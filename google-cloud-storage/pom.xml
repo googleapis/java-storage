@@ -95,15 +95,20 @@
       <version>2.1</version>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency>
+    <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>hamcrest-core</artifactId>
       <version>2.1</version>
       <scope>test</scope>
-    </dependency> -->
+    </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-netty-shaded</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -167,4 +172,22 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <configuration>
+            <!--
+              grpc-netty-shaded is needed for integration tests
+              hamcrest-core is used for test mocks
+              -->
+            <usedDependencies>io.grpc:grpc-netty-shaded,org.hamcrest:hamcrest-core</usedDependencies>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
