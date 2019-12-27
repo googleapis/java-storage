@@ -41,22 +41,42 @@ public final class StorageClass extends StringEnumValue {
   private static final StringEnumType<StorageClass> type =
       new StringEnumType(StorageClass.class, CONSTRUCTOR);
 
-  /** Regional storage class. */
-  public static final StorageClass REGIONAL = type.createAndRegister("REGIONAL");
-
-  /** Multi-regional storage class. */
-  public static final StorageClass MULTI_REGIONAL = type.createAndRegister("MULTI_REGIONAL");
-
-  /** Nearline storage class. */
-  public static final StorageClass NEARLINE = type.createAndRegister("NEARLINE");
-
-  /** Coldline storage class. */
-  public static final StorageClass COLDLINE = type.createAndRegister("COLDLINE");
-
-  /** Standard storage class. */
+  /**
+   * Standard storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   */
   public static final StorageClass STANDARD = type.createAndRegister("STANDARD");
 
-  /** Durable Reduced Availability (deprecated) */
+  /**
+   * Nearline storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   */
+  public static final StorageClass NEARLINE = type.createAndRegister("NEARLINE");
+
+  /**
+   * Coldline storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   */
+  public static final StorageClass COLDLINE = type.createAndRegister("COLDLINE");
+
+  /**
+   * Archive storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   */
+  public static final StorageClass ARCHIVE = type.createAndRegister("ARCHIVE");
+
+  /**
+   * Regional storage class (deprecated). See: https://cloud.google.com/storage/docs/storage-classes
+   * for details
+   */
+  public static final StorageClass REGIONAL = type.createAndRegister("REGIONAL");
+
+  /**
+   * Multi-regional storage class (deprecated).
+   * See:https://cloud.google.com/storage/docs/storage-classes for details
+   */
+  public static final StorageClass MULTI_REGIONAL = type.createAndRegister("MULTI_REGIONAL");
+
+  /**
+   * Durable Reduced Availability (deprecated).
+   * See:https://cloud.google.com/storage/docs/storage-classes for details
+   */
   public static final StorageClass DURABLE_REDUCED_AVAILABILITY =
       type.createAndRegister("DURABLE_REDUCED_AVAILABILITY");
 
