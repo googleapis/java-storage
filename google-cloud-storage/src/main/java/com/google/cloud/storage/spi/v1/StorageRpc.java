@@ -257,6 +257,14 @@ public interface StorageRpc extends ServiceRpc {
   boolean delete(Bucket bucket, Map<Option, ?> options);
 
   /**
+   * Disable or delete lifecycle rules of the requested bucket.
+   *
+   * @return {@code true} if the bucket lifecycle rule was disable.
+   * @throws StorageException upon failure
+   */
+  boolean disableLifeCycleRule(Bucket bucket, String serviceAccount);
+
+  /**
    * Deletes the requested storage object.
    *
    * @return {@code true} if the storage object was deleted, {@code false} if it was not found

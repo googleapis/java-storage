@@ -25,6 +25,7 @@ import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpContent;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
@@ -33,6 +34,7 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -57,6 +59,9 @@ import com.google.api.services.storage.model.TestIamPermissionsResponse;
 import com.google.cloud.Tuple;
 import com.google.cloud.http.CensusHttpModule;
 import com.google.cloud.http.HttpTransportOptions;
+import com.google.cloud.iam.credentials.v1.GenerateAccessTokenRequest;
+import com.google.cloud.iam.credentials.v1.GenerateAccessTokenResponse;
+import com.google.cloud.iam.credentials.v1.IamCredentialsClient;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.Function;
@@ -66,6 +71,7 @@ import com.google.common.collect.Lists;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
+import com.google.protobuf.Duration;
 import io.opencensus.common.Scope;
 import io.opencensus.trace.AttributeValue;
 import io.opencensus.trace.Span;
@@ -87,7 +93,11 @@ public class HttpStorageRpc implements StorageRpc {
   public static final String NO_ACL_PROJECTION = "noAcl";
   private static final String ENCRYPTION_KEY_PREFIX = "x-goog-encryption-";
   private static final String SOURCE_ENCRYPTION_KEY_PREFIX = "x-goog-copy-source-encryption-";
-
+  private static final String GOOGLE_STORAGE_API_ENDPOINT =
+      "https://storage.googleapis.com/storage/v1/b/";
+  private static final String GOOGLE_API_CLOUD_SCOPE =
+      "https://www.googleapis.com/auth/cloud-platform";
+  private static final Duration LIFE_TIME = Duration.newBuilder().setSeconds(3600).build();
   // declare this HttpStatus code here as it's not included in java.net.HttpURLConnection
   private static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
 
@@ -997,6 +1007,47 @@ public class HttpStorageRpc implements StorageRpc {
     } finally {
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
+    }
+  }
+
+  @Override
+  public boolean disableLifeCycleRule(Bucket bucket, String serviceAccount) {
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_BUCKET_LIFECYCLE_RULE);
+    Scope scope = tracer.withSpan(span);
+    try {
+      IamCredentialsClient client = IamCredentialsClient.create();
+      GenerateAccessTokenRequest request =
+          GenerateAccessTokenRequest.newBuilder()
+              .setName(serviceAccount)
+              .addScope(GOOGLE_API_CLOUD_SCOPE)
+              .setLifetime(LIFE_TIME)
+              .build();
+      GenerateAccessTokenResponse accessTokenResponse = client.generateAccessToken(request);
+      HttpHeaders headers = new HttpHeaders();
+      headers.setAuthorization("Bearer " + accessTokenResponse.getAccessToken());
+      headers.setContentType("application/json");
+
+      HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+      HttpContent httpContent = new JsonHttpContent(new JacksonFactory(), "");
+      HttpRequest httpRequest =
+          requestFactory
+              .buildPutRequest(
+                  new GenericUrl(
+                      GOOGLE_STORAGE_API_ENDPOINT + bucket.getName() + "?fields=lifecycle"),
+                  httpContent)
+              .setHeaders(headers);
+      httpRequest.execute();
+      return true;
+    } catch (IOException ex) {
+      span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
+      StorageException serviceException = translate(ex);
+      if (serviceException.getCode() == HTTP_NOT_FOUND) {
+        return false;
+      }
+      throw serviceException;
+    } finally {
+      scope.close();
+      span.end();
     }
   }
 

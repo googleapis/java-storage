@@ -3077,6 +3077,14 @@ public interface Storage extends Service<StorageOptions> {
   boolean deleteDefaultAcl(String bucket, Entity entity);
 
   /**
+   * Disable or delete lifecycle rules of the requested bucket.
+   *
+   * @return {@code true} if the bucket lifecycle rules was deleted.
+   * @throws StorageException upon failure
+   */
+  boolean disableLifeCycleRule(BucketInfo bucketInfo, String serviceAccount);
+
+  /**
    * Creates a new default blob ACL entry on the specified bucket.
    *
    * <p>Default ACLs are applied to a new blob within the bucket when no ACL was provided for that

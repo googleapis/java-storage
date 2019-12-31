@@ -89,6 +89,8 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.IAMPolicyGrpc;
 import com.google.iam.v1.SetIamPolicyRequest;
@@ -181,6 +183,10 @@ public class ITStorageTest {
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
+  private static final String GOOGLE_API_CLIENT_EMAIL = "clientEmail";
+  private static final String GOOGLE_API_CLOUD_SCOPE =
+      "https://www.googleapis.com/auth/cloud-platform";
+  private static final String REGEXP = "^\"|\"$";
 
   @BeforeClass
   public static void beforeClass() throws IOException {
@@ -3250,7 +3256,7 @@ public class ITStorageTest {
     String blobName = "test-blob-reload";
     BlobId blobId = BlobId.of(BUCKET, blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2});
+    Blob blob = storage.create(blobInfo, new byte[]{0, 1, 2});
 
     Blob blobUnchanged = blob.reload();
     assertEquals(blob, blobUnchanged);
@@ -3272,5 +3278,45 @@ public class ITStorageTest {
 
     updated.delete();
     assertNull(updated.reload());
+  }
+
+  @Test
+  public void testDisableLifeCycleRule() throws Exception {
+    String lifeCycleRuleBucket = RemoteStorageHelper.generateBucketName();
+    List<LifecycleRule> lifecycleRules =
+        ImmutableList.of(
+            new LifecycleRule(
+                LifecycleAction.newDeleteAction(),
+                LifecycleCondition.newBuilder().setAge(2).build()));
+    try {
+      Bucket bucket =
+          storage.create(
+              BucketInfo.newBuilder(lifeCycleRuleBucket)
+                  .setStorageClass(StorageClass.COLDLINE)
+                  .setLocation("us-central1")
+                  .setLifecycleRules(lifecycleRules)
+                  .build());
+      assertEquals(lifeCycleRuleBucket, bucket.getName());
+      assertEquals(StorageClass.COLDLINE, bucket.getStorageClass());
+      assertEquals(lifecycleRules, bucket.getLifecycleRules());
+      boolean isDisable =
+          bucket.disableLifeCycleRule(bucket, getFromCredential(GOOGLE_API_CLIENT_EMAIL));
+      if (isDisable) {
+        bucket =
+            storage.get(
+                lifeCycleRuleBucket, Storage.BucketGetOption.fields(Storage.BucketField.values()));
+        assertNull(bucket.getLifecycleRules());
+      }
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, lifeCycleRuleBucket, 5, TimeUnit.SECONDS);
+    }
+  }
+
+  private static String getFromCredential(String key) throws Exception {
+    Gson gson = new Gson();
+    GoogleCredentials credentials =
+        GoogleCredentials.getApplicationDefault().createScoped(GOOGLE_API_CLOUD_SCOPE);
+    JsonObject jsonObject = gson.fromJson(gson.toJson(credentials), JsonObject.class);
+    return jsonObject.get(key).toString().replaceAll(REGEXP, "");
   }
 }

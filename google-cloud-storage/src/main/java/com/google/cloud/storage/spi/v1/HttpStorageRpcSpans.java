@@ -33,6 +33,8 @@ class HttpStorageRpcSpans {
   static final String SPAN_NAME_PATCH_BUCKET = getTraceSpanName("patch(Bucket,Map)");
   static final String SPAN_NAME_PATCH_OBJECT = getTraceSpanName("patch(StorageObject,Map)");
   static final String SPAN_NAME_DELETE_BUCKET = getTraceSpanName("delete(Bucket,Map)");
+  static final String SPAN_NAME_DELETE_BUCKET_LIFECYCLE_RULE =
+      getTraceSpanName("delete(Bucket,String)");
   static final String SPAN_NAME_DELETE_OBJECT = getTraceSpanName("delete(StorageObject,Map)");
   static final String SPAN_NAME_CREATE_BATCH = getTraceSpanName("createBatch()");
   static final String SPAN_NAME_COMPOSE = getTraceSpanName("compose(Iterable,StorageObject,Map)");
@@ -96,7 +98,6 @@ class HttpStorageRpcSpans {
       getTraceSpanName(RpcBatch.class.getName() + ".submit()");
   static final EndSpanOptions END_SPAN_OPTIONS =
       EndSpanOptions.builder().setSampleToLocalSpanStore(true).build();
-
   static String getTraceSpanName(String methodDescriptor) {
     return String.format(
         "%s.%s.%s", SPAN_NAME_CLIENT_PREFIX, HttpStorageRpc.class.getName(), methodDescriptor);

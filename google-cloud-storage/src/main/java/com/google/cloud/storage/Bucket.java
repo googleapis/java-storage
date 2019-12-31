@@ -1115,6 +1115,16 @@ public class Bucket extends BucketInfo {
   }
 
   /**
+   * Disable or delete lifecycle rules of the requested bucket.
+   *
+   * @return {@code true} if the bucket lifecycle rules was deleted.
+   * @throws StorageException upon failure
+   */
+  public boolean disableLifeCycleRule(Bucket bucket, String serviceAccount) {
+    return storage.disableLifeCycleRule(bucket, serviceAccount);
+  }
+
+  /**
    * Creates a new default blob ACL entry on this bucket.
    *
    * <p>Default ACLs are applied to a new blob within the bucket when no ACL was provided for that
