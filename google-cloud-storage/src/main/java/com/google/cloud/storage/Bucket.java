@@ -1117,10 +1117,31 @@ public class Bucket extends BucketInfo {
   /**
    * Disable or delete lifecycle rules of the requested bucket.
    *
+   * <p>Example of disable or delete lifecycle rules of the bucket.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String serviceAccount = "client-email";
+   * Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName)
+   *     .setStorageClass(StorageClass.COLDLINE)
+   *     .setLocation("us-central1")
+   *     .setLifecycleRules(ImmutableList.of(
+   *             new LifecycleRule(
+   *                 LifecycleAction.newDeleteAction(),
+   *                 LifecycleCondition.newBuilder().setAge(2).build())))
+   *     .build());
+   * boolean isDisable  = bucket.disableLifeCycleRule(bucketName,serviceAccount);
+   * if (isDisable) {
+   *   // the lifecycle rules was disabled or deleted
+   * }
+   * }</pre>
+   *
+   * @param bucket name of the bucket.
+   * @param serviceAccount client_email which is present in credential.json file.
    * @return {@code true} if the bucket lifecycle rules was deleted.
    * @throws StorageException upon failure
    */
-  public boolean disableLifeCycleRule(Bucket bucket, String serviceAccount) {
+  public boolean disableLifeCycleRule(String bucket, String serviceAccount) {
     return storage.disableLifeCycleRule(bucket, serviceAccount);
   }
 

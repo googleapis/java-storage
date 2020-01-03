@@ -75,6 +75,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.StorageBatch;
 import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageClass;
@@ -3299,12 +3300,13 @@ public class ITStorageTest {
       assertEquals(lifeCycleRuleBucket, bucket.getName());
       assertEquals(StorageClass.COLDLINE, bucket.getStorageClass());
       assertEquals(lifecycleRules, bucket.getLifecycleRules());
+      assertNotNull(bucket.getLifecycleRules());
       boolean isDisable =
-          bucket.disableLifeCycleRule(bucket, getFromCredential(GOOGLE_API_CLIENT_EMAIL));
+          bucket.disableLifeCycleRule(
+              lifeCycleRuleBucket, getFromCredential(GOOGLE_API_CLIENT_EMAIL));
       if (isDisable) {
         bucket =
-            storage.get(
-                lifeCycleRuleBucket, Storage.BucketGetOption.fields(Storage.BucketField.values()));
+            storage.get(lifeCycleRuleBucket, BucketGetOption.fields(Storage.BucketField.values()));
         assertNull(bucket.getLifecycleRules());
       }
     } finally {

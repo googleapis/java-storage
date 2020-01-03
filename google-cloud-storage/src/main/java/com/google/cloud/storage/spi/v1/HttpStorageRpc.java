@@ -34,7 +34,6 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
-import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -1027,7 +1026,7 @@ public class HttpStorageRpc implements StorageRpc {
       headers.setAuthorization("Bearer " + accessTokenResponse.getAccessToken());
       headers.setContentType("application/json");
 
-      HttpRequestFactory requestFactory = new NetHttpTransport().createRequestFactory();
+      HttpRequestFactory requestFactory = storage.getRequestFactory();
       HttpContent httpContent = new JsonHttpContent(new JacksonFactory(), "");
       HttpRequest httpRequest =
           requestFactory

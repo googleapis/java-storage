@@ -65,6 +65,7 @@
     <site.installationModule>google-cloud-storage-parent</site.installationModule>
     <google.core.version>1.93.4</google.core.version>
     <google.api-common.version>1.9.0</google.api-common.version>
+    <google.iamcredentials.version>0.43.0-alpha</google.iamcredentials.version>
     <protobuf.version>3.11.1</protobuf.version>
     <junit.version>4.13</junit.version>
     <threeten.version>1.4.4</threeten.version>
@@ -150,7 +151,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-iamcredentials</artifactId>
-        <version>0.43.0-alpha</version>
+        <version>${google.iamcredentials.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.protobuf</groupId>
