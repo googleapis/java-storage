@@ -62,21 +62,22 @@ public final class StorageClass extends StringEnumValue {
   public static final StorageClass ARCHIVE = type.createAndRegister("ARCHIVE");
 
   /**
-   * Regional storage class.This is supported as a legacy storage class and will be deprecated in
+   * Regional storage class. This is supported as a legacy storage class and will be deprecated in
    * the future. See: https://cloud.google.com/storage/docs/storage-classes for details
    */
   public static final StorageClass REGIONAL = type.createAndRegister("REGIONAL");
 
   /**
-   * Multi-regional storage class.This is supported as a legacy storage class and will be deprecated
-   * in the future. See: https://cloud.google.com/storage/docs/storage-classes for details
+   * Multi-regional storage class. This is supported as a legacy storage class and will be
+   * deprecated in the future. See: https://cloud.google.com/storage/docs/storage-classes for
+   * details
    */
   public static final StorageClass MULTI_REGIONAL = type.createAndRegister("MULTI_REGIONAL");
 
   /**
-   * Durable Reduced Availability storage class.This is supported as a legacy storage class and will
-   * be deprecated in the future. See: https://cloud.google.com/storage/docs/storage-classes for
-   * details
+   * Durable Reduced Availability storage class. This is supported as a legacy storage class and
+   * will be deprecated in the future. See: https://cloud.google.com/storage/docs/storage-classes
+   * for details
    */
   public static final StorageClass DURABLE_REDUCED_AVAILABILITY =
       type.createAndRegister("DURABLE_REDUCED_AVAILABILITY");
