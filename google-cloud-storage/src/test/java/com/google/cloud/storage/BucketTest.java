@@ -706,10 +706,10 @@ public class BucketTest {
   @Test
   public void testDisableLifeCycleRule() {
     expect(storage.getOptions()).andReturn(mockOptions).times(1);
-    expect(storage.disableLifeCycleRule(BUCKET_INFO.getName(), "clientEmail")).andReturn(true);
+    expect(storage.disableLifeCycleRules(BUCKET_INFO.getName(), "clientEmail")).andReturn(true);
     replay(storage);
     initializeBucket();
-    assertTrue(bucket.disableLifeCycleRule(BUCKET_INFO.getName(), "clientEmail"));
+    assertTrue(bucket.disableLifeCycleRules(BUCKET_INFO.getName(), "clientEmail"));
   }
 
   @Test

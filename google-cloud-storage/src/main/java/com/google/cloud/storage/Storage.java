@@ -2010,8 +2010,6 @@ public interface Storage extends Service<StorageOptions> {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * Blob blob = storage.get(blobId, BlobGetOption.decryptionKey(blobEncryptionKey));
    * }</pre>
-   *
-   * @throws StorageException upon failure
    */
   Blob get(BlobId blob, BlobGetOption... options);
 
