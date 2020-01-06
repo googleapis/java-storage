@@ -3103,7 +3103,7 @@ public interface Storage extends Service<StorageOptions> {
    * @return {@code true} if the bucket lifecycle rules was deleted.
    * @throws StorageException upon failure
    */
-  boolean disableLifeCycleRule(String bucket, String serviceAccount);
+  boolean disableLifeCycleRules(String bucket, String serviceAccount);
 
   /**
    * Creates a new default blob ACL entry on the specified bucket.

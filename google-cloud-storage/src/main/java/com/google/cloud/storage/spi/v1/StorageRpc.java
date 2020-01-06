@@ -262,7 +262,7 @@ public interface StorageRpc extends ServiceRpc {
    * @return {@code true} if the bucket lifecycle rule was disable.
    * @throws StorageException upon failure
    */
-  boolean disableLifeCycleRule(Bucket bucket, String serviceAccount);
+  boolean disableLifeCycleRules(Bucket bucket, String serviceAccount);
 
   /**
    * Deletes the requested storage object.

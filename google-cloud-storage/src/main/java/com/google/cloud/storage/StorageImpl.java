@@ -1159,14 +1159,14 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public boolean disableLifeCycleRule(final String bucket, final String serviceAccount) {
+  public boolean disableLifeCycleRules(final String bucket, final String serviceAccount) {
     final com.google.api.services.storage.model.Bucket bucketPb = BucketInfo.of(bucket).toPb();
     try {
       return runWithRetries(
           new Callable<Boolean>() {
             @Override
             public Boolean call() {
-              return storageRpc.disableLifeCycleRule(bucketPb, serviceAccount);
+              return storageRpc.disableLifeCycleRules(bucketPb, serviceAccount);
             }
           },
           getOptions().getRetrySettings(),

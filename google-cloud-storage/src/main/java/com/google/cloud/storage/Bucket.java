@@ -1141,8 +1141,8 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if the bucket lifecycle rules was deleted.
    * @throws StorageException upon failure
    */
-  public boolean disableLifeCycleRule(String bucket, String serviceAccount) {
-    return storage.disableLifeCycleRule(bucket, serviceAccount);
+  public boolean disableLifeCycleRules(String bucket, String serviceAccount) {
+    return storage.disableLifeCycleRules(bucket, serviceAccount);
   }
 
   /**

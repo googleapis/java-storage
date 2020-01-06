@@ -3228,6 +3228,7 @@ public class ITStorageTest {
   }
 
   @Test
+<<<<<<< HEAD
   public void testSignedPostPolicyV4() throws Exception {
     PostFieldsV4 fields = PostFieldsV4.newBuilder().setAcl("public-read").build();
 
@@ -3282,13 +3283,13 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testDisableLifeCycleRule() throws Exception {
+  public void testDisableLifeCycleRules() throws Exception {
     String lifeCycleRuleBucket = RemoteStorageHelper.generateBucketName();
     List<LifecycleRule> lifecycleRules =
         ImmutableList.of(
             new LifecycleRule(
                 LifecycleAction.newDeleteAction(),
-                LifecycleCondition.newBuilder().setAge(2).build()));
+                LifecycleCondition.newBuilder().setAge(2).setIsLive(Boolean.TRUE).build()));
     try {
       Bucket bucket =
           storage.create(
@@ -3302,7 +3303,7 @@ public class ITStorageTest {
       assertEquals(lifecycleRules, bucket.getLifecycleRules());
       assertNotNull(bucket.getLifecycleRules());
       boolean isDisable =
-          bucket.disableLifeCycleRule(
+          bucket.disableLifeCycleRules(
               lifeCycleRuleBucket, getFromCredential(GOOGLE_API_CLIENT_EMAIL));
       if (isDisable) {
         bucket =
