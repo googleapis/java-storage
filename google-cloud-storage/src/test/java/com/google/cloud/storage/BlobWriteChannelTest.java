@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -46,10 +47,9 @@ import java.util.Random;
 import org.easymock.Capture;
 import org.easymock.CaptureType;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class BlobWriteChannelTest {
 
@@ -64,8 +64,6 @@ public class BlobWriteChannelTest {
   private static final Random RANDOM = new Random();
   private static final String SIGNED_URL =
       "http://www.test.com/test-bucket/test1.txt?GoogleAccessId=testClient-test@test.com&Expires=1553839761&Signature=MJUBXAZ7";
-
-  @Rule public ExpectedException thrown = ExpectedException.none();
 
   private StorageOptions options;
   private StorageRpcFactory rpcFactoryMock;
@@ -113,8 +111,12 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(BLOB_INFO.toPb(), EMPTY_RPC_OPTIONS))
         .andThrow(new RuntimeException());
     replay(storageRpcMock);
-    thrown.expect(RuntimeException.class);
-    new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);
+    try {
+      new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);
+      Assert.fail();
+    } catch (RuntimeException ex) {
+      assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
@@ -391,9 +393,12 @@ public class BlobWriteChannelTest {
     expect(new BlobWriteChannel(options, new URL(SIGNED_URL)))
         .andThrow(new RuntimeException(exceptionMessage));
     replay(storageRpcMock);
-    thrown.expect(StorageException.class);
-    thrown.expectMessage(exceptionMessage);
-    writer = new BlobWriteChannel(options, new URL(SIGNED_URL));
+    try {
+      writer = new BlobWriteChannel(options, new URL(SIGNED_URL));
+      Assert.fail();
+    } catch (StorageException ex) {
+      assertNotNull(ex.getMessage());
+    }
   }
 
   private static ByteBuffer randomBuffer(int size) {

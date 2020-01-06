@@ -86,11 +86,10 @@ import javax.crypto.spec.SecretKeySpec;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class StorageImplTest {
 
@@ -383,8 +382,6 @@ public class StorageImplTest {
 
   private Blob expectedBlob1, expectedBlob2, expectedBlob3;
   private Bucket expectedBucket1, expectedBucket2, expectedBucket3;
-
-  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @BeforeClass
   public static void beforeClass() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -785,9 +782,12 @@ public class StorageImplTest {
 
     // Even though this exception is retryable, storage.create(BlobInfo, InputStream)
     // shouldn't retry.
-    thrown.expect(StorageException.class);
-    thrown.expectMessage("internalError");
-    storage.create(infoWithHashes, fileStream);
+    try {
+      storage.create(infoWithHashes, fileStream);
+      Assert.fail();
+    } catch (StorageException ex) {
+      Assert.assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
@@ -2973,9 +2973,12 @@ public class StorageImplTest {
             .build()
             .getService();
     initializeServiceDependentObjects();
-    thrown.expect(StorageException.class);
-    thrown.expectMessage(exceptionMessage);
-    storage.get(blob);
+    try {
+      storage.get(blob);
+      Assert.fail();
+    } catch (StorageException ex) {
+      Assert.assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
@@ -2991,9 +2994,12 @@ public class StorageImplTest {
             .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
             .build()
             .getService();
-    thrown.expect(StorageException.class);
-    thrown.expectMessage(exceptionMessage);
-    storage.get(blob);
+    try {
+      storage.get(blob);
+      Assert.fail();
+    } catch (StorageException ex) {
+      Assert.assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
