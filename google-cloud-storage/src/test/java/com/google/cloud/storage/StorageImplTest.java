@@ -786,7 +786,7 @@ public class StorageImplTest {
       storage.create(infoWithHashes, fileStream);
       Assert.fail();
     } catch (StorageException ex) {
-      Assert.assertNotNull(ex.getMessage());
+      assertNotNull(ex.getMessage());
     }
   }
 
