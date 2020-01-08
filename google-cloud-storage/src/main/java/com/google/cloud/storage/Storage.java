@@ -1999,7 +1999,6 @@ public interface Storage extends Service<StorageOptions> {
    * only if supplied Decrpytion Key decrypts the blob successfully, otherwise a {@link
    * StorageException} is thrown. For more information review
    *
-   * @throws StorageException upon failure
    * @see <a
    *     href="https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#encrypted-elements">Encrypted
    *     Elements</a>
@@ -2010,6 +2009,8 @@ public interface Storage extends Service<StorageOptions> {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * Blob blob = storage.get(blobId, BlobGetOption.decryptionKey(blobEncryptionKey));
    * }</pre>
+   *
+   * @throws StorageException upon failure
    */
   Blob get(BlobId blob, BlobGetOption... options);
 
@@ -3075,24 +3076,27 @@ public interface Storage extends Service<StorageOptions> {
   boolean deleteDefaultAcl(String bucket, Entity entity);
 
   /**
-   * Disable or delete lifecycle rules of the requested bucket.
+   * Delete lifecycle rules of the requested bucket.
    *
-   * <p>Example of disable or delete lifecycle rules of the bucket.
+   * <p>Example of delete lifecycle rules of the bucket.
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
    * String serviceAccount = "client-email";
-   * Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName)
-   *     .setStorageClass(StorageClass.COLDLINE)
-   *     .setLocation("us-central1")
-   *     .setLifecycleRules(ImmutableList.of(
-   *             new LifecycleRule(
-   *                 LifecycleAction.newDeleteAction(),
-   *                 LifecycleCondition.newBuilder().setAge(2).build())))
-   *     .build());
-   * boolean isDisable  = bucket.disableLifeCycleRule(bucketName,serviceAccount);
-   * if (isDisable) {
-   *   // the lifecycle rules was disabled or deleted
+   * Bucket bucket =
+   *     storage.create(
+   *         BucketInfo.newBuilder(bucketName)
+   *             .setStorageClass(StorageClass.COLDLINE)
+   *             .setLocation("us-central1")
+   *             .setLifecycleRules(
+   *                 ImmutableList.of(
+   *                     new LifecycleRule(
+   *                         LifecycleAction.newDeleteAction(),
+   *                         LifecycleCondition.newBuilder().setAge(2).build())))
+   *             .build());
+   * boolean isDeleted = storage.deleteLifecycleRules(bucketName, serviceAccount);
+   * if (isDeleted) {
+   *   // the lifecycle rules was deleted
    * }
    * }</pre>
    *
@@ -3101,7 +3105,7 @@ public interface Storage extends Service<StorageOptions> {
    * @return {@code true} if the bucket lifecycle rules was deleted.
    * @throws StorageException upon failure
    */
-  boolean disableLifeCycleRules(String bucket, String serviceAccount);
+  boolean deleteLifecycleRules(String bucket, String serviceAccount);
 
   /**
    * Creates a new default blob ACL entry on the specified bucket.

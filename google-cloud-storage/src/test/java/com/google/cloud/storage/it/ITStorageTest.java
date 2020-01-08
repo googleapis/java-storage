@@ -3228,7 +3228,6 @@ public class ITStorageTest {
   }
 
   @Test
-<<<<<<< HEAD
   public void testSignedPostPolicyV4() throws Exception {
     PostFieldsV4 fields = PostFieldsV4.newBuilder().setAcl("public-read").build();
 
@@ -3283,7 +3282,7 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testDisableLifeCycleRules() throws Exception {
+  public void testDeleteLifecycleRules() throws Exception {
     String lifeCycleRuleBucket = RemoteStorageHelper.generateBucketName();
     List<LifecycleRule> lifecycleRules =
         ImmutableList.of(
@@ -3302,10 +3301,10 @@ public class ITStorageTest {
       assertEquals(StorageClass.COLDLINE, bucket.getStorageClass());
       assertEquals(lifecycleRules, bucket.getLifecycleRules());
       assertNotNull(bucket.getLifecycleRules());
-      boolean isDisable =
-          bucket.disableLifeCycleRules(
+      boolean isDeleted =
+          bucket.deleteLifecycleRules(
               lifeCycleRuleBucket, getFromCredential(GOOGLE_API_CLIENT_EMAIL));
-      if (isDisable) {
+      if (isDeleted) {
         bucket =
             storage.get(lifeCycleRuleBucket, BucketGetOption.fields(Storage.BucketField.values()));
         assertNull(bucket.getLifecycleRules());

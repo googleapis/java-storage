@@ -1010,7 +1010,7 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
-  public boolean disableLifeCycleRules(Bucket bucket, String serviceAccount) {
+  public boolean deleteLifecycleRules(Bucket bucket, String serviceAccount) {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_BUCKET_LIFECYCLE_RULE);
     Scope scope = tracer.withSpan(span);
     try {
