@@ -21,4 +21,15 @@
         <method>com.google.cloud.storage.PostPolicyV4 generateSignedPostPolicyV4(com.google.cloud.storage.BlobInfo, long, java.util.concurrent.TimeUnit, com.google.cloud.storage.Storage$PostPolicyV4Option[])</method>
         <differenceType>7012</differenceType>
     </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>boolean deleteLifecycleRules(java.lang.String, java.lang.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+        <method>boolean deleteLifecycleRules(com.google.api.services.storage.model.Bucket, java.lang.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
 </differences>
+
