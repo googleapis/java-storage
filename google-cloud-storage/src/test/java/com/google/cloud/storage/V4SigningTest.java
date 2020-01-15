@@ -56,17 +56,19 @@ public class V4SigningTest {
   private static class FakeClock implements ApiClock {
     private final AtomicLong currentNanoTime;
 
-    public FakeClock(Timestamp timestamp) {
+    FakeClock(Timestamp timestamp) {
       this.currentNanoTime =
           new AtomicLong(
               TimeUnit.NANOSECONDS.convert(timestamp.getSeconds(), TimeUnit.SECONDS)
                   + timestamp.getNanos());
     }
 
+    @Override
     public long nanoTime() {
       return this.currentNanoTime.get();
     }
 
+    @Override
     public long millisTime() {
       return TimeUnit.MILLISECONDS.convert(this.nanoTime(), TimeUnit.NANOSECONDS);
     }
