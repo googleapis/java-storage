@@ -124,9 +124,9 @@ public class V4SigningTest {
   }
 
   /**
-   * Load all of the tests and return a {@code Collection<Object[]>} representing the set
-   * of tests. Each entry in the returned collection is the set of parameters to the constructor of
-   * this test class.
+   * Load all of the tests and return a {@code Collection<Object[]>} representing the set of tests.
+   * Each entry in the returned collection is the set of parameters to the constructor of this test
+   * class.
    *
    * <p>The results of this method will then be run by JUnit's Parameterized test runner
    */

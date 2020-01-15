@@ -20,9 +20,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Assert;
-
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class OptionTest {
