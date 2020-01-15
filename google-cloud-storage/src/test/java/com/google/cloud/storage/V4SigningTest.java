@@ -109,7 +109,7 @@ public class V4SigningTest {
 
     BlobInfo blob = BlobInfo.newBuilder(testData.getBucket(), testData.getObject()).build();
 
-    final String signedUrl =
+    String signedUrl =
         storage
             .signUrl(
                 blob,

@@ -19,7 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.RetryHelper.runWithRetries;
 import static com.google.cloud.storage.PolicyHelper.convertFromApiPolicy;
 import static com.google.cloud.storage.PolicyHelper.convertToApiPolicy;
-import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
+import static com.google.cloud.storage.SignedUrlEncodingHelper.encodeForPath;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.DELIMITER;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.IF_GENERATION_MATCH;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.IF_GENERATION_NOT_MATCH;
@@ -666,7 +666,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     String bucketName = slashlessBucketNameFromBlobInfo(blobInfo);
     String escapedBlobName = "";
     if (!Strings.isNullOrEmpty(blobInfo.getName())) {
-      escapedBlobName = Rfc3986UriEncode(blobInfo.getName(), false);
+      escapedBlobName = encodeForPath(blobInfo.getName(), false);
     }
 
     boolean usePathStyle = shouldUsePathStyleForSignedUrl(optionMap);

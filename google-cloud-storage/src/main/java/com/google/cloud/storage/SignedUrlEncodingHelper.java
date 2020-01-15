@@ -16,28 +16,27 @@
 
 package com.google.cloud.storage;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import com.google.api.client.util.escape.PercentEscaper;
 
 /** Helper for encoding URI segments appropriately when creating a Signed URL. */
 class SignedUrlEncodingHelper {
 
-  static String Rfc3986UriEncode(final String segment, final boolean encodeForwardSlash) {
-    String encodedSegment;
-    try {
-      encodedSegment = URLEncoder.encode(segment, "UTF-8");
-    } catch (UnsupportedEncodingException exception) {
-      throw new RuntimeException(exception);
+  private static final PercentEscaper PATH_ENCODER =
+      new PercentEscaper(PercentEscaper.SAFEPATHCHARS_URLENCODER, false);
+
+  private static final PercentEscaper QUERY_ENCODER =
+      new PercentEscaper(PercentEscaper.SAFEQUERYSTRINGCHARS_URLENCODER, false);
+
+  static String encodeForPath(String segment, boolean encodeForwardSlash) {
+    String encodedSegment = PATH_ENCODER.escape(segment);
+    if (!encodeForwardSlash) {
+      encodedSegment = encodedSegment.replace("%2F", "/");
     }
-    // URLEncoder.encode() does mostly what we want, with the exception of a few characters that
-    // we fix in a second phase:
-    encodedSegment =
-        encodedSegment
-            .replace("*", "%2A") // Asterisks should be encoded.
-            .replace("+", "%20") // Spaces should be encoded as %20 instead of a plus sign.
-            .replace("%7E", "~"); // Tildes should not be encoded.
-    // Forward slashes should NOT be encoded in the segment of the URI that represents the
-    // object's name, but should be encoded for all other segments.
+    return encodedSegment;
+  }
+  
+  static String encodeForQueryString(String segment, boolean encodeForwardSlash) {
+    String encodedSegment = QUERY_ENCODER.escape(segment);
     if (!encodeForwardSlash) {
       encodedSegment = encodedSegment.replace("%2F", "/");
     }

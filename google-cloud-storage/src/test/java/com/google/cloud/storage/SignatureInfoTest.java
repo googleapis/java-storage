@@ -94,8 +94,8 @@ public class SignatureInfoTest {
 
     String queryString = builder.build().constructV4QueryString();
     assertEquals(
-        "X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=me%40google.com%2F20010909%2F"
-            + "auto%2Fstorage%2Fgoog4_request&X-Goog-Date=20010909T014640Z&X-Goog-Expires=10&X-Goog-SignedHeaders=host",
+        "X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=me@google.com/20010909/"
+            + "auto/storage/goog4_request&X-Goog-Date=20010909T014640Z&X-Goog-Expires=10&X-Goog-SignedHeaders=host",
         queryString);
   }
 }

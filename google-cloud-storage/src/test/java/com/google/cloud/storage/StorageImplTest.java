@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
+import static com.google.cloud.storage.SignedUrlEncodingHelper.encodeForPath;
 import static com.google.cloud.storage.testing.ApiPolicyMatcher.eqApiPolicy;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
@@ -1852,7 +1852,7 @@ public class StorageImplTest {
             14,
             TimeUnit.DAYS,
             Storage.SignUrlOption.withHostName("https://example.com"));
-    String escapedBlobName = Rfc3986UriEncode(blobName, false);
+    String escapedBlobName = encodeForPath(blobName, false);
     String stringUrl = url.toString();
     String expectedUrl =
         new StringBuilder("https://example.com/")
@@ -2238,7 +2238,7 @@ public class StorageImplTest {
     String blobName = "/foo/bar/baz #%20other cool stuff.txt";
     URL url =
         storage.signUrl(BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(), 14, TimeUnit.DAYS);
-    String escapedBlobName = Rfc3986UriEncode(blobName, false);
+    String escapedBlobName = encodeForPath(blobName, false);
     String stringUrl = url.toString();
     String expectedUrl =
         new StringBuilder("https://storage.googleapis.com/")
@@ -2288,7 +2288,7 @@ public class StorageImplTest {
             14,
             TimeUnit.DAYS,
             Storage.SignUrlOption.withHostName("https://example.com"));
-    String escapedBlobName = Rfc3986UriEncode(blobName, false);
+    String escapedBlobName = encodeForPath(blobName, false);
     String stringUrl = url.toString();
     String expectedUrl =
         new StringBuilder("https://example.com/")

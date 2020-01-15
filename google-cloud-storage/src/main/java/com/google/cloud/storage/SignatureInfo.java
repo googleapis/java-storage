@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableList;
@@ -191,7 +190,8 @@ public class SignatureInfo {
       if (!RESERVED_PARAMS_LOWER.contains(entry.getKey().toLowerCase())) {
         // URI encode user-supplied parameter, both the name and the value.
         sortedParamMap.put(
-            Rfc3986UriEncode(entry.getKey(), true), Rfc3986UriEncode(entry.getValue(), true));
+            SignedUrlEncodingHelper.encodeForQueryString(entry.getKey(), true),
+            SignedUrlEncodingHelper.encodeForQueryString(entry.getValue(), true));
       }
     }
 
@@ -237,16 +237,21 @@ public class SignatureInfo {
     TreeMap<String, String> sortedParamMap = getNonReservedUserQueryParams();
 
     // Add in the reserved auth-specific query params.
-    sortedParamMap.put("X-Goog-Algorithm", Rfc3986UriEncode(GOOG4_RSA_SHA256, true));
+    sortedParamMap.put("X-Goog-Algorithm",
+        SignedUrlEncodingHelper.encodeForQueryString(GOOG4_RSA_SHA256, true));
     sortedParamMap.put(
-        "X-Goog-Credential", Rfc3986UriEncode(accountEmail + "/" + yearMonthDay + SCOPE, true));
-    sortedParamMap.put("X-Goog-Date", Rfc3986UriEncode(exactDate, true));
-    sortedParamMap.put("X-Goog-Expires", Rfc3986UriEncode(Long.toString(expiration), true));
+        "X-Goog-Credential", 
+        SignedUrlEncodingHelper.encodeForQueryString(accountEmail + "/" + yearMonthDay + SCOPE, true));
+    sortedParamMap.put(
+        "X-Goog-Date", SignedUrlEncodingHelper.encodeForQueryString(exactDate, true));
+    sortedParamMap.put(
+        "X-Goog-Expires",
+        SignedUrlEncodingHelper.encodeForQueryString(Long.toString(expiration), true));
     StringBuilder signedHeadersBuilder =
         new CanonicalExtensionHeadersSerializer(Storage.SignUrlOption.SignatureVersion.V4)
             .serializeHeaderNames(canonicalizedExtensionHeaders);
-    sortedParamMap.put(
-        "X-Goog-SignedHeaders", Rfc3986UriEncode(signedHeadersBuilder.toString(), true));
+    sortedParamMap.put("X-Goog-SignedHeaders",
+        SignedUrlEncodingHelper.encodeForQueryString(signedHeadersBuilder.toString(), true));
 
     // The "X-Goog-Signature" param is not included here.
     return queryStringFromParamMap(sortedParamMap);
