@@ -18,18 +18,18 @@ package com.google.cloud.storage;
 
 import com.google.cloud.TransportOptions;
 import org.easymock.EasyMock;
-import org.junit.Rule;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class StorageOptionsTest {
 
-  @Rule public ExpectedException thrown = ExpectedException.none();
-
   @Test
   public void testInvalidTransport() {
-    thrown.expect(IllegalArgumentException.class);
-    StorageOptions.newBuilder()
-        .setTransportOptions(EasyMock.<TransportOptions>createMock(TransportOptions.class));
+    try {
+      StorageOptions.newBuilder()
+          .setTransportOptions(EasyMock.<TransportOptions>createMock(TransportOptions.class));
+      Assert.fail();
+    } catch (IllegalArgumentException expected) {
+    }
   }
 }
