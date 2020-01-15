@@ -24,9 +24,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.common.collect.ImmutableList;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class CopyRequestTest {
 
@@ -39,8 +37,6 @@ public class CopyRequestTest {
   private static final BlobId TARGET_BLOB_ID = BlobId.of(TARGET_BUCKET_NAME, TARGET_BLOB_NAME);
   private static final BlobInfo TARGET_BLOB_INFO =
       BlobInfo.newBuilder(TARGET_BLOB_ID).setContentType(TARGET_BLOB_CONTENT_TYPE).build();
-
-  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Test
   public void testCopyRequest() {
