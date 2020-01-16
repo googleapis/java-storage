@@ -663,7 +663,7 @@ public class BucketInfo implements Serializable {
             .toString();
       }
 
-      StorageClass getStorageClass() {
+      public StorageClass getStorageClass() {
         return storageClass;
       }
     }
