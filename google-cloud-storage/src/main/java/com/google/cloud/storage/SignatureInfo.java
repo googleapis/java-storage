@@ -238,20 +238,20 @@ public class SignatureInfo {
 
     // Add in the reserved auth-specific query params.
     sortedParamMap.put("X-Goog-Algorithm",
-        SignedUrlEncodingHelper.encodeForQueryString(GOOG4_RSA_SHA256, true));
+        SignedUrlEncodingHelper.Rfc3986UriEncode(GOOG4_RSA_SHA256, true));
     sortedParamMap.put(
         "X-Goog-Credential", 
-        SignedUrlEncodingHelper.encodeForQueryString(accountEmail + "/" + yearMonthDay + SCOPE, true));
+        SignedUrlEncodingHelper.Rfc3986UriEncode(accountEmail + "/" + yearMonthDay + SCOPE, true));
     sortedParamMap.put(
-        "X-Goog-Date", SignedUrlEncodingHelper.encodeForQueryString(exactDate, true));
+        "X-Goog-Date", SignedUrlEncodingHelper.Rfc3986UriEncode(exactDate, true));
     sortedParamMap.put(
         "X-Goog-Expires",
-        SignedUrlEncodingHelper.encodeForQueryString(Long.toString(expiration), true));
+        SignedUrlEncodingHelper.Rfc3986UriEncode(Long.toString(expiration), true));
     StringBuilder signedHeadersBuilder =
         new CanonicalExtensionHeadersSerializer(Storage.SignUrlOption.SignatureVersion.V4)
             .serializeHeaderNames(canonicalizedExtensionHeaders);
     sortedParamMap.put("X-Goog-SignedHeaders",
-        SignedUrlEncodingHelper.encodeForQueryString(signedHeadersBuilder.toString(), true));
+        SignedUrlEncodingHelper.Rfc3986UriEncode(signedHeadersBuilder.toString(), true));
 
     // The "X-Goog-Signature" param is not included here.
     return queryStringFromParamMap(sortedParamMap);
