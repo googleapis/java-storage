@@ -1115,13 +1115,12 @@ public class Bucket extends BucketInfo {
   }
 
   /**
-   * Delete lifecycle rules of the requested bucket.
+   * Delete the lifecycle rules of this bucket.
    *
-   * <p>Example of delete lifecycle rules of the bucket.
+   * <p>Example of delete the lifecycle rules of this bucket.
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
-   * String serviceAccount = "client-email";
    * Bucket bucket =
    *     storage.create(
    *         BucketInfo.newBuilder(bucketName)
@@ -1133,19 +1132,17 @@ public class Bucket extends BucketInfo {
    *                         LifecycleAction.newDeleteAction(),
    *                         LifecycleCondition.newBuilder().setAge(2).build())))
    *             .build());
-   * boolean isDeleted = bucket.deleteLifecycleRules(bucketName, serviceAccount);
-   * if (isDeleted) {
-   *   // the lifecycle rules was deleted
+   * boolean rulesDeleted = bucket.deleteLifecycleRules();
+   * if (rulesDeleted) {
+   *   // the lifecycle rules were deleted
    * }
    * }</pre>
    *
-   * @param bucket name of the bucket.
-   * @param serviceAccount client_email which is present in credential.json file.
-   * @return {@code true} if the bucket lifecycle rules was deleted.
+   * @return {@code true} if the bucket lifecycle rules were deleted.
    * @throws StorageException upon failure
    */
-  public boolean deleteLifecycleRules(String bucket, String serviceAccount) {
-    return storage.deleteLifecycleRules(bucket, serviceAccount);
+  public boolean deleteLifecycleRules() {
+    return storage.deleteLifecycleRules(getName());
   }
 
   /**

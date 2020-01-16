@@ -90,8 +90,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.IAMPolicyGrpc;
 import com.google.iam.v1.SetIamPolicyRequest;
@@ -184,10 +182,6 @@ public class ITStorageTest {
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
-  private static final String GOOGLE_API_CLIENT_EMAIL = "clientEmail";
-  private static final String GOOGLE_API_CLOUD_SCOPE =
-      "https://www.googleapis.com/auth/cloud-platform";
-  private static final String REGEXP = "^\"|\"$";
 
   @BeforeClass
   public static void beforeClass() throws IOException {
@@ -3301,10 +3295,9 @@ public class ITStorageTest {
       assertEquals(StorageClass.COLDLINE, bucket.getStorageClass());
       assertEquals(lifecycleRules, bucket.getLifecycleRules());
       assertNotNull(bucket.getLifecycleRules());
-      boolean isDeleted =
-          bucket.deleteLifecycleRules(
-              lifeCycleRuleBucket, getFromCredential(GOOGLE_API_CLIENT_EMAIL));
-      if (isDeleted) {
+
+      boolean rulesDeleted = bucket.deleteLifecycleRules();
+      if (rulesDeleted) {
         bucket =
             storage.get(lifeCycleRuleBucket, BucketGetOption.fields(Storage.BucketField.values()));
         assertNull(bucket.getLifecycleRules());
@@ -3312,13 +3305,5 @@ public class ITStorageTest {
     } finally {
       RemoteStorageHelper.forceDelete(storage, lifeCycleRuleBucket, 5, TimeUnit.SECONDS);
     }
-  }
-
-  private static String getFromCredential(String key) throws Exception {
-    Gson gson = new Gson();
-    GoogleCredentials credentials =
-        GoogleCredentials.getApplicationDefault().createScoped(GOOGLE_API_CLOUD_SCOPE);
-    JsonObject jsonObject = gson.fromJson(gson.toJson(credentials), JsonObject.class);
-    return jsonObject.get(key).toString().replaceAll(REGEXP, "");
   }
 }

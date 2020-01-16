@@ -3076,13 +3076,12 @@ public interface Storage extends Service<StorageOptions> {
   boolean deleteDefaultAcl(String bucket, Entity entity);
 
   /**
-   * Delete lifecycle rules of the requested bucket.
+   * Delete the lifecycle rules of the requested bucket.
    *
-   * <p>Example of delete lifecycle rules of the bucket.
+   * <p>Example of delete the lifecycle rules of the requested bucket.
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
-   * String serviceAccount = "client-email";
    * Bucket bucket =
    *     storage.create(
    *         BucketInfo.newBuilder(bucketName)
@@ -3094,18 +3093,17 @@ public interface Storage extends Service<StorageOptions> {
    *                         LifecycleAction.newDeleteAction(),
    *                         LifecycleCondition.newBuilder().setAge(2).build())))
    *             .build());
-   * boolean isDeleted = storage.deleteLifecycleRules(bucketName, serviceAccount);
-   * if (isDeleted) {
-   *   // the lifecycle rules was deleted
+   * boolean rulesDeleted = storage.deleteLifecycleRules(bucketName);
+   * if (rulesDeleted) {
+   *   // the lifecycle rules were deleted
    * }
    * }</pre>
    *
    * @param bucket name of the bucket.
-   * @param serviceAccount client_email which is present in credential.json file.
-   * @return {@code true} if the bucket lifecycle rules was deleted.
+   * @return {@code true} if the bucket lifecycle rules were deleted.
    * @throws StorageException upon failure
    */
-  boolean deleteLifecycleRules(String bucket, String serviceAccount);
+  boolean deleteLifecycleRules(String bucket);
 
   /**
    * Creates a new default blob ACL entry on the specified bucket.
