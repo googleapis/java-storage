@@ -34,6 +34,8 @@ import com.google.protobuf.util.JsonFormat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -95,7 +97,7 @@ public class V4SigningTest {
   }
 
   @Test
-  public void test() {
+  public void test() throws MalformedURLException {
     assumeThat(
         "Test skipped until b/136171758 is resolved",
         testName.getMethodName(),
@@ -122,7 +124,11 @@ public class V4SigningTest {
                 SignUrlOption.withExtHeaders(testData.getHeadersMap()),
                 SignUrlOption.withV4Signature())
             .toString();
-    assertEquals(testData.getExpectedUrl(), signedUrl);
+    assertEquals(new URL(testData.getExpectedUrl()), new URL(signedUrl));
+    // If the previous assert passed and this one fails, then the URLs are
+    // not properly caonicalized.
+    assertEquals("URLs are not strings and should not be compared as such",
+        testData.getExpectedUrl(), signedUrl);
   }
 
   /**

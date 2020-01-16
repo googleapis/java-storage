@@ -25,7 +25,8 @@ class SignedUrlEncodingHelper {
 
   /**
    * @deprecated use the escaper designed for the specific part of the URL you're
-   *     escaping. 
+   *     escaping. Different parts of the URL have different reserved and unreserved
+   *     characters.
    */
   @Deprecated
   static String Rfc3986UriEncode(String segment, boolean encodeForwardSlash) {
