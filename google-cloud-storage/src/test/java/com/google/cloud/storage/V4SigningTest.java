@@ -28,6 +28,7 @@ import com.google.cloud.conformance.storage.v1.SigningV4Test;
 import com.google.cloud.conformance.storage.v1.TestFile;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.common.base.Charsets;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.JsonFormat;
 import java.io.IOException;
@@ -125,35 +126,35 @@ public class V4SigningTest {
   }
 
   /**
-   * Attempt to load all of the tests and return a {@code Collection<Object[]>} representing the set
-   * of tests. Each entry in the returned collection is the set of parameters to the constructor of
-   * this test class.
+   * Load all of the tests and return a {@code Collection<Object[]>} representing the set of tests.
+   * Each entry in the returned collection is the set of parameters to the constructor of this test
+   * class.
    *
-   * <p>The results of this method will then be ran by JUnit's Parameterized test runner
+   * <p>The results of this method will then be run by JUnit's Parameterized test runner
    */
   @Parameters(name = "{2}")
   public static Collection<Object[]> testCases() throws IOException {
-    final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+    ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-    final InputStream credentialsStream = cl.getResourceAsStream(SERVICE_ACCOUNT_JSON_RESOURCE);
+    InputStream credentialsStream = cl.getResourceAsStream(SERVICE_ACCOUNT_JSON_RESOURCE);
     assertNotNull(
         String.format("Unable to load service account json: %s", SERVICE_ACCOUNT_JSON_RESOURCE),
         credentialsStream);
 
-    final InputStream dataJson = cl.getResourceAsStream(TEST_DATA_JSON_RESOURCE);
+    InputStream dataJson = cl.getResourceAsStream(TEST_DATA_JSON_RESOURCE);
     assertNotNull(
         String.format("Unable to load test definition: %s", TEST_DATA_JSON_RESOURCE), dataJson);
 
-    final ServiceAccountCredentials serviceAccountCredentials =
+    ServiceAccountCredentials serviceAccountCredentials =
         ServiceAccountCredentials.fromStream(credentialsStream);
 
-    final InputStreamReader reader = new InputStreamReader(dataJson);
-    final TestFile.Builder testBuilder = TestFile.newBuilder();
+    InputStreamReader reader = new InputStreamReader(dataJson, Charsets.UTF_8);
+    TestFile.Builder testBuilder = TestFile.newBuilder();
     JsonFormat.parser().merge(reader, testBuilder);
-    final TestFile testFile = testBuilder.build();
+    TestFile testFile = testBuilder.build();
 
-    final List<SigningV4Test> tests = testFile.getSigningV4TestsList();
-    final ArrayList<Object[]> data = new ArrayList<>(tests.size());
+    List<SigningV4Test> tests = testFile.getSigningV4TestsList();
+    ArrayList<Object[]> data = new ArrayList<>(tests.size());
     for (SigningV4Test test : tests) {
       data.add(new Object[] {test, serviceAccountCredentials, test.getDescription()});
     }
