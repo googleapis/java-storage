@@ -86,6 +86,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -381,7 +382,7 @@ public class StorageImplTest {
   private StorageRpc storageRpcMock;
   private Storage storage;
 
-  private Blob expectedBlob1, expectedBlob2, expectedBlob3;
+  private Blob expectedBlob1, expectedBlob2;
   private Bucket expectedBucket1, expectedBucket2, expectedBucket3;
 
   @Rule public ExpectedException thrown = ExpectedException.none();
@@ -426,7 +427,6 @@ public class StorageImplTest {
   private void initializeServiceDependentObjects() {
     expectedBlob1 = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO1));
     expectedBlob2 = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO2));
-    expectedBlob3 = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO3));
     expectedBucket1 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO1));
     expectedBucket2 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO2));
     expectedBucket3 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO3));
@@ -2332,7 +2332,7 @@ public class StorageImplTest {
     storage = options.toBuilder().setCredentials(credentials).build().getService();
 
     String dispositionNotEncoded = "attachment; filename=\"" + BLOB_NAME1 + "\"";
-    String dispositionEncoded = "attachment%3B%20filename%3D%22" + BLOB_NAME1 + "%22";
+    String dispositionEncoded = "attachment;%20filename%3D%22" + BLOB_NAME1 + "%22";
     URL url =
         storage.signUrl(
             BLOB_INFO1,
@@ -2361,7 +2361,8 @@ public class StorageImplTest {
             .append(42L + 1209600)
             .append("&Signature=")
             .toString();
-    assertTrue(stringUrl.startsWith(expectedPrefix));
+    assertTrue(stringUrl + "does not start with " + expectedPrefix,
+        stringUrl.startsWith(expectedPrefix));
     String signature = stringUrl.substring(expectedPrefix.length());
 
     StringBuilder signedMessageBuilder = new StringBuilder();
@@ -2400,7 +2401,7 @@ public class StorageImplTest {
     storage = options.toBuilder().setCredentials(credentials).build().getService();
 
     String dispositionNotEncoded = "attachment; filename=\"" + BLOB_NAME1 + "\"";
-    String dispositionEncoded = "attachment%3B%20filename%3D%22" + BLOB_NAME1 + "%22";
+    String dispositionEncoded = "attachment;%20filename%3D%22" + BLOB_NAME1 + "%22";
     URL url =
         storage.signUrl(
             BLOB_INFO1,
@@ -2442,7 +2443,9 @@ public class StorageImplTest {
     assertTrue(restOfUrl, matcher.matches());
 
     // Make sure query param was encoded properly.
-    assertNotEquals(-1, restOfUrl.indexOf("&response-content-disposition=" + dispositionEncoded));
+    String expected = "&response-content-disposition=" + dispositionEncoded;
+    Assert.assertTrue(restOfUrl + " does not contain " + expected,
+        restOfUrl.contains(expected));
   }
 
   @Test

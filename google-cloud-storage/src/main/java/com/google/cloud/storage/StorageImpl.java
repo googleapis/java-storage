@@ -19,7 +19,6 @@ package com.google.cloud.storage;
 import static com.google.cloud.RetryHelper.runWithRetries;
 import static com.google.cloud.storage.PolicyHelper.convertFromApiPolicy;
 import static com.google.cloud.storage.PolicyHelper.convertToApiPolicy;
-import static com.google.cloud.storage.SignedUrlEncodingHelper.encodeForPath;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.DELIMITER;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.IF_GENERATION_MATCH;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.IF_GENERATION_NOT_MATCH;
@@ -91,14 +90,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static final String STORAGE_XML_URI_SCHEME = "https";
 
   private static final String STORAGE_XML_URI_HOST_NAME = "storage.googleapis.com";
-
-  private static final Function<Tuple<Storage, Boolean>, Boolean> DELETE_FUNCTION =
-      new Function<Tuple<Storage, Boolean>, Boolean>() {
-        @Override
-        public Boolean apply(Tuple<Storage, Boolean> tuple) {
-          return tuple.y();
-        }
-      };
 
   private final StorageRpc storageRpc;
 
@@ -666,7 +657,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     String bucketName = slashlessBucketNameFromBlobInfo(blobInfo);
     String escapedBlobName = "";
     if (!Strings.isNullOrEmpty(blobInfo.getName())) {
-      escapedBlobName = encodeForPath(blobInfo.getName(), false);
+      escapedBlobName = SignedUrlEncodingHelper.Rfc3986UriEncode(blobInfo.getName(), false);
     }
 
     boolean usePathStyle = shouldUsePathStyleForSignedUrl(optionMap);

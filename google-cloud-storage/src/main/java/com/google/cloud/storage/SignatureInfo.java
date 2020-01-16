@@ -187,6 +187,7 @@ public class SignatureInfo {
       // Convert to (and check for the existence of) lowercase keys to prevent cases like a user
       // supplying "x-goog-algorithm", in order to prevent the resulting query string from
       // containing "x-goog-algorithm" and "X-Goog-Algorithm".
+      // todo this is broken. It depends on locale.
       if (!RESERVED_PARAMS_LOWER.contains(entry.getKey().toLowerCase())) {
         // URI encode user-supplied parameter, both the name and the value.
         sortedParamMap.put(

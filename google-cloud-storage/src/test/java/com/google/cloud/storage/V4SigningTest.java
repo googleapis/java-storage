@@ -126,7 +126,7 @@ public class V4SigningTest {
             .toString();
     assertEquals(new URL(testData.getExpectedUrl()), new URL(signedUrl));
     // If the previous assert passed and this one fails, then the URLs are
-    // not properly caonicalized.
+    // not properly canonicalized.
     assertEquals("URLs are not strings and should not be compared as such",
         testData.getExpectedUrl(), signedUrl);
   }
