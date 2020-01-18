@@ -3222,6 +3222,7 @@ public class ITStorageTest {
   }
 
   @Test
+<<<<<<< HEAD
   public void testSignedPostPolicyV4() throws Exception {
     PostFieldsV4 fields = PostFieldsV4.newBuilder().setAcl("public-read").build();
 
@@ -3276,7 +3277,7 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testDeleteLifecycleRules() throws Exception {
+  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
     String lifeCycleRuleBucket = RemoteStorageHelper.generateBucketName();
     List<LifecycleRule> lifecycleRules =
         ImmutableList.of(
@@ -3297,11 +3298,12 @@ public class ITStorageTest {
       assertNotNull(bucket.getLifecycleRules());
 
       boolean rulesDeleted = bucket.deleteLifecycleRules();
-      if (rulesDeleted) {
-        bucket =
-            storage.get(lifeCycleRuleBucket, BucketGetOption.fields(Storage.BucketField.values()));
-        assertNull(bucket.getLifecycleRules());
-      }
+      assertTrue(rulesDeleted);
+      bucket =
+          storage.get(lifeCycleRuleBucket, BucketGetOption.fields(Storage.BucketField.values()));
+      assertNull(bucket.getLifecycleRules());
+    } catch (StorageException ex) {
+      throw ex;
     } finally {
       RemoteStorageHelper.forceDelete(storage, lifeCycleRuleBucket, 5, TimeUnit.SECONDS);
     }

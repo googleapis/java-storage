@@ -55,7 +55,6 @@ import com.google.api.services.storage.model.Policy;
 import com.google.api.services.storage.model.ServiceAccount;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.TestIamPermissionsResponse;
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.Tuple;
 import com.google.cloud.http.CensusHttpModule;
 import com.google.cloud.http.HttpTransportOptions;
@@ -71,8 +70,6 @@ import com.google.common.collect.Lists;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.protobuf.Duration;
 import io.opencensus.common.Scope;
 import io.opencensus.trace.AttributeValue;
@@ -1013,23 +1010,14 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
-  public boolean deleteLifecycleRules(Bucket bucket) {
+  public boolean deleteLifecycleRules(Bucket bucket, String serviceAccount) {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_BUCKET_LIFECYCLE_RULE);
     Scope scope = tracer.withSpan(span);
-    Gson gson = new Gson();
     try {
-
-      /*Get the client email from the credentials to generate the accessToken*/
-      GoogleCredentials credentials =
-          GoogleCredentials.getApplicationDefault().createScoped(GOOGLE_API_CLOUD_SCOPE);
-      JsonObject jsonCredential = gson.fromJson(gson.toJson(credentials), JsonObject.class);
-      String serviceAccountEmail =
-          jsonCredential.get("clientEmail").toString().replaceAll("^\"|\"$", "");
-
       IamCredentialsClient client = IamCredentialsClient.create();
       GenerateAccessTokenRequest request =
           GenerateAccessTokenRequest.newBuilder()
-              .setName(serviceAccountEmail)
+              .setName(serviceAccount)
               .addScope(GOOGLE_API_CLOUD_SCOPE)
               .setLifetime(LIFE_TIME)
               .build();

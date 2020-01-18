@@ -28,7 +28,7 @@
     </difference>
     <difference>
         <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>boolean deleteLifecycleRules(com.google.api.services.storage.model.Bucket)</method>
+        <method>boolean deleteLifecycleRules(com.google.api.services.storage.model.Bucket, java.lang.String)</method>
         <differenceType>7012</differenceType>
     </difference>
 </differences>

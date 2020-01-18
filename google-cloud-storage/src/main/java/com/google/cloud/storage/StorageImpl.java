@@ -47,6 +47,7 @@ import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
+import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
@@ -1161,12 +1162,14 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   @Override
   public boolean deleteLifecycleRules(final String bucket) {
     final com.google.api.services.storage.model.Bucket bucketPb = BucketInfo.of(bucket).toPb();
+    final com.google.api.services.storage.model.ServiceAccount serviceAccount =
+        storageRpc.getServiceAccount(ServiceOptions.getDefaultProjectId());
     try {
       return runWithRetries(
           new Callable<Boolean>() {
             @Override
             public Boolean call() {
-              return storageRpc.deleteLifecycleRules(bucketPb);
+              return storageRpc.deleteLifecycleRules(bucketPb, serviceAccount.getEmailAddress());
             }
           },
           getOptions().getRetrySettings(),
