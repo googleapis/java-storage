@@ -75,6 +75,11 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>28.2-android</version>
+      </dependency>
+      <dependency>
         <groupId>com.google.http-client</groupId>
         <artifactId>google-http-client-bom</artifactId>
         <version>1.34.0</version>
@@ -133,7 +138,6 @@
         <artifactId>guava</artifactId>
         <version>28.2-android</version>
       </dependency>
-
       <dependency>
         <groupId>org.checkerframework</groupId>
         <artifactId>checker-compat-qual</artifactId>
@@ -220,7 +224,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-conformance-tests</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
