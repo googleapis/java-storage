@@ -567,7 +567,8 @@ public interface Storage extends Service<StorageOptions> {
       IF_CRC32C_MATCH,
       CUSTOMER_SUPPLIED_KEY,
       KMS_KEY_NAME,
-      USER_PROJECT;
+      USER_PROJECT,
+      IF_DISABLE_GZIP_CONTENT;
 
       StorageRpc.Option toRpcOption() {
         return StorageRpc.Option.valueOf(this.name());
@@ -698,6 +699,14 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static BlobWriteOption userProject(String userProject) {
       return new BlobWriteOption(Option.USER_PROJECT, userProject);
+    }
+
+    /**
+     * Returns an option that signals automatic gzip compression should not be performed en route to
+     * the bucket.
+     */
+    public static BlobWriteOption disableGzipContent() {
+      return new BlobWriteOption(Option.IF_DISABLE_GZIP_CONTENT, true);
     }
   }
 
