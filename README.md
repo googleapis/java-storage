@@ -77,6 +77,24 @@ Cloud Storage for your project.
 See the [Storage client library docs][storage-client-lib-docs] to learn how to interact
 with the Cloud Storage using this Client Library.
 
+Alternative: NIO
+----------------
+
+We also provide a separate library,
+[google-cloud-nio](https://github.com/googleapis/java-storage-nio)
+(currently in alpha). It lets you create standard Java `Path` objects that can
+be manipulated using the usual
+methods but that point to a file in Google Cloud Storage.
+
+For example here is how to get to `gs://bucket/cats/Calico.csv` with
+google-cloud-nio:
+
+```java
+import com.google.cloud.storage.contrib.nio.CloudStorageFileSystem;
+
+Path path = CloudStorageFileSystem.forBucket("bucket").getPath("cats/Calico.csv");
+```
+
 Getting Started
 ---------------
 #### Prerequisites
