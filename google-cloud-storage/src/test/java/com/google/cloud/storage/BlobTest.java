@@ -37,6 +37,7 @@ import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
@@ -51,7 +52,10 @@ import com.google.common.io.BaseEncoding;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Key;
 import java.util.List;
 import java.util.Map;
@@ -661,5 +665,39 @@ public class BlobTest {
     blob.downloadTo(file.toPath());
     byte actual[] = Files.readAllBytes(file.toPath());
     assertArrayEquals(expected, actual);
+  }
+
+  @Test
+  public void testUploadNonExistentFile() throws Exception {
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    String fileName = "non_existing_file.txt";
+    try {
+      blob.uploadFrom(Paths.get(fileName));
+    } catch (IllegalArgumentException e) {
+      assertEquals("file should exist " + fileName, e.getMessage());
+    }
+  }
+
+  @Test
+  public void testUpload() throws Exception {
+    final byte[] dataToSend = {1,2,3};
+    ByteBuffer expectedByteBuffer = ByteBuffer.wrap(dataToSend, 0, dataToSend.length);
+    WriteChannel channel = createMock(WriteChannel.class);
+    channel.setChunkSize(eq(2097152));
+    expect(channel.write(expectedByteBuffer)).andReturn(dataToSend.length);
+    channel.close();
+    replay(channel);
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    Bucket.BlobWriteOption[] writeOptions = {};
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    Path tempFile = Files.createTempFile("testUpload", ".tmp");
+    Files.write(tempFile, dataToSend);
+    blob.uploadFrom(tempFile);
   }
 }
