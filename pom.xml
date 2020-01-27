@@ -134,11 +134,6 @@
         <version>v1-rev20191011-1.30.3</version>
       </dependency>
       <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>28.2-android</version>
-      </dependency>
-      <dependency>
         <groupId>org.checkerframework</groupId>
         <artifactId>checker-compat-qual</artifactId>
         <version>2.5.5</version>
