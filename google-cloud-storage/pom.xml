@@ -165,11 +165,6 @@
       <artifactId>google-cloud-conformance-tests</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
