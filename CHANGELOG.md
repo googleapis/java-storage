@@ -1,5 +1,18 @@
 # Changelog
 
+### [1.103.1](https://www.github.com/googleapis/java-storage/compare/v1.103.0...v1.103.1) (2020-01-27)
+
+
+### Bug Fixes
+
+* make the getStorageClass() method public ([#22](https://www.github.com/googleapis/java-storage/issues/22)) ([7fb1f6c](https://www.github.com/googleapis/java-storage/commit/7fb1f6c2cb8c5d6ebbf9dcaccf1218d2a0aebb09))
+
+
+### Dependencies
+
+* update dependency com.google.truth:truth to v1.0.1 ([#60](https://www.github.com/googleapis/java-storage/issues/60)) ([3cedc8f](https://www.github.com/googleapis/java-storage/commit/3cedc8f7fcac0d87ca121197895fc7b36fc8f6d7))
+* update dependency org.threeten:threetenbp to v1.4.1 ([4c0f03a](https://www.github.com/googleapis/java-storage/commit/4c0f03a3cc22eed03f002bedf11b3a40e57c709e))
+
 ## [1.103.0](https://www.github.com/googleapis/java-storage/compare/1.102.0...v1.103.0) (2020-01-06)
 
 
