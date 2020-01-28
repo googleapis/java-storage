@@ -590,7 +590,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testDownload() throws Exception {
+  public void testDownloadTo() throws Exception {
     final byte[] expected = {1, 2};
     StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
     expect(storage.getOptions()).andReturn(mockOptions).times(1);
@@ -622,7 +622,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testDownloadWithRetries() throws Exception {
+  public void testDownloadToWithRetries() throws Exception {
     final byte[] expected = {1, 2};
     StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
     expect(storage.getOptions()).andReturn(mockOptions);
@@ -668,7 +668,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testUploadNonExistentFile() throws Exception {
+  public void testUploadFromNonExistentFile() throws Exception {
     initializeExpectedBlob(1);
     expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);
@@ -682,7 +682,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testUpload() throws Exception {
+  public void testUploadFrom() throws Exception {
     final byte[] dataToSend = {1,2,3};
     ByteBuffer expectedByteBuffer = ByteBuffer.wrap(dataToSend, 0, dataToSend.length);
     WriteChannel channel = createMock(WriteChannel.class);
