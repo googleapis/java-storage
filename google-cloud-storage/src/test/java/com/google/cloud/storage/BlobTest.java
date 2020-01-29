@@ -676,8 +676,8 @@ public class BlobTest {
     String fileName = "non_existing_file.txt";
     try {
       blob.uploadFrom(Paths.get(fileName));
-    } catch (IllegalArgumentException e) {
-      assertEquals("file should exist " + fileName, e.getMessage());
+    } catch (StorageException e) {
+      assertEquals("File to upload from does not exist '" + fileName + "'", e.getMessage());
     }
   }
 

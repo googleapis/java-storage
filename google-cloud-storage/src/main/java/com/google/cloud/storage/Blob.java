@@ -269,7 +269,6 @@ public class Blob extends BlobInfo {
    * @param path file to be uploaded
    * @param options blob write options
    * @throws StorageException upon failure
-   * @throws IllegalArgumentException if file does not exist
    */
   public void uploadFrom(Path path, BlobWriteOption... options) {
     uploadFrom(path, DEFAULT_CHUNK_SIZE, options);
@@ -283,11 +282,12 @@ public class Blob extends BlobInfo {
    * @param chunkSize the minimum size that will be written by a single RPC.
    * @param options blob write options
    * @throws StorageException upon failure
-   * @throws IllegalArgumentException if file does not exist
    */
   public void uploadFrom(Path path, int chunkSize, BlobWriteOption... options) {
+    if (!Files.exists(path)) {
+      throw new StorageException(0, "File to upload from does not exist '" + path + "'");
+    }
     chunkSize = Math.max(chunkSize, 262144); // adjust with MinChunkSize of BaseWriteChannel
-    checkArgument(Files.exists(path), "file should exist %s", path);
     try (WriteChannel writer = storage.writer(this, options)) {
       writer.setChunkSize(chunkSize);
       byte[] buffer = new byte[chunkSize];
