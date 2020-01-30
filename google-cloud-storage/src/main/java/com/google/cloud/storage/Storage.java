@@ -988,9 +988,7 @@ public interface Storage extends Service<StorageOptions> {
       return new BlobListOption(StorageRpc.Option.DELIMITER, true);
     }
 
-    /**
-     * Returns an option to set a delimiter '/'.
-     */
+    /** Returns an option to set a delimiter '/'. */
     public static BlobListOption delimiter() {
       return new BlobListOption(StorageRpc.Option.DELIMITER, "/");
     }

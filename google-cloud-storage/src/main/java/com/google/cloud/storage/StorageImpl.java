@@ -1583,8 +1583,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       Object prev = temp.put(option.getRpcOption(), option.getValue());
       checkArgument(prev == null, "Duplicate option %s", option);
     }
-    Boolean value = (Boolean) temp.remove(DELIMITER);
-    if (Boolean.TRUE.equals(value)) {
+    if (Boolean.TRUE.equals(temp.get(DELIMITER))) {
+      temp.remove(DELIMITER);
+      temp.put(DELIMITER, PATH_DELIMITER);
+    } else if (PATH_DELIMITER.equals(temp.get(DELIMITER))) {
       temp.put(DELIMITER, PATH_DELIMITER);
     }
     if (useAsSource) {
