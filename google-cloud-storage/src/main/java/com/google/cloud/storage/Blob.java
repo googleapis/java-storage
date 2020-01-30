@@ -285,7 +285,10 @@ public class Blob extends BlobInfo {
    */
   public void uploadFrom(Path path, int chunkSize, BlobWriteOption... options) {
     if (!Files.exists(path)) {
-      throw new StorageException(0, "File to upload from does not exist '" + path + "'");
+      throw new StorageException(0, path + ": No such file");
+    }
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + ": Is a directory");
     }
     chunkSize = Math.max(chunkSize, 262144); // adjust with MinChunkSize of BaseWriteChannel
     try (WriteChannel writer = storage.writer(this, options)) {

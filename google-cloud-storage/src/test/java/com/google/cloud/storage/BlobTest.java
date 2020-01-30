@@ -668,7 +668,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testUploadFromNonExistentFile() throws Exception {
+  public void testUploadFromNonExistentFile() {
     initializeExpectedBlob(1);
     expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);
@@ -677,7 +677,21 @@ public class BlobTest {
     try {
       blob.uploadFrom(Paths.get(fileName));
     } catch (StorageException e) {
-      assertEquals("File to upload from does not exist '" + fileName + "'", e.getMessage());
+      assertEquals(fileName + ": No such file", e.getMessage());
+    }
+  }
+
+  @Test
+  public void testUploadFromDirectory() throws Exception {
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    Path dir = Files.createTempDirectory("unit_");
+    try {
+      blob.uploadFrom(dir);
+    } catch (StorageException e) {
+      assertEquals(dir + ": Is a directory", e.getMessage());
     }
   }
 
