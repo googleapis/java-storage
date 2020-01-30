@@ -29,7 +29,8 @@ public class StorageOptionsTest {
       StorageOptions.newBuilder()
           .setTransportOptions(EasyMock.<TransportOptions>createMock(TransportOptions.class));
       Assert.fail();
-    } catch (IllegalArgumentException expected) {
+    } catch (IllegalArgumentException ex) {
+      Assert.assertNotNull(ex.getMessage());
     }
   }
 }

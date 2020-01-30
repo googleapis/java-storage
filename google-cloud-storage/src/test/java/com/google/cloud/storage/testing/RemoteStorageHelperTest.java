@@ -18,6 +18,7 @@ package com.google.cloud.storage.testing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.gax.paging.Page;
@@ -37,10 +38,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.threeten.bp.Duration;
 
 public class RemoteStorageHelperTest {
@@ -85,8 +85,6 @@ public class RemoteStorageHelperTest {
   private Blob blob2;
   private List<Blob> blobList;
   private Page<Blob> blobPage;
-
-  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Before
   public void setUp() {
@@ -175,9 +173,11 @@ public class RemoteStorageHelperTest {
         .andReturn(blobPage);
     EasyMock.expect(storageMock.delete(BUCKET_NAME)).andThrow(FATAL_EXCEPTION);
     EasyMock.replay(storageMock, blob1, blob2);
-    thrown.expect(ExecutionException.class);
     try {
       RemoteStorageHelper.forceDelete(storageMock, BUCKET_NAME, 5, TimeUnit.SECONDS);
+      Assert.fail();
+    } catch (ExecutionException ex) {
+      assertNotNull(ex.getMessage());
     } finally {
       EasyMock.verify(storageMock);
     }
@@ -213,9 +213,11 @@ public class RemoteStorageHelperTest {
         .andReturn(blobPage);
     EasyMock.expect(storageMock.delete(BUCKET_NAME)).andThrow(FATAL_EXCEPTION);
     EasyMock.replay(storageMock, blob1, blob2);
-    thrown.expect(StorageException.class);
     try {
       RemoteStorageHelper.forceDelete(storageMock, BUCKET_NAME);
+      Assert.fail();
+    } catch (StorageException ex) {
+      assertNotNull(ex.getMessage());
     } finally {
       EasyMock.verify(storageMock);
     }

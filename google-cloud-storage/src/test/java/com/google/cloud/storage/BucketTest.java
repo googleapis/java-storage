@@ -24,6 +24,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -52,10 +53,9 @@ import java.util.List;
 import java.util.Map;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class BucketTest {
 
@@ -134,8 +134,6 @@ public class BucketTest {
   private Bucket bucket;
   private Bucket expectedBucket;
   private List<Blob> blobResults;
-
-  @Rule public ExpectedException thrown = ExpectedException.none();
 
   @Before
   public void setUp() {
@@ -446,15 +444,17 @@ public class BucketTest {
     replay(storage);
     initializeBucket();
     byte[] content = {0xD, 0xE, 0xA, 0xD};
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(
-        "Only one option of generationMatch, doesNotExist or generationNotMatch can be provided");
-    bucket.create(
-        "n",
-        content,
-        CONTENT_TYPE,
-        Bucket.BlobTargetOption.generationMatch(42L),
-        Bucket.BlobTargetOption.generationNotMatch(24L));
+    try {
+      bucket.create(
+          "n",
+          content,
+          CONTENT_TYPE,
+          Bucket.BlobTargetOption.generationMatch(42L),
+          Bucket.BlobTargetOption.generationNotMatch(24L));
+      Assert.fail();
+    } catch (IllegalArgumentException ex) {
+      assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
@@ -464,15 +464,17 @@ public class BucketTest {
     replay(storage);
     initializeBucket();
     byte[] content = {0xD, 0xE, 0xA, 0xD};
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(
-        "metagenerationMatch and metagenerationNotMatch options can not be both provided");
-    bucket.create(
-        "n",
-        content,
-        CONTENT_TYPE,
-        Bucket.BlobTargetOption.metagenerationMatch(42L),
-        Bucket.BlobTargetOption.metagenerationNotMatch(24L));
+    try {
+      bucket.create(
+          "n",
+          content,
+          CONTENT_TYPE,
+          Bucket.BlobTargetOption.metagenerationMatch(42L),
+          Bucket.BlobTargetOption.metagenerationNotMatch(24L));
+      Assert.fail();
+    } catch (IllegalArgumentException ex) {
+      assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
@@ -592,15 +594,17 @@ public class BucketTest {
     initializeBucket();
     byte[] content = {0xD, 0xE, 0xA, 0xD};
     InputStream streamContent = new ByteArrayInputStream(content);
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(
-        "Only one option of generationMatch, doesNotExist or generationNotMatch can be provided");
-    bucket.create(
-        "n",
-        streamContent,
-        CONTENT_TYPE,
-        Bucket.BlobWriteOption.generationMatch(42L),
-        Bucket.BlobWriteOption.generationNotMatch(24L));
+    try {
+      bucket.create(
+          "n",
+          streamContent,
+          CONTENT_TYPE,
+          Bucket.BlobWriteOption.generationMatch(42L),
+          Bucket.BlobWriteOption.generationNotMatch(24L));
+      Assert.fail();
+    } catch (IllegalArgumentException ex) {
+      assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
@@ -611,15 +615,17 @@ public class BucketTest {
     initializeBucket();
     byte[] content = {0xD, 0xE, 0xA, 0xD};
     InputStream streamContent = new ByteArrayInputStream(content);
-    thrown.expect(IllegalArgumentException.class);
-    thrown.expectMessage(
-        "metagenerationMatch and metagenerationNotMatch options can not be both provided");
-    bucket.create(
-        "n",
-        streamContent,
-        CONTENT_TYPE,
-        Bucket.BlobWriteOption.metagenerationMatch(42L),
-        Bucket.BlobWriteOption.metagenerationNotMatch(24L));
+    try {
+      bucket.create(
+          "n",
+          streamContent,
+          CONTENT_TYPE,
+          Bucket.BlobWriteOption.metagenerationMatch(42L),
+          Bucket.BlobWriteOption.metagenerationNotMatch(24L));
+      Assert.fail();
+    } catch (IllegalArgumentException ex) {
+      assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
