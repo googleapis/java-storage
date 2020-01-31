@@ -101,6 +101,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2938,5 +2940,51 @@ public class ITStorageTest {
       RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
       RemoteStorageHelper.forceDelete(storage, loggingBucket, 5, TimeUnit.SECONDS);
     }
+  }
+
+  @Test
+  public void testUploadFromDownloadTo() throws Exception {
+    String blobName = "test-uploadFrom-downloadTo-blob";
+    BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
+
+    Blob blob1 = storage.create(blobInfo);
+    byte stringBytes[] = BLOB_STRING_CONTENT.getBytes(UTF_8);
+    Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
+    Files.write(tempFileFrom, stringBytes);
+    blob1.uploadFrom(tempFileFrom);
+
+    Blob blob2 = storage.get(blobInfo.getBlobId());
+    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
+    blob2.downloadTo(tempFileTo);
+    byte[] readBytes = Files.readAllBytes(tempFileTo);
+    String readString = new String(readBytes, UTF_8);
+    assertEquals(BLOB_STRING_CONTENT, readString);
+  }
+
+  @Test
+  public void testUploadFromDownloadToWithEncryption() throws Exception {
+    String blobName = "test-uploadFrom-downloadTo-withEncryption-blob";
+    BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
+
+    Blob blob1 = storage.create(blobInfo);
+    byte stringBytes[] = BLOB_STRING_CONTENT.getBytes(UTF_8);
+    Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
+    Files.write(tempFileFrom, stringBytes);
+    blob1.uploadFrom(tempFileFrom, Storage.BlobWriteOption.encryptionKey(KEY));
+
+    Blob blob2 = storage.get(blobInfo.getBlobId());
+    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
+    try {
+      blob2.downloadTo(tempFileTo);
+    } catch (Exception e) {
+      // Expected to be StorageException
+      String expectedMessage =
+          "The target object is encrypted by a customer-supplied encryption key.";
+      assertTrue(e.getMessage().contains(expectedMessage));
+    }
+    blob2.downloadTo(tempFileTo, Blob.BlobSourceOption.decryptionKey(KEY));
+    byte[] readBytes = Files.readAllBytes(tempFileTo);
+    String readString = new String(readBytes, UTF_8);
+    assertEquals(BLOB_STRING_CONTENT, readString);
   }
 }
