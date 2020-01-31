@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.RetryHelper.runWithRetries;
 import static com.google.cloud.storage.Blob.BlobSourceOption.toGetOptions;
 import static com.google.cloud.storage.Blob.BlobSourceOption.toSourceOptions;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.concurrent.Executors.callable;
 
@@ -38,9 +39,11 @@ import com.google.common.base.Function;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Key;
@@ -258,6 +261,52 @@ public class Blob extends BlobInfo {
    */
   public void downloadTo(Path path) {
     downloadTo(path, new BlobSourceOption[0]);
+  }
+
+  /**
+   * Uploads the given file path to this blob using specified blob write options.
+   *
+   * @param path file to be uploaded
+   * @param options blob write options
+   * @throws StorageException upon failure
+   */
+  public void uploadFrom(Path path, BlobWriteOption... options) {
+    uploadFrom(path, DEFAULT_CHUNK_SIZE, options);
+  }
+
+  /**
+   * Uploads the given file path to this blob using specified blob write options
+   * and the provided chunk size.
+   * The default chunk size is 2*1024*1024. Larger chunk sizes may improve
+   * the upload performance, but require more memory, which can cause OutOfMemoryError
+   * or add significant garbage collection overhead. Chunk sizes less than 256*1024
+   * are not allowed, they will be treated as 256*1024.
+   *
+   * @param path file to be uploaded
+   * @param chunkSize the minimum size that will be written by a single RPC.
+   * @param options blob write options
+   * @throws StorageException upon failure
+   */
+  public void uploadFrom(Path path, int chunkSize, BlobWriteOption... options) {
+    if (!Files.exists(path)) {
+      throw new StorageException(0, path + ": No such file");
+    }
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + ": Is a directory");
+    }
+    chunkSize = Math.max(chunkSize, 262144); // adjust with MinChunkSize of BaseWriteChannel
+    try (WriteChannel writer = storage.writer(this, options)) {
+      writer.setChunkSize(chunkSize);
+      byte[] buffer = new byte[chunkSize];
+      try (InputStream input = Files.newInputStream(path)) {
+        int length;
+        while ((length = input.read(buffer)) >= 0) {
+          writer.write(ByteBuffer.wrap(buffer, 0, length));
+        }
+      }
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
   }
 
   /** Builder for {@code Blob}. */
