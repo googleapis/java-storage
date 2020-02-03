@@ -40,6 +40,7 @@ import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.TestIamPermissionsResponse;
 import com.google.auth.ServiceAccountSigner;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.BaseService;
 import com.google.cloud.BatchResult;
 import com.google.cloud.PageImpl;
@@ -47,7 +48,6 @@ import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
-import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
@@ -71,6 +71,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -1160,16 +1161,16 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public boolean deleteLifecycleRules(final String bucket) {
+  public boolean deleteLifecycleRules(final String bucket) throws IOException {
     final com.google.api.services.storage.model.Bucket bucketPb = BucketInfo.of(bucket).toPb();
-    final com.google.api.services.storage.model.ServiceAccount serviceAccount =
-        storageRpc.getServiceAccount(ServiceOptions.getDefaultProjectId());
+    final ServiceAccountCredentials serviceAccount =
+        (ServiceAccountCredentials) ServiceAccountCredentials.getApplicationDefault();
     try {
       return runWithRetries(
           new Callable<Boolean>() {
             @Override
             public Boolean call() {
-              return storageRpc.deleteLifecycleRules(bucketPb, serviceAccount.getEmailAddress());
+              return storageRpc.deleteLifecycleRules(bucketPb, serviceAccount.getClientEmail());
             }
           },
           getOptions().getRetrySettings(),

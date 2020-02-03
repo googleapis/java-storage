@@ -2738,6 +2738,23 @@ public class StorageImplTest {
   }
 
   @Test
+  public void testDeleteLifecyclesRulesOfBucket() throws IOException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(SERVICE_ACCOUNT.getEmail())
+            .setPrivateKey(privateKey)
+            .build();
+    EasyMock.expect(
+            storageRpcMock.deleteLifecycleRules(
+                EasyMock.isA(com.google.api.services.storage.model.Bucket.class),
+                EasyMock.isA(String.class)))
+        .andReturn(true);
+    EasyMock.replay(storageRpcMock);
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    assertTrue(storage.deleteLifecycleRules(BUCKET_NAME1));
+  }
+
+  @Test
   public void testCreateDefaultBucketAcl() {
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
     EasyMock.expect(storageRpcMock.createDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1)))
