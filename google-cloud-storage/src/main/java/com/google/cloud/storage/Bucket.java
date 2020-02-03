@@ -1140,9 +1140,8 @@ public class Bucket extends BucketInfo {
    *
    * @return {@code true} if the bucket lifecycle rules were deleted.
    * @throws StorageException upon failure
-   * @throws IOException
    */
-  public boolean deleteLifecycleRules() throws IOException {
+  public boolean deleteLifecycleRules() {
     return storage.deleteLifecycleRules(getName());
   }
 

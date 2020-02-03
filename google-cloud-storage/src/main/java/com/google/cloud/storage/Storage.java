@@ -39,7 +39,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
@@ -3103,9 +3102,8 @@ public interface Storage extends Service<StorageOptions> {
    * @param bucket name of the bucket.
    * @return {@code true} if the bucket lifecycle rules were deleted.
    * @throws StorageException upon failure
-   * @throws IOException
    */
-  boolean deleteLifecycleRules(String bucket) throws IOException;
+  boolean deleteLifecycleRules(String bucket);
 
   /**
    * Creates a new default blob ACL entry on the specified bucket.

@@ -45,7 +45,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.Key;
 import java.util.Collections;
@@ -705,7 +704,7 @@ public class BucketTest {
   }
 
   @Test
-  public void testDeleteLifecycleRules() throws IOException {
+  public void testDeleteLifecycleRules() {
     expect(storage.getOptions()).andReturn(mockOptions).times(1);
     expect(storage.deleteLifecycleRules(BUCKET_INFO.getName())).andReturn(true);
     replay(storage);

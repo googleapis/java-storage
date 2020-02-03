@@ -30,7 +30,6 @@ import com.google.api.services.storage.model.TestIamPermissionsResponse;
 import com.google.cloud.ServiceRpc;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.StorageException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -262,7 +261,6 @@ public interface StorageRpc extends ServiceRpc {
    *
    * @return {@code true} if the bucket lifecycle rules were deleted.
    * @throws StorageException upon failure
-   * @throws IOException
    */
   boolean deleteLifecycleRules(Bucket bucket, String serviceAccount);
 

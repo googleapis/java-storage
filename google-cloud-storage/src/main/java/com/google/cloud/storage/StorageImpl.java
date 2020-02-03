@@ -40,8 +40,6 @@ import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.TestIamPermissionsResponse;
 import com.google.auth.ServiceAccountSigner;
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.BaseService;
 import com.google.cloud.BatchResult;
 import com.google.cloud.PageImpl;
@@ -72,7 +70,6 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -1162,16 +1159,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public boolean deleteLifecycleRules(final String bucket) throws IOException {
+  public boolean deleteLifecycleRules(final String bucket) {
     final com.google.api.services.storage.model.Bucket bucketPb = BucketInfo.of(bucket).toPb();
-    final ServiceAccountCredentials serviceAccount =
-        (ServiceAccountCredentials) GoogleCredentials.getApplicationDefault();
+    final ServiceAccount serviceAccount = getServiceAccount(getOptions().getProjectId());
     try {
       return runWithRetries(
           new Callable<Boolean>() {
             @Override
             public Boolean call() {
-              return storageRpc.deleteLifecycleRules(bucketPb, serviceAccount.getClientEmail());
+              return storageRpc.deleteLifecycleRules(bucketPb, serviceAccount.getEmail());
             }
           },
           getOptions().getRetrySettings(),
