@@ -40,6 +40,7 @@ import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.TestIamPermissionsResponse;
 import com.google.auth.ServiceAccountSigner;
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.BaseService;
 import com.google.cloud.BatchResult;
@@ -1164,7 +1165,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   public boolean deleteLifecycleRules(final String bucket) throws IOException {
     final com.google.api.services.storage.model.Bucket bucketPb = BucketInfo.of(bucket).toPb();
     final ServiceAccountCredentials serviceAccount =
-        (ServiceAccountCredentials) ServiceAccountCredentials.getApplicationDefault();
+        (ServiceAccountCredentials) GoogleCredentials.getApplicationDefault();
     try {
       return runWithRetries(
           new Callable<Boolean>() {
