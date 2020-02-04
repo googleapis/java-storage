@@ -169,7 +169,9 @@ public class SignatureInfo {
     canonicalRequest
         .append(serializer.serializeHeaderNames(canonicalizedExtensionHeaders))
         .append(COMPONENT_SEPARATOR);
-    canonicalRequest.append("UNSIGNED-PAYLOAD");
+
+    String userProvidedHash = canonicalizedExtensionHeaders.get("X-Goog-Content-SHA256");
+    canonicalRequest.append(userProvidedHash == null ? "UNSIGNED-PAYLOAD" : userProvidedHash);
 
     return Hashing.sha256()
         .hashString(canonicalRequest.toString(), StandardCharsets.UTF_8)
