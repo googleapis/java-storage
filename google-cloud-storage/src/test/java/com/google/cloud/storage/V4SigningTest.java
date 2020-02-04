@@ -16,12 +16,8 @@
 
 package com.google.cloud.storage;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeThat;
 
 import com.google.api.core.ApiClock;
 import com.google.auth.oauth2.ServiceAccountCredentials;
