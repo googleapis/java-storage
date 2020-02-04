@@ -49,6 +49,7 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
@@ -138,6 +139,8 @@ public class BlobTest {
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
   private static final Key KEY =
       new SecretKeySpec(BaseEncoding.base64().decode(BASE64_KEY), "AES256");
+  private static final int DEFAULT_CHUNK_SIZE = 2 * 1024 * 1024;
+  private static final int MIN_CHUNK_SIZE = 256 * 1024;
 
   // This retrying setting is used by test testDownloadWithRetries. This unit test is setup
   // to write one byte and then throw retryable exception, it then writes another bytes on
@@ -695,23 +698,53 @@ public class BlobTest {
     }
   }
 
-  @Test
-  public void testUploadFrom() throws Exception {
-    final byte[] dataToSend = {1, 2, 3};
-    ByteBuffer expectedByteBuffer = ByteBuffer.wrap(dataToSend, 0, dataToSend.length);
+  private WriteChannel createWriteChannelMock(byte[] bytes, int chunkSize) throws Exception {
     WriteChannel channel = createMock(WriteChannel.class);
-    channel.setChunkSize(eq(2097152));
-    expect(channel.write(expectedByteBuffer)).andReturn(dataToSend.length);
+    ByteBuffer expectedByteBuffer = ByteBuffer.wrap(bytes, 0, bytes.length);
+    channel.setChunkSize(eq(chunkSize));
+    expect(channel.write(expectedByteBuffer)).andReturn(bytes.length);
     channel.close();
     replay(channel);
+    return channel;
+  }
+
+  @Test
+  public void testUploadFromFile() throws Exception {
+    final byte[] dataToSend = {1, 2, 3};
+    WriteChannel channel = createWriteChannelMock(dataToSend, DEFAULT_CHUNK_SIZE);
     initializeExpectedBlob(1);
     expect(storage.getOptions()).andReturn(mockOptions);
-    Bucket.BlobWriteOption[] writeOptions = {};
     expect(storage.writer(eq(expectedBlob))).andReturn(channel);
     replay(storage);
     blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
     Path tempFile = Files.createTempFile("testUpload", ".tmp");
     Files.write(tempFile, dataToSend);
     blob.uploadFrom(tempFile);
+  }
+
+  @Test
+  public void testUploadFromStream() throws Exception {
+    final byte[] dataToSend = {1, 2, 3, 4, 5};
+    WriteChannel channel = createWriteChannelMock(dataToSend, DEFAULT_CHUNK_SIZE);
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    ByteArrayInputStream input = new ByteArrayInputStream(dataToSend);
+    blob.uploadFrom(input);
+  }
+
+  @Test
+  public void testUploadFromStreamWithSmallChunk() throws Exception {
+    final byte[] dataToSend = {1, 2, 3, 4, 5};
+    WriteChannel channel = createWriteChannelMock(dataToSend, MIN_CHUNK_SIZE);
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    ByteArrayInputStream input = new ByteArrayInputStream(dataToSend);
+    blob.uploadFrom(input, 1024);
   }
 }
