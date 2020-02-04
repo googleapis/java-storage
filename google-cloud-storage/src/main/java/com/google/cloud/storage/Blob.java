@@ -275,10 +275,10 @@ public class Blob extends BlobInfo {
 
   /**
    * Uploads the given file path to this blob using specified blob write options and the provided
-   * chunk size. The default chunk size is 2*1024*1024. Larger chunk sizes may improve the upload
-   * performance, but require more memory, which can cause OutOfMemoryError or add significant
-   * garbage collection overhead. Chunk sizes less than 256*1024 are not allowed, they will be
-   * treated as 256*1024.
+   * chunk size. The default chunk size is 2 MB. Larger chunk sizes may improve the upload
+   * performance but require more memory. It could cause OutOfMemoryError or add significant garbage
+   * collection overhead. Chunk sizes which are less than 256 KB are not allowed, they will be
+   * treated as 256 KB.
    *
    * @param path file to be uploaded
    * @param chunkSize the minimum size that will be written by a single RPC.
@@ -292,15 +292,44 @@ public class Blob extends BlobInfo {
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + ": Is a directory");
     }
+    try (InputStream input = Files.newInputStream(path)) {
+      uploadFrom(input, chunkSize, options);
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
+  }
+
+  /**
+   * Uploads the given content to this blob using specified blob write options.
+   *
+   * @param input content to be uploaded
+   * @param options blob write options
+   * @throws StorageException upon failure
+   */
+  public void uploadFrom(InputStream input, BlobWriteOption... options) {
+    uploadFrom(input, DEFAULT_CHUNK_SIZE, options);
+  }
+
+  /**
+   * Uploads the given content to this blob using specified blob write options and the provided
+   * chunk size. The default chunk size is 2 MB. Larger chunk sizes may improve the upload
+   * performance but require more memory. It could cause OutOfMemoryError or add significant garbage
+   * collection overhead. Chunk sizes which are less than 256 KB are not allowed, they will be
+   * treated as 256 KB.
+   *
+   * @param input content to be uploaded
+   * @param chunkSize the minimum size that will be written by a single RPC.
+   * @param options blob write options
+   * @throws StorageException upon failure
+   */
+  public void uploadFrom(InputStream input, int chunkSize, BlobWriteOption... options) {
     chunkSize = Math.max(chunkSize, 262144); // adjust with MinChunkSize of BaseWriteChannel
     try (WriteChannel writer = storage.writer(this, options)) {
       writer.setChunkSize(chunkSize);
       byte[] buffer = new byte[chunkSize];
-      try (InputStream input = Files.newInputStream(path)) {
-        int length;
-        while ((length = input.read(buffer)) >= 0) {
-          writer.write(ByteBuffer.wrap(buffer, 0, length));
-        }
+      int length;
+      while ((length = input.read(buffer)) >= 0) {
+        writer.write(ByteBuffer.wrap(buffer, 0, length));
       }
     } catch (IOException e) {
       throw new StorageException(e);
