@@ -37,6 +37,7 @@ import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
@@ -48,10 +49,14 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Key;
 import java.util.List;
 import java.util.Map;
@@ -134,6 +139,8 @@ public class BlobTest {
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
   private static final Key KEY =
       new SecretKeySpec(BaseEncoding.base64().decode(BASE64_KEY), "AES256");
+  private static final int DEFAULT_CHUNK_SIZE = 2 * 1024 * 1024;
+  private static final int MIN_CHUNK_SIZE = 256 * 1024;
 
   // This retrying setting is used by test testDownloadWithRetries. This unit test is setup
   // to write one byte and then throw retryable exception, it then writes another bytes on
@@ -586,7 +593,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testDownload() throws Exception {
+  public void testDownloadTo() throws Exception {
     final byte[] expected = {1, 2};
     StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
     expect(storage.getOptions()).andReturn(mockOptions).times(1);
@@ -618,7 +625,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testDownloadWithRetries() throws Exception {
+  public void testDownloadToWithRetries() throws Exception {
     final byte[] expected = {1, 2};
     StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
     expect(storage.getOptions()).andReturn(mockOptions);
@@ -661,5 +668,83 @@ public class BlobTest {
     blob.downloadTo(file.toPath());
     byte actual[] = Files.readAllBytes(file.toPath());
     assertArrayEquals(expected, actual);
+  }
+
+  @Test
+  public void testUploadFromNonExistentFile() {
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    String fileName = "non_existing_file.txt";
+    try {
+      blob.uploadFrom(Paths.get(fileName));
+    } catch (StorageException e) {
+      assertEquals(fileName + ": No such file", e.getMessage());
+    }
+  }
+
+  @Test
+  public void testUploadFromDirectory() throws Exception {
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    Path dir = Files.createTempDirectory("unit_");
+    try {
+      blob.uploadFrom(dir);
+    } catch (StorageException e) {
+      assertEquals(dir + ": Is a directory", e.getMessage());
+    }
+  }
+
+  private WriteChannel createWriteChannelMock(byte[] bytes, int chunkSize) throws Exception {
+    WriteChannel channel = createMock(WriteChannel.class);
+    ByteBuffer expectedByteBuffer = ByteBuffer.wrap(bytes, 0, bytes.length);
+    channel.setChunkSize(eq(chunkSize));
+    expect(channel.write(expectedByteBuffer)).andReturn(bytes.length);
+    channel.close();
+    replay(channel);
+    return channel;
+  }
+
+  @Test
+  public void testUploadFromFile() throws Exception {
+    final byte[] dataToSend = {1, 2, 3};
+    WriteChannel channel = createWriteChannelMock(dataToSend, DEFAULT_CHUNK_SIZE);
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    Path tempFile = Files.createTempFile("testUpload", ".tmp");
+    Files.write(tempFile, dataToSend);
+    blob.uploadFrom(tempFile);
+  }
+
+  @Test
+  public void testUploadFromStream() throws Exception {
+    final byte[] dataToSend = {1, 2, 3, 4, 5};
+    WriteChannel channel = createWriteChannelMock(dataToSend, DEFAULT_CHUNK_SIZE);
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    ByteArrayInputStream input = new ByteArrayInputStream(dataToSend);
+    blob.uploadFrom(input);
+  }
+
+  @Test
+  public void testUploadFromStreamWithSmallChunk() throws Exception {
+    final byte[] dataToSend = {1, 2, 3, 4, 5};
+    WriteChannel channel = createWriteChannelMock(dataToSend, MIN_CHUNK_SIZE);
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    ByteArrayInputStream input = new ByteArrayInputStream(dataToSend);
+    blob.uploadFrom(input, 1024);
   }
 }
