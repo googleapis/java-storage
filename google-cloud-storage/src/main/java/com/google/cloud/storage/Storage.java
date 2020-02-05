@@ -161,6 +161,21 @@ public interface Storage extends Service<StorageOptions> {
     }
   }
 
+  enum UriScheme {
+    HTTP("http"),
+    HTTPS("https");
+
+    private final String scheme;
+
+    UriScheme(String scheme) {
+      this.scheme = scheme;
+    }
+
+    public String getScheme() {
+      return scheme;
+    }
+  }
+
   /** Class for specifying bucket target options. */
   class BucketTargetOption extends Option {
 
@@ -1038,6 +1053,7 @@ public interface Storage extends Service<StorageOptions> {
       HOST_NAME,
       PATH_STYLE,
       VIRTUAL_HOSTED_STYLE,
+      BUCKET_BOUND_HOST_NAME,
       QUERY_PARAMS
     }
 
@@ -1158,6 +1174,44 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static SignUrlOption withPathStyle() {
       return new SignUrlOption(Option.PATH_STYLE, "");
+    }
+
+    /**
+     * Use a bucket-bound hostname, which replaces the storage.googleapis.com host with the name of
+     * a CNAME bucket, e.g. a bucket named 'gcs-subdomain.my.domain.tld', or a Google Cloud Load
+     * Balancer which routes to a bucket you own, e.g. 'my-load-balancer-domain.tld'. Note that this
+     * cannot be used alongside {@code withVirtualHostedStyle()} or {@code withPathStyle()}. This
+     * method signature uses HTTP for the URI scheme, and is equivalent to calling {@code
+     * withBucketBoundHostname("...", UriScheme.HTTP).}
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/request-endpoints#cname">CNAME
+     *     Redirects</a>
+     * @see <a
+     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
+     *     GCLB Redirects</a>
+     */
+    public static SignUrlOption withBucketBoundHostname(String bucketBoundHostname) {
+      return withBucketBoundHostname(bucketBoundHostname, UriScheme.HTTP);
+    }
+
+    /**
+     * Use a bucket-bound hostname, which replaces the storage.googleapis.com host with the name of
+     * a CNAME bucket, e.g. a bucket named 'gcs-subdomain.my.domain.tld', or a Google Cloud Load
+     * Balancer which routes to a bucket you own, e.g. 'my-load-balancer-domain.tld'. Note that this
+     * cannot be used alongside {@code withVirtualHostedStyle()} or {@code withPathStyle()}. The
+     * bucket name itself should not include the URI scheme (http or https), so it is specified via
+     * a local enum.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/request-endpoints#cname">CNAME
+     *     Redirects</a>
+     * @see <a
+     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
+     *     GCLB Redirects</a>
+     */
+    public static SignUrlOption withBucketBoundHostname(
+        String bucketBoundHostname, UriScheme uriScheme) {
+      return new SignUrlOption(
+          Option.BUCKET_BOUND_HOST_NAME, uriScheme.getScheme() + "://" + bucketBoundHostname);
     }
 
     /**

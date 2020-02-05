@@ -16,11 +16,8 @@
 
 package com.google.cloud.storage;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeThat;
 
 import com.google.api.core.ApiClock;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -94,11 +91,6 @@ public class V4SigningTest {
 
   @Test
   public void test() {
-    assumeThat(
-        "Test skipped until b/136171758 is resolved",
-        testName.getMethodName(),
-        is(not("test[Headers should be trimmed]")));
-
     Storage storage =
         RemoteStorageHelper.create()
             .getOptions()
@@ -110,6 +102,19 @@ public class V4SigningTest {
 
     BlobInfo blob = BlobInfo.newBuilder(testData.getBucket(), testData.getObject()).build();
 
+    SignUrlOption style = SignUrlOption.withPathStyle();
+
+    if (testData.getUrlStyle().equals(SigningV4Test.UrlStyle.VIRTUAL_HOSTED_STYLE)) {
+      style = SignUrlOption.withVirtualHostedStyle();
+    } else if (testData.getUrlStyle().equals(SigningV4Test.UrlStyle.PATH_STYLE)) {
+      style = SignUrlOption.withPathStyle();
+    } else if (testData.getUrlStyle().equals(SigningV4Test.UrlStyle.BUCKET_BOUND_DOMAIN)) {
+      style =
+          SignUrlOption.withBucketBoundHostname(
+              testData.getBucketBoundDomain(),
+              Storage.UriScheme.valueOf(testData.getScheme().toUpperCase()));
+    }
+
     final String signedUrl =
         storage
             .signUrl(
@@ -118,7 +123,9 @@ public class V4SigningTest {
                 TimeUnit.SECONDS,
                 SignUrlOption.httpMethod(HttpMethod.valueOf(testData.getMethod())),
                 SignUrlOption.withExtHeaders(testData.getHeadersMap()),
-                SignUrlOption.withV4Signature())
+                SignUrlOption.withV4Signature(),
+                SignUrlOption.withQueryParams(testData.getQueryParametersMap()),
+                style)
             .toString();
     assertEquals(testData.getExpectedUrl(), signedUrl);
   }

@@ -660,8 +660,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
     checkArgument(
         !(optionMap.containsKey(SignUrlOption.Option.VIRTUAL_HOSTED_STYLE)
-            && optionMap.containsKey(SignUrlOption.Option.PATH_STYLE)),
-        "Cannot specify both the VIRTUAL_HOSTED_STYLE and PATH_STYLE SignUrlOptions together.");
+            && optionMap.containsKey(SignUrlOption.Option.PATH_STYLE)
+            && optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)),
+        "Only one of VIRTUAL_HOSTED_STYLE, PATH_STYLE, or BUCKET_BOUND_HOST_NAME SignUrlOptions can be"
+            + " specified.");
 
     String bucketName = slashlessBucketNameFromBlobInfo(blobInfo);
     String escapedBlobName = "";
@@ -675,6 +677,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         usePathStyle
             ? STORAGE_XML_URI_SCHEME + "://" + getBaseStorageHostName(optionMap)
             : STORAGE_XML_URI_SCHEME + "://" + bucketName + "." + getBaseStorageHostName(optionMap);
+
+    if (optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
+      storageXmlHostName = (String) optionMap.get(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME);
+    }
 
     String stPath =
         usePathStyle
@@ -753,9 +759,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       }
       return pathBuilder.toString();
     }
-    if (!escapedBlobName.startsWith(PATH_DELIMITER)) {
-      pathBuilder.append(PATH_DELIMITER);
-    }
+    pathBuilder.append(PATH_DELIMITER);
     pathBuilder.append(escapedBlobName);
     return pathBuilder.toString();
   }
@@ -776,7 +780,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private boolean shouldUsePathStyleForSignedUrl(EnumMap<SignUrlOption.Option, Object> optionMap) {
     // TODO(#6362): If we decide to change the default style used to generate URLs, switch this
     // logic to return false unless PATH_STYLE was explicitly specified.
-    if (optionMap.containsKey(SignUrlOption.Option.VIRTUAL_HOSTED_STYLE)) {
+    if (optionMap.containsKey(SignUrlOption.Option.VIRTUAL_HOSTED_STYLE)
+        || optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
       return false;
     }
     return true;
@@ -836,7 +841,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         extHeadersBuilder.put(
             "host",
             slashlessBucketNameFromBlobInfo(blobInfo) + "." + getBaseStorageHostName(optionMap));
-      } else if (optionMap.containsKey(SignUrlOption.Option.HOST_NAME)) {
+      } else if (optionMap.containsKey(SignUrlOption.Option.HOST_NAME)
+          || optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
         extHeadersBuilder.put("host", getBaseStorageHostName(optionMap));
       }
     }
@@ -868,8 +874,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   /** Returns the hostname used to send requests to Cloud Storage, e.g. "storage.googleapis.com". */
   private String getBaseStorageHostName(Map<SignUrlOption.Option, Object> optionMap) {
     String specifiedBaseHostName = (String) optionMap.get(SignUrlOption.Option.HOST_NAME);
+    String bucketBoundHostName =
+        (String) optionMap.get(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME);
     if (!Strings.isNullOrEmpty(specifiedBaseHostName)) {
       return specifiedBaseHostName.replaceFirst("http(s)?://", "");
+    }
+    if (!Strings.isNullOrEmpty(bucketBoundHostName)) {
+      return bucketBoundHostName.replaceFirst("http(s)?://", "");
     }
     return STORAGE_XML_URI_HOST_NAME;
   }

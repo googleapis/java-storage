@@ -1808,6 +1808,7 @@ public class StorageImplTest {
     String expectedUrl =
         new StringBuilder("https://storage.googleapis.com/")
             .append(BUCKET_NAME1)
+            .append("/")
             .append(expectedResourcePath)
             .append("?GoogleAccessId=")
             .append(ACCOUNT)
@@ -1825,6 +1826,7 @@ public class StorageImplTest {
         .append(42L + 1209600)
         .append("\n/")
         .append(BUCKET_NAME1)
+        .append("/")
         .append(expectedResourcePath);
 
     Signature signer = Signature.getInstance("SHA256withRSA");
@@ -1857,6 +1859,7 @@ public class StorageImplTest {
     String expectedUrl =
         new StringBuilder("https://example.com/")
             .append(BUCKET_NAME1)
+            .append("/")
             .append(escapedBlobName)
             .append("?GoogleAccessId=")
             .append(ACCOUNT)
@@ -1874,6 +1877,7 @@ public class StorageImplTest {
         .append(42L + 1209600)
         .append("\n/")
         .append(BUCKET_NAME1)
+        .append("/")
         .append(escapedBlobName);
 
     Signature signer = Signature.getInstance("SHA256withRSA");
@@ -2019,6 +2023,7 @@ public class StorageImplTest {
       String expectedUrl =
           new StringBuilder("https://storage.googleapis.com/")
               .append(BUCKET_NAME1)
+              .append("/")
               .append(expectedBlobName)
               .append("?GoogleAccessId=")
               .append(ACCOUNT)
@@ -2036,6 +2041,7 @@ public class StorageImplTest {
           .append(42L + 1209600)
           .append("\n/")
           .append(BUCKET_NAME1)
+          .append("/")
           .append(expectedBlobName);
 
       Signature signer = Signature.getInstance("SHA256withRSA");
@@ -2075,6 +2081,7 @@ public class StorageImplTest {
       String expectedUrl =
           new StringBuilder("https://example.com/")
               .append(BUCKET_NAME1)
+              .append("/")
               .append(expectedBlobName)
               .append("?GoogleAccessId=")
               .append(ACCOUNT)
@@ -2092,6 +2099,7 @@ public class StorageImplTest {
           .append(42L + 1209600)
           .append("\n/")
           .append(BUCKET_NAME1)
+          .append("/")
           .append(expectedBlobName);
 
       Signature signer = Signature.getInstance("SHA256withRSA");
@@ -2243,6 +2251,7 @@ public class StorageImplTest {
     String expectedUrl =
         new StringBuilder("https://storage.googleapis.com/")
             .append(BUCKET_NAME1)
+            .append("/")
             .append(escapedBlobName)
             .append("?GoogleAccessId=")
             .append(ACCOUNT)
@@ -2260,6 +2269,7 @@ public class StorageImplTest {
         .append(42L + 1209600)
         .append("\n/")
         .append(BUCKET_NAME1)
+        .append("/")
         .append(escapedBlobName);
 
     Signature signer = Signature.getInstance("SHA256withRSA");
@@ -2293,6 +2303,7 @@ public class StorageImplTest {
     String expectedUrl =
         new StringBuilder("https://example.com/")
             .append(BUCKET_NAME1)
+            .append("/")
             .append(escapedBlobName)
             .append("?GoogleAccessId=")
             .append(ACCOUNT)
@@ -2310,6 +2321,7 @@ public class StorageImplTest {
         .append(42L + 1209600)
         .append("\n/")
         .append(BUCKET_NAME1)
+        .append("/")
         .append(escapedBlobName);
 
     Signature signer = Signature.getInstance("SHA256withRSA");
