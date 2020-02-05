@@ -215,11 +215,6 @@
         <version>0.0.5</version>
         <scope>test</scope>
       </dependency>
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest</artifactId>
-        <version>2.2</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -231,6 +226,7 @@
           <artifactId>maven-dependency-plugin</artifactId>
           <configuration>
             <ignoredUnusedDeclaredDependencies>org.objenesis:objenesis</ignoredUnusedDeclaredDependencies>
+            <ignoredUnusedDeclaredDependencies>org.hamcrest:hamcrest</ignoredUnusedDeclaredDependencies>
           </configuration>
         </plugin>
       </plugins>
