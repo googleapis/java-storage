@@ -1187,7 +1187,7 @@ public interface Storage extends Service<StorageOptions> {
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints#cname">CNAME
      *     Redirects</a>
      * @see <a
-     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers"
+     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
      *     GCLB Redirects</a>
      */
     public static SignUrlOption withBucketBoundHostname(String bucketBoundHostname) {
@@ -1205,7 +1205,7 @@ public interface Storage extends Service<StorageOptions> {
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints#cname">CNAME
      *     Redirects</a>
      * @see <a
-     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers"
+     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
      *     GCLB Redirects</a>
      */
     public static SignUrlOption withBucketBoundHostname(
