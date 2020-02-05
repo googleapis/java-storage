@@ -36,12 +36,19 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.security.Key;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1229,6 +1236,201 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static SignUrlOption withQueryParams(Map<String, String> queryParams) {
       return new SignUrlOption(Option.QUERY_PARAMS, queryParams);
+    }
+  }
+
+  class V4PostPolicy {
+    String url;
+    Map<String, String> fields;
+  }
+
+  class V4PostFields {
+
+  }
+
+  class V4PostConditions {
+    private Set<V4Condition> conditions;
+
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    V4PostConditions(Builder builder) {
+      this.conditions = builder.conditions;
+    }
+
+    public Builder toBuilder() {
+      return new Builder(conditions);
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      Set<V4Condition> conditions;
+
+      private Builder () {
+        this.conditions = new HashSet<>();
+      }
+
+      private Builder(Set<V4Condition> conditions) {
+        this.conditions = conditions;
+      }
+
+      public static Builder newBuilder() {
+        return new Builder();
+      }
+
+      public V4PostConditions build() {
+        return new V4PostConditions(this);
+      }
+
+      public Builder addAclCondition(V4ConditionType type, String acl) {
+        conditions.add(V4Condition.newV4Condition(type, "acl", acl));
+        return this;
+      }
+
+      public Builder addBucketCondition(V4ConditionType type, String bucket) {
+        conditions.add(V4Condition.newV4Condition(type, "bucket", bucket));
+        return this;
+      }
+
+      public Builder addCacheControlCondition(V4ConditionType type, String cacheControl) {
+        conditions.add(V4Condition.newV4Condition(type, "cache-control", cacheControl));
+        return this;
+      }
+
+      public Builder addContentDispositionCondition(V4ConditionType type, String contentDisposition) {
+        conditions.add(V4Condition.newV4Condition(type, "content-disposition", contentDisposition));
+        return this;
+      }
+
+      public Builder addContentEncodingCondition(V4ConditionType type, String contentEncoding) {
+        conditions.add(V4Condition.newV4Condition(type, "content-encoding", contentEncoding));
+        return this;
+      }
+
+      public Builder addContentLengthCondition(V4ConditionType type, int contentLength) {
+        conditions.add(V4Condition.newV4Condition(type, "content-length", "" + contentLength));
+        return this;
+      }
+
+      public Builder addContentTypeCondition(V4ConditionType type, String contentType) {
+        conditions.add(V4Condition.newV4Condition(type, "content-type", contentType));
+        return this;
+      }
+
+      public Builder addExpiresCondition(V4ConditionType type, long expires) {
+        conditions.add(V4Condition.newV4Condition(type, "expires", dateFormat.format(expires)));
+        return this;
+      }
+
+      public Builder addExpiresCondition(V4ConditionType type, String expires) {
+        conditions.add(V4Condition.newV4Condition(type, "expires", expires));
+        return this;
+      }
+
+      public Builder addKeyCondition(V4ConditionType type, String key) {
+        conditions.add(V4Condition.newV4Condition(type, "key", key));
+        return this;
+      }
+
+      public Builder addSuccessActionRedirectUrlCondition(V4ConditionType type, String successActionRedirectUrl) {
+        conditions.add(V4Condition.newV4Condition(type, "success_action_redirect", successActionRedirectUrl));
+        return this;
+      }
+
+      public Builder addSuccessActionStatusCondition(V4ConditionType type, int status) {
+        conditions.add(V4Condition.newV4Condition(type, "success_action_status", "" + status));
+        return this;
+      }
+
+      public Builder addCustomMetadataCondition(V4ConditionType type, String field, String value) {
+        conditions.add(V4Condition.newV4Condition(type, "x-goog-meta-" + field, value));
+        return this;
+      }
+
+      public Builder addContentLengthRange(int min, int max) {
+        conditions.add(V4Condition.newV4Condition(V4ConditionType.CONTENT_LENGTH_RANGE, "" + min, "" + max));
+        return this;
+      }
+
+      public Builder addCustomCondition(V4ConditionType type, String field, String value) {
+        conditions.add(V4Condition.newV4Condition(type, field, value));
+        return this;
+      }
+  }
+
+  }
+
+  class V4PostPolicyDocument {
+    private String expiration;
+    private V4PostConditions conditions;
+
+    private V4PostPolicyDocument(String expiration, V4PostConditions conditions) {
+      this.expiration = expiration;
+      this.conditions = conditions;
+    }
+
+    public static V4PostPolicyDocument of(String expiration, V4PostConditions conditions) {
+      return new V4PostPolicyDocument(expiration, conditions);
+    }
+    public String toJsonObject() {
+      JsonObject object = new JsonObject();
+      JsonArray conditions = new JsonArray();
+      for(V4Condition condition: this.conditions.conditions) {
+        switch(condition.type) {
+          case MATCHES:
+            JsonObject match = new JsonObject();
+            match.addProperty(condition.element, condition.value);
+            conditions.add(match);
+            break;
+          case STARTS_WITH:
+            JsonArray startsWith = new JsonArray();
+            startsWith.add("starts-with");
+            startsWith.add("$" + condition.element);
+            startsWith.add(condition.value);
+            conditions.add(startsWith);
+            break;
+          case CONTENT_LENGTH_RANGE:
+            JsonArray contentLengthRange = new JsonArray();
+            contentLengthRange.add("content-length-range");
+            contentLengthRange.add(Integer.parseInt(condition.element));
+            contentLengthRange.add(Integer.parseInt(condition.value));
+            conditions.add(contentLengthRange);
+            break;
+        }
+      }
+      object.add("conditions", conditions);
+      object.addProperty("expiration", expiration);
+      return object.toString();
+    }
+  }
+
+  enum V4ConditionType {
+    MATCHES,
+    STARTS_WITH,
+    CONTENT_LENGTH_RANGE
+  }
+
+  class V4Condition {
+    V4ConditionType type;
+    String element;
+    String value;
+
+    private V4Condition(V4ConditionType type, String element, String value) {
+      this.type = type;
+      this.element = element;
+      this.value = value;
+    }
+
+    public static V4Condition newV4Condition(V4ConditionType type, String element, String value) {
+      return new V4Condition(type, element, value);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+      V4Condition condition = (V4Condition) other;
+      return this.type == condition.type && this.element.equals(condition.element) && this.value.equals(condition.value);
     }
   }
 
@@ -2495,6 +2697,8 @@ public interface Storage extends Service<StorageOptions> {
    * @see <a href="https://cloud.google.com/storage/docs/access-control#Signed-URLs">Signed-URLs</a>
    */
   URL signUrl(BlobInfo blobInfo, long duration, TimeUnit unit, SignUrlOption... options);
+
+  V4PostPolicy generateV4PresignedPostPolicy(Bucket bucket, BlobInfo blobInfo, V4PostFields fields, V4PostConditions conditions, long duration);
 
   /**
    * Gets the requested blobs. A batch request is used to perform this call.

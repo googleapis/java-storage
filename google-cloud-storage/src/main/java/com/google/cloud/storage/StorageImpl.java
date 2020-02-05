@@ -34,6 +34,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.api.client.util.Base64;
 import com.google.api.gax.paging.Page;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.ObjectAccessControl;
@@ -72,12 +73,14 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -731,6 +734,31 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     } catch (MalformedURLException | UnsupportedEncodingException ex) {
       throw new IllegalStateException(ex);
     }
+  }
+
+  @Override
+  public V4PostPolicy generateV4PresignedPostPolicy(Bucket bucket, BlobInfo blobInfo, V4PostFields fields, V4PostConditions conditions, long duration) {
+    SimpleDateFormat googDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+    SimpleDateFormat yearMonthDayFormat = new SimpleDateFormat("yyyyMMdd");
+    SimpleDateFormat expirationFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    googDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    yearMonthDayFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    expirationFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+    ServiceAccountSigner credentials = (ServiceAccountSigner) this.getOptions().getCredentials();
+
+    long timestamp = getOptions().getClock().millisTime();
+
+    V4PostConditions v4Conditions = conditions.toBuilder()
+            .addKeyCondition(V4ConditionType.MATCHES, blobInfo.getName())
+            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-date", googDateFormat.format(timestamp))
+    .addCustomCondition(V4ConditionType.MATCHES, "x-goog-credential", credentials.getAccount() + "/" + yearMonthDayFormat.format(timestamp) + "/auto/storage/goog4_request")
+    .addCustomCondition(V4ConditionType.MATCHES, "x-goog-algorithm", "GOOG4-RSA-SHA256")
+            .build();
+    V4PostPolicyDocument document = V4PostPolicyDocument.of(expirationFormat.format(timestamp + TimeUnit.MILLISECONDS.convert(duration, TimeUnit.SECONDS)), v4Conditions);
+    System.out.println(document.toJsonObject());
+    System.out.println(Base64.encodeBase64String(document.toJsonObject().getBytes()));
+    return null;
   }
 
   private String constructResourceUriPath(
