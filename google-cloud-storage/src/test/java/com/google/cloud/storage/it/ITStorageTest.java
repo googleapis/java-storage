@@ -2331,7 +2331,7 @@ public class ITStorageTest {
   public void testBucketPolicy() {
     testBucketPolicyRequesterPays(true);
     testBucketPolicyRequesterPays(false);
-    //testBucketPolicyV3RequesterPays(true);
+    // testBucketPolicyV3RequesterPays(true);
     testBucketPolicyV3RequesterPays(false);
   }
 
@@ -2411,48 +2411,75 @@ public class ITStorageTest {
       assertTrue(updatedBucket.requesterPays());
     }
     // Enable Uniform Bucket-Level Access
-    storage.update(BucketInfo.newBuilder(BUCKET).setIamConfiguration(BucketInfo.IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build()).build());
+    storage.update(
+        BucketInfo.newBuilder(BUCKET)
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setIsUniformBucketLevelAccessEnabled(true)
+                    .build())
+            .build());
     String projectId = remoteStorageHelper.getOptions().getProjectId();
 
     Storage.BucketSourceOption[] bucketOptions =
-            requesterPays
-                    ? new Storage.BucketSourceOption[] {Storage.BucketSourceOption.requestedPolicyVersion(3),
-                    Storage.BucketSourceOption.userProject(projectId)}
-                    : new Storage.BucketSourceOption[] {Storage.BucketSourceOption.requestedPolicyVersion(3)};
+        requesterPays
+            ? new Storage.BucketSourceOption[] {
+              Storage.BucketSourceOption.requestedPolicyVersion(3),
+              Storage.BucketSourceOption.userProject(projectId)
+            }
+            : new Storage.BucketSourceOption[] {
+              Storage.BucketSourceOption.requestedPolicyVersion(3)
+            };
     Identity projectOwner = Identity.projectOwner(projectId);
     Identity projectEditor = Identity.projectEditor(projectId);
     Identity projectViewer = Identity.projectViewer(projectId);
     List<com.google.cloud.Binding> bindingsWithoutPublicRead =
-            ImmutableList.of(
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyBucketOwner().toString())
-                            .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue())).build(),
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyBucketReader().toString())
-                            .setMembers(ImmutableList.of(projectViewer.strValue()))
-                            .build()
-            );
+        ImmutableList.of(
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyBucketOwner().toString())
+                .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue()))
+                .build(),
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyBucketReader().toString())
+                .setMembers(ImmutableList.of(projectViewer.strValue()))
+                .build());
     List<com.google.cloud.Binding> bindingsWithPublicRead =
-            ImmutableList.of(
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyBucketReader().toString())
-                            .setMembers(ImmutableList.of(projectViewer.strValue()))
-                            .build(),
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyBucketOwner().toString())
-                            .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue())).build(),
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyObjectReader().toString())
-                    .setMembers(ImmutableList.of("allUsers")).build()
-            );
+        ImmutableList.of(
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyBucketReader().toString())
+                .setMembers(ImmutableList.of(projectViewer.strValue()))
+                .build(),
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyBucketOwner().toString())
+                .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue()))
+                .build(),
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyObjectReader().toString())
+                .setMembers(ImmutableList.of("allUsers"))
+                .build());
 
     List<com.google.cloud.Binding> bindingsWithConditionalPolicy =
-            ImmutableList.of(
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyBucketReader().toString())
-                            .setMembers(ImmutableList.of(projectViewer.strValue()))
-                            .build(),
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyBucketOwner().toString())
-                            .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue())).build(),
-                    com.google.cloud.Binding.newBuilder().setRole(StorageRoles.legacyObjectReader().toString())
-                            .setMembers(ImmutableList.of("serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com"))
-                            .setCondition(Condition.newBuilder().setTitle("Title").setDescription("Description").setExpression("resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")").build())
-                            .build()
-            );
+        ImmutableList.of(
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyBucketReader().toString())
+                .setMembers(ImmutableList.of(projectViewer.strValue()))
+                .build(),
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyBucketOwner().toString())
+                .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue()))
+                .build(),
+            com.google.cloud.Binding.newBuilder()
+                .setRole(StorageRoles.legacyObjectReader().toString())
+                .setMembers(
+                    ImmutableList.of(
+                        "serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com"))
+                .setCondition(
+                    Condition.newBuilder()
+                        .setTitle("Title")
+                        .setDescription("Description")
+                        .setExpression(
+                            "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")")
+                        .build())
+                .build());
 
     // Validate getting policy.
     Policy currentPolicy = storage.getIamPolicy(BUCKET, bucketOptions);
@@ -2460,18 +2487,17 @@ public class ITStorageTest {
 
     // Validate updating policy.
     List<com.google.cloud.Binding> currentBindings = new ArrayList(currentPolicy.getBindingsList());
-    currentBindings.add(com.google.cloud.Binding.newBuilder()
+    currentBindings.add(
+        com.google.cloud.Binding.newBuilder()
             .setRole(StorageRoles.legacyObjectReader().getValue())
-            .addMembers(Identity.allUsers().strValue()).build());
+            .addMembers(Identity.allUsers().strValue())
+            .build());
     Policy updatedPolicy =
-            storage.setIamPolicy(
-                    BUCKET,
-                    currentPolicy
-                            .toBuilder()
-                            .setBindings(currentBindings)
-                            .build(),
-                    bucketOptions);
-    assertTrue(bindingsWithPublicRead.size() == updatedPolicy.getBindingsList().size() && bindingsWithPublicRead.containsAll(updatedPolicy.getBindingsList()));
+        storage.setIamPolicy(
+            BUCKET, currentPolicy.toBuilder().setBindings(currentBindings).build(), bucketOptions);
+    assertTrue(
+        bindingsWithPublicRead.size() == updatedPolicy.getBindingsList().size()
+            && bindingsWithPublicRead.containsAll(updatedPolicy.getBindingsList()));
 
     // Remove a member
     List<com.google.cloud.Binding> updatedBindings = new ArrayList(updatedPolicy.getBindingsList());
@@ -2487,44 +2513,47 @@ public class ITStorageTest {
 
     updatedPolicy.toBuilder().setBindings(updatedBindings);
     Policy revertedPolicy =
-            storage.setIamPolicy(
-                    BUCKET,
-                    updatedPolicy
-                            .toBuilder()
-                            .setBindings(updatedBindings)
-                            .build(),
-                    bucketOptions);
+        storage.setIamPolicy(
+            BUCKET, updatedPolicy.toBuilder().setBindings(updatedBindings).build(), bucketOptions);
 
     assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindingsList());
-    assertTrue(bindingsWithoutPublicRead.size() == revertedPolicy.getBindingsList().size() && bindingsWithoutPublicRead.containsAll(revertedPolicy.getBindingsList()));
+    assertTrue(
+        bindingsWithoutPublicRead.size() == revertedPolicy.getBindingsList().size()
+            && bindingsWithoutPublicRead.containsAll(revertedPolicy.getBindingsList()));
 
     // Add Conditional Policy
-    List<com.google.cloud.Binding> conditionalBindings = new ArrayList(revertedPolicy.getBindingsList());
-    conditionalBindings.add(com.google.cloud.Binding.newBuilder()
+    List<com.google.cloud.Binding> conditionalBindings =
+        new ArrayList(revertedPolicy.getBindingsList());
+    conditionalBindings.add(
+        com.google.cloud.Binding.newBuilder()
             .setRole(StorageRoles.legacyObjectReader().toString())
-            .addMembers("serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com")
-            .setCondition(Condition.newBuilder().setTitle("Title").setDescription("Description").setExpression("resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")").build())
+            .addMembers(
+                "serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com")
+            .setCondition(
+                Condition.newBuilder()
+                    .setTitle("Title")
+                    .setDescription("Description")
+                    .setExpression(
+                        "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")")
+                    .build())
             .build());
     Policy conditionalPolicy =
-            storage.setIamPolicy(
-                    BUCKET,
-                    currentPolicy
-                            .toBuilder()
-                            .setBindings(conditionalBindings)
-                            .setVersion(3)
-                            .build(),
-                    bucketOptions);
-    assertTrue(bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size() && bindingsWithConditionalPolicy.containsAll(conditionalPolicy.getBindingsList()));
-
+        storage.setIamPolicy(
+            BUCKET,
+            currentPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
+            bucketOptions);
+    assertTrue(
+        bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size()
+            && bindingsWithConditionalPolicy.containsAll(conditionalPolicy.getBindingsList()));
 
     // Validate testing permissions.
     List<Boolean> expectedPermissions = ImmutableList.of(true, true);
     assertEquals(
-            expectedPermissions,
-            storage.testIamPermissions(
-                    BUCKET,
-                    ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-                    bucketOptions));
+        expectedPermissions,
+        storage.testIamPermissions(
+            BUCKET,
+            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
+            bucketOptions));
   }
 
   @Test

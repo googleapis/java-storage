@@ -1376,12 +1376,14 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_BUCKET_IAM_POLICY);
     Scope scope = tracer.withSpan(span);
     try {
-      Storage.Buckets.GetIamPolicy getIamPolicy = storage
+      Storage.Buckets.GetIamPolicy getIamPolicy =
+          storage
               .buckets()
               .getIamPolicy(bucket)
               .setUserProject(Option.USER_PROJECT.getString(options));
       if (null != Option.REQUESTED_POLICY_VERSION.getLong(options)) {
-        getIamPolicy.setOptionsRequestedPolicyVersion(Option.REQUESTED_POLICY_VERSION.getLong(options).intValue());
+        getIamPolicy.setOptionsRequestedPolicyVersion(
+            Option.REQUESTED_POLICY_VERSION.getLong(options).intValue());
       }
       return getIamPolicy.execute();
     } catch (IOException ex) {

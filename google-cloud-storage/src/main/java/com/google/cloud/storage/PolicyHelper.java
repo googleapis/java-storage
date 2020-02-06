@@ -18,15 +18,12 @@ package com.google.cloud.storage;
 
 import com.google.api.services.storage.model.Expr;
 import com.google.api.services.storage.model.Policy.Bindings;
-import com.google.cloud.Policy;
 import com.google.cloud.Binding;
 import com.google.cloud.Condition;
+import com.google.cloud.Policy;
 import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Helper for converting between the Policy model provided by the API and the Policy model provided
