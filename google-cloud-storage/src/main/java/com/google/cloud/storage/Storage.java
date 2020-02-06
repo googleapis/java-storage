@@ -269,6 +269,10 @@ public interface Storage extends Service<StorageOptions> {
     public static BucketSourceOption userProject(String userProject) {
       return new BucketSourceOption(StorageRpc.Option.USER_PROJECT, userProject);
     }
+
+    public static BucketSourceOption requestedPolicyVersion(long version) {
+      return new BucketSourceOption(StorageRpc.Option.REQUESTED_POLICY_VERSION, version);
+    }
   }
 
   /** Class for specifying listHmacKeys options */
