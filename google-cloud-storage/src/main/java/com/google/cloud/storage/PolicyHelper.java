@@ -75,6 +75,7 @@ class PolicyHelper {
     }
     return new com.google.api.services.storage.model.Policy()
         .setBindings(bindings)
+        .setEtag(policy.getEtag())
         .setVersion(policy.getVersion());
   }
 
