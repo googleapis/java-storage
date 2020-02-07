@@ -1014,9 +1014,12 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_BUCKET_LIFECYCLE_RULE);
     Scope scope = tracer.withSpan(span);
     try {
+      // ServiceAccountCredentials credentials = (ServiceAccountCredentials)
+      // GoogleCredentials.getApplicationDefault();
       IamCredentialsClient client = IamCredentialsClient.create();
       GenerateAccessTokenRequest request =
           GenerateAccessTokenRequest.newBuilder()
+              // .setName(credentials.getClientEmail())
               .setName(serviceAccount)
               .addScope(GOOGLE_API_CLOUD_SCOPE)
               .setLifetime(LIFE_TIME)
