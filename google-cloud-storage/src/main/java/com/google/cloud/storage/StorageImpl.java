@@ -1586,8 +1586,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     if (Boolean.TRUE.equals(temp.get(DELIMITER))) {
       temp.remove(DELIMITER);
       temp.put(DELIMITER, PATH_DELIMITER);
-    } else if (PATH_DELIMITER.equals(temp.get(DELIMITER))) {
-      temp.put(DELIMITER, PATH_DELIMITER);
+    } else {
+      temp.put(DELIMITER, temp.get(DELIMITER));
     }
     if (useAsSource) {
       addToOptionMap(IF_GENERATION_MATCH, IF_SOURCE_GENERATION_MATCH, generation, temp);
