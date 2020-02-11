@@ -2,3 +2,5 @@
 # module:released-version:current-version
 
 google-cloud-storage:1.106.0:1.106.1-SNAPSHOT
+grpc-google-cloud-storage-v1:1.106.0:1.106.1-SNAPSHOT
+proto-google-cloud-storage-v1:1.106.0:1.106.1-SNAPSHOT

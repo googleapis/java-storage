@@ -75,6 +75,17 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>com.google.api.grpc</groupId>
+        <artifactId>proto-google-cloud-storage-v1</artifactId>
+        <version>1.106.1-SNAPSHOT</version><!-- {x-version-update:proto-google-cloud-storage-v1:current} -->
+      </dependency>
+      <dependency>
+        <groupId>com.google.api.grpc</groupId>
+        <artifactId>grpc-google-cloud-storage-v1</artifactId>
+        <version>1.106.1-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-v1:current} -->
+      </dependency>
+
+      <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>28.2-android</version>
@@ -237,6 +248,9 @@
 
   <modules>
     <module>google-cloud-storage</module>
+    <module>grpc-google-cloud-storage-v1</module>
+    <module>proto-google-cloud-storage-v1</module>
+    <module>google-cloud-storage-bom</module>
   </modules>
 
   <reporting>
