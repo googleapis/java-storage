@@ -1,5 +1,14 @@
 # Changelog
 
+### [1.103.2](https://www.github.com/googleapis/java-storage/compare/v1.103.1...v1.103.2) (2020-02-12)
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.30.8 ([#111](https://www.github.com/googleapis/java-storage/issues/111)) ([47b1495](https://www.github.com/googleapis/java-storage/commit/47b149509478d211ff103419e695476f42b814f0))
+* update dependency com.google.protobuf:protobuf-bom to v3.11.3 ([#113](https://www.github.com/googleapis/java-storage/issues/113)) ([044de39](https://www.github.com/googleapis/java-storage/commit/044de393b6523c68eb63c8d1e160288e0c4dc2a0))
+* update to gRPC 1.27.0 ([#105](https://www.github.com/googleapis/java-storage/issues/105)) ([64f34bd](https://www.github.com/googleapis/java-storage/commit/64f34bd7a5735aaddecc6a1f76db4f35a320e305))
+
 ### [1.103.1](https://www.github.com/googleapis/java-storage/compare/v1.103.0...v1.103.1) (2020-01-27)
 
 
