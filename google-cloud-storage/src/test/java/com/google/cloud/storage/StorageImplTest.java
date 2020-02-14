@@ -1167,6 +1167,23 @@ public class StorageImplTest {
   }
 
   @Test
+  public void testListBlobsDelimiter() {
+    String cursor = "cursor";
+    String delimiter = "/";
+    Map<StorageRpc.Option, ?> options = ImmutableMap.of(StorageRpc.Option.DELIMITER, delimiter);
+    ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
+    Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
+        Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
+    EasyMock.expect(storageRpcMock.list(BUCKET_NAME1, options)).andReturn(result);
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
+    Page<Blob> page = storage.list(BUCKET_NAME1, Storage.BlobListOption.delimiter(delimiter));
+    assertEquals(cursor, page.getNextPageToken());
+    assertArrayEquals(blobList.toArray(), Iterables.toArray(page.getValues(), Blob.class));
+  }
+
+  @Test
   public void testUpdateBucket() {
     BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
     EasyMock.expect(storageRpcMock.patch(updatedBucketInfo.toPb(), EMPTY_RPC_OPTIONS))

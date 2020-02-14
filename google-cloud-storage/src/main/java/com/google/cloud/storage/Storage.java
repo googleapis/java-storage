@@ -1004,6 +1004,16 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
+     * Returns an option to set a delimiter.
+     *
+     * @param delimiter generally '/' is the one used most often, but you can used other delimiters
+     *     as well.
+     */
+    public static BlobListOption delimiter(String delimiter) {
+      return new BlobListOption(StorageRpc.Option.DELIMITER, delimiter);
+    }
+
+    /**
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      *
