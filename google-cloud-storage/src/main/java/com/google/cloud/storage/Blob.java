@@ -779,6 +779,13 @@ public class Blob extends BlobInfo {
    *     ServiceAccountCredentials.fromStream(new FileInputStream(keyPath))));
    * }</pre>
    *
+   * <p>Example of creating a signed URL for a blob generation.
+   *
+   * <pre>{@code
+   * URL signedUrl = blob.signUrl(1, TimeUnit.HOURS,
+   *     SignUrlOption.withQueryParams(ImmutableMap.of("generation", "1576656755290328")));
+   * }</pre>
+   *
    * @param duration time until the signed URL expires, expressed in {@code unit}. The finer
    *     granularity supported is 1 second, finer granularities will be truncated
    * @param unit time unit of the {@code duration} parameter
