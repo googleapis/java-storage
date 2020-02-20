@@ -3366,7 +3366,6 @@ public class ITStorageTest {
   @Test
   public void testGetNotification() {
     Notification actualNotification = storage.getNotification(BUCKET, notification.getId());
-    System.out.println(actualNotification);
     assertEquals(CUSTOM_ATTRIBUTES, actualNotification.getCustomAttributes());
     assertEquals(PAYLOAD_FORMAT.name(), actualNotification.getPayloadFormat());
     assertTrue(actualNotification.getTopic().contains(TOPIC.toString()));

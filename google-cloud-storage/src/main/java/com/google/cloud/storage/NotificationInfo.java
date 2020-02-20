@@ -112,7 +112,6 @@ public class NotificationInfo implements Serializable {
       return this;
     }
 
-    /** GcpLaunchStage.Alpha */
     public Builder setObjectNamePrefix(String objectNamePrefix) {
       this.objectNamePrefix = objectNamePrefix;
       return this;
@@ -197,7 +196,7 @@ public class NotificationInfo implements Serializable {
   }
 
   /**
-   * Returns the list of additional attributes to attach to each Cloud PubSub message published for\
+   * Returns the list of additional attributes to attach to each Cloud PubSub message published for
    * this notification subscription.
    *
    * @see <a href="https://cloud.google.com/storage/docs/access-control#About-Access-Control-Lists">
