@@ -58,9 +58,6 @@ import com.google.api.services.storage.model.TestIamPermissionsResponse;
 import com.google.cloud.Tuple;
 import com.google.cloud.http.CensusHttpModule;
 import com.google.cloud.http.HttpTransportOptions;
-import com.google.cloud.iam.credentials.v1.GenerateAccessTokenRequest;
-import com.google.cloud.iam.credentials.v1.GenerateAccessTokenResponse;
-import com.google.cloud.iam.credentials.v1.IamCredentialsClient;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.Function;
@@ -1010,34 +1007,16 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
-  public boolean deleteLifecycleRules(Bucket bucket, String serviceAccount) {
+  public boolean deleteLifecycleRules(Bucket bucket) {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_DELETE_BUCKET_LIFECYCLE_RULE);
     Scope scope = tracer.withSpan(span);
     try {
-      // ServiceAccountCredentials credentials = (ServiceAccountCredentials)
-      // GoogleCredentials.getApplicationDefault();
-      IamCredentialsClient client = IamCredentialsClient.create();
-      GenerateAccessTokenRequest request =
-          GenerateAccessTokenRequest.newBuilder()
-              // .setName(credentials.getClientEmail())
-              .setName(serviceAccount)
-              .addScope(GOOGLE_API_CLOUD_SCOPE)
-              .setLifetime(LIFE_TIME)
-              .build();
-      GenerateAccessTokenResponse accessTokenResponse = client.generateAccessToken(request);
-      HttpHeaders headers = new HttpHeaders();
-      headers.setAuthorization("Bearer " + accessTokenResponse.getAccessToken());
-      headers.setContentType("application/json");
-
       HttpRequestFactory requestFactory = storage.getRequestFactory();
       HttpContent httpContent = new JsonHttpContent(new JacksonFactory(), "");
       HttpRequest httpRequest =
-          requestFactory
-              .buildPutRequest(
-                  new GenericUrl(
-                      GOOGLE_STORAGE_API_ENDPOINT + bucket.getName() + "?fields=lifecycle"),
-                  httpContent)
-              .setHeaders(headers);
+          requestFactory.buildPutRequest(
+              new GenericUrl(GOOGLE_STORAGE_API_ENDPOINT + bucket.getName() + "?fields=lifecycle"),
+              httpContent);
       httpRequest.execute();
       return true;
     } catch (IOException ex) {

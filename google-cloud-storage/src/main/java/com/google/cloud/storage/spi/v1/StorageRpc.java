@@ -262,7 +262,7 @@ public interface StorageRpc extends ServiceRpc {
    * @return {@code true} if the bucket lifecycle rules were deleted.
    * @throws StorageException upon failure
    */
-  boolean deleteLifecycleRules(Bucket bucket, String serviceAccount);
+  boolean deleteLifecycleRules(Bucket bucket);
 
   /**
    * Deletes the requested storage object.

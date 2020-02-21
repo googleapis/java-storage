@@ -155,17 +155,6 @@
         <version>${google.api-common.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.google.cloud</groupId>
-        <artifactId>google-cloud-iamcredentials</artifactId>
-        <version>${google.iamcredentials.version}</version>
-      </dependency>
-      <dependency>
-        <groupId> com.google.api.grpc</groupId>
-        <artifactId>proto-google-cloud-iamcredentials-v1</artifactId>
-        <version>${google.iamcredentials.version}</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>proto-google-iam-v1</artifactId>
         <version>0.13.0</version>

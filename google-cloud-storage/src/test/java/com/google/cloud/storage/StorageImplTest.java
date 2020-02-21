@@ -2738,13 +2738,10 @@ public class StorageImplTest {
   }
 
   @Test
-  public void testDeleteLifecyclesRulesOfBucket() throws IOException {
-    EasyMock.expect(storageRpcMock.getServiceAccount("projectId"))
-        .andReturn(SERVICE_ACCOUNT.toPb());
+  public void testDeleteLifecyclesRulesOfBucket() {
     EasyMock.expect(
             storageRpcMock.deleteLifecycleRules(
-                EasyMock.isA(com.google.api.services.storage.model.Bucket.class),
-                EasyMock.isA(String.class)))
+                EasyMock.isA(com.google.api.services.storage.model.Bucket.class)))
         .andReturn(true);
     EasyMock.replay(storageRpcMock);
     initializeService();

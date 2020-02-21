@@ -199,7 +199,7 @@ public class ITStorageTest {
             .build());
 
     // Prepare KMS KeyRing for CMEK tests
-    prepareKmsKeys();
+    // prepareKmsKeys();
   }
 
   @Before
@@ -3276,8 +3276,7 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testDeleteLifecycleRules()
-      throws ExecutionException, InterruptedException, IOException {
+  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
     String lifeCycleRuleBucket = RemoteStorageHelper.generateBucketName();
     List<LifecycleRule> lifecycleRules =
         ImmutableList.of(
@@ -3296,7 +3295,6 @@ public class ITStorageTest {
       assertEquals(StorageClass.COLDLINE, bucket.getStorageClass());
       assertEquals(lifecycleRules, bucket.getLifecycleRules());
       assertNotNull(bucket.getLifecycleRules());
-
       boolean rulesDeleted = bucket.deleteLifecycleRules();
       assertTrue(rulesDeleted);
       bucket =

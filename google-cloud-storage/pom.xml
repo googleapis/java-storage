@@ -73,10 +73,6 @@
       <artifactId>opencensus-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-iamcredentials</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>proto-google-iam-v1</artifactId>
     </dependency>
@@ -91,10 +87,6 @@
     <dependency>
       <groupId>org.threeten</groupId>
       <artifactId>threetenbp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId> com.google.api.grpc</groupId>
-      <artifactId>proto-google-cloud-iamcredentials-v1</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
