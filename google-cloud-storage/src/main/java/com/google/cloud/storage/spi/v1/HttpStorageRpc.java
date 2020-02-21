@@ -67,7 +67,6 @@ import com.google.common.collect.Lists;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
-import com.google.protobuf.Duration;
 import io.opencensus.common.Scope;
 import io.opencensus.trace.AttributeValue;
 import io.opencensus.trace.Span;
@@ -91,9 +90,6 @@ public class HttpStorageRpc implements StorageRpc {
   private static final String SOURCE_ENCRYPTION_KEY_PREFIX = "x-goog-copy-source-encryption-";
   private static final String GOOGLE_STORAGE_API_ENDPOINT =
       "https://storage.googleapis.com/storage/v1/b/";
-  private static final String GOOGLE_API_CLOUD_SCOPE =
-      "https://www.googleapis.com/auth/cloud-platform";
-  private static final Duration LIFE_TIME = Duration.newBuilder().setSeconds(3600).build();
   // declare this HttpStatus code here as it's not included in java.net.HttpURLConnection
   private static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
 

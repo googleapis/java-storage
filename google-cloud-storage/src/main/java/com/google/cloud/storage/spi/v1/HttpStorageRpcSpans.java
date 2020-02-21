@@ -34,7 +34,7 @@ class HttpStorageRpcSpans {
   static final String SPAN_NAME_PATCH_OBJECT = getTraceSpanName("patch(StorageObject,Map)");
   static final String SPAN_NAME_DELETE_BUCKET = getTraceSpanName("delete(Bucket,Map)");
   static final String SPAN_NAME_DELETE_BUCKET_LIFECYCLE_RULE =
-      getTraceSpanName("delete(Bucket,String)");
+      getTraceSpanName("deleteLifecycleRules(String)");
   static final String SPAN_NAME_DELETE_OBJECT = getTraceSpanName("delete(StorageObject,Map)");
   static final String SPAN_NAME_CREATE_BATCH = getTraceSpanName("createBatch()");
   static final String SPAN_NAME_COMPOSE = getTraceSpanName("compose(Iterable,StorageObject,Map)");
