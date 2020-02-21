@@ -1,11 +1,25 @@
 {
-  "updateTime": "2020-02-01T09:02:33.355460Z",
+  "updateTime": "2020-02-21T23:02:22.764798Z",
   "sources": [
+    {
+      "git": {
+        "name": ".",
+        "remote": "https://github.com/googleapis/java-storage.git",
+        "sha": "fe71665228533c7dd78bcedbcd7fb250067f04d8"
+      }
+    },
+    {
+      "git": {
+        "name": "synthtool",
+        "remote": "rpc://devrel/cloud/libraries/tools/autosynth",
+        "sha": "706a38c26db42299845396cdae55db635c38794a"
+      }
+    },
     {
       "template": {
         "name": "java_library",
         "origin": "synthtool.gcp",
-        "version": "2019.10.17"
+        "version": "2020.2.4"
       }
     }
   ]
