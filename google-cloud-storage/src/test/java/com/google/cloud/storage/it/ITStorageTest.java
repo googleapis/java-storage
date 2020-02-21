@@ -199,7 +199,7 @@ public class ITStorageTest {
             .build());
 
     // Prepare KMS KeyRing for CMEK tests
-    // prepareKmsKeys();
+    prepareKmsKeys();
   }
 
   @Before
