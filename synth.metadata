@@ -1,11 +1,11 @@
 {
-  "updateTime": "2020-02-21T23:02:22.764798Z",
+  "updateTime": "2020-02-22T10:07:13.834948Z",
   "sources": [
     {
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/java-storage.git",
-        "sha": "fe71665228533c7dd78bcedbcd7fb250067f04d8"
+        "sha": "8e788d5f4075f3209268b2320a379ad2202f14f2"
       }
     },
     {
