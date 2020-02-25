@@ -1,11 +1,30 @@
 {
-  "updateTime": "2020-03-17T18:53:43.239577Z",
+  "updateTime": "2020-03-27T21:25:04.011945Z",
   "sources": [
     {
-      "template": {
-        "name": "java_library",
-        "origin": "synthtool.gcp",
-        "version": "2020.2.4"
+      "git": {
+        "name": "googleapis",
+        "remote": "https://github.com/googleapis/googleapis.git",
+        "sha": "48a166ce9f6e2a88b10947341b37336fe9dd3478",
+        "internalRef": "303302813"
+      }
+    },
+    {
+      "git": {
+        "name": "synthtool",
+        "remote": "https://github.com/googleapis/synthtool.git",
+        "sha": "e36822bfa0acb355502dab391b8ef9c4f30208d8"
+      }
+    }
+  ],
+  "destinations": [
+    {
+      "client": {
+        "source": "googleapis",
+        "apiName": "storage",
+        "apiVersion": "v1",
+        "language": "java",
+        "generator": "bazel"
       }
     }
   ]
