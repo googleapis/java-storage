@@ -14,7 +14,24 @@
 
 """This script is used to synthesize generated parts of this library."""
 
-import synthtool.languages.java
+import synthtool as s
+import synthtool.gcp as gcp
+import synthtool.languages.java as java
+
+gapic = gcp.GAPICBazel()
+
+service = 'storage'
+versions = ['v1']
+
+for version in versions:
+    library = java.bazel_library(
+        service=service,
+        version=version,
+        package_pattern='com.google.{service}.{version}',
+        gapic=gapic,
+        proto_path=f'google/{service}/{version}',
+        bazel_target=f'//google/{service}/{version}:google-cloud-{service}-{version}-java',
+    )
 
 java.common_templates(excludes=[
   'README.md',
