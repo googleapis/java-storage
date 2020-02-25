@@ -69,7 +69,7 @@
     <threeten.version>1.4.1</threeten.version>
     <javax.annotations.version>1.3.2</javax.annotations.version>
     <animal-sniffer.version>1.18</animal-sniffer.version>
-    <opencensus.version>0.25.0</opencensus.version>
+    <opencensus.version>0.24.0</opencensus.version>
   </properties>
 
   <dependencyManagement>
