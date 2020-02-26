@@ -57,7 +57,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.io.BaseEncoding;
-import com.google.pubsub.v1.ProjectTopicName;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -383,7 +382,7 @@ public class StorageImplTest {
   private static final String OBJECT_NAME_PREFIX = "index.html";
   private static final NotificationInfo.PayloadFormat PAYLOAD_FORMAT =
       NotificationInfo.PayloadFormat.JSON_API_V1.JSON_API_V1;
-  private static final ProjectTopicName TOPIC = ProjectTopicName.of("myProject", "topic1");
+  private static final String TOPIC = "projects/myProject/topics/topic1";
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final NotificationInfo NOTIFICATION_INFO_01 =
       NotificationInfo.newBuilder(TOPIC)

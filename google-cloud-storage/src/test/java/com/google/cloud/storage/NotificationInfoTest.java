@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.pubsub.v1.ProjectTopicName;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class NotificationInfoTest {
       ImmutableList.of("OBJECT_FINALIZE", "OBJECT_METADATA_UPDATE");
   private static final String OBJECT_NAME_PREFIX = "index.html";
   private static final PayloadFormat PAYLOAD_FORMAT = PayloadFormat.JSON_API_V1.JSON_API_V1;
-  private static final ProjectTopicName TOPIC = ProjectTopicName.of("myProject", "topic1");
+  private static final String TOPIC = "projects/myProject/topics/topic1";
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final NotificationInfo NOTIFICATION_INFO =
       NotificationInfo.newBuilder(TOPIC)

@@ -17,12 +17,12 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.pathtemplate.PathTemplate;
 import com.google.api.services.storage.model.Notification;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.pubsub.v1.ProjectTopicName;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +37,8 @@ import java.util.Objects;
 public class NotificationInfo implements Serializable {
 
   private static final long serialVersionUID = 5725883368559753810L;
+  private static final PathTemplate PATH_TEMPLATE =
+      PathTemplate.createWithoutUrlEncoding("projects/{project}/topics/{topic}");
 
   public enum PayloadFormat {
     JSON_API_V1,
@@ -58,7 +60,7 @@ public class NotificationInfo implements Serializable {
         }
       };
   private final String generatedId;
-  private final ProjectTopicName topic;
+  private final String topic;
   private final List<String> eventTypes;
   private final Map<String, String> customAttributes;
   private final PayloadFormat payloadFormat;
@@ -69,7 +71,7 @@ public class NotificationInfo implements Serializable {
   public static final class Builder {
 
     private String generatedId;
-    private ProjectTopicName topic;
+    private String topic;
     private List<String> eventTypes;
     private Map<String, String> customAttributes;
     private PayloadFormat payloadFormat;
@@ -77,7 +79,7 @@ public class NotificationInfo implements Serializable {
     private String etag;
     private String selfLink;
 
-    Builder(ProjectTopicName topic) {
+    Builder(String topic) {
       this.topic = topic;
     }
 
@@ -102,7 +104,8 @@ public class NotificationInfo implements Serializable {
       return this;
     }
 
-    public Builder setTopic(ProjectTopicName topic) {
+    /** The name of the topic. It must have the format "projects/{project}/topics/{topic}". */
+    public Builder setTopic(String topic) {
       this.topic = topic;
       return this;
     }
@@ -155,8 +158,8 @@ public class NotificationInfo implements Serializable {
     return generatedId;
   }
 
-  /** Returns the Cloud PubSub topic to which this subscription publishes. */
-  public ProjectTopicName getTopic() {
+  /** Returns the topic to which this subscription publishes. */
+  public String getTopic() {
     return topic;
   }
 
@@ -248,25 +251,35 @@ public class NotificationInfo implements Serializable {
       notificationPb.setPayloadFormat(PayloadFormat.NONE.toString());
     }
     notificationPb.setSelfLink(selfLink);
-    notificationPb.setTopic(topic.toString());
+    notificationPb.setTopic(topic);
 
     return notificationPb;
   }
 
-  /** Creates a {@code NotificationInfo} object for the provided topic name. */
-  public static NotificationInfo of(ProjectTopicName topic) {
+  /**
+   * Creates a {@code NotificationInfo} object for the provided topic name.
+   *
+   * @param topic The name of the topic. It must have the format
+   *     "projects/{project}/topics/{topic}".
+   */
+  public static NotificationInfo of(String topic) {
+    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
     return newBuilder(topic).build();
   }
 
   /**
    * Returns a {@code NotificationInfo} builder where the topic's name is set to the provided name.
+   *
+   * @param topic The name of the topic. It must have the format
+   *     "projects/{project}/topics/{topic}".
    */
-  public static Builder newBuilder(ProjectTopicName topic) {
+  public static Builder newBuilder(String topic) {
+    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
     return new Builder(topic);
   }
 
   static NotificationInfo fromPb(Notification notificationPb) {
-    Builder builder = newBuilder(ProjectTopicName.parse(notificationPb.getTopic()));
+    Builder builder = newBuilder(notificationPb.getTopic());
     if (notificationPb.getId() != null) {
       builder.setGeneratedId(notificationPb.getId());
     }
@@ -283,7 +296,7 @@ public class NotificationInfo implements Serializable {
       builder.setObjectNamePrefix(notificationPb.getObjectNamePrefix());
     }
     if (notificationPb.getTopic() != null) {
-      builder.setTopic(ProjectTopicName.parse(notificationPb.getTopic()));
+      builder.setTopic(notificationPb.getTopic());
     }
     if (notificationPb.getEventTypes() != null) {
       builder.setEventTypes(notificationPb.getEventTypes());

@@ -96,7 +96,6 @@ import com.google.common.io.ByteStreams;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.IAMPolicyGrpc;
 import com.google.iam.v1.SetIamPolicyRequest;
-import com.google.pubsub.v1.ProjectTopicName;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
@@ -208,8 +207,9 @@ public class ITStorageTest {
   private static final String ID = UUID.randomUUID().toString().substring(0, 8);
   private static final NotificationInfo.PayloadFormat PAYLOAD_FORMAT =
       NotificationInfo.PayloadFormat.JSON_API_V1.JSON_API_V1;
-  private static final ProjectTopicName TOPIC =
-      ProjectTopicName.of(PROJECT, String.format("test_topic_foo_%s", ID));
+
+  private static final String TOPIC =
+      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID);
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
 
   @BeforeClass
@@ -233,11 +233,10 @@ public class ITStorageTest {
     // Create pubsub topic for notification.
     topicAdminClient = TopicAdminClient.create();
     topicAdminClient.createTopic(TOPIC);
-    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(TOPIC.toString());
+    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(TOPIC);
     Binding binding =
         Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
-    topicAdminClient.setIamPolicy(
-        TOPIC.toString(), policy.toBuilder().addBindings(binding).build());
+    topicAdminClient.setIamPolicy(TOPIC, policy.toBuilder().addBindings(binding).build());
 
     // Create a notification on a bucket.
     NotificationInfo notificationInfo =
@@ -3368,7 +3367,7 @@ public class ITStorageTest {
     Notification actualNotification = storage.getNotification(BUCKET, notification.getId());
     assertEquals(CUSTOM_ATTRIBUTES, actualNotification.getCustomAttributes());
     assertEquals(PAYLOAD_FORMAT.name(), actualNotification.getPayloadFormat());
-    assertTrue(actualNotification.getTopic().contains(TOPIC.toString()));
+    assertTrue(actualNotification.getTopic().contains(TOPIC));
   }
 
   @Test
@@ -3378,7 +3377,7 @@ public class ITStorageTest {
       if (actualNotification.getId().equals(notification.getId())) {
         assertEquals(CUSTOM_ATTRIBUTES, actualNotification.getCustomAttributes());
         assertEquals(PAYLOAD_FORMAT.name(), actualNotification.getPayloadFormat());
-        assertTrue(actualNotification.getTopic().contains(TOPIC.toString()));
+        assertTrue(actualNotification.getTopic().contains(TOPIC));
       }
     }
   }
