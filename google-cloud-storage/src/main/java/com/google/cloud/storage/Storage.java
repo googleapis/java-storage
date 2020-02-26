@@ -2483,7 +2483,7 @@ public interface Storage extends Service<StorageOptions> {
    * }</pre>
    *
    * <p>Example of creating a signed URL passing the {@link
-   * SignUrlOption#signWith(ServiceAccountSigner)} option, that will be used for signing the URL.
+   * SignUrlOption#signWith(ServiceAccountSigner)} option, that will be used for signing the URL:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
@@ -2497,6 +2497,19 @@ public interface Storage extends Service<StorageOptions> {
    *
    * <p>Note that the {@link ServiceAccountSigner} may require additional configuration to enable
    * URL signing. See the documentation for the implementation for more details.
+   *
+   * <p>Example of creating a signed URL for a blob with generation:
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * long generation = 1576656755290328L;
+   *
+   * URL signedUrl = storage.signUrl(
+   *     BlobInfo.newBuilder(bucketName, blobName, generation).build(),
+   *     7, TimeUnit.DAYS,
+   *     SignUrlOption.withQueryParams(ImmutableMap.of("generation", String.valueOf(generation))));
+   * }</pre>
    *
    * @param blobInfo the blob associated with the signed URL
    * @param duration time until the signed URL expires, expressed in {@code unit}. The finest
