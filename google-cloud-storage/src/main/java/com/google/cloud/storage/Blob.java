@@ -764,14 +764,14 @@ public class Blob extends BlobInfo {
    * </ol>
    *
    * <p>Example of creating a signed URL for the blob that is valid for 2 weeks, using the default
-   * credentials for signing the URL.
+   * credentials for signing the URL:
    *
    * <pre>{@code
    * URL signedUrl = blob.signUrl(14, TimeUnit.DAYS);
    * }</pre>
    *
    * <p>Example of creating a signed URL for the blob passing the {@link
-   * SignUrlOption#signWith(ServiceAccountSigner)} option, that will be used to sign the URL.
+   * SignUrlOption#signWith(ServiceAccountSigner)} option, that will be used to sign the URL:
    *
    * <pre>{@code
    * String keyPath = "/path/to/key.json";
@@ -779,7 +779,7 @@ public class Blob extends BlobInfo {
    *     ServiceAccountCredentials.fromStream(new FileInputStream(keyPath))));
    * }</pre>
    *
-   * <p>Example of creating a signed URL for a blob generation.
+   * <p>Example of creating a signed URL for a blob generation:
    *
    * <pre>{@code
    * URL signedUrl = blob.signUrl(1, TimeUnit.HOURS,
