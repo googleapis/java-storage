@@ -36,7 +36,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -47,8 +46,7 @@ import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -589,7 +587,8 @@ public interface Storage extends Service<StorageOptions> {
       IF_CRC32C_MATCH,
       CUSTOMER_SUPPLIED_KEY,
       KMS_KEY_NAME,
-      USER_PROJECT;
+      USER_PROJECT,
+      IF_DISABLE_GZIP_CONTENT;
 
       StorageRpc.Option toRpcOption() {
         return StorageRpc.Option.valueOf(this.name());
@@ -720,6 +719,14 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static BlobWriteOption userProject(String userProject) {
       return new BlobWriteOption(Option.USER_PROJECT, userProject);
+    }
+
+    /**
+     * Returns an option that signals automatic gzip compression should not be performed en route to
+     * the bucket.
+     */
+    public static BlobWriteOption disableGzipContent() {
+      return new BlobWriteOption(Option.IF_DISABLE_GZIP_CONTENT, true);
     }
   }
 
@@ -1011,6 +1018,16 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
+     * Returns an option to set a delimiter.
+     *
+     * @param delimiter generally '/' is the one used most often, but you can used other delimiters
+     *     as well.
+     */
+    public static BlobListOption delimiter(String delimiter) {
+      return new BlobListOption(StorageRpc.Option.DELIMITER, delimiter);
+    }
+
+    /**
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      *
@@ -1239,13 +1256,244 @@ public interface Storage extends Service<StorageOptions> {
     }
   }
 
+  class V4PostPolicyOption implements Serializable {
+    private static final long serialVersionUID = 8150867146534084543L;
+    private final V4PostPolicyOption.Option option;
+    private final Object value;
+
+    enum Option {
+      PATH_STYLE,
+      VIRTUAL_HOSTED_STYLE,
+      BUCKET_BOUND_HOST_NAME,
+      SERVICE_ACCOUNT_CRED
+    }
+
+    private V4PostPolicyOption(Option option, Object value) {
+      this.option = option;
+      this.value = value;
+    }
+
+    V4PostPolicyOption.Option getOption() {
+      return option;
+    }
+
+    Object getValue() {
+      return value;
+    }
+
+    /**
+     * Provides a service account signer to sign the policy. If not provided an attempt will be made
+     * to get it from the environment.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/authentication#service_accounts">Service
+     *     Accounts</a>
+     */
+    public static V4PostPolicyOption signWith(ServiceAccountSigner signer) {
+      return new V4PostPolicyOption(V4PostPolicyOption.Option.SERVICE_ACCOUNT_CRED, signer);
+    }
+
+    /**
+     * Use a virtual hosted-style hostname, which adds the bucket into the host portion of the URI
+     * rather than the path, e.g. 'https://mybucket.storage.googleapis.com/...'. The bucket name
+     * will be obtained from the resource passed in.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
+     */
+    public static V4PostPolicyOption withVirtualHostedStyle() {
+      return new V4PostPolicyOption(V4PostPolicyOption.Option.VIRTUAL_HOSTED_STYLE, "");
+    }
+
+    /**
+     * Generate a path-style URL, which places the bucket name in the path portion of the URL
+     * instead of in the hostname, e.g 'https://storage.googleapis.com/mybucket/...'. Note that this
+     * cannot be used alongside {@code withVirtualHostedStyle()}. Virtual hosted-style URLs, which
+     * can be used via the {@code withVirtualHostedStyle()} method, should generally be preferred
+     * instead of path-style URLs.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
+     */
+    public static V4PostPolicyOption withPathStyle() {
+      return new V4PostPolicyOption(V4PostPolicyOption.Option.PATH_STYLE, "");
+    }
+
+    /**
+     * Use a bucket-bound hostname, which replaces the storage.googleapis.com host with the name of
+     * a CNAME bucket, e.g. a bucket named 'gcs-subdomain.my.domain.tld', or a Google Cloud Load
+     * Balancer which routes to a bucket you own, e.g. 'my-load-balancer-domain.tld'. Note that this
+     * cannot be used alongside {@code withVirtualHostedStyle()} or {@code withPathStyle()}. This
+     * method signature uses HTTP for the URI scheme, and is equivalent to calling {@code
+     * withBucketBoundHostname("...", UriScheme.HTTP).}
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/request-endpoints#cname">CNAME
+     *     Redirects</a>
+     * @see <a
+     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
+     *     GCLB Redirects</a>
+     */
+    public static V4PostPolicyOption withBucketBoundHostname(String bucketBoundHostname) {
+      return withBucketBoundHostname(bucketBoundHostname, UriScheme.HTTP);
+    }
+
+    /**
+     * Use a bucket-bound hostname, which replaces the storage.googleapis.com host with the name of
+     * a CNAME bucket, e.g. a bucket named 'gcs-subdomain.my.domain.tld', or a Google Cloud Load
+     * Balancer which routes to a bucket you own, e.g. 'my-load-balancer-domain.tld'. Note that this
+     * cannot be used alongside {@code withVirtualHostedStyle()} or {@code withPathStyle()}. The
+     * bucket name itself should not include the URI scheme (http or https), so it is specified via
+     * a local enum.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/request-endpoints#cname">CNAME
+     *     Redirects</a>
+     * @see <a
+     *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
+     *     GCLB Redirects</a>
+     */
+    public static V4PostPolicyOption withBucketBoundHostname(
+        String bucketBoundHostname, UriScheme uriScheme) {
+      return new V4PostPolicyOption(
+          V4PostPolicyOption.Option.BUCKET_BOUND_HOST_NAME,
+          uriScheme.getScheme() + "://" + bucketBoundHostname);
+    }
+  }
+
   class V4PostPolicy {
-    String url;
-    Map<String, String> fields;
+    private String url;
+    private Map<String, String> fields;
+
+    private V4PostPolicy(String url, Map<String, String> fields) {
+      this.url = url;
+      this.fields = fields;
+    }
+
+    public static V4PostPolicy of(String url, Map<String, String> fields) {
+      return new V4PostPolicy(url, fields);
+    }
+
+    public String getUrl() {
+      return url;
+    }
+
+    public Map<String, String> getFields() {
+      return fields;
+    }
   }
 
   class V4PostFields {
+    private Map<String, String> fieldsMap;
+    private String acl;
+    private String cacheControl;
+    private String contentDisposition;
+    private String contentEncoding;
+    private String contentLength;
+    private String contentType;
+    private String expires;
+    private String successActionRedirect;
+    private String successActionStatus;
 
+    private V4PostFields(Builder builder) {
+      this.acl = builder.acl;
+      this.cacheControl = builder.cacheControl;
+      this.contentDisposition = builder.contentDisposition;
+      this.contentEncoding = builder.contentEncoding;
+      this.contentLength = builder.contentLength;
+      this.contentType = builder.contentType;
+      this.expires = builder.expires;
+      this.successActionRedirect = builder.successActionRedirect;
+      this.successActionStatus = builder.successActionStatus;
+
+      this.fieldsMap = new HashMap<>();
+      fieldsMap.put("acl", acl);
+      fieldsMap.put("cache-control", cacheControl);
+      fieldsMap.put("content-disposition", contentDisposition);
+      fieldsMap.put("content-length", contentLength);
+      fieldsMap.put("content-encoding", contentEncoding);
+      fieldsMap.put("content-type", contentType);
+      fieldsMap.put("expires", expires);
+      fieldsMap.put("success_action_redirect", successActionRedirect);
+      fieldsMap.put("success_action_status", successActionStatus);
+    }
+
+    private V4PostFields(Map<String, String> fields) {
+      this.fieldsMap = fields;
+    }
+
+    public static V4PostFields of(Map<String, String> fields) {
+      return new V4PostFields(fields);
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Map<String, String> getFieldsMap() {
+      return fieldsMap;
+    }
+
+    public static class Builder {
+      private Map<String, String> fieldsMap;
+      private String acl;
+      private String cacheControl;
+      private String contentDisposition;
+      private String contentEncoding;
+      private String contentLength;
+      private String contentType;
+      private String expires;
+      private String successActionRedirect;
+      private String successActionStatus;
+
+      private Builder() {
+        fieldsMap = new HashMap<>();
+      }
+
+      public V4PostFields build() {
+        return new V4PostFields(this);
+      }
+
+      public Builder setAcl(String acl) {
+        this.acl = acl;
+        return this;
+      }
+
+      public Builder setCacheControl(String cacheControl) {
+        this.cacheControl = cacheControl;
+        return this;
+      }
+
+      public Builder setContentDisposition(String contentDisposition) {
+        this.contentDisposition = contentDisposition;
+        return this;
+      }
+
+      public Builder setContentEncoding(String contentEncoding) {
+        this.contentEncoding = contentEncoding;
+        return this;
+      }
+
+      public Builder setContentLength(int contentLength) {
+        this.contentLength = "" + contentLength;
+        return this;
+      }
+
+      public Builder setContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+      }
+
+      public Builder Expires(String expires) {
+        this.expires = expires;
+        return this;
+      }
+
+      public Builder setSuccessActionRedirect(String successActionRedirect) {
+        this.successActionRedirect = successActionRedirect;
+        return this;
+      }
+
+      public Builder setSuccessActionStatus(int successActionStatus) {
+        this.successActionStatus = "" + successActionStatus;
+        return this;
+      }
+    }
   }
 
   class V4PostConditions {
@@ -1265,11 +1513,15 @@ public interface Storage extends Service<StorageOptions> {
       return new Builder();
     }
 
+    public Set<V4Condition> getConditions() {
+      return conditions;
+    }
+
     public static class Builder {
       Set<V4Condition> conditions;
 
-      private Builder () {
-        this.conditions = new HashSet<>();
+      private Builder() {
+        this.conditions = new LinkedHashSet<>();
       }
 
       private Builder(Set<V4Condition> conditions) {
@@ -1299,7 +1551,8 @@ public interface Storage extends Service<StorageOptions> {
         return this;
       }
 
-      public Builder addContentDispositionCondition(V4ConditionType type, String contentDisposition) {
+      public Builder addContentDispositionCondition(
+          V4ConditionType type, String contentDisposition) {
         conditions.add(V4Condition.newV4Condition(type, "content-disposition", contentDisposition));
         return this;
       }
@@ -1334,8 +1587,10 @@ public interface Storage extends Service<StorageOptions> {
         return this;
       }
 
-      public Builder addSuccessActionRedirectUrlCondition(V4ConditionType type, String successActionRedirectUrl) {
-        conditions.add(V4Condition.newV4Condition(type, "success_action_redirect", successActionRedirectUrl));
+      public Builder addSuccessActionRedirectUrlCondition(
+          V4ConditionType type, String successActionRedirectUrl) {
+        conditions.add(
+            V4Condition.newV4Condition(type, "success_action_redirect", successActionRedirectUrl));
         return this;
       }
 
@@ -1350,7 +1605,8 @@ public interface Storage extends Service<StorageOptions> {
       }
 
       public Builder addContentLengthRange(int min, int max) {
-        conditions.add(V4Condition.newV4Condition(V4ConditionType.CONTENT_LENGTH_RANGE, "" + min, "" + max));
+        conditions.add(
+            V4Condition.newV4Condition(V4ConditionType.CONTENT_LENGTH_RANGE, "" + min, "" + max));
         return this;
       }
 
@@ -1358,8 +1614,7 @@ public interface Storage extends Service<StorageOptions> {
         conditions.add(V4Condition.newV4Condition(type, field, value));
         return this;
       }
-  }
-
+    }
   }
 
   class V4PostPolicyDocument {
@@ -1374,11 +1629,12 @@ public interface Storage extends Service<StorageOptions> {
     public static V4PostPolicyDocument of(String expiration, V4PostConditions conditions) {
       return new V4PostPolicyDocument(expiration, conditions);
     }
+
     public String toJsonObject() {
       JsonObject object = new JsonObject();
       JsonArray conditions = new JsonArray();
-      for(V4Condition condition: this.conditions.conditions) {
-        switch(condition.type) {
+      for (V4Condition condition : this.conditions.conditions) {
+        switch (condition.type) {
           case MATCHES:
             JsonObject match = new JsonObject();
             match.addProperty(condition.element, condition.value);
@@ -1430,7 +1686,14 @@ public interface Storage extends Service<StorageOptions> {
     @Override
     public boolean equals(Object other) {
       V4Condition condition = (V4Condition) other;
-      return this.type == condition.type && this.element.equals(condition.element) && this.value.equals(condition.value);
+      return this.type == condition.type
+          && this.element.equals(condition.element)
+          && this.value.equals(condition.value);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(type, element, value);
     }
   }
 
@@ -2666,7 +2929,7 @@ public interface Storage extends Service<StorageOptions> {
    * }</pre>
    *
    * <p>Example of creating a signed URL passing the {@link
-   * SignUrlOption#signWith(ServiceAccountSigner)} option, that will be used for signing the URL.
+   * SignUrlOption#signWith(ServiceAccountSigner)} option, that will be used for signing the URL:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
@@ -2680,6 +2943,19 @@ public interface Storage extends Service<StorageOptions> {
    *
    * <p>Note that the {@link ServiceAccountSigner} may require additional configuration to enable
    * URL signing. See the documentation for the implementation for more details.
+   *
+   * <p>Example of creating a signed URL for a blob with generation:
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * long generation = 1576656755290328L;
+   *
+   * URL signedUrl = storage.signUrl(
+   *     BlobInfo.newBuilder(bucketName, blobName, generation).build(),
+   *     7, TimeUnit.DAYS,
+   *     SignUrlOption.withQueryParams(ImmutableMap.of("generation", String.valueOf(generation))));
+   * }</pre>
    *
    * @param blobInfo the blob associated with the signed URL
    * @param duration time until the signed URL expires, expressed in {@code unit}. The finest
@@ -2698,7 +2974,12 @@ public interface Storage extends Service<StorageOptions> {
    */
   URL signUrl(BlobInfo blobInfo, long duration, TimeUnit unit, SignUrlOption... options);
 
-  V4PostPolicy generateV4PresignedPostPolicy(Bucket bucket, BlobInfo blobInfo, V4PostFields fields, V4PostConditions conditions, long duration);
+  V4PostPolicy generateV4PresignedPostPolicy(
+      BlobInfo blobInfo,
+      V4PostFields fields,
+      V4PostConditions conditions,
+      long duration,
+      V4PostPolicyOption... options);
 
   /**
    * Gets the requested blobs. A batch request is used to perform this call.

@@ -34,7 +34,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.google.api.client.util.Base64;
 import com.google.api.gax.paging.Page;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.ObjectAccessControl;
@@ -77,6 +76,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -737,7 +737,53 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public V4PostPolicy generateV4PresignedPostPolicy(Bucket bucket, BlobInfo blobInfo, V4PostFields fields, V4PostConditions conditions, long duration) {
+  public V4PostPolicy generateV4PresignedPostPolicy(
+      BlobInfo blobInfo,
+      V4PostFields fields,
+      V4PostConditions conditions,
+      long duration,
+      V4PostPolicyOption... options) {
+    EnumMap<SignUrlOption.Option, Object> optionMap = Maps.newEnumMap(SignUrlOption.Option.class);
+    // Convert to a map of SignUrlOptions so we can re-use some utility methods
+    for (V4PostPolicyOption option : options) {
+      optionMap.put(SignUrlOption.Option.valueOf(option.getOption().name()), option.getValue());
+    }
+
+    optionMap.put(SignUrlOption.Option.SIGNATURE_VERSION, SignUrlOption.SignatureVersion.V4);
+
+    ServiceAccountSigner credentials =
+        (ServiceAccountSigner) optionMap.get(SignUrlOption.Option.SERVICE_ACCOUNT_CRED);
+    if (credentials == null) {
+      checkState(
+          this.getOptions().getCredentials() instanceof ServiceAccountSigner,
+          "Signing key was not provided and could not be derived");
+      credentials = (ServiceAccountSigner) this.getOptions().getCredentials();
+    }
+
+    checkArgument(
+        !(optionMap.containsKey(SignUrlOption.Option.VIRTUAL_HOSTED_STYLE)
+            && optionMap.containsKey(SignUrlOption.Option.PATH_STYLE)
+            && optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)),
+        "Only one of VIRTUAL_HOSTED_STYLE, PATH_STYLE, or BUCKET_BOUND_HOST_NAME SignUrlOptions can be"
+            + " specified.");
+
+    String bucketName = slashlessBucketNameFromBlobInfo(blobInfo);
+
+    boolean usePathStyle = shouldUsePathStyleForSignedUrl(optionMap);
+
+    String url =
+        usePathStyle
+            ? STORAGE_XML_URI_SCHEME + "://" + STORAGE_XML_URI_HOST_NAME + "/" + bucketName + "/"
+            : STORAGE_XML_URI_SCHEME + "://" + bucketName + "." + STORAGE_XML_URI_HOST_NAME + "/";
+    String escapedBlobName = "";
+    if (!Strings.isNullOrEmpty(blobInfo.getName())) {
+      escapedBlobName = Rfc3986UriEncode(blobInfo.getName(), false);
+    }
+
+    if (optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
+      url = optionMap.get(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME) + "/";
+    }
+
     SimpleDateFormat googDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
     SimpleDateFormat yearMonthDayFormat = new SimpleDateFormat("yyyyMMdd");
     SimpleDateFormat expirationFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -745,20 +791,67 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     yearMonthDayFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
     expirationFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-    ServiceAccountSigner credentials = (ServiceAccountSigner) this.getOptions().getCredentials();
-
     long timestamp = getOptions().getClock().millisTime();
+    String date = googDateFormat.format(timestamp);
+    String signingCredential =
+        credentials.getAccount()
+            + "/"
+            + yearMonthDayFormat.format(timestamp)
+            + "/auto/storage/goog4_request";
 
-    V4PostConditions v4Conditions = conditions.toBuilder()
-            .addKeyCondition(V4ConditionType.MATCHES, blobInfo.getName())
-            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-date", googDateFormat.format(timestamp))
-    .addCustomCondition(V4ConditionType.MATCHES, "x-goog-credential", credentials.getAccount() + "/" + yearMonthDayFormat.format(timestamp) + "/auto/storage/goog4_request")
-    .addCustomCondition(V4ConditionType.MATCHES, "x-goog-algorithm", "GOOG4-RSA-SHA256")
+    Map<String, String> policyFields = new HashMap<>();
+
+    V4PostConditions.Builder conditionsBuilder = conditions.toBuilder();
+
+    for (Map.Entry<String, String> entry : fields.getFieldsMap().entrySet()) {
+      // Every field needs a corresponding policy condition, so add them if they're missing
+      conditionsBuilder.addCustomCondition(
+          V4ConditionType.MATCHES, entry.getKey(), entry.getValue());
+
+      policyFields.put(entry.getKey(), entry.getValue());
+    }
+
+    V4PostConditions v4Conditions =
+        conditionsBuilder
+            .addKeyCondition(V4ConditionType.MATCHES, escapedBlobName)
+            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-date", date)
+            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-credential", signingCredential)
+            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-algorithm", "GOOG4-RSA-SHA256")
             .build();
-    V4PostPolicyDocument document = V4PostPolicyDocument.of(expirationFormat.format(timestamp + TimeUnit.MILLISECONDS.convert(duration, TimeUnit.SECONDS)), v4Conditions);
-    System.out.println(document.toJsonObject());
-    System.out.println(Base64.encodeBase64String(document.toJsonObject().getBytes()));
-    return null;
+    V4PostPolicyDocument document =
+        V4PostPolicyDocument.of(
+            expirationFormat.format(
+                timestamp + TimeUnit.MILLISECONDS.convert(duration, TimeUnit.SECONDS)),
+            v4Conditions);
+    String policy = BaseEncoding.base64().encode(document.toJsonObject().getBytes());
+    String signature =
+        BaseEncoding.base16().encode(credentials.sign(policy.getBytes())).toLowerCase();
+
+    for (V4Condition condition : v4Conditions.getConditions()) {
+      if (condition.type == V4ConditionType.MATCHES) {
+        policyFields.put(condition.element, condition.value);
+      }
+    }
+    policyFields.put("key", escapedBlobName);
+    policyFields.put("x-goog-credential", signingCredential);
+    policyFields.put("x-goog-algorithm", "GOOG4-RSA-SHA256");
+    policyFields.put("x-goog-date", date);
+    policyFields.put("x-goog-signature", signature);
+    policyFields.put("policy", policy);
+
+    return V4PostPolicy.of(url, policyFields);
+  }
+
+  public V4PostPolicy generateV4PresignedPostPolicy(
+      BlobInfo blobInfo, V4PostFields fields, long duration, V4PostPolicyOption... options) {
+    return generateV4PresignedPostPolicy(
+        blobInfo, fields, V4PostConditions.newBuilder().build(), duration, options);
+  }
+
+  public V4PostPolicy generateV4PresignedPostPolicy(
+      BlobInfo blobInfo, long duration, V4PostPolicyOption... options) {
+    return generateV4PresignedPostPolicy(
+        blobInfo, V4PostFields.newBuilder().build(), duration, options);
   }
 
   private String constructResourceUriPath(
@@ -1622,9 +1715,11 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       Object prev = temp.put(option.getRpcOption(), option.getValue());
       checkArgument(prev == null, "Duplicate option %s", option);
     }
-    Boolean value = (Boolean) temp.remove(DELIMITER);
-    if (Boolean.TRUE.equals(value)) {
+    if (Boolean.TRUE.equals(temp.get(DELIMITER))) {
+      temp.remove(DELIMITER);
       temp.put(DELIMITER, PATH_DELIMITER);
+    } else if (null != temp.get(DELIMITER)) {
+      temp.put(DELIMITER, temp.get(DELIMITER));
     }
     if (useAsSource) {
       addToOptionMap(IF_GENERATION_MATCH, IF_SOURCE_GENERATION_MATCH, generation, temp);
