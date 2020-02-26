@@ -2331,7 +2331,7 @@ public class ITStorageTest {
   public void testBucketPolicy() {
     testBucketPolicyRequesterPays(true);
     testBucketPolicyRequesterPays(false);
-    // testBucketPolicyV3RequesterPays(true);
+    testBucketPolicyV3RequesterPays(true);
     testBucketPolicyV3RequesterPays(false);
   }
 
@@ -2501,7 +2501,7 @@ public class ITStorageTest {
 
     // Remove a member
     List<com.google.cloud.Binding> updatedBindings = new ArrayList(updatedPolicy.getBindingsList());
-    for (int i = 0; i < updatedBindings.size(); ++i) {
+    for (int i = 0; i < updatedBindings.size(); i++) {
       com.google.cloud.Binding binding = updatedBindings.get(i);
       if (binding.getRole().equals(StorageRoles.legacyObjectReader().toString())) {
         List<String> members = new ArrayList(binding.getMembers());

@@ -64,7 +64,7 @@ class PolicyHelper {
       Bindings apiBinding = new Bindings();
       apiBinding.setRole(binding.getRole());
       apiBinding.setMembers(new ArrayList<>(binding.getMembers()));
-      if (null != binding.getCondition()) {
+      if (binding.getCondition() != null) {
         Expr expr = new Expr();
         expr.setTitle(binding.getCondition().getTitle());
         expr.setDescription(binding.getCondition().getDescription());
