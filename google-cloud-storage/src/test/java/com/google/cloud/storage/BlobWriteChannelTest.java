@@ -59,7 +59,7 @@ public class BlobWriteChannelTest {
   private static final BlobInfo BLOB_INFO = BlobInfo.newBuilder(BUCKET_NAME, BLOB_NAME).build();
   private static final Map<StorageRpc.Option, ?> EMPTY_RPC_OPTIONS = ImmutableMap.of();
   private static final int MIN_CHUNK_SIZE = 256 * 1024;
-  private static final int DEFAULT_CHUNK_SIZE = 8 * MIN_CHUNK_SIZE;
+  private static final int DEFAULT_CHUNK_SIZE = 60 * MIN_CHUNK_SIZE; // 15MiB
   private static final int CUSTOM_CHUNK_SIZE = 4 * MIN_CHUNK_SIZE;
   private static final Random RANDOM = new Random();
   private static final String SIGNED_URL =
