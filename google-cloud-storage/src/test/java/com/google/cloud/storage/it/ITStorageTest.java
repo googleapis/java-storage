@@ -2343,28 +2343,16 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketPolicy() {
-    testBucketPolicyRequesterPays(true);
-    testBucketPolicyRequesterPays(false);
-    testBucketPolicyV3RequesterPays(true);
-    testBucketPolicyV3RequesterPays(false);
-  }
-
-  private void testBucketPolicyRequesterPays(boolean requesterPays) {
-    if (requesterPays) {
-      Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
-      assertNull(remoteBucket.requesterPays());
-      remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-      Bucket updatedBucket = storage.update(remoteBucket);
-      assertTrue(updatedBucket.requesterPays());
-    }
+  public void testBucketPolicyV1RequesterPays() {
+    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
+    assertNull(remoteBucket.requesterPays());
+    remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
+    Bucket updatedBucket = storage.update(remoteBucket);
+    assertTrue(updatedBucket.requesterPays());
 
     String projectId = remoteStorageHelper.getOptions().getProjectId();
 
-    Storage.BucketSourceOption[] bucketOptions =
-        requesterPays
-            ? new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)}
-            : new Storage.BucketSourceOption[] {};
+    Storage.BucketSourceOption[] bucketOptions = new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
     Identity projectOwner = Identity.projectOwner(projectId);
     Identity projectEditor = Identity.projectEditor(projectId);
     Identity projectViewer = Identity.projectViewer(projectId);
@@ -2417,14 +2405,65 @@ public class ITStorageTest {
             bucketOptions));
   }
 
-  private void testBucketPolicyV3RequesterPays(boolean requesterPays) {
-    if (requesterPays) {
-      Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
-      assertNull(remoteBucket.requesterPays());
-      remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-      Bucket updatedBucket = storage.update(remoteBucket);
-      assertTrue(updatedBucket.requesterPays());
-    }
+  @Test
+  public void testBucketPolicyV1() {
+    String projectId = remoteStorageHelper.getOptions().getProjectId();
+
+    Storage.BucketSourceOption[] bucketOptions = new Storage.BucketSourceOption[] {};
+    Identity projectOwner = Identity.projectOwner(projectId);
+    Identity projectEditor = Identity.projectEditor(projectId);
+    Identity projectViewer = Identity.projectViewer(projectId);
+    Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
+            ImmutableMap.of(
+                    StorageRoles.legacyBucketOwner(),
+                    new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+                    StorageRoles.legacyBucketReader(),
+                    (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
+    Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
+            ImmutableMap.of(
+                    StorageRoles.legacyBucketOwner(),
+                    new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+                    StorageRoles.legacyBucketReader(),
+                    new HashSet<>(Collections.singleton(projectViewer)),
+                    StorageRoles.legacyObjectReader(),
+                    (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
+
+    // Validate getting policy.
+    Policy currentPolicy = storage.getIamPolicy(BUCKET, bucketOptions);
+    assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
+
+    // Validate updating policy.
+    Policy updatedPolicy =
+            storage.setIamPolicy(
+                    BUCKET,
+                    currentPolicy
+                            .toBuilder()
+                            .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                            .build(),
+                    bucketOptions);
+    assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
+    Policy revertedPolicy =
+            storage.setIamPolicy(
+                    BUCKET,
+                    updatedPolicy
+                            .toBuilder()
+                            .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                            .build(),
+                    bucketOptions);
+    assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
+
+    // Validate testing permissions.
+    List<Boolean> expectedPermissions = ImmutableList.of(true, true);
+    assertEquals(
+            expectedPermissions,
+            storage.testIamPermissions(
+                    BUCKET,
+                    ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
+                    bucketOptions));
+  }
+
+  @Test
+  public void testBucketPolicyV3() {
     // Enable Uniform Bucket-Level Access
     storage.update(
         BucketInfo.newBuilder(BUCKET)
@@ -2435,13 +2474,7 @@ public class ITStorageTest {
             .build());
     String projectId = remoteStorageHelper.getOptions().getProjectId();
 
-    Storage.BucketSourceOption[] bucketOptions =
-        requesterPays
-            ? new Storage.BucketSourceOption[] {
-              Storage.BucketSourceOption.requestedPolicyVersion(3),
-              Storage.BucketSourceOption.userProject(projectId)
-            }
-            : new Storage.BucketSourceOption[] {
+    Storage.BucketSourceOption[] bucketOptions = new Storage.BucketSourceOption[] {
               Storage.BucketSourceOption.requestedPolicyVersion(3)
             };
     Identity projectOwner = Identity.projectOwner(projectId);
@@ -2526,7 +2559,6 @@ public class ITStorageTest {
       }
     }
 
-    updatedPolicy.toBuilder().setBindings(updatedBindings);
     Policy revertedPolicy =
         storage.setIamPolicy(
             BUCKET, updatedPolicy.toBuilder().setBindings(updatedBindings).build(), bucketOptions);
@@ -2554,8 +2586,7 @@ public class ITStorageTest {
             .build());
     Policy conditionalPolicy =
         storage.setIamPolicy(
-            BUCKET,
-            currentPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
+            BUCKET, revertedPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
             bucketOptions);
     assertTrue(
         bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size()
