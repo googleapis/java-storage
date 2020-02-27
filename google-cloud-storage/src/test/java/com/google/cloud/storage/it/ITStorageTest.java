@@ -2352,7 +2352,8 @@ public class ITStorageTest {
 
     String projectId = remoteStorageHelper.getOptions().getProjectId();
 
-    Storage.BucketSourceOption[] bucketOptions = new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
+    Storage.BucketSourceOption[] bucketOptions =
+        new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
     Identity projectOwner = Identity.projectOwner(projectId);
     Identity projectEditor = Identity.projectEditor(projectId);
     Identity projectViewer = Identity.projectViewer(projectId);
@@ -2414,19 +2415,19 @@ public class ITStorageTest {
     Identity projectEditor = Identity.projectEditor(projectId);
     Identity projectViewer = Identity.projectViewer(projectId);
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
-            ImmutableMap.of(
-                    StorageRoles.legacyBucketOwner(),
-                    new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-                    StorageRoles.legacyBucketReader(),
-                    (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
+        ImmutableMap.of(
+            StorageRoles.legacyBucketOwner(),
+            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            StorageRoles.legacyBucketReader(),
+            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
-            ImmutableMap.of(
-                    StorageRoles.legacyBucketOwner(),
-                    new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-                    StorageRoles.legacyBucketReader(),
-                    new HashSet<>(Collections.singleton(projectViewer)),
-                    StorageRoles.legacyObjectReader(),
-                    (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
+        ImmutableMap.of(
+            StorageRoles.legacyBucketOwner(),
+            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            StorageRoles.legacyBucketReader(),
+            new HashSet<>(Collections.singleton(projectViewer)),
+            StorageRoles.legacyObjectReader(),
+            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
 
     // Validate getting policy.
     Policy currentPolicy = storage.getIamPolicy(BUCKET, bucketOptions);
@@ -2434,32 +2435,32 @@ public class ITStorageTest {
 
     // Validate updating policy.
     Policy updatedPolicy =
-            storage.setIamPolicy(
-                    BUCKET,
-                    currentPolicy
-                            .toBuilder()
-                            .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                            .build(),
-                    bucketOptions);
+        storage.setIamPolicy(
+            BUCKET,
+            currentPolicy
+                .toBuilder()
+                .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                .build(),
+            bucketOptions);
     assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
     Policy revertedPolicy =
-            storage.setIamPolicy(
-                    BUCKET,
-                    updatedPolicy
-                            .toBuilder()
-                            .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                            .build(),
-                    bucketOptions);
+        storage.setIamPolicy(
+            BUCKET,
+            updatedPolicy
+                .toBuilder()
+                .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                .build(),
+            bucketOptions);
     assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
 
     // Validate testing permissions.
     List<Boolean> expectedPermissions = ImmutableList.of(true, true);
     assertEquals(
-            expectedPermissions,
-            storage.testIamPermissions(
-                    BUCKET,
-                    ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-                    bucketOptions));
+        expectedPermissions,
+        storage.testIamPermissions(
+            BUCKET,
+            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
+            bucketOptions));
   }
 
   @Test
@@ -2474,9 +2475,8 @@ public class ITStorageTest {
             .build());
     String projectId = remoteStorageHelper.getOptions().getProjectId();
 
-    Storage.BucketSourceOption[] bucketOptions = new Storage.BucketSourceOption[] {
-              Storage.BucketSourceOption.requestedPolicyVersion(3)
-            };
+    Storage.BucketSourceOption[] bucketOptions =
+        new Storage.BucketSourceOption[] {Storage.BucketSourceOption.requestedPolicyVersion(3)};
     Identity projectOwner = Identity.projectOwner(projectId);
     Identity projectEditor = Identity.projectEditor(projectId);
     Identity projectViewer = Identity.projectViewer(projectId);
@@ -2586,7 +2586,8 @@ public class ITStorageTest {
             .build());
     Policy conditionalPolicy =
         storage.setIamPolicy(
-            BUCKET, revertedPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
+            BUCKET,
+            revertedPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
             bucketOptions);
     assertTrue(
         bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size()
