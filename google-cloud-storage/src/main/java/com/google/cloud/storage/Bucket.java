@@ -1117,7 +1117,7 @@ public class Bucket extends BucketInfo {
   /**
    * Delete the lifecycle rules of this bucket.
    *
-   * <p>Example of delete the lifecycle rules of this bucket.
+   * <p>Example of deleting the lifecycle rules of this bucket.
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";

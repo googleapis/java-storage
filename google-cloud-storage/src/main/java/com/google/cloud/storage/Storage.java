@@ -3078,7 +3078,7 @@ public interface Storage extends Service<StorageOptions> {
   /**
    * Delete the lifecycle rules of the requested bucket.
    *
-   * <p>Example of delete the lifecycle rules of the requested bucket.
+   * <p>Example of deleting the lifecycle rules of the requested bucket.
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
