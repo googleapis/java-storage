@@ -39,10 +39,8 @@ class PolicyHelper {
       for (Bindings binding : bindings) {
         Binding.Builder bindingBuilder = Binding.newBuilder();
         bindingBuilder.setRole(binding.getRole());
-        for (String member : binding.getMembers()) {
-          bindingBuilder.addMembers(member);
-        }
-        if (null != binding.getCondition()) {
+        bindingBuilder.setMembers(binding.getMembers());
+        if (binding.getCondition() != null) {
           Condition.Builder conditionBuilder = Condition.newBuilder();
           conditionBuilder.setTitle(binding.getCondition().getTitle());
           conditionBuilder.setDescription(binding.getCondition().getDescription());
