@@ -2593,6 +2593,13 @@ public class ITStorageTest {
         bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size()
             && bindingsWithConditionalPolicy.containsAll(conditionalPolicy.getBindingsList()));
 
+    // Remove Conditional Policy
+    conditionalPolicy =
+            storage.setIamPolicy(
+                    BUCKET,
+                    conditionalPolicy.toBuilder().setBindings(updatedBindings).setVersion(3).build(),
+                    bucketOptions);
+
     // Validate testing permissions.
     List<Boolean> expectedPermissions = ImmutableList.of(true, true);
     assertEquals(
@@ -2601,6 +2608,15 @@ public class ITStorageTest {
             BUCKET,
             ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
             bucketOptions));
+
+    // Disable Uniform Bucket-Level Access
+    storage.update(
+            BucketInfo.newBuilder(BUCKET)
+                    .setIamConfiguration(
+                            BucketInfo.IamConfiguration.newBuilder()
+                                    .setIsUniformBucketLevelAccessEnabled(false)
+                                    .build())
+                    .build());
   }
 
   @Test
