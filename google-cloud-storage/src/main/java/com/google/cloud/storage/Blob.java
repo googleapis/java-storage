@@ -38,9 +38,11 @@ import com.google.common.base.Function;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Key;
@@ -73,7 +75,7 @@ public class Blob extends BlobInfo {
         }
       };
 
-  private static final int DEFAULT_CHUNK_SIZE = 2 * 1024 * 1024;
+  private static final int DEFAULT_CHUNK_SIZE = 15 * 1024 * 1024;
 
   /** Class for specifying blob source options when {@code Blob} methods are used. */
   public static class BlobSourceOption extends Option {
@@ -258,6 +260,84 @@ public class Blob extends BlobInfo {
    */
   public void downloadTo(Path path) {
     downloadTo(path, new BlobSourceOption[0]);
+  }
+
+  /**
+   * Uploads the given file path to this blob using specified blob write options.
+   *
+   * @param path file to be uploaded
+   * @param options blob write options
+   * @return updated blob
+   * @throws StorageException upon failure
+   */
+  public Blob uploadFrom(Path path, BlobWriteOption... options) {
+    if (!Files.exists(path)) {
+      throw new StorageException(0, path + ": No such file");
+    }
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + ": Is a directory");
+    }
+    try (InputStream input = Files.newInputStream(path)) {
+      return uploadFrom(input, options);
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
+  }
+
+  /**
+   * Uploads the given content to this blob using specified blob write options.
+   *
+   * @param input content to be uploaded
+   * @param options blob write options
+   * @return updated blob
+   * @throws StorageException upon failure
+   */
+  public Blob uploadFrom(InputStream input, BlobWriteOption... options) {
+    try (WriteChannel writer = storage.writer(this, options)) {
+      upload(input, writer);
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
+    BlobId blobId = getBlobId();
+    return storage.get(BlobId.of(blobId.getBucket(), blobId.getName()));
+  }
+
+  static void upload(InputStream input, WriteChannel writer) {
+    upload(input, writer, DEFAULT_CHUNK_SIZE);
+  }
+
+  /**
+   * Uploads the given content to the storage using specified write channel and the given
+   * buffer size. The default buffer size is 15 MB. Larger buffer sizes may improve the upload
+   * performance but require more memory. It could cause OutOfMemoryError or add significant garbage
+   * collection overhead. Buffer sizes which are less than 256 KB are not allowed, they will be
+   * treated as 256 KB.
+   *
+   * <p>Note that this method does not close neither InputStream nor WriterChannel</p>
+   *
+   * <p>Example of uploading:
+   *
+   * <pre>{@code
+   * Path file = Paths.get("humongous.file");
+   * try (InputStream input = Files.newInputStream(file); WriteChannel writer = storage.writer(blobInfo)) {
+   *     Blob.upload(input, writer, 150 * 1024 * 1024);
+   * }
+   *
+   * @param input content to be uploaded
+   * @param writer channel
+   * @param bufferSize size of the buffer to read from input and send over writer
+   */
+  public static void upload(InputStream input, WriteChannel writer, int bufferSize) {
+    bufferSize = Math.max(bufferSize, 262144);
+    try {
+      byte[] buffer = new byte[bufferSize];
+      int length;
+      while ((length = input.read(buffer)) >= 0) {
+        writer.write(ByteBuffer.wrap(buffer, 0, length));
+      }
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
   }
 
   /** Builder for {@code Blob}. */
