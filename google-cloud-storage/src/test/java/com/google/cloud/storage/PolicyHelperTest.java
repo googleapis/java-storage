@@ -41,6 +41,7 @@ public class PolicyHelperTest {
                 Identity.user("test1@gmail.com"),
                 Identity.user("test2@gmail.com"))
             .setEtag(ETAG)
+            .setVersion(1)
             .build();
     com.google.api.services.storage.model.Policy apiPolicy =
         new com.google.api.services.storage.model.Policy()
@@ -53,7 +54,8 @@ public class PolicyHelperTest {
                         .setMembers(
                             ImmutableList.of("user:test1@gmail.com", "user:test2@gmail.com"))
                         .setRole("roles/storage.objectAdmin")))
-            .setEtag(ETAG);
+            .setEtag(ETAG)
+            .setVersion(1);
 
     Policy actualLibPolicy = PolicyHelper.convertFromApiPolicy(apiPolicy);
     com.google.api.services.storage.model.Policy actualApiPolicy =
