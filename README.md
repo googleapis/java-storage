@@ -42,6 +42,11 @@ If you are using Maven without Bom, Add this to your dependencies.
 ```
 If you are using Gradle, add this to your dependencies
 ```Groovy
+repositories {
+        google() //this is required from version 1.104 onwards
+        //other repositories
+        }
+
 compile 'com.google.cloud:google-cloud-storage:1.105.0'
 ```
 If you are using SBT, add this to your dependencies
