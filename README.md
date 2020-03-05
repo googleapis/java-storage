@@ -44,6 +44,7 @@ If you are using Gradle, add this to your dependencies
 ```Groovy
 repositories {
         google()
+	 central()
         //other repositories
         }
 
