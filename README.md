@@ -43,7 +43,7 @@ If you are using Maven without Bom, Add this to your dependencies.
 If you are using Gradle, add this to your dependencies
 ```Groovy
 repositories {
-        google() //this is required from version 1.104 onwards
+        google()
         //other repositories
         }
 
