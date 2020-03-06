@@ -129,6 +129,7 @@ class BlobReadChannel implements ReadChannel {
                       return storageRpc.read(storageObject, requestOptions, position, toRead);
                     } catch(Exception e) {
                       if (e.getMessage().contains("Connection closed prematurely")) {
+                        // Temporary way to stop failure in the testbench
                         storageObject.setContentType("stop-failure");
                         throw new StorageException(500, e.getMessage());
                       } else {
