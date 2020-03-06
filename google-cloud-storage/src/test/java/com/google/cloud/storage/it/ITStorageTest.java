@@ -2961,15 +2961,14 @@ public class ITStorageTest {
     BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
 
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
-    Files.write(tempFileFrom, BLOB_STRING_CONTENT.getBytes(UTF_8));
+    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
     Blob blob = storage.create(blobInfo);
     blob = blob.uploadFrom(tempFileFrom);
 
     Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
     blob.downloadTo(tempFileTo);
     byte[] readBytes = Files.readAllBytes(tempFileTo);
-    String readString = new String(readBytes, UTF_8);
-    assertEquals(BLOB_STRING_CONTENT, readString);
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 
   @Test
@@ -2978,7 +2977,7 @@ public class ITStorageTest {
     BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
 
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
-    Files.write(tempFileFrom, BLOB_STRING_CONTENT.getBytes(UTF_8));
+    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
     Blob blob = storage.create(blobInfo);
     blob = blob.uploadFrom(tempFileFrom, Storage.BlobWriteOption.encryptionKey(KEY));
 
@@ -2993,7 +2992,6 @@ public class ITStorageTest {
     }
     blob.downloadTo(tempFileTo, Blob.BlobSourceOption.decryptionKey(KEY));
     byte[] readBytes = Files.readAllBytes(tempFileTo);
-    String readString = new String(readBytes, UTF_8);
-    assertEquals(BLOB_STRING_CONTENT, readString);
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 }
