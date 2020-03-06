@@ -76,6 +76,7 @@ public class Blob extends BlobInfo {
       };
 
   private static final int DEFAULT_CHUNK_SIZE = 15 * 1024 * 1024;
+  private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
   /** Class for specifying blob source options when {@code Blob} methods are used. */
   public static class BlobSourceOption extends Option {
@@ -308,12 +309,12 @@ public class Blob extends BlobInfo {
 
   /**
    * Uploads the given content to the storage using specified write channel and the given
-   * buffer size. The default buffer size is 15 MB. Larger buffer sizes may improve the upload
+   * buffer size. The default buffer size is 15 MiB. Larger buffer sizes may improve the upload
    * performance but require more memory. It could cause OutOfMemoryError or add significant garbage
-   * collection overhead. Buffer sizes which are less than 256 KB are not allowed, they will be
-   * treated as 256 KB.
+   * collection overhead. Buffer sizes which are less than 256 KiB are not allowed, they will be
+   * treated as 256 KiB.
    *
-   * <p>Note that this method does not close neither InputStream nor WriterChannel</p>
+   * <p>This method does not close either InputStream or WriterChannel</p>
    *
    * <p>Example of uploading:
    *
@@ -328,7 +329,7 @@ public class Blob extends BlobInfo {
    * @param bufferSize size of the buffer to read from input and send over writer
    */
   public static void upload(InputStream input, WriteChannel writer, int bufferSize) {
-    bufferSize = Math.max(bufferSize, 262144);
+    bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
     try {
       byte[] buffer = new byte[bufferSize];
       int length;

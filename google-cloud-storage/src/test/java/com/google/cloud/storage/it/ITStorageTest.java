@@ -39,6 +39,7 @@ import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
+import com.google.cloud.RetryHelper;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.http.HttpTransportOptions;
@@ -2946,9 +2947,8 @@ public class ITStorageTest {
   public void testUpload() throws Exception {
     String blobName = "test-upload-static";
     BlobId blobId = BlobId.of(BUCKET, blobName);
-    byte stringBytes[] = BLOB_STRING_CONTENT.getBytes(UTF_8);
     try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
-      Blob.upload(new ByteArrayInputStream(stringBytes), writer, 1);
+      Blob.upload(new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8)), writer, 1);
     }
     Blob blob = storage.get(blobId);
     String readString = new String(blob.getContent(), UTF_8);
@@ -2960,9 +2960,8 @@ public class ITStorageTest {
     String blobName = "test-uploadFrom-downloadTo-blob";
     BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
 
-    byte stringBytes[] = BLOB_STRING_CONTENT.getBytes(UTF_8);
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
-    Files.write(tempFileFrom, stringBytes);
+    Files.write(tempFileFrom, BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob blob = storage.create(blobInfo);
     blob = blob.uploadFrom(tempFileFrom);
 
@@ -2978,16 +2977,15 @@ public class ITStorageTest {
     String blobName = "test-uploadFrom-downloadTo-withEncryption-blob";
     BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
 
-    byte stringBytes[] = BLOB_STRING_CONTENT.getBytes(UTF_8);
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
-    Files.write(tempFileFrom, stringBytes);
+    Files.write(tempFileFrom, BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob blob = storage.create(blobInfo);
     blob = blob.uploadFrom(tempFileFrom, Storage.BlobWriteOption.encryptionKey(KEY));
 
     Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
     try {
       blob.downloadTo(tempFileTo);
-    } catch (Exception e) {
+    } catch (RetryHelper.RetryHelperException e) {
       // Expected to be StorageException
       String expectedMessage =
           "The target object is encrypted by a customer-supplied encryption key.";

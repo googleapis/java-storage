@@ -706,17 +706,21 @@ public class BlobTest {
     return channel;
   }
 
-  @Test
-  public void testUploadFromFile() throws Exception {
-    final byte[] dataToSend = {1, 2, 3};
-    WriteChannel channel = createWriteChannelMock(dataToSend);
+  private Blob createBlobForUpload(WriteChannel channel) {
     initializeExpectedBlob(1);
     BlobId blobId = BlobId.of(BLOB_INFO.getBucket(), BLOB_INFO.getName());
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.writer(eq(expectedBlob))).andReturn(channel);
     expect(storage.get(blobId)).andReturn(expectedBlob);
     replay(storage);
-    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    return new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+  }
+
+  @Test
+  public void testUploadFromFile() throws Exception {
+    byte[] dataToSend = {1, 2, 3};
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    blob = createBlobForUpload(channel);
     Path tempFile = Files.createTempFile("testUpload", ".tmp");
     Files.write(tempFile, dataToSend);
     blob = blob.uploadFrom(tempFile);
@@ -725,15 +729,9 @@ public class BlobTest {
 
   @Test
   public void testUploadFromStream() throws Exception {
-    final byte[] dataToSend = {1, 2, 3, 4, 5};
+    byte[] dataToSend = {1, 2, 3, 4, 5};
     WriteChannel channel = createWriteChannelMock(dataToSend);
-    initializeExpectedBlob(1);
-    BlobId blobId = BlobId.of(BLOB_INFO.getBucket(), BLOB_INFO.getName());
-    expect(storage.getOptions()).andReturn(mockOptions);
-    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
-    expect(storage.get(blobId)).andReturn(expectedBlob);
-    replay(storage);
-    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    blob = createBlobForUpload(channel);
     InputStream input = new ByteArrayInputStream(dataToSend);
     blob = blob.uploadFrom(input);
     assertSame(expectedBlob, blob);
@@ -742,7 +740,7 @@ public class BlobTest {
   @Test
   public void testUpload() throws Exception {
     replay(storage);
-    final byte[] dataToSend = {1, 2, 3, 4, 5};
+    byte[] dataToSend = {1, 2, 3, 4, 5};
     WriteChannel channel = createWriteChannelMock(dataToSend);
     InputStream input = new ByteArrayInputStream(dataToSend);
     Blob.upload(input, channel);
@@ -751,7 +749,7 @@ public class BlobTest {
   @Test
   public void testUploadSmallBufferSize() throws Exception {
     replay(storage);
-    final byte[] dataToSend = new byte[100_000];
+    byte[] dataToSend = new byte[100_000];
     WriteChannel channel = createWriteChannelMock(dataToSend);
     InputStream input = new ByteArrayInputStream(dataToSend);
     Blob.upload(input, channel, 100);
@@ -760,19 +758,19 @@ public class BlobTest {
   @Test
   public void testUploadMultiplePortions() throws Exception {
     replay(storage);
-    final int TOTAL_SIZE = 400_000;
-    final int BUFFER_SIZE = 300_000;
-    final byte[] dataToSend = new byte[TOTAL_SIZE];
+    int totalSize = 400_000;
+    int bufferSize = 300_000;
+    byte[] dataToSend = new byte[totalSize];
     dataToSend[0] = 42;
-    dataToSend[BUFFER_SIZE] = 43;
+    dataToSend[bufferSize] = 43;
 
     WriteChannel channel = createMock(WriteChannel.class);
-    expect(channel.write(ByteBuffer.wrap(dataToSend, 0, BUFFER_SIZE))).andReturn(BUFFER_SIZE);
-    expect(channel.write(ByteBuffer.wrap(dataToSend, BUFFER_SIZE, TOTAL_SIZE - BUFFER_SIZE)))
-        .andReturn(BUFFER_SIZE - BUFFER_SIZE);
+    expect(channel.write(ByteBuffer.wrap(dataToSend, 0, bufferSize))).andReturn(bufferSize);
+    expect(channel.write(ByteBuffer.wrap(dataToSend, bufferSize, totalSize - bufferSize)))
+        .andReturn(bufferSize - bufferSize);
     channel.close();
     replay(channel);
     InputStream input = new ByteArrayInputStream(dataToSend);
-    Blob.upload(input, channel, BUFFER_SIZE);
+    Blob.upload(input, channel, bufferSize);
   }
 }
