@@ -43,7 +43,7 @@ public final class StorageException extends BaseHttpServiceException {
           new Error(500, null),
           new Error(429, null),
           new Error(408, null),
-          new Error(null, "internalError"));
+          new Error(null, "internalError"), new Error(null, "Connection closed prematurely: bytesRead = 1114112, Content-Length = 10485760"));
 
   private static final long serialVersionUID = -4168430271327813063L;
 

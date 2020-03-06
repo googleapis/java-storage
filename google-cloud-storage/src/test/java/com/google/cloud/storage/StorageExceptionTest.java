@@ -19,7 +19,14 @@ package com.google.cloud.storage;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -30,12 +37,46 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import com.google.cloud.BaseServiceException;
+import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class StorageExceptionTest {
+  @Rule
+  public final ExpectedException thrown = ExpectedException.none();
+
+  private final Storage gcsStorage = mock(Storage.class);
+  private final BlobId file = BlobId.of("blob", "attack");
+  private final Blob metadata = mock(Blob.class);
+  private final ReadChannel gcsChannel = mock(ReadChannel.class);
+
+  @Before
+  public void before() throws IOException {
+    when(metadata.getSize()).thenReturn(42L);
+    when(metadata.getGeneration()).thenReturn(2L);
+    Storage.BlobGetOption options = Storage.BlobGetOption.fields(Storage.BlobField.GENERATION, Storage.BlobField.SIZE);
+    List optionsList = Lists.newArrayList(options);
+    when(gcsStorage.get(
+            file, options))
+            .thenReturn(metadata);
+    when(gcsStorage.reader(file, Storage.BlobSourceOption.generationMatch(2L)))
+            .thenReturn(gcsChannel);
+    when(gcsChannel.isOpen()).thenReturn(true);
+    gcsStorage.reader(file);
+    verify(gcsStorage).get(
+                    eq(file),
+                    eq(Storage.BlobGetOption.fields(Storage.BlobField.GENERATION, Storage.BlobField.SIZE)));
+    verify(gcsStorage).reader(eq(file), eq(Storage.BlobSourceOption.generationMatch(2L)));
+  }
 
   @Test
   public void testStorageException() {
@@ -134,6 +175,21 @@ public class StorageExceptionTest {
     assertEquals(408, exception.getCode());
     assertTrue(exception.isRetryable());
   }
+
+  @Test
+  public void testReadRetry() throws IOException {
+    ByteBuffer buffer = ByteBuffer.allocate(1);
+    when(gcsChannel.read(eq(buffer)))
+            .thenThrow(
+                    new StorageException(
+                            new IOException(
+                                    "outer",
+                                    new IOException(
+                                            "Connection closed prematurely: bytesRead = 33554432, Content-Length = 41943040"))))
+            .thenReturn(1);
+    verify(gcsChannel, times(2)).read(any(ByteBuffer.class));
+  }
+
 
   @Test
   public void testTranslateAndThrow() throws Exception {

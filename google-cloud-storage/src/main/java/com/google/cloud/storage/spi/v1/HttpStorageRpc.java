@@ -39,6 +39,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
+import com.google.api.services.storage.StorageRequest;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.Buckets;
@@ -691,6 +692,12 @@ public class HttpStorageRpc implements StorageRpc {
     try {
       checkArgument(position >= 0, "Position should be non-negative, is %d", position);
       Get req = createReadRequest(from, options);
+      HttpHeaders httpHeaders;
+      httpHeaders = req.getRequestHeaders();
+      if (from.getContentType() != "stop-failure") {
+        httpHeaders.set("x-goog-testbench-instructions", "return-broken-stream");
+      }
+      req.setRequestHeaders(httpHeaders);
       StringBuilder range = new StringBuilder();
       range.append("bytes=").append(position).append("-").append(position + bytes - 1);
       HttpHeaders requestHeaders = req.getRequestHeaders();
