@@ -19,7 +19,6 @@ package com.google.cloud.storage;
 import static com.google.cloud.RetryHelper.runWithRetries;
 
 import com.google.api.services.storage.model.StorageObject;
-import com.google.cloud.BaseServiceException;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
@@ -127,7 +126,7 @@ class BlobReadChannel implements ReadChannel {
                   public Tuple<String, byte[]> call() {
                     try {
                       return storageRpc.read(storageObject, requestOptions, position, toRead);
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                       if (e.getMessage().contains("Connection closed prematurely")) {
                         // Temporary way to stop failure in the testbench
                         storageObject.setContentType("stop-failure");

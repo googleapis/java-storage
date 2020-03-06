@@ -96,14 +96,11 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.auth.MoreCallCredentials;
 import io.grpc.stub.MetadataUtils;
-
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
@@ -344,15 +341,22 @@ public class ITStorageTest {
 
   @Test
   public void testFailure() throws IOException {
-    Storage storageClient = StorageOptions.getDefaultInstance().toBuilder().setHost("http://localhost:8080").build().getService();
+    Storage storageClient =
+        StorageOptions.getDefaultInstance()
+            .toBuilder()
+            .setHost("http://localhost:8080")
+            .build()
+            .getService();
 
     String blobName = "test-create-blob";
-    //storageClient.create(BucketInfo.of("test-bucket-frank"));
+    // storageClient.create(BucketInfo.of("test-bucket-frank"));
     BlobInfo blob = BlobInfo.newBuilder("test-bucket", blobName).build();
-    byte[] data = new byte[1024*1024*10];
+    byte[] data = new byte[1024 * 1024 * 10];
     Blob remoteBlob = storageClient.create(blob, data);
 
-    BufferedInputStream bufferedInputStream = new BufferedInputStream(Channels.newInputStream(storageClient.reader("test-bucket", blobName)));
+    BufferedInputStream bufferedInputStream =
+        new BufferedInputStream(
+            Channels.newInputStream(storageClient.reader("test-bucket", blobName)));
     assertNotNull(bufferedInputStream);
     byte buffer[] = new byte[1024 * 1024 * 10];
     while (true) {
@@ -361,7 +365,7 @@ public class ITStorageTest {
       }
     }
 
-    assertArrayEquals(data,buffer);
+    assertArrayEquals(data, buffer);
     assertNotNull(remoteBlob);
   }
 
