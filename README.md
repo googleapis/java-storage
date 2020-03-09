@@ -42,7 +42,13 @@ If you are using Maven without Bom, Add this to your dependencies.
 ```
 If you are using Gradle, add this to your dependencies
 ```Groovy
-compile 'com.google.cloud:google-cloud-storage:1.105.1'
+repositories {
+   google()
+	 central()
+   //other repositories
+}
+
+compile 'com.google.cloud:google-cloud-storage:1.105.0'
 ```
 If you are using SBT, add this to your dependencies
 ```Scala
