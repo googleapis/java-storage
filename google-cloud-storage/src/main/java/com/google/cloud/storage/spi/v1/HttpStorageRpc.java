@@ -689,7 +689,7 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_READ);
     Scope scope = tracer.withSpan(span);
     try {
-      checkArgument(position >= 0, "Position should be non-negative, is %d", position);
+      checkArgument(position >= 0, "Position should be non-negative, is " + position);
       Get req = createReadRequest(from, options);
       StringBuilder range = new StringBuilder();
       range.append("bytes=").append(position).append("-").append(position + bytes - 1);
