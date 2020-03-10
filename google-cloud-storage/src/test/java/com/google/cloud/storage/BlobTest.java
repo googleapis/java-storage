@@ -51,11 +51,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Key;
@@ -678,13 +680,14 @@ public class BlobTest {
     String fileName = "non_existing_file.txt";
     try {
       blob.uploadFrom(Paths.get(fileName));
-    } catch (StorageException e) {
-      assertEquals(fileName + ": No such file", e.getMessage());
+    } catch (IOException e) {
+      assertEquals(NoSuchFileException.class, e.getClass());
+      assertEquals(fileName, e.getMessage());
     }
   }
 
   @Test
-  public void testUploadFromDirectory() throws Exception {
+  public void testUploadFromDirectory() throws IOException {
     initializeExpectedBlob(1);
     expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);

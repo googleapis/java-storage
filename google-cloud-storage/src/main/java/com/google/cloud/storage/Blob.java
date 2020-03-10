@@ -269,19 +269,15 @@ public class Blob extends BlobInfo {
    * @param path file to be uploaded
    * @param options blob write options
    * @return updated blob
-   * @throws StorageException upon failure
+   * @throws IOException on I/O error
+   * @throws StorageException on failure
    */
-  public Blob uploadFrom(Path path, BlobWriteOption... options) {
-    if (!Files.exists(path)) {
-      throw new StorageException(0, path + ": No such file");
-    }
+  public Blob uploadFrom(Path path, BlobWriteOption... options) throws IOException {
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + ": Is a directory");
     }
     try (InputStream input = Files.newInputStream(path)) {
       return uploadFrom(input, options);
-    } catch (IOException e) {
-      throw new StorageException(e);
     }
   }
 
@@ -291,19 +287,18 @@ public class Blob extends BlobInfo {
    * @param input content to be uploaded
    * @param options blob write options
    * @return updated blob
-   * @throws StorageException upon failure
+   * @throws IOException on I/O error
+   * @throws StorageException on failure
    */
-  public Blob uploadFrom(InputStream input, BlobWriteOption... options) {
+  public Blob uploadFrom(InputStream input, BlobWriteOption... options) throws IOException {
     try (WriteChannel writer = storage.writer(this, options)) {
       upload(input, writer);
-    } catch (IOException e) {
-      throw new StorageException(e);
     }
     BlobId blobId = getBlobId();
     return storage.get(BlobId.of(blobId.getBucket(), blobId.getName()));
   }
 
-  static void upload(InputStream input, WriteChannel writer) {
+  static void upload(InputStream input, WriteChannel writer) throws IOException {
     upload(input, writer, DEFAULT_CHUNK_SIZE);
   }
 
@@ -321,23 +316,23 @@ public class Blob extends BlobInfo {
    * <pre>{@code
    * Path file = Paths.get("humongous.file");
    * try (InputStream input = Files.newInputStream(file); WriteChannel writer = storage.writer(blobInfo)) {
-   *     Blob.upload(input, writer, 150 * 1024 * 1024);
+   *   Blob.upload(input, writer, 150 * 1024 * 1024);
+   * } catch (IOException e) {
+   *   // your handler
    * }
    *
    * @param input content to be uploaded
    * @param writer channel
    * @param bufferSize size of the buffer to read from input and send over writer
+   * @throws IOException on I/O error
    */
-  public static void upload(InputStream input, WriteChannel writer, int bufferSize) {
+  public static void upload(InputStream input, WriteChannel writer, int bufferSize)
+      throws IOException {
     bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
-    try {
-      byte[] buffer = new byte[bufferSize];
-      int length;
-      while ((length = input.read(buffer)) >= 0) {
-        writer.write(ByteBuffer.wrap(buffer, 0, length));
-      }
-    } catch (IOException e) {
-      throw new StorageException(e);
+    byte[] buffer = new byte[bufferSize];
+    int length;
+    while ((length = input.read(buffer)) >= 0) {
+      writer.write(ByteBuffer.wrap(buffer, 0, length));
     }
   }
 
