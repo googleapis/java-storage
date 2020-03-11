@@ -292,41 +292,51 @@ public class Blob extends BlobInfo {
    */
   public Blob uploadFrom(InputStream input, BlobWriteOption... options) throws IOException {
     try (WriteChannel writer = storage.writer(this, options)) {
-      upload(input, writer);
+      uploadFrom(input, writer);
     }
     BlobId blobId = getBlobId();
-    return storage.get(BlobId.of(blobId.getBucket(), blobId.getName()));
+    try {
+      return storage.get(BlobId.of(blobId.getBucket(), blobId.getName()));
+    } catch (StorageException e) {
+      throw new StorageException(
+          e.getCode(), "Content has been uploaded successfully. Failed to retrieve blob.", e);
+    }
   }
 
-  static void upload(InputStream input, WriteChannel writer) throws IOException {
-    upload(input, writer, DEFAULT_CHUNK_SIZE);
+  static void uploadFrom(InputStream input, WriteChannel writer) throws IOException {
+    uploadFrom(input, writer, DEFAULT_CHUNK_SIZE);
   }
 
   /**
-   * Uploads the given content to the storage using specified write channel and the given
-   * buffer size. The default buffer size is 15 MiB. Larger buffer sizes may improve the upload
-   * performance but require more memory. It could cause OutOfMemoryError or add significant garbage
-   * collection overhead. Buffer sizes which are less than 256 KiB are not allowed, they will be
-   * treated as 256 KiB.
+   * Uploads the given content to the storage using specified write channel and the given buffer
+   * size. Other uploadFrom() methods invokes this one with the buffer size of 15 MiB, users may
+   * pass alternative values. Larger buffer sizes may improve the upload performance but require
+   * more memory. It could cause OutOfMemoryError or add significant garbage collection overhead.
+   * Smaller buffer sizes will reduce memory consumption, that will be noticeably in case of
+   * parallel uploads of many objects. Buffer sizes which are less than 256 KiB are not allowed,
+   * they will be treated as 256 KiB.
    *
-   * <p>This method does not close either InputStream or WriterChannel</p>
+   * <p>This method does not close either InputStream or WriterChannel
    *
    * <p>Example of uploading:
    *
    * <pre>{@code
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("video/webm").build();
    * Path file = Paths.get("humongous.file");
    * try (InputStream input = Files.newInputStream(file); WriteChannel writer = storage.writer(blobInfo)) {
    *   Blob.upload(input, writer, 150 * 1024 * 1024);
    * } catch (IOException e) {
    *   // your handler
    * }
+   * }</pre>
    *
    * @param input content to be uploaded
    * @param writer channel
    * @param bufferSize size of the buffer to read from input and send over writer
    * @throws IOException on I/O error
    */
-  public static void upload(InputStream input, WriteChannel writer, int bufferSize)
+  public static void uploadFrom(InputStream input, WriteChannel writer, int bufferSize)
       throws IOException {
     bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
     byte[] buffer = new byte[bufferSize];

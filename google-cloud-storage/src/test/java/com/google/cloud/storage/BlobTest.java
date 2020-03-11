@@ -32,6 +32,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.RetrySettings;
@@ -680,6 +681,7 @@ public class BlobTest {
     String fileName = "non_existing_file.txt";
     try {
       blob.uploadFrom(Paths.get(fileName));
+      fail();
     } catch (IOException e) {
       assertEquals(NoSuchFileException.class, e.getClass());
       assertEquals(fileName, e.getMessage());
@@ -695,6 +697,7 @@ public class BlobTest {
     Path dir = Files.createTempDirectory("unit_");
     try {
       blob.uploadFrom(dir);
+      fail();
     } catch (StorageException e) {
       assertEquals(dir + ": Is a directory", e.getMessage());
     }
@@ -741,12 +744,35 @@ public class BlobTest {
   }
 
   @Test
+  public void testUploadFromStreamRetrieveFailed() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    StorageException storageException = new StorageException(123, "message");
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    initializeExpectedBlob(1);
+    BlobId blobId = BlobId.of(BLOB_INFO.getBucket(), BLOB_INFO.getName());
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    expect(storage.get(blobId)).andThrow(storageException);
+    replay(storage);
+    Blob blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    try {
+      blob.uploadFrom(input);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(
+          "Content has been uploaded successfully. Failed to retrieve blob.", e.getMessage());
+      assertSame(e.getCause(), storageException);
+    }
+  }
+
+  @Test
   public void testUpload() throws Exception {
     replay(storage);
     byte[] dataToSend = {1, 2, 3, 4, 5};
     WriteChannel channel = createWriteChannelMock(dataToSend);
     InputStream input = new ByteArrayInputStream(dataToSend);
-    Blob.upload(input, channel);
+    Blob.uploadFrom(input, channel);
   }
 
   @Test
@@ -755,7 +781,7 @@ public class BlobTest {
     byte[] dataToSend = new byte[100_000];
     WriteChannel channel = createWriteChannelMock(dataToSend);
     InputStream input = new ByteArrayInputStream(dataToSend);
-    Blob.upload(input, channel, 100);
+    Blob.uploadFrom(input, channel, 100);
   }
 
   @Test
@@ -774,6 +800,6 @@ public class BlobTest {
     channel.close();
     replay(channel);
     InputStream input = new ByteArrayInputStream(dataToSend);
-    Blob.upload(input, channel, bufferSize);
+    Blob.uploadFrom(input, channel, bufferSize);
   }
 }

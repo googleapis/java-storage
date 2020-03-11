@@ -2948,7 +2948,7 @@ public class ITStorageTest {
     String blobName = "test-upload-static";
     BlobId blobId = BlobId.of(BUCKET, blobName);
     try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
-      Blob.upload(new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8)), writer, 1);
+      Blob.uploadFrom(new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8)), writer, 1);
     }
     Blob blob = storage.get(blobId);
     String readString = new String(blob.getContent(), UTF_8);
