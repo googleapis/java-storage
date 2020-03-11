@@ -85,7 +85,7 @@ public class BlobReadChannelTest {
   }
 
   @Test
-  public void testCreateRetryableError() throws IOException {
+  public void testCreateRetryableErrorPrematureClosure() throws IOException {
     byte[] arr = {0x0, 0xd, 0xa};
     Tuple<String, byte[]> test = Tuple.of("etag", arr);
     StorageException exception =
@@ -101,9 +101,27 @@ public class BlobReadChannelTest {
   }
 
   @Test
+  public void testCreateNonRetryableErrorPrematureClosure() throws IOException {
+    byte[] arr = {0x0, 0xd, 0xa};
+    Tuple<String, byte[]> test = Tuple.of("etag", arr);
+    StorageException exception =
+        new StorageException(
+            new IOException(
+                "Connection closed prematurely: bytesRead = 1114112, Content-Length = 10485760"));
+    reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
+    ByteBuffer byteBuffer = ByteBuffer.allocate(400);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
+    replay(storageRpcMock);
+    try {
+      assertTrue(reader.read(byteBuffer) > 0);
+      fail("StorageException was expected");
+    } catch (StorageException e) {
+      // Throw expected.
+    }
+  }
+
+  @Test
   public void testCreateRetryableErrorConnectionReset() throws IOException {
-    // com.google.cloud.storage.StorageException: Connection has been shutdown:
-    // javax.net.ssl.SSLException: java.net.SocketException: Connection reset
     byte[] arr = {0x0, 0xd, 0xa};
     Tuple<String, byte[]> test = Tuple.of("etag", arr);
     StorageException exception =
@@ -115,31 +133,34 @@ public class BlobReadChannelTest {
                     .toString()));
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
     ByteBuffer byteBuffer = ByteBuffer.allocate(400);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andReturn(test);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, DEFAULT_CHUNK_SIZE))
+        .andThrow(exception);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, DEFAULT_CHUNK_SIZE))
+        .andReturn(test);
     replay(storageRpcMock);
     assertTrue(reader.read(byteBuffer) > 0);
   }
 
   @Test
-  public void testCreateRetryableErrorConnectionResetWrapper() throws IOException {
-    // com.google.cloud.storage.StorageException: Connection has been shutdown:
-    // javax.net.ssl.SSLException: java.net.SocketException: Connection reset
+  public void testCreateNonRetryableErrorConnectionReset() throws IOException {
     byte[] arr = {0x0, 0xd, 0xa};
     Tuple<String, byte[]> test = Tuple.of("etag", arr);
     StorageException exception =
         new StorageException(
-            new SocketException(
-                new IOException(
-                        "Connection has been shutdown: "
-                            + new SSLException(new SocketException("Connection reset")))
-                    .toString()));
+            new IOException(
+                "Connection has been shutdown: "
+                    + new SSLException(new SocketException("Connection reset"))));
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
     ByteBuffer byteBuffer = ByteBuffer.allocate(400);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andReturn(test);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, DEFAULT_CHUNK_SIZE))
+        .andThrow(exception);
     replay(storageRpcMock);
-    assertTrue(reader.read(byteBuffer) > 0);
+    try {
+      assertTrue(reader.read(byteBuffer) > 0);
+      fail("StorageException was expected");
+    } catch (StorageException e) {
+      // Expected to throw
+    }
   }
 
   @Test
