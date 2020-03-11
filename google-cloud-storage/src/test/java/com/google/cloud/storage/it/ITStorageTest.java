@@ -339,38 +339,6 @@ public class ITStorageTest {
     return kmsKeyResourcePath;
   }
 
-  @Test
-  public void testFailure() throws IOException {
-    Storage storageClient =
-        StorageOptions.getDefaultInstance()
-            .toBuilder()
-            .setHost("http://localhost:8080")
-            .build()
-            .getService();
-
-    String blobName = "test-create-blob";
-    // storageClient.create(BucketInfo.of("test-bucket-frank"));
-    BlobInfo blob = BlobInfo.newBuilder("test-bucket", blobName).build();
-    byte[] data = new byte[1024 * 1024 * 10];
-    new Random().nextBytes(data);
-
-    Blob remoteBlob = storageClient.create(blob, data);
-
-    BufferedInputStream bufferedInputStream =
-        new BufferedInputStream(
-            Channels.newInputStream(storageClient.reader("test-bucket", blobName)));
-    assertNotNull(bufferedInputStream);
-    byte downloadBuffer[] = new byte[1024 * 1024 * 10];
-    while (true) {
-      if (bufferedInputStream.read(downloadBuffer) <= 0) {
-        break;
-      }
-    }
-    System.out.println(downloadBuffer[0] + "");
-    assertArrayEquals(data, downloadBuffer);
-    // assertNotNull(remoteBlob);
-  }
-
   @Test(timeout = 5000)
   public void testListBuckets() throws InterruptedException {
     Iterator<Bucket> bucketIterator =
