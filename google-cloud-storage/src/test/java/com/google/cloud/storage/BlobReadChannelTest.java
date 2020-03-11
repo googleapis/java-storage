@@ -128,19 +128,19 @@ public class BlobReadChannelTest {
     byte[] arr = {0x0, 0xd, 0xa};
     Tuple<String, byte[]> test = Tuple.of("etag", arr);
     StorageException exception =
-            new StorageException(
-                    new SocketException(
-                            new IOException(
-                                    "Connection has been shutdown: "
-                                            + new SSLException(new SocketException("Connection reset")))
-                                    .toString()));
+        new StorageException(
+            new SocketException(
+                new IOException(
+                        "Connection has been shutdown: "
+                            + new SSLException(new SocketException("Connection reset")))
+                    .toString()));
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
     ByteBuffer byteBuffer = ByteBuffer.allocate(400);
     expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
     expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andReturn(test);
     replay(storageRpcMock);
     assertTrue(reader.read(byteBuffer) > 0);
-}
+  }
 
   @Test
   public void testReadBuffered() throws IOException {
