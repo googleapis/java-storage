@@ -39,6 +39,7 @@ import java.nio.channels.ClosedChannelException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
+import javax.net.ssl.SSLException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,6 +92,27 @@ public class BlobReadChannelTest {
         new StorageException(
             new SocketException(
                 "Connection closed prematurely: bytesRead = 1114112, Content-Length = 10485760"));
+    reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
+    ByteBuffer byteBuffer = ByteBuffer.allocate(400);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andReturn(test);
+    replay(storageRpcMock);
+    assertTrue(reader.read(byteBuffer) > 0);
+  }
+
+  @Test
+  public void testCreateRetryableErrorConnectionReset() throws IOException {
+    // com.google.cloud.storage.StorageException: Connection has been shutdown:
+    // javax.net.ssl.SSLException: java.net.SocketException: Connection reset
+    byte[] arr = {0x0, 0xd, 0xa};
+    Tuple<String, byte[]> test = Tuple.of("etag", arr);
+    StorageException exception =
+        new StorageException(
+            new SocketException(
+                new IOException(
+                        "Connection has been shutdown: "
+                            + new SSLException(new SocketException("Connection reset")))
+                    .toString()));
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
     ByteBuffer byteBuffer = ByteBuffer.allocate(400);
     expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);

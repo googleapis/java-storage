@@ -707,6 +707,8 @@ public class HttpStorageRpc implements StorageRpc {
         return Tuple.of(null, new byte[0]);
       } else if (serviceException.getMessage().contains("Connection closed prematurely")) {
         serviceException = new StorageException(new SocketException(serviceException.getMessage()));
+      } else if (serviceException.getMessage().contains("Connection reset")) {
+        serviceException = new StorageException(new SocketException(serviceException.getMessage()));
       }
       throw serviceException;
     } finally {

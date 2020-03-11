@@ -96,6 +96,7 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.auth.MoreCallCredentials;
 import io.grpc.stub.MetadataUtils;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -103,6 +104,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -335,6 +337,38 @@ public class ITStorageTest {
       }
     }
     return kmsKeyResourcePath;
+  }
+
+  @Test
+  public void testFailure() throws IOException {
+    Storage storageClient =
+        StorageOptions.getDefaultInstance()
+            .toBuilder()
+            .setHost("http://localhost:8080")
+            .build()
+            .getService();
+
+    String blobName = "test-create-blob";
+    // storageClient.create(BucketInfo.of("test-bucket-frank"));
+    BlobInfo blob = BlobInfo.newBuilder("test-bucket", blobName).build();
+    byte[] data = new byte[1024 * 1024 * 10];
+    new Random().nextBytes(data);
+
+    Blob remoteBlob = storageClient.create(blob, data);
+
+    BufferedInputStream bufferedInputStream =
+        new BufferedInputStream(
+            Channels.newInputStream(storageClient.reader("test-bucket", blobName)));
+    assertNotNull(bufferedInputStream);
+    byte downloadBuffer[] = new byte[1024 * 1024 * 10];
+    while (true) {
+      if (bufferedInputStream.read(downloadBuffer) <= 0) {
+        break;
+      }
+    }
+    System.out.println(downloadBuffer[0] + "");
+    assertArrayEquals(data, downloadBuffer);
+    // assertNotNull(remoteBlob);
   }
 
   @Test(timeout = 5000)
