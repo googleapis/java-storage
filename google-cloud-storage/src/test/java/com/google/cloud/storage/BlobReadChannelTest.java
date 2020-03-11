@@ -28,12 +28,12 @@ import static org.junit.Assert.fail;
 
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.Arrays;
@@ -68,7 +68,6 @@ public class BlobReadChannelTest {
         StorageOptions.newBuilder()
             .setProjectId("projectId")
             .setServiceRpcFactory(rpcFactoryMock)
-            .setRetrySettings(ServiceOptions.getNoRetrySettings())
             .build();
   }
 
@@ -82,6 +81,22 @@ public class BlobReadChannelTest {
     replay(storageRpcMock);
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
     assertTrue(reader.isOpen());
+  }
+
+  @Test
+  public void testCreateRetryableError() throws IOException {
+    byte[] arr = {0x0, 0xd, 0xa};
+    Tuple<String, byte[]> test = Tuple.of("etag", arr);
+    StorageException exception =
+        new StorageException(
+            new SocketException(
+                "Connection closed prematurely: bytesRead = 1114112, Content-Length = 10485760"));
+    reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
+    ByteBuffer byteBuffer = ByteBuffer.allocate(400);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
+    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andReturn(test);
+    replay(storageRpcMock);
+    assertTrue(reader.read(byteBuffer) > 0);
   }
 
   @Test

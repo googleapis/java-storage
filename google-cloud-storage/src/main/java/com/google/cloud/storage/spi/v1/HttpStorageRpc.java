@@ -77,6 +77,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -704,6 +705,8 @@ public class HttpStorageRpc implements StorageRpc {
       StorageException serviceException = translate(ex);
       if (serviceException.getCode() == SC_REQUESTED_RANGE_NOT_SATISFIABLE) {
         return Tuple.of(null, new byte[0]);
+      } else if (serviceException.getMessage().contains("Connection closed prematurely")) {
+        serviceException = new StorageException(new SocketException(serviceException.getMessage()));
       }
       throw serviceException;
     } finally {
