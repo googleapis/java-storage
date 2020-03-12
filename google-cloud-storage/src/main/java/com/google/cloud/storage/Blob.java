@@ -266,7 +266,7 @@ public class Blob extends BlobInfo {
   /**
    * Uploads the given file path to this blob using specified blob write options.
    *
-   * @param path file to be uploaded
+   * @param path file to upload
    * @param options blob write options
    * @return updated blob
    * @throws IOException on I/O error
@@ -274,7 +274,7 @@ public class Blob extends BlobInfo {
    */
   public Blob uploadFrom(Path path, BlobWriteOption... options) throws IOException {
     if (Files.isDirectory(path)) {
-      throw new StorageException(0, path + ": Is a directory");
+      throw new StorageException(0, path + " is a directory");
     }
     try (InputStream input = Files.newInputStream(path)) {
       return uploadFrom(input, options);
@@ -284,7 +284,7 @@ public class Blob extends BlobInfo {
   /**
    * Uploads the given content to this blob using specified blob write options.
    *
-   * @param input content to be uploaded
+   * @param input content to upload
    * @param options blob write options
    * @return updated blob
    * @throws IOException on I/O error
@@ -309,14 +309,13 @@ public class Blob extends BlobInfo {
 
   /**
    * Uploads the given content to the storage using specified write channel and the given buffer
-   * size. Other uploadFrom() methods invokes this one with the buffer size of 15 MiB, users may
-   * pass alternative values. Larger buffer sizes may improve the upload performance but require
-   * more memory. It could cause OutOfMemoryError or add significant garbage collection overhead.
-   * Smaller buffer sizes will reduce memory consumption, that will be noticeably in case of
-   * parallel uploads of many objects. Buffer sizes which are less than 256 KiB are not allowed,
-   * they will be treated as 256 KiB.
+   * size. Other uploadFrom() methods invoke this one with a buffer size of 15 MiB, users can pass
+   * alternative values. Larger buffer sizes might improve the upload performance but require more
+   * memory. This can cause an OutOfMemoryError or add significant garbage collection overhead.
+   * Smaller buffer sizes reduce memory consumption, that is noticeable when uploading many objects
+   * in parallel. Buffer sizes less than 256 KiB are treated as 256 KiB.
    *
-   * <p>This method does not close either InputStream or WriterChannel
+   * <p>This method does not close either the InputStream or the WriterChannel
    *
    * <p>Example of uploading:
    *
@@ -325,13 +324,13 @@ public class Blob extends BlobInfo {
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("video/webm").build();
    * Path file = Paths.get("humongous.file");
    * try (InputStream input = Files.newInputStream(file); WriteChannel writer = storage.writer(blobInfo)) {
-   *   Blob.upload(input, writer, 150 * 1024 * 1024);
+   *   Blob.uploadFrom(input, writer, 150 * 1024 * 1024);
    * } catch (IOException e) {
    *   // your handler
    * }
    * }</pre>
    *
-   * @param input content to be uploaded
+   * @param input content to upload
    * @param writer channel
    * @param bufferSize size of the buffer to read from input and send over writer
    * @throws IOException on I/O error

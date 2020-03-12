@@ -699,7 +699,7 @@ public class BlobTest {
       blob.uploadFrom(dir);
       fail();
     } catch (StorageException e) {
-      assertEquals(dir + ": Is a directory", e.getMessage());
+      assertEquals(dir + " is a directory", e.getMessage());
     }
   }
 
