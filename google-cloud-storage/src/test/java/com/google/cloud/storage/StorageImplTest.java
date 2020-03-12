@@ -288,6 +288,7 @@ public class StorageImplTest {
               Identity.user("test1@gmail.com"),
               Identity.user("test2@gmail.com"))
           .setEtag(POLICY_ETAG1)
+          .setVersion(1)
           .build();
 
   private static final ServiceAccount SERVICE_ACCOUNT = ServiceAccount.of("test@google.com");
@@ -302,7 +303,8 @@ public class StorageImplTest {
                   new Bindings()
                       .setMembers(ImmutableList.of("user:test1@gmail.com", "user:test2@gmail.com"))
                       .setRole("roles/storage.objectAdmin")))
-          .setEtag(POLICY_ETAG1);
+          .setEtag(POLICY_ETAG1)
+          .setVersion(1);
 
   private static final String PRIVATE_KEY_STRING =
       "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoG"
@@ -2891,7 +2893,8 @@ public class StorageImplTest {
                     new Bindings()
                         .setMembers(ImmutableList.of("group:test-group@gmail.com"))
                         .setRole("roles/storage.admin")))
-            .setEtag(POLICY_ETAG1);
+            .setEtag(POLICY_ETAG1)
+            .setVersion(1);
     // postCommitApiPolicy is identical but for the etag, which has been updated.
     com.google.api.services.storage.model.Policy postCommitApiPolicy =
         new com.google.api.services.storage.model.Policy()
@@ -2907,7 +2910,8 @@ public class StorageImplTest {
                     new Bindings()
                         .setMembers(ImmutableList.of("group:test-group@gmail.com"))
                         .setRole("roles/storage.admin")))
-            .setEtag(POLICY_ETAG2);
+            .setEtag(POLICY_ETAG2)
+            .setVersion(1);
     Policy postCommitLibPolicy =
         Policy.newBuilder()
             .addIdentity(StorageRoles.objectViewer(), Identity.allUsers())
@@ -2917,6 +2921,7 @@ public class StorageImplTest {
                 Identity.user("test2@gmail.com"))
             .addIdentity(StorageRoles.admin(), Identity.group("test-group@gmail.com"))
             .setEtag(POLICY_ETAG2)
+            .setVersion(1)
             .build();
 
     EasyMock.expect(storageRpcMock.getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS))
