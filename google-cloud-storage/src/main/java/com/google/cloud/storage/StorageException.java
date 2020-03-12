@@ -84,13 +84,13 @@ public final class StorageException extends BaseHttpServiceException {
   }
 
   /**
-   * Translate IOException to the StorageException that caused the error. This method default to
-   * idempotent always being {@code True}. This method will force retry of the following transient
-   * issues (Connection Closed Prematurely, Connection Reset).
+   * Translate IOException to the StorageException that caused the error. This method defaults to
+   * idempotent always being {@code true}. This method retries the transient issues Connection
+   * Closed Prematurely and Connection Reset.
    *
-   * <p>Please Review {@code RETRYABLE_ERRORS} for a full list of retryable errors.
+   * <p>Review {@code RETRYABLE_ERRORS} for a full list of retryable errors.
    *
-   * @throws StorageException when {@code ex} was caused by a {@code StorageException}
+   * @returns {@code StorageException}
    */
   public static StorageException translate(IOException exception) {
     if (exception.getMessage().contains("Connection closed prematurely")) {
