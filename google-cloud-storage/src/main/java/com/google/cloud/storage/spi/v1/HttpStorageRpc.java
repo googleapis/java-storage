@@ -226,7 +226,6 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   private static StorageException translate(IOException exception) {
-
     return new StorageException(exception);
   }
 
