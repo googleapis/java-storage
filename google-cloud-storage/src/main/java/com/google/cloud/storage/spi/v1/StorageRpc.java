@@ -64,7 +64,8 @@ public interface StorageRpc extends ServiceRpc {
     USER_PROJECT("userProject"),
     KMS_KEY_NAME("kmsKeyName"),
     SERVICE_ACCOUNT_EMAIL("serviceAccount"),
-    SHOW_DELETED_KEYS("showDeletedKeys");
+    SHOW_DELETED_KEYS("showDeletedKeys"),
+    REQUESTED_POLICY_VERSION("optionsRequestedPolicyVersion");
 
     private final String value;
 

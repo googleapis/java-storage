@@ -16,8 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.Storage.V4ConditionType.MATCHES;
-import static com.google.cloud.storage.Storage.V4ConditionType.STARTS_WITH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -113,25 +111,25 @@ public class V4PostPolicyTest {
             .build();
 
     PolicyInput policyInput = testData.getPolicyInput();
-    Storage.V4PostConditions.Builder builder = Storage.V4PostConditions.newBuilder();
+    PostPolicyV4.PostConditionsV4.Builder builder = PostPolicyV4.PostConditionsV4.newBuilder();
 
     Map<String, String> fields = policyInput.getFieldsMap();
 
     PolicyConditions conditions = policyInput.getConditions();
 
     if (!Strings.isNullOrEmpty(fields.get("success_action_redirect"))) {
-      builder.addSuccessActionRedirectUrlCondition(MATCHES, fields.get("success_action_redirect"));
+      builder.addSuccessActionRedirectUrlCondition(PostPolicyV4.ConditionV4Type.MATCHES, fields.get("success_action_redirect"));
     }
 
     if (!Strings.isNullOrEmpty(fields.get("success_action_status"))) {
       builder.addSuccessActionStatusCondition(
-          MATCHES, Integer.parseInt(fields.get("success_action_status")));
+          PostPolicyV4.ConditionV4Type.MATCHES, Integer.parseInt(fields.get("success_action_status")));
     }
 
     if (conditions != null) {
       if (!conditions.getStartsWithList().isEmpty()) {
         builder.addCustomCondition(
-            STARTS_WITH, conditions.getStartsWith(0).replace("$", ""), conditions.getStartsWith(1));
+            PostPolicyV4.ConditionV4Type.STARTS_WITH, conditions.getStartsWith(0).replace("$", ""), conditions.getStartsWith(1));
       }
       if (!conditions.getContentLengthRangeList().isEmpty()) {
         builder.addContentLengthRange(
@@ -139,27 +137,48 @@ public class V4PostPolicyTest {
       }
     }
 
-    Storage.V4PostFields v4Fields = Storage.V4PostFields.of(fields);
+    PostPolicyV4.PostFieldsV4 v4Fields = PostPolicyV4.PostFieldsV4.of(fields);
 
-    Storage.V4PostPolicyOption style = Storage.V4PostPolicyOption.withPathStyle();
+    Storage.PostPolicyV4Option style = Storage.PostPolicyV4Option.withPathStyle();
 
     if (policyInput.getUrlStyle().equals(UrlStyle.VIRTUAL_HOSTED_STYLE)) {
-      style = Storage.V4PostPolicyOption.withVirtualHostedStyle();
+      style = Storage.PostPolicyV4Option.withVirtualHostedStyle();
     } else if (policyInput.getUrlStyle().equals(UrlStyle.PATH_STYLE)) {
-      style = Storage.V4PostPolicyOption.withPathStyle();
+      style = Storage.PostPolicyV4Option.withPathStyle();
     } else if (policyInput.getUrlStyle().equals(UrlStyle.BUCKET_BOUND_HOSTNAME)) {
       style =
-          Storage.V4PostPolicyOption.withBucketBoundHostname(
+          Storage.PostPolicyV4Option.withBucketBoundHostname(
               policyInput.getBucketBoundHostname(),
               Storage.UriScheme.valueOf(policyInput.getScheme().toUpperCase()));
     }
 
-    Storage.V4PostPolicy policy =
-        storage.generateV4PresignedPostPolicy(
-            blob, v4Fields, builder.build(), testData.getPolicyInput().getExpiration(), style);
+    PostPolicyV4 policy =
+        storage.generatePresignedPostPolicyV4(
+            blob, v4Fields, builder.build(), testData.getPolicyInput().getExpiration(), TimeUnit.SECONDS, style);
+
+    String expectedPolicy = testData.getPolicyOutput().getExpectedDecodedPolicy();
+    StringBuilder escapedPolicy = new StringBuilder();
+
+    //Java automatically unescapes the unicode escapes in the conformance tests, so we need to manually re-escape them
+    for (char c : expectedPolicy.toCharArray()) {
+      if (c >= 128) {
+        escapedPolicy.append(String.format("\\u%04x", (int) c));
+      } else {
+        switch (c) {
+          case '\\': escapedPolicy.append("\\\\"); break;
+          case '\b' : escapedPolicy.append("\\b"); break;
+          case '\f' : escapedPolicy.append("\\f"); break;
+          case '\n' : escapedPolicy.append("\\n"); break;
+          case '\r' : escapedPolicy.append("\\r"); break;
+          case '\t' : escapedPolicy.append("\\t"); break;
+          case '\u000b' : escapedPolicy.append("\\v"); break;
+          default : escapedPolicy.append(c);
+        }
+      }
+    }
     assertEquals(testData.getPolicyOutput().getFieldsMap(), policy.getFields());
     assertEquals(
-        testData.getPolicyOutput().getExpectedDecodedPolicy(),
+        escapedPolicy.toString(),
         new String(BaseEncoding.base64().decode(policy.getFields().get("policy"))));
     assertEquals(testData.getPolicyOutput().getUrl(), policy.getUrl());
   }

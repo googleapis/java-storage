@@ -52,6 +52,11 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteResponse;
+import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
+import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
+import com.google.cloud.storage.PostPolicyV4.PostPolicyV4Document;
+import com.google.cloud.storage.PostPolicyV4.ConditionV4;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -737,15 +742,16 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public V4PostPolicy generateV4PresignedPostPolicy(
+  public PostPolicyV4 generatePresignedPostPolicyV4(
       BlobInfo blobInfo,
-      V4PostFields fields,
-      V4PostConditions conditions,
+      PostFieldsV4 fields,
+      PostConditionsV4 conditions,
       long duration,
-      V4PostPolicyOption... options) {
+      TimeUnit unit,
+      PostPolicyV4Option... options) {
     EnumMap<SignUrlOption.Option, Object> optionMap = Maps.newEnumMap(SignUrlOption.Option.class);
     // Convert to a map of SignUrlOptions so we can re-use some utility methods
-    for (V4PostPolicyOption option : options) {
+    for (PostPolicyV4Option option : options) {
       optionMap.put(SignUrlOption.Option.valueOf(option.getOption().name()), option.getValue());
     }
 
@@ -775,10 +781,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         usePathStyle
             ? STORAGE_XML_URI_SCHEME + "://" + STORAGE_XML_URI_HOST_NAME + "/" + bucketName + "/"
             : STORAGE_XML_URI_SCHEME + "://" + bucketName + "." + STORAGE_XML_URI_HOST_NAME + "/";
-    String escapedBlobName = "";
-    if (!Strings.isNullOrEmpty(blobInfo.getName())) {
-      escapedBlobName = Rfc3986UriEncode(blobInfo.getName(), false);
-    }
 
     if (optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
       url = optionMap.get(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME) + "/";
@@ -801,57 +803,57 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
     Map<String, String> policyFields = new HashMap<>();
 
-    V4PostConditions.Builder conditionsBuilder = conditions.toBuilder();
+    PostConditionsV4.Builder conditionsBuilder = conditions.toBuilder();
 
     for (Map.Entry<String, String> entry : fields.getFieldsMap().entrySet()) {
       // Every field needs a corresponding policy condition, so add them if they're missing
       conditionsBuilder.addCustomCondition(
-          V4ConditionType.MATCHES, entry.getKey(), entry.getValue());
+          ConditionV4Type.MATCHES, entry.getKey(), entry.getValue());
 
       policyFields.put(entry.getKey(), entry.getValue());
     }
 
-    V4PostConditions v4Conditions =
+    PostConditionsV4 v4Conditions =
         conditionsBuilder
-            .addKeyCondition(V4ConditionType.MATCHES, escapedBlobName)
-            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-date", date)
-            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-credential", signingCredential)
-            .addCustomCondition(V4ConditionType.MATCHES, "x-goog-algorithm", "GOOG4-RSA-SHA256")
+            .addKeyCondition(ConditionV4Type.MATCHES, blobInfo.getName())
+            .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-date", date)
+            .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-credential", signingCredential)
+            .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-algorithm", "GOOG4-RSA-SHA256")
             .build();
-    V4PostPolicyDocument document =
-        V4PostPolicyDocument.of(
+    PostPolicyV4Document document =
+            PostPolicyV4Document.of(
             expirationFormat.format(
-                timestamp + TimeUnit.MILLISECONDS.convert(duration, TimeUnit.SECONDS)),
+                timestamp + unit.toMillis(duration)),
             v4Conditions);
-    String policy = BaseEncoding.base64().encode(document.toJsonObject().getBytes());
+    String policy = BaseEncoding.base64().encode(document.toJson().getBytes());
     String signature =
         BaseEncoding.base16().encode(credentials.sign(policy.getBytes())).toLowerCase();
 
-    for (V4Condition condition : v4Conditions.getConditions()) {
-      if (condition.type == V4ConditionType.MATCHES) {
+    for (ConditionV4 condition : v4Conditions.getConditions()) {
+      if (condition.type == ConditionV4Type.MATCHES) {
         policyFields.put(condition.element, condition.value);
       }
     }
-    policyFields.put("key", escapedBlobName);
+    policyFields.put("key", blobInfo.getName());
     policyFields.put("x-goog-credential", signingCredential);
     policyFields.put("x-goog-algorithm", "GOOG4-RSA-SHA256");
     policyFields.put("x-goog-date", date);
     policyFields.put("x-goog-signature", signature);
     policyFields.put("policy", policy);
 
-    return V4PostPolicy.of(url, policyFields);
+    return PostPolicyV4.of(url, policyFields);
   }
 
-  public V4PostPolicy generateV4PresignedPostPolicy(
-      BlobInfo blobInfo, V4PostFields fields, long duration, V4PostPolicyOption... options) {
-    return generateV4PresignedPostPolicy(
-        blobInfo, fields, V4PostConditions.newBuilder().build(), duration, options);
+  public PostPolicyV4 generatePresignedPostPolicyV4(
+      BlobInfo blobInfo, PostFieldsV4 fields, long duration, TimeUnit unit, PostPolicyV4Option... options) {
+    return generatePresignedPostPolicyV4(
+        blobInfo, fields, PostConditionsV4.newBuilder().build(), duration, unit, options);
   }
 
-  public V4PostPolicy generateV4PresignedPostPolicy(
-      BlobInfo blobInfo, long duration, V4PostPolicyOption... options) {
-    return generateV4PresignedPostPolicy(
-        blobInfo, V4PostFields.newBuilder().build(), duration, options);
+  public PostPolicyV4 generatePresignedPostPolicyV4(
+      BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options) {
+    return generatePresignedPostPolicyV4(
+        blobInfo, PostFieldsV4.newBuilder().build(), duration, unit, options);
   }
 
   private String constructResourceUriPath(
