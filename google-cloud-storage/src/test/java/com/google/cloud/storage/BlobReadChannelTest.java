@@ -33,13 +33,11 @@ import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
-import javax.net.ssl.SSLException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,85 +80,6 @@ public class BlobReadChannelTest {
     replay(storageRpcMock);
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
     assertTrue(reader.isOpen());
-  }
-
-  @Test
-  public void testCreateRetryableErrorPrematureClosure() throws IOException {
-    byte[] arr = {0x0, 0xd, 0xa};
-    Tuple<String, byte[]> test = Tuple.of("etag", arr);
-    StorageException exception =
-        new StorageException(
-            new SocketException(
-                "Connection closed prematurely: bytesRead = 1114112, Content-Length = 10485760"));
-    reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
-    ByteBuffer byteBuffer = ByteBuffer.allocate(400);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andReturn(test);
-    replay(storageRpcMock);
-    assertTrue(reader.read(byteBuffer) > 0);
-  }
-
-  @Test
-  public void testCreateNonRetryableErrorPrematureClosure() throws IOException {
-    byte[] arr = {0x0, 0xd, 0xa};
-    Tuple<String, byte[]> test = Tuple.of("etag", arr);
-    StorageException exception =
-        new StorageException(
-            new IOException(
-                "Connection closed prematurely: bytesRead = 1114112, Content-Length = 10485760"));
-    reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
-    ByteBuffer byteBuffer = ByteBuffer.allocate(400);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, 2097152)).andThrow(exception);
-    replay(storageRpcMock);
-    try {
-      assertTrue(reader.read(byteBuffer) > 0);
-      fail("StorageException was expected");
-    } catch (StorageException e) {
-      // Throw expected.
-    }
-  }
-
-  @Test
-  public void testCreateRetryableErrorConnectionReset() throws IOException {
-    byte[] arr = {0x0, 0xd, 0xa};
-    Tuple<String, byte[]> test = Tuple.of("etag", arr);
-    StorageException exception =
-        new StorageException(
-            new SocketException(
-                new IOException(
-                        "Connection has been shutdown: "
-                            + new SSLException(new SocketException("Connection reset")))
-                    .toString()));
-    reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
-    ByteBuffer byteBuffer = ByteBuffer.allocate(400);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, DEFAULT_CHUNK_SIZE))
-        .andThrow(exception);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, DEFAULT_CHUNK_SIZE))
-        .andReturn(test);
-    replay(storageRpcMock);
-    assertTrue(reader.read(byteBuffer) > 0);
-  }
-
-  @Test
-  public void testCreateNonRetryableErrorConnectionReset() throws IOException {
-    byte[] arr = {0x0, 0xd, 0xa};
-    Tuple<String, byte[]> test = Tuple.of("etag", arr);
-    StorageException exception =
-        new StorageException(
-            new IOException(
-                "Connection has been shutdown: "
-                    + new SSLException(new SocketException("Connection reset"))));
-    reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
-    ByteBuffer byteBuffer = ByteBuffer.allocate(400);
-    expect(storageRpcMock.read(BLOB_ID.toPb(), EMPTY_RPC_OPTIONS, 0, DEFAULT_CHUNK_SIZE))
-        .andThrow(exception);
-    replay(storageRpcMock);
-    try {
-      assertTrue(reader.read(byteBuffer) > 0);
-      fail("StorageException was expected");
-    } catch (StorageException e) {
-      // Expected to throw
-    }
   }
 
   @Test
