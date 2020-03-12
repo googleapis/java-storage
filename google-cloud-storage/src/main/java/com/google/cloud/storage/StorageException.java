@@ -84,11 +84,9 @@ public final class StorageException extends BaseHttpServiceException {
   }
 
   /**
-   * Translate IOException to the StorageException that caused the error. This method defaults to
-   * idempotent always being {@code true}. This method retries the transient issues Connection
-   * Closed Prematurely and Connection Reset.
-   *
-   * <p>Review {@code RETRYABLE_ERRORS} for a full list of retryable errors.
+   * Translate IOException to a StorageException representing the cause of the error. This method
+   * defaults to idempotent always being {@code true}. Additionally, this method translates
+   * transient issues Connection Closed Prematurely and Connection Reset as retryable errors.
    *
    * @returns {@code StorageException}
    */
