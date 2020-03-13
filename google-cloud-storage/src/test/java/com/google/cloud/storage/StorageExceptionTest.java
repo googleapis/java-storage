@@ -32,7 +32,9 @@ import com.google.api.client.http.HttpResponseException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import javax.net.ssl.SSLException;
 import org.junit.Test;
 
 public class StorageExceptionTest {
@@ -132,6 +134,29 @@ public class StorageExceptionTest {
     httpResponseException = new HttpResponseException.Builder(408, null, new HttpHeaders()).build();
     exception = new StorageException(httpResponseException);
     assertEquals(408, exception.getCode());
+    assertTrue(exception.isRetryable());
+  }
+
+  @Test
+  public void testTranslateConnectionReset() {
+    StorageException exception =
+        StorageException.translate(
+            new IOException(
+                "Connection has been shutdown: "
+                    + new SSLException(new SocketException("Connection reset"))));
+    assertEquals(0, exception.getCode());
+    assertEquals("connectionReset", exception.getReason());
+    assertTrue(exception.isRetryable());
+  }
+
+  @Test
+  public void testTranslateConnectionClosedPrematurely() {
+    StorageException exception =
+        StorageException.translate(
+            new IOException(
+                "Connection closed prematurely: bytesRead = 1114112, Content-Length = 10485760"));
+    assertEquals(0, exception.getCode());
+    assertEquals("connectionClosedPrematurely", exception.getReason());
     assertTrue(exception.isRetryable());
   }
 

@@ -33,6 +33,9 @@ import java.util.Set;
  */
 @InternalApi
 public final class StorageException extends BaseHttpServiceException {
+  private static final String INTERNAL_ERROR = "internalError";
+  private static final String CONNECTION_CLOSED_PREMATURELY = "connectionClosedPrematurely";
+  private static final String CONNECTION_RESET = "connectionReset";
 
   // see: https://cloud.google.com/storage/docs/resumable-uploads-xml#practices
   private static final Set<Error> RETRYABLE_ERRORS =
@@ -43,7 +46,9 @@ public final class StorageException extends BaseHttpServiceException {
           new Error(500, null),
           new Error(429, null),
           new Error(408, null),
-          new Error(null, "internalError"));
+          new Error(null, INTERNAL_ERROR),
+          new Error(null, CONNECTION_CLOSED_PREMATURELY),
+          new Error(null, CONNECTION_RESET));
 
   private static final long serialVersionUID = -4168430271327813063L;
 
@@ -53,6 +58,10 @@ public final class StorageException extends BaseHttpServiceException {
 
   public StorageException(int code, String message, Throwable cause) {
     super(code, message, null, true, RETRYABLE_ERRORS, cause);
+  }
+
+  public StorageException(int code, String message, String reason, Throwable cause) {
+    super(code, message, reason, true, RETRYABLE_ERRORS, cause);
   }
 
   public StorageException(IOException exception) {
@@ -72,5 +81,24 @@ public final class StorageException extends BaseHttpServiceException {
   public static StorageException translateAndThrow(RetryHelperException ex) {
     BaseServiceException.translate(ex);
     throw new StorageException(UNKNOWN_CODE, ex.getMessage(), ex.getCause());
+  }
+
+  /**
+   * Translate IOException to a StorageException representing the cause of the error. This method
+   * defaults to idempotent always being {@code true}. Additionally, this method translates
+   * transient issues Connection Closed Prematurely and Connection Reset as retryable errors.
+   *
+   * @returns {@code StorageException}
+   */
+  public static StorageException translate(IOException exception) {
+    if (exception.getMessage().contains("Connection closed prematurely")) {
+      return new StorageException(
+          0, exception.getMessage(), CONNECTION_CLOSED_PREMATURELY, exception);
+    } else if (exception.getMessage().contains("Connection reset")) {
+      return new StorageException(0, exception.getMessage(), CONNECTION_RESET, exception);
+    } else {
+      // default
+      return new StorageException(exception);
+    }
   }
 }

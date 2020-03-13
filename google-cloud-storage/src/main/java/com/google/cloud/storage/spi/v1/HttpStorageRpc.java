@@ -701,7 +701,7 @@ public class HttpStorageRpc implements StorageRpc {
       return Tuple.of(etag, output.toByteArray());
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
-      StorageException serviceException = translate(ex);
+      StorageException serviceException = StorageException.translate(ex);
       if (serviceException.getCode() == SC_REQUESTED_RANGE_NOT_SATISFIABLE) {
         return Tuple.of(null, new byte[0]);
       }

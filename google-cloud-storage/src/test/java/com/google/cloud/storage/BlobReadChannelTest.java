@@ -28,7 +28,6 @@ import static org.junit.Assert.fail;
 
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
@@ -68,7 +67,6 @@ public class BlobReadChannelTest {
         StorageOptions.newBuilder()
             .setProjectId("projectId")
             .setServiceRpcFactory(rpcFactoryMock)
-            .setRetrySettings(ServiceOptions.getNoRetrySettings())
             .build();
   }
 
