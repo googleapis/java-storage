@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.105.2](https://www.github.com/googleapis/java-storage/compare/v1.105.1...v1.105.2) (2020-03-13)
+
+
+### Bug Fixes
+
+* connection closed prematurely in BlobReadChannel & ConnectionReset ([#173](https://www.github.com/googleapis/java-storage/issues/173)) ([27bccda](https://www.github.com/googleapis/java-storage/commit/27bccda384da4a7b877b371fbaecc794d6304fbf))
+
+
+### Dependencies
+
+* update core dependencies ([#171](https://www.github.com/googleapis/java-storage/issues/171)) ([ef5f2c6](https://www.github.com/googleapis/java-storage/commit/ef5f2c6e5079debe8f7f37c3d2c501aac3dc82a6))
+
 ### [1.105.1](https://www.github.com/googleapis/java-storage/compare/v1.105.0...v1.105.1) (2020-03-09)
 
 
