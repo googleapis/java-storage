@@ -309,13 +309,13 @@ public class Blob extends BlobInfo {
 
   /**
    * Uploads the given content to the storage using specified write channel and the given buffer
-   * size. Other uploadFrom() methods invoke this one with a buffer size of 15 MiB, users can pass
+   * size. Other uploadFrom() methods invoke this one with a buffer size of 15 MiB. Users can pass
    * alternative values. Larger buffer sizes might improve the upload performance but require more
    * memory. This can cause an OutOfMemoryError or add significant garbage collection overhead.
    * Smaller buffer sizes reduce memory consumption, that is noticeable when uploading many objects
    * in parallel. Buffer sizes less than 256 KiB are treated as 256 KiB.
    *
-   * <p>This method does not close either the InputStream or the WriterChannel
+   * <p>This method does not close either the InputStream or the WriterChannel.
    *
    * <p>Example of uploading:
    *
