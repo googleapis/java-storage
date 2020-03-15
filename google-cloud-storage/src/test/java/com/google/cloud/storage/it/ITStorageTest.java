@@ -40,6 +40,7 @@ import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
+import com.google.cloud.RetryHelper;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.http.HttpTransportOptions;
@@ -103,6 +104,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3159,5 +3162,57 @@ public class ITStorageTest {
       RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
       RemoteStorageHelper.forceDelete(storage, loggingBucket, 5, TimeUnit.SECONDS);
     }
+  }
+
+  @Test
+  public void testUpload() throws Exception {
+    String blobName = "test-upload-static";
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
+      Blob.uploadFrom(new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8)), writer, 1);
+    }
+    Blob blob = storage.get(blobId);
+    String readString = new String(blob.getContent(), UTF_8);
+    assertEquals(BLOB_STRING_CONTENT, readString);
+  }
+
+  @Test
+  public void testUploadFromDownloadTo() throws Exception {
+    String blobName = "test-uploadFrom-downloadTo-blob";
+    BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
+
+    Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
+    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
+    Blob blob = storage.create(blobInfo);
+    blob = blob.uploadFrom(tempFileFrom);
+
+    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
+    blob.downloadTo(tempFileTo);
+    byte[] readBytes = Files.readAllBytes(tempFileTo);
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testUploadFromDownloadToWithEncryption() throws Exception {
+    String blobName = "test-uploadFrom-downloadTo-withEncryption-blob";
+    BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
+
+    Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
+    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
+    Blob blob = storage.create(blobInfo);
+    blob = blob.uploadFrom(tempFileFrom, Storage.BlobWriteOption.encryptionKey(KEY));
+
+    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
+    try {
+      blob.downloadTo(tempFileTo);
+    } catch (RetryHelper.RetryHelperException e) {
+      // Expected to be StorageException
+      String expectedMessage =
+          "The target object is encrypted by a customer-supplied encryption key.";
+      assertTrue(e.getMessage().contains(expectedMessage));
+    }
+    blob.downloadTo(tempFileTo, Blob.BlobSourceOption.decryptionKey(KEY));
+    byte[] readBytes = Files.readAllBytes(tempFileTo);
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 }

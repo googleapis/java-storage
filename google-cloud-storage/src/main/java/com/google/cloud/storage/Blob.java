@@ -38,9 +38,11 @@ import com.google.common.base.Function;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Key;
@@ -73,7 +75,8 @@ public class Blob extends BlobInfo {
         }
       };
 
-  private static final int DEFAULT_CHUNK_SIZE = 2 * 1024 * 1024;
+  private static final int DEFAULT_CHUNK_SIZE = 15 * 1024 * 1024;
+  private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
   /** Class for specifying blob source options when {@code Blob} methods are used. */
   public static class BlobSourceOption extends Option {
@@ -258,6 +261,88 @@ public class Blob extends BlobInfo {
    */
   public void downloadTo(Path path) {
     downloadTo(path, new BlobSourceOption[0]);
+  }
+
+  /**
+   * Uploads the given file path to this blob using specified blob write options.
+   *
+   * @param path file to upload
+   * @param options blob write options
+   * @return updated blob
+   * @throws IOException on I/O error
+   * @throws StorageException on failure
+   */
+  public Blob uploadFrom(Path path, BlobWriteOption... options) throws IOException {
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + " is a directory");
+    }
+    try (InputStream input = Files.newInputStream(path)) {
+      return uploadFrom(input, options);
+    }
+  }
+
+  /**
+   * Uploads the given content to this blob using specified blob write options.
+   *
+   * @param input content to upload
+   * @param options blob write options
+   * @return updated blob
+   * @throws IOException on I/O error
+   * @throws StorageException on failure
+   */
+  public Blob uploadFrom(InputStream input, BlobWriteOption... options) throws IOException {
+    try (WriteChannel writer = storage.writer(this, options)) {
+      uploadFrom(input, writer);
+    }
+    BlobId blobId = getBlobId();
+    try {
+      return storage.get(BlobId.of(blobId.getBucket(), blobId.getName()));
+    } catch (StorageException e) {
+      throw new StorageException(
+          e.getCode(), "Content has been uploaded successfully. Failed to retrieve blob.", e);
+    }
+  }
+
+  static void uploadFrom(InputStream input, WriteChannel writer) throws IOException {
+    uploadFrom(input, writer, DEFAULT_CHUNK_SIZE);
+  }
+
+  /**
+   * Uploads the given content to the storage using specified write channel and the given buffer
+   * size. Other uploadFrom() methods invoke this one with a buffer size of 15 MiB. Users can pass
+   * alternative values. Larger buffer sizes might improve the upload performance but require more
+   * memory. This can cause an OutOfMemoryError or add significant garbage collection overhead.
+   * Smaller buffer sizes reduce memory consumption, that is noticeable when uploading many objects
+   * in parallel. Buffer sizes less than 256 KiB are treated as 256 KiB.
+   *
+   * <p>This method does not close either the InputStream or the WriterChannel.
+   *
+   * <p>Example of uploading:
+   *
+   * <pre>{@code
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("video/webm").build();
+   * Path file = Paths.get("humongous.file");
+   * try (InputStream input = Files.newInputStream(file); WriteChannel writer = storage.writer(blobInfo)) {
+   *   Blob.uploadFrom(input, writer, 150 * 1024 * 1024);
+   * } catch (IOException e) {
+   *   // your handler
+   * }
+   * }</pre>
+   *
+   * @param input content to upload
+   * @param writer channel
+   * @param bufferSize size of the buffer to read from input and send over writer
+   * @throws IOException on I/O error
+   */
+  public static void uploadFrom(InputStream input, WriteChannel writer, int bufferSize)
+      throws IOException {
+    bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
+    byte[] buffer = new byte[bufferSize];
+    int length;
+    while ((length = input.read(buffer)) >= 0) {
+      writer.write(ByteBuffer.wrap(buffer, 0, length));
+    }
   }
 
   /** Builder for {@code Blob}. */

@@ -32,11 +32,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
@@ -48,10 +50,17 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Key;
 import java.util.List;
 import java.util.Map;
@@ -586,7 +595,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testDownload() throws Exception {
+  public void testDownloadTo() throws Exception {
     final byte[] expected = {1, 2};
     StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
     expect(storage.getOptions()).andReturn(mockOptions).times(1);
@@ -618,7 +627,7 @@ public class BlobTest {
   }
 
   @Test
-  public void testDownloadWithRetries() throws Exception {
+  public void testDownloadToWithRetries() throws Exception {
     final byte[] expected = {1, 2};
     StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
     expect(storage.getOptions()).andReturn(mockOptions);
@@ -661,5 +670,136 @@ public class BlobTest {
     blob.downloadTo(file.toPath());
     byte actual[] = Files.readAllBytes(file.toPath());
     assertArrayEquals(expected, actual);
+  }
+
+  @Test
+  public void testUploadFromNonExistentFile() {
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    String fileName = "non_existing_file.txt";
+    try {
+      blob.uploadFrom(Paths.get(fileName));
+      fail();
+    } catch (IOException e) {
+      assertEquals(NoSuchFileException.class, e.getClass());
+      assertEquals(fileName, e.getMessage());
+    }
+  }
+
+  @Test
+  public void testUploadFromDirectory() throws IOException {
+    initializeExpectedBlob(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
+    replay(storage);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    Path dir = Files.createTempDirectory("unit_");
+    try {
+      blob.uploadFrom(dir);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(dir + " is a directory", e.getMessage());
+    }
+  }
+
+  private WriteChannel createWriteChannelMock(byte[] bytes) throws Exception {
+    WriteChannel channel = createMock(WriteChannel.class);
+    ByteBuffer expectedByteBuffer = ByteBuffer.wrap(bytes, 0, bytes.length);
+    expect(channel.write(expectedByteBuffer)).andReturn(bytes.length);
+    channel.close();
+    replay(channel);
+    return channel;
+  }
+
+  private Blob createBlobForUpload(WriteChannel channel) {
+    initializeExpectedBlob(1);
+    BlobId blobId = BlobId.of(BLOB_INFO.getBucket(), BLOB_INFO.getName());
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    expect(storage.get(blobId)).andReturn(expectedBlob);
+    replay(storage);
+    return new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+  }
+
+  @Test
+  public void testUploadFromFile() throws Exception {
+    byte[] dataToSend = {1, 2, 3};
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    blob = createBlobForUpload(channel);
+    Path tempFile = Files.createTempFile("testUpload", ".tmp");
+    Files.write(tempFile, dataToSend);
+    blob = blob.uploadFrom(tempFile);
+    assertSame(expectedBlob, blob);
+  }
+
+  @Test
+  public void testUploadFromStream() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    blob = createBlobForUpload(channel);
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    blob = blob.uploadFrom(input);
+    assertSame(expectedBlob, blob);
+  }
+
+  @Test
+  public void testUploadFromStreamRetrieveFailed() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    StorageException storageException = new StorageException(123, "message");
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    initializeExpectedBlob(1);
+    BlobId blobId = BlobId.of(BLOB_INFO.getBucket(), BLOB_INFO.getName());
+    expect(storage.getOptions()).andReturn(mockOptions);
+    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
+    expect(storage.get(blobId)).andThrow(storageException);
+    replay(storage);
+    Blob blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    try {
+      blob.uploadFrom(input);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(
+          "Content has been uploaded successfully. Failed to retrieve blob.", e.getMessage());
+      assertSame(e.getCause(), storageException);
+    }
+  }
+
+  @Test
+  public void testUpload() throws Exception {
+    replay(storage);
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob.uploadFrom(input, channel);
+  }
+
+  @Test
+  public void testUploadSmallBufferSize() throws Exception {
+    replay(storage);
+    byte[] dataToSend = new byte[100_000];
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob.uploadFrom(input, channel, 100);
+  }
+
+  @Test
+  public void testUploadMultiplePortions() throws Exception {
+    replay(storage);
+    int totalSize = 400_000;
+    int bufferSize = 300_000;
+    byte[] dataToSend = new byte[totalSize];
+    dataToSend[0] = 42;
+    dataToSend[bufferSize] = 43;
+
+    WriteChannel channel = createMock(WriteChannel.class);
+    expect(channel.write(ByteBuffer.wrap(dataToSend, 0, bufferSize))).andReturn(bufferSize);
+    expect(channel.write(ByteBuffer.wrap(dataToSend, bufferSize, totalSize - bufferSize)))
+        .andReturn(bufferSize - bufferSize);
+    channel.close();
+    replay(channel);
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob.uploadFrom(input, channel, bufferSize);
   }
 }
