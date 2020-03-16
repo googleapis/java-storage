@@ -141,11 +141,23 @@ public class StorageExceptionTest {
   public void testTranslateConnectionReset() {
     StorageException exception =
         StorageException.translate(
-            new IOException(
+            new SSLException(
                 "Connection has been shutdown: "
                     + new SSLException(new SocketException("Connection reset"))));
     assertEquals(0, exception.getCode());
-    assertEquals("connectionReset", exception.getReason());
+    assertTrue(exception.isRetryable());
+  }
+
+  @Test
+  public void testTranslateConnectionShutdown() {
+    StorageException exception =
+        StorageException.translate(
+            new SSLException(
+                "Connection has been shutdown: "
+                    + new SSLException(new SocketException("Socket closed"))));
+    String test = exception.getMessage();
+
+    assertEquals(0, exception.getCode());
     assertTrue(exception.isRetryable());
   }
 
