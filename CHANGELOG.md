@@ -3,11 +3,6 @@
 ## [1.106.0](https://www.github.com/googleapis/java-storage/compare/v1.105.2...v1.106.0) (2020-03-17)
 
 
-### Features
-
-* add blob.uploadfrom(inputstream) ([#162](https://www.github.com/googleapis/java-storage/issues/162)) ([1f53baa](https://www.github.com/googleapis/java-storage/commit/1f53baa969331a94b5a73319df59711157ef2307))
-
-
 ### Bug Fixes
 
 * rely on google core for SSLException's ([#188](https://www.github.com/googleapis/java-storage/issues/188)) ([2581f3c](https://www.github.com/googleapis/java-storage/commit/2581f3cfff88ee6a1688ddb881baa30d9967b0c3))
