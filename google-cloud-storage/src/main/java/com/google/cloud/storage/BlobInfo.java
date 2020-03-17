@@ -795,18 +795,20 @@ public class BlobInfo implements Serializable {
     return metageneration;
   }
 
-  /** Returns the deletion time of the blob expressed as the number of ms since the Unix epoch. */
+  /** Returns the deletion time of the blob expressed as the number of milliseconds since the Unix
+   * epoch. */
   public Long getDeleteTime() {
     return deleteTime;
   }
 
-  /** Returns the last modification time of the blob's metadata expressed as the number of ms since
-   * the Unix epoch. */
+  /** Returns the last modification time of the blob's metadata expressed as the number of
+   * milliseconds since the Unix epoch. */
   public Long getUpdateTime() {
     return updateTime;
   }
 
-  /** Returns the creation time of the blob expressed as the number of ms since the Unix epoch. */
+  /** Returns the creation time of the blob expressed as the number of milliseconds since the Unix
+   * epoch. */
   public Long getCreateTime() {
     return createTime;
   }
