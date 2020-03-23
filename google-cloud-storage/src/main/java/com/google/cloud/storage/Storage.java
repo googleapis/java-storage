@@ -1813,9 +1813,9 @@ public interface Storage extends Service<StorageOptions> {
 
   /**
    * Uploads the given {@code path} to the blob using {@link #writer}. By default any md5 and crc32c
-   * values in the given {@code blobInfo} are ignored unless requested via the {@code
-   * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options. Folder upload is not
-   * supported.
+   * values in the given {@code blobInfo} are ignored unless requested via the {@link
+   * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options. Folder upload is
+   * not supported.
    *
    * <p>Example of uploading a file:
    *
@@ -1836,8 +1836,8 @@ public interface Storage extends Service<StorageOptions> {
 
   /**
    * Uploads the given {@code content} to the blob using {@link #writer}. By default any md5 and
-   * crc32c values in the given {@code blobInfo} are ignored unless requested via the {@code
-   * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options.
+   * crc32c values in the given {@code blobInfo} are ignored unless requested via the {@link
+   * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options.
    *
    * <p>Example of uploading:
    *
