@@ -36,9 +36,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.file.Path;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1808,6 +1810,53 @@ public interface Storage extends Service<StorageOptions> {
    */
   @Deprecated
   Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options);
+
+  /**
+   * Uploads the given {@code path} to the blob using {@link #writer}. By default any md5 and crc32c
+   * values in the given {@code blobInfo} are ignored unless requested via the {@code
+   * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options. Folder upload is not
+   * supported.
+   *
+   * <p>Example of uploading a file:
+   *
+   * <pre>{@code
+   * BlobId blobId = BlobId.of("my-unique-bucket", "my-blob-name");
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+   * storage.upload(blobInfo, Paths.get("readme.txt"));
+   * }</pre>
+   *
+   * @param blobInfo blob to create
+   * @param path file to upload
+   * @param options blob write options
+   * @throws IOException on I/O error
+   * @throws StorageException on failure
+   * @see Blob#upload(InputStream, WriteChannel, int)
+   */
+  void upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
+
+  /**
+   * Uploads the given {@code content} to the blob using {@link #writer}. By default any md5 and
+   * crc32c values in the given {@code blobInfo} are ignored unless requested via the {@code
+   * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options.
+   *
+   * <p>Example of uploading:
+   *
+   * <pre>{@code
+   * BlobId blobId = BlobId.of("my-unique-bucket", "my-blob-name");
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+   * byte[] content = "Hello, world".getBytes(UTF_8);
+   * storage.upload(blobInfo, new ByteArrayInputStream(content));
+   * }</pre>
+   *
+   * @param blobInfo blob to create
+   * @param content stream to upload
+   * @param options blob write options
+   * @throws IOException on I/O error
+   * @throws StorageException on failure
+   * @see Blob#upload(InputStream, WriteChannel, int)
+   */
+  void upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
+      throws IOException;
 
   /**
    * Returns the requested bucket or {@code null} if not found.

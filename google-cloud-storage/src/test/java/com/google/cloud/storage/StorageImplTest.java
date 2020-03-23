@@ -64,6 +64,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -113,6 +117,7 @@ public class StorageImplTest {
       "projects/gcloud-devel/locations/us/keyRings/gcs_kms_key_ring_us/cryptoKeys/key";
   private static final Long RETENTION_PERIOD = 10L;
   private static final String USER_PROJECT = "test-project";
+  private static final int WRITER_BUFFER_SIZE = 15 * 1024 * 1024;
 
   // BucketInfo objects
   private static final BucketInfo BUCKET_INFO1 =
@@ -3071,5 +3076,78 @@ public class StorageImplTest {
     WriteChannel writer = new BlobWriteChannel(options, new URL(SIGNED_URL));
     assertNotNull(writer);
     assertTrue(writer.isOpen());
+  }
+
+  @Test
+  public void testUploadNonExistentFile() {
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    String fileName = "non_existing_file.txt";
+    try {
+      storage.upload(BLOB_INFO1, Paths.get(fileName));
+      Assert.fail();
+    } catch (IOException e) {
+      assertEquals(NoSuchFileException.class, e.getClass());
+      assertEquals(fileName, e.getMessage());
+    }
+  }
+
+  @Test
+  public void testUploadDirectory() throws IOException {
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Path dir = Files.createTempDirectory("unit_");
+    try {
+      storage.upload(BLOB_INFO1, dir);
+      Assert.fail();
+    } catch (StorageException e) {
+      assertEquals(dir + " is a directory", e.getMessage());
+    }
+  }
+
+  private BlobInfo initializeUpload(
+      String uploadId, byte[] bytes, Map<StorageRpc.Option, ?> rpcOptions) {
+    byte[] buffer = new byte[WRITER_BUFFER_SIZE];
+    System.arraycopy(bytes, 0, buffer, 0, bytes.length);
+    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    EasyMock.expect(storageRpcMock.open(info.toPb(), rpcOptions)).andReturn(uploadId);
+    storageRpcMock.write(
+        EasyMock.anyString(),
+        EasyMock.aryEq(buffer),
+        EasyMock.eq(0),
+        EasyMock.eq(0L),
+        EasyMock.eq(bytes.length),
+        EasyMock.eq(true));
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    return info;
+  }
+
+  @Test
+  public void testUploadFile() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4};
+    Path tempFile = Files.createTempFile("testUpload", ".tmp");
+    Files.write(tempFile, dataToSend);
+
+    BlobInfo info = initializeUpload("upload-path-id", dataToSend, EMPTY_RPC_OPTIONS);
+    storage.upload(info, tempFile);
+  }
+
+  @Test
+  public void testUploadStream() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+
+    BlobInfo info = initializeUpload("upload-stream-id", dataToSend, EMPTY_RPC_OPTIONS);
+    storage.upload(info, stream);
+  }
+
+  @Test
+  public void testUploadWithOptions() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+
+    BlobInfo info = initializeUpload("upload-stream-id", dataToSend, KMS_KEY_NAME_OPTIONS);
+    storage.upload(info, stream, BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
   }
 }

@@ -48,6 +48,7 @@ import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.spi.v1.StorageRpc;
@@ -66,12 +67,15 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -201,6 +205,24 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getClock()));
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
+  public void upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException {
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + " is a directory");
+    }
+    try (InputStream input = Files.newInputStream(path)) {
+      upload(blobInfo, input, options);
+    }
+  }
+
+  @Override
+  public void upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
+      throws IOException {
+    try (WriteChannel writer = writer(blobInfo, options)) {
+      Blob.upload(content, writer);
     }
   }
 

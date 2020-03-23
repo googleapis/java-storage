@@ -37,6 +37,7 @@ import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
@@ -48,9 +49,12 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.security.Key;
 import java.util.List;
@@ -661,5 +665,51 @@ public class BlobTest {
     blob.downloadTo(file.toPath());
     byte actual[] = Files.readAllBytes(file.toPath());
     assertArrayEquals(expected, actual);
+  }
+
+  private WriteChannel createWriteChannelMock(byte[] bytes) throws Exception {
+    WriteChannel channel = createMock(WriteChannel.class);
+    ByteBuffer expectedByteBuffer = ByteBuffer.wrap(bytes, 0, bytes.length);
+    expect(channel.write(expectedByteBuffer)).andReturn(bytes.length);
+    channel.close();
+    replay(channel);
+    return channel;
+  }
+
+  @Test
+  public void testUpload() throws Exception {
+    replay(storage);
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob.upload(input, channel);
+  }
+
+  @Test
+  public void testUploadSmallBufferSize() throws Exception {
+    replay(storage);
+    byte[] dataToSend = new byte[100_000];
+    WriteChannel channel = createWriteChannelMock(dataToSend);
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob.upload(input, channel, 100);
+  }
+
+  @Test
+  public void testUploadMultiplePortions() throws Exception {
+    replay(storage);
+    int totalSize = 400_000;
+    int bufferSize = 300_000;
+    byte[] dataToSend = new byte[totalSize];
+    dataToSend[0] = 42;
+    dataToSend[bufferSize] = 43;
+
+    WriteChannel channel = createMock(WriteChannel.class);
+    expect(channel.write(ByteBuffer.wrap(dataToSend, 0, bufferSize))).andReturn(bufferSize);
+    expect(channel.write(ByteBuffer.wrap(dataToSend, bufferSize, totalSize - bufferSize)))
+        .andReturn(bufferSize - bufferSize);
+    channel.close();
+    replay(channel);
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob.upload(input, channel, bufferSize);
   }
 }
