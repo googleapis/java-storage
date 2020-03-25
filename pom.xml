@@ -212,7 +212,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-conformance-tests</artifactId>
-        <version>0.0.7</version>
+        <version>0.0.9</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
