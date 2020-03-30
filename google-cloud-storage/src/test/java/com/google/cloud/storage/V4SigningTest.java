@@ -23,7 +23,6 @@ import com.google.api.core.ApiClock;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.conformance.storage.v1.SigningV4Test;
 import com.google.cloud.conformance.storage.v1.TestFile;
-import com.google.cloud.conformance.storage.v1.UrlStyle;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.base.Charsets;
@@ -105,14 +104,14 @@ public class V4SigningTest {
 
     SignUrlOption style = SignUrlOption.withPathStyle();
 
-    if (testData.getUrlStyle().equals(UrlStyle.VIRTUAL_HOSTED_STYLE)) {
+    if (testData.getUrlStyle().equals(SigningV4Test.UrlStyle.VIRTUAL_HOSTED_STYLE)) {
       style = SignUrlOption.withVirtualHostedStyle();
-    } else if (testData.getUrlStyle().equals(UrlStyle.PATH_STYLE)) {
+    } else if (testData.getUrlStyle().equals(SigningV4Test.UrlStyle.PATH_STYLE)) {
       style = SignUrlOption.withPathStyle();
-    } else if (testData.getUrlStyle().equals(UrlStyle.BUCKET_BOUND_HOSTNAME)) {
+    } else if (testData.getUrlStyle().equals(SigningV4Test.UrlStyle.BUCKET_BOUND_DOMAIN)) {
       style =
           SignUrlOption.withBucketBoundHostname(
-              testData.getBucketBoundHostname(),
+              testData.getBucketBoundDomain(),
               Storage.UriScheme.valueOf(testData.getScheme().toUpperCase()));
     }
 
