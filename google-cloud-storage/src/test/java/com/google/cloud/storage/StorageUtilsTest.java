@@ -142,7 +142,7 @@ public class StorageUtilsTest {
     IOException ioException = new IOException("message");
     WriteChannel channel = createStrictMock(WriteChannel.class);
     channel.setChunkSize(DEFAULT_BUFFER_SIZE);
-    expect(channel.write((ByteBuffer)anyObject())).andThrow(ioException);
+    expect(channel.write((ByteBuffer) anyObject())).andThrow(ioException);
     replay(channel);
     expect(storage.writer(eq(BLOB_INFO))).andReturn(channel);
     replay(storage);
