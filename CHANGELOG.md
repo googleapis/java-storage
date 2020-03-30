@@ -1,5 +1,25 @@
 # Changelog
 
+### [1.106.1](https://www.github.com/googleapis/java-storage/compare/v1.106.0...v1.106.1) (2020-03-30)
+
+
+### Bug Fixes
+
+* storage-client-lib-docs to right location ([#213](https://www.github.com/googleapis/java-storage/issues/213)) ([133d137](https://www.github.com/googleapis/java-storage/commit/133d1377781fd6bdc58dd4f494a75ec1d7b9e530))
+
+
+### Dependencies
+
+* update conformance test dep ([#210](https://www.github.com/googleapis/java-storage/issues/210)) ([010c112](https://www.github.com/googleapis/java-storage/commit/010c1128761d9c74ba1af33bc34e9264f34b8c80))
+* update dependency com.google.api:api-common to v1.9.0 ([#209](https://www.github.com/googleapis/java-storage/issues/209)) ([789ceaa](https://www.github.com/googleapis/java-storage/commit/789ceaa2be6163f85f483637205191e38029e0c2))
+* update dependency com.google.cloud.samples:shared-configuration to v1.0.14 ([#207](https://www.github.com/googleapis/java-storage/issues/207)) ([be74072](https://www.github.com/googleapis/java-storage/commit/be74072662f2e3a99e54ee3d3feff66cb39032b2))
+* update dependency org.threeten:threetenbp to v1.4.2 ([#200](https://www.github.com/googleapis/java-storage/issues/200)) ([84faad1](https://www.github.com/googleapis/java-storage/commit/84faad1a854c3a189d2997a121a8753988213f90))
+
+
+### Documentation
+
+* clarify documentation on date formats ([#196](https://www.github.com/googleapis/java-storage/issues/196)) ([9b4af58](https://www.github.com/googleapis/java-storage/commit/9b4af5870ef38cae4e92b60a2f8e6efd3e93d06d)), closes [/github.com/googleapis/google-http-java-client/blob/master/google-http-client/src/main/java/com/google/api/client/util/DateTime.java#L53](https://www.github.com/googleapis//github.com/googleapis/google-http-java-client/blob/master/google-http-client/src/main/java/com/google/api/client/util/DateTime.java/issues/L53)
+
 ## [1.106.0](https://www.github.com/googleapis/java-storage/compare/v1.105.2...v1.106.0) (2020-03-17)
 
 
