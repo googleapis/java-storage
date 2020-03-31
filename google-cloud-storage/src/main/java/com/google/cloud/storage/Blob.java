@@ -26,6 +26,7 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.RetryHelper;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
@@ -230,21 +231,25 @@ public class Blob extends BlobInfo {
     final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
     final StorageRpc storageRpc = this.options.getStorageRpcV1();
     final Map<StorageRpc.Option, ?> requestOptions = StorageImpl.optionMap(getBlobId(), options);
-    runWithRetries(
-        callable(
-            new Runnable() {
-              @Override
-              public void run() {
-                storageRpc.read(
-                    getBlobId().toPb(),
-                    requestOptions,
-                    countingOutputStream.getCount(),
-                    countingOutputStream);
-              }
-            }),
-        this.options.getRetrySettings(),
-        StorageImpl.EXCEPTION_HANDLER,
-        this.options.getClock());
+    try {
+      runWithRetries(
+          callable(
+              new Runnable() {
+                @Override
+                public void run() {
+                  storageRpc.read(
+                      getBlobId().toPb(),
+                      requestOptions,
+                      countingOutputStream.getCount(),
+                      countingOutputStream);
+                }
+              }),
+          this.options.getRetrySettings(),
+          StorageImpl.EXCEPTION_HANDLER,
+          this.options.getClock());
+    } catch (RetryHelper.RetryHelperException e) {
+      StorageException.translateAndThrow(e);
+    }
   }
 
   /**
