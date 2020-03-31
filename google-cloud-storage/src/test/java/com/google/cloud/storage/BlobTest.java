@@ -679,7 +679,6 @@ public class BlobTest {
       blob.downloadTo(file.toPath());
       fail();
     } catch (StorageException e) {
-      e.printStackTrace();
       assertSame(exception, e.getCause());
     }
   }
