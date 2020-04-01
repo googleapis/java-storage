@@ -39,9 +39,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StorageUtilsTest {
+public class StorageOperationsTest {
   private Storage storage;
-  private StorageUtils storageUtils;
+  private StorageOperations storageOperations;
 
   private static final BlobInfo BLOB_INFO = BlobInfo.newBuilder("b", "n").build();
   private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
@@ -50,7 +50,7 @@ public class StorageUtilsTest {
   @Before
   public void setUp() {
     storage = createStrictMock(Storage.class);
-    storageUtils = StorageUtils.create(storage);
+    storageOperations = new StorageOperations(storage);
   }
 
   @After
@@ -59,18 +59,12 @@ public class StorageUtilsTest {
   }
 
   @Test
-  public void testCreate() {
-    replay(storage);
-    assertSame(storage, storageUtils.storage);
-  }
-
-  @Test
   public void testUploadFromNonExistentFile() {
     replay(storage);
     String fileName = "non_existing_file.txt";
     try {
-      storageUtils.upload(BLOB_INFO, Paths.get(fileName));
-      storageUtils.upload(BLOB_INFO, Paths.get(fileName), -1);
+      storageOperations.upload(BLOB_INFO, Paths.get(fileName));
+      storageOperations.upload(BLOB_INFO, Paths.get(fileName), -1);
       fail();
     } catch (IOException e) {
       assertEquals(NoSuchFileException.class, e.getClass());
@@ -83,8 +77,8 @@ public class StorageUtilsTest {
     replay(storage);
     Path dir = Files.createTempDirectory("unit_");
     try {
-      storageUtils.upload(BLOB_INFO, dir);
-      storageUtils.upload(BLOB_INFO, dir, -2);
+      storageOperations.upload(BLOB_INFO, dir);
+      storageOperations.upload(BLOB_INFO, dir, -2);
       fail();
     } catch (StorageException e) {
       assertEquals(dir + " is a directory", e.getMessage());
@@ -115,7 +109,7 @@ public class StorageUtilsTest {
     prepareForUpload(BLOB_INFO, dataToSend);
     Path tempFile = Files.createTempFile("testUpload", ".tmp");
     Files.write(tempFile, dataToSend);
-    storageUtils.upload(BLOB_INFO, tempFile);
+    storageOperations.upload(BLOB_INFO, tempFile);
   }
 
   @Test
@@ -125,7 +119,7 @@ public class StorageUtilsTest {
         new Storage.BlobWriteOption[] {Storage.BlobWriteOption.crc32cMatch()};
     prepareForUpload(BLOB_INFO, dataToSend, options);
     InputStream input = new ByteArrayInputStream(dataToSend);
-    storageUtils.upload(BLOB_INFO, input, options);
+    storageOperations.upload(BLOB_INFO, input, options);
   }
 
   @Test
@@ -134,7 +128,7 @@ public class StorageUtilsTest {
     prepareForUpload(BLOB_INFO, dataToSend, MIN_BUFFER_SIZE);
     InputStream input = new ByteArrayInputStream(dataToSend);
     int smallBufferSize = 100;
-    storageUtils.upload(BLOB_INFO, input, smallBufferSize);
+    storageOperations.upload(BLOB_INFO, input, smallBufferSize);
   }
 
   @Test
@@ -148,7 +142,7 @@ public class StorageUtilsTest {
     replay(storage);
     InputStream input = new ByteArrayInputStream(new byte[10]);
     try {
-      storageUtils.upload(BLOB_INFO, input);
+      storageOperations.upload(BLOB_INFO, input);
       fail();
     } catch (IOException e) {
       assertSame(e, ioException);
@@ -174,6 +168,6 @@ public class StorageUtilsTest {
     replay(storage);
 
     InputStream input = new ByteArrayInputStream(dataToSend);
-    storageUtils.upload(BLOB_INFO, input, bufferSize);
+    storageOperations.upload(BLOB_INFO, input, bufferSize);
   }
 }

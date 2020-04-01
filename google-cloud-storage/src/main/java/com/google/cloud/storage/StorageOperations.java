@@ -25,51 +25,25 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Utility methods to perform various operations with the Storage such as upload.
- *
- * <p>Example of uploading files from a folder:
- *
- * <pre>{@code
- * File folder = new File("pictures/");
- * StorageUtils utils = StorageUtils.create(storage);
- * for (File file: folder.listFiles()) {
- *     if (!file.isDirectory()) {
- *         BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, file.getName()).build();
- *         try {
- *             utils.upload(blobInfo, file.toPath());
- *         } catch (IOException e) {
- *             System.err.println("Unable to upload " + file + ": " + e.getMessage());
- *         }
- *     }
- * }
- * }</pre>
- */
-public final class StorageUtils {
+/** Utility methods to perform various operations with the Storage such as upload. */
+public final class StorageOperations {
 
-  /** The instance of the Storage the utilities are associated with. */
-  public final Storage storage;
-
+  private final Storage storage;
   private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
   private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
-  private StorageUtils(Storage storage) {
+  /**
+   * Creates a new StorageOperations instance associated with the given storage.
+   *
+   * @param storage the Storage
+   */
+  public StorageOperations(Storage storage) {
     this.storage = storage;
   }
 
   /**
-   * Creates a new utility object associated with the given storage.
-   *
-   * @param storage the Storage
-   * @return an instance which refers to {@code storage}
-   */
-  public static StorageUtils create(Storage storage) {
-    return new StorageUtils(storage);
-  }
-
-  /**
-   * Uploads the given {@code path} to the blob using {@link Storage#writer}. By default any MD5 and
-   * CRC32C values in the given {@code blobInfo} are ignored unless requested via the {@link
+   * Uploads {@code path} to the blob using {@link Storage#writer}. By default any MD5 and CRC32C
+   * values in the given {@code blobInfo} are ignored unless requested via the {@link
    * Storage.BlobWriteOption#md5Match()} and {@link Storage.BlobWriteOption#crc32cMatch()} options.
    * Folder upload is not supported.
    *
@@ -80,7 +54,7 @@ public final class StorageUtils {
    * String fileName = "readme.txt";
    * BlobId blobId = BlobId.of(bucketName, fileName);
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
-   * StorageUtils.create(storage).upload(blobInfo, Paths.get(fileName));
+   * new StorageOperations(storage).upload(blobInfo, Paths.get(fileName));
    * }</pre>
    *
    * @param blobInfo blob to create
@@ -96,16 +70,17 @@ public final class StorageUtils {
   }
 
   /**
-   * Uploads the given {@code path} to the blob using {@link Storage#writer} and the given {@code
-   * bufferSize}. By default any MD5 and CRC32C values in the given {@code blobInfo} are ignored
-   * unless requested via the {@link Storage.BlobWriteOption#md5Match()} and {@link
+   * Uploads {@code path} to the blob using {@link Storage#writer} and {@code bufferSize}. By
+   * default any MD5 and CRC32C values in the given {@code blobInfo} are ignored unless requested
+   * via the {@link Storage.BlobWriteOption#md5Match()} and {@link
    * Storage.BlobWriteOption#crc32cMatch()} options. Folder upload is not supported.
    *
-   * <p>{@link #upload(BlobInfo, Path, Storage.BlobWriteOption...)} invokes this one with a buffer
-   * size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the upload
-   * performance but require more memory. This can cause an OutOfMemoryError or add significant
-   * garbage collection overhead. Smaller buffer sizes reduce memory consumption, that is noticeable
-   * when uploading many objects in parallel. Buffer sizes less than 256 KiB are treated as 256 KiB.
+   * <p>{@link #upload(BlobInfo, Path, Storage.BlobWriteOption...)} invokes this method with a
+   * buffer size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the
+   * upload performance but require more memory. This can cause an OutOfMemoryError or add
+   * significant garbage collection overhead. Smaller buffer sizes reduce memory consumption, that
+   * is noticeable when uploading many objects in parallel. Buffer sizes less than 256 KiB are
+   * treated as 256 KiB.
    *
    * <p>Example of uploading a humongous file:
    *
@@ -115,7 +90,7 @@ public final class StorageUtils {
    *
    * int largeBufferSize = 150 * 1024 * 1024;
    * Path file = Paths.get("humongous.file");
-   * StorageUtils.create(storage).upload(blobInfo, file, largeBufferSize);
+   * new StorageOperations(storage).upload(blobInfo, file, largeBufferSize);
    * }</pre>
    *
    * @param blobInfo blob to create
@@ -137,24 +112,25 @@ public final class StorageUtils {
   }
 
   /**
-   * Uploads the given {@code content} to the blob using {@link Storage#writer}. By default any MD5
-   * and CRC32C values in the given {@code blobInfo} are ignored unless requested via the {@link
-   * Storage.BlobWriteOption#md5Match()} and {@link Storage.BlobWriteOption#crc32cMatch()} options.
+   * Reads bytes from an input stream and uploads those bytes to the blob using {@link
+   * Storage#writer}. By default any MD5 and CRC32C values in the given {@code blobInfo} are ignored
+   * unless requested via the {@link Storage.BlobWriteOption#md5Match()} and {@link
+   * Storage.BlobWriteOption#crc32cMatch()} options.
    *
    * <p>Example of uploading data with CRC32C checksum:
    *
    * <pre>{@code
    * BlobId blobId = BlobId.of(bucketName, blobName);
-   * byte[] content = "Hello, world".getBytes(UTF_8);
+   * byte[] content = "Hello, world".getBytes(StandardCharsets.UTF_8);
    * Hasher hasher = Hashing.crc32c().newHasher().putBytes(content);
    * String crc32c = BaseEncoding.base64().encode(Ints.toByteArray(hasher.hash().asInt()));
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(crc32c).build();
-   * StorageUtils.create(storage).upload(blobInfo, new ByteArrayInputStream(content),
+   * new StorageOperations(storage).upload(blobInfo, new ByteArrayInputStream(content),
    *     Storage.BlobWriteOption.crc32cMatch());
    * }</pre>
    *
    * @param blobInfo blob to create
-   * @param content content to upload
+   * @param content input stream to read from
    * @param options blob write options
    * @throws IOException on I/O error
    * @throws StorageException on failure
@@ -166,10 +142,10 @@ public final class StorageUtils {
   }
 
   /**
-   * Uploads the given {@code content} to the blob using {@link Storage#writer} and the given {@code
-   * bufferSize}. By default any MD5 and CRC32C values in the given {@code blobInfo} are ignored
-   * unless requested via the {@link Storage.BlobWriteOption#md5Match()} and {@link
-   * Storage.BlobWriteOption#crc32cMatch()} options.
+   * Reads bytes from an input stream and uploads those bytes to the blob using {@link
+   * Storage#writer} and {@code bufferSize}. By default any MD5 and CRC32C values in the given
+   * {@code blobInfo} are ignored unless requested via the {@link
+   * Storage.BlobWriteOption#md5Match()} and {@link Storage.BlobWriteOption#crc32cMatch()} options.
    *
    * <p>{@link #upload(BlobInfo, InputStream, Storage.BlobWriteOption...)} )} invokes this method
    * with a buffer size of 15 MiB. Users can pass alternative values. Larger buffer sizes might
@@ -179,7 +155,7 @@ public final class StorageUtils {
    * treated as 256 KiB.
    *
    * @param blobInfo blob to create
-   * @param content content to upload
+   * @param content input stream to read from
    * @param bufferSize size of the buffer I/O operations
    * @param options blob write options
    * @throws IOException on I/O error

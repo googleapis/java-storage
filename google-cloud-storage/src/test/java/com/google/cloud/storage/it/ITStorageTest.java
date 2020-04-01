@@ -76,9 +76,9 @@ import com.google.cloud.storage.StorageBatch;
 import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.StorageOperations;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.StorageRoles;
-import com.google.cloud.storage.StorageUtils;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -134,7 +134,7 @@ public class ITStorageTest {
 
   private static RemoteStorageHelper remoteStorageHelper;
   private static Storage storage;
-  private static StorageUtils storageUtils;
+  private static StorageOperations storageOperations;
   private static String kmsKeyOneResourcePath;
   private static String kmsKeyTwoResourcePath;
   private static Metadata requestParamsHeader = new Metadata();
@@ -179,7 +179,7 @@ public class ITStorageTest {
   public static void beforeClass() throws IOException {
     remoteStorageHelper = RemoteStorageHelper.create();
     storage = remoteStorageHelper.getOptions().getService();
-    storageUtils = StorageUtils.create(storage);
+    storageOperations = new StorageOperations(storage);
 
     storage.create(
         BucketInfo.newBuilder(BUCKET)
@@ -3222,7 +3222,7 @@ public class ITStorageTest {
 
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
     Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
-    storageUtils.upload(blobInfo, tempFileFrom);
+    storageOperations.upload(blobInfo, tempFileFrom);
 
     Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
     storage.get(blobId).downloadTo(tempFileTo);
@@ -3237,7 +3237,7 @@ public class ITStorageTest {
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
     ByteArrayInputStream content = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
-    storageUtils.upload(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
+    storageOperations.upload(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
 
     Blob blob = storage.get(blobId);
     try {
