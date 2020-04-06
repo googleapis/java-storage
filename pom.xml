@@ -103,14 +103,14 @@
       <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-bom</artifactId>
-        <version>1.27.2</version>
+        <version>1.28.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.google.api</groupId>
         <artifactId>gax-bom</artifactId>
-        <version>1.54.0</version>
+        <version>1.56.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
