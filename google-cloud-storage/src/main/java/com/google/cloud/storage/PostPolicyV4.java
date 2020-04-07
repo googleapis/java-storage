@@ -185,81 +185,81 @@ public final class PostPolicyV4 {
             }
 
             public Builder addAclCondition(ConditionV4Type type, String acl) {
-                conditions.add(ConditionV4.newV4Condition(type, "acl", acl));
+                conditions.add(new ConditionV4(type, "acl", acl));
                 return this;
             }
 
             public Builder addBucketCondition(ConditionV4Type type, String bucket) {
-                conditions.add(ConditionV4.newV4Condition(type, "bucket", bucket));
+                conditions.add(new ConditionV4(type, "bucket", bucket));
                 return this;
             }
 
             public Builder addCacheControlCondition(ConditionV4Type type, String cacheControl) {
-                conditions.add(ConditionV4.newV4Condition(type, "cache-control", cacheControl));
+                conditions.add(new ConditionV4(type, "cache-control", cacheControl));
                 return this;
             }
 
             public Builder addContentDispositionCondition(
                     ConditionV4Type type, String contentDisposition) {
-                conditions.add(ConditionV4.newV4Condition(type, "content-disposition", contentDisposition));
+                conditions.add(new ConditionV4(type, "content-disposition", contentDisposition));
                 return this;
             }
 
             public Builder addContentEncodingCondition(ConditionV4Type type, String contentEncoding) {
-                conditions.add(ConditionV4.newV4Condition(type, "content-encoding", contentEncoding));
+                conditions.add(new ConditionV4(type, "content-encoding", contentEncoding));
                 return this;
             }
 
             public Builder addContentLengthCondition(ConditionV4Type type, int contentLength) {
-                conditions.add(ConditionV4.newV4Condition(type, "content-length", "" + contentLength));
+                conditions.add(new ConditionV4(type, "content-length", "" + contentLength));
                 return this;
             }
 
             public Builder addContentTypeCondition(ConditionV4Type type, String contentType) {
-                conditions.add(ConditionV4.newV4Condition(type, "content-type", contentType));
+                conditions.add(new ConditionV4(type, "content-type", contentType));
                 return this;
             }
 
             public Builder addExpiresCondition(ConditionV4Type type, long expires) {
-                conditions.add(ConditionV4.newV4Condition(type, "expires", dateFormat.format(expires)));
+                conditions.add(new ConditionV4(type, "expires", dateFormat.format(expires)));
                 return this;
             }
 
             public Builder addExpiresCondition(ConditionV4Type type, String expires) {
-                conditions.add(ConditionV4.newV4Condition(type, "expires", expires));
+                conditions.add(new ConditionV4(type, "expires", expires));
                 return this;
             }
 
             public Builder addKeyCondition(ConditionV4Type type, String key) {
-                conditions.add(ConditionV4.newV4Condition(type, "key", key));
+                conditions.add(new ConditionV4(type, "key", key));
                 return this;
             }
 
             public Builder addSuccessActionRedirectUrlCondition(
                     ConditionV4Type type, String successActionRedirectUrl) {
                 conditions.add(
-                        ConditionV4.newV4Condition(type, "success_action_redirect", successActionRedirectUrl));
+                        new ConditionV4(type, "success_action_redirect", successActionRedirectUrl));
                 return this;
             }
 
             public Builder addSuccessActionStatusCondition(ConditionV4Type type, int status) {
-                conditions.add(ConditionV4.newV4Condition(type, "success_action_status", "" + status));
+                conditions.add(new ConditionV4(type, "success_action_status", "" + status));
                 return this;
             }
 
             public Builder addCustomMetadataCondition(ConditionV4Type type, String field, String value) {
-                conditions.add(ConditionV4.newV4Condition(type, "x-goog-meta-" + field, value));
+                conditions.add(new ConditionV4(type, "x-goog-meta-" + field, value));
                 return this;
             }
 
-            public Builder addContentLengthRange(int min, int max) {
+            public Builder addContentLengthRangeCondition(int min, int max) {
                 conditions.add(
-                        ConditionV4.newV4Condition(ConditionV4Type.CONTENT_LENGTH_RANGE, "" + min, "" + max));
+                        new ConditionV4(ConditionV4Type.CONTENT_LENGTH_RANGE, "" + min, "" + max));
                 return this;
             }
 
             public Builder addCustomCondition(ConditionV4Type type, String field, String value) {
-                conditions.add(ConditionV4.newV4Condition(type, field, value));
+                conditions.add(new ConditionV4(type, field, value));
                 return this;
             }
         }
@@ -290,21 +290,21 @@ public final class PostPolicyV4 {
                 switch (condition.type) {
                     case MATCHES:
                         JsonObject match = new JsonObject();
-                        match.addProperty(condition.element, condition.value);
+                        match.addProperty(condition.operand1, condition.operand2);
                         conditions.add(match);
                         break;
                     case STARTS_WITH:
                         JsonArray startsWith = new JsonArray();
                         startsWith.add("starts-with");
-                        startsWith.add("$" + condition.element);
-                        startsWith.add(condition.value);
+                        startsWith.add("$" + condition.operand1);
+                        startsWith.add(condition.operand2);
                         conditions.add(startsWith);
                         break;
                     case CONTENT_LENGTH_RANGE:
                         JsonArray contentLengthRange = new JsonArray();
                         contentLengthRange.add("content-length-range");
-                        contentLengthRange.add(Integer.parseInt(condition.element));
-                        contentLengthRange.add(Integer.parseInt(condition.value));
+                        contentLengthRange.add(Integer.parseInt(condition.operand1));
+                        contentLengthRange.add(Integer.parseInt(condition.operand2));
                         conditions.add(contentLengthRange);
                         break;
                 }
@@ -347,32 +347,28 @@ public final class PostPolicyV4 {
      *
      * @see <a href="https://cloud.google.com/storage/docs/authentication/signatures#policy-document"> Policy document</a>
      */
-    public static final class ConditionV4 {
+    static final class ConditionV4 {
         ConditionV4Type type;
-        String element;
-        String value;
+        String operand1;
+        String operand2;
 
-        private ConditionV4(ConditionV4Type type, String element, String value) {
+        private ConditionV4(ConditionV4Type type, String operand1, String operand2) {
             this.type = type;
-            this.element = element;
-            this.value = value;
-        }
-
-        public static ConditionV4 newV4Condition(ConditionV4Type type, String element, String value) {
-            return new ConditionV4(type, element, value);
+            this.operand1 = operand1;
+            this.operand2 = operand2;
         }
 
         @Override
         public boolean equals(Object other) {
             ConditionV4 condition = (ConditionV4) other;
             return this.type == condition.type
-                    && this.element.equals(condition.element)
-                    && this.value.equals(condition.value);
+                    && this.operand1.equals(condition.operand1)
+                    && this.operand2.equals(condition.operand2);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(type, element, value);
+            return Objects.hash(type, operand1, operand2);
         }
     }
 }

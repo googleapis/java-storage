@@ -2671,13 +2671,23 @@ public interface Storage extends Service<StorageOptions> {
    * @param duration how long until the form expires, in milliseconds
    * @param options optional post policy options
    */
-  PostPolicyV4 generatePresignedPostPolicyV4(
+  PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo,
-      PostFieldsV4 fields,
-      PostConditionsV4 conditions,
       long duration,
       TimeUnit unit,
+      PostFieldsV4 fields,
+      PostConditionsV4 conditions,
       PostPolicyV4Option... options);
+
+  PostPolicyV4 generateSignedPostPolicyV4(
+          BlobInfo blobInfo, long duration, TimeUnit unit, PostFieldsV4 fields, PostPolicyV4Option... options);
+
+  PostPolicyV4 generateSignedPostPolicyV4(
+          BlobInfo blobInfo, long duration, TimeUnit unit, PostConditionsV4 conditions, PostPolicyV4Option... options);
+
+  PostPolicyV4 generateSignedPostPolicyV4(
+          BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options);
+
 
   /**
    * Gets the requested blobs. A batch request is used to perform this call.

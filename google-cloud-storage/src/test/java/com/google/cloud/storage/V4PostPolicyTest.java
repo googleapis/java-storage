@@ -132,7 +132,7 @@ public class V4PostPolicyTest {
             PostPolicyV4.ConditionV4Type.STARTS_WITH, conditions.getStartsWith(0).replace("$", ""), conditions.getStartsWith(1));
       }
       if (!conditions.getContentLengthRangeList().isEmpty()) {
-        builder.addContentLengthRange(
+        builder.addContentLengthRangeCondition(
             conditions.getContentLengthRange(0), conditions.getContentLengthRange(1));
       }
     }
@@ -153,11 +153,12 @@ public class V4PostPolicyTest {
     }
 
     PostPolicyV4 policy =
-        storage.generatePresignedPostPolicyV4(
-            blob, v4Fields, builder.build(), testData.getPolicyInput().getExpiration(), TimeUnit.SECONDS, style);
+        storage.generateSignedPostPolicyV4(
+            blob, testData.getPolicyInput().getExpiration(), TimeUnit.SECONDS, v4Fields, builder.build(), style);
 
     String expectedPolicy = testData.getPolicyOutput().getExpectedDecodedPolicy();
     StringBuilder escapedPolicy = new StringBuilder();
+
 
     //Java automatically unescapes the unicode escapes in the conformance tests, so we need to manually re-escape them
     for (char c : expectedPolicy.toCharArray()) {
@@ -181,6 +182,7 @@ public class V4PostPolicyTest {
         escapedPolicy.toString(),
         new String(BaseEncoding.base64().decode(policy.getFields().get("policy"))));
     assertEquals(testData.getPolicyOutput().getUrl(), policy.getUrl());
+
   }
 
   /**

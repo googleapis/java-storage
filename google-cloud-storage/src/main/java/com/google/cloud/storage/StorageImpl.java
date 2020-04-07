@@ -56,7 +56,6 @@ import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostPolicyV4Document;
-import com.google.cloud.storage.PostPolicyV4.ConditionV4;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -742,12 +741,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public PostPolicyV4 generatePresignedPostPolicyV4(
+  public PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo,
-      PostFieldsV4 fields,
-      PostConditionsV4 conditions,
       long duration,
       TimeUnit unit,
+      PostFieldsV4 fields,
+      PostConditionsV4 conditions,
       PostPolicyV4Option... options) {
     EnumMap<SignUrlOption.Option, Object> optionMap = Maps.newEnumMap(SignUrlOption.Option.class);
     // Convert to a map of SignUrlOptions so we can re-use some utility methods
@@ -821,17 +820,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-algorithm", "GOOG4-RSA-SHA256")
             .build();
     PostPolicyV4Document document =
-            PostPolicyV4Document.of(
-            expirationFormat.format(
-                timestamp + unit.toMillis(duration)),
-            v4Conditions);
+        PostPolicyV4Document.of(
+            expirationFormat.format(timestamp + unit.toMillis(duration)), v4Conditions);
     String policy = BaseEncoding.base64().encode(document.toJson().getBytes());
     String signature =
         BaseEncoding.base16().encode(credentials.sign(policy.getBytes())).toLowerCase();
 
-    for (ConditionV4 condition : v4Conditions.getConditions()) {
+    for (PostPolicyV4.ConditionV4 condition : v4Conditions.getConditions()) {
       if (condition.type == ConditionV4Type.MATCHES) {
-        policyFields.put(condition.element, condition.value);
+        policyFields.put(condition.operand1, condition.operand2);
       }
     }
     policyFields.put("key", blobInfo.getName());
@@ -844,16 +841,30 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return PostPolicyV4.of(url, policyFields);
   }
 
-  public PostPolicyV4 generatePresignedPostPolicyV4(
-      BlobInfo blobInfo, PostFieldsV4 fields, long duration, TimeUnit unit, PostPolicyV4Option... options) {
-    return generatePresignedPostPolicyV4(
-        blobInfo, fields, PostConditionsV4.newBuilder().build(), duration, unit, options);
+  public PostPolicyV4 generateSignedPostPolicyV4(
+      BlobInfo blobInfo,
+      long duration,
+      TimeUnit unit,
+      PostFieldsV4 fields,
+      PostPolicyV4Option... options) {
+    return generateSignedPostPolicyV4(
+        blobInfo, duration, unit, fields, PostConditionsV4.newBuilder().build(), options);
   }
 
-  public PostPolicyV4 generatePresignedPostPolicyV4(
+  public PostPolicyV4 generateSignedPostPolicyV4(
+      BlobInfo blobInfo,
+      long duration,
+      TimeUnit unit,
+      PostConditionsV4 conditions,
+      PostPolicyV4Option... options) {
+    return generateSignedPostPolicyV4(
+        blobInfo, duration, unit, PostFieldsV4.newBuilder().build(), conditions, options);
+  }
+
+  public PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options) {
-    return generatePresignedPostPolicyV4(
-        blobInfo, PostFieldsV4.newBuilder().build(), duration, unit, options);
+    return generateSignedPostPolicyV4(
+        blobInfo, duration, unit, PostFieldsV4.newBuilder().build(), options);
   }
 
   private String constructResourceUriPath(
