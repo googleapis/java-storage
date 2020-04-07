@@ -1751,14 +1751,14 @@ public class ITStorageTest {
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.metagenerationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       // expected
     }
     try (ReadChannel reader =
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.generationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       // expected
     }
     BlobId blobIdWrongGeneration = BlobId.of(BUCKET, blobName, -1L);
@@ -1766,7 +1766,7 @@ public class ITStorageTest {
         storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
       reader.read(ByteBuffer.allocate(42));
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       // expected
     }
   }
@@ -1798,7 +1798,7 @@ public class ITStorageTest {
       readBytes = ByteBuffer.allocate(chunkSize);
       reader.read(readBytes);
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       StringBuilder messageBuilder = new StringBuilder();
       messageBuilder.append("Blob ").append(blob.getBlobId()).append(" was updated while reading");
       assertEquals(messageBuilder.toString(), ex.getMessage());
