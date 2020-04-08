@@ -63,6 +63,15 @@ import java.util.concurrent.TimeUnit;
  * {@link #copyTo} return a new object. Any changes to a Storage object made after creation of the
  * {@code Blob} is not visible in the {@code Blob}. To get a {@code Blob} object with the most
  * recent information use {@link #reload}.
+ *
+ * <p>Example of getting the content of a Storage object:
+ *
+ * <pre>{@code
+ * BlobId blobId = BlobId.of(bucketName, blobName);
+ * Blob blob = storage.get(blobId);
+ * long size = blob.getSize(); // no RPC call is required
+ * byte[] content = blob.getContent(); // one or multiple RPC calls will be issued
+ * }</pre>
  */
 public class Blob extends BlobInfo {
 
