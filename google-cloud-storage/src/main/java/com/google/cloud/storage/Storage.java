@@ -36,8 +36,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 
@@ -45,10 +43,8 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.security.Key;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1092,8 +1088,8 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
-     * Provides a service account signer to sign the policy. If not provided an attempt will be made
-     * to get it from the environment.
+     * Provides a service account signer to sign the policy. If not provided an attempt is made to
+     * get it from the environment.
      *
      * @see <a href="https://cloud.google.com/storage/docs/authentication#service_accounts">Service
      *     Accounts</a>
@@ -1104,8 +1100,8 @@ public interface Storage extends Service<StorageOptions> {
 
     /**
      * Use a virtual hosted-style hostname, which adds the bucket into the host portion of the URI
-     * rather than the path, e.g. 'https://mybucket.storage.googleapis.com/...'. The bucket name
-     * will be obtained from the resource passed in.
+     * rather than the path, e.g. 'https://mybucket.storage.googleapis.com/...'. The bucket name is
+     * obtained from the resource passed in.
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
      */
@@ -1114,7 +1110,7 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
-     * Generate a path-style URL, which places the bucket name in the path portion of the URL
+     * Generates a path-style URL, which places the bucket name in the path portion of the URL
      * instead of in the hostname, e.g 'https://storage.googleapis.com/mybucket/...'. Note that this
      * cannot be used alongside {@code withVirtualHostedStyle()}. Virtual hosted-style URLs, which
      * can be used via the {@code withVirtualHostedStyle()} method, should generally be preferred
@@ -1259,8 +1255,8 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
-     * Provides a service account signer to sign the URL. If not provided an attempt will be made to
-     * get it from the environment.
+     * Provides a service account signer to sign the URL. If not provided an attempt is made to get
+     * it from the environment.
      *
      * @see <a href="https://cloud.google.com/storage/docs/authentication#service_accounts">Service
      *     Accounts</a>
@@ -1272,7 +1268,7 @@ public interface Storage extends Service<StorageOptions> {
     /**
      * Use a different host name than the default host name 'storage.googleapis.com'. This option is
      * particularly useful for developers to point requests to an alternate endpoint (e.g. a staging
-     * environment or sending requests through VPC). Note that if using this with the {@code
+     * environment or sending requests through VPC). If using this with the {@code
      * withVirtualHostedStyle()} method, you should omit the bucket name from the hostname, as it
      * automatically gets prepended to the hostname for virtual hosted-style URLs.
      */
@@ -1282,10 +1278,10 @@ public interface Storage extends Service<StorageOptions> {
 
     /**
      * Use a virtual hosted-style hostname, which adds the bucket into the host portion of the URI
-     * rather than the path, e.g. 'https://mybucket.storage.googleapis.com/...'. The bucket name
-     * will be obtained from the resource passed in. For V4 signing, this also sets the "host"
-     * header in the canonicalized extension headers to the virtual hosted-style host, unless that
-     * header is supplied via the {@code withExtHeaders()} method.
+     * rather than the path, e.g. 'https://mybucket.storage.googleapis.com/...'. The bucket name is
+     * obtained from the resource passed in. For V4 signing, this also sets the "host" header in the
+     * canonicalized extension headers to the virtual hosted-style host, unless that header is
+     * supplied via the {@code withExtHeaders()} method.
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
      */
@@ -1294,11 +1290,11 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
-     * Generate a path-style URL, which places the bucket name in the path portion of the URL
-     * instead of in the hostname, e.g 'https://storage.googleapis.com/mybucket/...'. Note that this
-     * cannot be used alongside {@code withVirtualHostedStyle()}. Virtual hosted-style URLs, which
-     * can be used via the {@code withVirtualHostedStyle()} method, should generally be preferred
-     * instead of path-style URLs.
+     * Generates a path-style URL, which places the bucket name in the path portion of the URL
+     * instead of in the hostname, e.g 'https://storage.googleapis.com/mybucket/...'. This cannot be
+     * used alongside {@code withVirtualHostedStyle()}. Virtual hosted-style URLs, which can be used
+     * via the {@code withVirtualHostedStyle()} method, should generally be preferred instead of
+     * path-style URLs.
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
      */
@@ -1309,9 +1305,9 @@ public interface Storage extends Service<StorageOptions> {
     /**
      * Use a bucket-bound hostname, which replaces the storage.googleapis.com host with the name of
      * a CNAME bucket, e.g. a bucket named 'gcs-subdomain.my.domain.tld', or a Google Cloud Load
-     * Balancer which routes to a bucket you own, e.g. 'my-load-balancer-domain.tld'. Note that this
-     * cannot be used alongside {@code withVirtualHostedStyle()} or {@code withPathStyle()}. This
-     * method signature uses HTTP for the URI scheme, and is equivalent to calling {@code
+     * Balancer which routes to a bucket you own, e.g. 'my-load-balancer-domain.tld'. This cannot be
+     * used alongside {@code withVirtualHostedStyle()} or {@code withPathStyle()}. This method
+     * signature uses HTTP for the URI scheme, and is equivalent to calling {@code
      * withBucketBoundHostname("...", UriScheme.HTTP).}
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints#cname">CNAME
@@ -2653,16 +2649,23 @@ public interface Storage extends Service<StorageOptions> {
    * PostPolicyV4Option#signWith(ServiceAccountSigner)} option.
    *
    * <p>Example of generating a presigned post policy which has the condition that only jpeg images
-   * can be uploaded, and applies the public read acl to each image uploaded:
+   * can be uploaded, and applies the public read acl to each image uploaded, and making the POST
+   * request:
    *
    * <pre>{@code
    * PostFieldsV4 fields = PostFieldsV4.newBuilder().setAcl("public-read").build();
    * PostConditionsV4 conditions = PostConditionsV4.newBuilder().addContentTypeCondition(ConditionV4Type.MATCHES, "image/jpeg").build();
    *
-   * PostPolicyV4 policy = storage.generatePresignedPostPolicyV4(
+   * PostPolicyV4 policy = storage.generateSignedPostPolicyV4(
    *     BlobInfo.newBuilder("my-bucket", "my-object").build(),
-   *     fields, conditions, 7, TimeUnit.DAYS);
+   *     7, TimeUnit.DAYS, fields, conditions);
    *
+   * HttpClient client = HttpClientBuilder.create().build();
+   * HttpPost request = new HttpPost(policy.getUrl());
+   * for(Map.Entry<String, String> entry : policy.getFields().entrySet()) {
+   *     request.addHeader(entry.getKey(), entry.getValue());
+   * }
+   * client.execute(request);
    * }</pre>
    *
    * @param blobInfo the blob uploaded in the form
@@ -2679,15 +2682,40 @@ public interface Storage extends Service<StorageOptions> {
       PostConditionsV4 conditions,
       PostPolicyV4Option... options);
 
+  /**
+   * Generates a presigned post policy without any conditions. Automatically creates required
+   * conditions. See full documentation for generateSignedPostPolicyV4( BlobInfo blobInfo, long
+   * duration, TimeUnit unit, PostFieldsV4 fields, PostConditionsV4 conditions,
+   * PostPolicyV4Option... options) above.
+   */
   PostPolicyV4 generateSignedPostPolicyV4(
-          BlobInfo blobInfo, long duration, TimeUnit unit, PostFieldsV4 fields, PostPolicyV4Option... options);
+      BlobInfo blobInfo,
+      long duration,
+      TimeUnit unit,
+      PostFieldsV4 fields,
+      PostPolicyV4Option... options);
 
+  /**
+   * Generates a presigned post policy without any fields. Automatically creates required fields.
+   * See full documentation for generateSignedPostPolicyV4( BlobInfo blobInfo, long duration,
+   * TimeUnit unit, PostFieldsV4 fields, PostConditionsV4 conditions, PostPolicyV4Option... options)
+   * above.
+   */
   PostPolicyV4 generateSignedPostPolicyV4(
-          BlobInfo blobInfo, long duration, TimeUnit unit, PostConditionsV4 conditions, PostPolicyV4Option... options);
+      BlobInfo blobInfo,
+      long duration,
+      TimeUnit unit,
+      PostConditionsV4 conditions,
+      PostPolicyV4Option... options);
 
+  /**
+   * Generates a presigned post policy without any fields or conditions. Automatically creates
+   * required fields and conditions. See full documentation for generateSignedPostPolicyV4( BlobInfo
+   * blobInfo, long duration, TimeUnit unit, PostFieldsV4 fields, PostConditionsV4 conditions,
+   * PostPolicyV4Option... options) above.
+   */
   PostPolicyV4 generateSignedPostPolicyV4(
-          BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options);
-
+      BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options);
 
   /**
    * Gets the requested blobs. A batch request is used to perform this call.

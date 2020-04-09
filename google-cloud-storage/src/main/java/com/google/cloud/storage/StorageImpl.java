@@ -776,10 +776,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
     boolean usePathStyle = shouldUsePathStyleForSignedUrl(optionMap);
 
-    String url =
-        usePathStyle
-            ? STORAGE_XML_URI_SCHEME + "://" + STORAGE_XML_URI_HOST_NAME + "/" + bucketName + "/"
-            : STORAGE_XML_URI_SCHEME + "://" + bucketName + "." + STORAGE_XML_URI_HOST_NAME + "/";
+    String url;
+
+    if (usePathStyle) {
+      url = STORAGE_XML_URI_SCHEME + "://" + STORAGE_XML_URI_HOST_NAME + "/" + bucketName + "/";
+    } else {
+      url = STORAGE_XML_URI_SCHEME + "://" + bucketName + "." + STORAGE_XML_URI_HOST_NAME + "/";
+    }
 
     if (optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
       url = optionMap.get(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME) + "/";

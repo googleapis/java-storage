@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Google LLC
+ * Copyright 2020 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class V4PostPolicyTest {
   private final ServiceAccountCredentials serviceAccountCredentials;
 
   /**
-   * @param testData The serialized test data representing the test case.
+   * @param testData the serialized test data representing the test case.
    * @param serviceAccountCredentials The credentials to use in this test.
    * @param description Not used by the test, but used by the parameterized test runner as the name
    *     of the test.
@@ -186,7 +186,7 @@ public class V4PostPolicyTest {
   }
 
   /**
-   * Load all of the tests and return a {@code Collection<Object[]>} representing the set of tests.
+   * Loads all of the tests and return a {@code Collection<Object[]>} representing the set of tests.
    * Each entry in the returned collection is the set of parameters to the constructor of this test
    * class.
    *
