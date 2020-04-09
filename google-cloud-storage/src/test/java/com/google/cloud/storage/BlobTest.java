@@ -32,6 +32,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.RetrySettings;
@@ -585,17 +586,22 @@ public class BlobTest {
     assertTrue(blob.isDirectory());
   }
 
-  @Test
-  public void testDownload() throws Exception {
-    final byte[] expected = {1, 2};
+  private StorageRpc prepareForDownload() {
     StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
-    expect(storage.getOptions()).andReturn(mockOptions).times(1);
+    expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);
     expect(mockOptions.getStorageRpcV1()).andReturn(mockStorageRpc);
     expect(mockOptions.getRetrySettings()).andReturn(RETRY_SETTINGS);
     expect(mockOptions.getClock()).andReturn(API_CLOCK);
     replay(mockOptions);
     blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    return mockStorageRpc;
+  }
+
+  @Test
+  public void testDownloadTo() throws Exception {
+    final byte[] expected = {1, 2};
+    StorageRpc mockStorageRpc = prepareForDownload();
     expect(
             mockStorageRpc.read(
                 anyObject(StorageObject.class),
@@ -618,16 +624,9 @@ public class BlobTest {
   }
 
   @Test
-  public void testDownloadWithRetries() throws Exception {
+  public void testDownloadToWithRetries() throws Exception {
     final byte[] expected = {1, 2};
-    StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
-    expect(storage.getOptions()).andReturn(mockOptions);
-    replay(storage);
-    expect(mockOptions.getStorageRpcV1()).andReturn(mockStorageRpc);
-    expect(mockOptions.getRetrySettings()).andReturn(RETRY_SETTINGS);
-    expect(mockOptions.getClock()).andReturn(API_CLOCK);
-    replay(mockOptions);
-    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    StorageRpc mockStorageRpc = prepareForDownload();
     expect(
             mockStorageRpc.read(
                 anyObject(StorageObject.class),
@@ -661,5 +660,26 @@ public class BlobTest {
     blob.downloadTo(file.toPath());
     byte actual[] = Files.readAllBytes(file.toPath());
     assertArrayEquals(expected, actual);
+  }
+
+  @Test
+  public void testDownloadToWithException() throws Exception {
+    StorageRpc mockStorageRpc = prepareForDownload();
+    Exception exception = new IllegalStateException("test");
+    expect(
+            mockStorageRpc.read(
+                anyObject(StorageObject.class),
+                anyObject(Map.class),
+                eq(0l),
+                anyObject(OutputStream.class)))
+        .andThrow(exception);
+    replay(mockStorageRpc);
+    File file = File.createTempFile("blob", ".tmp");
+    try {
+      blob.downloadTo(file.toPath());
+      fail();
+    } catch (StorageException e) {
+      assertSame(exception, e.getCause());
+    }
   }
 }

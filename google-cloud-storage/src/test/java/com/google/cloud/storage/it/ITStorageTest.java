@@ -123,6 +123,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -187,6 +188,23 @@ public class ITStorageTest {
 
     // Prepare KMS KeyRing for CMEK tests
     prepareKmsKeys();
+  }
+
+  @Before
+  public void beforeEach() {
+    Bucket remoteBucket =
+        storage.get(
+            BUCKET,
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
+            Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
+    // Disable requester pays in case a test fails to clean up.
+    if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
+      remoteBucket
+          .toBuilder()
+          .setRequesterPays(false)
+          .build()
+          .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
+    }
   }
 
   @AfterClass
@@ -864,8 +882,9 @@ public class ITStorageTest {
     assertNotNull(storage.create(blob1));
 
     // Test listing a Requester Pays bucket.
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
-    assertNull(remoteBucket.requesterPays());
+    Bucket remoteBucket =
+        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+    assertFalse(remoteBucket.requesterPays());
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
     Bucket updatedBucket = storage.update(remoteBucket);
     assertTrue(updatedBucket.requesterPays());
@@ -1732,14 +1751,14 @@ public class ITStorageTest {
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.metagenerationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       // expected
     }
     try (ReadChannel reader =
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.generationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       // expected
     }
     BlobId blobIdWrongGeneration = BlobId.of(BUCKET, blobName, -1L);
@@ -1747,7 +1766,7 @@ public class ITStorageTest {
         storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
       reader.read(ByteBuffer.allocate(42));
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       // expected
     }
   }
@@ -1779,7 +1798,7 @@ public class ITStorageTest {
       readBytes = ByteBuffer.allocate(chunkSize);
       reader.read(readBytes);
       fail("StorageException was expected");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       StringBuilder messageBuilder = new StringBuilder();
       messageBuilder.append("Blob ").append(blob.getBlobId()).append(" was updated while reading");
       assertEquals(messageBuilder.toString(), ex.getMessage());
@@ -2135,7 +2154,8 @@ public class ITStorageTest {
 
   private void testBucketAclRequesterPays(boolean requesterPays) {
     if (requesterPays) {
-      Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
+      Bucket remoteBucket =
+          storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
       assertNull(remoteBucket.requesterPays());
       remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
       Bucket updatedBucket = storage.update(remoteBucket);
@@ -2161,6 +2181,18 @@ public class ITStorageTest {
     assertTrue(acls.contains(updatedAcl));
     assertTrue(storage.deleteAcl(BUCKET, User.ofAllAuthenticatedUsers(), bucketOptions));
     assertNull(storage.getAcl(BUCKET, User.ofAllAuthenticatedUsers(), bucketOptions));
+    if (requesterPays) {
+      Bucket remoteBucket =
+          storage.get(
+              BUCKET,
+              Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
+              Storage.BucketGetOption.userProject(projectId));
+      assertTrue(remoteBucket.requesterPays());
+      remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
+      Bucket updatedBucket =
+          storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
+      assertFalse(updatedBucket.requesterPays());
+    }
   }
 
   @Test
@@ -2344,8 +2376,9 @@ public class ITStorageTest {
 
   @Test
   public void testBucketPolicyV1RequesterPays() {
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
-    assertNull(remoteBucket.requesterPays());
+    Bucket remoteBucket =
+        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+    assertFalse(remoteBucket.requesterPays());
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
     Bucket updatedBucket = storage.update(remoteBucket);
     assertTrue(updatedBucket.requesterPays());
@@ -2404,6 +2437,9 @@ public class ITStorageTest {
             BUCKET,
             ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
             bucketOptions));
+    remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
+    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
+    assertFalse(updatedBucket.requesterPays());
   }
 
   @Test
@@ -2621,7 +2657,8 @@ public class ITStorageTest {
 
   @Test
   public void testUpdateBucketLabel() {
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
+    Bucket remoteBucket =
+        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertNull(remoteBucket.getLabels());
     remoteBucket = remoteBucket.toBuilder().setLabels(BUCKET_LABELS).build();
     Bucket updatedBucket = storage.update(remoteBucket);
@@ -2632,8 +2669,9 @@ public class ITStorageTest {
 
   @Test
   public void testUpdateBucketRequesterPays() {
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
-    assertNull(remoteBucket.requesterPays());
+    Bucket remoteBucket =
+        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+    assertFalse(remoteBucket.requesterPays());
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
     Bucket updatedBucket = storage.update(remoteBucket);
     assertTrue(updatedBucket.requesterPays());
@@ -2643,8 +2681,12 @@ public class ITStorageTest {
     String blobName = "test-create-empty-blob-requester-pays";
     Blob remoteBlob = updatedBucket.create(blobName, BLOB_BYTE_CONTENT, option);
     assertNotNull(remoteBlob);
-    byte[] readBytes = storage.readAllBytes(BUCKET, blobName);
+    byte[] readBytes =
+        storage.readAllBytes(BUCKET, blobName, Storage.BlobSourceOption.userProject(projectId));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+    remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
+    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
+    assertFalse(updatedBucket.requesterPays());
   }
 
   @Test
@@ -2783,6 +2825,12 @@ public class ITStorageTest {
       assertTrue(remoteBucket.retentionPolicyIsLocked());
       assertNotNull(remoteBucket.getRetentionEffectiveTime());
     } finally {
+      if (requesterPays) {
+        bucketInfo = bucketInfo.toBuilder().setRequesterPays(false).build();
+        Bucket updateBucket =
+            storage.update(bucketInfo, Storage.BucketTargetOption.userProject(projectId));
+        assertFalse(updateBucket.requesterPays());
+      }
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }

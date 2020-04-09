@@ -4,7 +4,7 @@
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.105.1</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>1.106.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
   <name>Storage Parent</name>
   <url>https://github.com/googleapis/java-storage</url>
   <description>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-shared-config</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
   </parent>
 
   <developers>
@@ -63,10 +63,10 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <github.global.server>github</github.global.server>
     <site.installationModule>google-cloud-storage-parent</site.installationModule>
-    <google.core.version>1.93.2</google.core.version>
-    <google.api-common.version>1.8.1</google.api-common.version>
+    <google.core.version>1.93.4</google.core.version>
+    <google.api-common.version>1.9.0</google.api-common.version>
     <junit.version>4.13</junit.version>
-    <threeten.version>1.4.1</threeten.version>
+    <threeten.version>1.4.3</threeten.version>
     <javax.annotations.version>1.3.2</javax.annotations.version>
     <animal-sniffer.version>1.18</animal-sniffer.version>
     <opencensus.version>0.24.0</opencensus.version>
@@ -103,14 +103,14 @@
       <dependency>
         <groupId>io.grpc</groupId>
         <artifactId>grpc-bom</artifactId>
-        <version>1.28.0</version>
+        <version>1.28.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.google.api</groupId>
         <artifactId>gax-bom</artifactId>
-        <version>1.54.0</version>
+        <version>1.56.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -124,7 +124,7 @@
       <dependency>
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-storage</artifactId>
-        <version>v1-rev20191127-1.30.9</version>
+        <version>v1-rev20200226-1.30.9</version>
       </dependency>
       <dependency>
         <groupId>org.checkerframework</groupId>
@@ -213,7 +213,6 @@
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-conformance-tests</artifactId>
         <version>0.0.9</version>
-
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -272,7 +271,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.2.0</version>
         <reportSets>
           <reportSet>
             <id>html</id>
