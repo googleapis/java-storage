@@ -532,46 +532,11 @@ public class Blob extends BlobInfo {
   }
 
   /**
-   * Updates the blob's information. Bucket or blob's name cannot be changed by this method. If you
-   * want to rename the blob or move it to a different bucket use the {@link #copyTo} and {@link
-   * #delete} operations. A new {@code Blob} object is returned. By default no checks are made on
-   * the metadata generation of the current blob. If you want to update the information only if the
-   * current blob metadata are at their latest version use the {@code metagenerationMatch} option:
-   * {@code newBlob.update(BlobTargetOption.metagenerationMatch())}.
-   *
-   * <p>Original metadata are merged with metadata in the provided {@code blobInfo}. If the original
-   * metadata already contains a key specified in the provided {@code blobInfo's} metadata map, it
-   * will be replaced by the new value. Removing metadata can be done by setting that metadata's
-   * value to {@code null}.
-   *
-   * <p>Example of adding new metadata values or updating existing ones.
-   *
-   * <pre>{@code
-   * String bucketName = "my_unique_bucket";
-   * String blobName = "my_blob_name";
-   * Map<String, String> newMetadata = new HashMap<>();
-   * newMetadata.put("keyToAddOrUpdate", "value");
-   * Blob blob = storage.update(BlobInfo.newBuilder(bucketName, blobName)
-   *     .setMetadata(newMetadata)
-   *     .build());
-   * }</pre>
-   *
-   * <p>Example of removing metadata values.
-   *
-   * <pre>{@code
-   * String bucketName = "my_unique_bucket";
-   * String blobName = "my_blob_name";
-   * Map<String, String> newMetadata = new HashMap<>();
-   * newMetadata.put("keyToRemove", null);
-   * Blob blob = storage.update(BlobInfo.newBuilder(bucketName, blobName)
-   *     .setMetadata(newMetadata)
-   *     .build());
-   * }</pre>
-   *
-   * @param options update options
-   * @return a {@code Blob} object with updated information
-   * @throws StorageException upon failure
+   * This method is marked as {@link Deprecated} because it does not have {@code BlobInfo} parameter
+   * to specify the update. Use {@link Storage#update(BlobInfo)} or {@link Storage#update(BlobInfo,
+   * BlobTargetOption...)} instead.
    */
+  @Deprecated
   public Blob update(BlobTargetOption... options) {
     return storage.update(this, options);
   }
