@@ -533,8 +533,10 @@ public class Blob extends BlobInfo {
 
   /**
    * This method is marked as {@link Deprecated} because it does not have {@code BlobInfo} parameter
-   * to specify the update. Use {@link Storage#update(BlobInfo)} or {@link Storage#update(BlobInfo,
-   * BlobTargetOption...)} instead.
+   * to specify the update.
+   *
+   * @deprecated Use {@link Storage#update(BlobInfo)} or {@link Storage#update(BlobInfo,
+   *     BlobTargetOption...)} instead.
    */
   @Deprecated
   public Blob update(BlobTargetOption... options) {
