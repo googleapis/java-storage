@@ -2019,7 +2019,7 @@ public interface Storage extends Service<StorageOptions> {
    * @param blobInfo information to update
    * @param options preconditions to apply the update
    * @return the updated blob
-   * @throws StorageException if preconditions fail
+   * @throws StorageException upon failure
    */
   Blob update(BlobInfo blobInfo, BlobTargetOption... options);
 
