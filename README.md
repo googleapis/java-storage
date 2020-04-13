@@ -216,7 +216,8 @@ See [TESTING] to read more about testing.
 Versioning
 ----------
 
-This library follows [Semantic Versioning](http://semver.org/).
+This library follows [Semantic Versioning](http://semver.org/), but does update [Storage interface](src/main/java/com.google.cloud.storage/Storage.java)
+to introduce new methods which can break your implementations if you implement this interface for testing purposes.
 
 It is currently in major version one (``1.y.z``), which means that the public API should be considered stable.
 
