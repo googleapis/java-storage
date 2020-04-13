@@ -52,7 +52,7 @@ import java.util.Set;
  * BlobInfo} and declares methods to perform operations on the object. Neither {@code BlobInfo} nor
  * {@code Blob} instances keep the object content, just the object properties.
  *
- * <p>Example of usage {@code BlobInfo} to crate an object in Google Cloud Storage:
+ * <p>Example of usage {@code BlobInfo} to create an object in Google Cloud Storage:
  *
  * <pre>{@code
  * BlobId blobId = BlobId.of(bucketName, blobName);
