@@ -1,6 +1,6 @@
-# Google Google Cloud Storage Client for Java
+# Google Cloud Storage Client for Java
 
-Java idiomatic client for [Google Cloud Storage][product-docs].
+Java idiomatic client for [Cloud Storage][product-docs].
 
 [![Maven][maven-version-image]][maven-version-link]
 ![Stability][stability-image]
@@ -63,8 +63,8 @@ See the [Authentication][authentication] section in the base directory's README.
 
 ### Prerequisites
 
-You will need a [Google Cloud Platform Console][developer-console] project with the Google Cloud Storage [API enabled][enable-api].
-You will need to [enable billing][enable-billing] to use Google Google Cloud Storage.
+You will need a [Google Cloud Platform Console][developer-console] project with the Cloud Storage [API enabled][enable-api].
+You will need to [enable billing][enable-billing] to use Google Cloud Storage.
 [Follow these instructions][create-project] to get your project set up. You will also need to set up the local development environment by
 [installing the Google Cloud SDK][cloud-sdk] and running the following commands in command line:
 `gcloud auth login` and `gcloud config set project [YOUR PROJECT ID]`.
@@ -74,13 +74,13 @@ You will need to [enable billing][enable-billing] to use Google Google Cloud Sto
 You'll need to obtain the `google-cloud-storage` library.  See the [Quickstart](#quickstart) section
 to add `google-cloud-storage` as a dependency in your code.
 
-## About Google Cloud Storage
+## About Cloud Storage
 
 
-[Google Cloud Storage][product-docs] is a durable and highly available object storage service. Google Cloud Storage is almost infinitely scalable and guarantees consistency: when a write succeeds, the latest copy of the object will be returned to any GET, globally.
+[Cloud Storage][product-docs] is a durable and highly available object storage service. Google Cloud Storage is almost infinitely scalable and guarantees consistency: when a write succeeds, the latest copy of the object will be returned to any GET, globally.
 
-See the [Google Cloud Storage client library docs][javadocs] to learn how to
-use this Google Cloud Storage Client Library.
+See the [Cloud Storage client library docs][javadocs] to learn how to
+use this Cloud Storage Client Library.
 
 
 #### Creating an authorized service object
