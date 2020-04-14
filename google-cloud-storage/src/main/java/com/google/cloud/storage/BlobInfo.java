@@ -34,8 +34,8 @@ import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.AbstractMap;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +44,21 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Google Storage object metadata.
+ * Information about an object in Google Cloud Storage. A {@code BlobInfo} object includes the
+ * {@code BlobId} instance and the set of properties, such as the blob's access control
+ * configuration, user provided metadata, the CRC32C checksum, etc. Instances of this class are used
+ * to create a new object in Google Cloud Storage or update the properties of an existing object. To
+ * deal with existing Storage objects the API includes the {@link Blob} class which extends {@code
+ * BlobInfo} and declares methods to perform operations on the object. Neither {@code BlobInfo} nor
+ * {@code Blob} instances keep the object content, just the object properties.
+ *
+ * <p>Example of usage {@code BlobInfo} to create an object in Google Cloud Storage:
+ *
+ * <pre>{@code
+ * BlobId blobId = BlobId.of(bucketName, blobName);
+ * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+ * Blob blob = storage.create(blobInfo, "Hello, world".getBytes(StandardCharsets.UTF_8));
+ * }</pre>
  *
  * @see <a href="https://cloud.google.com/storage/docs/concepts-techniques#concepts">Concepts and
  *     Terminology</a>
@@ -232,6 +246,7 @@ public class BlobInfo implements Serializable {
      *
      * @see <a href="https://cloud.google.com/storage/docs/hashes-etags#_JSONAPI">Hashes and ETags:
      *     Best Practices</a>
+     * @throws IllegalArgumentException when given an invalid hexadecimal value.
      */
     public abstract Builder setMd5FromHexString(String md5HexString);
 
@@ -252,6 +267,7 @@ public class BlobInfo implements Serializable {
      *
      * @see <a href="https://cloud.google.com/storage/docs/hashes-etags#_JSONAPI">Hashes and ETags:
      *     Best Practices</a>
+     * @throws IllegalArgumentException when given an invalid hexadecimal value.
      */
     public abstract Builder setCrc32cFromHexString(String crc32cHexString);
 
@@ -293,7 +309,7 @@ public class BlobInfo implements Serializable {
   }
 
   static final class BuilderImpl extends Builder {
-
+    private final String hexDecimalValues = "0123456789abcdef";
     private BlobId blobId;
     private String generatedId;
     private String contentType;
@@ -442,16 +458,27 @@ public class BlobInfo implements Serializable {
       return this;
     }
 
+    @Override
     public Builder setMd5FromHexString(String md5HexString) {
       if (md5HexString == null) {
         return this;
       }
-      byte[] bytes = new BigInteger(md5HexString, 16).toByteArray();
-      int leadingEmptyBytes = bytes.length - md5HexString.length() / 2;
-      if (leadingEmptyBytes > 0) {
-        bytes = Arrays.copyOfRange(bytes, leadingEmptyBytes, bytes.length);
+      if (md5HexString.length() % 2 != 0) {
+        throw new IllegalArgumentException(
+            "each byte must be represented by 2 valid hexadecimal characters");
       }
-      this.md5 = BaseEncoding.base64().encode(bytes);
+      String md5HexStringLower = md5HexString.toLowerCase();
+      ByteBuffer md5ByteBuffer = ByteBuffer.allocate(md5HexStringLower.length() / 2);
+      for (int charIndex = 0; charIndex < md5HexStringLower.length(); charIndex += 2) {
+        int higherOrderBits = this.hexDecimalValues.indexOf(md5HexStringLower.charAt(charIndex));
+        int lowerOrderBits = this.hexDecimalValues.indexOf(md5HexStringLower.charAt(charIndex + 1));
+        if (higherOrderBits == -1 || lowerOrderBits == -1) {
+          throw new IllegalArgumentException(
+              "each byte must be represented by 2 valid hexadecimal characters");
+        }
+        md5ByteBuffer.put((byte) (higherOrderBits << 4 | lowerOrderBits));
+      }
+      this.md5 = BaseEncoding.base64().encode(md5ByteBuffer.array());
       return this;
     }
 
@@ -466,12 +493,23 @@ public class BlobInfo implements Serializable {
       if (crc32cHexString == null) {
         return this;
       }
-      byte[] bytes = new BigInteger(crc32cHexString, 16).toByteArray();
-      int leadingEmptyBytes = bytes.length - crc32cHexString.length() / 2;
-      if (leadingEmptyBytes > 0) {
-        bytes = Arrays.copyOfRange(bytes, leadingEmptyBytes, bytes.length);
+      if (crc32cHexString.length() % 2 != 0) {
+        throw new IllegalArgumentException(
+            "each byte must be represented by 2 valid hexadecimal characters");
       }
-      this.crc32c = BaseEncoding.base64().encode(bytes);
+      String crc32cHexStringLower = crc32cHexString.toLowerCase();
+      ByteBuffer crc32cByteBuffer = ByteBuffer.allocate(crc32cHexStringLower.length() / 2);
+      for (int charIndex = 0; charIndex < crc32cHexStringLower.length(); charIndex += 2) {
+        int higherOrderBits = this.hexDecimalValues.indexOf(crc32cHexStringLower.charAt(charIndex));
+        int lowerOrderBits =
+            this.hexDecimalValues.indexOf(crc32cHexStringLower.charAt(charIndex + 1));
+        if (higherOrderBits == -1 || lowerOrderBits == -1) {
+          throw new IllegalArgumentException(
+              "each byte must be represented by 2 valid hexadecimal characters");
+        }
+        crc32cByteBuffer.put((byte) (higherOrderBits << 4 | lowerOrderBits));
+      }
+      this.crc32c = BaseEncoding.base64().encode(crc32cByteBuffer.array());
       return this;
     }
 
