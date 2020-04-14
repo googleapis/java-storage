@@ -3,11 +3,6 @@
 ## [1.107.0](https://www.github.com/googleapis/java-storage/compare/v1.106.0...v1.107.0) (2020-04-14)
 
 
-### Features
-
-* add upload functionality ([#214](https://www.github.com/googleapis/java-storage/issues/214)) ([7beb99d](https://www.github.com/googleapis/java-storage/commit/7beb99dc2058da220f1f69d531978db917707e8b))
-
-
 ### Bug Fixes
 
 * Blob API Doc is confusing ([#233](https://www.github.com/googleapis/java-storage/issues/233)) ([b5208b8](https://www.github.com/googleapis/java-storage/commit/b5208b87e5469bfdf684bd5f250921be99a59ac8))
