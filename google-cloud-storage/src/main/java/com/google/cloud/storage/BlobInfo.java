@@ -44,7 +44,21 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Google Storage object metadata.
+ * Information about an object in Google Cloud Storage. A {@code BlobInfo} object includes the
+ * {@code BlobId} instance and the set of properties, such as the blob's access control
+ * configuration, user provided metadata, the CRC32C checksum, etc. Instances of this class are used
+ * to create a new object in Google Cloud Storage or update the properties of an existing object. To
+ * deal with existing Storage objects the API includes the {@link Blob} class which extends {@code
+ * BlobInfo} and declares methods to perform operations on the object. Neither {@code BlobInfo} nor
+ * {@code Blob} instances keep the object content, just the object properties.
+ *
+ * <p>Example of usage {@code BlobInfo} to create an object in Google Cloud Storage:
+ *
+ * <pre>{@code
+ * BlobId blobId = BlobId.of(bucketName, blobName);
+ * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+ * Blob blob = storage.create(blobInfo, "Hello, world".getBytes(StandardCharsets.UTF_8));
+ * }</pre>
  *
  * @see <a href="https://cloud.google.com/storage/docs/concepts-techniques#concepts">Concepts and
  *     Terminology</a>

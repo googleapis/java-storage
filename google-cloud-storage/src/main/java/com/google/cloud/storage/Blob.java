@@ -52,12 +52,26 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A Google cloud storage object.
+ * An object in Google Cloud Storage. A {@code Blob} object includes the {@code BlobId} instance,
+ * the set of properties inherited from the {@link BlobInfo} class and the {@code Storage} instance.
+ * The class provides methods to perform operations on the object. Reading a property value does not
+ * issue any RPC calls. The object content is not stored within the {@code Blob} instance.
+ * Operations that access the content issue one or multiple RPC calls, depending on the content
+ * size.
  *
  * <p>Objects of this class are immutable. Operations that modify the blob like {@link #update} and
- * {@link #copyTo} return a new object. To get a {@code Blob} object with the most recent
- * information use {@link #reload}. {@code Blob} adds a layer of service-related functionality over
- * {@link BlobInfo}.
+ * {@link #copyTo} return a new object. Any changes to the object in Google Cloud Storage made after
+ * creation of the {@code Blob} are not visible in the {@code Blob}. To get a {@code Blob} object
+ * with the most recent information use {@link #reload}.
+ *
+ * <p>Example of getting the content of the object in Google Cloud Storage:
+ *
+ * <pre>{@code
+ * BlobId blobId = BlobId.of(bucketName, blobName);
+ * Blob blob = storage.get(blobId);
+ * long size = blob.getSize(); // no RPC call is required
+ * byte[] content = blob.getContent(); // one or multiple RPC calls will be issued
+ * }</pre>
  */
 public class Blob extends BlobInfo {
 
