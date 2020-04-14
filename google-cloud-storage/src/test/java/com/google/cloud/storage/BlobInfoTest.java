@@ -49,12 +49,16 @@ public class BlobInfoTest {
   private static final String CONTENT_LANGUAGE = "En";
   private static final String CRC32 = "FF00";
   private static final String CRC32_HEX_STRING = "145d34";
+  private static final String CRC32_HEX_STRING_LEADING_ZEROS = "005d34";
+  private static final String CRC32_BASE64_LEADING_ZEROS = "AF00";
   private static final Long DELETE_TIME = System.currentTimeMillis();
   private static final String ETAG = "0xFF00";
   private static final Long GENERATION = 1L;
   private static final String GENERATED_ID = "B/N:1";
   private static final String MD5 = "FF00";
   private static final String MD5_HEX_STRING = "145d34";
+  private static final String MD5_HEX_STRING_LEADING_ZEROS = "0006a7de52b4e0b82602ce09809523ca";
+  private static final String MD5_BASE64_LEADING_ZEROS = "AAan3lK04LgmAs4JgJUjyg==";
   private static final String MEDIA_LINK = "http://media/b/n";
   private static final Map<String, String> METADATA = ImmutableMap.of("n1", "v1", "n2", "v2");
   private static final Long META_GENERATION = 10L;
@@ -133,10 +137,28 @@ public class BlobInfoTest {
   }
 
   @Test
+  public void testToBuilderSetMd5FromHexStringLeadingZeros() {
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(BlobId.of("b2", "n2"))
+            .setMd5FromHexString(MD5_HEX_STRING_LEADING_ZEROS)
+            .build();
+    assertEquals(MD5_BASE64_LEADING_ZEROS, blobInfo.getMd5());
+  }
+
+  @Test
   public void testToBuilderSetCrc32cFromHexString() {
     BlobInfo blobInfo =
         BlobInfo.newBuilder(BlobId.of("b2", "n2")).setCrc32cFromHexString(CRC32_HEX_STRING).build();
     assertEquals(CRC32, blobInfo.getCrc32c());
+  }
+
+  @Test
+  public void testToBuilderSetCrc32cFromHexStringLeadingZeros() {
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(BlobId.of("b2", "n2"))
+            .setCrc32cFromHexString(CRC32_HEX_STRING_LEADING_ZEROS)
+            .build();
+    assertEquals(CRC32_BASE64_LEADING_ZEROS, blobInfo.getCrc32c());
   }
 
   @Test
