@@ -37,6 +37,8 @@ class HttpStorageRpcSpans {
   static final String SPAN_NAME_DELETE_OBJECT = getTraceSpanName("delete(StorageObject,Map)");
   static final String SPAN_NAME_CREATE_BATCH = getTraceSpanName("createBatch()");
   static final String SPAN_NAME_COMPOSE = getTraceSpanName("compose(Iterable,StorageObject,Map)");
+  static final String SPAN_NAME_WATCH_ALL = getTraceSpanName("watchAll(String,Channel,Map)");
+  static final String SPAN_NAME_STOP = getTraceSpanName("stop(Channel)");
   static final String SPAN_NAME_LOAD = getTraceSpanName("load(StorageObject,Map");
   static final String SPAN_NAME_READ = getTraceSpanName("read(StorageObject,Map,long,int)");
   static final String SPAN_NAME_OPEN = getTraceSpanName("open(StorageObject,Map)");
@@ -110,6 +112,8 @@ class HttpStorageRpcSpans {
           SPAN_NAME_DELETE_OBJECT,
           SPAN_NAME_CREATE_BATCH,
           SPAN_NAME_COMPOSE,
+          SPAN_NAME_WATCH_ALL,
+          SPAN_NAME_STOP,
           SPAN_NAME_LOAD,
           SPAN_NAME_READ,
           SPAN_NAME_OPEN,

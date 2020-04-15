@@ -536,6 +536,47 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
+  public Channel watchAll(final String bucket, Channel channel, final WatchAllOption... options) {
+    Preconditions.checkNotNull(channel);
+    final com.google.api.services.storage.model.Channel channelProtobuf = channel.toProtobuf();
+    final Map<StorageRpc.Option, ?> optionsMap = optionMap(options);
+    try {
+      return Channel.fromProtobuf(
+          runWithRetries(
+              new Callable<com.google.api.services.storage.model.Channel>() {
+                @Override
+                public com.google.api.services.storage.model.Channel call() {
+                  return storageRpc.watchAll(bucket, channelProtobuf, optionsMap);
+                }
+              },
+              getOptions().getRetrySettings(),
+              EXCEPTION_HANDLER,
+              getOptions().getClock()));
+    } catch (RetryHelperException e) {
+      throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
+  public boolean stop(final Channel channel) {
+    final com.google.api.services.storage.model.Channel channelProtobuf = channel.toProtobuf();
+    try {
+      return runWithRetries(
+          new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+              return storageRpc.stop(channelProtobuf);
+            }
+          },
+          getOptions().getRetrySettings(),
+          EXCEPTION_HANDLER,
+          getOptions().getClock());
+    } catch (RetryHelperException e) {
+      throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
   public CopyWriter copy(final CopyRequest copyRequest) {
     final StorageObject source = copyRequest.getSource().toPb();
     final Map<StorageRpc.Option, ?> sourceOptions =

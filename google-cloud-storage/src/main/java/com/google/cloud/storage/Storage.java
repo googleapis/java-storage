@@ -1257,6 +1257,55 @@ public interface Storage extends Service<StorageOptions> {
     }
   }
 
+  /** Class for specifying watchAll options. */
+  class WatchAllOption extends Option {
+
+    private WatchAllOption(StorageRpc.Option rpcOption, Object value) {
+      super(rpcOption, value);
+    }
+
+    /** Returns an option to set a delimiter. */
+    public static WatchAllOption delimiter(String delimiter) {
+      return new WatchAllOption(StorageRpc.Option.DELIMITER, delimiter);
+    }
+
+    /** Returns an option to specify the maximum number of objects returned per page. */
+    public static WatchAllOption maxResults(Integer maxResults) {
+      return new WatchAllOption(StorageRpc.Option.MAX_RESULTS, maxResults);
+    }
+
+    /** Returns an option to specify the page token from which to start listing objects. */
+    public static WatchAllOption pageToken(String pageToken) {
+      return new WatchAllOption(StorageRpc.Option.PAGE_TOKEN, pageToken);
+    }
+
+    /**
+     * Returns an option to set a prefix to filter results to objects whose names begin with this
+     * prefix.
+     */
+    public static WatchAllOption prefix(String prefix) {
+      return new WatchAllOption(StorageRpc.Option.PREFIX, prefix);
+    }
+
+    /**
+     * Returns an option to define the projection in the API request. In some cases this option may
+     * be needed to be set to `noAcl` to omit ACL data from the response. The default value is
+     * `full`.
+     */
+    public static WatchAllOption projection(String projection) {
+      return new WatchAllOption(StorageRpc.Option.PROJECTION, projection);
+    }
+
+    /**
+     * If set to {@code true}, lists all versions of an object. The default is {@code false}.
+     *
+     * @see <a href ="https://cloud.google.com/storage/docs/object-versioning">Object Versioning</a>
+     */
+    public static WatchAllOption versions(boolean version) {
+      return new WatchAllOption(StorageRpc.Option.VERSIONS, version);
+    }
+  }
+
   /**
    * A class to contain all information needed for a Google Cloud Storage Compose operation.
    *
@@ -1896,6 +1945,7 @@ public interface Storage extends Service<StorageOptions> {
    * only if supplied Decrpytion Key decrypts the blob successfully, otherwise a {@link
    * StorageException} is thrown. For more information review
    *
+   * @throws StorageException upon failure
    * @see <a
    *     href="https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#encrypted-elements">Encrypted
    *     Elements</a>
@@ -1906,8 +1956,6 @@ public interface Storage extends Service<StorageOptions> {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * Blob blob = storage.get(blobId, BlobGetOption.decryptionKey(blobEncryptionKey));
    * }</pre>
-   *
-   * @throws StorageException upon failure
    */
   Blob get(BlobId blob, BlobGetOption... options);
 
@@ -2172,6 +2220,62 @@ public interface Storage extends Service<StorageOptions> {
    * @throws StorageException upon failure
    */
   Blob compose(ComposeRequest composeRequest);
+
+  /**
+   * Watches the changes on objects in the bucket.
+   *
+   * <p>Example of watchAll.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * Channel channel =
+   * 	Channel.newBuilder()
+   * 		.setKind("api#channel")
+   * 		.setId("channelId")
+   * 		.setResourceId("resourceId")
+   * 		.setAddress("address")
+   * 		.setPayload(true)
+   * 		.setType("WEBHOOK")
+   * 		.build();
+   * Channel response = storage.watchAll(bucketName, channel);
+   * }</pre>
+   *
+   * @return the instance of Channel
+   * @throws StorageException upon failure
+   * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/objects/watchAll">watchAll</a>
+   */
+  Channel watchAll(String bucket, Channel channel, WatchAllOption... options);
+
+  /**
+   * Stops receiving object change notifications through the channel.
+   *
+   * <p>Example of stop receiving object change notifications through the channel.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * Channel channel =
+   * 	Channel.newBuilder()
+   * 		.setKind("api#channel")
+   * 		.setId("channelId")
+   * 		.setResourceId("resourceId")
+   * 		.setAddress("address")
+   * 		.setPayload(true)
+   * 		.setType("WEBHOOK")
+   * 		.build();
+   * Channel response = storage.watchAll(bucketName, channel);
+   * boolean stopped = storage.stop(response);
+   * if (stopped) {
+   *   // the channel is stopped.
+   * } else {
+   *   // the channel was not found
+   * }
+   * }</pre>
+   *
+   * @return {@code true} if channel was stopped, {@code false} if it was not found
+   * @throws StorageException upon failure
+   * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/channels/stop">stop</a>
+   */
+  boolean stop(Channel channel);
 
   /**
    * Sends a copy request. This method copies both blob's data and information. To override source
@@ -3148,6 +3252,7 @@ public interface Storage extends Service<StorageOptions> {
       final HmacKeyMetadata hmacKeyMetadata,
       final HmacKey.HmacKeyState state,
       UpdateHmacKeyOption... options);
+
   /**
    * Gets the IAM policy for the provided bucket.
    *

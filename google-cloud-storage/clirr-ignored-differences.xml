@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- see http://mojo.codehaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
+<differences>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>com.google.cloud.storage.Channel watchAll(java.lang.String, com.google.cloud.storage.Channel, com.google.cloud.storage.Storage$WatchAllOption[])</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>boolean stop(com.google.cloud.storage.Channel)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+        <method>com.google.api.services.storage.model.Channel watchAll(java.lang.String, com.google.api.services.storage.model.Channel, java.util.Map)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+        <method>boolean stop(com.google.api.services.storage.model.Channel)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+</differences>

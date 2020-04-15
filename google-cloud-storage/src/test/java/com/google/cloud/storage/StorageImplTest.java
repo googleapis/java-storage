@@ -79,6 +79,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -266,6 +267,27 @@ public class StorageImplTest {
           StorageRpc.Option.PREFIX, BLOB_LIST_PREFIX.getValue(),
           StorageRpc.Option.VERSIONS, BLOB_LIST_VERSIONS.getValue());
 
+  // Watch all options
+  private static final Storage.WatchAllOption WATCH_ALL_DELIMITER =
+      Storage.WatchAllOption.delimiter("/");
+  private static final Storage.WatchAllOption WATCH_ALL_MAX_RESULT =
+      Storage.WatchAllOption.maxResults(20);
+  private static final Storage.WatchAllOption WATCH_ALL_PAGE_TOKEN =
+      Storage.WatchAllOption.pageToken("cursor");
+  private static final Storage.WatchAllOption WATCH_ALL_PREFIX =
+      Storage.WatchAllOption.prefix("prefix");
+  private static final Storage.WatchAllOption WATCH_ALL_PROJECTION =
+      Storage.WatchAllOption.projection("full");
+  private static final Storage.WatchAllOption WATCH_ALL_VERSIONS =
+      Storage.WatchAllOption.versions(false);
+  private static final Map<StorageRpc.Option, ?> WATCH_ALL_OPTIONS =
+      ImmutableMap.of(
+          StorageRpc.Option.DELIMITER, WATCH_ALL_DELIMITER.getValue(),
+          StorageRpc.Option.PREFIX, WATCH_ALL_PREFIX.getValue(),
+          StorageRpc.Option.PAGE_TOKEN, WATCH_ALL_PAGE_TOKEN.getValue(),
+          StorageRpc.Option.PROJECTION, WATCH_ALL_PROJECTION.getValue(),
+          StorageRpc.Option.VERSIONS, WATCH_ALL_VERSIONS.getValue());
+
   // ACLs
   private static final Acl ACL = Acl.of(User.ofAllAuthenticatedUsers(), Role.OWNER);
   private static final Acl OTHER_ACL = Acl.of(new Project(ProjectRole.OWNERS, "p"), Role.READER);
@@ -384,6 +406,32 @@ public class StorageImplTest {
 
   private Blob expectedBlob1, expectedBlob2, expectedBlob3;
   private Bucket expectedBucket1, expectedBucket2, expectedBucket3;
+
+  // Channel
+  private static final String KIND = "api#channel";
+  private static final String ID = "ChannelId-" + UUID.randomUUID().toString();
+  private static final String RESOURCE_ID = "ResourceId-" + UUID.randomUUID().toString();
+  private static final String RESOURCE_URI =
+      "https://storage.googleapis.com/storage/v1/b/BucketName/o?alt=json";
+  private static final String TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
+  private static final Long EXPIRATION = 30000L;
+  private static final String TYPE = "WEBHOOK";
+  private static final String ADDRESS = "channel address";
+  private static final Map<String, String> PARAMS = ImmutableMap.of("field", "value");
+  private static final Boolean PAYLOAD = Boolean.TRUE;
+  private static final Channel CHANNEL =
+      Channel.newBuilder()
+          .setKind(KIND)
+          .setId(ID)
+          .setResourceId(RESOURCE_ID)
+          .setResourceUri(RESOURCE_URI)
+          .setToken(TOKEN)
+          .setExpiration(EXPIRATION)
+          .setType(TYPE)
+          .setAddress(ADDRESS)
+          .setParams(PARAMS)
+          .setPayload(PAYLOAD)
+          .build();
 
   @BeforeClass
   public static void beforeClass() throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -1350,6 +1398,61 @@ public class StorageImplTest {
     initializeService();
     Blob blob = storage.compose(req);
     assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testWatchAll() {
+    EasyMock.expect(storageRpcMock.watchAll(BUCKET_NAME1, CHANNEL.toProtobuf(), EMPTY_RPC_OPTIONS))
+        .andReturn(CHANNEL.toProtobuf());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Channel channel = storage.watchAll(BUCKET_NAME1, CHANNEL);
+    assertEquals(KIND, channel.getKind());
+    assertEquals(ID, channel.getId());
+    assertEquals(RESOURCE_ID, channel.getResourceId());
+    assertEquals(RESOURCE_URI, channel.getResourceUri());
+    assertEquals(TOKEN, channel.getToken());
+    assertEquals(EXPIRATION, channel.getExpiration());
+    assertEquals(TYPE, channel.getType());
+    assertEquals(ADDRESS, channel.getAddress());
+    assertEquals(PARAMS, channel.getParams());
+    assertEquals(PAYLOAD, channel.getPayload());
+  }
+
+  @Test
+  public void testWatchAllWithOptions() {
+    EasyMock.expect(storageRpcMock.watchAll(BUCKET_NAME1, CHANNEL.toProtobuf(), WATCH_ALL_OPTIONS))
+        .andReturn(CHANNEL.toProtobuf());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Channel channel =
+        storage.watchAll(
+            BUCKET_NAME1,
+            CHANNEL,
+            WATCH_ALL_DELIMITER,
+            WATCH_ALL_PREFIX,
+            WATCH_ALL_PAGE_TOKEN,
+            WATCH_ALL_PROJECTION,
+            WATCH_ALL_VERSIONS);
+    assertEquals(KIND, channel.getKind());
+    assertEquals(ID, channel.getId());
+    assertEquals(RESOURCE_ID, channel.getResourceId());
+    assertEquals(RESOURCE_URI, channel.getResourceUri());
+    assertEquals(TOKEN, channel.getToken());
+    assertEquals(EXPIRATION, channel.getExpiration());
+    assertEquals(TYPE, channel.getType());
+    assertEquals(ADDRESS, channel.getAddress());
+    assertEquals(PARAMS, channel.getParams());
+    assertEquals(PAYLOAD, channel.getPayload());
+  }
+
+  @Test
+  public void testStop() {
+    EasyMock.expect(storageRpcMock.stop(CHANNEL.toProtobuf())).andReturn(true);
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    boolean stopped = storage.stop(CHANNEL);
+    assertTrue(stopped);
   }
 
   @Test

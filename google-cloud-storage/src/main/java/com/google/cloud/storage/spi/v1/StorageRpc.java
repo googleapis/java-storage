@@ -19,6 +19,7 @@ package com.google.cloud.storage.spi.v1;
 import com.google.api.core.InternalApi;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
+import com.google.api.services.storage.model.Channel;
 import com.google.api.services.storage.model.HmacKey;
 import com.google.api.services.storage.model.HmacKeyMetadata;
 import com.google.api.services.storage.model.Notification;
@@ -274,6 +275,20 @@ public interface StorageRpc extends ServiceRpc {
    */
   StorageObject compose(
       Iterable<StorageObject> sources, StorageObject target, Map<Option, ?> targetOptions);
+
+  /**
+   * Watches the changes on objects in the bucket.
+   *
+   * @throws StorageException upon failure
+   */
+  Channel watchAll(String bucket, Channel channel, Map<Option, ?> options);
+
+  /**
+   * Stops receiving object change notifications through the channel.
+   *
+   * @throws StorageException upon failure
+   */
+  boolean stop(Channel channel);
 
   /**
    * Reads all the bytes from a storage object.

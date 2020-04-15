@@ -42,6 +42,7 @@ import com.google.api.services.storage.Storage.Objects.Insert;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.Buckets;
+import com.google.api.services.storage.model.Channel;
 import com.google.api.services.storage.model.ComposeRequest;
 import com.google.api.services.storage.model.ComposeRequest.SourceObjects.ObjectPreconditions;
 import com.google.api.services.storage.model.HmacKey;
@@ -604,6 +605,50 @@ public class HttpStorageRpc implements StorageRpc {
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
+    } finally {
+      scope.close();
+      span.end();
+    }
+  }
+
+  @Override
+  public Channel watchAll(String bucket, Channel channel, Map<Option, ?> option) {
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_WATCH_ALL);
+    Scope scope = tracer.withSpan(span);
+    try {
+      return storage
+          .objects()
+          .watchAll(bucket, channel)
+          .setDelimiter(Option.DELIMITER.getString(option))
+          .setMaxResults(Option.MAX_RESULTS.getLong(option))
+          .setPageToken(Option.PAGE_TOKEN.getString(option))
+          .setPrefix(Option.PREFIX.getString(option))
+          .setProjection(Option.PROJECTION.getString(option))
+          .setVersions(Option.VERSIONS.getBoolean(option))
+          .execute();
+    } catch (IOException ex) {
+      span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
+      throw translate(ex);
+    } finally {
+      scope.close();
+      span.end();
+    }
+  }
+
+  @Override
+  public boolean stop(Channel channel) {
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_STOP);
+    Scope scope = tracer.withSpan(span);
+    try {
+      storage.channels().stop(channel).execute();
+      return true;
+    } catch (IOException ex) {
+      span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
+      StorageException serviceException = translate(ex);
+      if (serviceException.getCode() == HTTP_NOT_FOUND) {
+        return false;
+      }
+      throw serviceException;
     } finally {
       scope.close();
       span.end();
