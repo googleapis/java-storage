@@ -546,9 +546,9 @@ public class Blob extends BlobInfo {
   }
 
   /**
-   * Updates the blob properties. Optional {@code options} parameter can contain the preconditions
-   * for applying the update. To update the properties you need to call {@link #toBuilder()}, set
-   * the properties you want to change, build the new {@code Blob} instance and then call {@link
+   * Updates the blob properties. The {@code options} parameter contains the preconditions for
+   * applying the update. To update the properties call {@link #toBuilder()}, set the properties you
+   * want to change, build the new {@code Blob} instance, and then call {@link
    * #update(BlobTargetOption...)}.
    *
    * <p>The property update details are described in {@link Storage#update(BlobInfo)}. {@link
