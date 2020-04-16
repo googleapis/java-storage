@@ -2022,6 +2022,8 @@ public interface Storage extends Service<StorageOptions> {
    * @param options preconditions to apply the update
    * @return the updated blob
    * @throws StorageException upon failure
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
   Blob update(BlobInfo blobInfo, BlobTargetOption... options);
 
@@ -2052,6 +2054,8 @@ public interface Storage extends Service<StorageOptions> {
    * @param blobInfo information to update
    * @return the updated blob
    * @throws StorageException upon failure
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
   Blob update(BlobInfo blobInfo);
 

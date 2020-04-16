@@ -563,8 +563,10 @@ public class Blob extends BlobInfo {
    * }</pre>
    *
    * @param options preconditions to apply the update
-   * @return the updated blob
+   * @return the updated {@code Blob}
    * @throws StorageException upon failure
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
   public Blob update(BlobTargetOption... options) {
     return storage.update(this, options);
