@@ -3,12 +3,12 @@
 <differences>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.Channel watchAll(java.lang.String, com.google.cloud.storage.Channel, com.google.cloud.storage.Storage$WatchAllOption[])</method>
+        <method>com.google.cloud.storage.NotificationChannel watchAll(java.lang.String, com.google.cloud.storage.NotificationChannel, com.google.cloud.storage.Storage$WatchAllOption[])</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>boolean stop(com.google.cloud.storage.Channel)</method>
+        <method>boolean stop(com.google.cloud.storage.NotificationChannel)</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>

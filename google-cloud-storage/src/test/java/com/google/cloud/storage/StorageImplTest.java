@@ -407,7 +407,7 @@ public class StorageImplTest {
   private Blob expectedBlob1, expectedBlob2, expectedBlob3;
   private Bucket expectedBucket1, expectedBucket2, expectedBucket3;
 
-  // Channel
+  // Notification Channel
   private static final String KIND = "api#channel";
   private static final String ID = "ChannelId-" + UUID.randomUUID().toString();
   private static final String RESOURCE_ID = "ResourceId-" + UUID.randomUUID().toString();
@@ -419,8 +419,8 @@ public class StorageImplTest {
   private static final String ADDRESS = "channel address";
   private static final Map<String, String> PARAMS = ImmutableMap.of("field", "value");
   private static final Boolean PAYLOAD = Boolean.TRUE;
-  private static final Channel CHANNEL =
-      Channel.newBuilder()
+  private static final NotificationChannel CHANNEL =
+      NotificationChannel.newBuilder()
           .setKind(KIND)
           .setId(ID)
           .setResourceId(RESOURCE_ID)
@@ -494,6 +494,7 @@ public class StorageImplTest {
     initializeService();
     Bucket bucket = storage.create(BUCKET_INFO1);
     assertEquals(expectedBucket1, bucket);
+    EasyMock.verify(rpcFactoryMock, storageRpcMock);
   }
 
   @Test
@@ -1406,7 +1407,7 @@ public class StorageImplTest {
         .andReturn(CHANNEL.toProtobuf());
     EasyMock.replay(storageRpcMock);
     initializeService();
-    Channel channel = storage.watchAll(BUCKET_NAME1, CHANNEL);
+    NotificationChannel channel = storage.watchAll(BUCKET_NAME1, CHANNEL);
     assertEquals(KIND, channel.getKind());
     assertEquals(ID, channel.getId());
     assertEquals(RESOURCE_ID, channel.getResourceId());
@@ -1425,7 +1426,7 @@ public class StorageImplTest {
         .andReturn(CHANNEL.toProtobuf());
     EasyMock.replay(storageRpcMock);
     initializeService();
-    Channel channel =
+    NotificationChannel channel =
         storage.watchAll(
             BUCKET_NAME1,
             CHANNEL,

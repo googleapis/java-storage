@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class ChannelTest {
+public class NotificationChannelTest {
 
   private static final String KIND = "api#channel";
   private static final String ID = "ChannelId-" + UUID.randomUUID().toString();
@@ -38,8 +38,8 @@ public class ChannelTest {
   private static final String ADDRESS = "channel address";
   private static final Map<String, String> PARAMS = ImmutableMap.of("field", "value");
   private static final Boolean PAYLOAD = Boolean.TRUE;
-  private static final Channel CHANNEL =
-      Channel.newBuilder()
+  private static final NotificationChannel CHANNEL =
+      NotificationChannel.newBuilder()
           .setKind(KIND)
           .setId(ID)
           .setResourceId(RESOURCE_ID)
@@ -69,7 +69,7 @@ public class ChannelTest {
   @Test
   public void testToBuilder() {
     assertEquals(CHANNEL, CHANNEL.toBuilder().build());
-    Channel channel =
+    NotificationChannel channel =
         CHANNEL
             .toBuilder()
             .setKind("kind")
@@ -89,6 +89,6 @@ public class ChannelTest {
 
   @Test
   public void testToAndFromProtobuf() {
-    assertEquals(CHANNEL, Channel.fromProtobuf(CHANNEL.toProtobuf()));
+    assertEquals(CHANNEL, NotificationChannel.fromProtobuf(CHANNEL.toProtobuf()));
   }
 }

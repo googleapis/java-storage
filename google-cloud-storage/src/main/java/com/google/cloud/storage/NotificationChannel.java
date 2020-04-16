@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A Google cloud storage notification channel object used to watch the changes on objects in the
- * {@code Bucket}.
+ * A Google cloud storage notification channel object which could be used to watch the changes on
+ * objects present in the {@code Bucket}.
  */
-public class Channel implements Serializable {
+public class NotificationChannel implements Serializable {
 
   private static final long serialVersionUID = -4712013629621638459L;
 
@@ -53,7 +53,7 @@ public class Channel implements Serializable {
 
     Builder() {}
 
-    Builder(Channel channel) {
+    Builder(NotificationChannel channel) {
       this.kind = channel.kind;
       this.id = channel.id;
       this.resourceId = channel.resourceId;
@@ -116,12 +116,12 @@ public class Channel implements Serializable {
       return this;
     }
 
-    Channel build() {
-      return new Channel(this);
+    NotificationChannel build() {
+      return new NotificationChannel(this);
     }
   }
 
-  public Channel(Builder builder) {
+  NotificationChannel(Builder builder) {
     this.kind = builder.kind;
     this.id = builder.id;
     this.resourceId = builder.resourceId;
@@ -192,7 +192,7 @@ public class Channel implements Serializable {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Channel channel = (Channel) o;
+    NotificationChannel channel = (NotificationChannel) o;
     return Objects.equals(kind, channel.kind)
         && Objects.equals(id, channel.id)
         && Objects.equals(resourceId, channel.resourceId)
@@ -211,12 +211,12 @@ public class Channel implements Serializable {
         kind, id, resourceId, resourceUri, token, expiration, type, address, params, payload);
   }
 
-  /** Returns a builder for the {@link Channel} object. */
+  /** Returns a builder for the {@link NotificationChannel} object. */
   public static Builder newBuilder() {
     return new Builder();
   }
 
-  /** Returns a builder for the {@link Channel} object. */
+  /** Returns a builder for the {@link NotificationChannel} object. */
   public Builder toBuilder() {
     return new Builder(this);
   }
@@ -257,7 +257,7 @@ public class Channel implements Serializable {
     return channel;
   }
 
-  static Channel fromProtobuf(com.google.api.services.storage.model.Channel channel) {
+  static NotificationChannel fromProtobuf(com.google.api.services.storage.model.Channel channel) {
     Builder builder = newBuilder();
     if (channel.getKind() != null) {
       builder.setKind(channel.getKind());

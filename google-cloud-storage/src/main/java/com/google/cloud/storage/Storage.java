@@ -1945,7 +1945,6 @@ public interface Storage extends Service<StorageOptions> {
    * only if supplied Decrpytion Key decrypts the blob successfully, otherwise a {@link
    * StorageException} is thrown. For more information review
    *
-   * @throws StorageException upon failure
    * @see <a
    *     href="https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#encrypted-elements">Encrypted
    *     Elements</a>
@@ -1956,6 +1955,8 @@ public interface Storage extends Service<StorageOptions> {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * Blob blob = storage.get(blobId, BlobGetOption.decryptionKey(blobEncryptionKey));
    * }</pre>
+   *
+   * @throws StorageException upon failure
    */
   Blob get(BlobId blob, BlobGetOption... options);
 
@@ -2228,8 +2229,8 @@ public interface Storage extends Service<StorageOptions> {
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
-   * Channel channel =
-   * 	Channel.newBuilder()
+   * NotificationChannel channel =
+   * 	NotificationChannel.newBuilder()
    * 		.setKind("api#channel")
    * 		.setId("channelId")
    * 		.setResourceId("resourceId")
@@ -2237,14 +2238,15 @@ public interface Storage extends Service<StorageOptions> {
    * 		.setPayload(true)
    * 		.setType("WEBHOOK")
    * 		.build();
-   * Channel response = storage.watchAll(bucketName, channel);
+   * NotificationChannel response = storage.watchAll(bucketName, channel);
    * }</pre>
    *
-   * @return the instance of Channel
+   * @return the instance of notification channel
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/objects/watchAll">watchAll</a>
    */
-  Channel watchAll(String bucket, Channel channel, WatchAllOption... options);
+  NotificationChannel watchAll(
+      String bucket, NotificationChannel channel, WatchAllOption... options);
 
   /**
    * Stops receiving object change notifications through the channel.
@@ -2253,8 +2255,8 @@ public interface Storage extends Service<StorageOptions> {
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
-   * Channel channel =
-   * 	Channel.newBuilder()
+   * NotificationChannel channel =
+   * 	NotificationChannel.newBuilder()
    * 		.setKind("api#channel")
    * 		.setId("channelId")
    * 		.setResourceId("resourceId")
@@ -2262,20 +2264,20 @@ public interface Storage extends Service<StorageOptions> {
    * 		.setPayload(true)
    * 		.setType("WEBHOOK")
    * 		.build();
-   * Channel response = storage.watchAll(bucketName, channel);
+   * NotificationChannel response = storage.watchAll(bucketName, channel);
    * boolean stopped = storage.stop(response);
    * if (stopped) {
-   *   // the channel is stopped.
+   *   // the notification channel is stopped.
    * } else {
-   *   // the channel was not found
+   *   // the notification channel was not found
    * }
    * }</pre>
    *
-   * @return {@code true} if channel was stopped, {@code false} if it was not found
+   * @return {@code true} if notification channel was stopped, {@code false} if it was not found
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/channels/stop">stop</a>
    */
-  boolean stop(Channel channel);
+  boolean stop(NotificationChannel channel);
 
   /**
    * Sends a copy request. This method copies both blob's data and information. To override source

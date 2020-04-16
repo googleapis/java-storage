@@ -536,12 +536,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public Channel watchAll(final String bucket, Channel channel, final WatchAllOption... options) {
+  public NotificationChannel watchAll(
+      final String bucket, NotificationChannel channel, final WatchAllOption... options) {
     Preconditions.checkNotNull(channel);
     final com.google.api.services.storage.model.Channel channelProtobuf = channel.toProtobuf();
     final Map<StorageRpc.Option, ?> optionsMap = optionMap(options);
     try {
-      return Channel.fromProtobuf(
+      return NotificationChannel.fromProtobuf(
           runWithRetries(
               new Callable<com.google.api.services.storage.model.Channel>() {
                 @Override
@@ -558,7 +559,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public boolean stop(final Channel channel) {
+  public boolean stop(final NotificationChannel channel) {
     final com.google.api.services.storage.model.Channel channelProtobuf = channel.toProtobuf();
     try {
       return runWithRetries(
