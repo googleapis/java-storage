@@ -17,7 +17,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>4.4.1</version>
+      <version>5.1.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -211,16 +211,14 @@ display on your webpage.
 
 To get help, follow the instructions in the [shared Troubleshooting document][troubleshooting].
 
-
 ## Java Versions
 
 Java 7 or above is required for using this client.
 
-
 ## Versioning
 
-This library follows [Semantic Versioning](http://semver.org/), but does update [Storage interface](src/main/java/com.google.cloud.storage/Storage.java)
-to introduce new methods which can break your implementations if you implement this interface for testing purposes.
+This library follows [Semantic Versioning](http://semver.org/).
+
 
 
 ## Contributing
