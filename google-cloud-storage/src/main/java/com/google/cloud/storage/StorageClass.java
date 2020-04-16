@@ -20,8 +20,9 @@ import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
 
 /**
- * Enums for the storage classes. See https://cloud.google.com/storage/docs/storage-classes for
- * details.
+ * Enums for the storage classes. See <a
+ * href="https://cloud.google.com/storage/docs/storage-classes">https://cloud.google.com/storage/docs/storage-classes</a>
+ * for details.
  */
 public final class StorageClass extends StringEnumValue {
   private static final long serialVersionUID = -6938125060419556331L;
@@ -42,42 +43,57 @@ public final class StorageClass extends StringEnumValue {
       new StringEnumType(StorageClass.class, CONSTRUCTOR);
 
   /**
-   * Standard storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   * Standard storage class. See: <a
+   * href="https://cloud.google.com/storage/docs/storage-classes#standard">https://cloud.google.com/storage/docs/storage-classes#standard</a>
+   * for details
    */
   public static final StorageClass STANDARD = type.createAndRegister("STANDARD");
 
   /**
-   * Nearline storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   * Nearline storage class. See: <a
+   * href="https://cloud.google.com/storage/docs/storage-classes#nearline">https://cloud.google.com/storage/docs/storage-classes#nearline</a>
+   * for details.
    */
   public static final StorageClass NEARLINE = type.createAndRegister("NEARLINE");
 
   /**
-   * Coldline storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   * Coldline storage class. See: <a
+   * href="https://cloud.google.com/storage/docs/storage-classes#coldline">https://cloud.google.com/storage/docs/storage-classes#coldline</a>
+   * for details.
    */
   public static final StorageClass COLDLINE = type.createAndRegister("COLDLINE");
 
   /**
-   * Archive storage class. See: https://cloud.google.com/storage/docs/storage-classes for details
+   * Archive storage class. See: <a
+   * href="https://cloud.google.com/storage/docs/storage-classes#archive">https://cloud.google.com/storage/docs/storage-classes#archive</a>
+   * for details.
    */
   public static final StorageClass ARCHIVE = type.createAndRegister("ARCHIVE");
 
   /**
    * Regional storage class. This is supported as a legacy storage class and will be deprecated in
-   * the future. See: https://cloud.google.com/storage/docs/storage-classes for details
+   * the future. This class cannot be set. Unless you already are using it, you should use {@link
+   * #STANDARD} instead. See <a
+   * href="https://cloud.google.com/storage/docs/storage-classes#legacy">Additional classes</a> for
+   * details.
    */
   public static final StorageClass REGIONAL = type.createAndRegister("REGIONAL");
 
   /**
    * Multi-regional storage class. This is supported as a legacy storage class and will be
-   * deprecated in the future. See: https://cloud.google.com/storage/docs/storage-classes for
-   * details
+   * deprecated in the future. This class cannot be set. Unless you already are using it, you should
+   * use {@link #STANDARD} instead. See <a
+   * href="https://cloud.google.com/storage/docs/storage-classes#legacy">Additional classes</a> for
+   * details.
    */
   public static final StorageClass MULTI_REGIONAL = type.createAndRegister("MULTI_REGIONAL");
 
   /**
    * Durable Reduced Availability storage class. This is supported as a legacy storage class and
-   * will be deprecated in the future. See: https://cloud.google.com/storage/docs/storage-classes
-   * for details
+   * will be deprecated in the future. This class cannot be set. Unless you already are using it,
+   * you should use {@link #STANDARD} instead. See <a
+   * href="https://cloud.google.com/storage/docs/storage-classes#legacy">Additional classes</a> for
+   * details.
    */
   public static final StorageClass DURABLE_REDUCED_AVAILABILITY =
       type.createAndRegister("DURABLE_REDUCED_AVAILABILITY");
