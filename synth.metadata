@@ -3,15 +3,15 @@
     {
       "git": {
         "name": ".",
-        "remote": "git@github.com:googleapis/java-storage.git",
-        "sha": "b5441df8d27ea8c77621da575decbf127f281897"
+        "remote": "https://github.com/googleapis/java-storage.git",
+        "sha": "ebab7e61b290fa3012e8d21a8a053ce079ea878b"
       }
     },
     {
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "8eff3790f88b50706a0c4b6a20b385f24e9ac4e7"
+        "sha": "52638600f387deb98efb5f9c85fec39e82aa9052"
       }
     }
   ]
