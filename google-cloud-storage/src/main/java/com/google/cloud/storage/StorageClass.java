@@ -75,9 +75,8 @@ public final class StorageClass extends StringEnumValue {
   public static final StorageClass ARCHIVE = type.createAndRegister("ARCHIVE");
 
   /**
-   * Regional storage class. This is supported as a legacy storage class and will be deprecated in
-   * the future. This class cannot be set. Unless you already are using it, you should use {@link
-   * #STANDARD} instead.
+   * Legacy Regional storage class, use {@link #STANDARD} instead. This class will be deprecated in
+   * the future.
    *
    * @see <a
    *     href="https://cloud.google.com/storage/docs/storage-classes#legacy">https://cloud.google.com/storage/docs/storage-classes#legacy</a>
@@ -85,9 +84,8 @@ public final class StorageClass extends StringEnumValue {
   public static final StorageClass REGIONAL = type.createAndRegister("REGIONAL");
 
   /**
-   * Multi-regional storage class. This is supported as a legacy storage class and will be
-   * deprecated in the future. This class cannot be set. Unless you already are using it, you should
-   * use {@link #STANDARD} instead.
+   * Legacy Multi-regional storage class, use {@link #STANDARD} instead. This class will be
+   * deprecated in the future.
    *
    * @see <a
    *     href="https://cloud.google.com/storage/docs/storage-classes#legacy">https://cloud.google.com/storage/docs/storage-classes#legacy</a>
@@ -95,9 +93,8 @@ public final class StorageClass extends StringEnumValue {
   public static final StorageClass MULTI_REGIONAL = type.createAndRegister("MULTI_REGIONAL");
 
   /**
-   * Durable Reduced Availability storage class. This is supported as a legacy storage class and
-   * will be deprecated in the future. This class cannot be set. Unless you already are using it,
-   * you should use {@link #STANDARD} instead.
+   * Legacy Durable Reduced Availability storage class, use {@link #STANDARD} instead. This class
+   * will be deprecated in the future.
    *
    * @see <a
    *     href="https://cloud.google.com/storage/docs/storage-classes#legacy">https://cloud.google.com/storage/docs/storage-classes#legacy</a>
