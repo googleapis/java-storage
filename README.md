@@ -218,8 +218,8 @@ Java 7 or above is required for using this client.
 
 ## Versioning
 
-This library follows [Semantic Versioning](http://semver.org/).
-
+This library follows [Semantic Versioning](http://semver.org/), but does update [Storage interface](src/main/java/com.google.cloud.storage/Storage.java)
+to introduce new methods which can break your implementations if you implement this interface for testing purposes.
 
 
 ## Contributing
