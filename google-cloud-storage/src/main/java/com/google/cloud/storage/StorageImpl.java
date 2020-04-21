@@ -241,7 +241,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException {
     try (WriteChannel writer = writer(blobInfo, options)) {
-      upload(Channels.newChannel(content), writer, bufferSize);
+      uploadHelper(Channels.newChannel(content), writer, bufferSize);
     }
   }
 
@@ -249,7 +249,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
    * Uploads the given content to the storage using specified write channel and the given buffer
    * size. This method does not close any channels.
    */
-  private static void upload(ReadableByteChannel reader, WriteChannel writer, int bufferSize)
+  private static void uploadHelper(ReadableByteChannel reader, WriteChannel writer, int bufferSize)
       throws IOException {
     bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
     ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
