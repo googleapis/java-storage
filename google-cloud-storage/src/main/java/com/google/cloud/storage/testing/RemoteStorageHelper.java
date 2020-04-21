@@ -75,7 +75,9 @@ public class RemoteStorageHelper {
           @Override
           public void run() {
             Page<Bucket> buckets =
-                storage.list(Storage.BucketListOption.prefix(BUCKET_NAME_PREFIX));
+                storage.list(
+                    Storage.BucketListOption.prefix(BUCKET_NAME_PREFIX),
+                    Storage.BucketListOption.userProject(storage.getOptions().getProjectId()));
             for (Bucket bucket : buckets.iterateAll()) {
               if (bucket.getCreateTime() < olderThan) {
                 try {
@@ -88,10 +90,9 @@ public class RemoteStorageHelper {
                           .iterateAll()) {
                     if (blob.getEventBasedHold() == true || blob.getTemporaryHold() == true) {
                       storage.update(
-                          blob.toBuilder()
-                              .setTemporaryHold(false)
-                              .setEventBasedHold(false)
-                              .build());
+                          blob.toBuilder().setTemporaryHold(false).setEventBasedHold(false).build(),
+                          Storage.BlobTargetOption.userProject(
+                              storage.getOptions().getProjectId()));
                     }
                   }
                   forceDelete(storage, bucket.getName());

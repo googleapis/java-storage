@@ -37,7 +37,7 @@ If you are using Maven without Bom, Add this to your dependencies.
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>1.105.1</version>
+  <version>1.106.0</version>
 </dependency>
 ```
 If you are using Gradle, add this to your dependencies
@@ -48,11 +48,11 @@ repositories {
         //other repositories
         }
 
-compile 'com.google.cloud:google-cloud-storage:1.105.1'
+compile 'com.google.cloud:google-cloud-storage:1.106.0'
 ```
 If you are using SBT, add this to your dependencies
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.105.1"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.106.0"
 ```
 [//]: # ({x-version-update-end})
 
@@ -245,4 +245,4 @@ Apache 2.0 - See [LICENSE] for more information.
 [cloud-storage-create-bucket]: https://cloud.google.com/storage/docs/cloud-console#_creatingbuckets
 [cloud-storage-activation]:https://cloud.google.com/storage/docs/signup?hl=en
 [storage-product-docs]: https://cloud.google.com/storage/docs/
-[storage-client-lib-docs]: https://googleapis.dev/java/google-cloud-clients/latest/index.html?com/google/cloud/storage/package-summary.html
+[storage-client-lib-docs]: https://googleapis.dev/java/google-cloud-storage/latest/index.html

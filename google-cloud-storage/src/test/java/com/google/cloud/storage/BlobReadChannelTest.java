@@ -23,12 +23,12 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
@@ -68,12 +68,11 @@ public class BlobReadChannelTest {
         StorageOptions.newBuilder()
             .setProjectId("projectId")
             .setServiceRpcFactory(rpcFactoryMock)
-            .setRetrySettings(ServiceOptions.getNoRetrySettings())
             .build();
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     verify(rpcFactoryMock, storageRpcMock);
   }
 
@@ -156,7 +155,7 @@ public class BlobReadChannelTest {
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
     assertTrue(reader.isOpen());
     reader.close();
-    assertTrue(!reader.isOpen());
+    assertFalse(reader.isOpen());
   }
 
   @Test
@@ -192,7 +191,7 @@ public class BlobReadChannelTest {
     try {
       reader.read(secondReadBuffer);
       fail("Expected ReadChannel read to throw StorageException");
-    } catch (StorageException ex) {
+    } catch (IOException ex) {
       StringBuilder messageBuilder = new StringBuilder();
       messageBuilder.append("Blob ").append(blobId).append(" was updated while reading");
       assertEquals(messageBuilder.toString(), ex.getMessage());
