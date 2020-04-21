@@ -133,12 +133,12 @@ class BlobReadChannel implements ReadChannel {
         if (result.y().length > 0 && lastEtag != null && !Objects.equals(result.x(), lastEtag)) {
           StringBuilder messageBuilder = new StringBuilder();
           messageBuilder.append("Blob ").append(blob).append(" was updated while reading");
-          throw new StorageException(0, messageBuilder.toString());
+          throw new IOException(messageBuilder.toString());
         }
         lastEtag = result.x();
         buffer = result.y();
       } catch (RetryHelper.RetryHelperException e) {
-        throw StorageException.translateAndThrow(e);
+        throw new IOException(e);
       }
       if (toRead > buffer.length) {
         endOfStream = true;

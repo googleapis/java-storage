@@ -31,14 +31,13 @@ import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
+import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
+import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
-import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
-import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
-
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URL;

@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.LinkedHashSet;

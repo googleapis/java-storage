@@ -118,18 +118,22 @@ public class V4PostPolicyTest {
     PolicyConditions conditions = policyInput.getConditions();
 
     if (!Strings.isNullOrEmpty(fields.get("success_action_redirect"))) {
-      builder.addSuccessActionRedirectUrlCondition(PostPolicyV4.ConditionV4Type.MATCHES, fields.get("success_action_redirect"));
+      builder.addSuccessActionRedirectUrlCondition(
+          PostPolicyV4.ConditionV4Type.MATCHES, fields.get("success_action_redirect"));
     }
 
     if (!Strings.isNullOrEmpty(fields.get("success_action_status"))) {
       builder.addSuccessActionStatusCondition(
-          PostPolicyV4.ConditionV4Type.MATCHES, Integer.parseInt(fields.get("success_action_status")));
+          PostPolicyV4.ConditionV4Type.MATCHES,
+          Integer.parseInt(fields.get("success_action_status")));
     }
 
     if (conditions != null) {
       if (!conditions.getStartsWithList().isEmpty()) {
         builder.addCustomCondition(
-            PostPolicyV4.ConditionV4Type.STARTS_WITH, conditions.getStartsWith(0).replace("$", ""), conditions.getStartsWith(1));
+            PostPolicyV4.ConditionV4Type.STARTS_WITH,
+            conditions.getStartsWith(0).replace("$", ""),
+            conditions.getStartsWith(1));
       }
       if (!conditions.getContentLengthRangeList().isEmpty()) {
         builder.addContentLengthRangeCondition(
@@ -154,26 +158,46 @@ public class V4PostPolicyTest {
 
     PostPolicyV4 policy =
         storage.generateSignedPostPolicyV4(
-            blob, testData.getPolicyInput().getExpiration(), TimeUnit.SECONDS, v4Fields, builder.build(), style);
+            blob,
+            testData.getPolicyInput().getExpiration(),
+            TimeUnit.SECONDS,
+            v4Fields,
+            builder.build(),
+            style);
 
     String expectedPolicy = testData.getPolicyOutput().getExpectedDecodedPolicy();
     StringBuilder escapedPolicy = new StringBuilder();
 
-
-    //Java automatically unescapes the unicode escapes in the conformance tests, so we need to manually re-escape them
+    // Java automatically unescapes the unicode escapes in the conformance tests, so we need to
+    // manually re-escape them
     for (char c : expectedPolicy.toCharArray()) {
       if (c >= 128) {
         escapedPolicy.append(String.format("\\u%04x", (int) c));
       } else {
         switch (c) {
-          case '\\': escapedPolicy.append("\\\\"); break;
-          case '\b' : escapedPolicy.append("\\b"); break;
-          case '\f' : escapedPolicy.append("\\f"); break;
-          case '\n' : escapedPolicy.append("\\n"); break;
-          case '\r' : escapedPolicy.append("\\r"); break;
-          case '\t' : escapedPolicy.append("\\t"); break;
-          case '\u000b' : escapedPolicy.append("\\v"); break;
-          default : escapedPolicy.append(c);
+          case '\\':
+            escapedPolicy.append("\\\\");
+            break;
+          case '\b':
+            escapedPolicy.append("\\b");
+            break;
+          case '\f':
+            escapedPolicy.append("\\f");
+            break;
+          case '\n':
+            escapedPolicy.append("\\n");
+            break;
+          case '\r':
+            escapedPolicy.append("\\r");
+            break;
+          case '\t':
+            escapedPolicy.append("\\t");
+            break;
+          case '\u000b':
+            escapedPolicy.append("\\v");
+            break;
+          default:
+            escapedPolicy.append(c);
         }
       }
     }
@@ -182,7 +206,6 @@ public class V4PostPolicyTest {
         escapedPolicy.toString(),
         new String(BaseEncoding.base64().decode(policy.getFields().get("policy"))));
     assertEquals(testData.getPolicyOutput().getUrl(), policy.getUrl());
-
   }
 
   /**
