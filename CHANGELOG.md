@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.107.0](https://www.github.com/googleapis/java-storage/compare/v1.106.0...v1.107.0) (2020-04-14)
+
+
+### Bug Fixes
+
+* Blob API Doc is confusing ([#233](https://www.github.com/googleapis/java-storage/issues/233)) ([b5208b8](https://www.github.com/googleapis/java-storage/commit/b5208b87e5469bfdf684bd5f250921be99a59ac8))
+* Blob.downloadTo() methods do not wrap RetryHelper$RetryHelperException ([#218](https://www.github.com/googleapis/java-storage/issues/218)) ([5599f29](https://www.github.com/googleapis/java-storage/commit/5599f299018cb363d600d4e39e35d2657b74f5bc))
+* implementations of FromHexString() for md5 and crc32c ([#246](https://www.github.com/googleapis/java-storage/issues/246)) ([c9b23b3](https://www.github.com/googleapis/java-storage/commit/c9b23b36874211681ea323ef89a69316438924af))
+* storage-client-lib-docs to right location ([#213](https://www.github.com/googleapis/java-storage/issues/213)) ([133d137](https://www.github.com/googleapis/java-storage/commit/133d1377781fd6bdc58dd4f494a75ec1d7b9e530))
+* surface storage interface expectations correctly. ([#241](https://www.github.com/googleapis/java-storage/issues/241)) ([130a641](https://www.github.com/googleapis/java-storage/commit/130a6413abbc1eacd0ee5c10dbbba699e1f528ea))
+* throw io exception instead of storage exception ([#229](https://www.github.com/googleapis/java-storage/issues/229)) ([4d42a4e](https://www.github.com/googleapis/java-storage/commit/4d42a4eb1feb2afc6a6a9f3a3797b33f33f50900))
+
+
+### Reverts
+
+* Revert "feat: add upload functionality (#214)" (#224) ([e87c731](https://www.github.com/googleapis/java-storage/commit/e87c7319c610454c9e7e052d0a4a4e7454e4d9a4)), closes [#214](https://www.github.com/googleapis/java-storage/issues/214) [#224](https://www.github.com/googleapis/java-storage/issues/224)
+* grpc version update ([#248](https://www.github.com/googleapis/java-storage/issues/248)) ([0f6703e](https://www.github.com/googleapis/java-storage/commit/0f6703ea2d8374667728ebcb4c398c6681280c58))
+
+
+### Dependencies
+
+* update conformance test dep ([#210](https://www.github.com/googleapis/java-storage/issues/210)) ([010c112](https://www.github.com/googleapis/java-storage/commit/010c1128761d9c74ba1af33bc34e9264f34b8c80))
+* update core dependencies ([#182](https://www.github.com/googleapis/java-storage/issues/182)) ([3f0c59c](https://www.github.com/googleapis/java-storage/commit/3f0c59c18ecfd844f718346768dc274a9e2f131d))
+* update core dependencies to v1.93.4 ([#231](https://www.github.com/googleapis/java-storage/issues/231)) ([1bb5787](https://www.github.com/googleapis/java-storage/commit/1bb578710148bab21c978e31b00608f7f9770128))
+* update dependency com.google.api:api-common to v1.9.0 ([#209](https://www.github.com/googleapis/java-storage/issues/209)) ([789ceaa](https://www.github.com/googleapis/java-storage/commit/789ceaa2be6163f85f483637205191e38029e0c2))
+* update dependency com.google.api.grpc:grpc-google-cloud-kms-v1 to v0.85.0 ([#222](https://www.github.com/googleapis/java-storage/issues/222)) ([03eace6](https://www.github.com/googleapis/java-storage/commit/03eace664dd13164c1db68b4895185d318d13d64))
+* update dependency com.google.api.grpc:proto-google-cloud-kms-v1 to v0.85.0 ([#223](https://www.github.com/googleapis/java-storage/issues/223)) ([aaf6a17](https://www.github.com/googleapis/java-storage/commit/aaf6a1728a9dd7e0bde1b6f52dd628c020cb73d3))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20200326-1.30.9 ([#239](https://www.github.com/googleapis/java-storage/issues/239)) ([b9d0a70](https://www.github.com/googleapis/java-storage/commit/b9d0a70c2a9ca1febafd1c1b8699c25e9e30e9b2))
+* update dependency com.google.cloud.samples:shared-configuration to v1.0.14 ([#207](https://www.github.com/googleapis/java-storage/issues/207)) ([be74072](https://www.github.com/googleapis/java-storage/commit/be74072662f2e3a99e54ee3d3feff66cb39032b2))
+* update dependency com.google.guava:guava to v29 ([#240](https://www.github.com/googleapis/java-storage/issues/240)) ([7824c15](https://www.github.com/googleapis/java-storage/commit/7824c15ab38ad89111c3eb9e77a499479a62742b))
+* update dependency org.threeten:threetenbp to v1.4.2 ([#200](https://www.github.com/googleapis/java-storage/issues/200)) ([84faad1](https://www.github.com/googleapis/java-storage/commit/84faad1a854c3a189d2997a121a8753988213f90))
+* update dependency org.threeten:threetenbp to v1.4.3 ([#228](https://www.github.com/googleapis/java-storage/issues/228)) ([be40a70](https://www.github.com/googleapis/java-storage/commit/be40a70fbe2d1556d26c7983c5ad62535ce6dfbd))
+
+
+### Documentation
+
+* clarify documentation on date formats ([#196](https://www.github.com/googleapis/java-storage/issues/196)) ([9b4af58](https://www.github.com/googleapis/java-storage/commit/9b4af5870ef38cae4e92b60a2f8e6efd3e93d06d)), closes [/github.com/googleapis/google-http-java-client/blob/master/google-http-client/src/main/java/com/google/api/client/util/DateTime.java#L53](https://www.github.com/googleapis//github.com/googleapis/google-http-java-client/blob/master/google-http-client/src/main/java/com/google/api/client/util/DateTime.java/issues/L53)
+
 ## [1.106.0](https://www.github.com/googleapis/java-storage/compare/v1.105.2...v1.106.0) (2020-03-17)
 
 

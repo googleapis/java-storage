@@ -52,12 +52,26 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A Google cloud storage object.
+ * An object in Google Cloud Storage. A {@code Blob} object includes the {@code BlobId} instance,
+ * the set of properties inherited from the {@link BlobInfo} class and the {@code Storage} instance.
+ * The class provides methods to perform operations on the object. Reading a property value does not
+ * issue any RPC calls. The object content is not stored within the {@code Blob} instance.
+ * Operations that access the content issue one or multiple RPC calls, depending on the content
+ * size.
  *
  * <p>Objects of this class are immutable. Operations that modify the blob like {@link #update} and
- * {@link #copyTo} return a new object. To get a {@code Blob} object with the most recent
- * information use {@link #reload}. {@code Blob} adds a layer of service-related functionality over
- * {@link BlobInfo}.
+ * {@link #copyTo} return a new object. Any changes to the object in Google Cloud Storage made after
+ * creation of the {@code Blob} are not visible in the {@code Blob}. To get a {@code Blob} object
+ * with the most recent information use {@link #reload}.
+ *
+ * <p>Example of getting the content of the object in Google Cloud Storage:
+ *
+ * <pre>{@code
+ * BlobId blobId = BlobId.of(bucketName, blobName);
+ * Blob blob = storage.get(blobId);
+ * long size = blob.getSize(); // no RPC call is required
+ * byte[] content = blob.getContent(); // one or multiple RPC calls will be issued
+ * }</pre>
  */
 public class Blob extends BlobInfo {
 
@@ -532,45 +546,27 @@ public class Blob extends BlobInfo {
   }
 
   /**
-   * Updates the blob's information. Bucket or blob's name cannot be changed by this method. If you
-   * want to rename the blob or move it to a different bucket use the {@link #copyTo} and {@link
-   * #delete} operations. A new {@code Blob} object is returned. By default no checks are made on
-   * the metadata generation of the current blob. If you want to update the information only if the
-   * current blob metadata are at their latest version use the {@code metagenerationMatch} option:
-   * {@code newBlob.update(BlobTargetOption.metagenerationMatch())}.
+   * Updates the blob properties. The {@code options} parameter contains the preconditions for
+   * applying the update. To update the properties call {@link #toBuilder()}, set the properties you
+   * want to change, build the new {@code Blob} instance, and then call {@link
+   * #update(BlobTargetOption...)}.
    *
-   * <p>Original metadata are merged with metadata in the provided {@code blobInfo}. If the original
-   * metadata already contains a key specified in the provided {@code blobInfo's} metadata map, it
-   * will be replaced by the new value. Removing metadata can be done by setting that metadata's
-   * value to {@code null}.
+   * <p>The property update details are described in {@link Storage#update(BlobInfo)}. {@link
+   * Storage#update(BlobInfo, BlobTargetOption...)} describes how to specify preconditions.
    *
-   * <p>Example of adding new metadata values or updating existing ones.
+   * <p>Example of updating the content type:
    *
    * <pre>{@code
-   * String bucketName = "my_unique_bucket";
-   * String blobName = "my_blob_name";
-   * Map<String, String> newMetadata = new HashMap<>();
-   * newMetadata.put("keyToAddOrUpdate", "value");
-   * Blob blob = storage.update(BlobInfo.newBuilder(bucketName, blobName)
-   *     .setMetadata(newMetadata)
-   *     .build());
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * Blob blob = storage.get(blobId);
+   * blob.toBuilder().setContentType("text/plain").build().update();
    * }</pre>
    *
-   * <p>Example of removing metadata values.
-   *
-   * <pre>{@code
-   * String bucketName = "my_unique_bucket";
-   * String blobName = "my_blob_name";
-   * Map<String, String> newMetadata = new HashMap<>();
-   * newMetadata.put("keyToRemove", null);
-   * Blob blob = storage.update(BlobInfo.newBuilder(bucketName, blobName)
-   *     .setMetadata(newMetadata)
-   *     .build());
-   * }</pre>
-   *
-   * @param options update options
-   * @return a {@code Blob} object with updated information
+   * @param options preconditions to apply the update
+   * @return the updated {@code Blob}
    * @throws StorageException upon failure
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
   public Blob update(BlobTargetOption... options) {
     return storage.update(this, options);

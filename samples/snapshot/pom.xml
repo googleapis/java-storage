@@ -14,7 +14,7 @@
   <parent>
     <groupId>com.google.cloud.samples</groupId>
     <artifactId>shared-configuration</artifactId>
-    <version>1.0.15</version>
+    <version>1.0.17</version>
   </parent>
 
   <properties>
@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage</artifactId>
-      <version>1.106.1-SNAPSHOT</version>
+      <version>1.107.0</version>
     </dependency>
 
     <dependency>

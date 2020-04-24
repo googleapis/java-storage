@@ -817,6 +817,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
     PostConditionsV4 v4Conditions =
         conditionsBuilder
+            .addBucketCondition(ConditionV4Type.MATCHES, blobInfo.getBucket())
             .addKeyCondition(ConditionV4Type.MATCHES, blobInfo.getName())
             .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-date", date)
             .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-credential", signingCredential)
@@ -840,6 +841,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     policyFields.put("x-goog-date", date);
     policyFields.put("x-goog-signature", signature);
     policyFields.put("policy", policy);
+
+    policyFields.remove("bucket");
 
     return PostPolicyV4.of(url, policyFields);
   }
