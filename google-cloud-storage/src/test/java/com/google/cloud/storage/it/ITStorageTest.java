@@ -3219,7 +3219,10 @@ public class ITStorageTest {
 
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
     Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
-    storage.upload(blobInfo, tempFileFrom);
+    Blob blob = storage.upload(blobInfo, tempFileFrom);
+    assertEquals(BUCKET, blob.getBucket());
+    assertEquals(blobName, blob.getName());
+    assertEquals(BLOB_BYTE_CONTENT.length, (long) blob.getSize());
 
     Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
     storage.get(blobId).downloadTo(tempFileTo);
@@ -3234,9 +3237,8 @@ public class ITStorageTest {
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
     ByteArrayInputStream content = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
-    storage.upload(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
+    Blob blob = storage.upload(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
 
-    Blob blob = storage.get(blobId);
     try {
       blob.getContent();
       fail("StorageException was expected");

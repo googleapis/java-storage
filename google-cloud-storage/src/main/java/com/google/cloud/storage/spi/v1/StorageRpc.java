@@ -313,11 +313,12 @@ public interface StorageRpc extends ServiceRpc {
   String open(String signedURL);
 
   /**
-   * Writes the provided bytes to a storage object at the provided location.
+   * Writes the provided bytes to a storage object at the provided location. If {@code last=true}
+   * returns metadata of the updated object, otherwise returns null.
    *
    * @throws StorageException upon failure
    */
-  void write(
+  StorageObject write(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,

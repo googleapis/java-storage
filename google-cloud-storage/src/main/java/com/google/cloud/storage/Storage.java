@@ -1720,7 +1720,7 @@ public interface Storage extends Service<StorageOptions> {
    * Blob blob = storage.create(blobInfo);
    * }</pre>
    *
-   * @return a [@code Blob} with complete information
+   * @return a {@code Blob} with complete information
    * @throws StorageException upon failure
    */
   Blob create(BlobInfo blobInfo, BlobTargetOption... options);
@@ -1741,7 +1741,7 @@ public interface Storage extends Service<StorageOptions> {
    * Blob blob = storage.create(blobInfo, "Hello, World!".getBytes(UTF_8));
    * }</pre>
    *
-   * @return a [@code Blob} with complete information
+   * @return a {@code Blob} with complete information
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/hashes-etags">Hashes and ETags</a>
    */
@@ -1764,7 +1764,7 @@ public interface Storage extends Service<StorageOptions> {
    * Blob blob = storage.create(blobInfo, "Hello, World!".getBytes(UTF_8), 7, 5);
    * }</pre>
    *
-   * @return a [@code Blob} with complete information
+   * @return a {@code Blob} with complete information
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/hashes-etags">Hashes and ETags</a>
    */
@@ -1807,7 +1807,7 @@ public interface Storage extends Service<StorageOptions> {
    * Blob blob = storage.create(blobInfo, content, BlobWriteOption.encryptionKey(encryptionKey));
    * }</pre>
    *
-   * @return a [@code Blob} with complete information
+   * @return a {@code Blob} with complete information
    * @throws StorageException upon failure
    */
   @Deprecated
@@ -1832,11 +1832,12 @@ public interface Storage extends Service<StorageOptions> {
    * @param blobInfo blob to create
    * @param path file to upload
    * @param options blob write options
+   * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
    * @throws StorageException on failure
    * @see #upload(BlobInfo, Path, int, BlobWriteOption...)
    */
-  void upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
+  Blob upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
 
   /**
    * Uploads {@code path} to the blob using {@link #writer} and {@code bufferSize}. By default any
@@ -1865,10 +1866,11 @@ public interface Storage extends Service<StorageOptions> {
    * @param path file to upload
    * @param bufferSize size of the buffer I/O operations
    * @param options blob write options
+   * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
    * @throws StorageException on failure
    */
-  void upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
+  Blob upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException;
 
   /**
@@ -1890,11 +1892,12 @@ public interface Storage extends Service<StorageOptions> {
    * @param blobInfo blob to create
    * @param content input stream to read from
    * @param options blob write options
+   * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
    * @throws StorageException on failure
    * @see #upload(BlobInfo, InputStream, int, BlobWriteOption...)
    */
-  void upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
+  Blob upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException;
 
   /**
@@ -1914,10 +1917,11 @@ public interface Storage extends Service<StorageOptions> {
    * @param content input stream to read from
    * @param bufferSize size of the buffer I/O operations
    * @param options blob write options
+   * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
    * @throws StorageException on failure
    */
-  void upload(BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
+  Blob upload(BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException;
 
   /**

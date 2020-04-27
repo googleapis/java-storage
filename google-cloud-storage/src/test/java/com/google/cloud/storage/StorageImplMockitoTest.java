@@ -22,10 +22,10 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.api.core.ApiClock;
+import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ServiceOptions;
@@ -37,6 +37,7 @@ import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -354,7 +355,7 @@ public class StorageImplMockitoTest {
   private StorageRpc storageRpcMock;
   private Storage storage;
 
-  private Blob expectedBlob1, expectedBlob2, expectedBlob3;
+  private Blob expectedBlob1, expectedBlob2, expectedBlob3, expectedUpdated;
   private Bucket expectedBucket1, expectedBucket2, expectedBucket3;
 
   @BeforeClass
@@ -394,6 +395,7 @@ public class StorageImplMockitoTest {
     expectedBucket1 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO1));
     expectedBucket2 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO2));
     expectedBucket3 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO3));
+    expectedUpdated = null;
   }
 
   @Test
@@ -421,45 +423,30 @@ public class StorageImplMockitoTest {
     }
   }
 
-  private static class UploadParameters {
-    final String uploadId;
-    final byte[] buffer;
-    final int length;
-    final boolean isLast;
-    final BlobInfo blobInfo;
-
-    private UploadParameters(
-        String uploadId, byte[] buffer, int length, boolean isLast, BlobInfo blobInfo) {
-      this.uploadId = uploadId;
-      this.buffer = buffer;
-      this.length = length;
-      this.isLast = isLast;
-      this.blobInfo = blobInfo;
-    }
-  }
-
-  private UploadParameters initializeUpload(byte[] bytes) {
+  private BlobInfo initializeUpload(byte[] bytes) {
     return initializeUpload(bytes, DEFAULT_BUFFER_SIZE, EMPTY_RPC_OPTIONS);
   }
 
-  private UploadParameters initializeUpload(byte[] bytes, int bufferSize) {
+  private BlobInfo initializeUpload(byte[] bytes, int bufferSize) {
     return initializeUpload(bytes, bufferSize, EMPTY_RPC_OPTIONS);
   }
 
-  private UploadParameters initializeUpload(
+  private BlobInfo initializeUpload(
       byte[] bytes, int bufferSize, Map<StorageRpc.Option, ?> rpcOptions) {
     String uploadId = "upload-id";
     byte[] buffer = new byte[bufferSize];
     System.arraycopy(bytes, 0, buffer, 0, bytes.length);
     BlobInfo blobInfo = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    StorageObject storageObject = new StorageObject();
+    storageObject.setBucket(BLOB_INFO1.getBucket());
+    storageObject.setName(BLOB_INFO1.getName());
+    storageObject.setSize(BigInteger.valueOf(bytes.length));
     when(storageRpcMock.open(blobInfo.toPb(), rpcOptions)).thenReturn(uploadId);
+    when(storageRpcMock.write(uploadId, buffer, 0, 0L, bytes.length, true))
+        .thenReturn(storageObject);
     initializeService();
-    return new UploadParameters(uploadId, buffer, bytes.length, true, blobInfo);
-  }
-
-  private void verifyUpload(UploadParameters parameters) {
-    verify(storageRpcMock)
-        .write(parameters.uploadId, parameters.buffer, 0, 0L, parameters.length, parameters.isLast);
+    expectedUpdated = Blob.fromPb(storage, storageObject);
+    return blobInfo;
   }
 
   @Test
@@ -468,9 +455,9 @@ public class StorageImplMockitoTest {
     Path tempFile = Files.createTempFile("testUpload", ".tmp");
     Files.write(tempFile, dataToSend);
 
-    UploadParameters uploadParameters = initializeUpload(dataToSend);
-    storage.upload(uploadParameters.blobInfo, tempFile);
-    verifyUpload(uploadParameters);
+    BlobInfo blobInfo = initializeUpload(dataToSend);
+    Blob blob = storage.upload(blobInfo, tempFile);
+    assertEquals(expectedUpdated, blob);
   }
 
   @Test
@@ -478,9 +465,9 @@ public class StorageImplMockitoTest {
     byte[] dataToSend = {1, 2, 3, 4, 5};
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
 
-    UploadParameters uploadParameters = initializeUpload(dataToSend);
-    storage.upload(uploadParameters.blobInfo, stream);
-    verifyUpload(uploadParameters);
+    BlobInfo blobInfo = initializeUpload(dataToSend);
+    Blob blob = storage.upload(blobInfo, stream);
+    assertEquals(expectedUpdated, blob);
   }
 
   @Test
@@ -488,11 +475,9 @@ public class StorageImplMockitoTest {
     byte[] dataToSend = {1, 2, 3, 4, 5, 6};
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
 
-    UploadParameters uploadParameters =
-        initializeUpload(dataToSend, DEFAULT_BUFFER_SIZE, KMS_KEY_NAME_OPTIONS);
-    storage.upload(
-        uploadParameters.blobInfo, stream, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
-    verifyUpload(uploadParameters);
+    BlobInfo blobInfo = initializeUpload(dataToSend, DEFAULT_BUFFER_SIZE, KMS_KEY_NAME_OPTIONS);
+    Blob blob = storage.upload(blobInfo, stream, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedUpdated, blob);
   }
 
   @Test
@@ -501,9 +486,9 @@ public class StorageImplMockitoTest {
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
     int bufferSize = MIN_BUFFER_SIZE * 2;
 
-    UploadParameters uploadParameters = initializeUpload(dataToSend, bufferSize);
-    storage.upload(uploadParameters.blobInfo, stream, bufferSize);
-    verifyUpload(uploadParameters);
+    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize);
+    Blob blob = storage.upload(blobInfo, stream, bufferSize);
+    assertEquals(expectedUpdated, blob);
   }
 
   @Test
@@ -512,14 +497,11 @@ public class StorageImplMockitoTest {
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
     int bufferSize = MIN_BUFFER_SIZE * 2;
 
-    UploadParameters uploadParameters =
-        initializeUpload(dataToSend, bufferSize, KMS_KEY_NAME_OPTIONS);
-    storage.upload(
-        uploadParameters.blobInfo,
-        stream,
-        bufferSize,
-        Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
-    verifyUpload(uploadParameters);
+    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize, KMS_KEY_NAME_OPTIONS);
+    Blob blob =
+        storage.upload(
+            blobInfo, stream, bufferSize, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedUpdated, blob);
   }
 
   @Test
@@ -528,9 +510,9 @@ public class StorageImplMockitoTest {
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
     int smallBufferSize = 100;
 
-    UploadParameters uploadParameters = initializeUpload(dataToSend, MIN_BUFFER_SIZE);
-    storage.upload(uploadParameters.blobInfo, stream, smallBufferSize);
-    verifyUpload(uploadParameters);
+    BlobInfo blobInfo = initializeUpload(dataToSend, MIN_BUFFER_SIZE);
+    Blob blob = storage.upload(blobInfo, stream, smallBufferSize);
+    assertEquals(expectedUpdated, blob);
   }
 
   @Test
@@ -566,18 +548,25 @@ public class StorageImplMockitoTest {
     dataToSend[0] = 42;
     dataToSend[MIN_BUFFER_SIZE + 1] = 43;
 
+    StorageObject storageObject = new StorageObject();
+    storageObject.setBucket(BLOB_INFO1.getBucket());
+    storageObject.setName(BLOB_INFO1.getName());
+    storageObject.setSize(BigInteger.valueOf(totalSize));
+
     BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
     when(storageRpcMock.open(info.toPb(), EMPTY_RPC_OPTIONS)).thenReturn(uploadId);
 
-    InputStream input = new ByteArrayInputStream(dataToSend);
-    storage.upload(info, input, MIN_BUFFER_SIZE);
-
     byte[] buffer1 = new byte[MIN_BUFFER_SIZE];
     System.arraycopy(dataToSend, 0, buffer1, 0, MIN_BUFFER_SIZE);
-    verify(storageRpcMock).write(uploadId, buffer1, 0, 0L, MIN_BUFFER_SIZE, false);
+    when(storageRpcMock.write(uploadId, buffer1, 0, 0L, MIN_BUFFER_SIZE, false)).thenReturn(null);
 
     byte[] buffer2 = new byte[MIN_BUFFER_SIZE];
     System.arraycopy(dataToSend, MIN_BUFFER_SIZE, buffer2, 0, extraBytes);
-    verify(storageRpcMock).write(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true);
+    when(storageRpcMock.write(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true))
+        .thenReturn(storageObject);
+
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob blob = storage.upload(info, input, MIN_BUFFER_SIZE);
+    assertEquals(Blob.fromPb(storage, storageObject), blob);
   }
 }

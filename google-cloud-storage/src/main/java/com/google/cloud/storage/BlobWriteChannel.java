@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.RetryHelper.runWithRetries;
 import static java.util.concurrent.Executors.callable;
 
+import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.BaseWriteChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
@@ -47,6 +48,13 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
     super(options, null, uploadId);
   }
 
+  // Contains metadata of the updated object or null if upload is not completed.
+  private StorageObject objectProto;
+
+  StorageObject getObjectProto() {
+    return objectProto;
+  }
+
   @Override
   protected void flushBuffer(final int length, final boolean last) {
     try {
@@ -55,9 +63,10 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
               new Runnable() {
                 @Override
                 public void run() {
-                  getOptions()
-                      .getStorageRpcV1()
-                      .write(getUploadId(), getBuffer(), 0, getPosition(), length, last);
+                  objectProto =
+                      getOptions()
+                          .getStorageRpcV1()
+                          .write(getUploadId(), getBuffer(), 0, getPosition(), length, last);
                 }
               }),
           getOptions().getRetrySettings(),

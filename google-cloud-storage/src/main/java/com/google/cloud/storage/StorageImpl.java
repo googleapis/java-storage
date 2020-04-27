@@ -215,34 +215,39 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public void upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException {
-    upload(blobInfo, path, DEFAULT_BUFFER_SIZE, options);
+  public Blob upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException {
+    return upload(blobInfo, path, DEFAULT_BUFFER_SIZE, options);
   }
 
   @Override
-  public void upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
+  public Blob upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
     try (InputStream input = Files.newInputStream(path)) {
-      upload(blobInfo, input, bufferSize, options);
+      return upload(blobInfo, input, bufferSize, options);
     }
   }
 
   @Override
-  public void upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
+  public Blob upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException {
-    upload(blobInfo, content, DEFAULT_BUFFER_SIZE, options);
+    return upload(blobInfo, content, DEFAULT_BUFFER_SIZE, options);
   }
 
   @Override
-  public void upload(
+  public Blob upload(
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException {
+
+    BlobWriteChannel blobWriteChannel;
     try (WriteChannel writer = writer(blobInfo, options)) {
+      blobWriteChannel = (BlobWriteChannel) writer;
       uploadHelper(Channels.newChannel(content), writer, bufferSize);
     }
+    StorageObject objectProto = blobWriteChannel.getObjectProto();
+    return Blob.fromPb(this, objectProto);
   }
 
   /*

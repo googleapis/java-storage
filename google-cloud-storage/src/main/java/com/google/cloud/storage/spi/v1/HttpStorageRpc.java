@@ -713,7 +713,7 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
-  public void write(
+  public StorageObject write(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,
@@ -722,9 +722,10 @@ public class HttpStorageRpc implements StorageRpc {
       boolean last) {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_WRITE);
     Scope scope = tracer.withSpan(span);
+    StorageObject updatedBlob = null;
     try {
       if (length == 0 && !last) {
-        return;
+        return updatedBlob;
       }
       GenericUrl url = new GenericUrl(uploadId);
       HttpRequest httpRequest =
@@ -745,6 +746,9 @@ public class HttpStorageRpc implements StorageRpc {
         range.append('*');
       }
       httpRequest.getHeaders().setContentRange(range.toString());
+      if (last) {
+        httpRequest.setParser(storage.getObjectParser());
+      }
       int code;
       String message;
       IOException exception = null;
@@ -753,6 +757,9 @@ public class HttpStorageRpc implements StorageRpc {
         response = httpRequest.execute();
         code = response.getStatusCode();
         message = response.getStatusMessage();
+        if (last && (code == 200 || code == 201)) {
+          updatedBlob = response.parseAs(StorageObject.class);
+        }
       } catch (HttpResponseException ex) {
         exception = ex;
         code = ex.getStatusCode();
@@ -778,6 +785,7 @@ public class HttpStorageRpc implements StorageRpc {
       scope.close();
       span.end();
     }
+    return updatedBlob;
   }
 
   @Override
