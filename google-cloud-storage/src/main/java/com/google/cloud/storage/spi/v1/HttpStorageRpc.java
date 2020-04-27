@@ -757,7 +757,11 @@ public class HttpStorageRpc implements StorageRpc {
         response = httpRequest.execute();
         code = response.getStatusCode();
         message = response.getStatusMessage();
-        if (last && (code == 200 || code == 201)) {
+        String contentType = response.getContentType();
+        if (last
+            && (code == 200 || code == 201)
+            && contentType != null
+            && contentType.startsWith("application/json")) {
           updatedBlob = response.parseAs(StorageObject.class);
         }
       } catch (HttpResponseException ex) {
