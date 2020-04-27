@@ -3075,21 +3075,29 @@ public class StorageImplTest {
 
   @Test
   public void testV4PostPolicy() {
+    EasyMock.replay(storageRpcMock);
+    ServiceAccountCredentials credentials =
+            ServiceAccountCredentials.newBuilder()
+                    .setClientEmail(ACCOUNT)
+                    .setPrivateKey(privateKey)
+                    .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
     PostPolicyV4.PostFieldsV4 fields =
-        PostPolicyV4.PostFieldsV4.newBuilder().setAcl("public-read").build();
+            PostPolicyV4.PostFieldsV4.newBuilder().setAcl("public-read").build();
     PostPolicyV4.PostConditionsV4 conditions =
-        PostPolicyV4.PostConditionsV4.newBuilder()
-            .addContentTypeCondition(PostPolicyV4.ConditionV4Type.MATCHES, "image/jpeg")
-            .build();
+            PostPolicyV4.PostConditionsV4.newBuilder()
+                    .addContentTypeCondition(PostPolicyV4.ConditionV4Type.MATCHES, "image/jpeg")
+                    .build();
 
     // test fields and conditions
     PostPolicyV4 policy =
-        storage.generateSignedPostPolicyV4(
-            BlobInfo.newBuilder("my-bucket", "my-object").build(),
-            7,
-            TimeUnit.DAYS,
-            fields,
-            conditions);
+            storage.generateSignedPostPolicyV4(
+                    BlobInfo.newBuilder("my-bucket", "my-object").build(),
+                    7,
+                    TimeUnit.DAYS,
+                    fields,
+                    conditions);
 
     Map<String, String> outputFields = policy.getFields();
 
@@ -3104,8 +3112,8 @@ public class StorageImplTest {
 
     // test fields, no conditions
     policy =
-        storage.generateSignedPostPolicyV4(
-            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, conditions);
+            storage.generateSignedPostPolicyV4(
+                    BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, conditions);
     outputFields = policy.getFields();
 
     assertTrue(outputFields.containsKey("x-goog-date"));
@@ -3118,8 +3126,8 @@ public class StorageImplTest {
 
     // test conditions, no fields
     policy =
-        storage.generateSignedPostPolicyV4(
-            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, fields);
+            storage.generateSignedPostPolicyV4(
+                    BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, fields);
     outputFields = policy.getFields();
     assertTrue(outputFields.containsKey("x-goog-date"));
     assertTrue(outputFields.containsKey("x-goog-credential"));
@@ -3130,8 +3138,8 @@ public class StorageImplTest {
 
     // test no conditions no fields
     policy =
-        storage.generateSignedPostPolicyV4(
-            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS);
+            storage.generateSignedPostPolicyV4(
+                    BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS);
     outputFields = policy.getFields();
     assertTrue(outputFields.containsKey("x-goog-date"));
     assertTrue(outputFields.containsKey("x-goog-credential"));
