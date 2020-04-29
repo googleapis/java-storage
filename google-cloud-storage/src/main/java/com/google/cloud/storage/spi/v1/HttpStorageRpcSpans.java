@@ -16,8 +16,7 @@
 
 package com.google.cloud.storage.spi.v1;
 
-import com.google.common.collect.ImmutableSet;
-import io.opencensus.trace.Tracing;
+import io.opencensus.trace.EndSpanOptions;
 
 /** Helper class for instrumenting {@link HttpStorageRpc} with Open Census APIs. */
 class HttpStorageRpcSpans {
@@ -95,61 +94,12 @@ class HttpStorageRpcSpans {
   static final String SPAN_NAME_GET_SERVICE_ACCOUNT = getTraceSpanName("getServiceAccount(String)");
   static final String SPAN_NAME_BATCH_SUBMIT =
       getTraceSpanName(RpcBatch.class.getName() + ".submit()");
-
-  static final ImmutableSet<String> ALL_SPAN_NAMES =
-      ImmutableSet.of(
-          SPAN_NAME_CREATE_BUCKET,
-          SPAN_NAME_CREATE_OBJECT,
-          SPAN_NAME_LIST_BUCKETS,
-          SPAN_NAME_LIST_OBJECTS,
-          SPAN_NAME_GET_BUCKET,
-          SPAN_NAME_GET_OBJECT,
-          SPAN_NAME_PATCH_BUCKET,
-          SPAN_NAME_PATCH_OBJECT,
-          SPAN_NAME_DELETE_BUCKET,
-          SPAN_NAME_DELETE_OBJECT,
-          SPAN_NAME_CREATE_BATCH,
-          SPAN_NAME_COMPOSE,
-          SPAN_NAME_LOAD,
-          SPAN_NAME_READ,
-          SPAN_NAME_OPEN,
-          SPAN_NAME_WRITE,
-          SPAN_NAME_OPEN_REWRITE,
-          SPAN_NAME_CONTINUE_REWRITE,
-          SPAN_NAME_GET_BUCKET_ACL,
-          SPAN_NAME_DELETE_BUCKET_ACL,
-          SPAN_NAME_CREATE_BUCKET_ACL,
-          SPAN_NAME_PATCH_BUCKET_ACL,
-          SPAN_NAME_LIST_BUCKET_ACLS,
-          SPAN_NAME_GET_OBJECT_DEFAULT_ACL,
-          SPAN_NAME_DELETE_OBJECT_DEFAULT_ACL,
-          SPAN_NAME_CREATE_OBJECT_DEFAULT_ACL,
-          SPAN_NAME_PATCH_OBJECT_DEFAULT_ACL,
-          SPAN_NAME_LIST_OBJECT_DEFAULT_ACLS,
-          SPAN_NAME_GET_OBJECT_ACL,
-          SPAN_NAME_DELETE_OBJECT_ACL,
-          SPAN_NAME_CREATE_OBJECT_ACL,
-          SPAN_NAME_PATCH_OBJECT_ACL,
-          SPAN_NAME_LIST_OBJECT_ACLS,
-          SPAN_NAME_GET_BUCKET_IAM_POLICY,
-          SPAN_NAME_SET_BUCKET_IAM_POLICY,
-          SPAN_NAME_TEST_BUCKET_IAM_PERMISSIONS,
-          SPAN_NAME_DELETE_NOTIFICATION,
-          SPAN_NAME_LIST_NOTIFICATIONS,
-          SPAN_NAME_CREATE_NOTIFICATION,
-          SPAN_NAME_GET_SERVICE_ACCOUNT,
-          SPAN_LOCK_RETENTION_POLICY,
-          SPAN_NAME_BATCH_SUBMIT);
+  static final EndSpanOptions END_SPAN_OPTIONS =
+      EndSpanOptions.builder().setSampleToLocalSpanStore(true).build();
 
   static String getTraceSpanName(String methodDescriptor) {
     return String.format(
         "%s.%s.%s", SPAN_NAME_CLIENT_PREFIX, HttpStorageRpc.class.getName(), methodDescriptor);
-  }
-
-  static void registerAllSpanNamesForCollection() {
-    Tracing.getExportComponent()
-        .getSampledSpanStore()
-        .registerSpanNamesForCollection(ALL_SPAN_NAMES);
   }
 
   private HttpStorageRpcSpans() {}

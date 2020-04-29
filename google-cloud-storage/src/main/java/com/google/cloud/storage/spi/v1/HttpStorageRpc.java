@@ -109,8 +109,6 @@ public class HttpStorageRpc implements StorageRpc {
     censusHttpModule = new CensusHttpModule(tracer, true);
     initializer = censusHttpModule.getHttpRequestInitializer(initializer);
     batchRequestInitializer = censusHttpModule.getHttpRequestInitializer(null);
-    HttpStorageRpcSpans.registerAllSpanNamesForCollection();
-
     storage =
         new Storage.Builder(transport, new JacksonFactory(), initializer)
             .setRootUrl(options.getHost())
@@ -205,7 +203,7 @@ public class HttpStorageRpc implements StorageRpc {
         throw translate(ex);
       } finally {
         scope.close();
-        span.end();
+        span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
       }
     }
   }
@@ -272,7 +270,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -310,7 +308,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -336,7 +334,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -370,7 +368,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -410,7 +408,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -443,7 +441,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -481,7 +479,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -510,7 +508,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -536,7 +534,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -569,7 +567,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -606,7 +604,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -634,13 +632,20 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
   @Override
   public RpcBatch createBatch() {
-    return new DefaultRpcBatch(storage);
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BATCH);
+    Scope scope = tracer.withSpan(span);
+    try {
+      return new DefaultRpcBatch(storage);
+    } finally {
+      scope.close();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
+    }
   }
 
   private Get createReadRequest(StorageObject from, Map<Option, ?> options) throws IOException {
@@ -679,7 +684,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -708,7 +713,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -776,7 +781,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -832,7 +837,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -865,7 +870,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -877,7 +882,7 @@ public class HttpStorageRpc implements StorageRpc {
       return rewrite(rewriteRequest, null);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -889,7 +894,7 @@ public class HttpStorageRpc implements StorageRpc {
       return rewrite(previousResponse.rewriteRequest, previousResponse.rewriteToken);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -967,7 +972,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -991,7 +996,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1010,7 +1015,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1029,7 +1034,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1049,7 +1054,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1068,7 +1073,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1088,7 +1093,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1103,7 +1108,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1121,7 +1126,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1136,7 +1141,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1159,7 +1164,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1183,7 +1188,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1202,7 +1207,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1221,7 +1226,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1241,7 +1246,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1265,7 +1270,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1295,7 +1300,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1319,7 +1324,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1343,7 +1348,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1367,7 +1372,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1391,7 +1396,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1410,7 +1415,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1430,7 +1435,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1450,7 +1455,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw serviceException;
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1465,7 +1470,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1480,7 +1485,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1499,7 +1504,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 
@@ -1514,7 +1519,7 @@ public class HttpStorageRpc implements StorageRpc {
       throw translate(ex);
     } finally {
       scope.close();
-      span.end();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
   }
 }
