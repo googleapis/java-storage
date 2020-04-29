@@ -99,7 +99,7 @@ public class BlobWriteChannelTest {
     replay(storageRpcMock);
     writer = new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);
     assertTrue(writer.isOpen());
-    assertNull(writer.getObjectProto());
+    assertNull(writer.getStorageObject());
   }
 
   @Test
@@ -110,7 +110,7 @@ public class BlobWriteChannelTest {
     replay(storageRpcMock);
     writer = new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);
     assertTrue(writer.isOpen());
-    assertNull(writer.getObjectProto());
+    assertNull(writer.getStorageObject());
   }
 
   @Test
@@ -153,7 +153,7 @@ public class BlobWriteChannelTest {
     ByteBuffer buffer = randomBuffer(CUSTOM_CHUNK_SIZE);
     assertEquals(CUSTOM_CHUNK_SIZE, writer.write(buffer));
     assertArrayEquals(buffer.array(), capturedBuffer.getValue());
-    assertNull(writer.getObjectProto());
+    assertNull(writer.getStorageObject());
   }
 
   @Test
@@ -175,7 +175,7 @@ public class BlobWriteChannelTest {
     for (int i = 0; i < buffers.length; i++) {
       buffers[i] = randomBuffer(MIN_CHUNK_SIZE);
       assertEquals(MIN_CHUNK_SIZE, writer.write(buffers[i]));
-      assertNull(writer.getObjectProto());
+      assertNull(writer.getStorageObject());
     }
     for (int i = 0; i < buffers.length; i++) {
       assertArrayEquals(
@@ -199,7 +199,7 @@ public class BlobWriteChannelTest {
     writer.close();
     assertArrayEquals(new byte[0], capturedBuffer.getValue());
     assertFalse(writer.isOpen());
-    assertSame(UPDATED_BLOB, writer.getObjectProto());
+    assertSame(UPDATED_BLOB, writer.getStorageObject());
   }
 
   @Test
@@ -224,7 +224,7 @@ public class BlobWriteChannelTest {
     assertEquals(DEFAULT_CHUNK_SIZE, capturedBuffer.getValue().length);
     assertArrayEquals(buffer.array(), Arrays.copyOf(capturedBuffer.getValue(), MIN_CHUNK_SIZE));
     assertFalse(writer.isOpen());
-    assertSame(UPDATED_BLOB, writer.getObjectProto());
+    assertSame(UPDATED_BLOB, writer.getStorageObject());
   }
 
   @Test
@@ -244,7 +244,7 @@ public class BlobWriteChannelTest {
     } catch (IOException ex) {
       // expected
     }
-    assertSame(UPDATED_BLOB, writer.getObjectProto());
+    assertSame(UPDATED_BLOB, writer.getStorageObject());
   }
 
   @Test

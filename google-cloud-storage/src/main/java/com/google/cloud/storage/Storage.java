@@ -1834,7 +1834,7 @@ public interface Storage extends Service<StorageOptions> {
    * @param options blob write options
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
-   * @throws StorageException on failure
+   * @throws StorageException on server side error
    * @see #upload(BlobInfo, Path, int, BlobWriteOption...)
    */
   Blob upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
@@ -1868,7 +1868,7 @@ public interface Storage extends Service<StorageOptions> {
    * @param options blob write options
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
-   * @throws StorageException on failure
+   * @throws StorageException on server side error
    */
   Blob upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException;
@@ -1894,7 +1894,7 @@ public interface Storage extends Service<StorageOptions> {
    * @param options blob write options
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
-   * @throws StorageException on failure
+   * @throws StorageException on server side error
    * @see #upload(BlobInfo, InputStream, int, BlobWriteOption...)
    */
   Blob upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
@@ -1919,7 +1919,7 @@ public interface Storage extends Service<StorageOptions> {
    * @param options blob write options
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
-   * @throws StorageException on failure
+   * @throws StorageException on server side error
    */
   Blob upload(BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException;

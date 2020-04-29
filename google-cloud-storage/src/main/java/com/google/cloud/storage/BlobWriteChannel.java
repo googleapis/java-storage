@@ -49,10 +49,10 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   }
 
   // Contains metadata of the updated object or null if upload is not completed.
-  private StorageObject objectProto;
+  private StorageObject storageObject;
 
-  StorageObject getObjectProto() {
-    return objectProto;
+  StorageObject getStorageObject() {
+    return storageObject;
   }
 
   @Override
@@ -63,7 +63,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
               new Runnable() {
                 @Override
                 public void run() {
-                  objectProto =
+                  storageObject =
                       getOptions()
                           .getStorageRpcV1()
                           .write(getUploadId(), getBuffer(), 0, getPosition(), length, last);
