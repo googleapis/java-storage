@@ -399,6 +399,33 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testGetOptions() {
+    initializeService();
+    assertSame(options, storage.getOptions());
+  }
+
+  @Test
+  public void testCreateBucket() {
+    when(storageRpcMock.create(BUCKET_INFO1.toPb(), EMPTY_RPC_OPTIONS))
+        .thenReturn(BUCKET_INFO1.toPb())
+        .thenThrow(new RuntimeException("Fail"));
+    initializeService();
+    Bucket bucket = storage.create(BUCKET_INFO1);
+    assertEquals(expectedBucket1, bucket);
+  }
+
+  @Test
+  public void testCreateBucketWithOptions() {
+    when(storageRpcMock.create(BUCKET_INFO1.toPb(), BUCKET_TARGET_OPTIONS))
+        .thenReturn(BUCKET_INFO1.toPb())
+        .thenThrow(new RuntimeException("Fail"));
+    initializeService();
+    Bucket bucket =
+        storage.create(BUCKET_INFO1, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_PREDEFINED_ACL);
+    assertEquals(expectedBucket1, bucket);
+  }
+
+  @Test
   public void testUploadNonExistentFile() {
     initializeService();
     String fileName = "non_existing_file.txt";

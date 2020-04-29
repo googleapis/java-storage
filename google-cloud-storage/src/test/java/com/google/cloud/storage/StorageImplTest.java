@@ -433,34 +433,6 @@ public class StorageImplTest {
   }
 
   @Test
-  public void testGetOptions() {
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    assertSame(options, storage.getOptions());
-  }
-
-  @Test
-  public void testCreateBucket() {
-    EasyMock.expect(storageRpcMock.create(BUCKET_INFO1.toPb(), EMPTY_RPC_OPTIONS))
-        .andReturn(BUCKET_INFO1.toPb());
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    Bucket bucket = storage.create(BUCKET_INFO1);
-    assertEquals(expectedBucket1, bucket);
-  }
-
-  @Test
-  public void testCreateBucketWithOptions() {
-    EasyMock.expect(storageRpcMock.create(BUCKET_INFO1.toPb(), BUCKET_TARGET_OPTIONS))
-        .andReturn(BUCKET_INFO1.toPb());
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    Bucket bucket =
-        storage.create(BUCKET_INFO1, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_PREDEFINED_ACL);
-    assertEquals(expectedBucket1, bucket);
-  }
-
-  @Test
   public void testCreateBlob() throws IOException {
     Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
     EasyMock.expect(
