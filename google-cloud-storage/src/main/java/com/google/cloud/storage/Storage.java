@@ -2010,6 +2010,8 @@ public interface Storage extends Service<StorageOptions> {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * Blob blob = storage.get(blobId, BlobGetOption.decryptionKey(blobEncryptionKey));
    * }</pre>
+   *
+   * @throws StorageException upon failure
    */
   Blob get(BlobId blob, BlobGetOption... options);
 
@@ -2101,11 +2103,23 @@ public interface Storage extends Service<StorageOptions> {
    * {@link StorageException} is thrown.
    *
    * <pre>{@code
-   * String bucketName = "my-unique-bucket";
-   * String blobName = "my-blob-name";
-   * Blob blob = storage.get(bucketName, blobName);
-   * BlobInfo updatedInfo = blob.toBuilder().setContentType("text/plain").build();
-   * storage.update(updatedInfo, BlobTargetOption.metagenerationMatch());
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+   * Blob blob = storage.create(blobInfo);
+   *
+   * doSomething();
+   *
+   * BlobInfo update = blob.toBuilder().setContentType("multipart/form-data").build();
+   * Storage.BlobTargetOption option = Storage.BlobTargetOption.metagenerationMatch();
+   * try {
+   *   storage.update(update, option);
+   * } catch (StorageException e) {
+   *   if (e.getCode() == 412) {
+   *     // the properties were updated externally
+   *   } else {
+   *     throw e;
+   *   }
+   * }
    * }</pre>
    *
    * @return the updated blob
@@ -2114,37 +2128,29 @@ public interface Storage extends Service<StorageOptions> {
   Blob update(BlobInfo blobInfo, BlobTargetOption... options);
 
   /**
-   * Updates blob information. Original metadata are merged with metadata in the provided {@code
-   * blobInfo}. If the original metadata already contains a key specified in the provided {@code
-   * blobInfo's} metadata map, it will be replaced by the new value. Removing metadata can be done
-   * by setting that metadata's value to {@code null}.
+   * Updates the properties of the blob. This method issues an RPC request to merge the current blob
+   * properties with the properties in the provided {@code blobInfo}. Properties not defined in
+   * {@code blobInfo} will not be updated. To unset a blob property this property in {@code
+   * blobInfo} should be explicitly set to {@code null}.
    *
-   * <p>Example of adding new metadata values or updating existing ones.
-   *
-   * <pre>{@code
-   * String bucketName = "my-unique-bucket";
-   * String blobName = "my-blob-name";
-   * Map<String, String> newMetadata = new HashMap<>();
-   * newMetadata.put("keyToAddOrUpdate", "value");
-   * Blob blob = storage.update(BlobInfo.newBuilder(bucketName, blobName)
-   *     .setMetadata(newMetadata)
-   *     .build());
-   * }</pre>
-   *
-   * <p>Example of removing metadata values.
+   * <p>Example of how to update blob's user provided metadata and unset the content type:
    *
    * <pre>{@code
-   * String bucketName = "my-unique-bucket";
-   * String blobName = "my-blob-name";
-   * Map<String, String> newMetadata = new HashMap<>();
-   * newMetadata.put("keyToRemove", null);
-   * Blob blob = storage.update(BlobInfo.newBuilder(bucketName, blobName)
-   *     .setMetadata(newMetadata)
-   *     .build());
+   * Map<String, String> metadataUpdate = new HashMap<>();
+   * metadataUpdate.put("keyToAdd", "new value");
+   * metadataUpdate.put("keyToRemove", null);
+   * BlobInfo blobUpdate = BlobInfo.newBuilder(bucketName, blobName)
+   *     .setMetadata(metadataUpdate)
+   *     .setContentType(null)
+   *     .build();
+   * Blob blob = storage.update(blobUpdate);
    * }</pre>
    *
+   * @param blobInfo information to update
    * @return the updated blob
    * @throws StorageException upon failure
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
   Blob update(BlobInfo blobInfo);
 
@@ -2770,10 +2776,10 @@ public interface Storage extends Service<StorageOptions> {
   List<Blob> get(Iterable<BlobId> blobIds);
 
   /**
-   * Updates the requested blobs. A batch request is used to perform this call. Original metadata
-   * are merged with metadata in the provided {@code BlobInfo} objects. To replace metadata instead
-   * you first have to unset them. Unsetting metadata can be done by setting the provided {@code
-   * BlobInfo} objects metadata to {@code null}. See {@link #update(BlobInfo)} for a code example.
+   * Updates the requested blobs. A batch request is used to perform this call. The original
+   * properties are merged with the properties in the provided {@code BlobInfo} objects. Unsetting a
+   * property can be done by setting the property of the provided {@code BlobInfo} objects to {@code
+   * null}. See {@link #update(BlobInfo)} for a code example.
    *
    * <p>Example of updating information on several blobs using a single batch request.
    *
@@ -2796,10 +2802,10 @@ public interface Storage extends Service<StorageOptions> {
   List<Blob> update(BlobInfo... blobInfos);
 
   /**
-   * Updates the requested blobs. A batch request is used to perform this call. Original metadata
-   * are merged with metadata in the provided {@code BlobInfo} objects. To replace metadata instead
-   * you first have to unset them. Unsetting metadata can be done by setting the provided {@code
-   * BlobInfo} objects metadata to {@code null}. See {@link #update(BlobInfo)} for a code example.
+   * Updates the requested blobs. A batch request is used to perform this call. The original
+   * properties are merged with the properties in the provided {@code BlobInfo} objects. Unsetting a
+   * property can be done by setting the property of the provided {@code BlobInfo} objects to {@code
+   * null}. See {@link #update(BlobInfo)} for a code example.
    *
    * <p>Example of updating information on several blobs using a single batch request.
    *
