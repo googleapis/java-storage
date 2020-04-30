@@ -2099,8 +2099,10 @@ public interface Storage extends Service<StorageOptions> {
    * userProject {@link BlobTargetOption} option which defines the project id to assign operational
    * costs.
    *
-   * <p>Example of udating a blob, only if the blob's metageneration matches a value, otherwise a
-   * {@link StorageException} is thrown.
+   * Updates the blob properties if the preconditions specified by {@code options} are met. The
+   * property update works as described in {@link #update(BlobInfo)}.
+   *
+   * <p>Example of updating the content type only if the properties are not updated externally:
    *
    * <pre>{@code
    * BlobId blobId = BlobId.of(bucketName, blobName);
@@ -2122,8 +2124,12 @@ public interface Storage extends Service<StorageOptions> {
    * }
    * }</pre>
    *
+   * @param blobInfo information to update
+   * @param options preconditions to apply the update
    * @return the updated blob
    * @throws StorageException upon failure
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
   Blob update(BlobInfo blobInfo, BlobTargetOption... options);
 
@@ -2132,6 +2138,11 @@ public interface Storage extends Service<StorageOptions> {
    * properties with the properties in the provided {@code blobInfo}. Properties not defined in
    * {@code blobInfo} will not be updated. To unset a blob property this property in {@code
    * blobInfo} should be explicitly set to {@code null}.
+   *
+   * <p>Bucket or blob's name cannot be changed by this method. If you want to rename the blob or
+   * move it to a different bucket use the {@link Blob#copyTo} and {@link #delete} operations.
+   *
+   * <p>Property update alters the blob metadata generation and doesn't alter the blob generation.
    *
    * <p>Example of how to update blob's user provided metadata and unset the content type:
    *
@@ -2780,7 +2791,7 @@ public interface Storage extends Service<StorageOptions> {
    * properties are merged with the properties in the provided {@code BlobInfo} objects. Unsetting a
    * property can be done by setting the property of the provided {@code BlobInfo} objects to {@code
    * null}. See {@link #update(BlobInfo)} for a code example.
-   *
+
    * <p>Example of updating information on several blobs using a single batch request.
    *
    * <pre>{@code
