@@ -2093,14 +2093,12 @@ public interface Storage extends Service<StorageOptions> {
   Bucket update(BucketInfo bucketInfo, BucketTargetOption... options);
 
   /**
-   * Updates blob information. Original metadata are merged with metadata in the provided {@code
-   * blobInfo}. To replace metadata instead you first have to unset them. Unsetting metadata can be
-   * done by setting the provided {@code blobInfo}'s metadata to {@code null}. Accepts an optional
-   * userProject {@link BlobTargetOption} option which defines the project id to assign operational
-   * costs.
-   *
    * Updates the blob properties if the preconditions specified by {@code options} are met. The
    * property update works as described in {@link #update(BlobInfo)}.
+   *
+   * <p>{@code options} parameter can contain the preconditions for applying the update. E.g. update
+   * of the blob properties might be required only if the properties have not been updated
+   * externally. {@code StorageException} with the code {@code 412} is thrown if preconditions fail.
    *
    * <p>Example of updating the content type only if the properties are not updated externally:
    *
@@ -2791,7 +2789,7 @@ public interface Storage extends Service<StorageOptions> {
    * properties are merged with the properties in the provided {@code BlobInfo} objects. Unsetting a
    * property can be done by setting the property of the provided {@code BlobInfo} objects to {@code
    * null}. See {@link #update(BlobInfo)} for a code example.
-
+   *
    * <p>Example of updating information on several blobs using a single batch request.
    *
    * <pre>{@code
