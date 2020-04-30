@@ -3044,4 +3044,80 @@ public class StorageImplTest {
     assertNotNull(writer);
     assertTrue(writer.isOpen());
   }
+
+  @Test
+  public void testV4PostPolicy() {
+    EasyMock.replay(storageRpcMock);
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    PostPolicyV4.PostFieldsV4 fields =
+        PostPolicyV4.PostFieldsV4.newBuilder().setAcl("public-read").build();
+    PostPolicyV4.PostConditionsV4 conditions =
+        PostPolicyV4.PostConditionsV4.newBuilder()
+            .addContentTypeCondition(PostPolicyV4.ConditionV4Type.MATCHES, "image/jpeg")
+            .build();
+
+    // test fields and conditions
+    PostPolicyV4 policy =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(),
+            7,
+            TimeUnit.DAYS,
+            fields,
+            conditions);
+
+    Map<String, String> outputFields = policy.getFields();
+
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("content-type"), "image/jpeg");
+    assertEquals(outputFields.get("acl"), "public-read");
+    assertEquals(outputFields.get("key"), "my-object");
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
+
+    // test fields, no conditions
+    policy =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, conditions);
+    outputFields = policy.getFields();
+
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("content-type"), "image/jpeg");
+    assertEquals(outputFields.get("key"), "my-object");
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
+
+    // test conditions, no fields
+    policy =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, fields);
+    outputFields = policy.getFields();
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("acl"), "public-read");
+    assertEquals(outputFields.get("key"), "my-object");
+
+    // test no conditions no fields
+    policy =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS);
+    outputFields = policy.getFields();
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("key"), "my-object");
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
+  }
 }

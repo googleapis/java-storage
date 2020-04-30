@@ -67,6 +67,8 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HttpMethod;
+import com.google.cloud.storage.PostPolicyV4;
+import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
@@ -98,11 +100,14 @@ import io.grpc.auth.MoreCallCredentials;
 import io.grpc.stub.MetadataUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,6 +125,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import javax.crypto.spec.SecretKeySpec;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.AfterClass;
@@ -3207,5 +3217,30 @@ public class ITStorageTest {
       RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
       RemoteStorageHelper.forceDelete(storage, loggingBucket, 5, TimeUnit.SECONDS);
     }
+  }
+
+  @Test
+  public void testSignedPostPolicyV4() throws Exception {
+    PostFieldsV4 fields = PostFieldsV4.newBuilder().setAcl("public-read").build();
+
+    PostPolicyV4 policy =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder(BUCKET, "my-object").build(), 7, TimeUnit.DAYS, fields);
+
+    HttpClient client = HttpClientBuilder.create().build();
+    HttpPost request = new HttpPost(policy.getUrl());
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+
+    for (Map.Entry<String, String> entry : policy.getFields().entrySet()) {
+      builder.addTextBody(entry.getKey(), entry.getValue());
+    }
+    File file = File.createTempFile("temp", "file");
+    Files.write(file.toPath(), "hello world".getBytes());
+    builder.addBinaryBody(
+        "file", new FileInputStream(file), ContentType.APPLICATION_OCTET_STREAM, file.getName());
+    request.setEntity(builder.build());
+    client.execute(request);
+
+    assertEquals("hello world", new String(storage.get(BUCKET, "my-object").getContent()));
   }
 }
