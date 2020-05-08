@@ -20,13 +20,17 @@ import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.BaseService;
+import com.google.cloud.RetryHelper;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.spi.v1.RpcBatch;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
+import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * A batch of operations to be submitted to Google Cloud Storage using a single RPC request.
@@ -146,7 +150,21 @@ public class StorageBatch {
 
   /** Submits this batch for processing using a single RPC request. */
   public void submit() {
-    batch.submit();
+    try {
+      RetryHelper.runWithRetries(
+          new Callable<Void>() {
+            @Override
+            public Void call() throws IOException {
+              batch.submit();
+              return null;
+            }
+          },
+          options.getRetrySettings(),
+          BaseService.EXCEPTION_HANDLER,
+          options.getClock());
+    } catch (RetryHelper.RetryHelperException e) {
+      throw StorageException.translateAndThrow(e);
+    }
   }
 
   private RpcBatch.Callback<Void> createDeleteCallback(final StorageBatchResult<Boolean> result) {

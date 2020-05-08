@@ -35,6 +35,7 @@ import java.util.Set;
 public final class StorageException extends BaseHttpServiceException {
   private static final String INTERNAL_ERROR = "internalError";
   private static final String CONNECTION_CLOSED_PREMATURELY = "connectionClosedPrematurely";
+  private static final String BATCH_ERROR = "batchError";
 
   // see: https://cloud.google.com/storage/docs/resumable-uploads-xml#practices
   private static final Set<Error> RETRYABLE_ERRORS =
@@ -46,7 +47,8 @@ public final class StorageException extends BaseHttpServiceException {
           new Error(429, null),
           new Error(408, null),
           new Error(null, INTERNAL_ERROR),
-          new Error(null, CONNECTION_CLOSED_PREMATURELY));
+          new Error(null, CONNECTION_CLOSED_PREMATURELY),
+          new Error(null, BATCH_ERROR));
 
   private static final long serialVersionUID = -4168430271327813063L;
 

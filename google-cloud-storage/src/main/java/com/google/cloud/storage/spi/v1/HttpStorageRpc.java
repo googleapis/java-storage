@@ -127,12 +127,14 @@ public class HttpStorageRpc implements StorageRpc {
     private final Storage storage;
     private final LinkedList<BatchRequest> batches;
     private int currentBatchSize;
+    private final List<RetryBatchCallBack> failedRpc;
 
     private DefaultRpcBatch(Storage storage) {
       this.storage = storage;
       batches = new LinkedList<>();
       // add OpenCensus HttpRequestInitializer
       batches.add(storage.batch(batchRequestInitializer));
+      failedRpc = new LinkedList<>();
     }
 
     @Override
@@ -143,7 +145,11 @@ public class HttpStorageRpc implements StorageRpc {
           batches.add(storage.batch());
           currentBatchSize = 0;
         }
-        deleteCall(storageObject, options).queue(batches.getLast(), toJsonCallback(callback));
+        Storage.Objects.Delete deleteOperation = deleteCall(storageObject, options);
+        deleteOperation.queue(
+            batches.getLast(),
+            toJsonCallback(
+                new RetryBatchCallBack(storageObject, options, callback, deleteOperation)));
         currentBatchSize++;
       } catch (IOException ex) {
         throw translate(ex);
@@ -160,7 +166,11 @@ public class HttpStorageRpc implements StorageRpc {
           batches.add(storage.batch());
           currentBatchSize = 0;
         }
-        patchCall(storageObject, options).queue(batches.getLast(), toJsonCallback(callback));
+        Storage.Objects.Patch patchOperation = patchCall(storageObject, options);
+        patchOperation.queue(
+            batches.getLast(),
+            toJsonCallback(
+                new RetryBatchCallBack(storageObject, options, callback, patchOperation)));
         currentBatchSize++;
       } catch (IOException ex) {
         throw translate(ex);
@@ -177,10 +187,52 @@ public class HttpStorageRpc implements StorageRpc {
           batches.add(storage.batch());
           currentBatchSize = 0;
         }
-        getCall(storageObject, options).queue(batches.getLast(), toJsonCallback(callback));
+        Storage.Objects.Get getOperation = getCall(storageObject, options);
+        getOperation.queue(
+            batches.getLast(),
+            toJsonCallback(new RetryBatchCallBack(storageObject, options, callback, getOperation)));
         currentBatchSize++;
       } catch (IOException ex) {
         throw translate(ex);
+      }
+    }
+
+    /** A class for generic batch callbacks. */
+    private class RetryBatchCallBack<T> implements RpcBatch.Callback<T> {
+      private final StorageObject stroageObject;
+      private final RpcBatch.Callback<T> objectCallback;
+      private final Map<Option, ?> optionMap;
+      private final Object type;
+
+      RetryBatchCallBack(
+          StorageObject object,
+          Map<Option, ?> options,
+          RpcBatch.Callback<T> objectCallback,
+          Object type) {
+        this.stroageObject = object;
+        this.objectCallback = objectCallback;
+        this.optionMap = options;
+        this.type = type;
+      }
+
+      /** This method will be called upon success of the batch operation. */
+      @Override
+      public void onSuccess(T response) {
+        objectCallback.onSuccess(response);
+      }
+
+      /** This method will be called upon failure of the batch operation. */
+      @Override
+      public void onFailure(GoogleJsonError googleJsonError) {
+        if (googleJsonError.getCode() == HTTP_NOT_FOUND) {
+          objectCallback.onSuccess(null);
+        } else {
+          StorageException storageException = new StorageException(googleJsonError);
+          if (storageException.isRetryable()) {
+            failedRpc.add(this);
+          }
+          objectCallback.onFailure(googleJsonError);
+        }
       }
     }
 
@@ -202,8 +254,41 @@ public class HttpStorageRpc implements StorageRpc {
         span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
         throw translate(ex);
       } finally {
+        if (failedRpc.size() > 0) {
+          processBatchRequest();
+          throw new StorageException(500, "batchError");
+        }
         scope.close();
         span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
+      }
+    }
+
+    private void processBatchRequest() {
+      if (failedRpc.size() > 0) {
+        for (RetryBatchCallBack retryBatchCallBack : failedRpc) {
+          String className = retryBatchCallBack.type.getClass().getSimpleName();
+          switch (className) {
+            case "Get":
+              addGet(
+                  retryBatchCallBack.stroageObject,
+                  retryBatchCallBack.objectCallback,
+                  retryBatchCallBack.optionMap);
+              break;
+            case "Delete":
+              addDelete(
+                  retryBatchCallBack.stroageObject,
+                  retryBatchCallBack.objectCallback,
+                  retryBatchCallBack.optionMap);
+              break;
+            case "Patch":
+              addPatch(
+                  retryBatchCallBack.stroageObject,
+                  retryBatchCallBack.objectCallback,
+                  retryBatchCallBack.optionMap);
+              break;
+          }
+        }
+        failedRpc.clear();
       }
     }
   }
@@ -211,7 +296,7 @@ public class HttpStorageRpc implements StorageRpc {
   private static <T> JsonBatchCallback<T> toJsonCallback(final RpcBatch.Callback<T> callback) {
     return new JsonBatchCallback<T>() {
       @Override
-      public void onSuccess(T response, HttpHeaders httpHeaders) throws IOException {
+      public void onSuccess(T response, HttpHeaders httpHeaders) {
         callback.onSuccess(response);
       }
 
