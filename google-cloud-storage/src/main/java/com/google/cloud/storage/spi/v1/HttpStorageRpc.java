@@ -236,8 +236,9 @@ public class HttpStorageRpc implements StorageRpc {
       }
 
       /** This method is used to check batch operation type. */
-      private boolean checkStorageObjectType(){
-        return (!(this.type instanceof Storage.Objects.Delete || this.type instanceof Storage.Objects.Patch));
+      private boolean checkStorageObjectType() {
+        return (!(this.type instanceof Storage.Objects.Delete
+            || this.type instanceof Storage.Objects.Patch));
       }
     }
 
