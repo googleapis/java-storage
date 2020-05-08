@@ -224,7 +224,7 @@ public class HttpStorageRpc implements StorageRpc {
       /** This method will be called upon failure of the batch operation. */
       @Override
       public void onFailure(GoogleJsonError googleJsonError) {
-        if (googleJsonError.getCode() == HTTP_NOT_FOUND) {
+        if (googleJsonError.getCode() == HTTP_NOT_FOUND && checkStorageObjectType()) {
           objectCallback.onSuccess(null);
         } else {
           StorageException storageException = new StorageException(googleJsonError);
@@ -233,6 +233,11 @@ public class HttpStorageRpc implements StorageRpc {
           }
           objectCallback.onFailure(googleJsonError);
         }
+      }
+
+      /** This method is used to check batch operation type. */
+      private boolean checkStorageObjectType(){
+        return (!(this.type instanceof Storage.Objects.Delete || this.type instanceof Storage.Objects.Patch));
       }
     }
 
