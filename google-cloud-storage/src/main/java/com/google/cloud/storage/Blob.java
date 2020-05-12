@@ -527,9 +527,9 @@ public class Blob extends BlobInfo {
   /**
    * Fetches the latest blob properties. Returns {@code null} if the blob no longer exists.
    *
-   * <p>{@code options} parameter can contain the preconditions. E.g. user may need to get the blob
-   * properties only if the content has not been updated externally. {@code StorageException} with
-   * the code {@code 412} is thrown if preconditions fail.
+   * <p>{@code options} parameter can contain the preconditions. For example, user may need to get
+   * the blob properties only if the content has not been updated externally. {@code
+   * StorageException} with the code {@code 412} is thrown if preconditions fail.
    *
    * <p>Example of retrieving the blob's latest information only if the content is not updated
    * externally:
@@ -555,8 +555,9 @@ public class Blob extends BlobInfo {
    * @throws StorageException upon failure
    */
   public Blob reload(BlobSourceOption... options) {
-    BlobId id = getBlobId();
-    return storage.get(BlobId.of(id.getBucket(), id.getName()), toGetOptions(this, options));
+    // BlobId with generation unset is needed to retrieve the latest version of the Blob
+    BlobId idWithoutGeneration = BlobId.of(getBucket(), getName());
+    return storage.get(idWithoutGeneration, toGetOptions(this, options));
   }
 
   /**
