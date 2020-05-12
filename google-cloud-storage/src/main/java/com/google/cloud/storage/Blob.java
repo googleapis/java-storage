@@ -527,8 +527,8 @@ public class Blob extends BlobInfo {
   /**
    * Fetches the latest blob properties. Returns {@code null} if the blob no longer exists.
    *
-   * <p>{@code options} parameter can contain the preconditions. For example, user might want to get
-   * the blob properties only if the content has not been updated externally. {@code
+   * <p>{@code options} parameter can contain the preconditions. For example, the user might want to
+   * get the blob properties only if the content has not been updated externally. {@code
    * StorageException} with the code {@code 412} is thrown if preconditions fail.
    *
    * <p>Example of retrieving the blob's latest information only if the content is not updated
