@@ -2503,12 +2503,10 @@ public interface Storage extends Service<StorageOptions> {
    * byte[] content = "Hello, World!".getBytes(UTF_8);
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
    * try (WriteChannel writer = storage.writer(blobInfo)) {
-   *   try {
    *     writer.write(ByteBuffer.wrap(content, 0, content.length));
    *   } catch (IOException ex) {
    *     // handle exception
    *   }
-   * }
    * }</pre>
    *
    * @throws StorageException upon failure
