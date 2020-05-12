@@ -525,24 +525,38 @@ public class Blob extends BlobInfo {
   }
 
   /**
-   * Fetches current blob's latest information. Returns {@code null} if the blob does not exist.
+   * Fetches the latest blob properties. Returns {@code null} if the blob no longer exists.
    *
-   * <p>Example of getting the blob's latest information, if its generation does not match the
-   * {@link Blob#getGeneration()} value, otherwise a {@link StorageException} is thrown.
+   * <p>{@code options} parameter can contain the preconditions. E.g. user may need to get the blob
+   * properties only if the content has not been updated externally. {@code StorageException} with
+   * the code {@code 412} is thrown if preconditions fail.
+   *
+   * <p>Example of retrieving the blob's latest information only if the content is not updated
+   * externally:
    *
    * <pre>{@code
-   * Blob latestBlob = blob.reload(BlobSourceOption.generationNotMatch());
-   * if (latestBlob == null) {
-   *   // the blob was not found
+   * Blob blob = storage.get(BlobId.of(bucketName, blobName));
+   *
+   * doSomething();
+   *
+   * try {
+   *   blob = blob.reload(Blob.BlobSourceOption.generationMatch());
+   * } catch (StorageException e) {
+   *   if (e.getCode() == 412) {
+   *     // the content was updated externally
+   *   } else {
+   *     throw e;
+   *   }
    * }
    * }</pre>
    *
-   * @param options blob read options
-   * @return a {@code Blob} object with latest information or {@code null} if not found
+   * @param options preconditions to fetch
+   * @return a {@code Blob} object with latest information or {@code null} if no longer exists.
    * @throws StorageException upon failure
    */
   public Blob reload(BlobSourceOption... options) {
-    return storage.get(getBlobId(), toGetOptions(this, options));
+    BlobId id = getBlobId();
+    return storage.get(BlobId.of(id.getBucket(), id.getName()), toGetOptions(this, options));
   }
 
   /**
@@ -732,6 +746,7 @@ public class Blob extends BlobInfo {
    *     // handle exception
    *   }
    * }
+   * blob = blob.reload();
    * }</pre>
    *
    * @param options target blob options

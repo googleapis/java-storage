@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -3242,5 +3243,34 @@ public class ITStorageTest {
     client.execute(request);
 
     assertEquals("hello world", new String(storage.get(BUCKET, "my-object").getContent()));
+  }
+
+  @Test
+  public void testBlobReload() throws Exception {
+    String blobName = "test-blob-reload";
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+    Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2});
+
+    Blob blobUnchanged = blob.reload();
+    assertEquals(blob, blobUnchanged);
+
+    blob.writer().close();
+    try {
+      blob.reload(Blob.BlobSourceOption.generationMatch());
+      fail("StorageException was expected");
+    } catch (StorageException e) {
+      assertEquals(412, e.getCode());
+      assertEquals("Precondition Failed", e.getMessage());
+    }
+
+    Blob updated = blob.reload();
+    assertEquals(blob.getBucket(), updated.getBucket());
+    assertEquals(blob.getName(), updated.getName());
+    assertNotEquals(blob.getGeneration(), updated.getGeneration());
+    assertEquals(new Long(0), updated.getSize());
+
+    updated.delete();
+    assertNull(updated.reload());
   }
 }

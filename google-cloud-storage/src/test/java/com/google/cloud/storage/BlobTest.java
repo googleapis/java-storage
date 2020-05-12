@@ -129,7 +129,11 @@ public class BlobTest {
           .setRetentionExpirationTime(RETENTION_EXPIRATION_TIME)
           .build();
   private static final BlobInfo BLOB_INFO =
-      BlobInfo.newBuilder("b", "n").setMetageneration(42L).build();
+      BlobInfo.newBuilder("b", "n", 12345678L).setMetageneration(42L).build();
+  private static final BlobInfo BLOB_INFO_NO_GENERATION =
+      BlobInfo.newBuilder(BLOB_INFO.getBucket(), BLOB_INFO.getName())
+          .setMetageneration(42L)
+          .build();
   private static final BlobInfo DIRECTORY_INFO =
       BlobInfo.newBuilder("b", "n/").setSize(0L).setIsDirectory(true).build();
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
@@ -233,7 +237,7 @@ public class BlobTest {
     initializeExpectedBlob(2);
     Blob expectedReloadedBlob = expectedBlob.toBuilder().setCacheControl("c").build();
     expect(storage.getOptions()).andReturn(mockOptions);
-    expect(storage.get(BLOB_INFO.getBlobId(), new Storage.BlobGetOption[0]))
+    expect(storage.get(BLOB_INFO_NO_GENERATION.getBlobId(), new Storage.BlobGetOption[0]))
         .andReturn(expectedReloadedBlob);
     replay(storage);
     initializeBlob();
@@ -245,7 +249,8 @@ public class BlobTest {
   public void testReloadNull() throws Exception {
     initializeExpectedBlob(1);
     expect(storage.getOptions()).andReturn(mockOptions);
-    expect(storage.get(BLOB_INFO.getBlobId(), new Storage.BlobGetOption[0])).andReturn(null);
+    expect(storage.get(BLOB_INFO_NO_GENERATION.getBlobId(), new Storage.BlobGetOption[0]))
+        .andReturn(null);
     replay(storage);
     initializeBlob();
     Blob reloadedBlob = blob.reload();
@@ -258,7 +263,8 @@ public class BlobTest {
     Blob expectedReloadedBlob = expectedBlob.toBuilder().setCacheControl("c").build();
     Storage.BlobGetOption[] options = {Storage.BlobGetOption.metagenerationMatch(42L)};
     expect(storage.getOptions()).andReturn(mockOptions);
-    expect(storage.get(BLOB_INFO.getBlobId(), options)).andReturn(expectedReloadedBlob);
+    expect(storage.get(BLOB_INFO_NO_GENERATION.getBlobId(), options))
+        .andReturn(expectedReloadedBlob);
     replay(storage);
     initializeBlob();
     Blob updatedBlob = blob.reload(BlobSourceOption.metagenerationMatch());
@@ -301,8 +307,8 @@ public class BlobTest {
     initializeBlob();
     CopyWriter returnedCopyWriter = blob.copyTo("bt");
     assertEquals(copyWriter, returnedCopyWriter);
-    assertEquals(capturedCopyRequest.getValue().getSource(), blob.getBlobId());
-    assertEquals(capturedCopyRequest.getValue().getTarget(), target);
+    assertEquals(BLOB_INFO_NO_GENERATION.getBlobId(), capturedCopyRequest.getValue().getSource());
+    assertEquals(target, capturedCopyRequest.getValue().getTarget());
     assertFalse(capturedCopyRequest.getValue().overrideInfo());
     assertTrue(capturedCopyRequest.getValue().getSourceOptions().isEmpty());
     assertTrue(capturedCopyRequest.getValue().getTargetOptions().isEmpty());
@@ -320,8 +326,8 @@ public class BlobTest {
     initializeBlob();
     CopyWriter returnedCopyWriter = blob.copyTo("bt", "nt");
     assertEquals(copyWriter, returnedCopyWriter);
-    assertEquals(capturedCopyRequest.getValue().getSource(), blob.getBlobId());
-    assertEquals(capturedCopyRequest.getValue().getTarget(), target);
+    assertEquals(BLOB_INFO_NO_GENERATION.getBlobId(), capturedCopyRequest.getValue().getSource());
+    assertEquals(target, capturedCopyRequest.getValue().getTarget());
     assertFalse(capturedCopyRequest.getValue().overrideInfo());
     assertTrue(capturedCopyRequest.getValue().getSourceOptions().isEmpty());
     assertTrue(capturedCopyRequest.getValue().getTargetOptions().isEmpty());
@@ -340,8 +346,8 @@ public class BlobTest {
     initializeBlob();
     CopyWriter returnedCopyWriter = blob.copyTo(targetId);
     assertEquals(copyWriter, returnedCopyWriter);
-    assertEquals(capturedCopyRequest.getValue().getSource(), blob.getBlobId());
-    assertEquals(capturedCopyRequest.getValue().getTarget(), target);
+    assertEquals(BLOB_INFO_NO_GENERATION.getBlobId(), capturedCopyRequest.getValue().getSource());
+    assertEquals(target, capturedCopyRequest.getValue().getTarget());
     assertFalse(capturedCopyRequest.getValue().overrideInfo());
     assertTrue(capturedCopyRequest.getValue().getSourceOptions().isEmpty());
     assertTrue(capturedCopyRequest.getValue().getTargetOptions().isEmpty());
