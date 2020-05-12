@@ -900,6 +900,10 @@ public class Blob extends BlobInfo {
     return new Builder(this);
   }
 
+  /**
+   * Returns true if obj instance {@code Blob.toPb()} metadata representation and {@code
+   * Blob.options} instance of StorageOptions are both equal.
+   */
   @Override
   public final boolean equals(Object obj) {
     if (obj == this) {
