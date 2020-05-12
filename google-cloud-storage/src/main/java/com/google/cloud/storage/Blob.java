@@ -728,7 +728,7 @@ public class Blob extends BlobInfo {
    * try (WriteChannel writer = blob.writer()) {
    *   try {
    *     writer.write(ByteBuffer.wrap(content, 0, content.length));
-   *   } catch (Exception ex) {
+   *   } catch (IOException ex) {
    *     // handle exception
    *   }
    * }

@@ -2505,7 +2505,7 @@ public interface Storage extends Service<StorageOptions> {
    * try (WriteChannel writer = storage.writer(blobInfo)) {
    *   try {
    *     writer.write(ByteBuffer.wrap(content, 0, content.length));
-   *   } catch (Exception ex) {
+   *   } catch (IOException ex) {
    *     // handle exception
    *   }
    * }
