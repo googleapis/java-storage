@@ -550,7 +550,7 @@ public class Blob extends BlobInfo {
    * }
    * }</pre>
    *
-   * @param options preconditions to use, see <a
+   * @param options preconditions to use on reload, see <a
    *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/get">https://cloud.google.com/storage/docs/json_api/v1/objects/get</a>
    *     for more information.
    * @return a {@code Blob} object with latest information or {@code null} if no longer exists.
