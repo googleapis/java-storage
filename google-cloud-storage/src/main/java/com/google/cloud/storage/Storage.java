@@ -2507,7 +2507,7 @@ public interface Storage extends Service<StorageOptions> {
    * } catch (IOException ex) {
    *   // handle exception
    * }
-   * </pre>
+   * }</pre>
    *
    * @throws StorageException upon failure
    */
