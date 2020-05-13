@@ -550,7 +550,9 @@ public class Blob extends BlobInfo {
    * }
    * }</pre>
    *
-   * @param options preconditions to fetch
+   * @param options preconditions to use, see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/get">https://cloud.google.com/storage/docs/json_api/v1/objects/get</a>
+   *     for more information.
    * @return a {@code Blob} object with latest information or {@code null} if no longer exists.
    * @throws StorageException upon failure
    */
