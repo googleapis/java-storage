@@ -726,11 +726,9 @@ public class Blob extends BlobInfo {
    * <pre>{@code
    * byte[] content = "Hello, World!".getBytes(UTF_8);
    * try (WriteChannel writer = blob.writer()) {
-   *   try {
    *     writer.write(ByteBuffer.wrap(content, 0, content.length));
-   *   } catch (Exception ex) {
-   *     // handle exception
-   *   }
+   * } catch (IOException ex) {
+   *   // handle exception
    * }
    * }</pre>
    *
