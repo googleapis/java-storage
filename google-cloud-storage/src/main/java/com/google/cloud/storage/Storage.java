@@ -2504,9 +2504,9 @@ public interface Storage extends Service<StorageOptions> {
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
    * try (WriteChannel writer = storage.writer(blobInfo)) {
    *     writer.write(ByteBuffer.wrap(content, 0, content.length));
-   *   } catch (IOException ex) {
-   *     // handle exception
-   *   }
+   * } catch (IOException ex) {
+   *   // handle exception
+   * }
    * }</pre>
    *
    * @throws StorageException upon failure
