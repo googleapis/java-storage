@@ -730,7 +730,7 @@ public class Blob extends BlobInfo {
    * } catch (IOException ex) {
    *   // handle exception
    * }
-   * }</pre>
+   * </pre>
    *
    * @param options target blob options
    * @throws StorageException upon failure
