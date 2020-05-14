@@ -1,5 +1,25 @@
 # Changelog
 
+### [1.108.1](https://www.github.com/googleapis/java-storage/compare/v1.108.0...v1.108.1) (2020-05-14)
+
+
+### Bug Fixes
+
+* blob.reload() does not work as intuitively expected ([#308](https://www.github.com/googleapis/java-storage/issues/308)) ([a2bab58](https://www.github.com/googleapis/java-storage/commit/a2bab58ccd89f48e8d4a8ee2dd776b201598420d))
+
+
+### Documentation
+
+* catch actual exception in java doc comment ([#312](https://www.github.com/googleapis/java-storage/issues/312)) ([9201de5](https://www.github.com/googleapis/java-storage/commit/9201de559fe4218abd2e4fac47beac62454547cf)), closes [#309](https://www.github.com/googleapis/java-storage/issues/309)
+* update CONTRIBUTING.md to include code formatting ([#534](https://www.github.com/googleapis/java-storage/issues/534)) ([#315](https://www.github.com/googleapis/java-storage/issues/315)) ([466d08f](https://www.github.com/googleapis/java-storage/commit/466d08f9835a0f1dd00b5c9b3a08551be68d03ad))
+* update readme to point client libarary documentation ([#317](https://www.github.com/googleapis/java-storage/issues/317)) ([8650f80](https://www.github.com/googleapis/java-storage/commit/8650f806736beec7bf7ab09a337b333bbf144f7b))
+
+
+### Dependencies
+
+* update dependency com.google.api.grpc:proto-google-common-protos to v1.18.0 ([#301](https://www.github.com/googleapis/java-storage/issues/301)) ([ff2dee2](https://www.github.com/googleapis/java-storage/commit/ff2dee2ce41d37787f0866ae740d3cd7f3b2bbd6))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20200410-1.30.9 ([#296](https://www.github.com/googleapis/java-storage/issues/296)) ([2e55aa2](https://www.github.com/googleapis/java-storage/commit/2e55aa2c8b9c78df9eebfe748fe72dcaae63ff81))
+
 ## [1.108.0](https://www.github.com/googleapis/java-storage/compare/v1.107.0...v1.108.0) (2020-04-30)
 
 
