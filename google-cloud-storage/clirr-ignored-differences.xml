@@ -42,6 +42,7 @@
         <differenceType>7012</differenceType>
     </difference>
     <difference>
+        <className>com/google/cloud/storage/Storage</className>
         <method>boolean deleteNotification(java.lang.String, java.lang.String)</method>
         <differenceType>7012</differenceType>
     </difference>
