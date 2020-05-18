@@ -98,6 +98,7 @@ class HttpStorageRpcSpans {
       getTraceSpanName(RpcBatch.class.getName() + ".submit()");
   static final EndSpanOptions END_SPAN_OPTIONS =
       EndSpanOptions.builder().setSampleToLocalSpanStore(true).build();
+
   static String getTraceSpanName(String methodDescriptor) {
     return String.format(
         "%s.%s.%s", SPAN_NAME_CLIENT_PREFIX, HttpStorageRpc.class.getName(), methodDescriptor);

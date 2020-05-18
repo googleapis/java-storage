@@ -3251,7 +3251,7 @@ public class ITStorageTest {
     String blobName = "test-blob-reload";
     BlobId blobId = BlobId.of(BUCKET, blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-    Blob blob = storage.create(blobInfo, new byte[]{0, 1, 2});
+    Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2});
 
     Blob blobUnchanged = blob.reload();
     assertEquals(blob, blobUnchanged);
