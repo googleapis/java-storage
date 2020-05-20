@@ -4,7 +4,7 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/java-storage.git",
-        "sha": "3d03fa3381cfbb76d1501ec3d2ad14742a8a58dd"
+        "sha": "f8c7f742c46a4fbd560302df0743ed05468393a7"
       }
     },
     {
