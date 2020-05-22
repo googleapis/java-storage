@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.api.client.util.DateTime;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.cloud.storage.Acl.Project;
@@ -322,6 +323,22 @@ public class BucketInfoTest {
         setStorageClassLifecycleRule.getAction().getStorageClass());
     assertTrue(setStorageClassLifecycleRule.getCondition().getIsLive());
     assertEquals(10, setStorageClassLifecycleRule.getCondition().getNumNewerVersions().intValue());
+
+    Rule lifecycleRule =
+        new LifecycleRule(
+                LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+                LifecycleCondition.newBuilder()
+                    .setIsLive(true)
+                    .setNumberOfNewerVersions(10)
+                    .setDaysSinceNoncurrentTime(30)
+                    .setNoncurrentTimeBefore(new DateTime(System.currentTimeMillis()))
+                    .build())
+            .toPb();
+    assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
+    assertTrue(lifecycleRule.getCondition().getIsLive());
+    assertEquals(10, lifecycleRule.getCondition().getNumNewerVersions().intValue());
+    assertEquals(30, lifecycleRule.getCondition().getDaysSinceNoncurrentTime().intValue());
+    assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBefore());
   }
 
   @Test

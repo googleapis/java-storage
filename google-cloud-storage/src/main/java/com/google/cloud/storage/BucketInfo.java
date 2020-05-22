@@ -350,7 +350,9 @@ public class BucketInfo implements Serializable {
           && condition.getAge() == null
           && condition.getCreatedBefore() == null
           && condition.getMatchesStorageClass() == null
-          && condition.getNumberOfNewerVersions() == null) {
+          && condition.getNumberOfNewerVersions() == null
+          && condition.getDaysSinceNoncurrentTime() == null
+          && condition.getNoncurrentTimeBefore() == null) {
         throw new IllegalArgumentException(
             "You must specify at least one condition to use object lifecycle "
                 + "management. Please see https://cloud.google.com/storage/docs/lifecycle for details.");
@@ -418,7 +420,12 @@ public class BucketInfo implements Serializable {
                       ? null
                       : transform(
                           lifecycleCondition.getMatchesStorageClass(),
-                          Functions.toStringFunction()));
+                          Functions.toStringFunction()))
+              .setDaysSinceNoncurrentTime(lifecycleCondition.getDaysSinceNoncurrentTime())
+              .setNoncurrentTimeBefore(
+                  lifecycleCondition.getNoncurrentTimeBefore() == null
+                      ? null
+                      : new DateTime(lifecycleCondition.getNoncurrentTimeBefore().getValue(), 0));
 
       rule.setCondition(condition);
 
@@ -461,7 +468,9 @@ public class BucketInfo implements Serializable {
                             public StorageClass apply(String storageClass) {
                               return StorageClass.valueOf(storageClass);
                             }
-                          }));
+                          }))
+              .setDaysSinceNoncurrentTime(condition.getDaysSinceNoncurrentTime())
+              .setNoncurrentTimeBefore(condition.getNoncurrentTimeBefore());
 
       return new LifecycleRule(lifecycleAction, conditionBuilder.build());
     }
@@ -479,6 +488,8 @@ public class BucketInfo implements Serializable {
       private final Integer numberOfNewerVersions;
       private final Boolean isLive;
       private final List<StorageClass> matchesStorageClass;
+      private final Integer daysSinceNoncurrentTime;
+      private final DateTime noncurrentTimeBefore;
 
       private LifecycleCondition(Builder builder) {
         this.age = builder.age;
@@ -486,6 +497,8 @@ public class BucketInfo implements Serializable {
         this.numberOfNewerVersions = builder.numberOfNewerVersions;
         this.isLive = builder.isLive;
         this.matchesStorageClass = builder.matchesStorageClass;
+        this.daysSinceNoncurrentTime = builder.daysSinceNoncurrentTime;
+        this.noncurrentTimeBefore = builder.noncurrentTimeBefore;
       }
 
       public Builder toBuilder() {
@@ -494,7 +507,9 @@ public class BucketInfo implements Serializable {
             .setCreatedBefore(this.createdBefore)
             .setNumberOfNewerVersions(this.numberOfNewerVersions)
             .setIsLive(this.isLive)
-            .setMatchesStorageClass(this.matchesStorageClass);
+            .setMatchesStorageClass(this.matchesStorageClass)
+            .setDaysSinceNoncurrentTime(this.daysSinceNoncurrentTime)
+            .setNoncurrentTimeBefore(this.noncurrentTimeBefore);
       }
 
       public static Builder newBuilder() {
@@ -509,6 +524,8 @@ public class BucketInfo implements Serializable {
             .add("numberofNewerVersions", numberOfNewerVersions)
             .add("isLive", isLive)
             .add("matchesStorageClass", matchesStorageClass)
+            .add("daysSinceNoncurrentTime", daysSinceNoncurrentTime)
+            .add("noncurrentTimeBefore", noncurrentTimeBefore)
             .toString();
       }
 
@@ -532,6 +549,14 @@ public class BucketInfo implements Serializable {
         return matchesStorageClass;
       }
 
+      public Integer getDaysSinceNoncurrentTime() {
+        return daysSinceNoncurrentTime;
+      }
+
+      public DateTime getNoncurrentTimeBefore() {
+        return noncurrentTimeBefore;
+      }
+
       /** Builder for {@code LifecycleCondition}. */
       public static class Builder {
         private Integer age;
@@ -539,6 +564,8 @@ public class BucketInfo implements Serializable {
         private Integer numberOfNewerVersions;
         private Boolean isLive;
         private List<StorageClass> matchesStorageClass;
+        private Integer daysSinceNoncurrentTime;
+        private DateTime noncurrentTimeBefore;
 
         private Builder() {}
 
@@ -590,6 +617,16 @@ public class BucketInfo implements Serializable {
          */
         public Builder setMatchesStorageClass(List<StorageClass> matchesStorageClass) {
           this.matchesStorageClass = matchesStorageClass;
+          return this;
+        }
+
+        public Builder setDaysSinceNoncurrentTime(Integer daysSinceNoncurrentTime) {
+          this.daysSinceNoncurrentTime = daysSinceNoncurrentTime;
+          return this;
+        }
+
+        public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
+          this.noncurrentTimeBefore = noncurrentTimeBefore;
           return this;
         }
 
