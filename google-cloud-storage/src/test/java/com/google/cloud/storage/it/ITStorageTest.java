@@ -3049,7 +3049,7 @@ public class ITStorageTest {
           storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
 
       assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
 
       remoteBucket
           .toBuilder()
