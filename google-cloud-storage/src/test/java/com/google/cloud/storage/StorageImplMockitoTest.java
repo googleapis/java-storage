@@ -55,6 +55,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -452,6 +453,191 @@ public class StorageImplMockitoTest {
     initializeService();
     try {
       storage.create(BUCKET_INFO1);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testGetBucket() {
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1);
+    assertEquals(expectedBucket1, bucket);
+  }
+
+  @Test
+  public void testGetBucketWithOptions() {
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BucketInfo.of(BUCKET_NAME1).toPb(), BUCKET_GET_OPTIONS);
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION);
+    assertEquals(expectedBucket1, bucket);
+  }
+
+  @Test
+  public void testGetBucketWithSelectedFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BucketInfo.of(BUCKET_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION, BUCKET_GET_FIELDS);
+    assertEquals(
+        BUCKET_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BUCKET_GET_METAGENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("name"));
+    assertTrue(selector.contains("location"));
+    assertTrue(selector.contains("acl"));
+    assertEquals(17, selector.length());
+    assertEquals(BUCKET_INFO1.getName(), bucket.getName());
+  }
+
+  @Test
+  public void testGetBucketWithEmptyFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BucketInfo.of(BUCKET_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION, BUCKET_GET_EMPTY_FIELDS);
+    assertEquals(
+        BUCKET_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BUCKET_GET_METAGENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("name"));
+    assertEquals(4, selector.length());
+    assertEquals(BUCKET_INFO1.getName(), bucket.getName());
+  }
+
+  @Test
+  public void testGetBucketFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .get(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.get(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testGetBlob() {
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    Blob blob = storage.get(BUCKET_NAME1, BLOB_NAME1);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithOptions() {
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_GET_OPTIONS);
+    initializeService();
+    Blob blob = storage.get(BUCKET_NAME1, BLOB_NAME1, BLOB_GET_METAGENERATION, BLOB_GET_GENERATION);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithOptionsFromBlobId() {
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BLOB_INFO1.getBlobId().toPb(), BLOB_GET_OPTIONS);
+    initializeService();
+    Blob blob =
+        storage.get(
+            BLOB_INFO1.getBlobId(), BLOB_GET_METAGENERATION, BLOB_GET_GENERATION_FROM_BLOB_ID);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithSelectedFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Blob blob =
+        storage.get(
+            BUCKET_NAME1,
+            BLOB_NAME1,
+            BLOB_GET_METAGENERATION,
+            BLOB_GET_GENERATION,
+            BLOB_GET_FIELDS);
+    assertEquals(
+        BLOB_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_METAGENERATION.getRpcOption()));
+    assertEquals(
+        BLOB_GET_GENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_GENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("bucket"));
+    assertTrue(selector.contains("name"));
+    assertTrue(selector.contains("contentType"));
+    assertTrue(selector.contains("crc32c"));
+    assertEquals(30, selector.length());
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithEmptyFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Blob blob =
+        storage.get(
+            BUCKET_NAME1,
+            BLOB_NAME1,
+            BLOB_GET_METAGENERATION,
+            BLOB_GET_GENERATION,
+            BLOB_GET_EMPTY_FIELDS);
+    assertEquals(
+        BLOB_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_METAGENERATION.getRpcOption()));
+    assertEquals(
+        BLOB_GET_GENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_GENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("bucket"));
+    assertTrue(selector.contains("name"));
+    assertEquals(11, selector.length());
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .get(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.get(BUCKET_NAME1, BLOB_NAME1);
       fail();
     } catch (StorageException e) {
       assertEquals(STORAGE_FAILURE, e.getCause());
