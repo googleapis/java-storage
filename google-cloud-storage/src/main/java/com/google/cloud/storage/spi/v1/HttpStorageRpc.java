@@ -81,6 +81,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import javax.activation.MimetypesFileTypeMap;
 
 public class HttpStorageRpc implements StorageRpc {
   public static final String DEFAULT_PROJECTION = "full";
@@ -98,6 +99,7 @@ public class HttpStorageRpc implements StorageRpc {
   private final HttpRequestInitializer batchRequestInitializer;
 
   private static final long MEGABYTE = 1024L * 1024L;
+  private static final MimetypesFileTypeMap MIMETYPES_FILE_TYPE_MAP = new MimetypesFileTypeMap();
 
   public HttpStorageRpc(StorageOptions options) {
     HttpTransportOptions transportOptions = (HttpTransportOptions) options.getTransportOptions();
@@ -286,7 +288,7 @@ public class HttpStorageRpc implements StorageRpc {
               .insert(
                   storageObject.getBucket(),
                   storageObject,
-                  new InputStreamContent(storageObject.getContentType(), content));
+                  new InputStreamContent(detectContentType(storageObject), content));
       insert.getMediaHttpUploader().setDirectUploadEnabled(true);
       Boolean disableGzipContent = Option.IF_DISABLE_GZIP_CONTENT.getBoolean(options);
       if (disableGzipContent != null) {
@@ -370,6 +372,12 @@ public class HttpStorageRpc implements StorageRpc {
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
+  }
+
+  private static String detectContentType(StorageObject object) {
+    return firstNonNull(
+        object.getContentType(),
+        MIMETYPES_FILE_TYPE_MAP.getContentType(object.getName().toLowerCase()));
   }
 
   private static Function<String, StorageObject> objectFromPrefix(final String bucket) {
@@ -811,9 +819,7 @@ public class HttpStorageRpc implements StorageRpc {
       HttpRequest httpRequest =
           requestFactory.buildPostRequest(url, new JsonHttpContent(jsonFactory, object));
       HttpHeaders requestHeaders = httpRequest.getHeaders();
-      requestHeaders.set(
-          "X-Upload-Content-Type",
-          firstNonNull(object.getContentType(), "application/octet-stream"));
+      requestHeaders.set("X-Upload-Content-Type", detectContentType(object));
       String key = Option.CUSTOMER_SUPPLIED_KEY.getString(options);
       if (key != null) {
         BaseEncoding base64 = BaseEncoding.base64();
