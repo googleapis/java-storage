@@ -3279,10 +3279,8 @@ public class ITStorageTest {
       case "create":
         return storage.create(blobInfo);
       case "writer":
-        {
-          storage.writer(blobInfo).close();
-          return storage.get(BlobId.of(blobInfo.getBucket(), blobInfo.getName()));
-        }
+        storage.writer(blobInfo).close();
+        return storage.get(BlobId.of(blobInfo.getBucket(), blobInfo.getName()));
       default:
         throw new IllegalArgumentException("Unknown method " + method);
     }
@@ -3291,17 +3289,16 @@ public class ITStorageTest {
   private void testAutoContentType(String method) throws IOException {
     String[] names = {"file1.txt", "dir with spaces/Pic.Jpg", "no_extension"};
     String[] types = {"text/plain", "image/jpeg", "application/octet-stream"};
-    Blob blob = null;
     for (int i = 0; i < names.length; i++) {
       BlobId blobId = BlobId.of(BUCKET, names[i]);
       BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-      blob = createBlob(method, blobInfo);
+      Blob blob = createBlob(method, blobInfo);
       assertEquals(types[i], blob.getContentType());
     }
     String customType = "custom/type";
     BlobId blobId = BlobId.of(BUCKET, names[0]);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(customType).build();
-    blob = createBlob(method, blobInfo);
+    Blob blob = createBlob(method, blobInfo);
     assertEquals(customType, blob.getContentType());
   }
 
