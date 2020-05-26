@@ -82,6 +82,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class HttpStorageRpc implements StorageRpc {
@@ -381,7 +382,7 @@ public class HttpStorageRpc implements StorageRpc {
       return contentType;
     }
     return firstNonNull(
-        FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase()),
+        FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase(Locale.ENGLISH)),
         "application/octet-stream");
   }
 
