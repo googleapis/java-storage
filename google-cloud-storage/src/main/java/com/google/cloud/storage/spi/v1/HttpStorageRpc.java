@@ -375,9 +375,10 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   private static String detectContentType(StorageObject object) {
-    return firstNonNull(
-        object.getContentType(),
-        MIMETYPES_FILE_TYPE_MAP.getContentType(object.getName().toLowerCase()));
+    String contentType = object.getContentType();
+    return contentType != null
+        ? contentType
+        : MIMETYPES_FILE_TYPE_MAP.getContentType(object.getName().toLowerCase());
   }
 
   private static Function<String, StorageObject> objectFromPrefix(final String bucket) {
