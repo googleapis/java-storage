@@ -77,11 +77,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.activation.MimetypesFileTypeMap;
 
 public class HttpStorageRpc implements StorageRpc {
   public static final String DEFAULT_PROJECTION = "full";
@@ -99,7 +100,7 @@ public class HttpStorageRpc implements StorageRpc {
   private final HttpRequestInitializer batchRequestInitializer;
 
   private static final long MEGABYTE = 1024L * 1024L;
-  private static final MimetypesFileTypeMap MIMETYPES_FILE_TYPE_MAP = new MimetypesFileTypeMap();
+  private static final FileNameMap FILE_NAME_MAP = URLConnection.getFileNameMap();
 
   public HttpStorageRpc(StorageOptions options) {
     HttpTransportOptions transportOptions = (HttpTransportOptions) options.getTransportOptions();
@@ -376,9 +377,12 @@ public class HttpStorageRpc implements StorageRpc {
 
   private static String detectContentType(StorageObject object) {
     String contentType = object.getContentType();
-    return contentType != null
-        ? contentType
-        : MIMETYPES_FILE_TYPE_MAP.getContentType(object.getName().toLowerCase());
+    if (contentType != null) {
+      return contentType;
+    }
+    return firstNonNull(
+        FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase()),
+        "application/octet-stream");
   }
 
   private static Function<String, StorageObject> objectFromPrefix(final String bucket) {
