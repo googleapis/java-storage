@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Role.WRITER;
+import static com.google.common.truth.Truth.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.expect;
@@ -647,6 +648,20 @@ public class BucketTest {
     replay(storage);
     initializeBucket();
     assertTrue(bucket.deleteAcl(User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void testDeleteLifecycleRules() {
+    Map<LifecycleRule, Boolean> expectedResults = ImmutableMap.of(LIFECYCLE_RULES.get(0), true);
+    expect(storage.getOptions()).andReturn(mockOptions).times(1);
+    expect(storage.deleteLifecycleRules(FULL_BUCKET_INFO.getName(), LIFECYCLE_RULES.get(0)))
+        .andReturn(expectedResults);
+    replay(storage);
+    initializeBucket();
+    Map<LifecycleRule, Boolean> actualResults = bucket.deleteLifecycleRules(LIFECYCLE_RULES.get(0));
+    assertThat(actualResults).hasSize(1);
+    assertThat(actualResults).containsKey(LIFECYCLE_RULES.get(0));
+    assertThat(actualResults).containsEntry(LIFECYCLE_RULES.get(0), true);
   }
 
   @Test

@@ -3273,4 +3273,41 @@ public class ITStorageTest {
     updated.delete();
     assertNull(updated.reload());
   }
+
+  @Test
+  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
+    String lifecycleTestBucket = RemoteStorageHelper.generateBucketName();
+    ImmutableList<BucketInfo.LifecycleRule> lifecycleRules =
+        ImmutableList.of(
+            new BucketInfo.LifecycleRule(
+                BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
+                    StorageClass.COLDLINE),
+                BucketInfo.LifecycleRule.LifecycleCondition.newBuilder()
+                    .setAge(1)
+                    .setNumberOfNewerVersions(3)
+                    .setIsLive(false)
+                    .setCreatedBefore(new DateTime(System.currentTimeMillis()))
+                    .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+                    .build()),
+            new BucketInfo.LifecycleRule(
+                BucketInfo.LifecycleRule.LifecycleAction.newDeleteAction(),
+                BucketInfo.LifecycleRule.LifecycleCondition.newBuilder().setAge(1).build()));
+    Bucket bucket =
+        storage.create(
+            BucketInfo.newBuilder(lifecycleTestBucket)
+                .setLocation("us")
+                .setLifecycleRules(lifecycleRules)
+                .build());
+    assertEquals(lifecycleTestBucket, bucket.getName());
+    assertEquals(2, bucket.getLifecycleRules().size());
+    try {
+      Map<LifecycleRule, Boolean> results =
+          storage.deleteLifecycleRules(lifecycleTestBucket, lifecycleRules.get(0));
+      assertThat(results).hasSize(1);
+      assertThat(results).containsKey(lifecycleRules.get(0));
+      assertThat(results).containsEntry(lifecycleRules.get(0), true);
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, lifecycleTestBucket, 5, TimeUnit.SECONDS);
+    }
+  }
 }

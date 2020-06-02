@@ -77,10 +77,12 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1276,6 +1278,40 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
           getOptions().getClock());
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
+  public Map<BucketInfo.LifecycleRule, Boolean> deleteLifecycleRules(
+      String bucket, BucketInfo.LifecycleRule... rules) {
+    final Storage storage = getOptions().getService();
+    final Map<BucketInfo.LifecycleRule, Boolean> results = Maps.newHashMap();
+    try {
+      Bucket remoteBucket =
+          storage.get(bucket, Storage.BucketGetOption.fields(Storage.BucketField.LIFECYCLE));
+      ArrayList<BucketInfo.LifecycleRule> lifecycleRules =
+          new ArrayList(remoteBucket.getLifecycleRules());
+      Iterator<BucketInfo.LifecycleRule> ruleIterator = lifecycleRules.iterator();
+      for (BucketInfo.LifecycleRule rule : rules) {
+        while (ruleIterator.hasNext()) {
+          BucketInfo.LifecycleRule actualRule = ruleIterator.next();
+          if (rule.getAction().getActionType().equals(actualRule.getAction().getActionType())) {
+            ruleIterator.remove();
+            results.put(rule, Boolean.TRUE);
+          }
+        }
+      }
+      if (!results.isEmpty()) {
+        storage
+            .get(bucket, Storage.BucketGetOption.fields())
+            .toBuilder()
+            .setLifecycleRules(lifecycleRules)
+            .build()
+            .update();
+      }
+      return Collections.unmodifiableMap(results);
+    } catch (StorageException ex) {
+      throw ex;
     }
   }
 

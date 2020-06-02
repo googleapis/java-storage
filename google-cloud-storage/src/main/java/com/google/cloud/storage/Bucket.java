@@ -1115,6 +1115,45 @@ public class Bucket extends BucketInfo {
   }
 
   /**
+   * Delete the lifecycle rules of this bucket.
+   *
+   * <p>Example of deleting the lifecycle rules of this bucket.
+   *
+   * <pre>{@code
+   * ImmutableList<BucketInfo.LifecycleRule> lifecycleRules =
+   *   ImmutableList.of(
+   * 	  new BucketInfo.LifecycleRule(
+   * 		  BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
+   * 			  StorageClass.COLDLINE),
+   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder()
+   * 			  .setAge(1)
+   * 			  .setNumberOfNewerVersions(3)
+   * 			  .setIsLive(false)
+   * 			  .setCreatedBefore(new DateTime(System.currentTimeMillis()))
+   * 			  .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+   * 			  .build()),
+   * 	  new BucketInfo.LifecycleRule(
+   * 		  BucketInfo.LifecycleRule.LifecycleAction.newDeleteAction(),
+   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder().setAge(1).build()));
+   * Bucket bucket =
+   *   storage.create(
+   * 	  BucketInfo.newBuilder(bucketName)
+   * 		  .setLocation("us")
+   * 		  .setLifecycleRules(lifecycleRules)
+   * 		  .build());
+   * Map<LifecycleRule, Boolean> results =
+   *   bucket.deleteLifecycleRules(lifecycleRules.get(0));
+   * }</pre>
+   *
+   * @param rules the set of OLM rules to delete
+   * @return the OLM rules and their results
+   * @throws StorageException upon failure
+   */
+  public Map<LifecycleRule, Boolean> deleteLifecycleRules(LifecycleRule... rules) {
+    return storage.deleteLifecycleRules(getName(), rules);
+  }
+
+  /**
    * Creates a new default blob ACL entry on this bucket.
    *
    * <p>Default ACLs are applied to a new blob within the bucket when no ACL was provided for that

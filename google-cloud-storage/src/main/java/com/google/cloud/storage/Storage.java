@@ -3077,6 +3077,46 @@ public interface Storage extends Service<StorageOptions> {
   boolean deleteDefaultAcl(String bucket, Entity entity);
 
   /**
+   * Deletes the lifecycle rules of the requested bucket.
+   *
+   * <p>Example of deleting the lifecycle rules of the requested bucket.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * ImmutableList<BucketInfo.LifecycleRule> lifecycleRules =
+   *   ImmutableList.of(
+   * 	  new BucketInfo.LifecycleRule(
+   * 		  BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
+   * 			  StorageClass.COLDLINE),
+   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder()
+   * 			  .setAge(1)
+   * 			  .setNumberOfNewerVersions(3)
+   * 			  .setIsLive(false)
+   * 			  .setCreatedBefore(new DateTime(System.currentTimeMillis()))
+   * 			  .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+   * 			  .build()),
+   * 	  new BucketInfo.LifecycleRule(
+   * 		  BucketInfo.LifecycleRule.LifecycleAction.newDeleteAction(),
+   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder().setAge(1).build()));
+   * Bucket bucket =
+   *   storage.create(
+   * 	  BucketInfo.newBuilder(bucketName)
+   * 		  .setLocation("us")
+   * 		  .setLifecycleRules(lifecycleRules)
+   * 		  .build());
+   * Map<LifecycleRule, Boolean> results =
+   *   storage.deleteLifecycleRules(bucketName, lifecycleRules.get(0));
+   * }</pre>
+   *
+   * @param bucket name of the bucket
+   * @param rules the set of OLM rules to delete
+   * @return the OLM rules and their results
+   * @throws StorageException upon failure
+   */
+  Map<BucketInfo.LifecycleRule, Boolean> deleteLifecycleRules(
+      String bucket, BucketInfo.LifecycleRule... rules);
+
+  /**
    * Creates a new default blob ACL entry on the specified bucket.
    *
    * <p>Default ACLs are applied to a new blob within the bucket when no ACL was provided for that
