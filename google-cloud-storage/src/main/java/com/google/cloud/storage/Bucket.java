@@ -1115,7 +1115,7 @@ public class Bucket extends BucketInfo {
   }
 
   /**
-   * Delete the lifecycle rules of this bucket.
+   * Deletes the lifecycle rules of this bucket.
    *
    * <p>Example of deleting the lifecycle rules of this bucket.
    *
