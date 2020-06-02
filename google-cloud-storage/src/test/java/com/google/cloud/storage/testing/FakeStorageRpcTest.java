@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.api.services.storage.model.Bucket;
@@ -30,9 +31,11 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
@@ -147,10 +150,13 @@ public class FakeStorageRpcTest {
 
     tuple = instance.list(null, options);
     assertEquals("abc", tuple.x());
-    Iterator<StorageObject> it = tuple.y().iterator();
-    assertSame(OBJECT, it.next());
-    assertSame(anotherObject, it.next());
-    assertFalse(it.hasNext());
+    List<StorageObject> objectList = new ArrayList<>();
+    for (Iterator<StorageObject> it = tuple.y().iterator(); it.hasNext(); ) {
+      objectList.add(it.next());
+    }
+    assertEquals(2, objectList.size());
+    assertTrue(objectList.contains(OBJECT));
+    assertTrue(objectList.contains(anotherObject));
   }
 
   @Test
