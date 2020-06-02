@@ -41,7 +41,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.concurrent.NotThreadSafe;
 
 /**
  * A bare-bones in-memory implementation of StorageRpc, meant for testing.
@@ -74,7 +73,6 @@ import javax.annotation.concurrent.NotThreadSafe;
  *       </ul>
  * </ul>
  */
-@NotThreadSafe
 public class FakeStorageRpc implements StorageRpc {
 
   // fullname -> metadata
