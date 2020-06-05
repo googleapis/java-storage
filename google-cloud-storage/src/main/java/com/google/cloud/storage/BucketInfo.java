@@ -1181,13 +1181,15 @@ public class BucketInfo implements Serializable {
     @Override
     @Deprecated
     public Builder setDeleteRules(Iterable<? extends DeleteRule> rules) {
-      this.deleteRules = rules != null ? ImmutableList.copyOf(rules) : null;
+      this.deleteRules =
+          rules != null ? ImmutableList.copyOf(rules) : ImmutableList.<DeleteRule>of();
       return this;
     }
 
     @Override
     public Builder setLifecycleRules(Iterable<? extends LifecycleRule> rules) {
-      this.lifecycleRules = rules != null ? ImmutableList.copyOf(rules) : null;
+      this.lifecycleRules =
+          rules != null ? ImmutableList.copyOf(rules) : ImmutableList.<LifecycleRule>of();
       return this;
     }
 
@@ -1430,11 +1432,11 @@ public class BucketInfo implements Serializable {
    */
   @Deprecated
   public List<? extends DeleteRule> getDeleteRules() {
-    return deleteRules;
+    return deleteRules != null ? deleteRules : ImmutableList.<DeleteRule>of();
   }
 
   public List<? extends LifecycleRule> getLifecycleRules() {
-    return lifecycleRules;
+    return lifecycleRules != null ? lifecycleRules : ImmutableList.<LifecycleRule>of();
   }
 
   /**
