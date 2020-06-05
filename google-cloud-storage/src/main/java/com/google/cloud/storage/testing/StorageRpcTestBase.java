@@ -35,12 +35,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A stub implementation of {@link StorageRpc} which could be used outside of the Storage module for
- * testing purposes. All the methods are implemented either to return the default value or to throw
- * an {@code UnsupportedOperationException}, depending on the boolean parameter given to create an
- * instance. {@code new StorageRpcTestBase()} and {@code new StorageRpcTestBase(true)} create an
- * instance with methods returning a value. {@code new StorageRpcTestBase(false)} creates an
- * instance which methods throwing the exception.
+ * A stub implementation of {@link StorageRpc} which can be used outside of the Storage module for
+ * testing purposes. All the methods either return the default value or throw an {@code
+ * UnsupportedOperationException}, depending on the boolean parameter given to create an instance.
+ * {@code new StorageRpcTestBase()} and {@code new StorageRpcTestBase(true)} create an instance with
+ * methods returning a value. {@code new StorageRpcTestBase(false)} creates an instance which
+ * methods throwing the exception.
  */
 public class StorageRpcTestBase implements StorageRpc {
 
@@ -55,7 +55,7 @@ public class StorageRpcTestBase implements StorageRpc {
    * Creates an instance with methods either returning the default value or throwing {@code
    * UnsupportedOperationException}, depending on the {@code isImplemented} parameter.
    *
-   * @param isImplemented {@code true} to return a value, {@code false} to throw an exception.
+   * @param isImplemented {@code true} to return a value, {@code false} to throw an exception
    */
   public StorageRpcTestBase(boolean isImplemented) {
     this.isImplemented = isImplemented;
