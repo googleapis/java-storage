@@ -652,16 +652,31 @@ public class BucketTest {
 
   @Test
   public void testDeleteLifecycleRules() {
-    Map<LifecycleRule, Boolean> expectedResults = ImmutableMap.of(LIFECYCLE_RULES.get(0), true);
+    List<LifecycleRule> expectedResults = ImmutableList.of(LIFECYCLE_RULES.get(0));
     expect(storage.getOptions()).andReturn(mockOptions).times(1);
     expect(storage.deleteLifecycleRules(FULL_BUCKET_INFO.getName(), LIFECYCLE_RULES.get(0)))
         .andReturn(expectedResults);
     replay(storage);
     initializeBucket();
-    Map<LifecycleRule, Boolean> actualResults = bucket.deleteLifecycleRules(LIFECYCLE_RULES.get(0));
+    List<LifecycleRule> actualResults = bucket.deleteLifecycleRules(LIFECYCLE_RULES.get(0));
     assertThat(actualResults).hasSize(1);
-    assertThat(actualResults).containsKey(LIFECYCLE_RULES.get(0));
-    assertThat(actualResults).containsEntry(LIFECYCLE_RULES.get(0), true);
+    assertThat(actualResults.get(0)).isEqualTo(LIFECYCLE_RULES.get(0));
+  }
+
+  @Test
+  public void testDeleteNonExistingLifecycleRule() {
+    List<LifecycleRule> expectedResults = ImmutableList.of();
+    LifecycleRule nonExistingLifecycleRule =
+        new LifecycleRule(
+            LifecycleAction.newSetStorageClassAction(StorageClass.ARCHIVE),
+            LifecycleCondition.newBuilder().setAge(10).build());
+    expect(storage.getOptions()).andReturn(mockOptions).times(1);
+    expect(storage.deleteLifecycleRules(FULL_BUCKET_INFO.getName(), nonExistingLifecycleRule))
+        .andReturn(expectedResults);
+    replay(storage);
+    initializeBucket();
+    List<LifecycleRule> actualResults = bucket.deleteLifecycleRules(nonExistingLifecycleRule);
+    assertThat(actualResults).isEmpty();
   }
 
   @Test

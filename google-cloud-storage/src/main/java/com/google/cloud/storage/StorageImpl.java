@@ -49,6 +49,7 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -1282,26 +1283,23 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public Map<BucketInfo.LifecycleRule, Boolean> deleteLifecycleRules(
-      String bucket, BucketInfo.LifecycleRule... rules) {
+  public List<LifecycleRule> deleteLifecycleRules(String bucket, LifecycleRule... rulesToDelete) {
     final Storage storage = getOptions().getService();
-    final Map<BucketInfo.LifecycleRule, Boolean> results = Maps.newHashMap();
+    final List<LifecycleRule> results = Lists.newArrayList();
     try {
       Bucket remoteBucket =
           storage.get(bucket, Storage.BucketGetOption.fields(Storage.BucketField.LIFECYCLE));
-      ArrayList<BucketInfo.LifecycleRule> lifecycleRules =
-          new ArrayList(remoteBucket.getLifecycleRules());
-      Iterator<BucketInfo.LifecycleRule> ruleIterator = lifecycleRules.iterator();
-      for (BucketInfo.LifecycleRule rule : rules) {
-        while (ruleIterator.hasNext()) {
-          BucketInfo.LifecycleRule actualRule = ruleIterator.next();
-          if (rule.getAction().getActionType().equals(actualRule.getAction().getActionType())) {
-            ruleIterator.remove();
-            results.put(rule, Boolean.TRUE);
+      List<LifecycleRule> lifecycleRules = new ArrayList(remoteBucket.getLifecycleRules());
+      for (Iterator<LifecycleRule> iterator = lifecycleRules.iterator(); iterator.hasNext(); ) {
+        LifecycleRule lifecycleRule = iterator.next();
+        for (LifecycleRule ruleToDelete : rulesToDelete) {
+          if (lifecycleRule.equals(ruleToDelete)) {
+            iterator.remove();
+            results.add(ruleToDelete);
           }
         }
       }
-      if (!results.isEmpty()) {
+      if (results.size() > 0) {
         storage
             .get(bucket, Storage.BucketGetOption.fields())
             .toBuilder()
@@ -1309,7 +1307,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             .build()
             .update();
       }
-      return Collections.unmodifiableMap(results);
+      return Collections.unmodifiableList(results);
     } catch (StorageException ex) {
       throw ex;
     }

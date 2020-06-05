@@ -1711,7 +1711,7 @@ public class BucketInfo implements Serializable {
                 }
               }));
     }
-    if (!rules.isEmpty()) {
+    if (rules != null) {
       Lifecycle lifecycle = new Lifecycle();
       lifecycle.setRule(ImmutableList.copyOf(rules));
       bucketPb.setLifecycle(lifecycle);

@@ -31,6 +31,7 @@ import com.google.cloud.Service;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
@@ -2000,6 +2001,7 @@ public interface Storage extends Service<StorageOptions> {
    * StorageException} is thrown. For more information review
    *
    * @throws StorageException upon failure
+   * @throws StorageException upon failure
    * @see <a
    *     href="https://cloud.google.com/storage/docs/encryption/customer-supplied-keys#encrypted-elements">Encrypted
    *     Elements</a>
@@ -2010,8 +2012,6 @@ public interface Storage extends Service<StorageOptions> {
    * BlobId blobId = BlobId.of(bucketName, blobName);
    * Blob blob = storage.get(blobId, BlobGetOption.decryptionKey(blobEncryptionKey));
    * }</pre>
-   *
-   * @throws StorageException upon failure
    */
   Blob get(BlobId blob, BlobGetOption... options);
 
@@ -3079,42 +3079,40 @@ public interface Storage extends Service<StorageOptions> {
   /**
    * Deletes the lifecycle rules of the requested bucket.
    *
-   * <p>Example of deleting the lifecycle rules of the requested bucket.
+   * <p>Example of deleting the lifecycle rules of the requested bucket:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
-   * ImmutableList<BucketInfo.LifecycleRule> lifecycleRules =
-   *   ImmutableList.of(
-   * 	  new BucketInfo.LifecycleRule(
-   * 		  BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
-   * 			  StorageClass.COLDLINE),
-   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder()
-   * 			  .setAge(1)
-   * 			  .setNumberOfNewerVersions(3)
-   * 			  .setIsLive(false)
-   * 			  .setCreatedBefore(new DateTime(System.currentTimeMillis()))
-   * 			  .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-   * 			  .build()),
-   * 	  new BucketInfo.LifecycleRule(
-   * 		  BucketInfo.LifecycleRule.LifecycleAction.newDeleteAction(),
-   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder().setAge(1).build()));
+   * LifecycleRule lifecycleRule_1 =
+   * 	new LifecycleRule(
+   * 		LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+   * 		LifecycleCondition.newBuilder()
+   * 			.setAge(1)
+   * 			.setNumberOfNewerVersions(3)
+   * 			.setIsLive(false)
+   * 			.setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+   * 			.build());
+   * LifecycleRule lifecycleRule_2 =
+   * 	new LifecycleRule(
+   * 		LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
+   * ImmutableList<LifecycleRule> lifecycleRules =
+   * 	ImmutableList.of(lifecycleRule_1, lifecycleRule_2);
    * Bucket bucket =
-   *   storage.create(
-   * 	  BucketInfo.newBuilder(bucketName)
-   * 		  .setLocation("us")
-   * 		  .setLifecycleRules(lifecycleRules)
-   * 		  .build());
-   * Map<LifecycleRule, Boolean> results =
-   *   storage.deleteLifecycleRules(bucketName, lifecycleRules.get(0));
+   * 	storage.create(
+   * 		BucketInfo.newBuilder(bucketName)
+   * 			.setLocation("us")
+   * 			.setLifecycleRules(lifecycleRules)
+   * 			.build());
+   * Map<LifecycleRule, Boolean> results = storage.deleteLifecycleRules(lifecycleTestBucket, lifecycleRule_1);
    * }</pre>
    *
    * @param bucket name of the bucket
-   * @param rules the set of OLM rules to delete
-   * @return the OLM rules and their results
+   * @param rulesToDelete the set of lifecycle rules to delete
+   * @return the lists of deleted lifecycle rules of bucket, an empty list if the requested
+   *     lifecycle rules was not found
    * @throws StorageException upon failure
    */
-  Map<BucketInfo.LifecycleRule, Boolean> deleteLifecycleRules(
-      String bucket, BucketInfo.LifecycleRule... rules);
+  List<LifecycleRule> deleteLifecycleRules(String bucket, LifecycleRule... rulesToDelete);
 
   /**
    * Creates a new default blob ACL entry on the specified bucket.

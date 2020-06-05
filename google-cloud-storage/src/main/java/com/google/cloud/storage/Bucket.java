@@ -1117,40 +1117,40 @@ public class Bucket extends BucketInfo {
   /**
    * Deletes the lifecycle rules of this bucket.
    *
-   * <p>Example of deleting the lifecycle rules of this bucket.
+   * <p>Example of deleting the lifecycle rules of this bucket:
    *
    * <pre>{@code
-   * ImmutableList<BucketInfo.LifecycleRule> lifecycleRules =
-   *   ImmutableList.of(
-   * 	  new BucketInfo.LifecycleRule(
-   * 		  BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
-   * 			  StorageClass.COLDLINE),
-   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder()
-   * 			  .setAge(1)
-   * 			  .setNumberOfNewerVersions(3)
-   * 			  .setIsLive(false)
-   * 			  .setCreatedBefore(new DateTime(System.currentTimeMillis()))
-   * 			  .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-   * 			  .build()),
-   * 	  new BucketInfo.LifecycleRule(
-   * 		  BucketInfo.LifecycleRule.LifecycleAction.newDeleteAction(),
-   * 		  BucketInfo.LifecycleRule.LifecycleCondition.newBuilder().setAge(1).build()));
+   * String bucketName = "my-unique-bucket";
+   * LifecycleRule lifecycleRule_1 =
+   * 	new LifecycleRule(
+   * 		LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+   * 		LifecycleCondition.newBuilder()
+   * 			.setAge(1)
+   * 			.setNumberOfNewerVersions(3)
+   * 			.setIsLive(false)
+   * 			.setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+   * 			.build());
+   * LifecycleRule lifecycleRule_2 =
+   * 	new LifecycleRule(
+   * 		LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
+   * ImmutableList<LifecycleRule> lifecycleRules =
+   * 	ImmutableList.of(lifecycleRule_1, lifecycleRule_2);
    * Bucket bucket =
-   *   storage.create(
-   * 	  BucketInfo.newBuilder(bucketName)
-   * 		  .setLocation("us")
-   * 		  .setLifecycleRules(lifecycleRules)
-   * 		  .build());
-   * Map<LifecycleRule, Boolean> results =
-   *   bucket.deleteLifecycleRules(lifecycleRules.get(0));
+   * 	storage.create(
+   * 		BucketInfo.newBuilder(bucketName)
+   * 			.setLocation("us")
+   * 			.setLifecycleRules(lifecycleRules)
+   * 			.build());
+   * Map<LifecycleRule, Boolean> results = storage.deleteLifecycleRules(lifecycleTestBucket, lifecycleRule_1);
    * }</pre>
    *
-   * @param rules the set of OLM rules to delete
-   * @return the OLM rules and their results
+   * @param rulesToDelete the set of lifecycle rules to delete
+   * @return the lists of deleted lifecycle rules of bucket, an empty list if the requested
+   *     lifecycle rules was not found
    * @throws StorageException upon failure
    */
-  public Map<LifecycleRule, Boolean> deleteLifecycleRules(LifecycleRule... rules) {
-    return storage.deleteLifecycleRules(getName(), rules);
+  public List<LifecycleRule> deleteLifecycleRules(LifecycleRule... rulesToDelete) {
+    return storage.deleteLifecycleRules(getName(), rulesToDelete);
   }
 
   /**
