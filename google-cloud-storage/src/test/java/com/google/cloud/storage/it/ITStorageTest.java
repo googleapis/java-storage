@@ -3007,7 +3007,7 @@ public class ITStorageTest {
           storage.get(bucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
 
       assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
       try {
         remoteBucket.listAcls();
         fail("StorageException was expected.");
