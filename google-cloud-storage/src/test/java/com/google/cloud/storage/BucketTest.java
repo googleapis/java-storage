@@ -71,8 +71,11 @@ public class BucketTest {
   private static final List<Cors> CORS = Collections.singletonList(Cors.newBuilder().build());
   private static final List<Acl> DEFAULT_ACL =
       Collections.singletonList(Acl.of(User.ofAllAuthenticatedUsers(), WRITER));
+
+  @SuppressWarnings({"unchecked", "deprecation"})
   private static final List<? extends DeleteRule> DELETE_RULES =
       Collections.singletonList(new AgeDeleteRule(5));
+
   private static final List<? extends BucketInfo.LifecycleRule> LIFECYCLE_RULES =
       Collections.singletonList(
           new LifecycleRule(
@@ -95,6 +98,8 @@ public class BucketTest {
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
   private static final String LOCATION_TYPE = "multi-region";
+
+  @SuppressWarnings({"unchecked", "deprecation"})
   private static final BucketInfo FULL_BUCKET_INFO =
       BucketInfo.newBuilder("b")
           .setAcl(ACLS)
@@ -121,6 +126,7 @@ public class BucketTest {
           .setRetentionPeriod(RETENTION_PERIOD)
           .setRetentionPolicyIsLocked(RETENTION_POLICY_IS_LOCKED)
           .build();
+
   private static final BucketInfo BUCKET_INFO =
       BucketInfo.newBuilder("b").setMetageneration(42L).build();
   private static final String CONTENT_TYPE = "text/plain";
@@ -478,6 +484,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStream() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info = BlobInfo.newBuilder("b", "n").setContentType(CONTENT_TYPE).build();
@@ -493,6 +500,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamNoContentType() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info = BlobInfo.newBuilder("b", "n").build();
@@ -508,6 +516,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamWithOptions() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info =
@@ -552,6 +561,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamWithEncryptionKey() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info = BlobInfo.newBuilder(BlobId.of("b", "n")).setContentType(CONTENT_TYPE).build();
@@ -569,6 +579,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamNotExists() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info =
@@ -763,6 +774,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testToBuilder() {
     expect(storage.getOptions()).andReturn(mockOptions).times(4);
     replay(storage);
@@ -773,6 +785,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testBuilder() {
     initializeExpectedBucket(4);
     expect(storage.getOptions()).andReturn(mockOptions).times(4);

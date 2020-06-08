@@ -236,6 +236,7 @@ public class ITStorageTest {
 
   private static class CustomHttpTransportFactory implements HttpTransportFactory {
     @Override
+    @SuppressWarnings({"unchecked", "deprecation"})
     public HttpTransport create() {
       PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
       manager.setMaxTotal(1);
@@ -616,6 +617,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStream() {
     String blobName = "test-create-blob-stream";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).setContentType(CONTENT_TYPE).build();
@@ -630,6 +632,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStreamDisableGzipContent() {
     String blobName = "test-create-blob-stream-disable-gzip-compression";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).setContentType(CONTENT_TYPE).build();
@@ -660,6 +663,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobMd5Fail() {
     String blobName = "test-create-blob-md5-fail";
     BlobInfo blob =
@@ -2952,6 +2956,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testBucketWithBucketPolicyOnlyEnabled() throws Exception {
     String bucket = RemoteStorageHelper.generateBucketName();
     try {
@@ -2959,15 +2964,15 @@ public class ITStorageTest {
           Bucket.newBuilder(bucket)
               .setIamConfiguration(
                   BucketInfo.IamConfiguration.newBuilder()
-                      .setIsUniformBucketLevelAccessEnabled(true)
+                      .setIsBucketPolicyOnlyEnabled(true)
                       .build())
               .build());
 
       Bucket remoteBucket =
           storage.get(bucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
 
-      assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
+      assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
 
       try {
         remoteBucket.listAcls();
@@ -3021,6 +3026,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = RemoteStorageHelper.generateBucketName();
     try {
@@ -3034,9 +3040,7 @@ public class ITStorageTest {
                   .build());
 
       BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
-          BucketInfo.IamConfiguration.newBuilder()
-              .setIsUniformBucketLevelAccessEnabled(true)
-              .build();
+          BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
       bucket
           .toBuilder()
           .setAcl(null)
@@ -3048,16 +3052,13 @@ public class ITStorageTest {
       Bucket remoteBucket =
           storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
 
-      assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
+      assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
 
       remoteBucket
           .toBuilder()
           .setIamConfiguration(
-              bpoEnabledIamConfiguration
-                  .toBuilder()
-                  .setIsUniformBucketLevelAccessEnabled(false)
-                  .build())
+              bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
           .build()
           .update();
 
@@ -3067,7 +3068,7 @@ public class ITStorageTest {
               Storage.BucketGetOption.fields(
                   BucketField.IAMCONFIGURATION, BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
 
-      assertFalse(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getDefaultAcl().get(0).getEntity());
       assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
       assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());

@@ -684,6 +684,7 @@ public class StorageImplTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobFromStream() throws IOException {
     Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
 
@@ -711,6 +712,7 @@ public class StorageImplTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobFromStreamDisableGzipContent() throws IOException {
     Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
 
@@ -738,6 +740,7 @@ public class StorageImplTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobFromStreamWithEncryptionKey() throws IOException {
     ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
     BlobInfo.Builder infoBuilder = BLOB_INFO1.toBuilder();
@@ -757,6 +760,7 @@ public class StorageImplTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobFromStreamRetryableException() throws IOException {
     Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
     ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
