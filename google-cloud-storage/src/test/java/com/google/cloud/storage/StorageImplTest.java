@@ -56,6 +56,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -425,6 +427,370 @@ public class StorageImplTest {
     expectedBucket1 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO1));
     expectedBucket2 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO2));
     expectedBucket3 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO3));
+  }
+
+  @Test
+  public void testCreateBlob() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(
+                    BLOB_INFO1
+                        .toBuilder()
+                        .setMd5(CONTENT_MD5)
+                        .setCrc32c(CONTENT_CRC32C)
+                        .build()
+                        .toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(EMPTY_RPC_OPTIONS)))
+        .andReturn(BLOB_INFO1.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT);
+
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobWithSubArrayFromByteArray() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(
+                    BLOB_INFO1
+                        .toBuilder()
+                        .setMd5(SUB_CONTENT_MD5)
+                        .setCrc32c(SUB_CONTENT_CRC32C)
+                        .build()
+                        .toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(EMPTY_RPC_OPTIONS)))
+        .andReturn(BLOB_INFO1.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT, 1, 2);
+
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_SUB_CONTENT.length];
+    assertEquals(BLOB_SUB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_SUB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobRetry() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream1 = Capture.newInstance();
+    Capture<ByteArrayInputStream> capturedStream2 = Capture.newInstance();
+    StorageObject storageObject =
+        BLOB_INFO1.toBuilder().setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build().toPb();
+
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(storageObject),
+                EasyMock.capture(capturedStream1),
+                EasyMock.eq(EMPTY_RPC_OPTIONS)))
+        .andThrow(new StorageException(500, "internalError"))
+        .once();
+
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(storageObject),
+                EasyMock.capture(capturedStream2),
+                EasyMock.eq(EMPTY_RPC_OPTIONS)))
+        .andReturn(BLOB_INFO1.toPb());
+
+    EasyMock.replay(storageRpcMock);
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
+            .build()
+            .getService();
+    initializeServiceDependentObjects();
+
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT);
+
+    assertEquals(expectedBlob1, blob);
+
+    ByteArrayInputStream byteStream = capturedStream1.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+
+    ByteArrayInputStream byteStream2 = capturedStream2.getValue();
+    byte[] streamBytes2 = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream2.read(streamBytes2));
+    assertArrayEquals(BLOB_CONTENT, streamBytes2);
+    assertEquals(-1, byteStream.read(streamBytes2));
+  }
+
+  @Test
+  public void testCreateEmptyBlob() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(
+                    BLOB_INFO1
+                        .toBuilder()
+                        .setMd5("1B2M2Y8AsgTpgAmY7PhCfg==")
+                        .setCrc32c("AAAAAA==")
+                        .build()
+                        .toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(EMPTY_RPC_OPTIONS)))
+        .andReturn(BLOB_INFO1.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Blob blob = storage.create(BLOB_INFO1);
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobWithOptions() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(
+                    BLOB_INFO1
+                        .toBuilder()
+                        .setMd5(CONTENT_MD5)
+                        .setCrc32c(CONTENT_CRC32C)
+                        .build()
+                        .toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(BLOB_TARGET_OPTIONS_CREATE)))
+        .andReturn(BLOB_INFO1.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Blob blob =
+        storage.create(
+            BLOB_INFO1,
+            BLOB_CONTENT,
+            BLOB_TARGET_METAGENERATION,
+            BLOB_TARGET_NOT_EXIST,
+            BLOB_TARGET_PREDEFINED_ACL);
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobWithDisabledGzipContent() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(
+                    BLOB_INFO1
+                        .toBuilder()
+                        .setMd5(CONTENT_MD5)
+                        .setCrc32c(CONTENT_CRC32C)
+                        .build()
+                        .toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(BLOB_TARGET_OPTIONS_CREATE_DISABLE_GZIP_CONTENT)))
+        .andReturn(BLOB_INFO1.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT, BLOB_TARGET_DISABLE_GZIP_CONTENT);
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobWithEncryptionKey() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(
+                    BLOB_INFO1
+                        .toBuilder()
+                        .setMd5(CONTENT_MD5)
+                        .setCrc32c(CONTENT_CRC32C)
+                        .build()
+                        .toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(ENCRYPTION_KEY_OPTIONS)))
+        .andReturn(BLOB_INFO1.toPb())
+        .times(2);
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT, BlobTargetOption.encryptionKey(KEY));
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+    blob = storage.create(BLOB_INFO1, BLOB_CONTENT, BlobTargetOption.encryptionKey(BASE64_KEY));
+    assertEquals(expectedBlob1, blob);
+    byteStream = capturedStream.getValue();
+    streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobWithKmsKeyName() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(
+                    BLOB_INFO1
+                        .toBuilder()
+                        .setMd5(CONTENT_MD5)
+                        .setCrc32c(CONTENT_CRC32C)
+                        .build()
+                        .toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(KMS_KEY_NAME_OPTIONS)))
+        .andReturn(BLOB_INFO1.toPb())
+        .times(2);
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT, BlobTargetOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+    blob = storage.create(BLOB_INFO1, BLOB_CONTENT, BlobTargetOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedBlob1, blob);
+    byteStream = capturedStream.getValue();
+    streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStream() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+    BlobInfo.Builder infoBuilder = BLOB_INFO1.toBuilder();
+    BlobInfo infoWithHashes = infoBuilder.setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
+    BlobInfo infoWithoutHashes = infoBuilder.setMd5(null).setCrc32c(null).build();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(infoWithoutHashes.toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(EMPTY_RPC_OPTIONS)))
+        .andReturn(BLOB_INFO1.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+
+    Blob blob = storage.create(infoWithHashes, fileStream);
+
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStreamDisableGzipContent() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+    BlobInfo.Builder infoBuilder = BLOB_INFO1.toBuilder();
+    BlobInfo infoWithHashes = infoBuilder.setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
+    BlobInfo infoWithoutHashes = infoBuilder.setMd5(null).setCrc32c(null).build();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(infoWithoutHashes.toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(BLOB_TARGET_OPTIONS_CREATE_DISABLE_GZIP_CONTENT)))
+        .andReturn(BLOB_INFO1.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+
+    Blob blob = storage.create(infoWithHashes, fileStream, BlobWriteOption.disableGzipContent());
+
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStreamWithEncryptionKey() throws IOException {
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+    BlobInfo.Builder infoBuilder = BLOB_INFO1.toBuilder();
+    BlobInfo infoWithHashes = infoBuilder.setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
+    BlobInfo infoWithoutHashes = infoBuilder.setMd5(null).setCrc32c(null).build();
+    EasyMock.expect(
+            storageRpcMock.create(infoWithoutHashes.toPb(), fileStream, ENCRYPTION_KEY_OPTIONS))
+        .andReturn(BLOB_INFO1.toPb())
+        .times(2);
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Blob blob =
+        storage.create(infoWithHashes, fileStream, BlobWriteOption.encryptionKey(BASE64_KEY));
+    assertEquals(expectedBlob1, blob);
+    blob = storage.create(infoWithHashes, fileStream, BlobWriteOption.encryptionKey(BASE64_KEY));
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStreamRetryableException() throws IOException {
+    Capture<ByteArrayInputStream> capturedStream = Capture.newInstance();
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+    BlobInfo.Builder infoBuilder = BLOB_INFO1.toBuilder();
+    BlobInfo infoWithHashes = infoBuilder.setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
+    BlobInfo infoWithoutHashes = infoBuilder.setMd5(null).setCrc32c(null).build();
+    EasyMock.expect(
+            storageRpcMock.create(
+                EasyMock.eq(infoWithoutHashes.toPb()),
+                EasyMock.capture(capturedStream),
+                EasyMock.eq(EMPTY_RPC_OPTIONS)))
+        .andThrow(new StorageException(500, "internalError"))
+        .once();
+
+    EasyMock.replay(storageRpcMock);
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
+            .build()
+            .getService();
+
+    // Even though this exception is retryable, storage.create(BlobInfo, InputStream)
+    // shouldn't retry.
+    try {
+      storage.create(infoWithHashes, fileStream);
+      Assert.fail();
+    } catch (StorageException ex) {
+      assertNotNull(ex.getMessage());
+    }
   }
 
   @Test
