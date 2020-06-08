@@ -16,10 +16,7 @@
 
 package com.google.cloud.storage.testing;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import com.google.api.services.storage.model.Bucket;
@@ -40,16 +37,16 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class StorageRpcTestBaseTest {
 
-  private StorageRpc valueInstance;
-  private StorageRpc exceptionInstance;
-  private RpcCall call;
+  private Callable rpc;
 
+  private static final StorageRpc STORAGE_RPC = new StorageRpcTestBase();
   private static final Map<StorageRpc.Option, Object> OPTIONS = new HashMap<>();
   private static final Bucket BUCKET = new Bucket().setName("fake-bucket");
   private static final byte[] BYTES = {0, 1, 2, 3, 4, 5, 6, 7};
@@ -58,238 +55,214 @@ public class StorageRpcTestBaseTest {
 
   @Before
   public void setUp() {
-    valueInstance = new StorageRpcTestBase();
-    exceptionInstance = new StorageRpcTestBase(false);
-    call = null;
+    rpc = null;
   }
 
   @After
-  public void tearDown() {
-    assertNotNull(call);
-    verifyUnsupported(call);
-    verifyReturnValue(call);
-  }
-
-  interface RpcCall<V> {
-    V call(StorageRpc storageRpc);
-  }
-
-  private void verifyUnsupported(RpcCall rpcCall) {
+  public void tearDown() throws Exception {
+    assertNotNull(rpc);
     try {
-      rpcCall.call(exceptionInstance);
+      rpc.call();
       fail("UnsupportedOperationException expected");
     } catch (UnsupportedOperationException e) {
       // expected
     }
   }
 
-  private void verifyReturnValue(RpcCall rpcCall) {
-    Object value = rpcCall.call(valueInstance);
-    if (value instanceof Boolean) {
-      assertEquals(Boolean.FALSE, value);
-    } else if (value instanceof Long) {
-      assertEquals(new Long(0), value);
-    } else if (value instanceof byte[]) {
-      assertArrayEquals(new byte[0], (byte[]) value);
-    } else {
-      assertNull(value);
-    }
-  }
-
   @Test
   public void testCreateBucket() {
-    call =
-        new RpcCall<Bucket>() {
+    rpc =
+        new Callable<Bucket>() {
           @Override
-          public Bucket call(StorageRpc storageRpc) {
-            return storageRpc.create(BUCKET, OPTIONS);
+          public Bucket call() {
+            return STORAGE_RPC.create(BUCKET, OPTIONS);
           }
         };
   }
 
   @Test
   public void testCreateObject() {
-    call =
-        new RpcCall<StorageObject>() {
+    rpc =
+        new Callable<StorageObject>() {
           @Override
-          public StorageObject call(StorageRpc storageRpc) {
-            return storageRpc.create(OBJECT, new ByteArrayInputStream(BYTES), OPTIONS);
+          public StorageObject call() {
+            return STORAGE_RPC.create(OBJECT, new ByteArrayInputStream(BYTES), OPTIONS);
           }
         };
   }
 
   @Test
   public void testList() {
-    call =
-        new RpcCall<Tuple<String, Iterable<Bucket>>>() {
+    rpc =
+        new Callable<Tuple<String, Iterable<Bucket>>>() {
           @Override
-          public Tuple<String, Iterable<Bucket>> call(StorageRpc storageRpc) {
-            return storageRpc.list(OPTIONS);
+          public Tuple<String, Iterable<Bucket>> call() {
+            return STORAGE_RPC.list(OPTIONS);
           }
         };
   }
 
   @Test
   public void testListBucket() {
-    call =
-        new RpcCall<Tuple<String, Iterable<StorageObject>>>() {
+    rpc =
+        new Callable<Tuple<String, Iterable<StorageObject>>>() {
           @Override
-          public Tuple<String, Iterable<StorageObject>> call(StorageRpc storageRpc) {
-            return storageRpc.list(BUCKET.getName(), OPTIONS);
+          public Tuple<String, Iterable<StorageObject>> call() {
+            return STORAGE_RPC.list(BUCKET.getName(), OPTIONS);
           }
         };
   }
 
   @Test
   public void testGetBucket() {
-    call =
-        new RpcCall<Bucket>() {
+    rpc =
+        new Callable<Bucket>() {
           @Override
-          public Bucket call(StorageRpc storageRpc) {
-            return storageRpc.get(BUCKET, OPTIONS);
+          public Bucket call() {
+            return STORAGE_RPC.get(BUCKET, OPTIONS);
           }
         };
   }
 
   @Test
   public void testGetObject() {
-    call =
-        new RpcCall<StorageObject>() {
+    rpc =
+        new Callable<StorageObject>() {
           @Override
-          public StorageObject call(StorageRpc storageRpc) {
-            return storageRpc.get(OBJECT, OPTIONS);
+          public StorageObject call() {
+            return STORAGE_RPC.get(OBJECT, OPTIONS);
           }
         };
   }
 
   @Test
   public void testPatchBucket() {
-    call =
-        new RpcCall<Bucket>() {
+    rpc =
+        new Callable<Bucket>() {
           @Override
-          public Bucket call(StorageRpc storageRpc) {
-            return storageRpc.patch(BUCKET, OPTIONS);
+          public Bucket call() {
+            return STORAGE_RPC.patch(BUCKET, OPTIONS);
           }
         };
   }
 
   @Test
   public void testPatchObject() {
-    call =
-        new RpcCall<StorageObject>() {
+    rpc =
+        new Callable<StorageObject>() {
           @Override
-          public StorageObject call(StorageRpc storageRpc) {
-            return storageRpc.patch(OBJECT, OPTIONS);
+          public StorageObject call() {
+            return STORAGE_RPC.patch(OBJECT, OPTIONS);
           }
         };
   }
 
   @Test
   public void testDeleteBucket() {
-    call =
-        new RpcCall<Boolean>() {
+    rpc =
+        new Callable<Boolean>() {
           @Override
-          public Boolean call(StorageRpc storageRpc) {
-            return storageRpc.delete(BUCKET, OPTIONS);
+          public Boolean call() {
+            return STORAGE_RPC.delete(BUCKET, OPTIONS);
           }
         };
   }
 
   @Test
   public void testDeleteObject() {
-    call =
-        new RpcCall<Boolean>() {
+    rpc =
+        new Callable<Boolean>() {
           @Override
-          public Boolean call(StorageRpc storageRpc) {
-            return storageRpc.delete(OBJECT, OPTIONS);
+          public Boolean call() {
+            return STORAGE_RPC.delete(OBJECT, OPTIONS);
           }
         };
   }
 
   @Test
   public void testCreateBatch() {
-    call =
-        new RpcCall<RpcBatch>() {
+    rpc =
+        new Callable<RpcBatch>() {
           @Override
-          public RpcBatch call(StorageRpc storageRpc) {
-            return storageRpc.createBatch();
+          public RpcBatch call() {
+            return STORAGE_RPC.createBatch();
           }
         };
   }
 
   @Test
   public void testCompose() {
-    call =
-        new RpcCall<StorageObject>() {
+    rpc =
+        new Callable<StorageObject>() {
           @Override
-          public StorageObject call(StorageRpc storageRpc) {
-            return storageRpc.compose(null, OBJECT, OPTIONS);
+          public StorageObject call() {
+            return STORAGE_RPC.compose(null, OBJECT, OPTIONS);
           }
         };
   }
 
   @Test
   public void testLoad() {
-    call =
-        new RpcCall<byte[]>() {
+    rpc =
+        new Callable<byte[]>() {
           @Override
-          public byte[] call(StorageRpc storageRpc) {
-            return storageRpc.load(OBJECT, OPTIONS);
+          public byte[] call() {
+            return STORAGE_RPC.load(OBJECT, OPTIONS);
           }
         };
   }
 
   @Test
   public void testReadBytes() {
-    call =
-        new RpcCall<Tuple<String, byte[]>>() {
+    rpc =
+        new Callable<Tuple<String, byte[]>>() {
           @Override
-          public Tuple<String, byte[]> call(StorageRpc storageRpc) {
-            return storageRpc.read(OBJECT, OPTIONS, 0, 0);
+          public Tuple<String, byte[]> call() {
+            return STORAGE_RPC.read(OBJECT, OPTIONS, 0, 0);
           }
         };
   }
 
   @Test
   public void testReadOutputStream() {
-    call =
-        new RpcCall<Long>() {
+    rpc =
+        new Callable<Long>() {
           @Override
-          public Long call(StorageRpc storageRpc) {
-            return storageRpc.read(OBJECT, OPTIONS, 0, new ByteArrayOutputStream(100));
+          public Long call() {
+            return STORAGE_RPC.read(OBJECT, OPTIONS, 0, new ByteArrayOutputStream(100));
           }
         };
   }
 
   @Test
   public void testOpenObject() {
-    call =
-        new RpcCall<String>() {
+    rpc =
+        new Callable<String>() {
           @Override
-          public String call(StorageRpc storageRpc) {
-            return storageRpc.open(OBJECT, OPTIONS);
+          public String call() {
+            return STORAGE_RPC.open(OBJECT, OPTIONS);
           }
         };
   }
 
   @Test
   public void testOpenSignedURL() {
-    call =
-        new RpcCall<String>() {
+    rpc =
+        new Callable<String>() {
           @Override
-          public String call(StorageRpc storageRpc) {
-            return storageRpc.open("signedURL");
+          public String call() {
+            return STORAGE_RPC.open("signedURL");
           }
         };
   }
 
   @Test
   public void testWrite() {
-    call =
-        new RpcCall<Void>() {
+    rpc =
+        new Callable<Void>() {
           @Override
-          public Void call(StorageRpc storageRpc) {
-            storageRpc.write("uploadId", new byte[10], 1, 2L, 3, false);
+          public Void call() {
+            STORAGE_RPC.write("uploadId", new byte[10], 1, 2L, 3, false);
             return null;
           }
         };
@@ -297,187 +270,187 @@ public class StorageRpcTestBaseTest {
 
   @Test
   public void testOpenRewrite() {
-    call =
-        new RpcCall<StorageRpc.RewriteResponse>() {
+    rpc =
+        new Callable<StorageRpc.RewriteResponse>() {
           @Override
-          public StorageRpc.RewriteResponse call(StorageRpc storageRpc) {
-            return storageRpc.openRewrite(null);
+          public StorageRpc.RewriteResponse call() {
+            return STORAGE_RPC.openRewrite(null);
           }
         };
   }
 
   @Test
   public void testContinueRewrite() {
-    call =
-        new RpcCall<StorageRpc.RewriteResponse>() {
+    rpc =
+        new Callable<StorageRpc.RewriteResponse>() {
           @Override
-          public StorageRpc.RewriteResponse call(StorageRpc storageRpc) {
-            return storageRpc.continueRewrite(null);
+          public StorageRpc.RewriteResponse call() {
+            return STORAGE_RPC.continueRewrite(null);
           }
         };
   }
 
   @Test
   public void testGetAclBucket() {
-    call =
-        new RpcCall<BucketAccessControl>() {
+    rpc =
+        new Callable<BucketAccessControl>() {
           @Override
-          public BucketAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.getAcl("bucket", "entity", OPTIONS);
+          public BucketAccessControl call() {
+            return STORAGE_RPC.getAcl("bucket", "entity", OPTIONS);
           }
         };
   }
 
   @Test
   public void testGetAclObject() {
-    call =
-        new RpcCall<ObjectAccessControl>() {
+    rpc =
+        new Callable<ObjectAccessControl>() {
           @Override
-          public ObjectAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.getAcl("bucket", "object", 1L, "entity");
+          public ObjectAccessControl call() {
+            return STORAGE_RPC.getAcl("bucket", "object", 1L, "entity");
           }
         };
   }
 
   @Test
   public void testDeleteAclBucket() {
-    call =
-        new RpcCall<Boolean>() {
+    rpc =
+        new Callable<Boolean>() {
           @Override
-          public Boolean call(StorageRpc storageRpc) {
-            return storageRpc.deleteAcl("bucketName", "entity", OPTIONS);
+          public Boolean call() {
+            return STORAGE_RPC.deleteAcl("bucketName", "entity", OPTIONS);
           }
         };
   }
 
   @Test
   public void testDeleteAclObject() {
-    call =
-        new RpcCall<Boolean>() {
+    rpc =
+        new Callable<Boolean>() {
           @Override
-          public Boolean call(StorageRpc storageRpc) {
-            return storageRpc.deleteAcl("bucketName", "object", 0L, "entity");
+          public Boolean call() {
+            return STORAGE_RPC.deleteAcl("bucketName", "object", 0L, "entity");
           }
         };
   }
 
   @Test
   public void testCreateAclBucket() {
-    call =
-        new RpcCall<BucketAccessControl>() {
+    rpc =
+        new Callable<BucketAccessControl>() {
           @Override
-          public BucketAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.createAcl(null, OPTIONS);
+          public BucketAccessControl call() {
+            return STORAGE_RPC.createAcl(null, OPTIONS);
           }
         };
   }
 
   @Test
   public void testCreateAclObject() {
-    call =
-        new RpcCall<ObjectAccessControl>() {
+    rpc =
+        new Callable<ObjectAccessControl>() {
           @Override
-          public ObjectAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.createAcl(null);
+          public ObjectAccessControl call() {
+            return STORAGE_RPC.createAcl(null);
           }
         };
   }
 
   @Test
   public void testPatchAclBucket() {
-    call =
-        new RpcCall<ObjectAccessControl>() {
+    rpc =
+        new Callable<ObjectAccessControl>() {
           @Override
-          public ObjectAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.createAcl(null);
+          public ObjectAccessControl call() {
+            return STORAGE_RPC.createAcl(null);
           }
         };
   }
 
   @Test
   public void testPatchAclObject() {
-    call =
-        new RpcCall<ObjectAccessControl>() {
+    rpc =
+        new Callable<ObjectAccessControl>() {
           @Override
-          public ObjectAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.patchAcl(null);
+          public ObjectAccessControl call() {
+            return STORAGE_RPC.patchAcl(null);
           }
         };
   }
 
   @Test
   public void testListAclsBucket() {
-    call =
-        new RpcCall<List<BucketAccessControl>>() {
+    rpc =
+        new Callable<List<BucketAccessControl>>() {
           @Override
-          public List<BucketAccessControl> call(StorageRpc storageRpc) {
-            return storageRpc.listAcls("BUCKET_NAME", OPTIONS);
+          public List<BucketAccessControl> call() {
+            return STORAGE_RPC.listAcls("BUCKET_NAME", OPTIONS);
           }
         };
   }
 
   @Test
   public void testListAclsObject() {
-    call =
-        new RpcCall<List<ObjectAccessControl>>() {
+    rpc =
+        new Callable<List<ObjectAccessControl>>() {
           @Override
-          public List<ObjectAccessControl> call(StorageRpc storageRpc) {
-            return storageRpc.listAcls("BUCKET_NAME", "OBJECT_NAME", 100L);
+          public List<ObjectAccessControl> call() {
+            return STORAGE_RPC.listAcls("BUCKET_NAME", "OBJECT_NAME", 100L);
           }
         };
   }
 
   @Test
   public void testCreateHmacKey() {
-    call =
-        new RpcCall<HmacKey>() {
+    rpc =
+        new Callable<HmacKey>() {
           @Override
-          public HmacKey call(StorageRpc storageRpc) {
-            return storageRpc.createHmacKey("account", OPTIONS);
+          public HmacKey call() {
+            return STORAGE_RPC.createHmacKey("account", OPTIONS);
           }
         };
   }
 
   @Test
   public void testListHmacKeys() {
-    call =
-        new RpcCall<Tuple<String, Iterable<HmacKeyMetadata>>>() {
+    rpc =
+        new Callable<Tuple<String, Iterable<HmacKeyMetadata>>>() {
           @Override
-          public Tuple<String, Iterable<HmacKeyMetadata>> call(StorageRpc storageRpc) {
-            return storageRpc.listHmacKeys(OPTIONS);
+          public Tuple<String, Iterable<HmacKeyMetadata>> call() {
+            return STORAGE_RPC.listHmacKeys(OPTIONS);
           }
         };
   }
 
   @Test
   public void testUpdateHmacKey() {
-    call =
-        new RpcCall<HmacKeyMetadata>() {
+    rpc =
+        new Callable<HmacKeyMetadata>() {
           @Override
-          public HmacKeyMetadata call(StorageRpc storageRpc) {
-            return storageRpc.updateHmacKey(null, OPTIONS);
+          public HmacKeyMetadata call() {
+            return STORAGE_RPC.updateHmacKey(null, OPTIONS);
           }
         };
   }
 
   @Test
   public void testGetHmacKey() {
-    call =
-        new RpcCall<HmacKeyMetadata>() {
+    rpc =
+        new Callable<HmacKeyMetadata>() {
           @Override
-          public HmacKeyMetadata call(StorageRpc storageRpc) {
-            return storageRpc.getHmacKey("account", OPTIONS);
+          public HmacKeyMetadata call() {
+            return STORAGE_RPC.getHmacKey("account", OPTIONS);
           }
         };
   }
 
   @Test
   public void testDeleteHmacKey() {
-    call =
-        new RpcCall<Void>() {
+    rpc =
+        new Callable<Void>() {
           @Override
-          public Void call(StorageRpc storageRpc) {
-            storageRpc.deleteHmacKey(null, OPTIONS);
+          public Void call() {
+            STORAGE_RPC.deleteHmacKey(null, OPTIONS);
             return null;
           }
         };
@@ -485,143 +458,143 @@ public class StorageRpcTestBaseTest {
 
   @Test
   public void testGetDefaultAcl() {
-    call =
-        new RpcCall<ObjectAccessControl>() {
+    rpc =
+        new Callable<ObjectAccessControl>() {
           @Override
-          public ObjectAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.getDefaultAcl("bucket", "entity");
+          public ObjectAccessControl call() {
+            return STORAGE_RPC.getDefaultAcl("bucket", "entity");
           }
         };
   }
 
   @Test
   public void testDeleteDefaultAcl() {
-    call =
-        new RpcCall<Boolean>() {
+    rpc =
+        new Callable<Boolean>() {
           @Override
-          public Boolean call(StorageRpc storageRpc) {
-            return storageRpc.deleteDefaultAcl("bucket", "entity");
+          public Boolean call() {
+            return STORAGE_RPC.deleteDefaultAcl("bucket", "entity");
           }
         };
   }
 
   @Test
   public void testCreateDefaultAcl() {
-    call =
-        new RpcCall<ObjectAccessControl>() {
+    rpc =
+        new Callable<ObjectAccessControl>() {
           @Override
-          public ObjectAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.createDefaultAcl(null);
+          public ObjectAccessControl call() {
+            return STORAGE_RPC.createDefaultAcl(null);
           }
         };
   }
 
   @Test
   public void testPatchDefaultAcl() {
-    call =
-        new RpcCall<ObjectAccessControl>() {
+    rpc =
+        new Callable<ObjectAccessControl>() {
           @Override
-          public ObjectAccessControl call(StorageRpc storageRpc) {
-            return storageRpc.patchDefaultAcl(null);
+          public ObjectAccessControl call() {
+            return STORAGE_RPC.patchDefaultAcl(null);
           }
         };
   }
 
   @Test
   public void testListDefaultAcls() {
-    call =
-        new RpcCall<List<ObjectAccessControl>>() {
+    rpc =
+        new Callable<List<ObjectAccessControl>>() {
           @Override
-          public List<ObjectAccessControl> call(StorageRpc storageRpc) {
-            return storageRpc.listDefaultAcls("bucket");
+          public List<ObjectAccessControl> call() {
+            return STORAGE_RPC.listDefaultAcls("bucket");
           }
         };
   }
 
   @Test
   public void testGetIamPolicy() {
-    call =
-        new RpcCall<Policy>() {
+    rpc =
+        new Callable<Policy>() {
           @Override
-          public Policy call(StorageRpc storageRpc) {
-            return storageRpc.getIamPolicy("bucket", OPTIONS);
+          public Policy call() {
+            return STORAGE_RPC.getIamPolicy("bucket", OPTIONS);
           }
         };
   }
 
   @Test
   public void testSetIamPolicy() {
-    call =
-        new RpcCall<Policy>() {
+    rpc =
+        new Callable<Policy>() {
           @Override
-          public Policy call(StorageRpc storageRpc) {
-            return storageRpc.setIamPolicy("bucket", null, OPTIONS);
+          public Policy call() {
+            return STORAGE_RPC.setIamPolicy("bucket", null, OPTIONS);
           }
         };
   }
 
   @Test
   public void testTestIamPermissions() {
-    call =
-        new RpcCall<TestIamPermissionsResponse>() {
+    rpc =
+        new Callable<TestIamPermissionsResponse>() {
           @Override
-          public TestIamPermissionsResponse call(StorageRpc storageRpc) {
-            return storageRpc.testIamPermissions("bucket", null, OPTIONS);
+          public TestIamPermissionsResponse call() {
+            return STORAGE_RPC.testIamPermissions("bucket", null, OPTIONS);
           }
         };
   }
 
   @Test
   public void testDeleteNotification() {
-    call =
-        new RpcCall<Boolean>() {
+    rpc =
+        new Callable<Boolean>() {
           @Override
-          public Boolean call(StorageRpc storageRpc) {
-            return storageRpc.deleteNotification("bucket", "entity");
+          public Boolean call() {
+            return STORAGE_RPC.deleteNotification("bucket", "entity");
           }
         };
   }
 
   @Test
   public void testListNotifications() {
-    call =
-        new RpcCall<List<Notification>>() {
+    rpc =
+        new Callable<List<Notification>>() {
           @Override
-          public List<Notification> call(StorageRpc storageRpc) {
-            return storageRpc.listNotifications("bucket");
+          public List<Notification> call() {
+            return STORAGE_RPC.listNotifications("bucket");
           }
         };
   }
 
   @Test
   public void testCreateNotification() {
-    call =
-        new RpcCall<Notification>() {
+    rpc =
+        new Callable<Notification>() {
           @Override
-          public Notification call(StorageRpc storageRpc) {
-            return storageRpc.createNotification("bucket", null);
+          public Notification call() {
+            return STORAGE_RPC.createNotification("bucket", null);
           }
         };
   }
 
   @Test
   public void testLockRetentionPolicy() {
-    call =
-        new RpcCall<Bucket>() {
+    rpc =
+        new Callable<Bucket>() {
           @Override
-          public Bucket call(StorageRpc storageRpc) {
-            return storageRpc.lockRetentionPolicy(BUCKET, OPTIONS);
+          public Bucket call() {
+            return STORAGE_RPC.lockRetentionPolicy(BUCKET, OPTIONS);
           }
         };
   }
 
   @Test
   public void testGetServiceAccount() {
-    call =
-        new RpcCall<ServiceAccount>() {
+    rpc =
+        new Callable<ServiceAccount>() {
           @Override
-          public ServiceAccount call(StorageRpc storageRpc) {
-            return storageRpc.getServiceAccount("project");
+          public ServiceAccount call() {
+            return STORAGE_RPC.getServiceAccount("project");
           }
         };
   }
