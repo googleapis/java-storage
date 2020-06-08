@@ -549,10 +549,12 @@ public class BucketInfo implements Serializable {
         return matchesStorageClass;
       }
 
+      /** Returns the number of days elapsed since the noncurrent timestamp of an object. */
       public Integer getDaysSinceNoncurrentTime() {
         return daysSinceNoncurrentTime;
       }
 
+      /** Returns the timestamp in RFC 3339 format. */
       public DateTime getNoncurrentTimeBefore() {
         return noncurrentTimeBefore;
       }
@@ -620,11 +622,23 @@ public class BucketInfo implements Serializable {
           return this;
         }
 
+        /**
+         * Sets the number of days elapsed since the noncurrent timestamp of an object. The
+         * condition is satisfied if the days elapsed is at least this number. This condition is
+         * relevant only for versioned objects. The value of the field must be a nonnegative
+         * integer. If it's zero, the object version will become eligible for Lifecycle action as
+         * soon as it becomes noncurrent.
+         */
         public Builder setDaysSinceNoncurrentTime(Integer daysSinceNoncurrentTime) {
           this.daysSinceNoncurrentTime = daysSinceNoncurrentTime;
           return this;
         }
 
+        /**
+         * Sets the timestamp in RFC 3339 format. This condition is satisfied when the noncurrent
+         * time on an object is before this timestamp. This condition is relevant only for versioned
+         * objects.
+         */
         public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
           this.noncurrentTimeBefore = noncurrentTimeBefore;
           return this;
