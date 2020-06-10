@@ -24,7 +24,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
-import com.google.api.services.storage.model.*;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.Encryption;
 import com.google.api.services.storage.model.Bucket.Lifecycle;
@@ -32,17 +31,23 @@ import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.api.services.storage.model.Bucket.Owner;
 import com.google.api.services.storage.model.Bucket.Versioning;
 import com.google.api.services.storage.model.Bucket.Website;
+import com.google.api.services.storage.model.BucketAccessControl;
+import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1318,6 +1323,7 @@ public class BucketInfo implements Serializable {
   }
 
   BucketInfo(BuilderImpl builder) {
+    // super(StorageOptions.newBuilder().build());
     generatedId = builder.generatedId;
     name = builder.name;
     etag = builder.etag;
@@ -1437,6 +1443,73 @@ public class BucketInfo implements Serializable {
 
   public List<? extends LifecycleRule> getLifecycleRules() {
     return lifecycleRules != null ? lifecycleRules : ImmutableList.<LifecycleRule>of();
+  }
+
+  /**
+   * Deletes the lifecycle rules of this bucket.
+   *
+   * <p>Example of deleting the lifecycle rules of this bucket:
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * LifecycleRule lifecycleRule_1 =
+   * 	new LifecycleRule(
+   * 		LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+   * 		LifecycleCondition.newBuilder()
+   * 			.setAge(1)
+   * 			.setNumberOfNewerVersions(3)
+   * 			.setIsLive(false)
+   * 			.setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+   * 			.build());
+   * LifecycleRule lifecycleRule_2 =
+   * 	new LifecycleRule(
+   * 		LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
+   * ImmutableList<LifecycleRule> lifecycleRules =
+   * 	ImmutableList.of(lifecycleRule_1, lifecycleRule_2);
+   * Bucket bucket =
+   * 	storage.create(
+   * 		BucketInfo.newBuilder(bucketName)
+   * 			.setLocation("us")
+   * 			.setLifecycleRules(lifecycleRules)
+   * 			.build());
+   * List<LifecycleRule> results = bucket.deleteLifecycleRules(storage, lifecycleRule_1);
+   * }</pre>
+   *
+   * @param rulesToDelete the set of lifecycle rules to delete
+   * @param storage an object of storage
+   * @return the lists of deleted lifecycle rules of bucket, an empty list if the requested
+   *     lifecycle rules was not found
+   * @throws StorageException upon failure
+   */
+  public List<LifecycleRule> deleteLifecycleRules(Storage storage, LifecycleRule... rulesToDelete) {
+
+    final String bucket = getName();
+    final List<LifecycleRule> results = Lists.newArrayList();
+    try {
+      com.google.cloud.storage.Bucket remoteBucket =
+          storage.get(bucket, Storage.BucketGetOption.fields(Storage.BucketField.LIFECYCLE));
+      List<LifecycleRule> lifecycleRules = new ArrayList(remoteBucket.getLifecycleRules());
+      for (Iterator<LifecycleRule> iterator = lifecycleRules.iterator(); iterator.hasNext(); ) {
+        LifecycleRule lifecycleRule = iterator.next();
+        for (LifecycleRule ruleToDelete : rulesToDelete) {
+          if (lifecycleRule.equals(ruleToDelete)) {
+            iterator.remove();
+            results.add(ruleToDelete);
+          }
+        }
+      }
+      if (results.size() > 0) {
+        storage
+            .get(bucket, Storage.BucketGetOption.fields())
+            .toBuilder()
+            .setLifecycleRules(lifecycleRules)
+            .build()
+            .update();
+      }
+      return Collections.unmodifiableList(results);
+    } catch (StorageException ex) {
+      throw ex;
+    }
   }
 
   /**

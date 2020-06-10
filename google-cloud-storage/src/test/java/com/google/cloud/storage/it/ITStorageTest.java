@@ -3300,7 +3300,7 @@ public class ITStorageTest {
     assertThat(bucket.getName()).isEqualTo(bucketName);
     assertThat(bucket.getLifecycleRules()).hasSize(2);
     try {
-      List<LifecycleRule> results = storage.deleteLifecycleRules(bucketName, LIFECYCLE_RULE_1);
+      List<LifecycleRule> results = bucket.deleteLifecycleRules(storage, LIFECYCLE_RULE_1);
       assertThat(results).hasSize(1);
       assertThat(results.get(0)).isEqualTo(LIFECYCLE_RULE_1);
     } finally {
@@ -3321,7 +3321,7 @@ public class ITStorageTest {
     assertThat(bucket.getLifecycleRules()).hasSize(2);
     try {
       List<LifecycleRule> results =
-          storage.deleteLifecycleRules(bucketName, LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
+          bucket.deleteLifecycleRules(storage, LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
       assertThat(results).hasSize(2);
       assertThat(results).contains(LIFECYCLE_RULE_1);
       assertThat(results).contains(LIFECYCLE_RULE_2);
@@ -3346,8 +3346,7 @@ public class ITStorageTest {
     assertThat(bucket.getName()).isEqualTo(bucketName);
     assertThat(bucket.getLifecycleRules()).hasSize(2);
     try {
-      List<LifecycleRule> results =
-          storage.deleteLifecycleRules(bucketName, nonExistingLifecycleRule);
+      List<LifecycleRule> results = bucket.deleteLifecycleRules(storage, nonExistingLifecycleRule);
       assertThat(results).isEmpty();
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);

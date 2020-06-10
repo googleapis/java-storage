@@ -17,6 +17,9 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
+import static com.google.common.truth.Truth.assertThat;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -42,6 +45,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.easymock.EasyMock;
 import org.junit.Test;
 
 public class BucketInfoTest {
@@ -332,5 +336,35 @@ public class BucketInfoTest {
             .toPb();
     assertEquals("test-bucket", logging.getLogBucket());
     assertEquals("test-", logging.getLogObjectPrefix());
+  }
+
+  @Test
+  public void testDeleteLifecycleRules() {
+    Storage storage = EasyMock.createStrictMock(Storage.class);
+    BucketInfo bucketInfo = EasyMock.createStrictMock(BUCKET_INFO.getClass());
+    expect(bucketInfo.deleteLifecycleRules(storage, LIFECYCLE_RULES.get(0)))
+        .andReturn(ImmutableList.of(LIFECYCLE_RULES.get(0)));
+    replay(bucketInfo);
+    List<LifecycleRule> actualResults =
+        bucketInfo.deleteLifecycleRules(storage, LIFECYCLE_RULES.get(0));
+    assertThat(actualResults).hasSize(1);
+    assertThat(actualResults.get(0)).isEqualTo(LIFECYCLE_RULES.get(0));
+  }
+
+  @Test
+  public void testDeleteNonExistingLifecycleRule() {
+    Storage storage = EasyMock.createStrictMock(Storage.class);
+    BucketInfo bucketInfo = EasyMock.createStrictMock(BucketInfo.class);
+    LifecycleRule nonExistingLifecycleRule =
+        new LifecycleRule(
+            LifecycleAction.newSetStorageClassAction(StorageClass.ARCHIVE),
+            LifecycleCondition.newBuilder().setAge(10).build());
+    List<LifecycleRule> expectedResults = ImmutableList.of();
+    expect(bucketInfo.deleteLifecycleRules(storage, nonExistingLifecycleRule))
+        .andReturn(expectedResults);
+    replay(bucketInfo);
+    List<LifecycleRule> actualResults =
+        bucketInfo.deleteLifecycleRules(storage, nonExistingLifecycleRule);
+    assertThat(actualResults).isEmpty();
   }
 }

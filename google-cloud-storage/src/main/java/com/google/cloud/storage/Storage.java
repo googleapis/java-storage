@@ -31,7 +31,6 @@ import com.google.cloud.Service;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
-import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
@@ -3075,44 +3074,6 @@ public interface Storage extends Service<StorageOptions> {
    * @throws StorageException upon failure
    */
   boolean deleteDefaultAcl(String bucket, Entity entity);
-
-  /**
-   * Deletes the lifecycle rules of the requested bucket.
-   *
-   * <p>Example of deleting the lifecycle rules of the requested bucket:
-   *
-   * <pre>{@code
-   * String bucketName = "my-unique-bucket";
-   * LifecycleRule lifecycleRule_1 =
-   * 	new LifecycleRule(
-   * 		LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
-   * 		LifecycleCondition.newBuilder()
-   * 			.setAge(1)
-   * 			.setNumberOfNewerVersions(3)
-   * 			.setIsLive(false)
-   * 			.setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-   * 			.build());
-   * LifecycleRule lifecycleRule_2 =
-   * 	new LifecycleRule(
-   * 		LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
-   * ImmutableList<LifecycleRule> lifecycleRules =
-   * 	ImmutableList.of(lifecycleRule_1, lifecycleRule_2);
-   * Bucket bucket =
-   * 	storage.create(
-   * 		BucketInfo.newBuilder(bucketName)
-   * 			.setLocation("us")
-   * 			.setLifecycleRules(lifecycleRules)
-   * 			.build());
-   * Map<LifecycleRule, Boolean> results = storage.deleteLifecycleRules(lifecycleTestBucket, lifecycleRule_1);
-   * }</pre>
-   *
-   * @param bucket name of the bucket
-   * @param rulesToDelete the set of lifecycle rules to delete
-   * @return the lists of deleted lifecycle rules of bucket, an empty list if the requested
-   *     lifecycle rules was not found
-   * @throws StorageException upon failure
-   */
-  List<LifecycleRule> deleteLifecycleRules(String bucket, LifecycleRule... rulesToDelete);
 
   /**
    * Creates a new default blob ACL entry on the specified bucket.

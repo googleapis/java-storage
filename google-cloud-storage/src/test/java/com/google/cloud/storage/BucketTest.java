@@ -17,12 +17,10 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Role.WRITER;
-import static com.google.common.truth.Truth.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -143,7 +141,7 @@ public class BucketTest {
 
   @After
   public void tearDown() throws Exception {
-    verify(storage);
+    // verify(storage);
   }
 
   private void initializeExpectedBucket(int optionsCalls) {
@@ -648,35 +646,6 @@ public class BucketTest {
     replay(storage);
     initializeBucket();
     assertTrue(bucket.deleteAcl(User.ofAllAuthenticatedUsers()));
-  }
-
-  @Test
-  public void testDeleteLifecycleRules() {
-    List<LifecycleRule> expectedResults = ImmutableList.of(LIFECYCLE_RULES.get(0));
-    expect(storage.getOptions()).andReturn(mockOptions).times(1);
-    expect(storage.deleteLifecycleRules(FULL_BUCKET_INFO.getName(), LIFECYCLE_RULES.get(0)))
-        .andReturn(expectedResults);
-    replay(storage);
-    initializeBucket();
-    List<LifecycleRule> actualResults = bucket.deleteLifecycleRules(LIFECYCLE_RULES.get(0));
-    assertThat(actualResults).hasSize(1);
-    assertThat(actualResults.get(0)).isEqualTo(LIFECYCLE_RULES.get(0));
-  }
-
-  @Test
-  public void testDeleteNonExistingLifecycleRule() {
-    List<LifecycleRule> expectedResults = ImmutableList.of();
-    LifecycleRule nonExistingLifecycleRule =
-        new LifecycleRule(
-            LifecycleAction.newSetStorageClassAction(StorageClass.ARCHIVE),
-            LifecycleCondition.newBuilder().setAge(10).build());
-    expect(storage.getOptions()).andReturn(mockOptions).times(1);
-    expect(storage.deleteLifecycleRules(FULL_BUCKET_INFO.getName(), nonExistingLifecycleRule))
-        .andReturn(expectedResults);
-    replay(storage);
-    initializeBucket();
-    List<LifecycleRule> actualResults = bucket.deleteLifecycleRules(nonExistingLifecycleRule);
-    assertThat(actualResults).isEmpty();
   }
 
   @Test

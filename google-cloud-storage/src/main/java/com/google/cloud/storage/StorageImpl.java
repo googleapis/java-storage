@@ -49,7 +49,6 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
 import com.google.cloud.storage.Acl.Entity;
-import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -78,12 +77,10 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1279,37 +1276,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
           getOptions().getClock());
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
-    }
-  }
-
-  @Override
-  public List<LifecycleRule> deleteLifecycleRules(String bucket, LifecycleRule... rulesToDelete) {
-    final Storage storage = getOptions().getService();
-    final List<LifecycleRule> results = Lists.newArrayList();
-    try {
-      Bucket remoteBucket =
-          storage.get(bucket, Storage.BucketGetOption.fields(Storage.BucketField.LIFECYCLE));
-      List<LifecycleRule> lifecycleRules = new ArrayList(remoteBucket.getLifecycleRules());
-      for (Iterator<LifecycleRule> iterator = lifecycleRules.iterator(); iterator.hasNext(); ) {
-        LifecycleRule lifecycleRule = iterator.next();
-        for (LifecycleRule ruleToDelete : rulesToDelete) {
-          if (lifecycleRule.equals(ruleToDelete)) {
-            iterator.remove();
-            results.add(ruleToDelete);
-          }
-        }
-      }
-      if (results.size() > 0) {
-        storage
-            .get(bucket, Storage.BucketGetOption.fields())
-            .toBuilder()
-            .setLifecycleRules(lifecycleRules)
-            .build()
-            .update();
-      }
-      return Collections.unmodifiableList(results);
-    } catch (StorageException ex) {
-      throw ex;
     }
   }
 
