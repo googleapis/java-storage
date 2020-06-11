@@ -3,8 +3,8 @@
     {
       "git": {
         "name": ".",
-        "remote": "git@github.com:googleapis/java-storage.git",
-        "sha": "ad5182fbe1c5c75ace607e97ca4d2e328811e494"
+        "remote": "https://github.com/googleapis/java-storage.git",
+        "sha": "20d2b74704aa056521205c40f8d5a7e2c0a59200"
       }
     },
     {
