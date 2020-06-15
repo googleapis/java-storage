@@ -340,31 +340,19 @@ public class BucketInfoTest {
 
   @Test
   public void testDeleteLifecycleRules() {
-    Storage storage = EasyMock.createStrictMock(Storage.class);
-    BucketInfo bucketInfo = EasyMock.createStrictMock(BUCKET_INFO.getClass());
-    expect(bucketInfo.deleteLifecycleRules(storage, LIFECYCLE_RULES.get(0)))
-        .andReturn(ImmutableList.of(LIFECYCLE_RULES.get(0)));
+    BucketInfo bucketInfo = EasyMock.createStrictMock(BucketInfo.class);
+    expect(bucketInfo.deleteLifecycleRules()).andReturn(ImmutableList.of(LIFECYCLE_RULES.get(0)));
     replay(bucketInfo);
-    List<LifecycleRule> actualResults =
-        bucketInfo.deleteLifecycleRules(storage, LIFECYCLE_RULES.get(0));
+    List<LifecycleRule> actualResults = bucketInfo.deleteLifecycleRules();
     assertThat(actualResults).hasSize(1);
-    assertThat(actualResults.get(0)).isEqualTo(LIFECYCLE_RULES.get(0));
   }
 
   @Test
-  public void testDeleteNonExistingLifecycleRule() {
-    Storage storage = EasyMock.createStrictMock(Storage.class);
+  public void testDeleteLifecycleRuleIfNotExists() {
     BucketInfo bucketInfo = EasyMock.createStrictMock(BucketInfo.class);
-    LifecycleRule nonExistingLifecycleRule =
-        new LifecycleRule(
-            LifecycleAction.newSetStorageClassAction(StorageClass.ARCHIVE),
-            LifecycleCondition.newBuilder().setAge(10).build());
-    List<LifecycleRule> expectedResults = ImmutableList.of();
-    expect(bucketInfo.deleteLifecycleRules(storage, nonExistingLifecycleRule))
-        .andReturn(expectedResults);
+    expect(bucketInfo.deleteLifecycleRules()).andReturn(ImmutableList.<LifecycleRule>of());
     replay(bucketInfo);
-    List<LifecycleRule> actualResults =
-        bucketInfo.deleteLifecycleRules(storage, nonExistingLifecycleRule);
-    assertThat(actualResults).isEmpty();
+    List<LifecycleRule> lifecycleRules = bucketInfo.deleteLifecycleRules();
+    assertThat(lifecycleRules).isEmpty();
   }
 }

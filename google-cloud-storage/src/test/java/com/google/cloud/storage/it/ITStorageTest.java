@@ -3289,7 +3289,7 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testDeleteIndividualLifecycleRules() throws ExecutionException, InterruptedException {
+  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
     Bucket bucket =
         storage.create(
@@ -3300,54 +3300,23 @@ public class ITStorageTest {
     assertThat(bucket.getName()).isEqualTo(bucketName);
     assertThat(bucket.getLifecycleRules()).hasSize(2);
     try {
-      List<LifecycleRule> results = bucket.deleteLifecycleRules(storage, LIFECYCLE_RULE_1);
-      assertThat(results).hasSize(1);
-      assertThat(results.get(0)).isEqualTo(LIFECYCLE_RULE_1);
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
-  public void testDeleteAllLifecycleRules() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setLocation("us")
-                .setLifecycleRules(LIFECYCLE_RULES)
-                .build());
-    assertThat(bucket.getName()).isEqualTo(bucketName);
-    assertThat(bucket.getLifecycleRules()).hasSize(2);
-    try {
-      List<LifecycleRule> results =
-          bucket.deleteLifecycleRules(storage, LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
+      List<LifecycleRule> results = bucket.deleteLifecycleRules();
       assertThat(results).hasSize(2);
-      assertThat(results).contains(LIFECYCLE_RULE_1);
-      assertThat(results).contains(LIFECYCLE_RULE_2);
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
 
   @Test
-  public void testDeleteNonExistingLifecycleRule() throws ExecutionException, InterruptedException {
+  public void testDeleteLifecycleRulesIfNotExists()
+      throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
-    LifecycleRule nonExistingLifecycleRule =
-        new LifecycleRule(
-            LifecycleAction.newSetStorageClassAction(StorageClass.ARCHIVE),
-            LifecycleCondition.newBuilder().setAge(10).build());
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setLocation("us")
-                .setLifecycleRules(LIFECYCLE_RULES)
-                .build());
+    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
     assertThat(bucket.getName()).isEqualTo(bucketName);
-    assertThat(bucket.getLifecycleRules()).hasSize(2);
+    assertThat(bucket.getLifecycleRules()).isEmpty();
     try {
-      List<LifecycleRule> results = bucket.deleteLifecycleRules(storage, nonExistingLifecycleRule);
-      assertThat(results).isEmpty();
+      List<LifecycleRule> lifecycleRules = bucket.deleteLifecycleRules();
+      assertThat(lifecycleRules).isEmpty();
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }

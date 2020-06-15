@@ -1186,8 +1186,7 @@ public class BucketInfo implements Serializable {
     @Override
     @Deprecated
     public Builder setDeleteRules(Iterable<? extends DeleteRule> rules) {
-      this.deleteRules =
-          rules != null ? ImmutableList.copyOf(rules) : ImmutableList.<DeleteRule>of();
+      this.deleteRules = rules != null ? ImmutableList.copyOf(rules) : null;
       return this;
     }
 
@@ -1323,7 +1322,6 @@ public class BucketInfo implements Serializable {
   }
 
   BucketInfo(BuilderImpl builder) {
-    // super(StorageOptions.newBuilder().build());
     generatedId = builder.generatedId;
     name = builder.name;
     etag = builder.etag;
@@ -1438,7 +1436,7 @@ public class BucketInfo implements Serializable {
    */
   @Deprecated
   public List<? extends DeleteRule> getDeleteRules() {
-    return deleteRules != null ? deleteRules : ImmutableList.<DeleteRule>of();
+    return deleteRules;
   }
 
   public List<? extends LifecycleRule> getLifecycleRules() {
@@ -1453,8 +1451,7 @@ public class BucketInfo implements Serializable {
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
    * LifecycleRule lifecycleRule_1 =
-   * 	new LifecycleRule(
-   * 		LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+   * 	new LifecycleRule(LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
    * 		LifecycleCondition.newBuilder()
    * 			.setAge(1)
    * 			.setNumberOfNewerVersions(3)
@@ -1462,27 +1459,23 @@ public class BucketInfo implements Serializable {
    * 			.setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
    * 			.build());
    * LifecycleRule lifecycleRule_2 =
-   * 	new LifecycleRule(
-   * 		LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
-   * ImmutableList<LifecycleRule> lifecycleRules =
-   * 	ImmutableList.of(lifecycleRule_1, lifecycleRule_2);
+   *    new LifecycleRule(LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
+   * ImmutableList<LifecycleRule> lifecycleRules = ImmutableList.of(lifecycleRule_1, lifecycleRule_2);
    * Bucket bucket =
    * 	storage.create(
    * 		BucketInfo.newBuilder(bucketName)
    * 			.setLocation("us")
    * 			.setLifecycleRules(lifecycleRules)
    * 			.build());
-   * List<LifecycleRule> results = bucket.deleteLifecycleRules(storage, lifecycleRule_1);
+   * List<LifecycleRule> results = bucket.deleteLifecycleRules();
    * }</pre>
    *
-   * @param rulesToDelete the set of lifecycle rules to delete
-   * @param storage an object of storage
-   * @return the lists of deleted lifecycle rules of bucket, an empty list if the requested
-   *     lifecycle rules was not found
+   * @return the lists of deleted lifecycle rules of bucket, an empty list if the lifecycle rules
+   *     was not found
    * @throws StorageException upon failure
    */
-  public List<LifecycleRule> deleteLifecycleRules(Storage storage, LifecycleRule... rulesToDelete) {
-
+  public List<LifecycleRule> deleteLifecycleRules() {
+    final Storage storage = StorageOptions.getDefaultInstance().getService();
     final String bucket = getName();
     final List<LifecycleRule> results = Lists.newArrayList();
     try {
@@ -1491,12 +1484,8 @@ public class BucketInfo implements Serializable {
       List<LifecycleRule> lifecycleRules = new ArrayList(remoteBucket.getLifecycleRules());
       for (Iterator<LifecycleRule> iterator = lifecycleRules.iterator(); iterator.hasNext(); ) {
         LifecycleRule lifecycleRule = iterator.next();
-        for (LifecycleRule ruleToDelete : rulesToDelete) {
-          if (lifecycleRule.equals(ruleToDelete)) {
-            iterator.remove();
-            results.add(ruleToDelete);
-          }
-        }
+        iterator.remove();
+        results.add(lifecycleRule);
       }
       if (results.size() > 0) {
         storage
@@ -1764,6 +1753,7 @@ public class BucketInfo implements Serializable {
       bucketPb.setWebsite(website);
     }
     Set<Rule> rules = new HashSet<>();
+    Lifecycle lifecycle = new Lifecycle();
     if (deleteRules != null) {
       rules.addAll(
           transform(
@@ -1774,6 +1764,8 @@ public class BucketInfo implements Serializable {
                   return deleteRule.toPb();
                 }
               }));
+      lifecycle.setRule(ImmutableList.copyOf(rules));
+      bucketPb.setLifecycle(lifecycle);
     }
     if (lifecycleRules != null) {
       rules.addAll(
@@ -1785,12 +1777,10 @@ public class BucketInfo implements Serializable {
                   return lifecycleRule.toPb();
                 }
               }));
-    }
-    if (rules != null) {
-      Lifecycle lifecycle = new Lifecycle();
       lifecycle.setRule(ImmutableList.copyOf(rules));
       bucketPb.setLifecycle(lifecycle);
     }
+
     if (labels != null) {
       bucketPb.setLabels(labels);
     }
@@ -1840,6 +1830,7 @@ public class BucketInfo implements Serializable {
     if (bucketPb.getId() != null) {
       builder.setGeneratedId(bucketPb.getId());
     }
+
     if (bucketPb.getEtag() != null) {
       builder.setEtag(bucketPb.getEtag());
     }
