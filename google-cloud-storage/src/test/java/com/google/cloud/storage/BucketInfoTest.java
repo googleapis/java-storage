@@ -341,18 +341,18 @@ public class BucketInfoTest {
   @Test
   public void testDeleteLifecycleRules() {
     BucketInfo bucketInfo = EasyMock.createStrictMock(BucketInfo.class);
-    expect(bucketInfo.deleteLifecycleRules()).andReturn(ImmutableList.of(LIFECYCLE_RULES.get(0)));
+    expect(bucketInfo.deleteLifecycleRules()).andReturn(true);
     replay(bucketInfo);
-    List<LifecycleRule> actualResults = bucketInfo.deleteLifecycleRules();
-    assertThat(actualResults).hasSize(1);
+    boolean rulesDeleted = bucketInfo.deleteLifecycleRules();
+    assertThat(rulesDeleted).isTrue();
   }
 
   @Test
-  public void testDeleteLifecycleRuleIfNotExists() {
+  public void testDeleteLifecycleRulesIfNotFound() {
     BucketInfo bucketInfo = EasyMock.createStrictMock(BucketInfo.class);
-    expect(bucketInfo.deleteLifecycleRules()).andReturn(ImmutableList.<LifecycleRule>of());
+    expect(bucketInfo.deleteLifecycleRules()).andReturn(false);
     replay(bucketInfo);
-    List<LifecycleRule> lifecycleRules = bucketInfo.deleteLifecycleRules();
-    assertThat(lifecycleRules).isEmpty();
+    boolean rulesDeleted = bucketInfo.deleteLifecycleRules();
+    assertThat(rulesDeleted).isFalse();
   }
 }

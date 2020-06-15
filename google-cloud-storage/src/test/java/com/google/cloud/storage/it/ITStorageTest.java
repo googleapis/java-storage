@@ -3300,23 +3300,22 @@ public class ITStorageTest {
     assertThat(bucket.getName()).isEqualTo(bucketName);
     assertThat(bucket.getLifecycleRules()).hasSize(2);
     try {
-      List<LifecycleRule> results = bucket.deleteLifecycleRules();
-      assertThat(results).hasSize(2);
+      boolean rulesDeleted = bucket.deleteLifecycleRules();
+      assertThat(rulesDeleted).isTrue();
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
 
   @Test
-  public void testDeleteLifecycleRulesIfNotExists()
-      throws ExecutionException, InterruptedException {
+  public void testDeleteLifecycleRulesIfNotFound() throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
     Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
     assertThat(bucket.getName()).isEqualTo(bucketName);
     assertThat(bucket.getLifecycleRules()).isEmpty();
     try {
-      List<LifecycleRule> lifecycleRules = bucket.deleteLifecycleRules();
-      assertThat(lifecycleRules).isEmpty();
+      boolean rulesDeleted = bucket.deleteLifecycleRules();
+      assertThat(rulesDeleted).isFalse();
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
