@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.109.1](https://www.github.com/googleapis/java-storage/compare/v1.109.0...v1.109.1) (2020-06-15)
+
+
+### Dependencies
+
+* bump shared-deps version and add back certain test deps ([#340](https://www.github.com/googleapis/java-storage/issues/340)) ([afd0339](https://www.github.com/googleapis/java-storage/commit/afd0339c1d62dfb82032e08e3ef50a14c80ad30a))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.8.1 ([#368](https://www.github.com/googleapis/java-storage/issues/368)) ([ccaf480](https://www.github.com/googleapis/java-storage/commit/ccaf48015f9e99fa2ee3b457eb5c04ad07c3253a))
+
 ## [1.109.0](https://www.github.com/googleapis/java-storage/compare/v1.108.0...v1.109.0) (2020-06-11)
 
 
