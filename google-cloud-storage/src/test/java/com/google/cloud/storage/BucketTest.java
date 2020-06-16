@@ -848,7 +848,6 @@ public class BucketTest {
     initializeBucket();
     Bucket updatedBucket = new Bucket(storage, new BucketInfo.BuilderImpl(expectedUpdatedBucket));
     Bucket actualUpdatedBucket = updatedBucket.update();
-    assertThat(actualUpdatedBucket.getLifecycleRules()).isEmpty();
     assertThat(actualUpdatedBucket.getLifecycleRules()).hasSize(0);
   }
 }

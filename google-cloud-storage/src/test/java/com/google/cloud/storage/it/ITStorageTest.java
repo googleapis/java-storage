@@ -3301,7 +3301,6 @@ public class ITStorageTest {
     assertThat(bucket.getLifecycleRules()).hasSize(2);
     try {
       Bucket updatedBucket = bucket.toBuilder().deleteLifecycleRules().build().update();
-      assertThat(updatedBucket.getLifecycleRules()).isEmpty();
       assertThat(updatedBucket.getLifecycleRules()).hasSize(0);
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);

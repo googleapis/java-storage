@@ -979,6 +979,9 @@ public class BucketInfo implements Serializable {
      */
     public abstract Builder setLifecycleRules(Iterable<? extends LifecycleRule> rules);
 
+    /** Deletes the lifecycle rules of this bucket. */
+    public abstract Builder deleteLifecycleRules();
+
     /**
      * Sets the bucket's storage class. This defines how blobs in the bucket are stored and
      * determines the SLA and the cost of storage. A list of supported values is available <a
@@ -1193,6 +1196,7 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    @Override
     public Builder deleteLifecycleRules() {
       setDeleteRules(null);
       setLifecycleRules(null);

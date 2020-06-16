@@ -571,6 +571,7 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
+    @Override
     public Builder deleteLifecycleRules() {
       infoBuilder.deleteLifecycleRules();
       return this;
