@@ -17,9 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
-import static com.google.common.truth.Truth.assertThat;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +42,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.easymock.EasyMock;
 import org.junit.Test;
 
 public class BucketInfoTest {
@@ -221,7 +217,11 @@ public class BucketInfoTest {
   @Test
   public void testToPbAndFromPb() {
     compareBuckets(BUCKET_INFO, BucketInfo.fromPb(BUCKET_INFO.toPb()));
-    BucketInfo bucketInfo = BucketInfo.of("b");
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder("b")
+            .setDeleteRules(DELETE_RULES)
+            .setLifecycleRules(LIFECYCLE_RULES)
+            .build();
     compareBuckets(bucketInfo, BucketInfo.fromPb(bucketInfo.toPb()));
   }
 
@@ -336,23 +336,5 @@ public class BucketInfoTest {
             .toPb();
     assertEquals("test-bucket", logging.getLogBucket());
     assertEquals("test-", logging.getLogObjectPrefix());
-  }
-
-  @Test
-  public void testDeleteLifecycleRules() {
-    BucketInfo bucketInfo = EasyMock.createStrictMock(BucketInfo.class);
-    expect(bucketInfo.deleteLifecycleRules()).andReturn(true);
-    replay(bucketInfo);
-    boolean rulesDeleted = bucketInfo.deleteLifecycleRules();
-    assertThat(rulesDeleted).isTrue();
-  }
-
-  @Test
-  public void testDeleteLifecycleRulesIfNotFound() {
-    BucketInfo bucketInfo = EasyMock.createStrictMock(BucketInfo.class);
-    expect(bucketInfo.deleteLifecycleRules()).andReturn(false);
-    replay(bucketInfo);
-    boolean rulesDeleted = bucketInfo.deleteLifecycleRules();
-    assertThat(rulesDeleted).isFalse();
   }
 }

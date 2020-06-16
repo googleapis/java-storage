@@ -43,9 +43,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -1195,6 +1193,12 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    public Builder deleteLifecycleRules() {
+      setDeleteRules(null);
+      setLifecycleRules(null);
+      return this;
+    }
+
     @Override
     public Builder setStorageClass(StorageClass storageClass) {
       this.storageClass = storageClass;
@@ -1439,60 +1443,6 @@ public class BucketInfo implements Serializable {
 
   public List<? extends LifecycleRule> getLifecycleRules() {
     return lifecycleRules != null ? lifecycleRules : ImmutableList.<LifecycleRule>of();
-  }
-
-  /**
-   * Deletes the lifecycle rules of this bucket.
-   *
-   * <p>Example of deleting the lifecycle rules of this bucket:
-   *
-   * <pre>{@code
-   * String bucketName = "my-unique-bucket";
-   * LifecycleRule lifecycleRule_1 =
-   *  new LifecycleRule(LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE), LifecycleCondition.newBuilder()
-   *   .setAge(1)
-   *   .setNumberOfNewerVersions(3)
-   *   .setIsLive(false)
-   *   .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-   *   .build());
-   * LifecycleRule lifecycleRule_2 = new LifecycleRule(LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
-   * ImmutableList<LifecycleRule> lifecycleRules = ImmutableList.of(lifecycleRule_1, lifecycleRule_2);
-   * Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").setLifecycleRules(lifecycleRules).build());
-   * boolean rulesDeleted = bucket.deleteLifecycleRules();
-   * if (rulesDeleted) {
-   *   // the lifecycle rules were deleted
-   * }
-   * }</pre>
-   *
-   * @return {@code true} if the bucket lifecycle rules were deleted, {@code false} if it was not
-   *     found
-   * @throws StorageException upon failure
-   */
-  public Boolean deleteLifecycleRules() {
-    final Storage storage = new StorageImpl(StorageOptions.getDefaultInstance());
-    final String bucket = getName();
-    try {
-      com.google.cloud.storage.Bucket remoteBucket =
-          storage.get(bucket, Storage.BucketGetOption.fields(Storage.BucketField.LIFECYCLE));
-      List<LifecycleRule> lifecycleRules = new ArrayList(remoteBucket.getLifecycleRules());
-      if (!lifecycleRules.isEmpty()) {
-        for (Iterator<LifecycleRule> ruleIterator = lifecycleRules.iterator();
-            ruleIterator.hasNext(); ) {
-          ruleIterator.next();
-          ruleIterator.remove();
-        }
-        storage
-            .get(bucket, Storage.BucketGetOption.fields())
-            .toBuilder()
-            .setLifecycleRules(lifecycleRules)
-            .build()
-            .update();
-        return true;
-      }
-      return false;
-    } catch (StorageException ex) {
-      throw ex;
-    }
   }
 
   /**
@@ -1747,7 +1697,6 @@ public class BucketInfo implements Serializable {
       bucketPb.setWebsite(website);
     }
     Set<Rule> rules = new HashSet<>();
-    Lifecycle lifecycle = new Lifecycle();
     if (deleteRules != null) {
       rules.addAll(
           transform(
@@ -1758,7 +1707,6 @@ public class BucketInfo implements Serializable {
                   return deleteRule.toPb();
                 }
               }));
-      lifecycle.setRule(ImmutableList.copyOf(rules));
     }
     if (lifecycleRules != null) {
       rules.addAll(
@@ -1770,10 +1718,11 @@ public class BucketInfo implements Serializable {
                   return lifecycleRule.toPb();
                 }
               }));
-      lifecycle.setRule(ImmutableList.copyOf(rules));
     }
 
     if (rules != null) {
+      Lifecycle lifecycle = new Lifecycle();
+      lifecycle.setRule(ImmutableList.copyOf(rules));
       bucketPb.setLifecycle(lifecycle);
     }
 
