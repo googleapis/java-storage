@@ -181,6 +181,20 @@ public class ITStorageTest {
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
+  private static final LifecycleRule LIFECYCLE_RULE_1 =
+      new LifecycleRule(
+          LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+          LifecycleCondition.newBuilder()
+              .setAge(1)
+              .setNumberOfNewerVersions(3)
+              .setIsLive(false)
+              .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+              .build());
+  private static final LifecycleRule LIFECYCLE_RULE_2 =
+      new LifecycleRule(
+          LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
+  private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
+      ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
   @BeforeClass
   public static void beforeClass() throws IOException {
@@ -3278,5 +3292,24 @@ public class ITStorageTest {
 
     updated.delete();
     assertNull(updated.reload());
+  }
+
+  @Test
+  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    Bucket bucket =
+        storage.create(
+            BucketInfo.newBuilder(bucketName)
+                .setLocation("us")
+                .setLifecycleRules(LIFECYCLE_RULES)
+                .build());
+    assertThat(bucket.getLifecycleRules()).isNotNull();
+    assertThat(bucket.getLifecycleRules()).hasSize(2);
+    try {
+      Bucket updatedBucket = bucket.toBuilder().deleteLifecycleRules().build().update();
+      assertThat(updatedBucket.getLifecycleRules()).hasSize(0);
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
   }
 }

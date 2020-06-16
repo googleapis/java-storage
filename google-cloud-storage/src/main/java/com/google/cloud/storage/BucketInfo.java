@@ -24,7 +24,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
-import com.google.api.services.storage.model.*;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.Encryption;
 import com.google.api.services.storage.model.Bucket.Lifecycle;
@@ -32,6 +31,8 @@ import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.api.services.storage.model.Bucket.Owner;
 import com.google.api.services.storage.model.Bucket.Versioning;
 import com.google.api.services.storage.model.Bucket.Website;
+import com.google.api.services.storage.model.BucketAccessControl;
+import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
@@ -978,6 +979,9 @@ public class BucketInfo implements Serializable {
      */
     public abstract Builder setLifecycleRules(Iterable<? extends LifecycleRule> rules);
 
+    /** Deletes the lifecycle rules of this bucket. */
+    public abstract Builder deleteLifecycleRules();
+
     /**
      * Sets the bucket's storage class. This defines how blobs in the bucket are stored and
      * determines the SLA and the cost of storage. A list of supported values is available <a
@@ -1187,7 +1191,15 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setLifecycleRules(Iterable<? extends LifecycleRule> rules) {
-      this.lifecycleRules = rules != null ? ImmutableList.copyOf(rules) : null;
+      this.lifecycleRules =
+          rules != null ? ImmutableList.copyOf(rules) : ImmutableList.<LifecycleRule>of();
+      return this;
+    }
+
+    @Override
+    public Builder deleteLifecycleRules() {
+      setDeleteRules(null);
+      setLifecycleRules(null);
       return this;
     }
 
@@ -1434,7 +1446,7 @@ public class BucketInfo implements Serializable {
   }
 
   public List<? extends LifecycleRule> getLifecycleRules() {
-    return lifecycleRules;
+    return lifecycleRules != null ? lifecycleRules : ImmutableList.<LifecycleRule>of();
   }
 
   /**
@@ -1711,11 +1723,13 @@ public class BucketInfo implements Serializable {
                 }
               }));
     }
-    if (!rules.isEmpty()) {
+
+    if (rules != null) {
       Lifecycle lifecycle = new Lifecycle();
       lifecycle.setRule(ImmutableList.copyOf(rules));
       bucketPb.setLifecycle(lifecycle);
     }
+
     if (labels != null) {
       bucketPb.setLabels(labels);
     }
@@ -1765,6 +1779,7 @@ public class BucketInfo implements Serializable {
     if (bucketPb.getId() != null) {
       builder.setGeneratedId(bucketPb.getId());
     }
+
     if (bucketPb.getEtag() != null) {
       builder.setEtag(bucketPb.getEtag());
     }

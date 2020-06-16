@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Role.WRITER;
+import static com.google.common.truth.Truth.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.expect;
@@ -845,5 +846,21 @@ public class BucketTest {
     assertEquals(RETENTION_POLICY_IS_LOCKED, bucket.retentionPolicyIsLocked());
     assertEquals(storage.getOptions(), bucket.getStorage().getOptions());
     assertTrue(LOCATION_TYPES.contains(LOCATION_TYPE));
+  }
+
+  @Test
+  public void testDeleteLifecycleRules() {
+    initializeExpectedBucket(6);
+    Bucket bucket =
+        new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(FULL_BUCKET_INFO));
+    assertThat(bucket.getLifecycleRules()).hasSize(1);
+    Bucket expectedUpdatedBucket = bucket.toBuilder().deleteLifecycleRules().build();
+    expect(storage.getOptions()).andReturn(mockOptions).times(2);
+    expect(storage.update(expectedUpdatedBucket)).andReturn(expectedUpdatedBucket);
+    replay(storage);
+    initializeBucket();
+    Bucket updatedBucket = new Bucket(storage, new BucketInfo.BuilderImpl(expectedUpdatedBucket));
+    Bucket actualUpdatedBucket = updatedBucket.update();
+    assertThat(actualUpdatedBucket.getLifecycleRules()).hasSize(0);
   }
 }

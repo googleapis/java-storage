@@ -225,7 +225,11 @@ public class BucketInfoTest {
   @Test
   public void testToPbAndFromPb() {
     compareBuckets(BUCKET_INFO, BucketInfo.fromPb(BUCKET_INFO.toPb()));
-    BucketInfo bucketInfo = BucketInfo.of("b");
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder("b")
+            .setDeleteRules(DELETE_RULES)
+            .setLifecycleRules(LIFECYCLE_RULES)
+            .build();
     compareBuckets(bucketInfo, BucketInfo.fromPb(bucketInfo.toPb()));
   }
 
