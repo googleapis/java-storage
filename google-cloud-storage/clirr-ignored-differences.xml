@@ -21,4 +21,9 @@
         <method>com.google.cloud.storage.PostPolicyV4 generateSignedPostPolicyV4(com.google.cloud.storage.BlobInfo, long, java.util.concurrent.TimeUnit, com.google.cloud.storage.Storage$PostPolicyV4Option[])</method>
         <differenceType>7012</differenceType>
     </difference>
+    <difference>
+        <className>com/google/cloud/storage/BucketInfo$Builder</className>
+        <method>com.google.cloud.storage.BucketInfo$Builder deleteLifecycleRules()</method>
+        <differenceType>7013</differenceType>
+    </difference>
 </differences>
