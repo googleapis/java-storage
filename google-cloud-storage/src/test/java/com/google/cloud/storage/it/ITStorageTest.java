@@ -2404,71 +2404,81 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketPolicyV1RequesterPays() {
-    Bucket remoteBucket =
-        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertFalse(remoteBucket.requesterPays());
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertTrue(updatedBucket.requesterPays());
+  public void testBucketPolicyV1RequesterPays() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    storage.create(BucketInfo.newBuilder(bucketName).build());
 
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    try {
+      Bucket bucketDefault =
+          storage.get(
+              bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+      assertNull(bucketDefault.requesterPays());
 
-    Storage.BucketSourceOption[] bucketOptions =
-        new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
-    Identity projectOwner = Identity.projectOwner(projectId);
-    Identity projectEditor = Identity.projectEditor(projectId);
-    Identity projectViewer = Identity.projectViewer(projectId);
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            new HashSet<>(Collections.singleton(projectViewer)),
-            StorageRoles.legacyObjectReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
+      Bucket bucketTrue = storage.update(bucketDefault.toBuilder().setRequesterPays(true).build());
+      assertTrue(bucketTrue.requesterPays());
 
-    // Validate getting policy.
-    Policy currentPolicy = storage.getIamPolicy(BUCKET, bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
+      String projectId = remoteStorageHelper.getOptions().getProjectId();
 
-    // Validate updating policy.
-    Policy updatedPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            currentPolicy
-                .toBuilder()
-                .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
-    Policy revertedPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            updatedPolicy
-                .toBuilder()
-                .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
+      Storage.BucketSourceOption[] bucketOptions =
+          new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
+      Identity projectOwner = Identity.projectOwner(projectId);
+      Identity projectEditor = Identity.projectEditor(projectId);
+      Identity projectViewer = Identity.projectViewer(projectId);
+      Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
+          ImmutableMap.of(
+              StorageRoles.legacyBucketOwner(),
+              new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+              StorageRoles.legacyBucketReader(),
+              (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
+      Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
+          ImmutableMap.of(
+              StorageRoles.legacyBucketOwner(),
+              new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+              StorageRoles.legacyBucketReader(),
+              new HashSet<>(Collections.singleton(projectViewer)),
+              StorageRoles.legacyObjectReader(),
+              (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
 
-    // Validate testing permissions.
-    List<Boolean> expectedPermissions = ImmutableList.of(true, true);
-    assertEquals(
-        expectedPermissions,
-        storage.testIamPermissions(
-            BUCKET,
-            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-            bucketOptions));
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
-    assertFalse(updatedBucket.requesterPays());
+      // Validate getting policy.
+      Policy currentPolicy = storage.getIamPolicy(bucketName, bucketOptions);
+      assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
+
+      // Validate updating policy.
+      Policy updatedPolicy =
+          storage.setIamPolicy(
+              bucketName,
+              currentPolicy
+                  .toBuilder()
+                  .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                  .build(),
+              bucketOptions);
+      assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
+      Policy revertedPolicy =
+          storage.setIamPolicy(
+              bucketName,
+              updatedPolicy
+                  .toBuilder()
+                  .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                  .build(),
+              bucketOptions);
+      assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
+
+      // Validate testing permissions.
+      List<Boolean> expectedPermissions = ImmutableList.of(true, true);
+      assertEquals(
+          expectedPermissions,
+          storage.testIamPermissions(
+              bucketName,
+              ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
+              bucketOptions));
+      Bucket bucketFalse =
+          storage.update(
+              bucketTrue.toBuilder().setRequesterPays(false).build(),
+              Storage.BucketTargetOption.userProject(projectId));
+      assertFalse(bucketFalse.requesterPays());
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
   }
 
   @Test
