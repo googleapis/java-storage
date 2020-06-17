@@ -2410,7 +2410,8 @@ public class ITStorageTest {
 
     try {
       Bucket remoteBucket =
-          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+          storage.get(
+              bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
       assertNull(remoteBucket.requesterPays());
       remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
       Bucket updatedBucket = storage.update(remoteBucket);
@@ -2419,7 +2420,7 @@ public class ITStorageTest {
       String projectId = remoteStorageHelper.getOptions().getProjectId();
 
       Storage.BucketSourceOption[] bucketOptions =
-          new Storage.BucketSourceOption[]{Storage.BucketSourceOption.userProject(projectId)};
+          new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
       Identity projectOwner = Identity.projectOwner(projectId);
       Identity projectEditor = Identity.projectEditor(projectId);
       Identity projectViewer = Identity.projectViewer(projectId);
@@ -2471,7 +2472,8 @@ public class ITStorageTest {
               ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
               bucketOptions));
       remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-      updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
+      updatedBucket =
+          storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
       assertFalse(updatedBucket.requesterPays());
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
