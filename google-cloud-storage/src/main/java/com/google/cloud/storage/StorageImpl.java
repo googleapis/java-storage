@@ -48,6 +48,7 @@ import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
@@ -70,12 +71,18 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -98,6 +105,9 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static final String STORAGE_XML_URI_SCHEME = "https";
 
   private static final String STORAGE_XML_URI_HOST_NAME = "storage.googleapis.com";
+
+  private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
+  private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
   private static final Function<Tuple<Storage, Boolean>, Boolean> DELETE_FUNCTION =
       new Function<Tuple<Storage, Boolean>, Boolean>() {
@@ -208,6 +218,59 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getClock()));
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
+  public Blob upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException {
+    return upload(blobInfo, path, DEFAULT_BUFFER_SIZE, options);
+  }
+
+  @Override
+  public Blob upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
+      throws IOException {
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + " is a directory");
+    }
+    try (InputStream input = Files.newInputStream(path)) {
+      return upload(blobInfo, input, bufferSize, options);
+    }
+  }
+
+  @Override
+  public Blob upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
+      throws IOException {
+    return upload(blobInfo, content, DEFAULT_BUFFER_SIZE, options);
+  }
+
+  @Override
+  public Blob upload(
+      BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
+      throws IOException {
+
+    BlobWriteChannel blobWriteChannel;
+    try (WriteChannel writer = writer(blobInfo, options)) {
+      blobWriteChannel = (BlobWriteChannel) writer;
+      uploadHelper(Channels.newChannel(content), writer, bufferSize);
+    }
+    StorageObject objectProto = blobWriteChannel.getStorageObject();
+    return Blob.fromPb(this, objectProto);
+  }
+
+  /*
+   * Uploads the given content to the storage using specified write channel and the given buffer
+   * size. This method does not close any channels.
+   */
+  private static void uploadHelper(ReadableByteChannel reader, WriteChannel writer, int bufferSize)
+      throws IOException {
+    bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
+    ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
+    writer.setChunkSize(bufferSize);
+
+    while (reader.read(buffer) >= 0) {
+      buffer.flip();
+      writer.write(buffer);
+      buffer.clear();
     }
   }
 

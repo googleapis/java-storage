@@ -41,7 +41,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -959,6 +963,184 @@ public class StorageImplMockitoTest {
     } catch (StorageException ex) {
       assertSame(internalErrorException, ex);
     }
+  }
+
+  @Test
+  public void testUploadDirectory() throws IOException {
+    initializeService();
+    Path dir = Files.createTempDirectory("unit_");
+    try {
+      storage.upload(BLOB_INFO1, dir);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(dir + " is a directory", e.getMessage());
+    }
+  }
+
+  private BlobInfo initializeUpload(byte[] bytes) {
+    return initializeUpload(bytes, DEFAULT_BUFFER_SIZE, EMPTY_RPC_OPTIONS);
+  }
+
+  private BlobInfo initializeUpload(byte[] bytes, int bufferSize) {
+    return initializeUpload(bytes, bufferSize, EMPTY_RPC_OPTIONS);
+  }
+
+  private BlobInfo initializeUpload(
+      byte[] bytes, int bufferSize, Map<StorageRpc.Option, ?> rpcOptions) {
+    String uploadId = "upload-id";
+    byte[] buffer = new byte[bufferSize];
+    System.arraycopy(bytes, 0, buffer, 0, bytes.length);
+    BlobInfo blobInfo = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    StorageObject storageObject = new StorageObject();
+    storageObject.setBucket(BLOB_INFO1.getBucket());
+    storageObject.setName(BLOB_INFO1.getName());
+    storageObject.setSize(BigInteger.valueOf(bytes.length));
+    doReturn(uploadId)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .open(blobInfo.toPb(), rpcOptions);
+
+    doReturn(storageObject)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .write(uploadId, buffer, 0, 0L, bytes.length, true);
+
+    initializeService();
+    expectedUpdated = Blob.fromPb(storage, storageObject);
+    return blobInfo;
+  }
+
+  @Test
+  public void testUploadFile() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4};
+    Path tempFile = Files.createTempFile("testUpload", ".tmp");
+    Files.write(tempFile, dataToSend);
+
+    BlobInfo blobInfo = initializeUpload(dataToSend);
+    Blob blob = storage.upload(blobInfo, tempFile);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testUploadStream() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+
+    BlobInfo blobInfo = initializeUpload(dataToSend);
+    Blob blob = storage.upload(blobInfo, stream);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testUploadWithOptions() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, DEFAULT_BUFFER_SIZE, KMS_KEY_NAME_OPTIONS);
+    Blob blob = storage.upload(blobInfo, stream, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testUploadWithBufferSize() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+    int bufferSize = MIN_BUFFER_SIZE * 2;
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize);
+    Blob blob = storage.upload(blobInfo, stream, bufferSize);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testUploadWithBufferSizeAndOptions() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+    int bufferSize = MIN_BUFFER_SIZE * 2;
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize, KMS_KEY_NAME_OPTIONS);
+    Blob blob =
+        storage.upload(
+            blobInfo, stream, bufferSize, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testUploadWithSmallBufferSize() throws Exception {
+    byte[] dataToSend = new byte[100_000];
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+    int smallBufferSize = 100;
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, MIN_BUFFER_SIZE);
+    Blob blob = storage.upload(blobInfo, stream, smallBufferSize);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testUploadWithException() throws Exception {
+    initializeService();
+    String uploadId = "id-exception";
+    byte[] bytes = new byte[10];
+    byte[] buffer = new byte[MIN_BUFFER_SIZE];
+    System.arraycopy(bytes, 0, buffer, 0, bytes.length);
+    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    doReturn(uploadId)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .open(info.toPb(), EMPTY_RPC_OPTIONS);
+
+    Exception runtimeException = new RuntimeException("message");
+    doThrow(runtimeException)
+        .when(storageRpcMock)
+        .write(uploadId, buffer, 0, 0L, bytes.length, true);
+
+    InputStream input = new ByteArrayInputStream(bytes);
+    try {
+      storage.upload(info, input, MIN_BUFFER_SIZE);
+      fail();
+    } catch (StorageException e) {
+      assertSame(runtimeException, e.getCause());
+    }
+  }
+
+  @Test
+  public void testUploadMultipleParts() throws Exception {
+    initializeService();
+    String uploadId = "id-multiple-parts";
+    int extraBytes = 10;
+    int totalSize = MIN_BUFFER_SIZE + extraBytes;
+    byte[] dataToSend = new byte[totalSize];
+    dataToSend[0] = 42;
+    dataToSend[MIN_BUFFER_SIZE + 1] = 43;
+
+    StorageObject storageObject = new StorageObject();
+    storageObject.setBucket(BLOB_INFO1.getBucket());
+    storageObject.setName(BLOB_INFO1.getName());
+    storageObject.setSize(BigInteger.valueOf(totalSize));
+
+    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    doReturn(uploadId)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .open(info.toPb(), EMPTY_RPC_OPTIONS);
+
+    byte[] buffer1 = new byte[MIN_BUFFER_SIZE];
+    System.arraycopy(dataToSend, 0, buffer1, 0, MIN_BUFFER_SIZE);
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .write(uploadId, buffer1, 0, 0L, MIN_BUFFER_SIZE, false);
+
+    byte[] buffer2 = new byte[MIN_BUFFER_SIZE];
+    System.arraycopy(dataToSend, MIN_BUFFER_SIZE, buffer2, 0, extraBytes);
+    doReturn(storageObject)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .write(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true);
+
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob blob = storage.upload(info, input, MIN_BUFFER_SIZE);
+    assertEquals(Blob.fromPb(storage, storageObject), blob);
   }
 
   private void verifyChannelRead(ReadChannel channel, byte[] bytes) throws IOException {
