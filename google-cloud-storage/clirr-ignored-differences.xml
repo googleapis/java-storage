@@ -12,26 +12,13 @@
         <method>*.Blob upload(*.BlobInfo, java.io.InputStream, *.Storage$BlobWriteOption[])</method>
     </difference>
     <difference>
-        <differenceType>7006</differenceType>
+        <differenceType>7012</differenceType>
         <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>void write(*.String, byte[], int, long, int, boolean)</method>
-        <to>com.google.api.services.storage.model.StorageObject</to>
-    </difference>
-    <difference>
-        <differenceType>7006</differenceType>
-        <className>com/google/cloud/storage/spi/v1/HttpStorageRpc</className>
-        <method>void write(*.String, byte[], int, long, int, boolean)</method>
-        <to>com.google.api.services.storage.model.StorageObject</to>
+        <method>*.StorageObject upload(*.String, byte[], int, long, int, boolean)</method>
     </difference>
     <difference>
         <className>com/google/cloud/storage/BucketInfo$Builder</className>
         <method>com.google.cloud.storage.BucketInfo$Builder deleteLifecycleRules()</method>
         <differenceType>7013</differenceType>
-    </difference>
-    <difference>
-        <differenceType>7006</differenceType>
-        <className>com/google/cloud/storage/testing/StorageRpcTestBase</className>
-        <method>void write(*.String, byte[], int, long, int, boolean)</method>
-        <to>com.google.api.services.storage.model.StorageObject</to>
     </difference>
 </differences>

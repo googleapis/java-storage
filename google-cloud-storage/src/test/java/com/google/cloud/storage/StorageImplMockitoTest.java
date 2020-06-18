@@ -1003,7 +1003,7 @@ public class StorageImplMockitoTest {
     doReturn(storageObject)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .write(uploadId, buffer, 0, 0L, bytes.length, true);
+        .upload(uploadId, buffer, 0, 0L, bytes.length, true);
 
     initializeService();
     expectedUpdated = Blob.fromPb(storage, storageObject);
@@ -1092,7 +1092,7 @@ public class StorageImplMockitoTest {
     Exception runtimeException = new RuntimeException("message");
     doThrow(runtimeException)
         .when(storageRpcMock)
-        .write(uploadId, buffer, 0, 0L, bytes.length, true);
+        .upload(uploadId, buffer, 0, 0L, bytes.length, true);
 
     InputStream input = new ByteArrayInputStream(bytes);
     try {
@@ -1129,14 +1129,14 @@ public class StorageImplMockitoTest {
     doReturn(null)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .write(uploadId, buffer1, 0, 0L, MIN_BUFFER_SIZE, false);
+        .upload(uploadId, buffer1, 0, 0L, MIN_BUFFER_SIZE, false);
 
     byte[] buffer2 = new byte[MIN_BUFFER_SIZE];
     System.arraycopy(dataToSend, MIN_BUFFER_SIZE, buffer2, 0, extraBytes);
     doReturn(storageObject)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .write(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true);
+        .upload(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true);
 
     InputStream input = new ByteArrayInputStream(dataToSend);
     Blob blob = storage.upload(info, input, MIN_BUFFER_SIZE);

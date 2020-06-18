@@ -718,7 +718,18 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
-  public StorageObject write(
+  public void write(
+      String uploadId,
+      byte[] toWrite,
+      int toWriteOffset,
+      long destOffset,
+      int length,
+      boolean last) {
+    upload(uploadId, toWrite, toWriteOffset, destOffset, length, last);
+  }
+
+  @Override
+  public StorageObject upload(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,

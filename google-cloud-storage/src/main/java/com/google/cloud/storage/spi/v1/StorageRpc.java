@@ -313,12 +313,36 @@ public interface StorageRpc extends ServiceRpc {
   String open(String signedURL);
 
   /**
-   * Writes the provided bytes to a storage object at the provided location. If {@code last=true}
-   * returns metadata of the updated object, otherwise returns null.
+   * Writes the provided bytes to a storage object at the provided location.
+   *
+   * <p>This method is {@link Deprecated} because it does not return {@code StorageObject}, use
+   * {@link #upload(String, byte[], int, long, int, boolean)} instead.
    *
    * @throws StorageException upon failure
    */
-  StorageObject write(
+  @Deprecated
+  void write(
+      String uploadId,
+      byte[] toWrite,
+      int toWriteOffset,
+      long destOffset,
+      int length,
+      boolean last);
+
+  /**
+   * Uploads the provided bytes to a storage object at the provided location. If {@code last=true}
+   * returns metadata of the updated object, otherwise returns null.
+   *
+   * @param uploadId resumable upload ID
+   * @param toWrite a portion of the content
+   * @param toWriteOffset starting position in the {@code toWrite} array
+   * @param destOffset starting position in the destination data
+   * @param length the number of bytes to be uploaded
+   * @param last true, if {@code toWrite} is the final content portion
+   * @throws StorageException upon failure
+   * @return
+   */
+  StorageObject upload(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,

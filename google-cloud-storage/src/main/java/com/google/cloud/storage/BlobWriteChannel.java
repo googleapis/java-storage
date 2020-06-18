@@ -66,7 +66,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                   storageObject =
                       getOptions()
                           .getStorageRpcV1()
-                          .write(getUploadId(), getBuffer(), 0, getPosition(), length, last);
+                          .upload(getUploadId(), getBuffer(), 0, getPosition(), length, last);
                 }
               }),
           getOptions().getRetrySettings(),

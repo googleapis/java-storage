@@ -139,7 +139,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(BLOB_INFO.toPb(), EMPTY_RPC_OPTIONS)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
@@ -161,7 +161,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(BLOB_INFO.toPb(), EMPTY_RPC_OPTIONS)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
@@ -190,7 +190,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(BLOB_INFO.toPb(), EMPTY_RPC_OPTIONS)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID), capture(capturedBuffer), eq(0), eq(0L), eq(0), eq(true)))
         .andReturn(UPDATED_BLOB);
     replay(storageRpcMock);
@@ -208,7 +208,7 @@ public class BlobWriteChannelTest {
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     ByteBuffer buffer = randomBuffer(MIN_CHUNK_SIZE);
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
@@ -232,7 +232,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(BLOB_INFO.toPb(), EMPTY_RPC_OPTIONS)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID), capture(capturedBuffer), eq(0), eq(0L), eq(0), eq(true)))
         .andReturn(UPDATED_BLOB);
     replay(storageRpcMock);
@@ -253,7 +253,7 @@ public class BlobWriteChannelTest {
     Capture<byte[]> capturedBuffer = Capture.newInstance(CaptureType.ALL);
     Capture<Long> capturedPosition = Capture.newInstance(CaptureType.ALL);
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
@@ -281,7 +281,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(BLOB_INFO.toPb(), EMPTY_RPC_OPTIONS)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID), capture(capturedBuffer), eq(0), eq(0L), eq(0), eq(true)))
         .andReturn(UPDATED_BLOB);
     replay(storageRpcMock);
@@ -328,7 +328,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(SIGNED_URL)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
@@ -349,7 +349,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(SIGNED_URL)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
@@ -377,7 +377,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(SIGNED_URL)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID), capture(capturedBuffer), eq(0), eq(0L), eq(0), eq(true)))
         .andReturn(UPDATED_BLOB);
     replay(storageRpcMock);
@@ -394,7 +394,7 @@ public class BlobWriteChannelTest {
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     ByteBuffer buffer = randomBuffer(MIN_CHUNK_SIZE);
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
@@ -417,7 +417,7 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.open(SIGNED_URL)).andReturn(UPLOAD_ID);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID), capture(capturedBuffer), eq(0), eq(0L), eq(0), eq(true)))
         .andReturn(UPDATED_BLOB);
     replay(storageRpcMock);
@@ -437,7 +437,7 @@ public class BlobWriteChannelTest {
     Capture<byte[]> capturedBuffer = Capture.newInstance(CaptureType.ALL);
     Capture<Long> capturedPosition = Capture.newInstance(CaptureType.ALL);
     expect(
-            storageRpcMock.write(
+            storageRpcMock.upload(
                 eq(UPLOAD_ID),
                 capture(capturedBuffer),
                 eq(0),
