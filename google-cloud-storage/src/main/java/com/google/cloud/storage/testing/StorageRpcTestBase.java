@@ -140,7 +140,7 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
-  public StorageObject upload(
+  public StorageObject writeWithResponse(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,

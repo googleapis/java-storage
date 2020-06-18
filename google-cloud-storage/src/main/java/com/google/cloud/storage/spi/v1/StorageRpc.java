@@ -315,12 +315,8 @@ public interface StorageRpc extends ServiceRpc {
   /**
    * Writes the provided bytes to a storage object at the provided location.
    *
-   * <p>This method is {@link Deprecated} because it does not return {@code StorageObject}, use
-   * {@link #upload(String, byte[], int, long, int, boolean)} instead.
-   *
    * @throws StorageException upon failure
    */
-  @Deprecated
   void write(
       String uploadId,
       byte[] toWrite,
@@ -330,7 +326,7 @@ public interface StorageRpc extends ServiceRpc {
       boolean last);
 
   /**
-   * Uploads the provided bytes to a storage object at the provided location. If {@code last=true}
+   * Writes the provided bytes to a storage object at the provided location. If {@code last=true}
    * returns metadata of the updated object, otherwise returns null.
    *
    * @param uploadId resumable upload ID
@@ -342,7 +338,7 @@ public interface StorageRpc extends ServiceRpc {
    * @throws StorageException upon failure
    * @return
    */
-  StorageObject upload(
+  StorageObject writeWithResponse(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,

@@ -725,11 +725,11 @@ public class HttpStorageRpc implements StorageRpc {
       long destOffset,
       int length,
       boolean last) {
-    upload(uploadId, toWrite, toWriteOffset, destOffset, length, last);
+    writeWithResponse(uploadId, toWrite, toWriteOffset, destOffset, length, last);
   }
 
   @Override
-  public StorageObject upload(
+  public StorageObject writeWithResponse(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,

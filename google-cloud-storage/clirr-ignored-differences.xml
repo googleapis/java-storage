@@ -14,7 +14,7 @@
     <difference>
         <differenceType>7012</differenceType>
         <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>*.StorageObject upload(*.String, byte[], int, long, int, boolean)</method>
+        <method>*.StorageObject writeWithResponse(*.String, byte[], int, long, int, boolean)</method>
     </difference>
     <difference>
         <className>com/google/cloud/storage/BucketInfo$Builder</className>
