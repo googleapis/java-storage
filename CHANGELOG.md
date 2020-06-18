@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.110.0](https://www.github.com/googleapis/java-storage/compare/v1.109.1...v1.110.0) (2020-06-18)
+
+
+### Features
+
+* delete bucket OLM rules ([#352](https://www.github.com/googleapis/java-storage/issues/352)) ([0a528c6](https://www.github.com/googleapis/java-storage/commit/0a528c6916f8b031916a4c6ecc96ce5e49ea99c7))
+
 ### [1.109.1](https://www.github.com/googleapis/java-storage/compare/v1.109.0...v1.109.1) (2020-06-15)
 
 
