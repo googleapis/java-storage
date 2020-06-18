@@ -281,6 +281,11 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
+  public Notification getNotification(String bucket, String notification) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
   public Bucket lockRetentionPolicy(Bucket bucket, Map<Option, ?> options) {
     throw new UnsupportedOperationException("Not implemented yet");
   }

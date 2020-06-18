@@ -57,7 +57,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.io.BaseEncoding;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -2558,6 +2557,6 @@ public class StorageImplTest {
     assertEquals(EVENT_TYPES, value.getEventTypes());
     assertEquals(OBJECT_NAME_PREFIX, value.getObjectNamePrefix());
     assertEquals(PAYLOAD_FORMAT.name(), value.getPayloadFormat());
-    assertEquals(TOPIC.toString(), value.getTopic());
+    assertEquals(TOPIC, value.getTopic());
   }
 }
