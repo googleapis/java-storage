@@ -525,24 +525,41 @@ public class Blob extends BlobInfo {
   }
 
   /**
-   * Fetches current blob's latest information. Returns {@code null} if the blob does not exist.
+   * Fetches the latest blob properties. Returns {@code null} if the blob no longer exists.
    *
-   * <p>Example of getting the blob's latest information, if its generation does not match the
-   * {@link Blob#getGeneration()} value, otherwise a {@link StorageException} is thrown.
+   * <p>{@code options} parameter can contain the preconditions. For example, the user might want to
+   * get the blob properties only if the content has not been updated externally. {@code
+   * StorageException} with the code {@code 412} is thrown if preconditions fail.
+   *
+   * <p>Example of retrieving the blob's latest information only if the content is not updated
+   * externally:
    *
    * <pre>{@code
-   * Blob latestBlob = blob.reload(BlobSourceOption.generationNotMatch());
-   * if (latestBlob == null) {
-   *   // the blob was not found
+   * Blob blob = storage.get(BlobId.of(bucketName, blobName));
+   *
+   * doSomething();
+   *
+   * try {
+   *   blob = blob.reload(Blob.BlobSourceOption.generationMatch());
+   * } catch (StorageException e) {
+   *   if (e.getCode() == 412) {
+   *     // the content was updated externally
+   *   } else {
+   *     throw e;
+   *   }
    * }
    * }</pre>
    *
-   * @param options blob read options
-   * @return a {@code Blob} object with latest information or {@code null} if not found
+   * @param options preconditions to use on reload, see <a
+   *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/get">https://cloud.google.com/storage/docs/json_api/v1/objects/get</a>
+   *     for more information.
+   * @return a {@code Blob} object with latest information or {@code null} if no longer exists.
    * @throws StorageException upon failure
    */
   public Blob reload(BlobSourceOption... options) {
-    return storage.get(getBlobId(), toGetOptions(this, options));
+    // BlobId with generation unset is needed to retrieve the latest version of the Blob
+    BlobId idWithoutGeneration = BlobId.of(getBucket(), getName());
+    return storage.get(idWithoutGeneration, toGetOptions(this, options));
   }
 
   /**
@@ -726,12 +743,11 @@ public class Blob extends BlobInfo {
    * <pre>{@code
    * byte[] content = "Hello, World!".getBytes(UTF_8);
    * try (WriteChannel writer = blob.writer()) {
-   *   try {
    *     writer.write(ByteBuffer.wrap(content, 0, content.length));
-   *   } catch (Exception ex) {
-   *     // handle exception
-   *   }
+   * } catch (IOException ex) {
+   *   // handle exception
    * }
+   * blob = blob.reload();
    * }</pre>
    *
    * @param options target blob options
@@ -900,6 +916,10 @@ public class Blob extends BlobInfo {
     return new Builder(this);
   }
 
+  /**
+   * Returns true if obj instance {@code Blob.toPb()} metadata representation and {@code
+   * Blob.options} instance of StorageOptions are both equal.
+   */
   @Override
   public final boolean equals(Object obj) {
     if (obj == this) {

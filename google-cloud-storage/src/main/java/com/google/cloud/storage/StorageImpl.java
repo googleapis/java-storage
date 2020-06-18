@@ -48,9 +48,12 @@ import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
-import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
+import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
+import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
+import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.PostPolicyV4.PostPolicyV4Document;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteResponse;
 import com.google.common.base.CharMatcher;
@@ -67,24 +70,21 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -98,9 +98,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static final String STORAGE_XML_URI_SCHEME = "https";
 
   private static final String STORAGE_XML_URI_HOST_NAME = "storage.googleapis.com";
-
-  private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
-  private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
   private static final Function<Tuple<Storage, Boolean>, Boolean> DELETE_FUNCTION =
       new Function<Tuple<Storage, Boolean>, Boolean>() {
@@ -211,59 +208,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getClock()));
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
-    }
-  }
-
-  @Override
-  public Blob upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException {
-    return upload(blobInfo, path, DEFAULT_BUFFER_SIZE, options);
-  }
-
-  @Override
-  public Blob upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
-      throws IOException {
-    if (Files.isDirectory(path)) {
-      throw new StorageException(0, path + " is a directory");
-    }
-    try (InputStream input = Files.newInputStream(path)) {
-      return upload(blobInfo, input, bufferSize, options);
-    }
-  }
-
-  @Override
-  public Blob upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
-      throws IOException {
-    return upload(blobInfo, content, DEFAULT_BUFFER_SIZE, options);
-  }
-
-  @Override
-  public Blob upload(
-      BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
-      throws IOException {
-
-    BlobWriteChannel blobWriteChannel;
-    try (WriteChannel writer = writer(blobInfo, options)) {
-      blobWriteChannel = (BlobWriteChannel) writer;
-      uploadHelper(Channels.newChannel(content), writer, bufferSize);
-    }
-    StorageObject objectProto = blobWriteChannel.getStorageObject();
-    return Blob.fromPb(this, objectProto);
-  }
-
-  /*
-   * Uploads the given content to the storage using specified write channel and the given buffer
-   * size. This method does not close any channels.
-   */
-  private static void uploadHelper(ReadableByteChannel reader, WriteChannel writer, int bufferSize)
-      throws IOException {
-    bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
-    ByteBuffer buffer = ByteBuffer.allocate(bufferSize);
-    writer.setChunkSize(bufferSize);
-
-    while (reader.read(buffer) >= 0) {
-      buffer.flip();
-      writer.write(buffer);
-      buffer.clear();
     }
   }
 
@@ -794,6 +738,139 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     } catch (MalformedURLException | UnsupportedEncodingException ex) {
       throw new IllegalStateException(ex);
     }
+  }
+
+  @Override
+  public PostPolicyV4 generateSignedPostPolicyV4(
+      BlobInfo blobInfo,
+      long duration,
+      TimeUnit unit,
+      PostFieldsV4 fields,
+      PostConditionsV4 conditions,
+      PostPolicyV4Option... options) {
+    EnumMap<SignUrlOption.Option, Object> optionMap = Maps.newEnumMap(SignUrlOption.Option.class);
+    // Convert to a map of SignUrlOptions so we can re-use some utility methods
+    for (PostPolicyV4Option option : options) {
+      optionMap.put(SignUrlOption.Option.valueOf(option.getOption().name()), option.getValue());
+    }
+
+    optionMap.put(SignUrlOption.Option.SIGNATURE_VERSION, SignUrlOption.SignatureVersion.V4);
+
+    ServiceAccountSigner credentials =
+        (ServiceAccountSigner) optionMap.get(SignUrlOption.Option.SERVICE_ACCOUNT_CRED);
+    if (credentials == null) {
+      checkState(
+          this.getOptions().getCredentials() instanceof ServiceAccountSigner,
+          "Signing key was not provided and could not be derived");
+      credentials = (ServiceAccountSigner) this.getOptions().getCredentials();
+    }
+
+    checkArgument(
+        !(optionMap.containsKey(SignUrlOption.Option.VIRTUAL_HOSTED_STYLE)
+            && optionMap.containsKey(SignUrlOption.Option.PATH_STYLE)
+            && optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)),
+        "Only one of VIRTUAL_HOSTED_STYLE, PATH_STYLE, or BUCKET_BOUND_HOST_NAME SignUrlOptions can be"
+            + " specified.");
+
+    String bucketName = slashlessBucketNameFromBlobInfo(blobInfo);
+
+    boolean usePathStyle = shouldUsePathStyleForSignedUrl(optionMap);
+
+    String url;
+
+    if (usePathStyle) {
+      url = STORAGE_XML_URI_SCHEME + "://" + STORAGE_XML_URI_HOST_NAME + "/" + bucketName + "/";
+    } else {
+      url = STORAGE_XML_URI_SCHEME + "://" + bucketName + "." + STORAGE_XML_URI_HOST_NAME + "/";
+    }
+
+    if (optionMap.containsKey(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME)) {
+      url = optionMap.get(SignUrlOption.Option.BUCKET_BOUND_HOST_NAME) + "/";
+    }
+
+    SimpleDateFormat googDateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'");
+    SimpleDateFormat yearMonthDayFormat = new SimpleDateFormat("yyyyMMdd");
+    SimpleDateFormat expirationFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    googDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    yearMonthDayFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    expirationFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+    long timestamp = getOptions().getClock().millisTime();
+    String date = googDateFormat.format(timestamp);
+    String signingCredential =
+        credentials.getAccount()
+            + "/"
+            + yearMonthDayFormat.format(timestamp)
+            + "/auto/storage/goog4_request";
+
+    Map<String, String> policyFields = new HashMap<>();
+
+    PostConditionsV4.Builder conditionsBuilder = conditions.toBuilder();
+
+    for (Map.Entry<String, String> entry : fields.getFieldsMap().entrySet()) {
+      // Every field needs a corresponding policy condition, so add them if they're missing
+      conditionsBuilder.addCustomCondition(
+          ConditionV4Type.MATCHES, entry.getKey(), entry.getValue());
+
+      policyFields.put(entry.getKey(), entry.getValue());
+    }
+
+    PostConditionsV4 v4Conditions =
+        conditionsBuilder
+            .addBucketCondition(ConditionV4Type.MATCHES, blobInfo.getBucket())
+            .addKeyCondition(ConditionV4Type.MATCHES, blobInfo.getName())
+            .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-date", date)
+            .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-credential", signingCredential)
+            .addCustomCondition(ConditionV4Type.MATCHES, "x-goog-algorithm", "GOOG4-RSA-SHA256")
+            .build();
+    PostPolicyV4Document document =
+        PostPolicyV4Document.of(
+            expirationFormat.format(timestamp + unit.toMillis(duration)), v4Conditions);
+    String policy = BaseEncoding.base64().encode(document.toJson().getBytes());
+    String signature =
+        BaseEncoding.base16().encode(credentials.sign(policy.getBytes())).toLowerCase();
+
+    for (PostPolicyV4.ConditionV4 condition : v4Conditions.getConditions()) {
+      if (condition.type == ConditionV4Type.MATCHES) {
+        policyFields.put(condition.operand1, condition.operand2);
+      }
+    }
+    policyFields.put("key", blobInfo.getName());
+    policyFields.put("x-goog-credential", signingCredential);
+    policyFields.put("x-goog-algorithm", "GOOG4-RSA-SHA256");
+    policyFields.put("x-goog-date", date);
+    policyFields.put("x-goog-signature", signature);
+    policyFields.put("policy", policy);
+
+    policyFields.remove("bucket");
+
+    return PostPolicyV4.of(url, policyFields);
+  }
+
+  public PostPolicyV4 generateSignedPostPolicyV4(
+      BlobInfo blobInfo,
+      long duration,
+      TimeUnit unit,
+      PostFieldsV4 fields,
+      PostPolicyV4Option... options) {
+    return generateSignedPostPolicyV4(
+        blobInfo, duration, unit, fields, PostConditionsV4.newBuilder().build(), options);
+  }
+
+  public PostPolicyV4 generateSignedPostPolicyV4(
+      BlobInfo blobInfo,
+      long duration,
+      TimeUnit unit,
+      PostConditionsV4 conditions,
+      PostPolicyV4Option... options) {
+    return generateSignedPostPolicyV4(
+        blobInfo, duration, unit, PostFieldsV4.newBuilder().build(), conditions, options);
+  }
+
+  public PostPolicyV4 generateSignedPostPolicyV4(
+      BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options) {
+    return generateSignedPostPolicyV4(
+        blobInfo, duration, unit, PostFieldsV4.newBuilder().build(), options);
   }
 
   private String constructResourceUriPath(

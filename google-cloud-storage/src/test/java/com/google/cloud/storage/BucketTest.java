@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Role.WRITER;
+import static com.google.common.truth.Truth.assertThat;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.expect;
@@ -71,8 +72,11 @@ public class BucketTest {
   private static final List<Cors> CORS = Collections.singletonList(Cors.newBuilder().build());
   private static final List<Acl> DEFAULT_ACL =
       Collections.singletonList(Acl.of(User.ofAllAuthenticatedUsers(), WRITER));
+
+  @SuppressWarnings({"unchecked", "deprecation"})
   private static final List<? extends DeleteRule> DELETE_RULES =
       Collections.singletonList(new AgeDeleteRule(5));
+
   private static final List<? extends BucketInfo.LifecycleRule> LIFECYCLE_RULES =
       Collections.singletonList(
           new LifecycleRule(
@@ -95,6 +99,8 @@ public class BucketTest {
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
   private static final String LOCATION_TYPE = "multi-region";
+
+  @SuppressWarnings({"unchecked", "deprecation"})
   private static final BucketInfo FULL_BUCKET_INFO =
       BucketInfo.newBuilder("b")
           .setAcl(ACLS)
@@ -121,6 +127,7 @@ public class BucketTest {
           .setRetentionPeriod(RETENTION_PERIOD)
           .setRetentionPolicyIsLocked(RETENTION_POLICY_IS_LOCKED)
           .build();
+
   private static final BucketInfo BUCKET_INFO =
       BucketInfo.newBuilder("b").setMetageneration(42L).build();
   private static final String CONTENT_TYPE = "text/plain";
@@ -478,6 +485,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStream() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info = BlobInfo.newBuilder("b", "n").setContentType(CONTENT_TYPE).build();
@@ -493,6 +501,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamNoContentType() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info = BlobInfo.newBuilder("b", "n").build();
@@ -508,6 +517,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamWithOptions() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info =
@@ -552,6 +562,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamWithEncryptionKey() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info = BlobInfo.newBuilder(BlobId.of("b", "n")).setContentType(CONTENT_TYPE).build();
@@ -569,6 +580,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamNotExists() throws Exception {
     initializeExpectedBucket(5);
     BlobInfo info =
@@ -763,6 +775,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testToBuilder() {
     expect(storage.getOptions()).andReturn(mockOptions).times(4);
     replay(storage);
@@ -773,6 +786,7 @@ public class BucketTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testBuilder() {
     initializeExpectedBucket(4);
     expect(storage.getOptions()).andReturn(mockOptions).times(4);
@@ -832,5 +846,21 @@ public class BucketTest {
     assertEquals(RETENTION_POLICY_IS_LOCKED, bucket.retentionPolicyIsLocked());
     assertEquals(storage.getOptions(), bucket.getStorage().getOptions());
     assertTrue(LOCATION_TYPES.contains(LOCATION_TYPE));
+  }
+
+  @Test
+  public void testDeleteLifecycleRules() {
+    initializeExpectedBucket(6);
+    Bucket bucket =
+        new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(FULL_BUCKET_INFO));
+    assertThat(bucket.getLifecycleRules()).hasSize(1);
+    Bucket expectedUpdatedBucket = bucket.toBuilder().deleteLifecycleRules().build();
+    expect(storage.getOptions()).andReturn(mockOptions).times(2);
+    expect(storage.update(expectedUpdatedBucket)).andReturn(expectedUpdatedBucket);
+    replay(storage);
+    initializeBucket();
+    Bucket updatedBucket = new Bucket(storage, new BucketInfo.BuilderImpl(expectedUpdatedBucket));
+    Bucket actualUpdatedBucket = updatedBucket.update();
+    assertThat(actualUpdatedBucket.getLifecycleRules()).hasSize(0);
   }
 }
