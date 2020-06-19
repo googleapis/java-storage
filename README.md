@@ -17,7 +17,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>5.7.0</version>
+      <version>7.0.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -205,6 +205,16 @@ display on your webpage.
 - [`Flexible Environment/Storage example`](https://github.com/GoogleCloudPlatform/java-docs-samples/tree/master/flexible/cloudstorage) - An app that uploads files to a public Cloud Storage bucket on the App Engine Flexible Environment runtime.
 
 
+
+
+## Samples
+
+Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/master/samples) directory. The samples' `README.md`
+has instructions for running the samples.
+
+| Sample                      | Source Code                       | Try it |
+| --------------------------- | --------------------------------- | ------ |
+| Quickstart Sample | [source code](https://github.com/googleapis/java-storage/blob/master/samples/snippets/src/main/java/com/example/storage/QuickstartSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/QuickstartSample.java) |
 
 
 
