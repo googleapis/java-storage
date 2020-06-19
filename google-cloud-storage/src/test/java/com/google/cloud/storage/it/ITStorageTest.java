@@ -3332,7 +3332,7 @@ public class ITStorageTest {
 
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
     Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
-    Blob blob = storage.upload(blobInfo, tempFileFrom);
+    Blob blob = storage.createFrom(blobInfo, tempFileFrom);
     assertEquals(BUCKET, blob.getBucket());
     assertEquals(blobName, blob.getName());
     assertEquals(BLOB_BYTE_CONTENT.length, (long) blob.getSize());
@@ -3350,7 +3350,7 @@ public class ITStorageTest {
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
     ByteArrayInputStream content = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
-    Blob blob = storage.upload(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
+    Blob blob = storage.createFrom(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
 
     try {
       blob.getContent();

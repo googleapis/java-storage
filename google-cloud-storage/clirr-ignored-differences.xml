@@ -4,12 +4,12 @@
     <difference>
         <differenceType>7012</differenceType>
         <className>com/google/cloud/storage/Storage</className>
-        <method>*.Blob upload(*.BlobInfo, java.nio.file.Path, *.Storage$BlobWriteOption[])</method>
+        <method>*.Blob createFrom(*.BlobInfo, java.nio.file.Path, *.Storage$BlobWriteOption[])</method>
     </difference>
     <difference>
         <differenceType>7012</differenceType>
         <className>com/google/cloud/storage/Storage</className>
-        <method>*.Blob upload(*.BlobInfo, java.io.InputStream, *.Storage$BlobWriteOption[])</method>
+        <method>*.Blob createFrom(*.BlobInfo, java.io.InputStream, *.Storage$BlobWriteOption[])</method>
     </difference>
     <difference>
         <differenceType>7012</differenceType>

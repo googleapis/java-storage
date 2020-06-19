@@ -1929,7 +1929,7 @@ public interface Storage extends Service<StorageOptions> {
    * String fileName = "readme.txt";
    * BlobId blobId = BlobId.of(bucketName, fileName);
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
-   * storage.upload(blobInfo, Paths.get(fileName));
+   * storage.createFrom(blobInfo, Paths.get(fileName));
    * }</pre>
    *
    * @param blobInfo blob to create
@@ -1938,9 +1938,9 @@ public interface Storage extends Service<StorageOptions> {
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
    * @throws StorageException on server side error
-   * @see #upload(BlobInfo, Path, int, BlobWriteOption...)
+   * @see #createFrom(BlobInfo, Path, int, BlobWriteOption...)
    */
-  Blob upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
+  Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
 
   /**
    * Uploads {@code path} to the blob using {@link #writer} and {@code bufferSize}. By default any
@@ -1948,8 +1948,8 @@ public interface Storage extends Service<StorageOptions> {
    * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options. Folder upload is
    * not supported.
    *
-   * <p>{@link #upload(BlobInfo, Path, BlobWriteOption...)} invokes this method with a buffer size
-   * of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the upload
+   * <p>{@link #createFrom(BlobInfo, Path, BlobWriteOption...)} invokes this method with a buffer
+   * size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the upload
    * performance but require more memory. This can cause an OutOfMemoryError or add significant
    * garbage collection overhead. Smaller buffer sizes reduce memory consumption, that is noticeable
    * when uploading many objects in parallel. Buffer sizes less than 256 KiB are treated as 256 KiB.
@@ -1962,7 +1962,7 @@ public interface Storage extends Service<StorageOptions> {
    *
    * int largeBufferSize = 150 * 1024 * 1024;
    * Path file = Paths.get("humongous.file");
-   * storage.upload(blobInfo, file, largeBufferSize);
+   * storage.createFrom(blobInfo, file, largeBufferSize);
    * }</pre>
    *
    * @param blobInfo blob to create
@@ -1973,7 +1973,7 @@ public interface Storage extends Service<StorageOptions> {
    * @throws IOException on I/O error
    * @throws StorageException on server side error
    */
-  Blob upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
+  Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException;
 
   /**
@@ -1989,7 +1989,7 @@ public interface Storage extends Service<StorageOptions> {
    * Hasher hasher = Hashing.crc32c().newHasher().putBytes(content);
    * String crc32c = BaseEncoding.base64().encode(Ints.toByteArray(hasher.hash().asInt()));
    * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(crc32c).build();
-   * storage.upload(blobInfo, new ByteArrayInputStream(content), Storage.BlobWriteOption.crc32cMatch());
+   * storage.createFrom(blobInfo, new ByteArrayInputStream(content), Storage.BlobWriteOption.crc32cMatch());
    * }</pre>
    *
    * @param blobInfo blob to create
@@ -1998,9 +1998,9 @@ public interface Storage extends Service<StorageOptions> {
    * @return a {@code Blob} with complete information
    * @throws IOException on I/O error
    * @throws StorageException on server side error
-   * @see #upload(BlobInfo, InputStream, int, BlobWriteOption...)
+   * @see #createFrom(BlobInfo, InputStream, int, BlobWriteOption...)
    */
-  Blob upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
+  Blob createFrom(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException;
 
   /**
@@ -2009,7 +2009,7 @@ public interface Storage extends Service<StorageOptions> {
    * ignored unless requested via the {@link BlobWriteOption#md5Match()} and {@link
    * BlobWriteOption#crc32cMatch()} options.
    *
-   * <p>{@link #upload(BlobInfo, InputStream, BlobWriteOption...)} )} invokes this method with a
+   * <p>{@link #createFrom(BlobInfo, InputStream, BlobWriteOption...)} )} invokes this method with a
    * buffer size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the
    * upload performance but require more memory. This can cause an OutOfMemoryError or add
    * significant garbage collection overhead. Smaller buffer sizes reduce memory consumption, that
@@ -2024,7 +2024,8 @@ public interface Storage extends Service<StorageOptions> {
    * @throws IOException on I/O error
    * @throws StorageException on server side error
    */
-  Blob upload(BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
+  Blob createFrom(
+      BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException;
 
   /**

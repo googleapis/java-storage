@@ -222,29 +222,30 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public Blob upload(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException {
-    return upload(blobInfo, path, DEFAULT_BUFFER_SIZE, options);
+  public Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options)
+      throws IOException {
+    return createFrom(blobInfo, path, DEFAULT_BUFFER_SIZE, options);
   }
 
   @Override
-  public Blob upload(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
+  public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
     try (InputStream input = Files.newInputStream(path)) {
-      return upload(blobInfo, input, bufferSize, options);
+      return createFrom(blobInfo, input, bufferSize, options);
     }
   }
 
   @Override
-  public Blob upload(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
+  public Blob createFrom(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException {
-    return upload(blobInfo, content, DEFAULT_BUFFER_SIZE, options);
+    return createFrom(blobInfo, content, DEFAULT_BUFFER_SIZE, options);
   }
 
   @Override
-  public Blob upload(
+  public Blob createFrom(
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException {
 

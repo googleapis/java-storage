@@ -966,11 +966,11 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testUploadDirectory() throws IOException {
+  public void testCreateFromDirectory() throws IOException {
     initializeService();
     Path dir = Files.createTempDirectory("unit_");
     try {
-      storage.upload(BLOB_INFO1, dir);
+      storage.createFrom(BLOB_INFO1, dir);
       fail();
     } catch (StorageException e) {
       assertEquals(dir + " is a directory", e.getMessage());
@@ -1011,73 +1011,74 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testUploadFile() throws Exception {
+  public void testCreateFromFile() throws Exception {
     byte[] dataToSend = {1, 2, 3, 4};
-    Path tempFile = Files.createTempFile("testUpload", ".tmp");
+    Path tempFile = Files.createTempFile("testCreateFrom", ".tmp");
     Files.write(tempFile, dataToSend);
 
     BlobInfo blobInfo = initializeUpload(dataToSend);
-    Blob blob = storage.upload(blobInfo, tempFile);
+    Blob blob = storage.createFrom(blobInfo, tempFile);
     assertEquals(expectedUpdated, blob);
   }
 
   @Test
-  public void testUploadStream() throws Exception {
+  public void testCreateFromStream() throws Exception {
     byte[] dataToSend = {1, 2, 3, 4, 5};
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
 
     BlobInfo blobInfo = initializeUpload(dataToSend);
-    Blob blob = storage.upload(blobInfo, stream);
+    Blob blob = storage.createFrom(blobInfo, stream);
     assertEquals(expectedUpdated, blob);
   }
 
   @Test
-  public void testUploadWithOptions() throws Exception {
+  public void testCreateFromWithOptions() throws Exception {
     byte[] dataToSend = {1, 2, 3, 4, 5, 6};
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
 
     BlobInfo blobInfo = initializeUpload(dataToSend, DEFAULT_BUFFER_SIZE, KMS_KEY_NAME_OPTIONS);
-    Blob blob = storage.upload(blobInfo, stream, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
+    Blob blob =
+        storage.createFrom(blobInfo, stream, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
     assertEquals(expectedUpdated, blob);
   }
 
   @Test
-  public void testUploadWithBufferSize() throws Exception {
+  public void testCreateFromWithBufferSize() throws Exception {
     byte[] dataToSend = {1, 2, 3, 4, 5, 6};
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
     int bufferSize = MIN_BUFFER_SIZE * 2;
 
     BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize);
-    Blob blob = storage.upload(blobInfo, stream, bufferSize);
+    Blob blob = storage.createFrom(blobInfo, stream, bufferSize);
     assertEquals(expectedUpdated, blob);
   }
 
   @Test
-  public void testUploadWithBufferSizeAndOptions() throws Exception {
+  public void testCreateFromWithBufferSizeAndOptions() throws Exception {
     byte[] dataToSend = {1, 2, 3, 4, 5, 6};
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
     int bufferSize = MIN_BUFFER_SIZE * 2;
 
     BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize, KMS_KEY_NAME_OPTIONS);
     Blob blob =
-        storage.upload(
+        storage.createFrom(
             blobInfo, stream, bufferSize, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
     assertEquals(expectedUpdated, blob);
   }
 
   @Test
-  public void testUploadWithSmallBufferSize() throws Exception {
+  public void testCreateFromWithSmallBufferSize() throws Exception {
     byte[] dataToSend = new byte[100_000];
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
     int smallBufferSize = 100;
 
     BlobInfo blobInfo = initializeUpload(dataToSend, MIN_BUFFER_SIZE);
-    Blob blob = storage.upload(blobInfo, stream, smallBufferSize);
+    Blob blob = storage.createFrom(blobInfo, stream, smallBufferSize);
     assertEquals(expectedUpdated, blob);
   }
 
   @Test
-  public void testUploadWithException() throws Exception {
+  public void testCreateFromWithException() throws Exception {
     initializeService();
     String uploadId = "id-exception";
     byte[] bytes = new byte[10];
@@ -1096,7 +1097,7 @@ public class StorageImplMockitoTest {
 
     InputStream input = new ByteArrayInputStream(bytes);
     try {
-      storage.upload(info, input, MIN_BUFFER_SIZE);
+      storage.createFrom(info, input, MIN_BUFFER_SIZE);
       fail();
     } catch (StorageException e) {
       assertSame(runtimeException, e.getCause());
@@ -1104,7 +1105,7 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testUploadMultipleParts() throws Exception {
+  public void testCreateFromMultipleParts() throws Exception {
     initializeService();
     String uploadId = "id-multiple-parts";
     int extraBytes = 10;
@@ -1139,7 +1140,7 @@ public class StorageImplMockitoTest {
         .writeWithResponse(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true);
 
     InputStream input = new ByteArrayInputStream(dataToSend);
-    Blob blob = storage.upload(info, input, MIN_BUFFER_SIZE);
+    Blob blob = storage.createFrom(info, input, MIN_BUFFER_SIZE);
     assertEquals(Blob.fromPb(storage, storageObject), blob);
   }
 
