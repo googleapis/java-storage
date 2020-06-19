@@ -129,7 +129,18 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
-  public StorageObject write(
+  public void write(
+      String uploadId,
+      byte[] toWrite,
+      int toWriteOffset,
+      long destOffset,
+      int length,
+      boolean last) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
+  public StorageObject writeWithResponse(
       String uploadId,
       byte[] toWrite,
       int toWriteOffset,
