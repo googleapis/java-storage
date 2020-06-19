@@ -338,7 +338,13 @@ public class ITStorageTest {
             .build();
     requestParamsHeader.put(requestParamsKey, "parent=" + kmsKeyRingResourcePath);
     iamStub = MetadataUtils.attachHeaders(iamStub, requestParamsHeader);
-    iamStub.setIamPolicy(setIamPolicyRequest);
+    try {
+      iamStub.setIamPolicy(setIamPolicyRequest);
+    } catch (StatusRuntimeException e) {
+      if (log.isLoggable(Level.WARNING)) {
+        log.log(Level.WARNING, "Unable to set IAM policy: {0}", e.getMessage());
+      }
+    }
   }
 
   private static String ensureKmsKeyExistsForTests(
