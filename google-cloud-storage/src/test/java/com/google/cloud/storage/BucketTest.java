@@ -863,4 +863,51 @@ public class BucketTest {
     Bucket actualUpdatedBucket = updatedBucket.update();
     assertThat(actualUpdatedBucket.getLifecycleRules()).hasSize(0);
   }
+
+  @Test
+  public void testDisableLogging() {
+    initializeExpectedBucket(6);
+    BucketInfo.Logging logging =
+        BucketInfo.Logging.newBuilder()
+            .setLogBucket("logs-bucket")
+            .setLogObjectPrefix("test-logs")
+            .build();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder("b")
+            .setAcl(ACLS)
+            .setEtag(ETAG)
+            .setGeneratedId(GENERATED_ID)
+            .setMetageneration(META_GENERATION)
+            .setOwner(OWNER)
+            .setSelfLink(SELF_LINK)
+            .setCors(CORS)
+            .setCreateTime(CREATE_TIME)
+            .setLogging(logging)
+            .setDefaultAcl(DEFAULT_ACL)
+            .setLifecycleRules(LIFECYCLE_RULES)
+            .setIndexPage(INDEX_PAGE)
+            .setNotFoundPage(NOT_FOUND_PAGE)
+            .setLocation(LOCATION)
+            .setStorageClass(STORAGE_CLASS)
+            .setVersioningEnabled(VERSIONING_ENABLED)
+            .setLabels(BUCKET_LABELS)
+            .setRequesterPays(REQUESTER_PAYS)
+            .setDefaultKmsKeyName(DEFAULT_KMS_KEY_NAME)
+            .setDefaultEventBasedHold(DEFAULT_EVENT_BASED_HOLD)
+            .setRetentionEffectiveTime(RETENTION_EFFECTIVE_TIME)
+            .setRetentionPeriod(RETENTION_PERIOD)
+            .setRetentionPolicyIsLocked(RETENTION_POLICY_IS_LOCKED)
+            .build();
+    Bucket bucket = new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(bucketInfo));
+    assertEquals("logs-bucket", bucket.getLogging().getLogBucket());
+    assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
+    Bucket expectedUpdatedBucket = bucket.toBuilder().disableLogging().build();
+    expect(storage.getOptions()).andReturn(mockOptions).times(2);
+    expect(storage.update(expectedUpdatedBucket)).andReturn(expectedUpdatedBucket);
+    replay(storage);
+    initializeBucket();
+    Bucket updatedBucket = new Bucket(storage, new BucketInfo.BuilderImpl(expectedUpdatedBucket));
+    Bucket actualUpdatedBucket = updatedBucket.update();
+    assertThat(actualUpdatedBucket.getLogging()).isNull();
+  }
 }

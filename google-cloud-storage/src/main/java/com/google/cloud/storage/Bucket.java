@@ -578,6 +578,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    public Builder disableLogging() {
+      infoBuilder.disableLogging();
+      return this;
+    }
+
+    @Override
     public Builder setStorageClass(StorageClass storageClass) {
       infoBuilder.setStorageClass(storageClass);
       return this;

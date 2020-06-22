@@ -983,6 +983,14 @@ public class BucketInfo implements Serializable {
     public abstract Builder deleteLifecycleRules();
 
     /**
+     * Disable access logging for this bucket.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/access-logs#disabling">Disabling
+     *     logging</a>
+     */
+    public abstract Builder disableLogging();
+
+    /**
      * Sets the bucket's storage class. This defines how blobs in the bucket are stored and
      * determines the SLA and the cost of storage. A list of supported values is available <a
      * href="https://cloud.google.com/storage/docs/storage-classes">here</a>.
@@ -1200,6 +1208,12 @@ public class BucketInfo implements Serializable {
     public Builder deleteLifecycleRules() {
       setDeleteRules(null);
       setLifecycleRules(null);
+      return this;
+    }
+
+    @Override
+    public Builder disableLogging() {
+      setLogging(null);
       return this;
     }
 
@@ -1760,6 +1774,8 @@ public class BucketInfo implements Serializable {
     }
     if (logging != null) {
       bucketPb.setLogging(logging.toPb());
+    } else {
+      bucketPb.setLogging(Data.nullOf(Bucket.Logging.class));
     }
     return bucketPb;
   }
