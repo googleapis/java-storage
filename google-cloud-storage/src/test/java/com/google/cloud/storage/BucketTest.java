@@ -872,32 +872,7 @@ public class BucketTest {
             .setLogBucket("logs-bucket")
             .setLogObjectPrefix("test-logs")
             .build();
-    BucketInfo bucketInfo =
-        BucketInfo.newBuilder("b")
-            .setAcl(ACLS)
-            .setEtag(ETAG)
-            .setGeneratedId(GENERATED_ID)
-            .setMetageneration(META_GENERATION)
-            .setOwner(OWNER)
-            .setSelfLink(SELF_LINK)
-            .setCors(CORS)
-            .setCreateTime(CREATE_TIME)
-            .setLogging(logging)
-            .setDefaultAcl(DEFAULT_ACL)
-            .setLifecycleRules(LIFECYCLE_RULES)
-            .setIndexPage(INDEX_PAGE)
-            .setNotFoundPage(NOT_FOUND_PAGE)
-            .setLocation(LOCATION)
-            .setStorageClass(STORAGE_CLASS)
-            .setVersioningEnabled(VERSIONING_ENABLED)
-            .setLabels(BUCKET_LABELS)
-            .setRequesterPays(REQUESTER_PAYS)
-            .setDefaultKmsKeyName(DEFAULT_KMS_KEY_NAME)
-            .setDefaultEventBasedHold(DEFAULT_EVENT_BASED_HOLD)
-            .setRetentionEffectiveTime(RETENTION_EFFECTIVE_TIME)
-            .setRetentionPeriod(RETENTION_PERIOD)
-            .setRetentionPolicyIsLocked(RETENTION_POLICY_IS_LOCKED)
-            .build();
+    BucketInfo bucketInfo = BucketInfo.newBuilder("b").setLogging(logging).build();
     Bucket bucket = new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(bucketInfo));
     assertEquals("logs-bucket", bucket.getLogging().getLogBucket());
     assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
