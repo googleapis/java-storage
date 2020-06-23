@@ -865,7 +865,7 @@ public class BucketTest {
   }
 
   @Test
-  public void testDisableLogging() {
+  public void testUpdateBucketLogging() {
     initializeExpectedBucket(6);
     BucketInfo.Logging logging =
         BucketInfo.Logging.newBuilder()
@@ -901,7 +901,7 @@ public class BucketTest {
     Bucket bucket = new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(bucketInfo));
     assertEquals("logs-bucket", bucket.getLogging().getLogBucket());
     assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
-    Bucket expectedUpdatedBucket = bucket.toBuilder().disableLogging().build();
+    Bucket expectedUpdatedBucket = bucket.toBuilder().setLogging(null).build();
     expect(storage.getOptions()).andReturn(mockOptions).times(2);
     expect(storage.update(expectedUpdatedBucket)).andReturn(expectedUpdatedBucket);
     replay(storage);

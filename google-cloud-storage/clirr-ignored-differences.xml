@@ -26,9 +26,4 @@
         <method>com.google.cloud.storage.BucketInfo$Builder deleteLifecycleRules()</method>
         <differenceType>7013</differenceType>
     </difference>
-    <difference>
-        <className>com/google/cloud/storage/BucketInfo$Builder</className>
-        <method>com.google.cloud.storage.BucketInfo$Builder disableLogging()</method>
-        <differenceType>7013</differenceType>
-    </difference>
 </differences>

@@ -3324,7 +3324,7 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testDisableLogging() throws ExecutionException, InterruptedException {
+  public void testUpdateBucketLogging() throws ExecutionException, InterruptedException {
     String logsBucket = RemoteStorageHelper.generateBucketName();
     String loggingBucket = RemoteStorageHelper.generateBucketName();
     try {
@@ -3348,7 +3348,7 @@ public class ITStorageTest {
 
       assertEquals(logsBucket, bucket.getLogging().getLogBucket());
       assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
-      Bucket updatedBucket = bucket.toBuilder().disableLogging().build().update();
+      Bucket updatedBucket = bucket.toBuilder().setLogging(null).build().update();
       assertThat(updatedBucket.getLogging()).isNull();
     } finally {
       RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
