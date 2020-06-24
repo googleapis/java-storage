@@ -1310,7 +1310,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setLogging(Logging logging) {
-      this.logging = logging;
+      this.logging = logging != null ? logging : null;
       return this;
     }
 
@@ -1758,11 +1758,8 @@ public class BucketInfo implements Serializable {
     if (iamConfiguration != null) {
       bucketPb.setIamConfiguration(iamConfiguration.toPb());
     }
-    if (logging != null) {
-      bucketPb.setLogging(logging.toPb());
-    } else {
-      bucketPb.setLogging(Data.nullOf(Bucket.Logging.class));
-    }
+    Bucket.Logging loggingPb = logging != null ? logging.toPb() : Data.nullOf(Bucket.Logging.class);
+    bucketPb.setLogging(loggingPb);
     return bucketPb;
   }
 
