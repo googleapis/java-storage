@@ -36,7 +36,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.api.gax.paging.Page;
 import com.google.api.services.storage.model.BucketAccessControl;
-import com.google.api.services.storage.model.Notification;
 import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.TestIamPermissionsResponse;
@@ -1694,79 +1693,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               EXCEPTION_HANDLER,
               getOptions().getClock());
       return answer == null ? null : ServiceAccount.fromPb(answer);
-    } catch (RetryHelperException e) {
-      throw StorageException.translateAndThrow(e);
-    }
-  }
-
-  @Override
-  public Notification createNotification(final String bucket, final NotificationInfo notification) {
-    final com.google.api.services.storage.model.Notification notificationPb = notification.toPb();
-    try {
-      return runWithRetries(
-          new Callable<com.google.api.services.storage.model.Notification>() {
-            @Override
-            public com.google.api.services.storage.model.Notification call() {
-              return storageRpc.createNotification(bucket, notificationPb);
-            }
-          },
-          getOptions().getRetrySettings(),
-          EXCEPTION_HANDLER,
-          getOptions().getClock());
-    } catch (RetryHelperException e) {
-      throw StorageException.translateAndThrow(e);
-    }
-  }
-
-  @Override
-  public Notification getNotification(final String bucket, final String notification) {
-    try {
-      return runWithRetries(
-          new Callable<Notification>() {
-            @Override
-            public Notification call() {
-              return storageRpc.getNotification(bucket, notification);
-            }
-          },
-          getOptions().getRetrySettings(),
-          EXCEPTION_HANDLER,
-          getOptions().getClock());
-    } catch (RetryHelperException e) {
-      throw StorageException.translateAndThrow(e);
-    }
-  }
-
-  @Override
-  public List<Notification> listNotifications(final String bucket) {
-    try {
-      return runWithRetries(
-          new Callable<List<Notification>>() {
-            @Override
-            public List<Notification> call() {
-              return storageRpc.listNotifications(bucket);
-            }
-          },
-          getOptions().getRetrySettings(),
-          EXCEPTION_HANDLER,
-          getOptions().getClock());
-    } catch (RetryHelperException e) {
-      throw StorageException.translateAndThrow(e);
-    }
-  }
-
-  @Override
-  public boolean deleteNotification(final String bucket, final String notification) {
-    try {
-      return runWithRetries(
-          new Callable<Boolean>() {
-            @Override
-            public Boolean call() {
-              return storageRpc.deleteNotification(bucket, notification);
-            }
-          },
-          getOptions().getRetrySettings(),
-          EXCEPTION_HANDLER,
-          getOptions().getClock());
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }
