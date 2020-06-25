@@ -533,14 +533,6 @@ public interface StorageRpc extends ServiceRpc {
   Notification createNotification(String bucket, Notification notification);
 
   /**
-   * Get the notification with the specified name on the specified object.
-   *
-   * @return the notification object that exist on the bucket.
-   * @throws StorageException upon failure
-   */
-  Notification getNotification(String bucket, String notification);
-
-  /**
    * Lock retention policy for the provided bucket.
    *
    * @return a {@code Bucket} object of the locked bucket
