@@ -287,7 +287,7 @@ public class BucketInfo implements Serializable {
 
     Bucket.Logging toPb() {
       Bucket.Logging logging;
-      if (logBucket != null && logObjectPrefix != null) {
+      if (logBucket != null || logObjectPrefix != null) {
         logging = new Bucket.Logging();
         logging.setLogBucket(logBucket);
         logging.setLogObjectPrefix(logObjectPrefix);
