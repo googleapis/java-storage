@@ -2,24 +2,19 @@
 <!-- see http://mojo.codehaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
     <difference>
-        <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.PostPolicyV4 generateSignedPostPolicyV4(com.google.cloud.storage.BlobInfo, long, java.util.concurrent.TimeUnit, com.google.cloud.storage.PostPolicyV4$PostFieldsV4, com.google.cloud.storage.PostPolicyV4$PostConditionsV4, com.google.cloud.storage.Storage$PostPolicyV4Option[])</method>
         <differenceType>7012</differenceType>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>*.Blob createFrom(*.BlobInfo, java.nio.file.Path, *.Storage$BlobWriteOption[])</method>
     </difference>
     <difference>
-        <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.PostPolicyV4 generateSignedPostPolicyV4(com.google.cloud.storage.BlobInfo, long, java.util.concurrent.TimeUnit, com.google.cloud.storage.PostPolicyV4$PostFieldsV4, com.google.cloud.storage.Storage$PostPolicyV4Option[])</method>
         <differenceType>7012</differenceType>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>*.Blob createFrom(*.BlobInfo, java.io.InputStream, *.Storage$BlobWriteOption[])</method>
     </difference>
     <difference>
-        <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.PostPolicyV4 generateSignedPostPolicyV4(com.google.cloud.storage.BlobInfo, long, java.util.concurrent.TimeUnit, com.google.cloud.storage.PostPolicyV4$PostConditionsV4, com.google.cloud.storage.Storage$PostPolicyV4Option[])</method>
         <differenceType>7012</differenceType>
-    </difference>
-    <difference>
-        <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.PostPolicyV4 generateSignedPostPolicyV4(com.google.cloud.storage.BlobInfo, long, java.util.concurrent.TimeUnit, com.google.cloud.storage.Storage$PostPolicyV4Option[])</method>
-        <differenceType>7012</differenceType>
+        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+        <method>*.StorageObject writeWithResponse(*.String, byte[], int, long, int, boolean)</method>
     </difference>
     <difference>
         <className>com/google/cloud/storage/BucketInfo$Builder</className>

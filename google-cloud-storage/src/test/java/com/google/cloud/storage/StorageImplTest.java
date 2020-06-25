@@ -109,7 +109,8 @@ public class StorageImplTest {
       "projects/gcloud-devel/locations/us/keyRings/gcs_kms_key_ring_us/cryptoKeys/key";
   private static final Long RETENTION_PERIOD = 10L;
   private static final String USER_PROJECT = "test-project";
-
+  private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
+  private static final int MIN_BUFFER_SIZE = 256 * 1024;
   // BucketInfo objects
   private static final BucketInfo BUCKET_INFO1 =
       BucketInfo.newBuilder(BUCKET_NAME1).setMetageneration(42L).build();
