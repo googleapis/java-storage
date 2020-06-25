@@ -3227,13 +3227,7 @@ public class ITStorageTest {
     try {
       assertNotNull(storage.create(BucketInfo.newBuilder(logsBucket).setLocation("us").build()));
       Policy policy = storage.getIamPolicy(logsBucket);
-      assertNotNull(
-          storage.setIamPolicy(
-              logsBucket,
-              policy
-                  .toBuilder()
-                  .addIdentity(StorageRoles.legacyBucketWriter(), Identity.allAuthenticatedUsers())
-                  .build()));
+      assertNotNull(policy);
       BucketInfo.Logging logging =
           BucketInfo.Logging.newBuilder()
               .setLogBucket(logsBucket)
@@ -3247,7 +3241,7 @@ public class ITStorageTest {
 
       // Disable bucket logging.
       Bucket updatedBucket = bucket.toBuilder().setLogging(null).build().update();
-      assertThat(updatedBucket.getLogging()).isNull();
+      assertNull(updatedBucket.getLogging());
 
     } finally {
       RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
