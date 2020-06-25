@@ -33,6 +33,7 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.util.DateTime;
 import com.google.api.gax.paging.Page;
+import com.google.api.services.storage.model.Notification;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.http.HttpTransportFactory;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -41,6 +42,7 @@ import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
+import com.google.cloud.ServiceOptions;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.http.HttpTransportOptions;
@@ -54,6 +56,7 @@ import com.google.cloud.kms.v1.KeyManagementServiceGrpc;
 import com.google.cloud.kms.v1.KeyManagementServiceGrpc.KeyManagementServiceBlockingStub;
 import com.google.cloud.kms.v1.KeyRingName;
 import com.google.cloud.kms.v1.LocationName;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
@@ -68,6 +71,7 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HttpMethod;
+import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.ServiceAccount;
@@ -120,6 +124,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -142,6 +147,8 @@ public class ITStorageTest {
 
   private static RemoteStorageHelper remoteStorageHelper;
   private static Storage storage;
+  private static TopicAdminClient topicAdminClient;
+  private static Notification notification;
   private static String kmsKeyOneResourcePath;
   private static String kmsKeyTwoResourcePath;
   private static Metadata requestParamsHeader = new Metadata();
@@ -196,6 +203,15 @@ public class ITStorageTest {
   private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
       ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
+  private static final String PROJECT = ServiceOptions.getDefaultProjectId();
+  private static final String ID = UUID.randomUUID().toString().substring(0, 8);
+  private static final NotificationInfo.PayloadFormat PAYLOAD_FORMAT =
+      NotificationInfo.PayloadFormat.JSON_API_V1.JSON_API_V1;
+
+  private static final String TOPIC =
+      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID);
+  private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
+
   @BeforeClass
   public static void beforeClass() throws IOException {
     remoteStorageHelper = RemoteStorageHelper.create();
@@ -213,6 +229,22 @@ public class ITStorageTest {
 
     // Prepare KMS KeyRing for CMEK tests
     prepareKmsKeys();
+
+    // Create pubsub topic for notification.
+    topicAdminClient = TopicAdminClient.create();
+    topicAdminClient.createTopic(TOPIC);
+    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(TOPIC);
+    Binding binding =
+        Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
+    topicAdminClient.setIamPolicy(TOPIC, policy.toBuilder().addBindings(binding).build());
+
+    // Create a notification on a bucket.
+    NotificationInfo notificationInfo =
+        NotificationInfo.newBuilder(TOPIC)
+            .setCustomAttributes(CUSTOM_ATTRIBUTES)
+            .setPayloadFormat(PAYLOAD_FORMAT)
+            .build();
+    notification = storage.createNotification(BUCKET, notificationInfo);
   }
 
   @Before
@@ -235,6 +267,13 @@ public class ITStorageTest {
   @AfterClass
   public static void afterClass() throws ExecutionException, InterruptedException {
     if (storage != null) {
+
+      /* Delete the specified notification on the specified bucket as well as delete the pubsub topic */
+      if (topicAdminClient != null) {
+        storage.deleteNotification(BUCKET, notification.getId());
+        topicAdminClient.deleteTopic(TOPIC);
+        topicAdminClient.close();
+      }
       // In beforeClass, we make buckets auto-delete blobs older than a day old.
       // Here, delete all buckets older than 2 days. They should already be empty and easy.
       long cleanTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(2);
@@ -3320,6 +3359,26 @@ public class ITStorageTest {
       assertThat(updatedBucket.getLifecycleRules()).hasSize(0);
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
+  }
+
+  @Test
+  public void testGetNotification() {
+    Notification actualNotification = storage.getNotification(BUCKET, notification.getId());
+    assertEquals(CUSTOM_ATTRIBUTES, actualNotification.getCustomAttributes());
+    assertEquals(PAYLOAD_FORMAT.name(), actualNotification.getPayloadFormat());
+    assertTrue(actualNotification.getTopic().contains(TOPIC));
+  }
+
+  @Test
+  public void testListNotification() {
+    List<Notification> notifications = storage.listNotifications(BUCKET);
+    for (Notification actualNotification : notifications) {
+      if (actualNotification.getId().equals(notification.getId())) {
+        assertEquals(CUSTOM_ATTRIBUTES, actualNotification.getCustomAttributes());
+        assertEquals(PAYLOAD_FORMAT.name(), actualNotification.getPayloadFormat());
+        assertTrue(actualNotification.getTopic().contains(TOPIC));
+      }
     }
   }
 }
