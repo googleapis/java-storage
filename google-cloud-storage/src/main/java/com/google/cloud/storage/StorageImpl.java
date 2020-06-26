@@ -1374,6 +1374,26 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return Retrying.run(getOptions(), algorithm, c, f);
   }
 
+  @Override
+  public Notification createNotification(final String bucket, NotificationInfo notification) {
+      return null;
+  }
+
+  @Override
+  public Notification getNotification(final String bucket, final String notification) {
+    return null;
+  }
+
+  @Override
+  public List<Notification> listNotifications(final String bucket) {
+    return null;
+  }
+
+  @Override
+  public boolean deleteNotification(final String bucket, final String notification) {
+    return false;
+  }
+
   private static <T> void addToOptionMap(
       StorageRpc.Option option, T defaultValue, Map<StorageRpc.Option, Object> map) {
     addToOptionMap(option, option, defaultValue, map);
