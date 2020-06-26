@@ -415,7 +415,7 @@ public class BucketInfo implements Serializable {
               .setCreatedBefore(
                   lifecycleCondition.getCreatedBefore() == null
                       ? null
-                      : new DateTime(false, lifecycleCondition.getCreatedBefore().getValue(), 0))
+                      : new DateTime(true, lifecycleCondition.getCreatedBefore().getValue(), 0))
               .setIsLive(lifecycleCondition.getIsLive())
               .setNumNewerVersions(lifecycleCondition.getNumberOfNewerVersions())
               .setMatchesStorageClass(
@@ -580,10 +580,12 @@ public class BucketInfo implements Serializable {
         return noncurrentTimeBefore;
       }
 
+      /** Returns the custom time before in RFC 3339 format. */
       public DateTime getCustomTimeBefore() {
         return customTimeBefore;
       }
 
+      /** Returns the number of days elapsed since the user-specified timestamp set on an object. */
       public Integer getDaysSinceCustomTime() {
         return daysSinceCustomTime;
       }
@@ -676,11 +678,20 @@ public class BucketInfo implements Serializable {
           return this;
         }
 
+        /**
+         * Sets the timestamp in RFC 3339 format. This condition is satisfied when the custom time
+         * on an object is before this timestamp.
+         */
         public Builder setCustomTimeBefore(DateTime customTimeBefore) {
           this.customTimeBefore = customTimeBefore;
           return this;
         }
 
+        /**
+         * Sets the number of days elapsed since the user-specified timestamp set on an object. The
+         * condition is satisfied if the days elapsed is at least this number. If no custom
+         * timestamp is specified on an object, the condition does not apply.
+         */
         public Builder setDaysSinceCustomTime(Integer daysSinceCustomTime) {
           this.daysSinceCustomTime = daysSinceCustomTime;
           return this;
