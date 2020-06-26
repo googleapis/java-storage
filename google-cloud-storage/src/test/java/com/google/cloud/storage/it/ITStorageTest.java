@@ -458,6 +458,8 @@ public class ITStorageTest {
                             .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
                             .setDaysSinceNoncurrentTime(30)
                             .setNoncurrentTimeBefore(new DateTime(System.currentTimeMillis()))
+                            .setCustomTimeBefore(new DateTime(System.currentTimeMillis()))
+                            .setDaysSinceCustomTime(30)
                             .build())))
             .build());
     Bucket remoteBucket =
@@ -476,6 +478,8 @@ public class ITStorageTest {
       assertEquals(1, lifecycleRule.getCondition().getMatchesStorageClass().size());
       assertEquals(30, lifecycleRule.getCondition().getDaysSinceNoncurrentTime().intValue());
       assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBefore());
+      assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
+      assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
     } finally {
       storage.delete(lifecycleTestBucketName);
     }
