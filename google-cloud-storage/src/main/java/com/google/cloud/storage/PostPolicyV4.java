@@ -31,8 +31,8 @@ import java.util.Set;
  * @see <a href="https://cloud.google.com/storage/docs/xml-api/post-object">POST Object</a>
  */
 public final class PostPolicyV4 {
-  private String url;
-  private Map<String, String> fields;
+  private final String url;
+  private final Map<String, String> fields;
 
   private PostPolicyV4(String url, Map<String, String> fields) {
     this.url = url;
@@ -58,7 +58,7 @@ public final class PostPolicyV4 {
    *     Object Form fields</a>
    */
   public static final class PostFieldsV4 {
-    private Map<String, String> fieldsMap;
+    private final Map<String, String> fieldsMap;
 
     private PostFieldsV4(Builder builder) {
       this.fieldsMap = builder.fieldsMap;
@@ -76,15 +76,23 @@ public final class PostPolicyV4 {
       return new Builder();
     }
 
+    public Builder toBuilder() {
+      return new Builder(fieldsMap);
+    }
+
     public Map<String, String> getFieldsMap() {
       return fieldsMap;
     }
 
     public static class Builder {
-      private Map<String, String> fieldsMap;
+      private final Map<String, String> fieldsMap;
 
       private Builder() {
-        fieldsMap = new HashMap<>();
+        this(new HashMap<String, String>());
+      }
+
+      private Builder(Map<String, String> fieldsMap) {
+        this.fieldsMap = fieldsMap;
       }
 
       public PostFieldsV4 build() {
@@ -121,7 +129,7 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      public Builder Expires(String expires) {
+      public Builder setExpires(String expires) {
         fieldsMap.put("expires", expires);
         return this;
       }
@@ -136,8 +144,8 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      public Builder AddCustomMetadataField(String field, String value) {
-        fieldsMap.put("x-goog-meta-" + field, value);
+      public Builder addCustomMetadataField(String field, String value) {
+        fieldsMap.put(field, value);
         return this;
       }
     }
@@ -270,8 +278,8 @@ public final class PostPolicyV4 {
    *     Policy document</a>
    */
   public static final class PostPolicyV4Document {
-    private String expiration;
-    private PostConditionsV4 conditions;
+    private final String expiration;
+    private final PostConditionsV4 conditions;
 
     private PostPolicyV4Document(String expiration, PostConditionsV4 conditions) {
       this.expiration = expiration;
@@ -363,9 +371,9 @@ public final class PostPolicyV4 {
    *     Policy document</a>
    */
   static final class ConditionV4 {
-    ConditionV4Type type;
-    String operand1;
-    String operand2;
+    final ConditionV4Type type;
+    final String operand1;
+    final String operand2;
 
     private ConditionV4(ConditionV4Type type, String operand1, String operand2) {
       this.type = type;
