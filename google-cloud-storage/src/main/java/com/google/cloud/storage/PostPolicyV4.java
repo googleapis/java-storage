@@ -122,9 +122,7 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /**
-       * @deprecated use {@link #setExpires(String)}
-       */
+      /** @deprecated use {@link #setExpires(String)} */
       @Deprecated
       public Builder Expires(String expires) {
         return setExpires(expires);
@@ -145,9 +143,7 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /**
-       * @deprecated use {@link #addCustomMetadataField(String, String)}
-       */
+      /** @deprecated use {@link #addCustomMetadataField(String, String)} */
       @Deprecated
       public Builder AddCustomMetadataField(String field, String value) {
         return addCustomMetadataField(field, value);

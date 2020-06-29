@@ -21,14 +21,4 @@
         <method>com.google.cloud.storage.BucketInfo$Builder deleteLifecycleRules()</method>
         <differenceType>7013</differenceType>
     </difference>
-    <difference>
-        <differenceType>7002</differenceType>
-        <className>com/google/cloud/storage/PostPolicyV4$PostFieldsV4$Builder</className>
-        <method>*.PostPolicyV4$PostFieldsV4$Builder AddCustomMetadataField(java.lang.String, java.lang.String)</method>
-    </difference>
-    <difference>
-        <differenceType>7002</differenceType>
-        <className>com/google/cloud/storage/PostPolicyV4$PostFieldsV4$Builder</className>
-        <method>*.PostPolicyV4$PostFieldsV4$Builder Expires(java.lang.String)</method>
-    </difference>
 </differences>
