@@ -76,10 +76,6 @@ public final class PostPolicyV4 {
       return new Builder();
     }
 
-    public Builder toBuilder() {
-      return new Builder(fieldsMap);
-    }
-
     public Map<String, String> getFieldsMap() {
       return fieldsMap;
     }
@@ -89,11 +85,7 @@ public final class PostPolicyV4 {
       private final Map<String, String> fieldsMap;
 
       private Builder() {
-        this(new HashMap<String, String>());
-      }
-
-      private Builder(Map<String, String> fieldsMap) {
-        this.fieldsMap = fieldsMap;
+        this.fieldsMap = new HashMap<>();
       }
 
       public PostFieldsV4 build() {
@@ -130,6 +122,14 @@ public final class PostPolicyV4 {
         return this;
       }
 
+      /**
+       * @deprecated use {@link #setExpires(String)}
+       */
+      @Deprecated
+      public Builder Expires(String expires) {
+        return setExpires(expires);
+      }
+
       public Builder setExpires(String expires) {
         fieldsMap.put("expires", expires);
         return this;
@@ -143,6 +143,14 @@ public final class PostPolicyV4 {
       public Builder setSuccessActionStatus(int successActionStatus) {
         fieldsMap.put("success_action_status", "" + successActionStatus);
         return this;
+      }
+
+      /**
+       * @deprecated use {@link #addCustomMetadataField(String, String)}
+       */
+      @Deprecated
+      public Builder AddCustomMetadataField(String field, String value) {
+        return addCustomMetadataField(field, value);
       }
 
       public Builder addCustomMetadataField(String field, String value) {
