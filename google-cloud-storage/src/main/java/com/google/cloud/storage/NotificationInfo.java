@@ -36,274 +36,307 @@ import java.util.Objects;
  */
 public class NotificationInfo implements Serializable {
 
-    private static final long serialVersionUID = 5725883368559753810L;
-    private static final PathTemplate PATH_TEMPLATE =
-            PathTemplate.createWithoutUrlEncoding("projects/{project}/topics/{topic}");
+  private static final long serialVersionUID = 5725883368559753810L;
+  private static final PathTemplate PATH_TEMPLATE =
+      PathTemplate.createWithoutUrlEncoding("projects/{project}/topics/{topic}");
 
-    public enum PayloadFormat {
-        JSON_API_V1,
-        NONE
+  public enum PayloadFormat {
+    JSON_API_V1,
+    NONE
+  }
+
+  static final Function<Notification, NotificationInfo> FROM_PB_FUNCTION =
+      new Function<Notification, NotificationInfo>() {
+        @Override
+        public NotificationInfo apply(Notification pb) {
+          return NotificationInfo.fromPb(pb);
+        }
+      };
+  static final Function<NotificationInfo, Notification> TO_PB_FUNCTION =
+      new Function<NotificationInfo, Notification>() {
+        @Override
+        public Notification apply(NotificationInfo NotificationInfo) {
+          return NotificationInfo.toPb();
+        }
+      };
+  private final String generatedId;
+  private final String topic;
+  private final List<String> eventTypes;
+  private final Map<String, String> customAttributes;
+  private final PayloadFormat payloadFormat;
+  private final String objectNamePrefix;
+  private final String etag;
+  private final String selfLink;
+
+  /** Builder for {@code NotificatioInfo}. */
+  public abstract static class Builder {
+    Builder() {}
+
+    public abstract Builder setGeneratedId(String generatedId);
+
+    public abstract Builder setSelfLink(String selfLink);
+
+    public abstract Builder setTopic(String topic);
+
+    public abstract Builder setPayloadFormat(PayloadFormat payloadFormat);
+
+    public abstract Builder setObjectNamePrefix(String objectNamePrefix);
+
+    public abstract Builder setEventTypes(Iterable<String> eventTypes);
+
+    public abstract Builder setEtag(String etag);
+
+    public abstract Builder setCustomAttributes(Map<String, String> customAttributes);
+
+    /** Creates a {@code NotificationInfo} object. */
+    public abstract NotificationInfo build();
+  }
+
+  public static final class BuilderImpl extends Builder {
+
+    private String generatedId;
+    private String topic;
+    private List<String> eventTypes;
+    private Map<String, String> customAttributes;
+    private PayloadFormat payloadFormat;
+    private String objectNamePrefix;
+    private String etag;
+    private String selfLink;
+
+    BuilderImpl(String topic) {
+      this.topic = topic;
     }
 
-    static final Function<Notification, NotificationInfo> FROM_PB_FUNCTION =
-            new Function<Notification, NotificationInfo>() {
-                @Override
-                public NotificationInfo apply(Notification pb) {
-                    return NotificationInfo.fromPb(pb);
-                }
-            };
-    static final Function<NotificationInfo, Notification> TO_PB_FUNCTION =
-            new Function<NotificationInfo, Notification>() {
-                @Override
-                public Notification apply(NotificationInfo NotificationInfo) {
-                    return NotificationInfo.toPb();
-                }
-            };
-    private final String generatedId;
-    private final String topic;
-    private final List<String> eventTypes;
-    private final Map<String, String> customAttributes;
-    private final PayloadFormat payloadFormat;
-    private final String objectNamePrefix;
-    private final String etag;
-    private final String selfLink;
-
-    public static final class Builder {
-
-        private String generatedId;
-        private String topic;
-        private List<String> eventTypes;
-        private Map<String, String> customAttributes;
-        private PayloadFormat payloadFormat;
-        private String objectNamePrefix;
-        private String etag;
-        private String selfLink;
-
-        Builder(String topic) {
-            this.topic = topic;
-        }
-
-        Builder(NotificationInfo NotificationInfo) {
-            generatedId = NotificationInfo.generatedId;
-            etag = NotificationInfo.etag;
-            selfLink = NotificationInfo.selfLink;
-            topic = NotificationInfo.topic;
-            eventTypes = NotificationInfo.eventTypes;
-            customAttributes = NotificationInfo.customAttributes;
-            payloadFormat = NotificationInfo.payloadFormat;
-            objectNamePrefix = NotificationInfo.objectNamePrefix;
-        }
-
-        Builder setGeneratedId(String generatedId) {
-            this.generatedId = generatedId;
-            return this;
-        }
-
-        Builder setSelfLink(String selfLink) {
-            this.selfLink = selfLink;
-            return this;
-        }
-
-        /** The name of the topic. It must have the format "projects/{project}/topics/{topic}". */
-        public Builder setTopic(String topic) {
-            this.topic = topic;
-            return this;
-        }
-
-        public Builder setPayloadFormat(PayloadFormat payloadFormat) {
-            this.payloadFormat = payloadFormat;
-            return this;
-        }
-
-        public Builder setObjectNamePrefix(String objectNamePrefix) {
-            this.objectNamePrefix = objectNamePrefix;
-            return this;
-        }
-
-        public Builder setEventTypes(Iterable<String> eventTypes) {
-            this.eventTypes = eventTypes != null ? ImmutableList.copyOf(eventTypes) : null;
-            return this;
-        }
-
-        Builder setEtag(String etag) {
-            this.etag = etag;
-            return this;
-        }
-
-        public Builder setCustomAttributes(Map<String, String> customAttributes) {
-            this.customAttributes =
-                    customAttributes != null ? ImmutableMap.copyOf(customAttributes) : null;
-            return this;
-        }
-
-        public NotificationInfo build() {
-            checkNotNull(topic);
-            return new NotificationInfo(this);
-        }
-    }
-
-    NotificationInfo(Builder builder) {
-        generatedId = builder.generatedId;
-        etag = builder.etag;
-        selfLink = builder.selfLink;
-        topic = builder.topic;
-        eventTypes = builder.eventTypes;
-        customAttributes = builder.customAttributes;
-        payloadFormat = builder.payloadFormat;
-        objectNamePrefix = builder.objectNamePrefix;
-    }
-
-    /** Returns the service-generated id for the notification. */
-    public String getGeneratedId() {
-        return generatedId;
-    }
-
-    /** Returns the topic to which this subscription publishes. */
-    public String getTopic() {
-        return topic;
-    }
-
-    /** Returns the canonical URI of this topic as a string. */
-    public String getSelfLink() {
-        return selfLink;
-    }
-
-    /** Returns the desired content of the Payload. */
-    public PayloadFormat getPayloadFormat() {
-        return payloadFormat;
-    }
-
-    /** Returns the object name prefix for which this notification configuration applies. */
-    public String getObjectNamePrefix() {
-        return objectNamePrefix;
-    }
-
-    /**
-     * Returns HTTP 1.1 Entity tag for the notification.
-     *
-     * @see <a href="http://tools.ietf.org/html/rfc2616#section-3.11">Entity Tags</a>
-     */
-    public String getEtag() {
-        return etag;
-    }
-
-    /**
-     * Returns the list of event types that this notification will apply to. If empty, notifications
-     * will be sent on all event types.
-     *
-     * @see <a href="https://cloud.google.com/storage/docs/cross-origin">Cross-Origin Resource Sharing
-     *     (CORS)</a>
-     */
-    public List<String> getEventTypes() {
-        return eventTypes;
-    }
-
-    /**
-     * Returns the list of additional attributes to attach to each Cloud PubSub message published for
-     * this notification subscription.
-     *
-     * @see <a href="https://cloud.google.com/storage/docs/access-control#About-Access-Control-Lists">
-     *     About Access Control Lists</a>
-     */
-    public Map<String, String> getCustomAttributes() {
-        return customAttributes;
-    }
-
-    /** Returns a builder for the current notification. */
-    public Builder toBuilder() {
-        return new Builder(this);
+    BuilderImpl(NotificationInfo NotificationInfo) {
+      generatedId = NotificationInfo.generatedId;
+      etag = NotificationInfo.etag;
+      selfLink = NotificationInfo.selfLink;
+      topic = NotificationInfo.topic;
+      eventTypes = NotificationInfo.eventTypes;
+      customAttributes = NotificationInfo.customAttributes;
+      payloadFormat = NotificationInfo.payloadFormat;
+      objectNamePrefix = NotificationInfo.objectNamePrefix;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getTopic());
+    public Builder setGeneratedId(String generatedId) {
+      this.generatedId = generatedId;
+      return this;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return obj == this
-                || obj != null
-                && obj.getClass().equals(NotificationInfo.class)
-                && Objects.equals(toPb(), ((NotificationInfo) obj).toPb());
+    public Builder setSelfLink(String selfLink) {
+      this.selfLink = selfLink;
+      return this;
+    }
+
+    /** The name of the topic. It must have the format "projects/{project}/topics/{topic}". */
+    @Override
+    public Builder setTopic(String topic) {
+      this.topic = topic;
+      return this;
     }
 
     @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("topic", getTopic()).toString();
+    public Builder setPayloadFormat(PayloadFormat payloadFormat) {
+      this.payloadFormat = payloadFormat;
+      return this;
     }
 
-    Notification toPb() {
-        Notification notificationPb = new Notification();
-        notificationPb.setId(generatedId);
-        notificationPb.setEtag(etag);
-        if (customAttributes != null) {
-            notificationPb.setCustomAttributes(customAttributes);
-        }
-        if (eventTypes != null) {
-            notificationPb.setEventTypes(eventTypes);
-        }
-        if (objectNamePrefix != null) {
-            notificationPb.setObjectNamePrefix(objectNamePrefix);
-        }
-        if (payloadFormat != null) {
-            notificationPb.setPayloadFormat(payloadFormat.toString());
-        } else {
-            notificationPb.setPayloadFormat(PayloadFormat.NONE.toString());
-        }
-        notificationPb.setSelfLink(selfLink);
-        notificationPb.setTopic(topic);
-
-        return notificationPb;
+    @Override
+    public Builder setObjectNamePrefix(String objectNamePrefix) {
+      this.objectNamePrefix = objectNamePrefix;
+      return this;
     }
 
-    /**
-     * Creates a {@code NotificationInfo} object for the provided topic name.
-     *
-     * @param topic The name of the topic. It must have the format
-     *     "projects/{project}/topics/{topic}".
-     */
-    public static NotificationInfo of(String topic) {
-        PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
-        return newBuilder(topic).build();
+    @Override
+    public Builder setEventTypes(Iterable<String> eventTypes) {
+      this.eventTypes = eventTypes != null ? ImmutableList.copyOf(eventTypes) : null;
+      return this;
     }
 
-    /**
-     * Returns a {@code NotificationInfo} builder where the topic's name is set to the provided name.
-     *
-     * @param topic The name of the topic. It must have the format
-     *     "projects/{project}/topics/{topic}".
-     */
-    public static Builder newBuilder(String topic) {
-        PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
-        return new Builder(topic);
+    @Override
+    public Builder setEtag(String etag) {
+      this.etag = etag;
+      return this;
     }
 
-    static NotificationInfo fromPb(Notification notificationPb) {
-        Builder builder = newBuilder(notificationPb.getTopic());
-        if (notificationPb.getId() != null) {
-            builder.setGeneratedId(notificationPb.getId());
-        }
-        if (notificationPb.getEtag() != null) {
-            builder.setEtag(notificationPb.getEtag());
-        }
-        if (notificationPb.getCustomAttributes() != null) {
-            builder.setCustomAttributes(notificationPb.getCustomAttributes());
-        }
-        if (notificationPb.getSelfLink() != null) {
-            builder.setSelfLink(notificationPb.getSelfLink());
-        }
-        if (notificationPb.getObjectNamePrefix() != null) {
-            builder.setObjectNamePrefix(notificationPb.getObjectNamePrefix());
-        }
-        if (notificationPb.getTopic() != null) {
-            builder.setTopic(notificationPb.getTopic());
-        }
-        if (notificationPb.getEventTypes() != null) {
-            builder.setEventTypes(notificationPb.getEventTypes());
-        }
-        if (notificationPb.getPayloadFormat() != null) {
-            builder.setPayloadFormat(PayloadFormat.valueOf(notificationPb.getPayloadFormat()));
-        }
-        return builder.build();
+    @Override
+    public Builder setCustomAttributes(Map<String, String> customAttributes) {
+      this.customAttributes =
+          customAttributes != null ? ImmutableMap.copyOf(customAttributes) : null;
+      return this;
     }
+
+    @Override
+    public NotificationInfo build() {
+      checkNotNull(topic);
+      return new NotificationInfo(this);
+    }
+  }
+
+  NotificationInfo(BuilderImpl builder) {
+    generatedId = builder.generatedId;
+    etag = builder.etag;
+    selfLink = builder.selfLink;
+    topic = builder.topic;
+    eventTypes = builder.eventTypes;
+    customAttributes = builder.customAttributes;
+    payloadFormat = builder.payloadFormat;
+    objectNamePrefix = builder.objectNamePrefix;
+  }
+
+  /** Returns the service-generated id for the notification. */
+  public String getGeneratedId() {
+    return generatedId;
+  }
+
+  /** Returns the topic to which this subscription publishes. */
+  public String getTopic() {
+    return topic;
+  }
+
+  /** Returns the canonical URI of this topic as a string. */
+  public String getSelfLink() {
+    return selfLink;
+  }
+
+  /** Returns the desired content of the Payload. */
+  public PayloadFormat getPayloadFormat() {
+    return payloadFormat;
+  }
+
+  /** Returns the object name prefix for which this notification configuration applies. */
+  public String getObjectNamePrefix() {
+    return objectNamePrefix;
+  }
+
+  /**
+   * Returns HTTP 1.1 Entity tag for the notification.
+   *
+   * @see <a href="http://tools.ietf.org/html/rfc2616#section-3.11">Entity Tags</a>
+   */
+  public String getEtag() {
+    return etag;
+  }
+
+  /**
+   * Returns the list of event types that this notification will apply to. If empty, notifications
+   * will be sent on all event types.
+   *
+   * @see <a href="https://cloud.google.com/storage/docs/cross-origin">Cross-Origin Resource Sharing
+   *     (CORS)</a>
+   */
+  public List<String> getEventTypes() {
+    return eventTypes;
+  }
+
+  /**
+   * Returns the list of additional attributes to attach to each Cloud PubSub message published for
+   * this notification subscription.
+   *
+   * @see <a href="https://cloud.google.com/storage/docs/access-control#About-Access-Control-Lists">
+   *     About Access Control Lists</a>
+   */
+  public Map<String, String> getCustomAttributes() {
+    return customAttributes;
+  }
+
+  /** Returns a builder for the current notification. */
+  public Builder toBuilder() {
+    return new BuilderImpl(this);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getTopic());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return obj == this
+        || obj != null
+            && obj.getClass().equals(NotificationInfo.class)
+            && Objects.equals(toPb(), ((NotificationInfo) obj).toPb());
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("topic", getTopic()).toString();
+  }
+
+  Notification toPb() {
+    Notification notificationPb = new Notification();
+    notificationPb.setId(generatedId);
+    notificationPb.setEtag(etag);
+    if (customAttributes != null) {
+      notificationPb.setCustomAttributes(customAttributes);
+    }
+    if (eventTypes != null) {
+      notificationPb.setEventTypes(eventTypes);
+    }
+    if (objectNamePrefix != null) {
+      notificationPb.setObjectNamePrefix(objectNamePrefix);
+    }
+    if (payloadFormat != null) {
+      notificationPb.setPayloadFormat(payloadFormat.toString());
+    } else {
+      notificationPb.setPayloadFormat(PayloadFormat.NONE.toString());
+    }
+    notificationPb.setSelfLink(selfLink);
+    notificationPb.setTopic(topic);
+
+    return notificationPb;
+  }
+
+  /**
+   * Creates a {@code NotificationInfo} object for the provided topic name.
+   *
+   * @param topic The name of the topic. It must have the format
+   *     "projects/{project}/topics/{topic}".
+   */
+  public static NotificationInfo of(String topic) {
+    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
+    return newBuilder(topic).build();
+  }
+
+  /**
+   * Returns a {@code NotificationInfo} builder where the topic's name is set to the provided name.
+   *
+   * @param topic The name of the topic. It must have the format
+   *     "projects/{project}/topics/{topic}".
+   */
+  public static Builder newBuilder(String topic) {
+    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
+    return new BuilderImpl(topic);
+  }
+
+  static NotificationInfo fromPb(Notification notificationPb) {
+    Builder builder = newBuilder(notificationPb.getTopic());
+    if (notificationPb.getId() != null) {
+      builder.setGeneratedId(notificationPb.getId());
+    }
+    if (notificationPb.getEtag() != null) {
+      builder.setEtag(notificationPb.getEtag());
+    }
+    if (notificationPb.getCustomAttributes() != null) {
+      builder.setCustomAttributes(notificationPb.getCustomAttributes());
+    }
+    if (notificationPb.getSelfLink() != null) {
+      builder.setSelfLink(notificationPb.getSelfLink());
+    }
+    if (notificationPb.getObjectNamePrefix() != null) {
+      builder.setObjectNamePrefix(notificationPb.getObjectNamePrefix());
+    }
+    if (notificationPb.getTopic() != null) {
+      builder.setTopic(notificationPb.getTopic());
+    }
+    if (notificationPb.getEventTypes() != null) {
+      builder.setEventTypes(notificationPb.getEventTypes());
+    }
+    if (notificationPb.getPayloadFormat() != null) {
+      builder.setPayloadFormat(PayloadFormat.valueOf(notificationPb.getPayloadFormat()));
+    }
+    return builder.build();
+  }
 }

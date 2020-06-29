@@ -11,4 +11,29 @@
         <method>BucketInfo$LifecycleRule$LifecycleAction()</method>
         <differenceType>7004</differenceType>
     </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>com.google.cloud.storage.Notification createNotification(java.lang.String, com.google.cloud.storage.NotificationInfo)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>com.google.cloud.storage.Notification getNotification(java.lang.String, java.lang.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>java.util.List listNotifications(java.lang.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>boolean deleteNotification(java.lang.String, java.lang.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+        <method>com.google.api.services.storage.model.Notification getNotification(java.lang.String, java.lang.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
 </differences>

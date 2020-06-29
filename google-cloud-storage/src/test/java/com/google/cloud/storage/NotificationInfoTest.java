@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 Google LLC
  *
@@ -28,76 +27,76 @@ import org.junit.Test;
 
 public class NotificationInfoTest {
 
-    private static final String ETAG = "0xFF00";
-    private static final String GENERATED_ID = "B/N:1";
-    private static final String SELF_LINK = "http://storage/b/n";
-    private static final List<String> EVENT_TYPES =
-            ImmutableList.of("OBJECT_FINALIZE", "OBJECT_METADATA_UPDATE");
-    private static final String OBJECT_NAME_PREFIX = "index.html";
-    private static final PayloadFormat PAYLOAD_FORMAT = PayloadFormat.JSON_API_V1.JSON_API_V1;
-    private static final String TOPIC = "projects/myProject/topics/topic1";
-    private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
-    private static final NotificationInfo NOTIFICATION_INFO =
-            NotificationInfo.newBuilder(TOPIC)
-                    .setEtag(ETAG)
-                    .setCustomAttributes(CUSTOM_ATTRIBUTES)
-                    .setSelfLink(SELF_LINK)
-                    .setEventTypes(EVENT_TYPES)
-                    .setObjectNamePrefix(OBJECT_NAME_PREFIX)
-                    .setPayloadFormat(PAYLOAD_FORMAT)
-                    .setGeneratedId(GENERATED_ID)
-                    .build();
+  private static final String ETAG = "0xFF00";
+  private static final String GENERATED_ID = "B/N:1";
+  private static final String SELF_LINK = "http://storage/b/n";
+  private static final List<String> EVENT_TYPES =
+      ImmutableList.of("OBJECT_FINALIZE", "OBJECT_METADATA_UPDATE");
+  private static final String OBJECT_NAME_PREFIX = "index.html";
+  private static final PayloadFormat PAYLOAD_FORMAT = PayloadFormat.JSON_API_V1.JSON_API_V1;
+  private static final String TOPIC = "projects/myProject/topics/topic1";
+  private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
+  private static final NotificationInfo NOTIFICATION_INFO =
+      NotificationInfo.newBuilder(TOPIC)
+          .setEtag(ETAG)
+          .setCustomAttributes(CUSTOM_ATTRIBUTES)
+          .setSelfLink(SELF_LINK)
+          .setEventTypes(EVENT_TYPES)
+          .setObjectNamePrefix(OBJECT_NAME_PREFIX)
+          .setPayloadFormat(PAYLOAD_FORMAT)
+          .setGeneratedId(GENERATED_ID)
+          .build();
 
-    @Test
-    public void testToBuilder() {
-        compareBuckets(NOTIFICATION_INFO, NOTIFICATION_INFO.toBuilder().build());
-        NotificationInfo bucketInfo = NOTIFICATION_INFO.toBuilder().setGeneratedId("id").build();
-        assertEquals("id", bucketInfo.getGeneratedId());
-        bucketInfo = bucketInfo.toBuilder().setGeneratedId(GENERATED_ID).build();
-        compareBuckets(NOTIFICATION_INFO, bucketInfo);
-    }
+  @Test
+  public void testToBuilder() {
+    compareBuckets(NOTIFICATION_INFO, NOTIFICATION_INFO.toBuilder().build());
+    NotificationInfo bucketInfo = NOTIFICATION_INFO.toBuilder().setGeneratedId("id").build();
+    assertEquals("id", bucketInfo.getGeneratedId());
+    bucketInfo = bucketInfo.toBuilder().setGeneratedId(GENERATED_ID).build();
+    compareBuckets(NOTIFICATION_INFO, bucketInfo);
+  }
 
-    @Test
-    public void testToBuilderIncomplete() {
-        NotificationInfo incompleteBucketInfo = NotificationInfo.newBuilder(TOPIC).build();
-        compareBuckets(incompleteBucketInfo, incompleteBucketInfo.toBuilder().build());
-    }
+  @Test
+  public void testToBuilderIncomplete() {
+    NotificationInfo incompleteBucketInfo = NotificationInfo.newBuilder(TOPIC).build();
+    compareBuckets(incompleteBucketInfo, incompleteBucketInfo.toBuilder().build());
+  }
 
-    @Test
-    public void testOf() {
-        NotificationInfo bucketInfo = NotificationInfo.of(TOPIC);
-        assertEquals(TOPIC, bucketInfo.getTopic());
-    }
+  @Test
+  public void testOf() {
+    NotificationInfo bucketInfo = NotificationInfo.of(TOPIC);
+    assertEquals(TOPIC, bucketInfo.getTopic());
+  }
 
-    @Test
-    public void testBuilder() {
-        assertEquals(ETAG, NOTIFICATION_INFO.getEtag());
-        assertEquals(GENERATED_ID, NOTIFICATION_INFO.getGeneratedId());
-        assertEquals(SELF_LINK, NOTIFICATION_INFO.getSelfLink());
-        assertEquals(EVENT_TYPES, NOTIFICATION_INFO.getEventTypes());
-        assertEquals(OBJECT_NAME_PREFIX, NOTIFICATION_INFO.getObjectNamePrefix());
-        assertEquals(PAYLOAD_FORMAT, NOTIFICATION_INFO.getPayloadFormat());
-        assertEquals(TOPIC, NOTIFICATION_INFO.getTopic());
-        assertEquals(CUSTOM_ATTRIBUTES, NOTIFICATION_INFO.getCustomAttributes());
-    }
+  @Test
+  public void testBuilder() {
+    assertEquals(ETAG, NOTIFICATION_INFO.getEtag());
+    assertEquals(GENERATED_ID, NOTIFICATION_INFO.getGeneratedId());
+    assertEquals(SELF_LINK, NOTIFICATION_INFO.getSelfLink());
+    assertEquals(EVENT_TYPES, NOTIFICATION_INFO.getEventTypes());
+    assertEquals(OBJECT_NAME_PREFIX, NOTIFICATION_INFO.getObjectNamePrefix());
+    assertEquals(PAYLOAD_FORMAT, NOTIFICATION_INFO.getPayloadFormat());
+    assertEquals(TOPIC, NOTIFICATION_INFO.getTopic());
+    assertEquals(CUSTOM_ATTRIBUTES, NOTIFICATION_INFO.getCustomAttributes());
+  }
 
-    @Test
-    public void testToPbAndFromPb() {
-        compareBuckets(NOTIFICATION_INFO, NotificationInfo.fromPb(NOTIFICATION_INFO.toPb()));
-        NotificationInfo bucketInfo =
-                NotificationInfo.of(TOPIC).toBuilder().setPayloadFormat(PayloadFormat.NONE).build();
-        compareBuckets(bucketInfo, NotificationInfo.fromPb(bucketInfo.toPb()));
-    }
+  @Test
+  public void testToPbAndFromPb() {
+    compareBuckets(NOTIFICATION_INFO, NotificationInfo.fromPb(NOTIFICATION_INFO.toPb()));
+    NotificationInfo bucketInfo =
+        NotificationInfo.of(TOPIC).toBuilder().setPayloadFormat(PayloadFormat.NONE).build();
+    compareBuckets(bucketInfo, NotificationInfo.fromPb(bucketInfo.toPb()));
+  }
 
-    private void compareBuckets(NotificationInfo expected, NotificationInfo value) {
-        assertEquals(expected, value);
-        assertEquals(expected.getGeneratedId(), value.getGeneratedId());
-        assertEquals(expected.getCustomAttributes(), value.getCustomAttributes());
-        assertEquals(expected.getEtag(), value.getEtag());
-        assertEquals(expected.getSelfLink(), value.getSelfLink());
-        assertEquals(expected.getEventTypes(), value.getEventTypes());
-        assertEquals(expected.getObjectNamePrefix(), value.getObjectNamePrefix());
-        assertEquals(expected.getPayloadFormat(), value.getPayloadFormat());
-        assertEquals(expected.getTopic(), value.getTopic());
-    }
+  private void compareBuckets(NotificationInfo expected, NotificationInfo value) {
+    assertEquals(expected, value);
+    assertEquals(expected.getGeneratedId(), value.getGeneratedId());
+    assertEquals(expected.getCustomAttributes(), value.getCustomAttributes());
+    assertEquals(expected.getEtag(), value.getEtag());
+    assertEquals(expected.getSelfLink(), value.getSelfLink());
+    assertEquals(expected.getEventTypes(), value.getEventTypes());
+    assertEquals(expected.getObjectNamePrefix(), value.getObjectNamePrefix());
+    assertEquals(expected.getPayloadFormat(), value.getPayloadFormat());
+    assertEquals(expected.getTopic(), value.getTopic());
+  }
 }

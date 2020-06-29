@@ -3626,14 +3626,13 @@ public interface Storage extends Service<StorageOptions> {
    */
   ServiceAccount getServiceAccount(String projectId);
 
-
   /**
    * Creates a notification with the specified entity on the specified bucket.
    *
    * @return the notification that was created.
    * @throws StorageException upon failure
    */
-  Notification createNotification(String bucket, NotificationInfo notification);
+  Notification createNotification(String bucket, NotificationInfo notificationInfo);
 
   /**
    * Get the notification with the specified name on the specified object.

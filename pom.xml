@@ -78,6 +78,12 @@
         <version>v1-rev20220210-1.32.1</version>
       </dependency>
       <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>google-cloud-pubsub</artifactId>
+        <version>1.106.0</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>4.3</version>

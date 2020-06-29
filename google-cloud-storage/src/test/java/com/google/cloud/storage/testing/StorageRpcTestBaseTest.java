@@ -577,16 +577,16 @@ public class StorageRpcTestBaseTest {
         };
   }
 
-    @Test
-    public void testGetNotification() {
-        rpc =
-                new Callable<Notification>() {
-                    @Override
-                    public Notification call() {
-                        return STORAGE_RPC.getNotification("bucket", "notification");
-                    }
-                };
-    }
+  @Test
+  public void testGetNotification() {
+    rpc =
+        new Callable<Notification>() {
+          @Override
+          public Notification call() {
+            return STORAGE_RPC.getNotification("bucket", "notification");
+          }
+        };
+  }
 
   @Test
   public void testLockRetentionPolicy() {
