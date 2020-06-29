@@ -85,6 +85,7 @@ public final class PostPolicyV4 {
     }
 
     public static class Builder {
+      private static final String CUSTOM_FIELD_PREFIX = "x-goog-meta-";
       private final Map<String, String> fieldsMap;
 
       private Builder() {
@@ -145,6 +146,9 @@ public final class PostPolicyV4 {
       }
 
       public Builder addCustomMetadataField(String field, String value) {
+        if (!field.startsWith(CUSTOM_FIELD_PREFIX)) {
+          field = CUSTOM_FIELD_PREFIX + value;
+        }
         fieldsMap.put(field, value);
         return this;
       }
