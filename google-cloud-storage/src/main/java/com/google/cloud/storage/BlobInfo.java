@@ -84,6 +84,7 @@ public class BlobInfo implements Serializable {
   private final String etag;
   private final String md5;
   private final String crc32c;
+  private final Long customTime;
   private final String mediaLink;
   private final Map<String, String> metadata;
   private final Long metageneration;
@@ -260,6 +261,9 @@ public class BlobInfo implements Serializable {
      */
     public abstract Builder setCrc32c(String crc32c);
 
+    /* */
+    public abstract Builder setCustomTime(Long customTime);
+
     /**
      * Sets the CRC32C checksum of blob's data as described in <a
      * href="http://tools.ietf.org/html/rfc4960#appendix-B">RFC 4960, Appendix B;</a> from hex
@@ -325,6 +329,7 @@ public class BlobInfo implements Serializable {
     private String selfLink;
     private String md5;
     private String crc32c;
+    private Long customTime;
     private String mediaLink;
     private Map<String, String> metadata;
     private Long metageneration;
@@ -360,6 +365,7 @@ public class BlobInfo implements Serializable {
       selfLink = blobInfo.selfLink;
       md5 = blobInfo.md5;
       crc32c = blobInfo.crc32c;
+      customTime = blobInfo.customTime;
       mediaLink = blobInfo.mediaLink;
       metadata = blobInfo.metadata;
       metageneration = blobInfo.metageneration;
@@ -485,6 +491,12 @@ public class BlobInfo implements Serializable {
     @Override
     public Builder setCrc32c(String crc32c) {
       this.crc32c = firstNonNull(crc32c, Data.<String>nullOf(String.class));
+      return this;
+    }
+
+    @Override
+    public Builder setCustomTime(Long customTime) {
+      this.customTime = customTime;
       return this;
     }
 
@@ -619,6 +631,7 @@ public class BlobInfo implements Serializable {
     selfLink = builder.selfLink;
     md5 = builder.md5;
     crc32c = builder.crc32c;
+    customTime = builder.customTime;
     mediaLink = builder.mediaLink;
     metadata = builder.metadata;
     metageneration = builder.metageneration;
@@ -857,6 +870,11 @@ public class BlobInfo implements Serializable {
     return createTime;
   }
 
+  /** Returns the custom time specified by the user for an object. */
+  public Long getCustomTime() {
+    return customTime;
+  }
+
   /**
    * Returns {@code true} if the current blob represents a directory. This can only happen if the
    * blob is returned by {@link Storage#list(String, Storage.BlobListOption...)} when the {@link
@@ -1002,6 +1020,9 @@ public class BlobInfo implements Serializable {
     if (createTime != null) {
       storageObject.setTimeCreated(new DateTime(createTime));
     }
+    if (customTime != null) {
+      storageObject.setCustomTime(new DateTime(customTime));
+    }
     if (size != null) {
       storageObject.setSize(BigInteger.valueOf(size));
     }
@@ -1124,6 +1145,9 @@ public class BlobInfo implements Serializable {
     }
     if (storageObject.getTimeCreated() != null) {
       builder.setCreateTime(storageObject.getTimeCreated().getValue());
+    }
+    if (storageObject.getCustomTime() != null) {
+      builder.setCustomTime(storageObject.getCustomTime().getValue());
     }
     if (storageObject.getSize() != null) {
       builder.setSize(storageObject.getSize().longValue());

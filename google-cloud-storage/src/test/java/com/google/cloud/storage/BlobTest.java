@@ -91,6 +91,7 @@ public class BlobTest {
   private static final Long SIZE = 1024L;
   private static final Long UPDATE_TIME = DELETE_TIME - 1L;
   private static final Long CREATE_TIME = UPDATE_TIME - 1L;
+  private static final Long CUSTOM_TIME = CREATE_TIME - 1L;
   private static final String ENCRYPTION_ALGORITHM = "AES256";
   private static final String KEY_SHA256 = "keySha";
   private static final BlobInfo.CustomerEncryption CUSTOMER_ENCRYPTION =
@@ -122,6 +123,7 @@ public class BlobTest {
           .setSize(SIZE)
           .setUpdateTime(UPDATE_TIME)
           .setCreateTime(CREATE_TIME)
+          .setCustomTime(CUSTOM_TIME)
           .setCustomerEncryption(CUSTOMER_ENCRYPTION)
           .setKmsKeyName(KMS_KEY_NAME)
           .setEventBasedHold(EVENT_BASED_HOLD)
@@ -510,6 +512,7 @@ public class BlobTest {
             .setContentLanguage(CONTENT_LANGUAGE)
             .setCrc32c(CRC32)
             .setCreateTime(CREATE_TIME)
+            .setCustomTime(CUSTOM_TIME)
             .setCustomerEncryption(CUSTOMER_ENCRYPTION)
             .setKmsKeyName(KMS_KEY_NAME)
             .setEventBasedHold(EVENT_BASED_HOLD)
@@ -539,6 +542,7 @@ public class BlobTest {
     assertEquals(CRC32, blob.getCrc32c());
     assertEquals(CRC32_HEX_STRING, blob.getCrc32cToHexString());
     assertEquals(CREATE_TIME, blob.getCreateTime());
+    assertEquals(CUSTOM_TIME, blob.getCustomTime());
     assertEquals(CUSTOMER_ENCRYPTION, blob.getCustomerEncryption());
     assertEquals(KMS_KEY_NAME, blob.getKmsKeyName());
     assertEquals(EVENT_BASED_HOLD, blob.getEventBasedHold());
@@ -589,6 +593,7 @@ public class BlobTest {
     assertNull(blob.getSelfLink());
     assertEquals(0L, (long) blob.getSize());
     assertNull(blob.getUpdateTime());
+    assertNull(blob.getCustomTime());
     assertTrue(blob.isDirectory());
   }
 

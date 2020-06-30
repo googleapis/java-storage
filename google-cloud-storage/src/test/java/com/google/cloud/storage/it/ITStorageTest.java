@@ -519,9 +519,11 @@ public class ITStorageTest {
   @Test
   public void testCreateBlob() {
     String blobName = "test-create-blob";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob =
+        BlobInfo.newBuilder(BUCKET, blobName).setCustomTime(System.currentTimeMillis()).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
+    assertNotNull(remoteBlob.getCustomTime());
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     byte[] readBytes = storage.readAllBytes(BUCKET, blobName);
