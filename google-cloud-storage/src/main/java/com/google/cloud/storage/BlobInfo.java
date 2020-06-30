@@ -261,7 +261,7 @@ public class BlobInfo implements Serializable {
      */
     public abstract Builder setCrc32c(String crc32c);
 
-    /* */
+    /** Sets the custom time for an object. */
     public abstract Builder setCustomTime(Long customTime);
 
     /**
