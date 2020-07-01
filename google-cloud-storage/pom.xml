@@ -16,7 +16,6 @@
   </parent>
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
-    <hamcrest.version>2.2</hamcrest.version>
   </properties>
   <dependencies>
     <dependency>
@@ -96,25 +95,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>${hamcrest.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <version>${hamcrest.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-netty-shaded</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -166,11 +148,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.objenesis</groupId>
-      <artifactId>objenesis</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-conformance-tests</artifactId>
       <scope>test</scope>
@@ -198,13 +175,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <configuration>
-            <!--
-              grpc-netty-shaded is needed for integration tests
-              hamcrest-core is used for test mocks
-              -->
-            <usedDependencies>io.grpc:grpc-netty-shaded,org.hamcrest:hamcrest-core</usedDependencies>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
