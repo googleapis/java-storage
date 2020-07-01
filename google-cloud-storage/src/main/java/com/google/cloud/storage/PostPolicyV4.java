@@ -143,13 +143,13 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated use {@link #addCustomMetadataField(String, String)} */
+      /** @deprecated use {@link #setCustomMetadataField(String, String)} */
       @Deprecated
       public Builder AddCustomMetadataField(String field, String value) {
-        return addCustomMetadataField(field, value);
+        return setCustomMetadataField(field, value);
       }
 
-      public Builder addCustomMetadataField(String field, String value) {
+      public Builder setCustomMetadataField(String field, String value) {
         if (!field.startsWith(CUSTOM_FIELD_PREFIX)) {
           field = CUSTOM_FIELD_PREFIX + value;
         }
