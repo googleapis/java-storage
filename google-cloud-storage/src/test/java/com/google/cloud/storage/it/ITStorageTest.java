@@ -121,6 +121,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -145,6 +146,7 @@ public class ITStorageTest {
   private static Storage storage;
   private static String kmsKeyOneResourcePath;
   private static String kmsKeyTwoResourcePath;
+  private static String kmsKeyNoPermissionsResourcePath;
   private static Metadata requestParamsHeader = new Metadata();
   private static Metadata.Key<String> requestParamsKey =
       Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
@@ -279,6 +281,16 @@ public class ITStorageTest {
     kmsKeyTwoResourcePath =
         ensureKmsKeyExistsForTests(
             kmsStub, projectId, KMS_KEY_RING_LOCATION, KMS_KEY_RING_NAME, KMS_KEY_TWO_NAME);
+
+    String randomKeyRingName = UUID.randomUUID().toString();
+    ensureKmsKeyRingExistsForTests(kmsStub, projectId, KMS_KEY_RING_LOCATION, randomKeyRingName);
+    kmsKeyNoPermissionsResourcePath =
+        ensureKmsKeyExistsForTests(
+            kmsStub,
+            projectId,
+            KMS_KEY_RING_LOCATION,
+            randomKeyRingName,
+            "gcs_kms_key_no_permissions");
   }
 
   private static String ensureKmsKeyRingExistsForTests(
@@ -3368,5 +3380,49 @@ public class ITStorageTest {
     }
     byte[] readBytes = blob.getContent(Blob.BlobSourceOption.decryptionKey(KEY));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testCreateBlobKmsWithoutPermissions() {
+    BlobInfo targetBlobInfo =
+        BlobInfo.newBuilder(BUCKET, "test-kms-without-permission-blob").build();
+    String expectedMessage =
+        "Permission denied on Cloud KMS key. Please ensure that your Cloud Storage service account has been authorized to use this key.";
+
+    try {
+      storage.create(
+          targetBlobInfo, Storage.BlobTargetOption.kmsKeyName(kmsKeyNoPermissionsResourcePath));
+      fail("StorageException expected");
+    } catch (StorageException e) {
+      assertEquals(403, e.getCode());
+      assertEquals(expectedMessage, e.getMessage());
+    }
+
+    try {
+      storage.writer(
+          targetBlobInfo, Storage.BlobWriteOption.kmsKeyName(kmsKeyNoPermissionsResourcePath));
+      fail("StorageException expected");
+    } catch (StorageException e) {
+      assertEquals(403, e.getCode());
+      assertTrue(e.getMessage().contains(expectedMessage));
+    }
+
+    BlobId source = BlobId.of(BUCKET, "test-kms-source-blob");
+    storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
+    Storage.CopyRequest req =
+        Storage.CopyRequest.newBuilder()
+            .setSource(source)
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(BASE64_KEY))
+            .setTarget(
+                targetBlobInfo,
+                Storage.BlobTargetOption.kmsKeyName(kmsKeyNoPermissionsResourcePath))
+            .build();
+    try {
+      storage.copy(req);
+      fail("StorageException expected");
+    } catch (StorageException e) {
+      assertEquals(403, e.getCode());
+      assertEquals(expectedMessage, e.getMessage());
+    }
   }
 }
