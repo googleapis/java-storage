@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.111.0](https://www.github.com/googleapis/java-storage/compare/v1.110.0...v1.111.0) (2020-06-25)
+
+
+### Features
+
+* add storage.upload(path) ([#269](https://www.github.com/googleapis/java-storage/issues/269)) ([9457f3a](https://www.github.com/googleapis/java-storage/commit/9457f3a76ff18552adc5f9c82f62ab8f3c207d31))
+* Add support to disable logging from bucket ([#390](https://www.github.com/googleapis/java-storage/issues/390)) ([be72027](https://www.github.com/googleapis/java-storage/commit/be72027b1587b9b0a3e9e65e7a2231bdb2ae521f))
+* expose all the methods of notification ([#141](https://www.github.com/googleapis/java-storage/issues/141)) ([8dfc0cb](https://www.github.com/googleapis/java-storage/commit/8dfc0cbf8294a7fc426948e22e5c2182da97b630))
+
+
+### Reverts
+
+* Revert "feat: expose all the methods of notification (#141)" (#393) ([3e02b9c](https://www.github.com/googleapis/java-storage/commit/3e02b9c4ee1ce0fb785d15b04bd36754e31831a0)), closes [#141](https://www.github.com/googleapis/java-storage/issues/141) [#393](https://www.github.com/googleapis/java-storage/issues/393)
+
 ## [1.110.0](https://www.github.com/googleapis/java-storage/compare/v1.109.1...v1.110.0) (2020-06-18)
 
 

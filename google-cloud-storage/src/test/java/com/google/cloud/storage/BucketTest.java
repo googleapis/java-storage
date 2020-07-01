@@ -863,4 +863,27 @@ public class BucketTest {
     Bucket actualUpdatedBucket = updatedBucket.update();
     assertThat(actualUpdatedBucket.getLifecycleRules()).hasSize(0);
   }
+
+  @Test
+  public void testUpdateBucketLogging() {
+    initializeExpectedBucket(6);
+    BucketInfo.Logging logging =
+        BucketInfo.Logging.newBuilder()
+            .setLogBucket("logs-bucket")
+            .setLogObjectPrefix("test-logs")
+            .build();
+    BucketInfo bucketInfo = BucketInfo.newBuilder("b").setLogging(logging).build();
+    Bucket bucket = new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(bucketInfo));
+    assertThat(bucket.getLogging().getLogBucket()).isEqualTo("logs-bucket");
+    assertThat(bucket.getLogging().getLogObjectPrefix()).isEqualTo("test-logs");
+    Bucket expectedUpdatedBucket = bucket.toBuilder().setLogging(null).build();
+    expect(storage.getOptions()).andReturn(mockOptions).times(2);
+    expect(storage.update(expectedUpdatedBucket)).andReturn(expectedUpdatedBucket);
+    replay(storage);
+    initializeBucket();
+    Bucket updatedBucket = new Bucket(storage, new BucketInfo.BuilderImpl(expectedUpdatedBucket));
+    Bucket actualUpdatedBucket = updatedBucket.update();
+    assertThat(actualUpdatedBucket.getLogging().getLogBucket()).isNull();
+    assertThat(actualUpdatedBucket.getLogging().getLogObjectPrefix()).isNull();
+  }
 }

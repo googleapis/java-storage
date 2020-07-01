@@ -109,6 +109,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3233,13 +3234,7 @@ public class ITStorageTest {
     try {
       assertNotNull(storage.create(BucketInfo.newBuilder(logsBucket).setLocation("us").build()));
       Policy policy = storage.getIamPolicy(logsBucket);
-      assertNotNull(
-          storage.setIamPolicy(
-              logsBucket,
-              policy
-                  .toBuilder()
-                  .addIdentity(StorageRoles.legacyBucketWriter(), Identity.allAuthenticatedUsers())
-                  .build()));
+      assertNotNull(policy);
       BucketInfo.Logging logging =
           BucketInfo.Logging.newBuilder()
               .setLogBucket(logsBucket)
@@ -3250,6 +3245,11 @@ public class ITStorageTest {
               BucketInfo.newBuilder(loggingBucket).setLocation("us").setLogging(logging).build());
       assertEquals(logsBucket, bucket.getLogging().getLogBucket());
       assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
+
+      // Disable bucket logging.
+      Bucket updatedBucket = bucket.toBuilder().setLogging(null).build().update();
+      assertNull(updatedBucket.getLogging());
+
     } finally {
       RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
       RemoteStorageHelper.forceDelete(storage, loggingBucket, 5, TimeUnit.SECONDS);
@@ -3327,5 +3327,46 @@ public class ITStorageTest {
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
+  }
+
+  @Test
+  public void testUploadFromDownloadTo() throws Exception {
+    String blobName = "test-uploadFrom-downloadTo-blob";
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+    Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
+    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
+    Blob blob = storage.createFrom(blobInfo, tempFileFrom);
+    assertEquals(BUCKET, blob.getBucket());
+    assertEquals(blobName, blob.getName());
+    assertEquals(BLOB_BYTE_CONTENT.length, (long) blob.getSize());
+
+    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
+    storage.get(blobId).downloadTo(tempFileTo);
+    byte[] readBytes = Files.readAllBytes(tempFileTo);
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testUploadWithEncryption() throws Exception {
+    String blobName = "test-upload-withEncryption";
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+    ByteArrayInputStream content = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
+    Blob blob = storage.createFrom(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
+
+    try {
+      blob.getContent();
+      fail("StorageException was expected");
+    } catch (StorageException e) {
+      String expectedMessage =
+          "The target object is encrypted by a customer-supplied encryption key.";
+      assertTrue(e.getMessage().contains(expectedMessage));
+      assertEquals(400, e.getCode());
+    }
+    byte[] readBytes = blob.getContent(Blob.BlobSourceOption.decryptionKey(KEY));
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 }

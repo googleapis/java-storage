@@ -229,6 +229,7 @@ public class BucketInfoTest {
         BucketInfo.newBuilder("b")
             .setDeleteRules(DELETE_RULES)
             .setLifecycleRules(LIFECYCLE_RULES)
+            .setLogging(LOGGING)
             .build();
     compareBuckets(bucketInfo, BucketInfo.fromPb(bucketInfo.toPb()));
   }
