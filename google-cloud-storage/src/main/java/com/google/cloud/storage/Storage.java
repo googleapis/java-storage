@@ -3627,33 +3627,40 @@ public interface Storage extends Service<StorageOptions> {
   ServiceAccount getServiceAccount(String projectId);
 
   /**
-   * Creates a notification with the specified entity on the specified bucket.
+   * Creates a notification subscription for a given bucket.
    *
-   * @return the notification that was created.
+   * @param bucket name of the bucket
+   * @param notification a {@code Notification} object
+   * @return the notification that was created
    * @throws StorageException upon failure
    */
-  Notification createNotification(String bucket, NotificationInfo notificationInfo);
+  Notification createNotification(String bucket, Notification notification);
 
   /**
-   * Get the notification with the specified name on the specified object.
+   * Gets the notification with the specified name on the bucket.
    *
-   * @return the notification object that exist on the bucket.
+   * @param bucket name of the bucket
+   * @param notification notification ID
+   * @return the notification object that exist on the bucket or {@code null} if not found
    * @throws StorageException upon failure
    */
   Notification getNotification(String bucket, String notification);
 
   /**
-   * List the notifications for the provided bucket.
+   * Retrieves a list of notification subscriptions for a given bucket.
    *
+   * @param bucket name of the bucket
    * @return a list of {@link Notification} objects that exist on the bucket.
    * @throws StorageException upon failure
    */
   List<Notification> listNotifications(String bucket);
 
   /**
-   * Deletes the notification with the specified name on the specified object.
+   * Deletes the notification subscription with the specified name on the bucket.
    *
-   * @return {@code true} if the notification was deleted, {@code false} if it was not found
+   * @param bucket name of the bucket
+   * @param notification ID of the notification to delete
+   * @return {@code true} if the notification has been deleted, {@code false} if not found
    * @throws StorageException upon failure
    */
   boolean deleteNotification(String bucket, String notification);

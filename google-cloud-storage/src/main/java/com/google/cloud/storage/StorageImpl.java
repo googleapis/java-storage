@@ -1375,13 +1375,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public Notification createNotification(
-      final String bucket, final NotificationInfo notificationInfo) {
-    final com.google.api.services.storage.model.Notification notificationPb =
-        notificationInfo.toPb();
+  public Notification createNotification(final String bucket, final Notification notification) {
+    final com.google.api.services.storage.model.Notification notificationPb = notification.toPb();
     try {
       return Notification.fromPb(
-          this,
           runWithRetries(
               new Callable<com.google.api.services.storage.model.Notification>() {
                 @Override
@@ -1411,7 +1408,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getRetrySettings(),
               EXCEPTION_HANDLER,
               getOptions().getClock());
-      return answer == null ? null : Notification.fromPb(this, answer);
+      return answer == null ? null : Notification.fromPb(answer);
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }
@@ -1431,17 +1428,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getRetrySettings(),
               EXCEPTION_HANDLER,
               getOptions().getClock());
-      return answer == null
-          ? null
-          : Lists.transform(
-              answer,
-              new Function<com.google.api.services.storage.model.Notification, Notification>() {
-                @Override
-                public Notification apply(
-                    com.google.api.services.storage.model.Notification notificationPb) {
-                  return Notification.fromPb(getOptions().getService(), notificationPb);
-                }
-              });
+      return Lists.transform(answer, Notification.FROM_PB_FUNCTION);
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }

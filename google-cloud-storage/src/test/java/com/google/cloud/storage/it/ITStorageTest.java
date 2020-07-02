@@ -74,7 +74,6 @@ import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Notification;
-import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.Rpo;
@@ -231,8 +230,8 @@ public class ITStorageTest {
   private static final String ID = UUID.randomUUID().toString().substring(0, 8);
   private static final String TOPIC =
       String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID);
-  private static final NotificationInfo.PayloadFormat PAYLOAD_FORMAT =
-      NotificationInfo.PayloadFormat.JSON_API_V1.JSON_API_V1;
+  private static final Notification.PayloadFormat PAYLOAD_FORMAT =
+      Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
 
   @BeforeClass
@@ -454,12 +453,12 @@ public class ITStorageTest {
     topicAdminClient.setIamPolicy(setIamPolicyRequest);
 
     // Create a notification on a bucket.
-    NotificationInfo notificationInfo =
-        NotificationInfo.newBuilder(TOPIC)
+    Notification bucketNotification =
+        Notification.newBuilder(TOPIC)
             .setCustomAttributes(CUSTOM_ATTRIBUTES)
             .setPayloadFormat(PAYLOAD_FORMAT)
             .build();
-    notification = storage.createNotification(BUCKET, notificationInfo);
+    notification = storage.createNotification(BUCKET, bucketNotification);
     return notification;
   }
 

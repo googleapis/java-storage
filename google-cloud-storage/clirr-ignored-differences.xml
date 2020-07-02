@@ -13,7 +13,7 @@
     </difference>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.Notification createNotification(java.lang.String, com.google.cloud.storage.NotificationInfo)</method>
+        <method>com.google.cloud.storage.Notification createNotification(java.lang.String, com.google.cloud.storage.Notification)</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>

@@ -374,12 +374,12 @@ public class StorageImplMockitoTest {
   private static final List<String> EVENT_TYPES =
       ImmutableList.of("OBJECT_FINALIZE", "OBJECT_METADATA_UPDATE");
   private static final String OBJECT_NAME_PREFIX = "index.html";
-  private static final NotificationInfo.PayloadFormat PAYLOAD_FORMAT =
-      NotificationInfo.PayloadFormat.JSON_API_V1.JSON_API_V1;
+  private static final Notification.PayloadFormat PAYLOAD_FORMAT =
+      Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final String TOPIC = "projects/myProject/topics/topic1";
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
-  private static final NotificationInfo NOTIFICATION_INFO_01 =
-      NotificationInfo.newBuilder(TOPIC)
+  private static final Notification NOTIFICATION_01 =
+      Notification.newBuilder(TOPIC)
           .setEtag(ETAG)
           .setCustomAttributes(CUSTOM_ATTRIBUTES)
           .setSelfLink(SELF_LINK)
@@ -388,8 +388,8 @@ public class StorageImplMockitoTest {
           .setPayloadFormat(PAYLOAD_FORMAT)
           .setGeneratedId(GENERATED_ID)
           .build();
-  private static final NotificationInfo NOTIFICATION_INFO_02 =
-      NotificationInfo.newBuilder(TOPIC)
+  private static final Notification NOTIFICATION_02 =
+      Notification.newBuilder(TOPIC)
           .setEtag(ETAG)
           .setCustomAttributes(CUSTOM_ATTRIBUTES)
           .setSelfLink(SELF_LINK)
@@ -1679,17 +1679,17 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testCreateNotification() {
-    doReturn(NOTIFICATION_INFO_01.toPb())
+    doReturn(NOTIFICATION_01.toPb())
         .when(storageRpcMock)
-        .createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01.toPb());
+        .createNotification(BUCKET_NAME1, NOTIFICATION_01.toPb());
     initializeService();
-    Notification notification = storage.createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01);
+    Notification notification = storage.createNotification(BUCKET_NAME1, NOTIFICATION_01);
     compareBucketsNotification(notification);
   }
 
   @Test
   public void testGetNotification() {
-    doReturn(NOTIFICATION_INFO_01.toPb())
+    doReturn(NOTIFICATION_01.toPb())
         .when(storageRpcMock)
         .getNotification(BUCKET_NAME1, GENERATED_ID);
     initializeService();
@@ -1699,7 +1699,7 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testListNotification() {
-    doReturn(Arrays.asList(NOTIFICATION_INFO_01.toPb(), NOTIFICATION_INFO_02.toPb()))
+    doReturn(Arrays.asList(NOTIFICATION_01.toPb(), NOTIFICATION_02.toPb()))
         .when(storageRpcMock)
         .listNotifications(BUCKET_NAME1);
     initializeService();
