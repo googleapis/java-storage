@@ -70,7 +70,7 @@ public class Notification implements Serializable {
   private final String etag;
   private final String selfLink;
 
-  /** Builder for {@code NotificatioInfo}. */
+  /** Builder for {@code Notification}. */
   public static class Builder {
 
     private String generatedId;
@@ -107,7 +107,7 @@ public class Notification implements Serializable {
       return this;
     }
 
-    /** The name of the topic. It must have the format "projects/{project}/topics/{topic}". */
+    /** Sets a topic in the format of "projects/{project}/topics/{topic}". */
     public Builder setTopic(String topic) {
       this.topic = topic;
       return this;
@@ -141,6 +141,7 @@ public class Notification implements Serializable {
 
     public Notification build() {
       checkNotNull(topic);
+      PATH_TEMPLATE.validatedMatch(topic, "topic must be in valid format");
       return new Notification(this);
     }
   }
@@ -256,13 +257,12 @@ public class Notification implements Serializable {
   }
 
   /**
-   * Creates a {@code Notification} object for the provided topic name.
+   * Creates a {@code Notification} object for the provided topic.
    *
-   * @param topic The name of the topic. It must have the format
-   *     "projects/{project}/topics/{topic}".
+   * @param topic a string in the format "projects/{project}/topics/{topic}"
    */
   public static Notification of(String topic) {
-    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
+    PATH_TEMPLATE.validatedMatch(topic, "topic must be in valid format");
     return newBuilder(topic).build();
   }
 
@@ -272,13 +272,12 @@ public class Notification implements Serializable {
   }
 
   /**
-   * Returns a {@code Notification} builder where the topic's name is set to the provided name.
+   * Returns a {@code Notification.Builder} with the topic set.
    *
-   * @param topic The name of the topic. It must have the format
-   *     "projects/{project}/topics/{topic}".
+   * @param topic a string in the format "projects/{project}/topics/{topic}"
    */
   public static Builder newBuilder(String topic) {
-    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
+    PATH_TEMPLATE.validatedMatch(topic, "topic must be in valid format");
     return new Builder(topic);
   }
 

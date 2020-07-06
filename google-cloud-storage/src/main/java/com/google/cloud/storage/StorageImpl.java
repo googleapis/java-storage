@@ -1395,14 +1395,14 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public Notification getNotification(final String bucket, final String notification) {
+  public Notification getNotification(final String bucket, final String notificationId) {
     try {
       com.google.api.services.storage.model.Notification answer =
           runWithRetries(
               new Callable<com.google.api.services.storage.model.Notification>() {
                 @Override
                 public com.google.api.services.storage.model.Notification call() {
-                  return storageRpc.getNotification(bucket, notification);
+                  return storageRpc.getNotification(bucket, notificationId);
                 }
               },
               getOptions().getRetrySettings(),
@@ -1435,13 +1435,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public boolean deleteNotification(final String bucket, final String notification) {
+  public boolean deleteNotification(final String bucket, final String notificationId) {
     try {
       return runWithRetries(
           new Callable<Boolean>() {
             @Override
             public Boolean call() {
-              return storageRpc.deleteNotification(bucket, notification);
+              return storageRpc.deleteNotification(bucket, notificationId);
             }
           },
           getOptions().getRetrySettings(),

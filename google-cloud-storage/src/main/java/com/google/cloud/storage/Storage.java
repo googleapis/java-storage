@@ -3640,11 +3640,11 @@ public interface Storage extends Service<StorageOptions> {
    * Gets the notification with the specified name on the bucket.
    *
    * @param bucket name of the bucket
-   * @param notification notification ID
+   * @param notificationId notification ID
    * @return the notification object that exist on the bucket or {@code null} if not found
    * @throws StorageException upon failure
    */
-  Notification getNotification(String bucket, String notification);
+  Notification getNotification(String bucket, String notificationId);
 
   /**
    * Retrieves a list of notification subscriptions for a given bucket.
@@ -3659,9 +3659,9 @@ public interface Storage extends Service<StorageOptions> {
    * Deletes the notification subscription with the specified name on the bucket.
    *
    * @param bucket name of the bucket
-   * @param notification ID of the notification to delete
+   * @param notificationId ID of the notification to delete
    * @return {@code true} if the notification has been deleted, {@code false} if not found
    * @throws StorageException upon failure
    */
-  boolean deleteNotification(String bucket, String notification);
+  boolean deleteNotification(String bucket, String notificationId);
 }
