@@ -993,6 +993,56 @@ public class ITStorageTest {
     }
   }
 
+  @Test
+  public void testListBlobsWithOffset() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    Bucket bucket =
+        storage.create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
+    try {
+      String[] blobNames = {
+        "test-list-blobs-start-offset-blob1",
+        "test-list-blobs-start-offset-blob2",
+        "test-list-blobs-end-offset-blob3"
+      };
+      BlobInfo blob1 =
+          BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
+      BlobInfo blob2 =
+          BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
+      BlobInfo blob3 =
+          BlobInfo.newBuilder(bucket, blobNames[2]).setContentType(CONTENT_TYPE).build();
+
+      Blob remoteBlob1 = storage.create(blob1);
+      Blob remoteBlob2 = storage.create(blob2);
+      Blob remoteBlob3 = storage.create(blob3);
+      assertNotNull(remoteBlob1);
+      assertNotNull(remoteBlob2);
+      assertNotNull(remoteBlob3);
+      Page<Blob> page =
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.startOffset("test-list-blobs-start-offset-blob"),
+              Storage.BlobListOption.endOffset("test-list-blobs-end-offset-blob3"));
+      // Listing blobs is eventually consistent, we loop until the list is of the expected size.
+      while (Iterators.size(page.iterateAll().iterator()) != 3) {
+        page =
+            storage.list(
+                bucketName,
+                Storage.BlobListOption.startOffset("test-list-blobs-start-offset-blob"),
+                Storage.BlobListOption.endOffset("test-list-blobs-end-offset-blob3"));
+      }
+      Set<String> blobSet = ImmutableSet.of(blobNames[0], blobNames[1], blobNames[2]);
+      Iterator<Blob> iterator = page.iterateAll().iterator();
+      while (iterator.hasNext()) {
+        Blob remoteBlob = iterator.next();
+        assertEquals(bucketName, remoteBlob.getBucket());
+        assertTrue(blobSet.contains(remoteBlob.getName()));
+        assertNotNull(remoteBlob.getGeneration());
+      }
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
+  }
+
   @Test(timeout = 5000)
   public void testListBlobsCurrentDirectory() throws InterruptedException {
     String directoryName = "test-list-blobs-current-directory/";
