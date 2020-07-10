@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.111.2](https://www.github.com/googleapis/java-storage/compare/v1.111.1...v1.111.2) (2020-07-10)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.8.3 ([#425](https://www.github.com/googleapis/java-storage/issues/425)) ([727b173](https://www.github.com/googleapis/java-storage/commit/727b1739963f5dc86009587eeb998d20adb94448))
+
 ### [1.111.1](https://www.github.com/googleapis/java-storage/compare/v1.111.0...v1.111.1) (2020-07-01)
 
 
