@@ -3669,7 +3669,7 @@ public interface Storage extends Service<StorageOptions> {
   /**
    * Retrieves a list of notification subscriptions for a given bucket.
    *
-   * <p>Example of getting a service account.
+   * <p>Example of listing the bucket notifications:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
@@ -3685,7 +3685,7 @@ public interface Storage extends Service<StorageOptions> {
   /**
    * Deletes the notification subscription with the specified name on the bucket.
    *
-   * <p>Example of getting a service account.
+   * <p>Example of deleting the notification:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
