@@ -28,10 +28,14 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Google Storage Notification metadata;
+ * A {@code Notification} object sends the information about the changes of objects in your buckets,
+ * where the information is added to the topic of your choice in the form of messages. For example,
+ * you can track objects that are created and deleted in your bucket. Each notification contains
+ * information describing both the event that triggered it and the object that changed.
  *
- * @see <a href="https://cloud.google.com/storage/docs/concepts-techniques#concepts">Concepts and
- *     Terminology</a>
+ * <p>You can send notifications to any topic in any project for which you have sufficient
+ * permissions. Once received by the topic, the resulting message can be sent to any number of
+ * subscribers to the topic.
  */
 public class Notification implements Serializable {
 
@@ -141,7 +145,7 @@ public class Notification implements Serializable {
 
     public Notification build() {
       checkNotNull(topic);
-      PATH_TEMPLATE.validatedMatch(topic, "topic must be in valid format");
+      checkTopicFormat(topic);
       return new Notification(this);
     }
   }
@@ -262,7 +266,7 @@ public class Notification implements Serializable {
    * @param topic a string in the format "projects/{project}/topics/{topic}"
    */
   public static Notification of(String topic) {
-    PATH_TEMPLATE.validatedMatch(topic, "topic must be in valid format");
+    checkTopicFormat(topic);
     return newBuilder(topic).build();
   }
 
@@ -277,7 +281,7 @@ public class Notification implements Serializable {
    * @param topic a string in the format "projects/{project}/topics/{topic}"
    */
   public static Builder newBuilder(String topic) {
-    PATH_TEMPLATE.validatedMatch(topic, "topic must be in valid format");
+    checkTopicFormat(topic);
     return new Builder(topic);
   }
 
@@ -308,5 +312,9 @@ public class Notification implements Serializable {
       builder.setPayloadFormat(PayloadFormat.valueOf(notificationPb.getPayloadFormat()));
     }
     return builder.build();
+  }
+
+  private static void checkTopicFormat(String topic) {
+    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
   }
 }
