@@ -27,6 +27,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import com.google.api.core.ApiClock;
+import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
@@ -38,8 +39,13 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -55,6 +61,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -103,6 +110,11 @@ public class StorageImplMockitoTest {
           .build();
   private static final BlobInfo BLOB_INFO2 = BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME2).build();
   private static final BlobInfo BLOB_INFO3 = BlobInfo.newBuilder(BUCKET_NAME1, BLOB_NAME3).build();
+
+  private static final BlobInfo BLOB_INFO_WITH_HASHES =
+      BLOB_INFO1.toBuilder().setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
+  private static final BlobInfo BLOB_INFO_WITHOUT_HASHES =
+      BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
 
   // Empty StorageRpc options
   private static final Map<StorageRpc.Option, ?> EMPTY_RPC_OPTIONS = ImmutableMap.of();
@@ -458,6 +470,680 @@ public class StorageImplMockitoTest {
     }
   }
 
+  @Test
+  public void testGetBucket() {
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1);
+    assertEquals(expectedBucket1, bucket);
+  }
+
+  @Test
+  public void testGetBucketWithOptions() {
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BucketInfo.of(BUCKET_NAME1).toPb(), BUCKET_GET_OPTIONS);
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION);
+    assertEquals(expectedBucket1, bucket);
+  }
+
+  @Test
+  public void testGetBucketWithSelectedFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BucketInfo.of(BUCKET_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION, BUCKET_GET_FIELDS);
+    assertEquals(
+        BUCKET_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BUCKET_GET_METAGENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("name"));
+    assertTrue(selector.contains("location"));
+    assertTrue(selector.contains("acl"));
+    assertEquals(17, selector.length());
+    assertEquals(BUCKET_INFO1.getName(), bucket.getName());
+  }
+
+  @Test
+  public void testGetBucketWithEmptyFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BUCKET_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BucketInfo.of(BUCKET_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION, BUCKET_GET_EMPTY_FIELDS);
+    assertEquals(
+        BUCKET_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BUCKET_GET_METAGENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("name"));
+    assertEquals(4, selector.length());
+    assertEquals(BUCKET_INFO1.getName(), bucket.getName());
+  }
+
+  @Test
+  public void testGetBucketFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .get(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.get(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testGetBlob() {
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    Blob blob = storage.get(BUCKET_NAME1, BLOB_NAME1);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithOptions() {
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_GET_OPTIONS);
+    initializeService();
+    Blob blob = storage.get(BUCKET_NAME1, BLOB_NAME1, BLOB_GET_METAGENERATION, BLOB_GET_GENERATION);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithOptionsFromBlobId() {
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(BLOB_INFO1.getBlobId().toPb(), BLOB_GET_OPTIONS);
+    initializeService();
+    Blob blob =
+        storage.get(
+            BLOB_INFO1.getBlobId(), BLOB_GET_METAGENERATION, BLOB_GET_GENERATION_FROM_BLOB_ID);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithSelectedFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Blob blob =
+        storage.get(
+            BUCKET_NAME1,
+            BLOB_NAME1,
+            BLOB_GET_METAGENERATION,
+            BLOB_GET_GENERATION,
+            BLOB_GET_FIELDS);
+    assertEquals(
+        BLOB_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_METAGENERATION.getRpcOption()));
+    assertEquals(
+        BLOB_GET_GENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_GENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("bucket"));
+    assertTrue(selector.contains("name"));
+    assertTrue(selector.contains("contentType"));
+    assertTrue(selector.contains("crc32c"));
+    assertEquals(30, selector.length());
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobWithEmptyFields() {
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(Mockito.eq(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb()), capturedOptions.capture());
+    initializeService();
+    Blob blob =
+        storage.get(
+            BUCKET_NAME1,
+            BLOB_NAME1,
+            BLOB_GET_METAGENERATION,
+            BLOB_GET_GENERATION,
+            BLOB_GET_EMPTY_FIELDS);
+    assertEquals(
+        BLOB_GET_METAGENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_METAGENERATION.getRpcOption()));
+    assertEquals(
+        BLOB_GET_GENERATION.getValue(),
+        capturedOptions.getValue().get(BLOB_GET_GENERATION.getRpcOption()));
+    String selector = (String) capturedOptions.getValue().get(BLOB_GET_FIELDS.getRpcOption());
+    assertTrue(selector.contains("bucket"));
+    assertTrue(selector.contains("name"));
+    assertEquals(11, selector.length());
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testGetBlobFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .get(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.get(BUCKET_NAME1, BLOB_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  private void verifyCreateBlobCapturedStream(ArgumentCaptor<ByteArrayInputStream> capturedStream)
+      throws IOException {
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlob() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(BLOB_INFO_WITH_HASHES.toPb()),
+            capturedStream.capture(),
+            Mockito.eq(EMPTY_RPC_OPTIONS));
+    initializeService();
+
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT);
+
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+  }
+
+  @Test
+  public void testCreateBlobWithSubArrayFromByteArray() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(
+                BLOB_INFO1
+                    .toBuilder()
+                    .setMd5(SUB_CONTENT_MD5)
+                    .setCrc32c(SUB_CONTENT_CRC32C)
+                    .build()
+                    .toPb()),
+            capturedStream.capture(),
+            Mockito.eq(EMPTY_RPC_OPTIONS));
+    initializeService();
+
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT, 1, 2);
+
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_SUB_CONTENT.length];
+    assertEquals(BLOB_SUB_CONTENT.length, byteStream.read(streamBytes));
+    assertArrayEquals(BLOB_SUB_CONTENT, streamBytes);
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobRetry() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    StorageObject storageObject = BLOB_INFO_WITH_HASHES.toPb();
+
+    doThrow(new StorageException(500, "internalError"))
+        .doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(Mockito.eq(storageObject), capturedStream.capture(), Mockito.eq(EMPTY_RPC_OPTIONS));
+
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
+            .build()
+            .getService();
+    initializeServiceDependentObjects();
+
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT);
+
+    assertEquals(expectedBlob1, blob);
+
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    for (ByteArrayInputStream byteStream : capturedStream.getAllValues()) {
+      assertEquals(BLOB_CONTENT.length, byteStream.read(streamBytes));
+      assertArrayEquals(BLOB_CONTENT, streamBytes);
+      assertEquals(-1, byteStream.read(streamBytes));
+    }
+  }
+
+  @Test
+  public void testCreateEmptyBlob() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(
+                BLOB_INFO1
+                    .toBuilder()
+                    .setMd5("1B2M2Y8AsgTpgAmY7PhCfg==")
+                    .setCrc32c("AAAAAA==")
+                    .build()
+                    .toPb()),
+            capturedStream.capture(),
+            Mockito.eq(EMPTY_RPC_OPTIONS));
+    initializeService();
+
+    Blob blob = storage.create(BLOB_INFO1);
+    assertEquals(expectedBlob1, blob);
+    ByteArrayInputStream byteStream = capturedStream.getValue();
+    byte[] streamBytes = new byte[BLOB_CONTENT.length];
+    assertEquals(-1, byteStream.read(streamBytes));
+  }
+
+  @Test
+  public void testCreateBlobWithOptions() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(BLOB_INFO_WITH_HASHES.toPb()),
+            capturedStream.capture(),
+            Mockito.eq(BLOB_TARGET_OPTIONS_CREATE));
+    initializeService();
+
+    Blob blob =
+        storage.create(
+            BLOB_INFO1,
+            BLOB_CONTENT,
+            BLOB_TARGET_METAGENERATION,
+            BLOB_TARGET_NOT_EXIST,
+            BLOB_TARGET_PREDEFINED_ACL);
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+  }
+
+  @Test
+  public void testCreateBlobWithDisabledGzipContent() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(BLOB_INFO_WITH_HASHES.toPb()),
+            capturedStream.capture(),
+            Mockito.eq(BLOB_TARGET_OPTIONS_CREATE_DISABLE_GZIP_CONTENT));
+    initializeService();
+
+    Blob blob = storage.create(BLOB_INFO1, BLOB_CONTENT, BLOB_TARGET_DISABLE_GZIP_CONTENT);
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+  }
+
+  @Test
+  public void testCreateBlobWithEncryptionKey() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    doReturn(BLOB_INFO1.toPb())
+        .doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(BLOB_INFO_WITH_HASHES.toPb()),
+            capturedStream.capture(),
+            Mockito.eq(ENCRYPTION_KEY_OPTIONS));
+    initializeService();
+
+    Blob blob =
+        storage.create(BLOB_INFO1, BLOB_CONTENT, Storage.BlobTargetOption.encryptionKey(KEY));
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+    blob =
+        storage.create(
+            BLOB_INFO1, BLOB_CONTENT, Storage.BlobTargetOption.encryptionKey(BASE64_KEY));
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+  }
+
+  @Test
+  public void testCreateBlobWithKmsKeyName() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    doReturn(BLOB_INFO1.toPb())
+        .doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(BLOB_INFO_WITH_HASHES.toPb()),
+            capturedStream.capture(),
+            Mockito.eq(KMS_KEY_NAME_OPTIONS));
+    initializeService();
+
+    Blob blob =
+        storage.create(BLOB_INFO1, BLOB_CONTENT, Storage.BlobTargetOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+    blob =
+        storage.create(BLOB_INFO1, BLOB_CONTENT, Storage.BlobTargetOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStream() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(BLOB_INFO_WITHOUT_HASHES.toPb()),
+            capturedStream.capture(),
+            Mockito.eq(EMPTY_RPC_OPTIONS));
+    initializeService();
+
+    Blob blob = storage.create(BLOB_INFO_WITH_HASHES, fileStream);
+
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStreamDisableGzipContent() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(
+            Mockito.eq(BLOB_INFO_WITHOUT_HASHES.toPb()),
+            capturedStream.capture(),
+            Mockito.eq(BLOB_TARGET_OPTIONS_CREATE_DISABLE_GZIP_CONTENT));
+    initializeService();
+
+    Blob blob =
+        storage.create(
+            BLOB_INFO_WITH_HASHES, fileStream, Storage.BlobWriteOption.disableGzipContent());
+
+    assertEquals(expectedBlob1, blob);
+    verifyCreateBlobCapturedStream(capturedStream);
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStreamWithEncryptionKey() throws IOException {
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+
+    doReturn(BLOB_INFO1.toPb())
+        .doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(BLOB_INFO_WITHOUT_HASHES.toPb(), fileStream, ENCRYPTION_KEY_OPTIONS);
+    initializeService();
+    Blob blob =
+        storage.create(
+            BLOB_INFO_WITH_HASHES, fileStream, Storage.BlobWriteOption.encryptionKey(BASE64_KEY));
+    assertEquals(expectedBlob1, blob);
+    blob =
+        storage.create(
+            BLOB_INFO_WITH_HASHES, fileStream, Storage.BlobWriteOption.encryptionKey(BASE64_KEY));
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testCreateBlobFromStreamRetryableException() throws IOException {
+    ArgumentCaptor<ByteArrayInputStream> capturedStream =
+        ArgumentCaptor.forClass(ByteArrayInputStream.class);
+
+    ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
+
+    Exception internalErrorException = new StorageException(500, "internalError");
+    doThrow(internalErrorException)
+        .when(storageRpcMock)
+        .create(BLOB_INFO_WITHOUT_HASHES.toPb(), fileStream, EMPTY_RPC_OPTIONS);
+
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
+            .build()
+            .getService();
+
+    // Even though this exception is retryable, storage.create(BlobInfo, InputStream)
+    // shouldn't retry.
+    try {
+      storage.create(BLOB_INFO_WITH_HASHES, fileStream);
+      fail();
+    } catch (StorageException ex) {
+      assertSame(internalErrorException, ex);
+    }
+  }
+
+  @Test
+  public void testCreateFromDirectory() throws IOException {
+    initializeService();
+    Path dir = Files.createTempDirectory("unit_");
+    try {
+      storage.createFrom(BLOB_INFO1, dir);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(dir + " is a directory", e.getMessage());
+    }
+  }
+
+  private BlobInfo initializeUpload(byte[] bytes) {
+    return initializeUpload(bytes, DEFAULT_BUFFER_SIZE, EMPTY_RPC_OPTIONS);
+  }
+
+  private BlobInfo initializeUpload(byte[] bytes, int bufferSize) {
+    return initializeUpload(bytes, bufferSize, EMPTY_RPC_OPTIONS);
+  }
+
+  private BlobInfo initializeUpload(
+      byte[] bytes, int bufferSize, Map<StorageRpc.Option, ?> rpcOptions) {
+    String uploadId = "upload-id";
+    byte[] buffer = new byte[bufferSize];
+    System.arraycopy(bytes, 0, buffer, 0, bytes.length);
+    BlobInfo blobInfo = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    StorageObject storageObject = new StorageObject();
+    storageObject.setBucket(BLOB_INFO1.getBucket());
+    storageObject.setName(BLOB_INFO1.getName());
+    storageObject.setSize(BigInteger.valueOf(bytes.length));
+    doReturn(uploadId)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .open(blobInfo.toPb(), rpcOptions);
+
+    doReturn(storageObject)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .writeWithResponse(uploadId, buffer, 0, 0L, bytes.length, true);
+
+    initializeService();
+    expectedUpdated = Blob.fromPb(storage, storageObject);
+    return blobInfo;
+  }
+
+  @Test
+  public void testCreateFromFile() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4};
+    Path tempFile = Files.createTempFile("testCreateFrom", ".tmp");
+    Files.write(tempFile, dataToSend);
+
+    BlobInfo blobInfo = initializeUpload(dataToSend);
+    Blob blob = storage.createFrom(blobInfo, tempFile);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testCreateFromStream() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+
+    BlobInfo blobInfo = initializeUpload(dataToSend);
+    Blob blob = storage.createFrom(blobInfo, stream);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testCreateFromWithOptions() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, DEFAULT_BUFFER_SIZE, KMS_KEY_NAME_OPTIONS);
+    Blob blob =
+        storage.createFrom(blobInfo, stream, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testCreateFromWithBufferSize() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+    int bufferSize = MIN_BUFFER_SIZE * 2;
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize);
+    Blob blob = storage.createFrom(blobInfo, stream, bufferSize);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testCreateFromWithBufferSizeAndOptions() throws Exception {
+    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+    int bufferSize = MIN_BUFFER_SIZE * 2;
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize, KMS_KEY_NAME_OPTIONS);
+    Blob blob =
+        storage.createFrom(
+            blobInfo, stream, bufferSize, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testCreateFromWithSmallBufferSize() throws Exception {
+    byte[] dataToSend = new byte[100_000];
+    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
+    int smallBufferSize = 100;
+
+    BlobInfo blobInfo = initializeUpload(dataToSend, MIN_BUFFER_SIZE);
+    Blob blob = storage.createFrom(blobInfo, stream, smallBufferSize);
+    assertEquals(expectedUpdated, blob);
+  }
+
+  @Test
+  public void testCreateFromWithException() throws Exception {
+    initializeService();
+    String uploadId = "id-exception";
+    byte[] bytes = new byte[10];
+    byte[] buffer = new byte[MIN_BUFFER_SIZE];
+    System.arraycopy(bytes, 0, buffer, 0, bytes.length);
+    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    doReturn(uploadId)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .open(info.toPb(), EMPTY_RPC_OPTIONS);
+
+    Exception runtimeException = new RuntimeException("message");
+    doThrow(runtimeException)
+        .when(storageRpcMock)
+        .writeWithResponse(uploadId, buffer, 0, 0L, bytes.length, true);
+
+    InputStream input = new ByteArrayInputStream(bytes);
+    try {
+      storage.createFrom(info, input, MIN_BUFFER_SIZE);
+      fail();
+    } catch (StorageException e) {
+      assertSame(runtimeException, e.getCause());
+    }
+  }
+
+  @Test
+  public void testCreateFromMultipleParts() throws Exception {
+    initializeService();
+    String uploadId = "id-multiple-parts";
+    int extraBytes = 10;
+    int totalSize = MIN_BUFFER_SIZE + extraBytes;
+    byte[] dataToSend = new byte[totalSize];
+    dataToSend[0] = 42;
+    dataToSend[MIN_BUFFER_SIZE + 1] = 43;
+
+    StorageObject storageObject = new StorageObject();
+    storageObject.setBucket(BLOB_INFO1.getBucket());
+    storageObject.setName(BLOB_INFO1.getName());
+    storageObject.setSize(BigInteger.valueOf(totalSize));
+
+    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
+    doReturn(uploadId)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .open(info.toPb(), EMPTY_RPC_OPTIONS);
+
+    byte[] buffer1 = new byte[MIN_BUFFER_SIZE];
+    System.arraycopy(dataToSend, 0, buffer1, 0, MIN_BUFFER_SIZE);
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .writeWithResponse(uploadId, buffer1, 0, 0L, MIN_BUFFER_SIZE, false);
+
+    byte[] buffer2 = new byte[MIN_BUFFER_SIZE];
+    System.arraycopy(dataToSend, MIN_BUFFER_SIZE, buffer2, 0, extraBytes);
+    doReturn(storageObject)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .writeWithResponse(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true);
+
+    InputStream input = new ByteArrayInputStream(dataToSend);
+    Blob blob = storage.createFrom(info, input, MIN_BUFFER_SIZE);
+    assertEquals(Blob.fromPb(storage, storageObject), blob);
+  }
+
   private void verifyChannelRead(ReadChannel channel, byte[] bytes) throws IOException {
     assertNotNull(channel);
     assertTrue(channel.isOpen());
@@ -551,15 +1237,12 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testWriter() {
-    BlobInfo.Builder infoBuilder = BLOB_INFO1.toBuilder();
-    BlobInfo infoWithHashes = infoBuilder.setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
-    BlobInfo infoWithoutHashes = infoBuilder.setMd5(null).setCrc32c(null).build();
     doReturn("upload-id")
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .open(infoWithoutHashes.toPb(), EMPTY_RPC_OPTIONS);
+        .open(BLOB_INFO_WITHOUT_HASHES.toPb(), EMPTY_RPC_OPTIONS);
     initializeService();
-    WriteChannel channel = storage.writer(infoWithHashes);
+    WriteChannel channel = storage.writer(BLOB_INFO_WITH_HASHES);
     assertNotNull(channel);
     assertTrue(channel.isOpen());
   }
@@ -618,13 +1301,12 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testWriterFailure() {
-    BlobInfo.Builder infoBuilder = BLOB_INFO1.toBuilder();
-    BlobInfo infoWithHashes = infoBuilder.setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
-    BlobInfo infoWithoutHashes = infoBuilder.setMd5(null).setCrc32c(null).build();
-    doThrow(STORAGE_FAILURE).when(storageRpcMock).open(infoWithoutHashes.toPb(), EMPTY_RPC_OPTIONS);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .open(BLOB_INFO_WITHOUT_HASHES.toPb(), EMPTY_RPC_OPTIONS);
     initializeService();
     try {
-      storage.writer(infoWithHashes);
+      storage.writer(BLOB_INFO_WITH_HASHES);
       fail();
     } catch (StorageException e) {
       assertSame(STORAGE_FAILURE, e.getCause());

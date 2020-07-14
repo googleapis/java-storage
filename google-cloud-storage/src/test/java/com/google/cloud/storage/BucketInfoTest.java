@@ -59,8 +59,11 @@ public class BucketInfoTest {
   private static final List<Cors> CORS = Collections.singletonList(Cors.newBuilder().build());
   private static final List<Acl> DEFAULT_ACL =
       Collections.singletonList(Acl.of(User.ofAllAuthenticatedUsers(), Role.WRITER));
+
+  @SuppressWarnings({"unchecked", "deprecation"})
   private static final List<? extends DeleteRule> DELETE_RULES =
       Collections.singletonList(new AgeDeleteRule(5));
+
   private static final List<? extends BucketInfo.LifecycleRule> LIFECYCLE_RULES =
       Collections.singletonList(
           new BucketInfo.LifecycleRule(
@@ -102,6 +105,8 @@ public class BucketInfoTest {
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
   private static final String LOCATION_TYPE = "multi-region";
+
+  @SuppressWarnings({"unchecked", "deprecation"})
   private static final BucketInfo BUCKET_INFO =
       BucketInfo.newBuilder("b")
           .setAcl(ACL)
@@ -131,6 +136,8 @@ public class BucketInfoTest {
           .setRetentionPolicyIsLocked(RETENTION_POLICY_IS_LOCKED)
           .setLogging(LOGGING)
           .build();
+
+  @SuppressWarnings({"unchecked", "deprecation"})
   private static final BucketInfo BUCKET_INFO_ARCHIVE =
       BucketInfo.newBuilder("b")
           .setAcl(ACL)
@@ -185,6 +192,7 @@ public class BucketInfoTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testBuilder() {
     assertEquals("b", BUCKET_INFO.getName());
     assertEquals(ACL, BUCKET_INFO.getAcl());
@@ -217,10 +225,16 @@ public class BucketInfoTest {
   @Test
   public void testToPbAndFromPb() {
     compareBuckets(BUCKET_INFO, BucketInfo.fromPb(BUCKET_INFO.toPb()));
-    BucketInfo bucketInfo = BucketInfo.of("b");
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder("b")
+            .setDeleteRules(DELETE_RULES)
+            .setLifecycleRules(LIFECYCLE_RULES)
+            .setLogging(LOGGING)
+            .build();
     compareBuckets(bucketInfo, BucketInfo.fromPb(bucketInfo.toPb()));
   }
 
+  @SuppressWarnings({"unchecked", "deprecation"})
   private void compareBuckets(BucketInfo expected, BucketInfo value) {
     assertEquals(expected, value);
     assertEquals(expected.getName(), value.getName());
@@ -252,6 +266,7 @@ public class BucketInfoTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testDeleteRules() {
     AgeDeleteRule ageRule = new AgeDeleteRule(10);
     assertEquals(10, ageRule.getDaysToLive());

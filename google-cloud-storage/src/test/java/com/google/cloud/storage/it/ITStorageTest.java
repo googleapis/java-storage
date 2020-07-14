@@ -109,6 +109,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,6 +182,20 @@ public class ITStorageTest {
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
   private static final List<String> LOCATION_TYPES =
       ImmutableList.of("multi-region", "region", "dual-region");
+  private static final LifecycleRule LIFECYCLE_RULE_1 =
+      new LifecycleRule(
+          LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+          LifecycleCondition.newBuilder()
+              .setAge(1)
+              .setNumberOfNewerVersions(3)
+              .setIsLive(false)
+              .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+              .build());
+  private static final LifecycleRule LIFECYCLE_RULE_2 =
+      new LifecycleRule(
+          LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
+  private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
+      ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
   @BeforeClass
   public static void beforeClass() throws IOException {
@@ -236,6 +251,7 @@ public class ITStorageTest {
 
   private static class CustomHttpTransportFactory implements HttpTransportFactory {
     @Override
+    @SuppressWarnings({"unchecked", "deprecation"})
     public HttpTransport create() {
       PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
       manager.setMaxTotal(1);
@@ -616,6 +632,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStream() {
     String blobName = "test-create-blob-stream";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).setContentType(CONTENT_TYPE).build();
@@ -630,6 +647,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStreamDisableGzipContent() {
     String blobName = "test-create-blob-stream-disable-gzip-compression";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).setContentType(CONTENT_TYPE).build();
@@ -660,6 +678,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobMd5Fail() {
     String blobName = "test-create-blob-md5-fail";
     BlobInfo blob =
@@ -2386,71 +2405,81 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketPolicyV1RequesterPays() {
-    Bucket remoteBucket =
-        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertFalse(remoteBucket.requesterPays());
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertTrue(updatedBucket.requesterPays());
+  public void testBucketPolicyV1RequesterPays() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    storage.create(BucketInfo.newBuilder(bucketName).build());
 
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    try {
+      Bucket bucketDefault =
+          storage.get(
+              bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+      assertNull(bucketDefault.requesterPays());
 
-    Storage.BucketSourceOption[] bucketOptions =
-        new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
-    Identity projectOwner = Identity.projectOwner(projectId);
-    Identity projectEditor = Identity.projectEditor(projectId);
-    Identity projectViewer = Identity.projectViewer(projectId);
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            new HashSet<>(Collections.singleton(projectViewer)),
-            StorageRoles.legacyObjectReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
+      Bucket bucketTrue = storage.update(bucketDefault.toBuilder().setRequesterPays(true).build());
+      assertTrue(bucketTrue.requesterPays());
 
-    // Validate getting policy.
-    Policy currentPolicy = storage.getIamPolicy(BUCKET, bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
+      String projectId = remoteStorageHelper.getOptions().getProjectId();
 
-    // Validate updating policy.
-    Policy updatedPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            currentPolicy
-                .toBuilder()
-                .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
-    Policy revertedPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            updatedPolicy
-                .toBuilder()
-                .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
+      Storage.BucketSourceOption[] bucketOptions =
+          new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
+      Identity projectOwner = Identity.projectOwner(projectId);
+      Identity projectEditor = Identity.projectEditor(projectId);
+      Identity projectViewer = Identity.projectViewer(projectId);
+      Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
+          ImmutableMap.of(
+              StorageRoles.legacyBucketOwner(),
+              new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+              StorageRoles.legacyBucketReader(),
+              (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
+      Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
+          ImmutableMap.of(
+              StorageRoles.legacyBucketOwner(),
+              new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+              StorageRoles.legacyBucketReader(),
+              new HashSet<>(Collections.singleton(projectViewer)),
+              StorageRoles.legacyObjectReader(),
+              (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
 
-    // Validate testing permissions.
-    List<Boolean> expectedPermissions = ImmutableList.of(true, true);
-    assertEquals(
-        expectedPermissions,
-        storage.testIamPermissions(
-            BUCKET,
-            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-            bucketOptions));
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
-    assertFalse(updatedBucket.requesterPays());
+      // Validate getting policy.
+      Policy currentPolicy = storage.getIamPolicy(bucketName, bucketOptions);
+      assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
+
+      // Validate updating policy.
+      Policy updatedPolicy =
+          storage.setIamPolicy(
+              bucketName,
+              currentPolicy
+                  .toBuilder()
+                  .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                  .build(),
+              bucketOptions);
+      assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
+      Policy revertedPolicy =
+          storage.setIamPolicy(
+              bucketName,
+              updatedPolicy
+                  .toBuilder()
+                  .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
+                  .build(),
+              bucketOptions);
+      assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
+
+      // Validate testing permissions.
+      List<Boolean> expectedPermissions = ImmutableList.of(true, true);
+      assertEquals(
+          expectedPermissions,
+          storage.testIamPermissions(
+              bucketName,
+              ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
+              bucketOptions));
+      Bucket bucketFalse =
+          storage.update(
+              bucketTrue.toBuilder().setRequesterPays(false).build(),
+              Storage.BucketTargetOption.userProject(projectId));
+      assertFalse(bucketFalse.requesterPays());
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
   }
 
   @Test
@@ -2952,6 +2981,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testBucketWithBucketPolicyOnlyEnabled() throws Exception {
     String bucket = RemoteStorageHelper.generateBucketName();
     try {
@@ -3002,7 +3032,7 @@ public class ITStorageTest {
           storage.get(bucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
 
       assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
+      assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
       try {
         remoteBucket.listAcls();
         fail("StorageException was expected.");
@@ -3021,6 +3051,7 @@ public class ITStorageTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = RemoteStorageHelper.generateBucketName();
     try {
@@ -3197,13 +3228,7 @@ public class ITStorageTest {
     try {
       assertNotNull(storage.create(BucketInfo.newBuilder(logsBucket).setLocation("us").build()));
       Policy policy = storage.getIamPolicy(logsBucket);
-      assertNotNull(
-          storage.setIamPolicy(
-              logsBucket,
-              policy
-                  .toBuilder()
-                  .addIdentity(StorageRoles.legacyBucketWriter(), Identity.allAuthenticatedUsers())
-                  .build()));
+      assertNotNull(policy);
       BucketInfo.Logging logging =
           BucketInfo.Logging.newBuilder()
               .setLogBucket(logsBucket)
@@ -3214,6 +3239,11 @@ public class ITStorageTest {
               BucketInfo.newBuilder(loggingBucket).setLocation("us").setLogging(logging).build());
       assertEquals(logsBucket, bucket.getLogging().getLogBucket());
       assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
+
+      // Disable bucket logging.
+      Bucket updatedBucket = bucket.toBuilder().setLogging(null).build().update();
+      assertNull(updatedBucket.getLogging());
+
     } finally {
       RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
       RemoteStorageHelper.forceDelete(storage, loggingBucket, 5, TimeUnit.SECONDS);
@@ -3272,6 +3302,66 @@ public class ITStorageTest {
 
     updated.delete();
     assertNull(updated.reload());
+  }
+
+  @Test
+  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    Bucket bucket =
+        storage.create(
+            BucketInfo.newBuilder(bucketName)
+                .setLocation("us")
+                .setLifecycleRules(LIFECYCLE_RULES)
+                .build());
+    assertThat(bucket.getLifecycleRules()).isNotNull();
+    assertThat(bucket.getLifecycleRules()).hasSize(2);
+    try {
+      Bucket updatedBucket = bucket.toBuilder().deleteLifecycleRules().build().update();
+      assertThat(updatedBucket.getLifecycleRules()).hasSize(0);
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
+  }
+
+  @Test
+  public void testUploadFromDownloadTo() throws Exception {
+    String blobName = "test-uploadFrom-downloadTo-blob";
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+    Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
+    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
+    Blob blob = storage.createFrom(blobInfo, tempFileFrom);
+    assertEquals(BUCKET, blob.getBucket());
+    assertEquals(blobName, blob.getName());
+    assertEquals(BLOB_BYTE_CONTENT.length, (long) blob.getSize());
+
+    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
+    storage.get(blobId).downloadTo(tempFileTo);
+    byte[] readBytes = Files.readAllBytes(tempFileTo);
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testUploadWithEncryption() throws Exception {
+    String blobName = "test-upload-withEncryption";
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+    ByteArrayInputStream content = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
+    Blob blob = storage.createFrom(blobInfo, content, Storage.BlobWriteOption.encryptionKey(KEY));
+
+    try {
+      blob.getContent();
+      fail("StorageException was expected");
+    } catch (StorageException e) {
+      String expectedMessage =
+          "The target object is encrypted by a customer-supplied encryption key.";
+      assertTrue(e.getMessage().contains(expectedMessage));
+      assertEquals(400, e.getCode());
+    }
+    byte[] readBytes = blob.getContent(Blob.BlobSourceOption.decryptionKey(KEY));
+    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 
   private Blob createBlob(String method, BlobInfo blobInfo) throws IOException {
