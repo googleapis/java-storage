@@ -28,14 +28,11 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A {@code Notification} object sends the information about the changes of objects in your buckets,
- * where the information is added to the topic of your choice in the form of messages. For example,
- * you can track objects that are created and deleted in your bucket. Each notification contains
- * information describing both the event that triggered it and the object that changed.
+ * The class representing Pub/Sub notifications for the Storage.
  *
- * <p>You can send notifications to any topic in any project for which you have sufficient
- * permissions. Once received by the topic, the resulting message can be sent to any number of
- * subscribers to the topic.
+ * @see <a
+ *     href="https://cloud.google.com/storage/docs/pubsub-notifications">pubsub-notifications</a>
+ *     for details.
  */
 public class Notification implements Serializable {
 
@@ -101,7 +98,7 @@ public class Notification implements Serializable {
       objectNamePrefix = notification.objectNamePrefix;
     }
 
-    public Builder setGeneratedId(String generatedId) {
+    Builder setGeneratedId(String generatedId) {
       this.generatedId = generatedId;
       return this;
     }
