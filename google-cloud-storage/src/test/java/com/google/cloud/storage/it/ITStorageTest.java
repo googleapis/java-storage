@@ -254,9 +254,9 @@ public class ITStorageTest {
     // Prepare KMS KeyRing for CMEK tests
     prepareKmsKeys();
 
-    // Create notification.
+    // Add notification.
     topicAdminClient = TopicAdminClient.create();
-    createNotification(topicAdminClient);
+    addNotification(topicAdminClient);
   }
 
   private static void unsetRequesterPays() {
@@ -438,7 +438,7 @@ public class ITStorageTest {
     return kmsKeyResourcePath;
   }
 
-  private static Notification createNotification(TopicAdminClient topicAdminClient) {
+  private static Notification addNotification(TopicAdminClient topicAdminClient) {
     topicAdminClient.createTopic(TOPIC);
     GetIamPolicyRequest getIamPolicyRequest =
         GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
@@ -452,13 +452,13 @@ public class ITStorageTest {
             .build();
     topicAdminClient.setIamPolicy(setIamPolicyRequest);
 
-    // Create a notification on a bucket.
+    // Add a new notification to the bucket.
     Notification bucketNotification =
         Notification.newBuilder(TOPIC)
             .setCustomAttributes(CUSTOM_ATTRIBUTES)
             .setPayloadFormat(PAYLOAD_FORMAT)
             .build();
-    notification = storage.createNotification(BUCKET, bucketNotification);
+    notification = storage.addNotification(BUCKET, bucketNotification);
     return notification;
   }
 

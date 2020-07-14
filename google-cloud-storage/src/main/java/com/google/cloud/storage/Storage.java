@@ -3627,29 +3627,30 @@ public interface Storage extends Service<StorageOptions> {
   ServiceAccount getServiceAccount(String projectId);
 
   /**
-   * Creates a notification subscription for a given bucket.
+   * Adds a new notification to the bucket.
    *
-   * <p>Example of creating a notification subscription:
+   * <p>Example of adding a notification:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
-   * String topic = "projects/myProject/topics/topic"
+   * String topic = "projects/myProject/topics/myTopic"
    * Notification bucketNotification = Notification.newBuilder(topic)
    *  .setCustomAttributes(ImmutableMap.of("label1", "value1"))
+   *  .setEventTypes(Notification.EventType.OBJECT_FINALIZE)
    *  .setPayloadFormat(Notification.PayloadFormat.JSON_API_V1.JSON_API_V1)
    *  .build();
-   * Notification notification = storage.createNotification(bucketName, bucketNotification);
+   * Notification notification = storage.addNotification(bucketName, bucketNotification);
    * }</pre>
    *
    * @param bucket name of the bucket
    * @param notification a {@code Notification} object
-   * @return the notification that was created
+   * @return the created notification
    * @throws StorageException upon failure
    */
-  Notification createNotification(String bucket, Notification notification);
+  Notification addNotification(String bucket, Notification notification);
 
   /**
-   * Gets the notification with the specified name on the bucket.
+   * Gets the notification with the specified id.
    *
    * <p>Example of getting the notification:
    *
@@ -3667,7 +3668,7 @@ public interface Storage extends Service<StorageOptions> {
   Notification getNotification(String bucket, String notificationId);
 
   /**
-   * Retrieves a list of notification subscriptions for a given bucket.
+   * Retrieves the list of notifications associated with the bucket.
    *
    * <p>Example of listing the bucket notifications:
    *
@@ -3683,7 +3684,7 @@ public interface Storage extends Service<StorageOptions> {
   List<Notification> listNotifications(String bucket);
 
   /**
-   * Deletes the notification subscription with the specified name on the bucket.
+   * Deletes the notification with the specified id.
    *
    * <p>Example of deleting the notification:
    *

@@ -1375,7 +1375,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public Notification createNotification(final String bucket, final Notification notification) {
+  public Notification addNotification(final String bucket, final Notification notification) {
     final com.google.api.services.storage.model.Notification notificationPb = notification.toPb();
     try {
       return Notification.fromPb(
