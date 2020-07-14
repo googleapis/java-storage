@@ -522,6 +522,15 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
+     * Returns an option for detecting content type. If this option is used, the content type is
+     * detected from the blob name if not explicitly set. This option is on the client side only, it
+     * does not appear in a RPC call.
+     */
+    public static BlobTargetOption detectContentType() {
+      return new BlobTargetOption(StorageRpc.Option.DETECT_CONTENT_TYPE, true);
+    }
+
+    /**
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
@@ -593,6 +602,7 @@ public interface Storage extends Service<StorageOptions> {
       CUSTOMER_SUPPLIED_KEY,
       KMS_KEY_NAME,
       USER_PROJECT,
+      DETECT_CONTENT_TYPE,
       IF_DISABLE_GZIP_CONTENT;
 
       StorageRpc.Option toRpcOption() {
@@ -732,6 +742,15 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static BlobWriteOption disableGzipContent() {
       return new BlobWriteOption(Option.IF_DISABLE_GZIP_CONTENT, true);
+    }
+
+    /**
+     * Returns an option for detecting content type. If this option is used, the content type is
+     * detected from the blob name if not explicitly set. This option is on the client side only, it
+     * does not appear in a RPC call.
+     */
+    public static BlobWriteOption detectContentType() {
+      return new BlobWriteOption(Option.DETECT_CONTENT_TYPE, true);
     }
   }
 
@@ -1811,8 +1830,7 @@ public interface Storage extends Service<StorageOptions> {
   Bucket create(BucketInfo bucketInfo, BucketTargetOption... options);
 
   /**
-   * Creates a new blob with no content. The content type is detected from the blob name if not
-   * explicitly set.
+   * Creates a new blob with no content.
    *
    * <p>Example of creating a blob with no content.
    *
@@ -1857,7 +1875,7 @@ public interface Storage extends Service<StorageOptions> {
    * {@code content}. For large content, {@link #writer} is recommended as it uses resumable upload.
    * MD5 and CRC32C hashes of {@code content} are computed and used for validating transferred data.
    * Accepts a userProject {@link BlobGetOption} option, which defines the project id to assign
-   * operational costs. The content type is detected from the blob name if not explicitly set.
+   * operational costs.
    *
    * <p>Example of creating a blob from a byte array:
    *
@@ -1881,8 +1899,7 @@ public interface Storage extends Service<StorageOptions> {
    * #writer} is recommended as it uses resumable upload. By default any MD5 and CRC32C values in
    * the given {@code blobInfo} are ignored unless requested via the {@code
    * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options. The given input
-   * stream is closed upon success. The content type is detected from the blob name if not
-   * explicitly set.
+   * stream is closed upon success.
    *
    * <p>This method is marked as {@link Deprecated} because it cannot safely retry, given that it
    * accepts an {@link InputStream} which can only be consumed once.
@@ -2606,10 +2623,9 @@ public interface Storage extends Service<StorageOptions> {
   ReadChannel reader(BlobId blob, BlobSourceOption... options);
 
   /**
-   * Creates a blob and returns a channel for writing its content. The content type is detected from
-   * the blob name if not explicitly set. By default any MD5 and CRC32C values in the given {@code
-   * blobInfo} are ignored unless requested via the {@code BlobWriteOption.md5Match} and {@code
-   * BlobWriteOption.crc32cMatch} options.
+   * Creates a blob and returns a channel for writing its content. By default any MD5 and CRC32C
+   * values in the given {@code blobInfo} are ignored unless requested via the {@code
+   * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options.
    *
    * <p>Example of writing a blob's content through a writer:
    *

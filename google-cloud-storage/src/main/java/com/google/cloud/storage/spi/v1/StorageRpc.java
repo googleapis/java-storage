@@ -65,7 +65,8 @@ public interface StorageRpc extends ServiceRpc {
     KMS_KEY_NAME("kmsKeyName"),
     SERVICE_ACCOUNT_EMAIL("serviceAccount"),
     SHOW_DELETED_KEYS("showDeletedKeys"),
-    REQUESTED_POLICY_VERSION("optionsRequestedPolicyVersion");
+    REQUESTED_POLICY_VERSION("optionsRequestedPolicyVersion"),
+    DETECT_CONTENT_TYPE("detectContentType");
 
     private final String value;
 

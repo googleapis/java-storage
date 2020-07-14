@@ -290,7 +290,7 @@ public class HttpStorageRpc implements StorageRpc {
               .insert(
                   storageObject.getBucket(),
                   storageObject,
-                  new InputStreamContent(detectContentType(storageObject), content));
+                  new InputStreamContent(detectContentType(storageObject, options), content));
       insert.getMediaHttpUploader().setDirectUploadEnabled(true);
       Boolean disableGzipContent = Option.IF_DISABLE_GZIP_CONTENT.getBoolean(options);
       if (disableGzipContent != null) {
@@ -376,14 +376,17 @@ public class HttpStorageRpc implements StorageRpc {
     }
   }
 
-  private static String detectContentType(StorageObject object) {
+  private static String detectContentType(StorageObject object, Map<Option, ?> options) {
     String contentType = object.getContentType();
     if (contentType != null) {
       return contentType;
     }
-    return firstNonNull(
-        FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase(Locale.ENGLISH)),
-        "application/octet-stream");
+
+    if (Boolean.TRUE == Option.DETECT_CONTENT_TYPE.get(options)) {
+      contentType = FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase(Locale.ENGLISH));
+    }
+
+    return firstNonNull(contentType, "application/octet-stream");
   }
 
   private static Function<String, StorageObject> objectFromPrefix(final String bucket) {
@@ -848,7 +851,7 @@ public class HttpStorageRpc implements StorageRpc {
       HttpRequest httpRequest =
           requestFactory.buildPostRequest(url, new JsonHttpContent(jsonFactory, object));
       HttpHeaders requestHeaders = httpRequest.getHeaders();
-      requestHeaders.set("X-Upload-Content-Type", detectContentType(object));
+      requestHeaders.set("X-Upload-Content-Type", detectContentType(object, options));
       String key = Option.CUSTOMER_SUPPLIED_KEY.getString(options);
       if (key != null) {
         BaseEncoding base64 = BaseEncoding.base64();
