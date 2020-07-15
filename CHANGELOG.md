@@ -1,5 +1,19 @@
 # Changelog
 
+### [1.111.3](https://www.github.com/googleapis/java-storage/compare/v1.111.2...v1.111.3) (2020-07-15)
+
+
+### Bug Fixes
+
+* PostPolicyV4.PostFieldsV4.Builder.addCustomMetadataField() allows to add prefixed an not prefixed custom fields ([#398](https://www.github.com/googleapis/java-storage/issues/398)) ([02dc3b5](https://www.github.com/googleapis/java-storage/commit/02dc3b5e5377d8848c889647e72102cd9acc646d))
+* **docs:** example of Storage#testIamPermissions ([#434](https://www.github.com/googleapis/java-storage/issues/434)) ([275f452](https://www.github.com/googleapis/java-storage/commit/275f452a5993f95a84fb603a5f4b436238b39439))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.30.10 ([#423](https://www.github.com/googleapis/java-storage/issues/423)) ([fbfa9ec](https://www.github.com/googleapis/java-storage/commit/fbfa9ecf277794e07d9a3c46d5b5022f54c37afd))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20200611-1.30.10 ([#428](https://www.github.com/googleapis/java-storage/issues/428)) ([6ef57eb](https://www.github.com/googleapis/java-storage/commit/6ef57ebc9eeddc90f13ef87274e8ab0b7eb53290))
+
 ### [1.111.2](https://www.github.com/googleapis/java-storage/compare/v1.111.1...v1.111.2) (2020-07-10)
 
 
