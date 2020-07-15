@@ -3363,4 +3363,61 @@ public class ITStorageTest {
     byte[] readBytes = blob.getContent(Blob.BlobSourceOption.decryptionKey(KEY));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
+
+  private Blob createBlob(String method, BlobInfo blobInfo, boolean detectType) throws IOException {
+    switch (method) {
+      case "create":
+        return detectType
+            ? storage.create(blobInfo, Storage.BlobTargetOption.detectContentType())
+            : storage.create(blobInfo);
+      case "createFrom":
+        InputStream inputStream = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
+        return detectType
+            ? storage.createFrom(blobInfo, inputStream, Storage.BlobWriteOption.detectContentType())
+            : storage.createFrom(blobInfo, inputStream);
+      case "writer":
+        if (detectType) {
+          storage.writer(blobInfo, Storage.BlobWriteOption.detectContentType()).close();
+        } else {
+          storage.writer(blobInfo).close();
+        }
+        return storage.get(BlobId.of(blobInfo.getBucket(), blobInfo.getName()));
+      default:
+        throw new IllegalArgumentException("Unknown method " + method);
+    }
+  }
+
+  private void testAutoContentType(String method) throws IOException {
+    String[] names = {"file1.txt", "dir with spaces/Pic.Jpg", "no_extension"};
+    String[] types = {"text/plain", "image/jpeg", "application/octet-stream"};
+    for (int i = 0; i < names.length; i++) {
+      BlobId blobId = BlobId.of(BUCKET, names[i]);
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+      Blob blob_true = createBlob(method, blobInfo, true);
+      assertEquals(types[i], blob_true.getContentType());
+
+      Blob blob_false = createBlob(method, blobInfo, false);
+      assertEquals("application/octet-stream", blob_false.getContentType());
+    }
+    String customType = "custom/type";
+    BlobId blobId = BlobId.of(BUCKET, names[0]);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(customType).build();
+    Blob blob = createBlob(method, blobInfo, true);
+    assertEquals(customType, blob.getContentType());
+  }
+
+  @Test
+  public void testAutoContentTypeCreate() throws IOException {
+    testAutoContentType("create");
+  }
+
+  @Test
+  public void testAutoContentTypeCreateFrom() throws IOException {
+    testAutoContentType("createFrom");
+  }
+
+  @Test
+  public void testAutoContentTypeWriter() throws IOException {
+    testAutoContentType("writer");
+  }
 }
