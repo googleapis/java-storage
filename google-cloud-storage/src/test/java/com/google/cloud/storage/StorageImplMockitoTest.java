@@ -371,9 +371,9 @@ public class StorageImplMockitoTest {
   private static final String ETAG = "0xFF00";
   private static final String GENERATED_ID = "B/N:1";
   private static final String SELF_LINK = "http://storage/b/n";
-  private static final Notification.EventType[] EVENT_TYPES = {
-    Notification.EventType.OBJECT_FINALIZE, Notification.EventType.OBJECT_METADATA_UPDATE
-  };
+  private static final List<Notification.EventType> EVENT_TYPES =
+      ImmutableList.of(
+          Notification.EventType.OBJECT_FINALIZE, Notification.EventType.OBJECT_METADATA_UPDATE);
   private static final String OBJECT_NAME_PREFIX = "index.html";
   private static final Notification.PayloadFormat PAYLOAD_FORMAT =
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
@@ -394,7 +394,7 @@ public class StorageImplMockitoTest {
           .setEtag(ETAG)
           .setCustomAttributes(CUSTOM_ATTRIBUTES)
           .setSelfLink(SELF_LINK)
-          .setEventTypes(Notification.EventType.OBJECT_FINALIZE)
+          .setEventTypes(EVENT_TYPES)
           .setObjectNamePrefix(OBJECT_NAME_PREFIX)
           .setPayloadFormat(PAYLOAD_FORMAT)
           .setGeneratedId(GENERATED_ID)
@@ -1721,7 +1721,7 @@ public class StorageImplMockitoTest {
     assertEquals(CUSTOM_ATTRIBUTES, value.getCustomAttributes());
     assertEquals(ETAG, value.getEtag());
     assertEquals(SELF_LINK, value.getSelfLink());
-    assertArrayEquals(EVENT_TYPES, value.getEventTypes());
+    assertEquals(EVENT_TYPES, value.getEventTypes());
     assertEquals(OBJECT_NAME_PREFIX, value.getObjectNamePrefix());
     assertEquals(PAYLOAD_FORMAT.name(), value.getPayloadFormat().name());
     assertEquals(TOPIC, value.getTopic());

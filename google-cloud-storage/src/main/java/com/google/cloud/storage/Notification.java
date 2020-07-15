@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class Notification implements Serializable {
           };
   private final String generatedId;
   private final String topic;
-  private final EventType[] eventTypes;
+  private final List<EventType> eventTypes;
   private final Map<String, String> customAttributes;
   private final PayloadFormat payloadFormat;
   private final String objectNamePrefix;
@@ -83,7 +84,7 @@ public class Notification implements Serializable {
 
     private String generatedId;
     private String topic;
-    private EventType[] eventTypes;
+    private List<EventType> eventTypes;
     private Map<String, String> customAttributes;
     private PayloadFormat payloadFormat;
     private String objectNamePrefix;
@@ -131,8 +132,8 @@ public class Notification implements Serializable {
       return this;
     }
 
-    public Builder setEventTypes(EventType... eventTypes) {
-      this.eventTypes = eventTypes != null && eventTypes.length > 0 ? eventTypes : null;
+    public Builder setEventTypes(List<EventType> eventTypes) {
+      this.eventTypes = eventTypes != null ? ImmutableList.copyOf(eventTypes) : null;
       return this;
     }
 
@@ -206,7 +207,7 @@ public class Notification implements Serializable {
    * @see <a href="https://cloud.google.com/storage/docs/cross-origin">Cross-Origin Resource Sharing
    *     (CORS)</a>
    */
-  public EventType[] getEventTypes() {
+  public List<EventType> getEventTypes() {
     return eventTypes;
   }
 
@@ -247,7 +248,7 @@ public class Notification implements Serializable {
     if (customAttributes != null) {
       notificationPb.setCustomAttributes(customAttributes);
     }
-    if (eventTypes != null && eventTypes.length > 0) {
+    if (eventTypes != null && eventTypes.size() > 0) {
       List<String> eventTypesPb = new ArrayList<>();
       for (EventType eventType : eventTypes) {
         eventTypesPb.add(eventType.toString());
@@ -270,6 +271,13 @@ public class Notification implements Serializable {
 
   /**
    * Creates a {@code Notification} object for the provided topic.
+   *
+   * <p>Example of creating the notification object:
+   *
+   * <pre>{@code
+   * String topic = "projects/myProject/topics/myTopic"
+   * Notification notification = Notification.of(topic)
+   * }</pre>
    *
    * @param topic a string in the format "projects/{project}/topics/{topic}"
    */
@@ -314,10 +322,9 @@ public class Notification implements Serializable {
       builder.setTopic(notificationPb.getTopic());
     }
     if (notificationPb.getEventTypes() != null) {
-      List<String> eventTypesPb = notificationPb.getEventTypes();
-      EventType[] eventTypes = new EventType[eventTypesPb.size()];
-      for (int index = 0; index < eventTypesPb.size(); index++) {
-        eventTypes[index] = EventType.valueOf(eventTypesPb.get(index));
+      List<EventType> eventTypes = new ArrayList<>();
+      for (String eventType : notificationPb.getEventTypes()) {
+        eventTypes.add(EventType.valueOf(eventType));
       }
       builder.setEventTypes(eventTypes);
     }

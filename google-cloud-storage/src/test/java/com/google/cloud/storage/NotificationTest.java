@@ -16,10 +16,11 @@
 
 package com.google.cloud.storage;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
@@ -28,9 +29,9 @@ public class NotificationTest {
   private static final String ETAG = "0xFF00";
   private static final String GENERATED_ID = "B/N:1";
   private static final String SELF_LINK = "http://storage/b/n";
-  private static final Notification.EventType[] EVENT_TYPES = {
-    Notification.EventType.OBJECT_FINALIZE, Notification.EventType.OBJECT_METADATA_UPDATE
-  };
+  private static final List<Notification.EventType> EVENT_TYPES =
+      ImmutableList.of(
+          Notification.EventType.OBJECT_FINALIZE, Notification.EventType.OBJECT_METADATA_UPDATE);
   private static final String OBJECT_NAME_PREFIX = "index.html";
   private static final Notification.PayloadFormat PAYLOAD_FORMAT =
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
@@ -73,7 +74,7 @@ public class NotificationTest {
     assertEquals(ETAG, NOTIFICATION.getEtag());
     assertEquals(GENERATED_ID, NOTIFICATION.getGeneratedId());
     assertEquals(SELF_LINK, NOTIFICATION.getSelfLink());
-    assertArrayEquals(EVENT_TYPES, NOTIFICATION.getEventTypes());
+    assertEquals(EVENT_TYPES, NOTIFICATION.getEventTypes());
     assertEquals(OBJECT_NAME_PREFIX, NOTIFICATION.getObjectNamePrefix());
     assertEquals(PAYLOAD_FORMAT, NOTIFICATION.getPayloadFormat());
     assertEquals(TOPIC, NOTIFICATION.getTopic());
@@ -97,7 +98,7 @@ public class NotificationTest {
     assertEquals(expected.getCustomAttributes(), actual.getCustomAttributes());
     assertEquals(expected.getEtag(), actual.getEtag());
     assertEquals(expected.getSelfLink(), actual.getSelfLink());
-    assertArrayEquals(expected.getEventTypes(), actual.getEventTypes());
+    assertEquals(expected.getEventTypes(), actual.getEventTypes());
     assertEquals(expected.getObjectNamePrefix(), actual.getObjectNamePrefix());
     assertEquals(expected.getPayloadFormat(), actual.getPayloadFormat());
     assertEquals(expected.getTopic(), actual.getTopic());
