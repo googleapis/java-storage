@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
@@ -26,7 +27,6 @@ import org.junit.Test;
 public class NotificationTest {
 
   private static final String ETAG = "0xFF00";
-  private static final String GENERATED_ID = "B/N:1";
   private static final String SELF_LINK = "http://storage/b/n";
   private static final Notification.EventType[] EVENT_TYPES = {
     Notification.EventType.OBJECT_FINALIZE, Notification.EventType.OBJECT_METADATA_UPDATE
@@ -44,15 +44,14 @@ public class NotificationTest {
           .setEventTypes(EVENT_TYPES)
           .setObjectNamePrefix(OBJECT_NAME_PREFIX)
           .setPayloadFormat(PAYLOAD_FORMAT)
-          .setGeneratedId(GENERATED_ID)
           .build();
 
   @Test
   public void testToBuilder() {
     compareBucketsNotification(NOTIFICATION, NOTIFICATION.toBuilder().build());
-    Notification notification = NOTIFICATION.toBuilder().setGeneratedId("id").build();
-    assertEquals("id", notification.getGeneratedId());
-    notification = notification.toBuilder().setGeneratedId(GENERATED_ID).build();
+    Notification notification = NOTIFICATION.toBuilder().setTopic(TOPIC).build();
+    assertEquals(TOPIC, notification.getTopic());
+    notification = notification.toBuilder().setTopic(TOPIC).build();
     compareBucketsNotification(NOTIFICATION, notification);
   }
 
@@ -66,12 +65,19 @@ public class NotificationTest {
   public void testOf() {
     Notification notification = Notification.of(TOPIC);
     assertEquals(TOPIC, notification.getTopic());
+    assertNull(notification.getGeneratedId());
+    assertNull(notification.getCustomAttributes());
+    assertNull(notification.getEtag());
+    assertNull(notification.getSelfLink());
+    assertNull(notification.getEventTypes());
+    assertNull(notification.getObjectNamePrefix());
+    assertNull(notification.getPayloadFormat());
   }
 
   @Test
   public void testBuilder() {
     assertEquals(ETAG, NOTIFICATION.getEtag());
-    assertEquals(GENERATED_ID, NOTIFICATION.getGeneratedId());
+    assertNull(NOTIFICATION.getGeneratedId());
     assertEquals(SELF_LINK, NOTIFICATION.getSelfLink());
     assertEquals(OBJECT_NAME_PREFIX, NOTIFICATION.getObjectNamePrefix());
     assertEquals(PAYLOAD_FORMAT, NOTIFICATION.getPayloadFormat());

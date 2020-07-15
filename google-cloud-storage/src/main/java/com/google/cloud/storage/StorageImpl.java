@@ -1428,7 +1428,9 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getRetrySettings(),
               EXCEPTION_HANDLER,
               getOptions().getClock());
-      return Lists.transform(answer, Notification.FROM_PB_FUNCTION);
+      return answer == null
+          ? ImmutableList.<Notification>of()
+          : Lists.transform(answer, Notification.FROM_PB_FUNCTION);
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }

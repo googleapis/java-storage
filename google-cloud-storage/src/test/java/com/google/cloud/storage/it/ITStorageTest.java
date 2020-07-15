@@ -254,9 +254,8 @@ public class ITStorageTest {
     // Prepare KMS KeyRing for CMEK tests
     prepareKmsKeys();
 
-    // Add notification.
-    topicAdminClient = TopicAdminClient.create();
-    addNotification(topicAdminClient);
+    // Configure topic admin client for notification.
+    topicAdminClient = configureTopicAdminClient();
   }
 
   private static void unsetRequesterPays() {
@@ -279,9 +278,10 @@ public class ITStorageTest {
   public static void afterClass() throws ExecutionException, InterruptedException {
     if (storage != null) {
 
-      /* Delete the specified notification on the specified bucket as well as delete the pubsub topic */
+      /* Deletes the pubsub topic */
       if (topicAdminClient != null) {
-        deleteNotification(topicAdminClient);
+        topicAdminClient.deleteTopic(TOPIC);
+        topicAdminClient.close();
       }
       // In beforeClass, we make buckets auto-delete blobs older than a day old.
       // Here, delete all buckets older than 2 days. They should already be empty and easy.
@@ -438,7 +438,8 @@ public class ITStorageTest {
     return kmsKeyResourcePath;
   }
 
-  private static Notification addNotification(TopicAdminClient topicAdminClient) {
+  private static TopicAdminClient configureTopicAdminClient() throws IOException {
+    TopicAdminClient topicAdminClient = TopicAdminClient.create();
     topicAdminClient.createTopic(TOPIC);
     GetIamPolicyRequest getIamPolicyRequest =
         GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
@@ -451,21 +452,7 @@ public class ITStorageTest {
             .setPolicy(policy.toBuilder().addBindings(binding).build())
             .build();
     topicAdminClient.setIamPolicy(setIamPolicyRequest);
-
-    // Add a new notification to the bucket.
-    Notification bucketNotification =
-        Notification.newBuilder(TOPIC)
-            .setCustomAttributes(CUSTOM_ATTRIBUTES)
-            .setPayloadFormat(PAYLOAD_FORMAT)
-            .build();
-    notification = storage.addNotification(BUCKET, bucketNotification);
-    return notification;
-  }
-
-  public static void deleteNotification(TopicAdminClient topicAdminClient) {
-    storage.deleteNotification(BUCKET, notification.getGeneratedId());
-    topicAdminClient.deleteTopic(TOPIC);
-    topicAdminClient.close();
+    return topicAdminClient;
   }
 
   @Test(timeout = 5000)
@@ -3821,44 +3808,58 @@ public class ITStorageTest {
 
   @Test
   public void testBucketUpdateTime() throws ExecutionException, InterruptedException {
-      String bucketName = RemoteStorageHelper.generateBucketName();
-      BucketInfo bucketInfo =
-              BucketInfo.newBuilder(bucketName).setLocation("us").setVersioningEnabled(true).build();
-      try {
-          Bucket bucket = storage.create(bucketInfo);
-          assertThat(bucket).isNotNull();
-          assertThat(bucket.versioningEnabled()).isTrue();
-          assertThat(bucket.getCreateTime()).isNotNull();
-          assertThat(bucket.getUpdateTime()).isEqualTo(bucket.getCreateTime());
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName).setLocation("us").setVersioningEnabled(true).build();
+    try {
+      Bucket bucket = storage.create(bucketInfo);
+      assertThat(bucket).isNotNull();
+      assertThat(bucket.versioningEnabled()).isTrue();
+      assertThat(bucket.getCreateTime()).isNotNull();
+      assertThat(bucket.getUpdateTime()).isEqualTo(bucket.getCreateTime());
 
-          Bucket updatedBucket = bucket.toBuilder().setVersioningEnabled(false).build().update();
-          assertThat(updatedBucket.versioningEnabled()).isFalse();
-          assertThat(updatedBucket.getUpdateTime()).isNotNull();
-          assertThat(updatedBucket.getCreateTime()).isEqualTo(bucket.getCreateTime());
-          assertThat(updatedBucket.getUpdateTime()).isGreaterThan(bucket.getCreateTime());
-      } finally {
-          RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-      }
+      Bucket updatedBucket = bucket.toBuilder().setVersioningEnabled(false).build().update();
+      assertThat(updatedBucket.versioningEnabled()).isFalse();
+      assertThat(updatedBucket.getUpdateTime()).isNotNull();
+      assertThat(updatedBucket.getCreateTime()).isEqualTo(bucket.getCreateTime());
+      assertThat(updatedBucket.getUpdateTime()).isGreaterThan(bucket.getCreateTime());
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
   }
 
   @Test
-  public void testGetNotification() {
-    Notification actualNotification =
-        storage.getNotification(BUCKET, notification.getGeneratedId());
-    assertEquals(CUSTOM_ATTRIBUTES, actualNotification.getCustomAttributes());
-    assertEquals(PAYLOAD_FORMAT.name(), actualNotification.getPayloadFormat().name());
-    assertTrue(actualNotification.getTopic().contains(TOPIC));
-  }
+  public void testNotification() throws InterruptedException, ExecutionException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
+    Notification bucketNotification =
+        Notification.newBuilder(TOPIC)
+            .setCustomAttributes(CUSTOM_ATTRIBUTES)
+            .setPayloadFormat(PAYLOAD_FORMAT)
+            .build();
+    try {
+      Notification notification = storage.addNotification(bucketName, bucketNotification);
+      assertThat(notification.getGeneratedId()).isNotNull();
+      assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
+      assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
+      assertThat(notification.getTopic().contains(TOPIC)).isTrue();
 
-  @Test
-  public void testListNotification() {
-    List<Notification> notifications = storage.listNotifications(BUCKET);
-    for (Notification actualNotification : notifications) {
-      if (actualNotification.getGeneratedId().equals(notification.getGeneratedId())) {
-        assertEquals(CUSTOM_ATTRIBUTES, actualNotification.getCustomAttributes());
-        assertEquals(PAYLOAD_FORMAT.name(), actualNotification.getPayloadFormat().name());
-        assertTrue(actualNotification.getTopic().contains(TOPIC));
-      }
+      // Gets the notification with the specified id.
+      Notification actualNotification =
+          storage.getNotification(bucketName, notification.getGeneratedId());
+      assertEquals(notification, actualNotification);
+
+      // Retrieves the list of notifications associated with the bucket.
+      List<Notification> notifications = storage.listNotifications(bucketName);
+      assertEquals(1, notifications.size());
+
+      // Deletes the notification with the specified id.
+      boolean isDeleted = storage.deleteNotification(bucketName, notification.getGeneratedId());
+      assertThat(isDeleted).isTrue();
+      assertThat(storage.getNotification(bucketName, notification.getGeneratedId())).isNull();
+      assertThat(storage.listNotifications(bucketName)).isEmpty();
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
 

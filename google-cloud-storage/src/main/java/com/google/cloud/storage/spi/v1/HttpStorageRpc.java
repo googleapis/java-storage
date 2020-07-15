@@ -1610,7 +1610,11 @@ public class HttpStorageRpc implements StorageRpc {
       return storage.notifications().get(bucket, notification).execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
-      throw translate(ex);
+      StorageException serviceException = translate(ex);
+      if (serviceException.getCode() == HTTP_NOT_FOUND) {
+        return null;
+      }
+      throw serviceException;
     } finally {
       scope.close();
       span.end();

@@ -29,11 +29,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * The class representing Pub/Sub notifications for the Storage.
- *
- * @see <a
- *     href="https://cloud.google.com/storage/docs/pubsub-notifications">pubsub-notifications</a>
- *     for details.
+ * The class representing Pub/Sub notifications for the Storage. See <a
+ * href="https://cloud.google.com/storage/docs/pubsub-notifications">pubsub-notifications</a> for
+ * details.
  */
 public class Notification implements Serializable {
 
@@ -106,7 +104,7 @@ public class Notification implements Serializable {
       objectNamePrefix = notification.objectNamePrefix;
     }
 
-    Builder setGeneratedId(String generatedId) {
+    private Builder setGeneratedId(String generatedId) {
       this.generatedId = generatedId;
       return this;
     }
@@ -171,7 +169,7 @@ public class Notification implements Serializable {
     return generatedId;
   }
 
-  /** Returns the topic to which this subscription publishes. */
+  /** Returns the topic in Pub/Sub that receives notifications. */
   public String getTopic() {
     return topic;
   }
@@ -192,20 +190,18 @@ public class Notification implements Serializable {
   }
 
   /**
-   * Returns HTTP 1.1 Entity tag for the notification.
-   *
-   * @see <a href="http://tools.ietf.org/html/rfc2616#section-3.11">Entity Tags</a>
+   * Returns HTTP 1.1 Entity tag for the notification. See <a
+   * href="http://tools.ietf.org/html/rfc2616#section-3.11">Entity Tags</a>
    */
   public String getEtag() {
     return etag;
   }
 
   /**
-   * Returns the list of event types that this notification will apply to. If empty, notifications
-   * will be sent on all event types.
-   *
-   * @see <a href="https://cloud.google.com/storage/docs/cross-origin">Cross-Origin Resource Sharing
-   *     (CORS)</a>
+   * Returns the events that trigger a notification to be sent. If empty, notifications are
+   * triggered by any event. See <a
+   * href="https://cloud.google.com/storage/docs/pubsub-notifications#events">Event types</a> to get
+   * list of available events.
    */
   public List<EventType> getEventTypes() {
     return eventTypes;
@@ -214,9 +210,6 @@ public class Notification implements Serializable {
   /**
    * Returns the list of additional attributes to attach to each Cloud PubSub message published for
    * this notification subscription.
-   *
-   * @see <a href="https://cloud.google.com/storage/docs/access-control#About-Access-Control-Lists">
-   *     About Access Control Lists</a>
    */
   public Map<String, String> getCustomAttributes() {
     return customAttributes;
@@ -224,7 +217,7 @@ public class Notification implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(getTopic());
+    return toPb().hashCode();
   }
 
   @Override
@@ -317,9 +310,6 @@ public class Notification implements Serializable {
     }
     if (notificationPb.getObjectNamePrefix() != null) {
       builder.setObjectNamePrefix(notificationPb.getObjectNamePrefix());
-    }
-    if (notificationPb.getTopic() != null) {
-      builder.setTopic(notificationPb.getTopic());
     }
     if (notificationPb.getEventTypes() != null) {
       List<String> eventTypesPb = notificationPb.getEventTypes();

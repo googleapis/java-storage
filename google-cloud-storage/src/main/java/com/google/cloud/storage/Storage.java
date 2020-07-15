@@ -3662,7 +3662,7 @@ public interface Storage extends Service<StorageOptions> {
    *
    * @param bucket name of the bucket
    * @param notificationId notification ID
-   * @return the notification object that exist on the bucket or {@code null} if not found
+   * @return the {@code Notification} object with the given id or {@code null} if not found
    * @throws StorageException upon failure
    */
   Notification getNotification(String bucket, String notificationId);
@@ -3678,7 +3678,7 @@ public interface Storage extends Service<StorageOptions> {
    * }</pre>
    *
    * @param bucket name of the bucket
-   * @return a list of {@link Notification} objects that exist on the bucket.
+   * @return a list of {@link Notification} objects added to the bucket.
    * @throws StorageException upon failure
    */
   List<Notification> listNotifications(String bucket);
