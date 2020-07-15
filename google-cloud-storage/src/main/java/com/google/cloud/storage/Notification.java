@@ -20,10 +20,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -132,8 +132,8 @@ public class Notification implements Serializable {
       return this;
     }
 
-    public Builder setEventTypes(List<EventType> eventTypes) {
-      this.eventTypes = eventTypes != null ? ImmutableList.copyOf(eventTypes) : null;
+    public Builder setEventTypes(EventType... eventTypes) {
+      this.eventTypes = eventTypes != null ? Arrays.asList(eventTypes) : null;
       return this;
     }
 
@@ -322,9 +322,10 @@ public class Notification implements Serializable {
       builder.setTopic(notificationPb.getTopic());
     }
     if (notificationPb.getEventTypes() != null) {
-      List<EventType> eventTypes = new ArrayList<>();
-      for (String eventType : notificationPb.getEventTypes()) {
-        eventTypes.add(EventType.valueOf(eventType));
+      List<String> eventTypesPb = notificationPb.getEventTypes();
+      EventType[] eventTypes = new EventType[eventTypesPb.size()];
+      for (int index = 0; index < eventTypesPb.size(); index++) {
+        eventTypes[index] = EventType.valueOf(eventTypesPb.get(index));
       }
       builder.setEventTypes(eventTypes);
     }

@@ -3636,7 +3636,7 @@ public interface Storage extends Service<StorageOptions> {
    * String topic = "projects/myProject/topics/myTopic"
    * Notification bucketNotification = Notification.newBuilder(topic)
    *  .setCustomAttributes(ImmutableMap.of("label1", "value1"))
-   *  .setEventTypes(ImmutableList.of(Notification.EventType.OBJECT_FINALIZE))
+   *  .setEventTypes(Notification.EventType.OBJECT_FINALIZE)
    *  .setPayloadFormat(Notification.PayloadFormat.JSON_API_V1)
    *  .build();
    * Notification notification = storage.addNotification(bucketName, bucketNotification);
