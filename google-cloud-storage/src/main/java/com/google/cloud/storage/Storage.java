@@ -3517,7 +3517,7 @@ public interface Storage extends Service<StorageOptions> {
    * String bucketName = "my-unique-bucket";
    * List<Boolean> response =
    *     storage.testIamPermissions(
-   *         bucket,
+   *         bucketName,
    *         ImmutableList.of("storage.buckets.get", "storage.buckets.getIamPolicy"));
    * for (boolean hasPermission : response) {
    *   // Do something with permission test response
