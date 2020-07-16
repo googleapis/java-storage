@@ -3857,8 +3857,8 @@ public class ITStorageTest {
           .isEqualTo(actualNotification.getGeneratedId());
 
       // Deletes the notification with the specified id.
-      boolean isDeleted = storage.deleteNotification(bucketName, notification.getGeneratedId());
-      assertThat(isDeleted).isTrue();
+      assertThat(storage.deleteNotification(bucketName, notification.getGeneratedId())).isTrue();
+      assertThat(storage.deleteNotification(bucketName, notification.getGeneratedId())).isFalse();
       assertThat(storage.getNotification(bucketName, notification.getGeneratedId())).isNull();
       assertThat(storage.listNotifications(bucketName)).isEmpty();
     } finally {
