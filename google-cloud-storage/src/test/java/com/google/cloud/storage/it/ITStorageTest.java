@@ -3838,6 +3838,7 @@ public class ITStorageTest {
             .setPayloadFormat(PAYLOAD_FORMAT)
             .build();
     try {
+      assertThat(storage.listNotifications(bucketName)).isEmpty();
       Notification notification = storage.addNotification(bucketName, bucketNotification);
       assertThat(notification.getGeneratedId()).isNotNull();
       assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
@@ -3851,7 +3852,9 @@ public class ITStorageTest {
 
       // Retrieves the list of notifications associated with the bucket.
       List<Notification> notifications = storage.listNotifications(bucketName);
-      assertEquals(1, notifications.size());
+      assertThat(notifications.size()).isEqualTo(1);
+      assertThat(notifications.get(0).getGeneratedId())
+          .isEqualTo(actualNotification.getGeneratedId());
 
       // Deletes the notification with the specified id.
       boolean isDeleted = storage.deleteNotification(bucketName, notification.getGeneratedId());
