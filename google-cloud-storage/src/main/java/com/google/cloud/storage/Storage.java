@@ -1052,6 +1052,28 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
+     * Returns an option to set a startOffset to filter results to objects whose names are
+     * lexicographically equal to or after startOffset. If endOffset is also set, the objects listed
+     * have names between startOffset (inclusive) and endOffset (exclusive).
+     *
+     * @param startOffset startOffset to filter the results
+     */
+    public static BlobListOption startOffset(String startOffset) {
+      return new BlobListOption(StorageRpc.Option.START_OFF_SET, startOffset);
+    }
+
+    /**
+     * Returns an option to set a endOffset to filter results to objects whose names are
+     * lexicographically before endOffset. If startOffset is also set, the objects listed have names
+     * between startOffset (inclusive) and endOffset (exclusive).
+     *
+     * @param endOffset endOffset to filter the results
+     */
+    public static BlobListOption endOffset(String endOffset) {
+      return new BlobListOption(StorageRpc.Option.END_OFF_SET, endOffset);
+    }
+
+    /**
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      *
