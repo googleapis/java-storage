@@ -999,17 +999,14 @@ public class ITStorageTest {
     Bucket bucket =
         storage.create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
     try {
-      String[] blobNames = {
-        "test-list-blobs-start-offset-blob1",
-        "test-list-blobs-start-offset-blob2",
-        "test-list-blobs-end-offset-blob3"
-      };
+      List<String> blobNames =
+          ImmutableList.of("startOffset_blob1", "startOffset_blob2", "blob3_endOffset");
       BlobInfo blob1 =
-          BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
+          BlobInfo.newBuilder(bucket, blobNames.get(0)).setContentType(CONTENT_TYPE).build();
       BlobInfo blob2 =
-          BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
+          BlobInfo.newBuilder(bucket, blobNames.get(1)).setContentType(CONTENT_TYPE).build();
       BlobInfo blob3 =
-          BlobInfo.newBuilder(bucket, blobNames[2]).setContentType(CONTENT_TYPE).build();
+          BlobInfo.newBuilder(bucket, blobNames.get(2)).setContentType(CONTENT_TYPE).build();
 
       Blob remoteBlob1 = storage.create(blob1);
       Blob remoteBlob2 = storage.create(blob2);
@@ -1017,27 +1014,27 @@ public class ITStorageTest {
       assertNotNull(remoteBlob1);
       assertNotNull(remoteBlob2);
       assertNotNull(remoteBlob3);
-      Page<Blob> page =
+
+      // Listing blobs without BlobListOptions.
+      Page<Blob> page1 = storage.list(bucketName);
+      assertEquals(3, Iterators.size(page1.iterateAll().iterator()));
+
+      // Listing blobs with startOffset.
+      Page<Blob> page2 =
+          storage.list(bucketName, Storage.BlobListOption.startOffset("startOffset"));
+      assertEquals(2, Iterators.size(page2.iterateAll().iterator()));
+
+      // Listing blobs with endOffset.
+      Page<Blob> page3 = storage.list(bucketName, Storage.BlobListOption.endOffset("endOffset"));
+      assertEquals(1, Iterators.size(page3.iterateAll().iterator()));
+
+      // Listing blobs with startOffset and endOffset.
+      Page<Blob> page4 =
           storage.list(
               bucketName,
-              Storage.BlobListOption.startOffset("test-list-blobs-start-offset-blob"),
-              Storage.BlobListOption.endOffset("test-list-blobs-end-offset-blob3"));
-      // Listing blobs is eventually consistent, we loop until the list is of the expected size.
-      while (Iterators.size(page.iterateAll().iterator()) != 3) {
-        page =
-            storage.list(
-                bucketName,
-                Storage.BlobListOption.startOffset("test-list-blobs-start-offset-blob"),
-                Storage.BlobListOption.endOffset("test-list-blobs-end-offset-blob3"));
-      }
-      Set<String> blobSet = ImmutableSet.of(blobNames[0], blobNames[1], blobNames[2]);
-      Iterator<Blob> iterator = page.iterateAll().iterator();
-      while (iterator.hasNext()) {
-        Blob remoteBlob = iterator.next();
-        assertEquals(bucketName, remoteBlob.getBucket());
-        assertTrue(blobSet.contains(remoteBlob.getName()));
-        assertNotNull(remoteBlob.getGeneration());
-      }
+              Storage.BlobListOption.startOffset("startOffset"),
+              Storage.BlobListOption.endOffset("endOffset"));
+      assertEquals(0, Iterators.size(page4.iterateAll().iterator()));
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }

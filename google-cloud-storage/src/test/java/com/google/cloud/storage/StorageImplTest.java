@@ -668,9 +668,11 @@ public class StorageImplTest {
   @Test
   public void testListBlobsWithOffset() {
     String cursor = "cursor";
+    String startOffset = "startOffset";
+    String endOffset = "endOffset";
     Map<StorageRpc.Option, ?> options =
         ImmutableMap.of(
-            StorageRpc.Option.START_OFF_SET, BLOB_NAME1, StorageRpc.Option.END_OFF_SET, BLOB_NAME2);
+            StorageRpc.Option.START_OFF_SET, startOffset, StorageRpc.Option.END_OFF_SET, endOffset);
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
@@ -681,8 +683,8 @@ public class StorageImplTest {
     Page<Blob> page =
         storage.list(
             BUCKET_NAME1,
-            Storage.BlobListOption.startOffset(BLOB_NAME1),
-            Storage.BlobListOption.endOffset(BLOB_NAME2));
+            Storage.BlobListOption.startOffset(startOffset),
+            Storage.BlobListOption.endOffset(endOffset));
     assertEquals(cursor, page.getNextPageToken());
     assertArrayEquals(blobList.toArray(), Iterables.toArray(page.getValues(), Blob.class));
   }

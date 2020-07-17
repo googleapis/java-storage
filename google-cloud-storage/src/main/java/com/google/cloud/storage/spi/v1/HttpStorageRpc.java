@@ -350,6 +350,8 @@ public class HttpStorageRpc implements StorageRpc {
               .setProjection(DEFAULT_PROJECTION)
               .setVersions(Option.VERSIONS.getBoolean(options))
               .setDelimiter(Option.DELIMITER.getString(options))
+              .setStartOffset(Option.START_OFF_SET.getString(options))
+              .setEndOffset(Option.END_OFF_SET.getString(options))
               .setPrefix(Option.PREFIX.getString(options))
               .setMaxResults(Option.MAX_RESULTS.getLong(options))
               .setPageToken(Option.PAGE_TOKEN.getString(options))
