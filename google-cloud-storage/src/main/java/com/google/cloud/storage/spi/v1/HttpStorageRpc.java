@@ -77,9 +77,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class HttpStorageRpc implements StorageRpc {
@@ -98,6 +101,7 @@ public class HttpStorageRpc implements StorageRpc {
   private final HttpRequestInitializer batchRequestInitializer;
 
   private static final long MEGABYTE = 1024L * 1024L;
+  private static final FileNameMap FILE_NAME_MAP = URLConnection.getFileNameMap();
 
   public HttpStorageRpc(StorageOptions options) {
     HttpTransportOptions transportOptions = (HttpTransportOptions) options.getTransportOptions();
@@ -286,7 +290,7 @@ public class HttpStorageRpc implements StorageRpc {
               .insert(
                   storageObject.getBucket(),
                   storageObject,
-                  new InputStreamContent(storageObject.getContentType(), content));
+                  new InputStreamContent(detectContentType(storageObject, options), content));
       insert.getMediaHttpUploader().setDirectUploadEnabled(true);
       Boolean disableGzipContent = Option.IF_DISABLE_GZIP_CONTENT.getBoolean(options);
       if (disableGzipContent != null) {
@@ -350,6 +354,8 @@ public class HttpStorageRpc implements StorageRpc {
               .setProjection(DEFAULT_PROJECTION)
               .setVersions(Option.VERSIONS.getBoolean(options))
               .setDelimiter(Option.DELIMITER.getString(options))
+              .setStartOffset(Option.START_OFF_SET.getString(options))
+              .setEndOffset(Option.END_OFF_SET.getString(options))
               .setPrefix(Option.PREFIX.getString(options))
               .setMaxResults(Option.MAX_RESULTS.getLong(options))
               .setPageToken(Option.PAGE_TOKEN.getString(options))
@@ -370,6 +376,19 @@ public class HttpStorageRpc implements StorageRpc {
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
+  }
+
+  private static String detectContentType(StorageObject object, Map<Option, ?> options) {
+    String contentType = object.getContentType();
+    if (contentType != null) {
+      return contentType;
+    }
+
+    if (Boolean.TRUE == Option.DETECT_CONTENT_TYPE.get(options)) {
+      contentType = FILE_NAME_MAP.getContentTypeFor(object.getName().toLowerCase(Locale.ENGLISH));
+    }
+
+    return firstNonNull(contentType, "application/octet-stream");
   }
 
   private static Function<String, StorageObject> objectFromPrefix(final String bucket) {
@@ -834,9 +853,7 @@ public class HttpStorageRpc implements StorageRpc {
       HttpRequest httpRequest =
           requestFactory.buildPostRequest(url, new JsonHttpContent(jsonFactory, object));
       HttpHeaders requestHeaders = httpRequest.getHeaders();
-      requestHeaders.set(
-          "X-Upload-Content-Type",
-          firstNonNull(object.getContentType(), "application/octet-stream"));
+      requestHeaders.set("X-Upload-Content-Type", detectContentType(object, options));
       String key = Option.CUSTOMER_SUPPLIED_KEY.getString(options);
       if (key != null) {
         BaseEncoding base64 = BaseEncoding.base64();

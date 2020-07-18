@@ -58,6 +58,8 @@ public interface StorageRpc extends ServiceRpc {
     MAX_RESULTS("maxResults"),
     PAGE_TOKEN("pageToken"),
     DELIMITER("delimiter"),
+    START_OFF_SET("startOffset"),
+    END_OFF_SET("endOffset"),
     VERSIONS("versions"),
     FIELDS("fields"),
     CUSTOMER_SUPPLIED_KEY("customerSuppliedKey"),
@@ -65,7 +67,8 @@ public interface StorageRpc extends ServiceRpc {
     KMS_KEY_NAME("kmsKeyName"),
     SERVICE_ACCOUNT_EMAIL("serviceAccount"),
     SHOW_DELETED_KEYS("showDeletedKeys"),
-    REQUESTED_POLICY_VERSION("optionsRequestedPolicyVersion");
+    REQUESTED_POLICY_VERSION("optionsRequestedPolicyVersion"),
+    DETECT_CONTENT_TYPE("detectContentType");
 
     private final String value;
 

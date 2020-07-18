@@ -522,6 +522,15 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     /**
+     * Returns an option for detecting content type. If this option is used, the content type is
+     * detected from the blob name if not explicitly set. This option is on the client side only, it
+     * does not appear in a RPC call.
+     */
+    public static BlobTargetOption detectContentType() {
+      return new BlobTargetOption(StorageRpc.Option.DETECT_CONTENT_TYPE, true);
+    }
+
+    /**
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
@@ -593,6 +602,7 @@ public interface Storage extends Service<StorageOptions> {
       CUSTOMER_SUPPLIED_KEY,
       KMS_KEY_NAME,
       USER_PROJECT,
+      DETECT_CONTENT_TYPE,
       IF_DISABLE_GZIP_CONTENT;
 
       StorageRpc.Option toRpcOption() {
@@ -732,6 +742,15 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static BlobWriteOption disableGzipContent() {
       return new BlobWriteOption(Option.IF_DISABLE_GZIP_CONTENT, true);
+    }
+
+    /**
+     * Returns an option for detecting content type. If this option is used, the content type is
+     * detected from the blob name if not explicitly set. This option is on the client side only, it
+     * does not appear in a RPC call.
+     */
+    public static BlobWriteOption detectContentType() {
+      return new BlobWriteOption(Option.DETECT_CONTENT_TYPE, true);
     }
   }
 
@@ -1030,6 +1049,28 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static BlobListOption delimiter(String delimiter) {
       return new BlobListOption(StorageRpc.Option.DELIMITER, delimiter);
+    }
+
+    /**
+     * Returns an option to set a startOffset to filter results to objects whose names are
+     * lexicographically equal to or after startOffset. If endOffset is also set, the objects listed
+     * have names between startOffset (inclusive) and endOffset (exclusive).
+     *
+     * @param startOffset startOffset to filter the results
+     */
+    public static BlobListOption startOffset(String startOffset) {
+      return new BlobListOption(StorageRpc.Option.START_OFF_SET, startOffset);
+    }
+
+    /**
+     * Returns an option to set a endOffset to filter results to objects whose names are
+     * lexicographically before endOffset. If startOffset is also set, the objects listed have names
+     * between startOffset (inclusive) and endOffset (exclusive).
+     *
+     * @param endOffset endOffset to filter the results
+     */
+    public static BlobListOption endOffset(String endOffset) {
+      return new BlobListOption(StorageRpc.Option.END_OFF_SET, endOffset);
     }
 
     /**
@@ -1832,9 +1873,10 @@ public interface Storage extends Service<StorageOptions> {
    * Creates a new blob. Direct upload is used to upload {@code content}. For large content, {@link
    * #writer} is recommended as it uses resumable upload. MD5 and CRC32C hashes of {@code content}
    * are computed and used for validating transferred data. Accepts an optional userProject {@link
-   * BlobGetOption} option which defines the project id to assign operational costs.
+   * BlobGetOption} option which defines the project id to assign operational costs. The content
+   * type is detected from the blob name if not explicitly set.
    *
-   * <p>Example of creating a blob from a byte array.
+   * <p>Example of creating a blob from a byte array:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
@@ -1857,7 +1899,7 @@ public interface Storage extends Service<StorageOptions> {
    * Accepts a userProject {@link BlobGetOption} option, which defines the project id to assign
    * operational costs.
    *
-   * <p>Example of creating a blob from a byte array.
+   * <p>Example of creating a blob from a byte array:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
@@ -1876,7 +1918,7 @@ public interface Storage extends Service<StorageOptions> {
 
   /**
    * Creates a new blob. Direct upload is used to upload {@code content}. For large content, {@link
-   * #writer} is recommended as it uses resumable upload. By default any md5 and crc32c values in
+   * #writer} is recommended as it uses resumable upload. By default any MD5 and CRC32C values in
    * the given {@code blobInfo} are ignored unless requested via the {@code
    * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options. The given input
    * stream is closed upon success.
@@ -2603,11 +2645,11 @@ public interface Storage extends Service<StorageOptions> {
   ReadChannel reader(BlobId blob, BlobSourceOption... options);
 
   /**
-   * Creates a blob and return a channel for writing its content. By default any md5 and crc32c
+   * Creates a blob and returns a channel for writing its content. By default any MD5 and CRC32C
    * values in the given {@code blobInfo} are ignored unless requested via the {@code
    * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options.
    *
-   * <p>Example of writing a blob's content through a writer.
+   * <p>Example of writing a blob's content through a writer:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
@@ -3517,7 +3559,7 @@ public interface Storage extends Service<StorageOptions> {
    * String bucketName = "my-unique-bucket";
    * List<Boolean> response =
    *     storage.testIamPermissions(
-   *         bucket,
+   *         bucketName,
    *         ImmutableList.of("storage.buckets.get", "storage.buckets.getIamPolicy"));
    * for (boolean hasPermission : response) {
    *   // Do something with permission test response

@@ -1000,6 +1000,53 @@ public class ITStorageTest {
     }
   }
 
+  @Test
+  public void testListBlobsWithOffset() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    Bucket bucket =
+        storage.create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
+    try {
+      List<String> blobNames =
+          ImmutableList.of("startOffset_blob1", "startOffset_blob2", "blob3_endOffset");
+      BlobInfo blob1 =
+          BlobInfo.newBuilder(bucket, blobNames.get(0)).setContentType(CONTENT_TYPE).build();
+      BlobInfo blob2 =
+          BlobInfo.newBuilder(bucket, blobNames.get(1)).setContentType(CONTENT_TYPE).build();
+      BlobInfo blob3 =
+          BlobInfo.newBuilder(bucket, blobNames.get(2)).setContentType(CONTENT_TYPE).build();
+
+      Blob remoteBlob1 = storage.create(blob1);
+      Blob remoteBlob2 = storage.create(blob2);
+      Blob remoteBlob3 = storage.create(blob3);
+      assertNotNull(remoteBlob1);
+      assertNotNull(remoteBlob2);
+      assertNotNull(remoteBlob3);
+
+      // Listing blobs without BlobListOptions.
+      Page<Blob> page1 = storage.list(bucketName);
+      assertEquals(3, Iterators.size(page1.iterateAll().iterator()));
+
+      // Listing blobs with startOffset.
+      Page<Blob> page2 =
+          storage.list(bucketName, Storage.BlobListOption.startOffset("startOffset"));
+      assertEquals(2, Iterators.size(page2.iterateAll().iterator()));
+
+      // Listing blobs with endOffset.
+      Page<Blob> page3 = storage.list(bucketName, Storage.BlobListOption.endOffset("endOffset"));
+      assertEquals(1, Iterators.size(page3.iterateAll().iterator()));
+
+      // Listing blobs with startOffset and endOffset.
+      Page<Blob> page4 =
+          storage.list(
+              bucketName,
+              Storage.BlobListOption.startOffset("startOffset"),
+              Storage.BlobListOption.endOffset("endOffset"));
+      assertEquals(0, Iterators.size(page4.iterateAll().iterator()));
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
+  }
+
   @Test(timeout = 5000)
   public void testListBlobsCurrentDirectory() throws InterruptedException {
     String directoryName = "test-list-blobs-current-directory/";
@@ -3369,5 +3416,62 @@ public class ITStorageTest {
     }
     byte[] readBytes = blob.getContent(Blob.BlobSourceOption.decryptionKey(KEY));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+  }
+
+  private Blob createBlob(String method, BlobInfo blobInfo, boolean detectType) throws IOException {
+    switch (method) {
+      case "create":
+        return detectType
+            ? storage.create(blobInfo, Storage.BlobTargetOption.detectContentType())
+            : storage.create(blobInfo);
+      case "createFrom":
+        InputStream inputStream = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
+        return detectType
+            ? storage.createFrom(blobInfo, inputStream, Storage.BlobWriteOption.detectContentType())
+            : storage.createFrom(blobInfo, inputStream);
+      case "writer":
+        if (detectType) {
+          storage.writer(blobInfo, Storage.BlobWriteOption.detectContentType()).close();
+        } else {
+          storage.writer(blobInfo).close();
+        }
+        return storage.get(BlobId.of(blobInfo.getBucket(), blobInfo.getName()));
+      default:
+        throw new IllegalArgumentException("Unknown method " + method);
+    }
+  }
+
+  private void testAutoContentType(String method) throws IOException {
+    String[] names = {"file1.txt", "dir with spaces/Pic.Jpg", "no_extension"};
+    String[] types = {"text/plain", "image/jpeg", "application/octet-stream"};
+    for (int i = 0; i < names.length; i++) {
+      BlobId blobId = BlobId.of(BUCKET, names[i]);
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+      Blob blob_true = createBlob(method, blobInfo, true);
+      assertEquals(types[i], blob_true.getContentType());
+
+      Blob blob_false = createBlob(method, blobInfo, false);
+      assertEquals("application/octet-stream", blob_false.getContentType());
+    }
+    String customType = "custom/type";
+    BlobId blobId = BlobId.of(BUCKET, names[0]);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(customType).build();
+    Blob blob = createBlob(method, blobInfo, true);
+    assertEquals(customType, blob.getContentType());
+  }
+
+  @Test
+  public void testAutoContentTypeCreate() throws IOException {
+    testAutoContentType("create");
+  }
+
+  @Test
+  public void testAutoContentTypeCreateFrom() throws IOException {
+    testAutoContentType("createFrom");
+  }
+
+  @Test
+  public void testAutoContentTypeWriter() throws IOException {
+    testAutoContentType("writer");
   }
 }
