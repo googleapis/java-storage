@@ -260,6 +260,7 @@ public class ITStorageTest {
   }
 
   private static void prepareKmsKeys() throws IOException {
+    // https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys
     String projectId = remoteStorageHelper.getOptions().getProjectId();
     GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
     ManagedChannel kmsChannel =
@@ -339,7 +340,13 @@ public class ITStorageTest {
             .build();
     requestParamsHeader.put(requestParamsKey, "parent=" + kmsKeyRingResourcePath);
     iamStub = MetadataUtils.attachHeaders(iamStub, requestParamsHeader);
-    iamStub.setIamPolicy(setIamPolicyRequest);
+    try {
+      iamStub.setIamPolicy(setIamPolicyRequest);
+    } catch (StatusRuntimeException e) {
+      if (log.isLoggable(Level.WARNING)) {
+        log.log(Level.WARNING, "Unable to set IAM policy: {0}", e.getMessage());
+      }
+    }
   }
 
   private static String ensureKmsKeyExistsForTests(
