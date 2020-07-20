@@ -66,6 +66,7 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
+import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
@@ -3473,5 +3474,35 @@ public class ITStorageTest {
   @Test
   public void testAutoContentTypeWriter() throws IOException {
     testAutoContentType("writer");
+  }
+
+  @Test
+  public void testRemoveBucketCORS() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
+    List<HttpMethod> httpMethods = ImmutableList.of(HttpMethod.GET);
+    List<String> responseHeaders = ImmutableList.of("Content-Type");
+    try {
+      Cors cors =
+          Cors.newBuilder()
+              .setOrigins(origins)
+              .setMethods(httpMethods)
+              .setResponseHeaders(responseHeaders)
+              .setMaxAgeSeconds(100)
+              .build();
+      Bucket bucket =
+          storage.create(BucketInfo.newBuilder(bucketName).setCors(ImmutableList.of(cors)).build());
+      assertThat(bucket.getCors().size()).isEqualTo(1);
+      assertThat(bucket.getCors().get(0).getMaxAgeSeconds()).isEqualTo(100);
+      assertThat(bucket.getCors().get(0).getMethods()).isEqualTo(httpMethods);
+      assertThat(bucket.getCors().get(0).getOrigins()).isEqualTo(origins);
+      assertThat(bucket.getCors().get(0).getResponseHeaders()).isEqualTo(responseHeaders);
+
+      // Remove bucket CORS configuration.
+      Bucket updatedBucket = bucket.toBuilder().setCors(ImmutableList.<Cors>of()).build().update();
+      assertThat(updatedBucket.getCors().size()).isEqualTo(0);
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
   }
 }
