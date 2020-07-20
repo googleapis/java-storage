@@ -924,7 +924,9 @@ public class ITStorageTest {
 
     // Test listing a Requester Pays bucket.
     Bucket remoteBucket =
-        storage.get(BUCKET_REQUESTER_PAYS, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+        storage.get(
+            BUCKET_REQUESTER_PAYS,
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
 
     assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
@@ -2245,8 +2247,10 @@ public class ITStorageTest {
   private void testBucketAclRequesterPays(boolean requesterPays) {
     if (requesterPays) {
       Bucket remoteBucket =
-          storage.get(BUCKET_REQUESTER_PAYS, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-      assertNull(remoteBucket.requesterPays());
+          storage.get(
+              BUCKET_REQUESTER_PAYS,
+              Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+      assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
       remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
       Bucket updatedBucket = storage.update(remoteBucket);
       assertTrue(updatedBucket.requesterPays());
@@ -2259,18 +2263,23 @@ public class ITStorageTest {
             ? new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)}
             : new Storage.BucketSourceOption[] {};
 
-    assertNull(storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
-    assertFalse(storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+    assertNull(
+        storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+    assertFalse(
+        storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
     Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
     assertNotNull(storage.createAcl(BUCKET_REQUESTER_PAYS, acl, bucketOptions));
     Acl updatedAcl =
-        storage.updateAcl(BUCKET_REQUESTER_PAYS, acl.toBuilder().setRole(Role.WRITER).build(), bucketOptions);
+        storage.updateAcl(
+            BUCKET_REQUESTER_PAYS, acl.toBuilder().setRole(Role.WRITER).build(), bucketOptions);
     assertEquals(Role.WRITER, updatedAcl.getRole());
     Set<Acl> acls = new HashSet<>();
     acls.addAll(storage.listAcls(BUCKET_REQUESTER_PAYS, bucketOptions));
     assertTrue(acls.contains(updatedAcl));
-    assertTrue(storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
-    assertNull(storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+    assertTrue(
+        storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+    assertNull(
+        storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
     if (requesterPays) {
       Bucket remoteBucket =
           storage.get(
@@ -2466,9 +2475,11 @@ public class ITStorageTest {
 
   @Test
   public void testBucketPolicyV1RequesterPays() throws ExecutionException, InterruptedException {
+    unsetRequesterPays();
     Bucket bucketDefault =
         storage.get(
-            BUCKET_REQUESTER_PAYS, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+            BUCKET_REQUESTER_PAYS,
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertTrue(bucketDefault.requesterPays() == null || !bucketDefault.requesterPays());
 
     Bucket bucketTrue = storage.update(bucketDefault.toBuilder().setRequesterPays(true).build());
@@ -2764,7 +2775,9 @@ public class ITStorageTest {
   public void testUpdateBucketRequesterPays() {
     unsetRequesterPays();
     Bucket remoteBucket =
-        storage.get(BUCKET_REQUESTER_PAYS, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+        storage.get(
+            BUCKET_REQUESTER_PAYS,
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
     Bucket updatedBucket = storage.update(remoteBucket);
@@ -2776,7 +2789,8 @@ public class ITStorageTest {
     Blob remoteBlob = updatedBucket.create(blobName, BLOB_BYTE_CONTENT, option);
     assertNotNull(remoteBlob);
     byte[] readBytes =
-        storage.readAllBytes(BUCKET_REQUESTER_PAYS, blobName, Storage.BlobSourceOption.userProject(projectId));
+        storage.readAllBytes(
+            BUCKET_REQUESTER_PAYS, blobName, Storage.BlobSourceOption.userProject(projectId));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
     updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
