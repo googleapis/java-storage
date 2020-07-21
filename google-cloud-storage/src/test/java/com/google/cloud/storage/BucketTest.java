@@ -902,7 +902,7 @@ public class BucketTest {
             .build();
     BucketInfo bucketInfo = BucketInfo.newBuilder("b").setCors(ImmutableList.of(cors)).build();
     Bucket bucket = new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(bucketInfo));
-    assertThat(bucket.getCors().size()).isEqualTo(1);
+    assertThat(bucket.getCors()).isNotNull();
     assertThat(bucket.getCors().get(0).getMaxAgeSeconds()).isEqualTo(100);
     assertThat(bucket.getCors().get(0).getMethods()).isEqualTo(httpMethods);
     assertThat(bucket.getCors().get(0).getOrigins()).isEqualTo(origins);
@@ -916,6 +916,6 @@ public class BucketTest {
     initializeBucket();
     Bucket updatedBucket = new Bucket(storage, new BucketInfo.BuilderImpl(expectedUpdatedBucket));
     Bucket actualUpdatedBucket = updatedBucket.update();
-    assertThat(actualUpdatedBucket.getCors().size()).isEqualTo(0);
+    assertThat(actualUpdatedBucket.getCors()).isEmpty();
   }
 }

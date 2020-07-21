@@ -1509,7 +1509,7 @@ public class BucketInfo implements Serializable {
    *     (CORS)</a>
    */
   public List<Cors> getCors() {
-    return cors != null ? cors : ImmutableList.<Cors>of();
+    return cors;
   }
 
   /**
