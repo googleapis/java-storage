@@ -886,4 +886,36 @@ public class BucketTest {
     assertThat(actualUpdatedBucket.getLogging().getLogBucket()).isNull();
     assertThat(actualUpdatedBucket.getLogging().getLogObjectPrefix()).isNull();
   }
+
+  @Test
+  public void testRemoveBucketCORS() {
+    initializeExpectedBucket(6);
+    List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
+    List<HttpMethod> httpMethods = ImmutableList.of(HttpMethod.GET);
+    List<String> responseHeaders = ImmutableList.of("Content-Type");
+    Cors cors =
+        Cors.newBuilder()
+            .setOrigins(origins)
+            .setMethods(httpMethods)
+            .setResponseHeaders(responseHeaders)
+            .setMaxAgeSeconds(100)
+            .build();
+    BucketInfo bucketInfo = BucketInfo.newBuilder("b").setCors(ImmutableList.of(cors)).build();
+    Bucket bucket = new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(bucketInfo));
+    assertThat(bucket.getCors()).isNotNull();
+    assertThat(bucket.getCors().get(0).getMaxAgeSeconds()).isEqualTo(100);
+    assertThat(bucket.getCors().get(0).getMethods()).isEqualTo(httpMethods);
+    assertThat(bucket.getCors().get(0).getOrigins()).isEqualTo(origins);
+    assertThat(bucket.getCors().get(0).getResponseHeaders()).isEqualTo(responseHeaders);
+
+    // Remove bucket CORS configuration.
+    Bucket expectedUpdatedBucket = bucket.toBuilder().setCors(null).build();
+    expect(storage.getOptions()).andReturn(mockOptions).times(2);
+    expect(storage.update(expectedUpdatedBucket)).andReturn(expectedUpdatedBucket);
+    replay(storage);
+    initializeBucket();
+    Bucket updatedBucket = new Bucket(storage, new BucketInfo.BuilderImpl(expectedUpdatedBucket));
+    Bucket actualUpdatedBucket = updatedBucket.update();
+    assertThat(actualUpdatedBucket.getCors()).isEmpty();
+  }
 }

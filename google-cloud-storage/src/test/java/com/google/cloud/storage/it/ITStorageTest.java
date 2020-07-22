@@ -66,6 +66,7 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
+import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
@@ -3473,5 +3474,51 @@ public class ITStorageTest {
   @Test
   public void testAutoContentTypeWriter() throws IOException {
     testAutoContentType("writer");
+  }
+
+  @Test
+  public void testRemoveBucketCORS() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
+    List<HttpMethod> httpMethods = ImmutableList.of(HttpMethod.GET);
+    List<String> responseHeaders = ImmutableList.of("Content-Type");
+    try {
+      Cors cors =
+          Cors.newBuilder()
+              .setOrigins(origins)
+              .setMethods(httpMethods)
+              .setResponseHeaders(responseHeaders)
+              .setMaxAgeSeconds(100)
+              .build();
+      storage.create(BucketInfo.newBuilder(bucketName).setCors(ImmutableList.of(cors)).build());
+
+      // case-1 : Cors are set and field selector is selected then returns not-null.
+      Bucket remoteBucket =
+          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
+      assertThat(remoteBucket.getCors()).isNotNull();
+      assertThat(remoteBucket.getCors().get(0).getMaxAgeSeconds()).isEqualTo(100);
+      assertThat(remoteBucket.getCors().get(0).getMethods()).isEqualTo(httpMethods);
+      assertThat(remoteBucket.getCors().get(0).getOrigins()).isEqualTo(origins);
+      assertThat(remoteBucket.getCors().get(0).getResponseHeaders()).isEqualTo(responseHeaders);
+
+      // case-2 : Cors are set but field selector isn't selected then returns not-null.
+      remoteBucket = storage.get(bucketName);
+      assertThat(remoteBucket.getCors()).isNotNull();
+
+      // Remove CORS configuration from the bucket.
+      Bucket updatedBucket = remoteBucket.toBuilder().setCors(null).build().update();
+      assertThat(updatedBucket.getCors()).isNull();
+
+      // case-3 : Cors are not set and field selector is selected then returns null.
+      updatedBucket = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
+      assertThat(updatedBucket.getCors()).isNull();
+
+      // case-4 : Cors are not set and field selector isn't selected then returns null.
+      updatedBucket = storage.get(bucketName);
+      assertThat(updatedBucket.getCors()).isNull();
+
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
   }
 }

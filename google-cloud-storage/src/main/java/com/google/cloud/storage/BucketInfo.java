@@ -1240,7 +1240,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setCors(Iterable<Cors> cors) {
-      this.cors = cors != null ? ImmutableList.copyOf(cors) : null;
+      this.cors = cors != null ? ImmutableList.copyOf(cors) : ImmutableList.<Cors>of();
       return this;
     }
 
