@@ -16,28 +16,38 @@
 
 package com.google.cloud.storage;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
+import com.google.cloud.storage.NotificationInfo.EventType;
+import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class NotificationTest {
 
   private static final String ETAG = "0xFF00";
   private static final String SELF_LINK = "http://storage/b/n";
-  private static final Notification.EventType[] EVENT_TYPES = {
-    Notification.EventType.OBJECT_FINALIZE, Notification.EventType.OBJECT_METADATA_UPDATE
-  };
   private static final String OBJECT_NAME_PREFIX = "index.html";
-  private static final Notification.PayloadFormat PAYLOAD_FORMAT =
-      Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final String TOPIC = "projects/myProject/topics/topic1";
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
-  private static final Notification NOTIFICATION =
-      Notification.newBuilder(TOPIC)
+  private static final PayloadFormat PAYLOAD_FORMAT = PayloadFormat.JSON_API_V1.JSON_API_V1;
+  private static final EventType[] EVENT_TYPES = {
+    EventType.OBJECT_FINALIZE, EventType.OBJECT_METADATA_UPDATE
+  };
+  private static final NotificationInfo NOTIFICATION_INFO =
+      NotificationInfo.newBuilder(TOPIC)
           .setEtag(ETAG)
           .setCustomAttributes(CUSTOM_ATTRIBUTES)
           .setSelfLink(SELF_LINK)
@@ -46,59 +56,62 @@ public class NotificationTest {
           .setPayloadFormat(PAYLOAD_FORMAT)
           .build();
 
-  @Test
-  public void testToBuilder() {
-    compareBucketsNotification(NOTIFICATION, NOTIFICATION.toBuilder().build());
-    Notification notification = NOTIFICATION.toBuilder().setTopic(TOPIC).build();
-    assertEquals(TOPIC, notification.getTopic());
-    notification = notification.toBuilder().setTopic(TOPIC).build();
-    compareBucketsNotification(NOTIFICATION, notification);
+  private Storage storage;
+  private StorageOptions mockOptions = createMock(StorageOptions.class);
+
+  @Before
+  public void setUp() {
+    storage = createStrictMock(Storage.class);
   }
 
-  @Test
-  public void testToBuilderIncomplete() {
-    Notification incompleteNotification = Notification.newBuilder(TOPIC).build();
-    compareBucketsNotification(incompleteNotification, incompleteNotification.toBuilder().build());
-  }
-
-  @Test
-  public void testOf() {
-    Notification notification = Notification.of(TOPIC);
-    assertEquals(TOPIC, notification.getTopic());
-    assertNull(notification.getGeneratedId());
-    assertNull(notification.getCustomAttributes());
-    assertNull(notification.getEtag());
-    assertNull(notification.getSelfLink());
-    assertNull(notification.getEventTypes());
-    assertNull(notification.getObjectNamePrefix());
-    assertNull(notification.getPayloadFormat());
+  @After
+  public void tearDown() {
+    verify(storage);
   }
 
   @Test
   public void testBuilder() {
-    assertEquals(ETAG, NOTIFICATION.getEtag());
-    assertNull(NOTIFICATION.getGeneratedId());
-    assertEquals(SELF_LINK, NOTIFICATION.getSelfLink());
-    assertEquals(OBJECT_NAME_PREFIX, NOTIFICATION.getObjectNamePrefix());
-    assertEquals(PAYLOAD_FORMAT, NOTIFICATION.getPayloadFormat());
-    assertEquals(TOPIC, NOTIFICATION.getTopic());
-    assertEquals(CUSTOM_ATTRIBUTES, NOTIFICATION.getCustomAttributes());
-    assertEquals(Arrays.asList(EVENT_TYPES), NOTIFICATION.getEventTypes());
+    expect(storage.getOptions()).andReturn(mockOptions).times(2);
+    replay(storage);
+    Notification.Builder builder =
+        new Notification.Builder(
+            new Notification(storage, new NotificationInfo.BuilderImpl(NOTIFICATION_INFO)));
+    Notification notification =
+        builder
+            .setEtag(ETAG)
+            .setCustomAttributes(CUSTOM_ATTRIBUTES)
+            .setSelfLink(SELF_LINK)
+            .setEventTypes(EVENT_TYPES)
+            .setObjectNamePrefix(OBJECT_NAME_PREFIX)
+            .setPayloadFormat(PAYLOAD_FORMAT)
+            .build();
+    assertEquals(ETAG, notification.getEtag());
+    assertEquals(SELF_LINK, notification.getSelfLink());
+    assertEquals(OBJECT_NAME_PREFIX, notification.getObjectNamePrefix());
+    assertEquals(PAYLOAD_FORMAT, notification.getPayloadFormat());
+    assertEquals(TOPIC, notification.getTopic());
+    assertEquals(CUSTOM_ATTRIBUTES, notification.getCustomAttributes());
+    assertEquals(Arrays.asList(EVENT_TYPES), notification.getEventTypes());
   }
 
   @Test
-  public void testToPbAndFromPb() {
-    compareBucketsNotification(NOTIFICATION, Notification.fromPb(NOTIFICATION.toPb()));
+  public void testToBuilder() {
+    expect(storage.getOptions()).andReturn(mockOptions).times(2);
+    replay(storage);
     Notification notification =
-        Notification.of(TOPIC)
-            .toBuilder()
-            .setPayloadFormat(Notification.PayloadFormat.NONE)
-            .build();
-    compareBucketsNotification(notification, Notification.fromPb(notification.toPb()));
+        new Notification(storage, new NotificationInfo.BuilderImpl(NOTIFICATION_INFO));
+    compareBucketNotification(notification, notification.toBuilder().build());
   }
 
-  private void compareBucketsNotification(Notification expected, Notification actual) {
-    assertEquals(expected, actual);
+  @Test
+  public void testFromPb() {
+    expect(storage.getOptions()).andReturn(mockOptions).times(1);
+    replay(storage);
+    compareBucketNotification(
+        NOTIFICATION_INFO, Notification.fromPb(storage, NOTIFICATION_INFO.toPb()));
+  }
+
+  private void compareBucketNotification(NotificationInfo expected, NotificationInfo actual) {
     assertEquals(expected.getGeneratedId(), actual.getGeneratedId());
     assertEquals(expected.getCustomAttributes(), actual.getCustomAttributes());
     assertEquals(expected.getEtag(), actual.getEtag());
@@ -106,6 +119,6 @@ public class NotificationTest {
     assertEquals(expected.getEventTypes(), actual.getEventTypes());
     assertEquals(expected.getObjectNamePrefix(), actual.getObjectNamePrefix());
     assertEquals(expected.getPayloadFormat(), actual.getPayloadFormat());
-    assertEquals(expected.getTopic(), actual.getTopic());
+    assertEquals(expected.getTopic().trim(), actual.getTopic().trim());
   }
 }

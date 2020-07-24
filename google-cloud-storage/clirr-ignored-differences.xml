@@ -13,27 +13,27 @@
     </difference>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.Notification addNotification(java.lang.String, com.google.cloud.storage.Notification)</method>
+        <method>*.Notification addNotification(*.String, *.NotificationInfo)</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>com.google.cloud.storage.Notification getNotification(java.lang.String, java.lang.String)</method>
+        <method>*.Notification getNotification(*.String, *.String)</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>java.util.List listNotifications(java.lang.String)</method>
+        <method>java.util.List listNotifications(*.String)</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>boolean deleteNotification(java.lang.String, java.lang.String)</method>
+        <method>boolean deleteNotification(*.String, *.String)</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>
         <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>com.google.api.services.storage.model.Notification getNotification(java.lang.String, java.lang.String)</method>
+        <method>*.model.Notification getNotification(*.String, *.String)</method>
         <differenceType>7012</differenceType>
     </difference>
 </differences>

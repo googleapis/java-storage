@@ -1375,10 +1375,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public Notification addNotification(final String bucket, final Notification notification) {
-    final com.google.api.services.storage.model.Notification notificationPb = notification.toPb();
+  public Notification addNotification(
+      final String bucket, final NotificationInfo notificationInfo) {
+    final com.google.api.services.storage.model.Notification notificationPb =
+        notificationInfo.toPb();
     try {
       return Notification.fromPb(
+          this,
           runWithRetries(
               new Callable<com.google.api.services.storage.model.Notification>() {
                 @Override
@@ -1408,7 +1411,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getRetrySettings(),
               EXCEPTION_HANDLER,
               getOptions().getClock());
-      return answer == null ? null : Notification.fromPb(answer);
+      return answer == null ? null : Notification.fromPb(this, answer);
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }
@@ -1430,7 +1433,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getClock());
       return answer == null
           ? ImmutableList.<Notification>of()
-          : Lists.transform(answer, Notification.FROM_PB_FUNCTION);
+          : Lists.transform(
+              answer,
+              new Function<com.google.api.services.storage.model.Notification, Notification>() {
+                @Override
+                public Notification apply(
+                    com.google.api.services.storage.model.Notification notificationPb) {
+                  return Notification.fromPb(getOptions().getService(), notificationPb);
+                }
+              });
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }

@@ -74,6 +74,7 @@ import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Notification;
+import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.Rpo;
@@ -167,7 +168,6 @@ public class ITStorageTest {
 
   private static RemoteStorageHelper remoteStorageHelper;
   private static Storage storage;
-  private static Notification notification;
   private static TopicAdminClient topicAdminClient;
   private static String kmsKeyOneResourcePath;
   private static String kmsKeyTwoResourcePath;
@@ -229,7 +229,7 @@ public class ITStorageTest {
   private static final String PROJECT = ServiceOptions.getDefaultProjectId();
   private static final String ID = UUID.randomUUID().toString().substring(0, 8);
   private static final String TOPIC =
-      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID);
+      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID).trim();
   private static final Notification.PayloadFormat PAYLOAD_FORMAT =
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
@@ -278,7 +278,7 @@ public class ITStorageTest {
   public static void afterClass() throws ExecutionException, InterruptedException {
     if (storage != null) {
 
-      /* Deletes the pubsub topic */
+      /* Delete the Pub/Sub topic */
       if (topicAdminClient != null) {
         topicAdminClient.deleteTopic(TOPIC);
         topicAdminClient.close();
@@ -3831,15 +3831,15 @@ public class ITStorageTest {
   @Test
   public void testNotification() throws InterruptedException, ExecutionException {
     String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
-    Notification bucketNotification =
-        Notification.newBuilder(TOPIC)
+    storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
+    NotificationInfo notificationInfo =
+        NotificationInfo.newBuilder(TOPIC)
             .setCustomAttributes(CUSTOM_ATTRIBUTES)
             .setPayloadFormat(PAYLOAD_FORMAT)
             .build();
     try {
       assertThat(storage.listNotifications(bucketName)).isEmpty();
-      Notification notification = storage.addNotification(bucketName, bucketNotification);
+      Notification notification = storage.addNotification(bucketName, notificationInfo);
       assertThat(notification.getGeneratedId()).isNotNull();
       assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
       assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
@@ -3848,7 +3848,14 @@ public class ITStorageTest {
       // Gets the notification with the specified id.
       Notification actualNotification =
           storage.getNotification(bucketName, notification.getGeneratedId());
-      assertEquals(notification, actualNotification);
+      assertThat(actualNotification.getGeneratedId()).isEqualTo(notification.getGeneratedId());
+      assertThat(actualNotification.getTopic().trim()).isEqualTo(notification.getTopic().trim());
+      assertThat(actualNotification.getEtag()).isEqualTo(notification.getEtag());
+      assertThat(actualNotification.getEventTypes()).isEqualTo(notification.getEventTypes());
+      assertThat(actualNotification.getPayloadFormat()).isEqualTo(notification.getPayloadFormat());
+      assertThat(actualNotification.getSelfLink()).isEqualTo(notification.getSelfLink());
+      assertThat(actualNotification.getCustomAttributes())
+          .isEqualTo(notification.getCustomAttributes());
 
       // Retrieves the list of notifications associated with the bucket.
       List<Notification> notifications = storage.listNotifications(bucketName);

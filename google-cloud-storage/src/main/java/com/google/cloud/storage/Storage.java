@@ -3634,20 +3634,20 @@ public interface Storage extends Service<StorageOptions> {
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
    * String topic = "projects/myProject/topics/myTopic"
-   * Notification bucketNotification = Notification.newBuilder(topic)
+   * NotificationInfo notificationInfo = NotificationInfo.newBuilder(topic)
    *  .setCustomAttributes(ImmutableMap.of("label1", "value1"))
-   *  .setEventTypes(Notification.EventType.OBJECT_FINALIZE)
+   *  .setEventTypes(NotificationInfo.EventType.OBJECT_FINALIZE)
    *  .setPayloadFormat(Notification.PayloadFormat.JSON_API_V1)
    *  .build();
-   * Notification notification = storage.addNotification(bucketName, bucketNotification);
+   * Notification notification = storage.addNotification(bucketName, notificationInfo);
    * }</pre>
    *
    * @param bucket name of the bucket
-   * @param notification a {@code Notification} object
+   * @param notificationInfo notification to create
    * @return the created notification
    * @throws StorageException upon failure
    */
-  Notification addNotification(String bucket, Notification notification);
+  Notification addNotification(String bucket, NotificationInfo notificationInfo);
 
   /**
    * Gets the notification with the specified id.

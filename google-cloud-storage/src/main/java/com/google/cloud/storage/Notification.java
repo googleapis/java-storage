@@ -17,14 +17,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.pathtemplate.PathTemplate;
-import com.google.common.base.Function;
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableMap;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,299 +25,115 @@ import java.util.Objects;
  * href="https://cloud.google.com/storage/docs/pubsub-notifications">pubsub-notifications</a> for
  * details.
  */
-public class Notification implements Serializable {
+public class Notification extends NotificationInfo {
 
-  private static final long serialVersionUID = 5725883368559753810L;
-  private static final PathTemplate PATH_TEMPLATE =
-      PathTemplate.createWithoutUrlEncoding("projects/{project}/topics/{topic}");
-
-  public enum PayloadFormat {
-    JSON_API_V1,
-    NONE
-  }
-
-  public enum EventType {
-    OBJECT_FINALIZE,
-    OBJECT_METADATA_UPDATE,
-    OBJECT_DELETE,
-    OBJECT_ARCHIVE
-  }
-
-  static final Function<com.google.api.services.storage.model.Notification, Notification>
-      FROM_PB_FUNCTION =
-          new Function<com.google.api.services.storage.model.Notification, Notification>() {
-            @Override
-            public Notification apply(com.google.api.services.storage.model.Notification pb) {
-              return Notification.fromPb(pb);
-            }
-          };
-  static final Function<Notification, com.google.api.services.storage.model.Notification>
-      TO_PB_FUNCTION =
-          new Function<Notification, com.google.api.services.storage.model.Notification>() {
-            @Override
-            public com.google.api.services.storage.model.Notification apply(
-                Notification notification) {
-              return notification.toPb();
-            }
-          };
-  private final String generatedId;
-  private final String topic;
-  private final List<EventType> eventTypes;
-  private final Map<String, String> customAttributes;
-  private final PayloadFormat payloadFormat;
-  private final String objectNamePrefix;
-  private final String etag;
-  private final String selfLink;
+  private final StorageOptions options;
+  private transient Storage storage;
 
   /** Builder for {@code Notification}. */
-  public static class Builder {
+  public static class Builder extends NotificationInfo.Builder {
+    private final Storage storage;
+    private final NotificationInfo.BuilderImpl infoBuilder;
 
-    private String generatedId;
-    private String topic;
-    private List<EventType> eventTypes;
-    private Map<String, String> customAttributes;
-    private PayloadFormat payloadFormat;
-    private String objectNamePrefix;
-    private String etag;
-    private String selfLink;
-
-    private Builder(String topic) {
-      this.topic = topic;
+    Builder(Notification notification) {
+      this.storage = notification.storage;
+      this.infoBuilder = new NotificationInfo.BuilderImpl(notification);
     }
 
-    private Builder(Notification notification) {
-      generatedId = notification.generatedId;
-      etag = notification.etag;
-      selfLink = notification.selfLink;
-      topic = notification.topic;
-      eventTypes = notification.eventTypes;
-      customAttributes = notification.customAttributes;
-      payloadFormat = notification.payloadFormat;
-      objectNamePrefix = notification.objectNamePrefix;
-    }
-
-    private Builder setGeneratedId(String generatedId) {
-      this.generatedId = generatedId;
+    @Override
+    Builder setGeneratedId(String generatedId) {
+      infoBuilder.setGeneratedId(generatedId);
       return this;
     }
 
+    @Override
     public Builder setSelfLink(String selfLink) {
-      this.selfLink = selfLink;
+      infoBuilder.setSelfLink(selfLink);
       return this;
     }
 
-    /** Sets a topic in the format of "projects/{project}/topics/{topic}". */
+    @Override
     public Builder setTopic(String topic) {
-      this.topic = topic;
+      infoBuilder.setTopic(topic);
       return this;
     }
 
+    @Override
     public Builder setPayloadFormat(PayloadFormat payloadFormat) {
-      this.payloadFormat = payloadFormat;
+      infoBuilder.setPayloadFormat(payloadFormat);
       return this;
     }
 
+    @Override
     public Builder setObjectNamePrefix(String objectNamePrefix) {
-      this.objectNamePrefix = objectNamePrefix;
+      infoBuilder.setObjectNamePrefix(objectNamePrefix);
       return this;
     }
 
+    @Override
     public Builder setEventTypes(EventType... eventTypes) {
-      this.eventTypes = eventTypes != null ? Arrays.asList(eventTypes) : null;
+      infoBuilder.setEventTypes(eventTypes);
       return this;
     }
 
+    @Override
     public Builder setEtag(String etag) {
-      this.etag = etag;
+      infoBuilder.setEtag(etag);
       return this;
     }
 
+    @Override
     public Builder setCustomAttributes(Map<String, String> customAttributes) {
-      this.customAttributes =
-          customAttributes != null ? ImmutableMap.copyOf(customAttributes) : null;
+      infoBuilder.setCustomAttributes(customAttributes);
       return this;
     }
 
+    @Override
     public Notification build() {
-      checkNotNull(topic);
-      checkTopicFormat(topic);
-      return new Notification(this);
+      return new Notification(storage, infoBuilder);
     }
   }
 
-  private Notification(Builder builder) {
-    generatedId = builder.generatedId;
-    etag = builder.etag;
-    selfLink = builder.selfLink;
-    topic = builder.topic;
-    eventTypes = builder.eventTypes;
-    customAttributes = builder.customAttributes;
-    payloadFormat = builder.payloadFormat;
-    objectNamePrefix = builder.objectNamePrefix;
+  Notification(Storage storage, NotificationInfo.BuilderImpl infoBuilder) {
+    super(infoBuilder);
+    this.storage = checkNotNull(storage);
+    this.options = storage.getOptions();
   }
 
-  /** Returns the service-generated id for the notification. */
-  public String getGeneratedId() {
-    return generatedId;
+  /** Returns the notification's {@code Storage} object used to issue requests. */
+  public Storage getStorage() {
+    return storage;
   }
 
-  /** Returns the topic in Pub/Sub that receives notifications. */
-  public String getTopic() {
-    return topic;
+  @Override
+  public Builder toBuilder() {
+    return new Notification.Builder(this);
   }
 
-  /** Returns the canonical URI of this topic as a string. */
-  public String getSelfLink() {
-    return selfLink;
-  }
-
-  /** Returns the desired content of the Payload. */
-  public PayloadFormat getPayloadFormat() {
-    return payloadFormat;
-  }
-
-  /** Returns the object name prefix for which this notification configuration applies. */
-  public String getObjectNamePrefix() {
-    return objectNamePrefix;
-  }
-
-  /**
-   * Returns HTTP 1.1 Entity tag for the notification. See <a
-   * href="http://tools.ietf.org/html/rfc2616#section-3.11">Entity Tags</a>
-   */
-  public String getEtag() {
-    return etag;
-  }
-
-  /**
-   * Returns the events that trigger a notification to be sent. If empty, notifications are
-   * triggered by any event. See <a
-   * href="https://cloud.google.com/storage/docs/pubsub-notifications#events">Event types</a> to get
-   * list of available events.
-   */
-  public List<EventType> getEventTypes() {
-    return eventTypes;
-  }
-
-  /**
-   * Returns the list of additional attributes to attach to each Cloud PubSub message published for
-   * this notification subscription.
-   */
-  public Map<String, String> getCustomAttributes() {
-    return customAttributes;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    Notification notification = (Notification) o;
+    return Objects.equals(toPb(), notification.toPb())
+        && Objects.equals(options, notification.options);
   }
 
   @Override
   public int hashCode() {
-    return toPb().hashCode();
+    return Objects.hash(super.hashCode(), options, storage);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj == this
-        || obj != null
-            && obj.getClass().equals(Notification.class)
-            && Objects.equals(toPb(), ((Notification) obj).toPb());
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this).add("topic", getTopic()).toString();
-  }
-
-  com.google.api.services.storage.model.Notification toPb() {
-    com.google.api.services.storage.model.Notification notificationPb =
-        new com.google.api.services.storage.model.Notification();
-    notificationPb.setId(generatedId);
-    notificationPb.setEtag(etag);
-    if (customAttributes != null) {
-      notificationPb.setCustomAttributes(customAttributes);
-    }
-    if (eventTypes != null && eventTypes.size() > 0) {
-      List<String> eventTypesPb = new ArrayList<>();
-      for (EventType eventType : eventTypes) {
-        eventTypesPb.add(eventType.toString());
-      }
-      notificationPb.setEventTypes(eventTypesPb);
-    }
-    if (objectNamePrefix != null) {
-      notificationPb.setObjectNamePrefix(objectNamePrefix);
-    }
-    if (payloadFormat != null) {
-      notificationPb.setPayloadFormat(payloadFormat.toString());
-    } else {
-      notificationPb.setPayloadFormat(PayloadFormat.NONE.toString());
-    }
-    notificationPb.setSelfLink(selfLink);
-    notificationPb.setTopic(topic);
-
-    return notificationPb;
-  }
-
-  /**
-   * Creates a {@code Notification} object for the provided topic.
-   *
-   * <p>Example of creating the notification object:
-   *
-   * <pre>{@code
-   * String topic = "projects/myProject/topics/myTopic"
-   * Notification notification = Notification.of(topic)
-   * }</pre>
-   *
-   * @param topic a string in the format "projects/{project}/topics/{topic}"
-   */
-  public static Notification of(String topic) {
-    checkTopicFormat(topic);
-    return newBuilder(topic).build();
-  }
-
-  /** Returns a builder for the current notification. */
-  public Builder toBuilder() {
-    return new Builder(this);
-  }
-
-  /**
-   * Returns a {@code Notification.Builder} with the topic set.
-   *
-   * @param topic a string in the format "projects/{project}/topics/{topic}"
-   */
-  public static Builder newBuilder(String topic) {
-    checkTopicFormat(topic);
-    return new Builder(topic);
-  }
-
-  static Notification fromPb(com.google.api.services.storage.model.Notification notificationPb) {
-    Builder builder = newBuilder(notificationPb.getTopic());
-    if (notificationPb.getId() != null) {
-      builder.setGeneratedId(notificationPb.getId());
-    }
-    if (notificationPb.getEtag() != null) {
-      builder.setEtag(notificationPb.getEtag());
-    }
-    if (notificationPb.getCustomAttributes() != null) {
-      builder.setCustomAttributes(notificationPb.getCustomAttributes());
-    }
-    if (notificationPb.getSelfLink() != null) {
-      builder.setSelfLink(notificationPb.getSelfLink());
-    }
-    if (notificationPb.getObjectNamePrefix() != null) {
-      builder.setObjectNamePrefix(notificationPb.getObjectNamePrefix());
-    }
-    if (notificationPb.getEventTypes() != null) {
-      List<String> eventTypesPb = notificationPb.getEventTypes();
-      EventType[] eventTypes = new EventType[eventTypesPb.size()];
-      for (int index = 0; index < eventTypesPb.size(); index++) {
-        eventTypes[index] = EventType.valueOf(eventTypesPb.get(index));
-      }
-      builder.setEventTypes(eventTypes);
-    }
-    if (notificationPb.getPayloadFormat() != null) {
-      builder.setPayloadFormat(PayloadFormat.valueOf(notificationPb.getPayloadFormat()));
-    }
-    return builder.build();
-  }
-
-  private static void checkTopicFormat(String topic) {
-    PATH_TEMPLATE.validatedMatch(topic, "topic name must be in valid format");
+  static Notification fromPb(
+      Storage storage, com.google.api.services.storage.model.Notification notificationPb) {
+    return new Notification(
+        storage, new NotificationInfo.BuilderImpl(NotificationInfo.fromPb(notificationPb)));
   }
 }
