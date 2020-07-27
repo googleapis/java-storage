@@ -112,7 +112,7 @@ public class NotificationTest {
   }
 
   private void compareBucketNotification(NotificationInfo expected, NotificationInfo actual) {
-    assertEquals(expected.getGeneratedId(), actual.getGeneratedId());
+    assertEquals(expected.getNotificationId(), actual.getNotificationId());
     assertEquals(expected.getCustomAttributes(), actual.getCustomAttributes());
     assertEquals(expected.getEtag(), actual.getEtag());
     assertEquals(expected.getSelfLink(), actual.getSelfLink());

@@ -65,7 +65,7 @@ public class NotificationInfo implements Serializable {
     OBJECT_ARCHIVE
   }
 
-  private final String generatedId;
+  private final String notificationId;
   private final String topic;
   private final List<EventType> eventTypes;
   private final Map<String, String> customAttributes;
@@ -78,7 +78,7 @@ public class NotificationInfo implements Serializable {
   public abstract static class Builder {
     Builder() {}
 
-    abstract Builder setGeneratedId(String generatedId);
+    abstract Builder setNotificationId(String notificationId);
 
     public abstract Builder setSelfLink(String selfLink);
 
@@ -101,7 +101,7 @@ public class NotificationInfo implements Serializable {
   /** Builder for {@code NotificationInfo}. */
   public static class BuilderImpl extends Builder {
 
-    private String generatedId;
+    private String notificationId;
     private String topic;
     private List<EventType> eventTypes;
     private Map<String, String> customAttributes;
@@ -115,7 +115,7 @@ public class NotificationInfo implements Serializable {
     }
 
     BuilderImpl(NotificationInfo notificationInfo) {
-      generatedId = notificationInfo.generatedId;
+      notificationId = notificationInfo.notificationId;
       etag = notificationInfo.etag;
       selfLink = notificationInfo.selfLink;
       topic = notificationInfo.topic;
@@ -126,8 +126,8 @@ public class NotificationInfo implements Serializable {
     }
 
     @Override
-    Builder setGeneratedId(String generatedId) {
-      this.generatedId = generatedId;
+    Builder setNotificationId(String notificationId) {
+      this.notificationId = notificationId;
       return this;
     }
 
@@ -183,7 +183,7 @@ public class NotificationInfo implements Serializable {
   }
 
   NotificationInfo(BuilderImpl builder) {
-    generatedId = builder.generatedId;
+    notificationId = builder.notificationId;
     etag = builder.etag;
     selfLink = builder.selfLink;
     topic = builder.topic;
@@ -194,8 +194,8 @@ public class NotificationInfo implements Serializable {
   }
 
   /** Returns the service-generated id for the notification. */
-  public String getGeneratedId() {
-    return generatedId;
+  public String getNotificationId() {
+    return notificationId;
   }
 
   /** Returns the topic in Pub/Sub that receives notifications. */
@@ -265,8 +265,8 @@ public class NotificationInfo implements Serializable {
   com.google.api.services.storage.model.Notification toPb() {
     com.google.api.services.storage.model.Notification notificationPb =
         new com.google.api.services.storage.model.Notification();
-    if (generatedId != null) {
-      notificationPb.setId(generatedId);
+    if (notificationId != null) {
+      notificationPb.setId(notificationId);
     }
     notificationPb.setEtag(etag);
     if (customAttributes != null) {
@@ -328,7 +328,7 @@ public class NotificationInfo implements Serializable {
       com.google.api.services.storage.model.Notification notificationPb) {
     NotificationInfo.Builder builder = new NotificationInfo.BuilderImpl(notificationPb.getTopic());
     if (notificationPb.getId() != null) {
-      builder.setGeneratedId(notificationPb.getId());
+      builder.setNotificationId(notificationPb.getId());
     }
     if (notificationPb.getEtag() != null) {
       builder.setEtag(notificationPb.getEtag());

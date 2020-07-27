@@ -66,7 +66,7 @@ public class NotificationInfoTest {
   public void testOf() {
     NotificationInfo notificationInfo = NotificationInfo.of(TOPIC);
     assertEquals(TOPIC, notificationInfo.getTopic());
-    assertNull(notificationInfo.getGeneratedId());
+    assertNull(notificationInfo.getNotificationId());
     assertNull(notificationInfo.getCustomAttributes());
     assertNull(notificationInfo.getEtag());
     assertNull(notificationInfo.getSelfLink());
@@ -78,7 +78,7 @@ public class NotificationInfoTest {
   @Test
   public void testBuilder() {
     assertEquals(ETAG, NOTIFICATION_INFO.getEtag());
-    assertNull(NOTIFICATION_INFO.getGeneratedId());
+    assertNull(NOTIFICATION_INFO.getNotificationId());
     assertEquals(SELF_LINK, NOTIFICATION_INFO.getSelfLink());
     assertEquals(OBJECT_NAME_PREFIX, NOTIFICATION_INFO.getObjectNamePrefix());
     assertEquals(PAYLOAD_FORMAT, NOTIFICATION_INFO.getPayloadFormat());
@@ -98,7 +98,7 @@ public class NotificationInfoTest {
 
   private void compareBucketsNotification(NotificationInfo expected, NotificationInfo actual) {
     assertEquals(expected, actual);
-    assertEquals(expected.getGeneratedId(), actual.getGeneratedId());
+    assertEquals(expected.getNotificationId(), actual.getNotificationId());
     assertEquals(expected.getCustomAttributes(), actual.getCustomAttributes());
     assertEquals(expected.getEtag(), actual.getEtag());
     assertEquals(expected.getSelfLink(), actual.getSelfLink());

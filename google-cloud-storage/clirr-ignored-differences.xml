@@ -13,7 +13,7 @@
     </difference>
     <difference>
         <className>com/google/cloud/storage/Storage</className>
-        <method>*.Notification addNotification(*.String, *.NotificationInfo)</method>
+        <method>*.Notification createNotification(*.String, *.NotificationInfo)</method>
         <differenceType>7012</differenceType>
     </difference>
     <difference>

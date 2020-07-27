@@ -3839,16 +3839,17 @@ public class ITStorageTest {
             .build();
     try {
       assertThat(storage.listNotifications(bucketName)).isEmpty();
-      Notification notification = storage.addNotification(bucketName, notificationInfo);
-      assertThat(notification.getGeneratedId()).isNotNull();
+      Notification notification = storage.createNotification(bucketName, notificationInfo);
+      assertThat(notification.getNotificationId()).isNotNull();
       assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
       assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
       assertThat(notification.getTopic().contains(TOPIC)).isTrue();
 
       // Gets the notification with the specified id.
       Notification actualNotification =
-          storage.getNotification(bucketName, notification.getGeneratedId());
-      assertThat(actualNotification.getGeneratedId()).isEqualTo(notification.getGeneratedId());
+          storage.getNotification(bucketName, notification.getNotificationId());
+      assertThat(actualNotification.getNotificationId())
+          .isEqualTo(notification.getNotificationId());
       assertThat(actualNotification.getTopic().trim()).isEqualTo(notification.getTopic().trim());
       assertThat(actualNotification.getEtag()).isEqualTo(notification.getEtag());
       assertThat(actualNotification.getEventTypes()).isEqualTo(notification.getEventTypes());
@@ -3860,13 +3861,14 @@ public class ITStorageTest {
       // Retrieves the list of notifications associated with the bucket.
       List<Notification> notifications = storage.listNotifications(bucketName);
       assertThat(notifications.size()).isEqualTo(1);
-      assertThat(notifications.get(0).getGeneratedId())
-          .isEqualTo(actualNotification.getGeneratedId());
+      assertThat(notifications.get(0).getNotificationId())
+          .isEqualTo(actualNotification.getNotificationId());
 
       // Deletes the notification with the specified id.
-      assertThat(storage.deleteNotification(bucketName, notification.getGeneratedId())).isTrue();
-      assertThat(storage.deleteNotification(bucketName, notification.getGeneratedId())).isFalse();
-      assertThat(storage.getNotification(bucketName, notification.getGeneratedId())).isNull();
+      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId())).isTrue();
+      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId()))
+          .isFalse();
+      assertThat(storage.getNotification(bucketName, notification.getNotificationId())).isNull();
       assertThat(storage.listNotifications(bucketName)).isEmpty();
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);

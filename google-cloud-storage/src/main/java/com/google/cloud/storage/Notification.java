@@ -41,8 +41,8 @@ public class Notification extends NotificationInfo {
     }
 
     @Override
-    Builder setGeneratedId(String generatedId) {
-      infoBuilder.setGeneratedId(generatedId);
+    Builder setNotificationId(String notificationId) {
+      infoBuilder.setNotificationId(notificationId);
       return this;
     }
 

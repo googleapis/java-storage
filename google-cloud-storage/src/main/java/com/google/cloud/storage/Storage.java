@@ -3627,9 +3627,9 @@ public interface Storage extends Service<StorageOptions> {
   ServiceAccount getServiceAccount(String projectId);
 
   /**
-   * Adds a new notification to the bucket.
+   * Creates the notification for a given bucket.
    *
-   * <p>Example of adding a notification:
+   * <p>Example of creating a notification:
    *
    * <pre>{@code
    * String bucketName = "my-unique-bucket";
@@ -3637,9 +3637,9 @@ public interface Storage extends Service<StorageOptions> {
    * NotificationInfo notificationInfo = NotificationInfo.newBuilder(topic)
    *  .setCustomAttributes(ImmutableMap.of("label1", "value1"))
    *  .setEventTypes(NotificationInfo.EventType.OBJECT_FINALIZE)
-   *  .setPayloadFormat(Notification.PayloadFormat.JSON_API_V1)
+   *  .setPayloadFormat(NotificationInfo.PayloadFormat.JSON_API_V1)
    *  .build();
-   * Notification notification = storage.addNotification(bucketName, notificationInfo);
+   * Notification notification = storage.createNotification(bucketName, notificationInfo);
    * }</pre>
    *
    * @param bucket name of the bucket
@@ -3647,7 +3647,7 @@ public interface Storage extends Service<StorageOptions> {
    * @return the created notification
    * @throws StorageException upon failure
    */
-  Notification addNotification(String bucket, NotificationInfo notificationInfo);
+  Notification createNotification(String bucket, NotificationInfo notificationInfo);
 
   /**
    * Gets the notification with the specified id.

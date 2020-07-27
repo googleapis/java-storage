@@ -1682,7 +1682,7 @@ public class StorageImplMockitoTest {
         .when(storageRpcMock)
         .createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01.toPb());
     initializeService();
-    Notification notification = storage.addNotification(BUCKET_NAME1, NOTIFICATION_INFO_01);
+    Notification notification = storage.createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01);
     verifyBucketNotification(notification);
   }
 
@@ -1717,7 +1717,7 @@ public class StorageImplMockitoTest {
   }
 
   private void verifyBucketNotification(Notification value) {
-    assertNull(value.getGeneratedId());
+    assertNull(value.getNotificationId());
     assertEquals(CUSTOM_ATTRIBUTES, value.getCustomAttributes());
     assertEquals(ETAG, value.getEtag());
     assertEquals(SELF_LINK, value.getSelfLink());
