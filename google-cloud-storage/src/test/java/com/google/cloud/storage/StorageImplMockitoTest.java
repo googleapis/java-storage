@@ -1677,7 +1677,7 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testAddNotification() {
+  public void testCreateNotification() {
     doReturn(NOTIFICATION_INFO_01.toPb())
         .when(storageRpcMock)
         .createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01.toPb());
