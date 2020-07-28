@@ -2843,6 +2843,8 @@ public interface Storage extends Service<StorageOptions> {
    * }</pre>
    *
    * @param blobInfo the blob uploaded in the form
+   * @param duration time before expiration
+   * @param unit duration time unit
    * @param fields the fields specified in the form
    * @param conditions which conditions every upload must satisfy
    * @param duration how long until the form expires, in milliseconds
@@ -2861,9 +2863,8 @@ public interface Storage extends Service<StorageOptions> {
 
   /**
    * Generates a presigned post policy without any conditions. Automatically creates required
-   * conditions. See full documentation for generateSignedPostPolicyV4( BlobInfo blobInfo, long
-   * duration, TimeUnit unit, PostFieldsV4 fields, PostConditionsV4 conditions,
-   * PostPolicyV4Option... options) above.
+   * conditions. See full documentation for {@link #generateSignedPostPolicyV4(BlobInfo, long,
+   * TimeUnit, PostPolicyV4.PostFieldsV4, PostPolicyV4.PostConditionsV4, PostPolicyV4Option...)}.
    */
   PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo,
@@ -2874,9 +2875,8 @@ public interface Storage extends Service<StorageOptions> {
 
   /**
    * Generates a presigned post policy without any fields. Automatically creates required fields.
-   * See full documentation for generateSignedPostPolicyV4( BlobInfo blobInfo, long duration,
-   * TimeUnit unit, PostFieldsV4 fields, PostConditionsV4 conditions, PostPolicyV4Option... options)
-   * above.
+   * See full documentation for {@link #generateSignedPostPolicyV4(BlobInfo, long, TimeUnit,
+   * PostPolicyV4.PostFieldsV4, PostPolicyV4.PostConditionsV4, PostPolicyV4Option...)}.
    */
   PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo,
@@ -2887,9 +2887,9 @@ public interface Storage extends Service<StorageOptions> {
 
   /**
    * Generates a presigned post policy without any fields or conditions. Automatically creates
-   * required fields and conditions. See full documentation for generateSignedPostPolicyV4( BlobInfo
-   * blobInfo, long duration, TimeUnit unit, PostFieldsV4 fields, PostConditionsV4 conditions,
-   * PostPolicyV4Option... options) above.
+   * required fields and conditions. See full documentation for {@link
+   * #generateSignedPostPolicyV4(BlobInfo, long, TimeUnit, PostPolicyV4.PostFieldsV4,
+   * PostPolicyV4.PostConditionsV4, PostPolicyV4Option...)}.
    */
   PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options);

@@ -18,56 +18,123 @@ package com.google.cloud.storage;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Presigned V4 post policy.
+ * Presigned V4 post policy. Instances of {@code PostPolicyV4} include a URL and a map of fields
+ * that can be specified in an HTML form to submit a POST request to upload an object.
  *
- * @see <a href="https://cloud.google.com/storage/docs/xml-api/post-object">POST Object</a>
+ * <p>See <a href="https://cloud.google.com/storage/docs/xml-api/post-object">POST Object</a> for
+ * details of upload by using HTML forms.
+ *
+ * <p>See {@link Storage#generateSignedPostPolicyV4(BlobInfo, long, TimeUnit,
+ * PostPolicyV4.PostFieldsV4, PostPolicyV4.PostConditionsV4, Storage.PostPolicyV4Option...)} for
+ * example of usage.
  */
 public final class PostPolicyV4 {
   private final String url;
   private final Map<String, String> fields;
 
   private PostPolicyV4(String url, Map<String, String> fields) {
+    try {
+      new URL(url);
+    } catch (MalformedURLException e) {
+      throw new IllegalArgumentException(e);
+    }
+    PostFieldsV4.validateFields(fields);
+
     this.url = url;
-    this.fields = fields;
+    this.fields = Collections.unmodifiableMap(fields);
   }
 
+  /**
+   * Constructs {@code PostPolicyV4} instance of the given URL and fields map.
+   *
+   * @param url URL for the HTTP POST request
+   * @param fields HTML form fields
+   * @return constructed object
+   * @throws IllegalArgumentException if URL is malformed or fields are not valid
+   */
   public static PostPolicyV4 of(String url, Map<String, String> fields) {
     return new PostPolicyV4(url, fields);
   }
 
+  /** Returns the URL for the HTTP POST request */
   public String getUrl() {
     return url;
   }
 
+  /** Returns the HTML form fields */
   public Map<String, String> getFields() {
     return fields;
   }
 
   /**
-   * Class representing which fields to specify in a V4 POST request.
+   * A helper class to define fields to be specified in a V4 POST request. Instance of this class
+   * helps to construct {@code PostPolicyV4} objects. Used in: {@link
+   * Storage#generateSignedPostPolicyV4(BlobInfo, long, TimeUnit, PostPolicyV4.PostFieldsV4,
+   * PostPolicyV4.PostConditionsV4, Storage.PostPolicyV4Option...)}
    *
    * @see <a href="https://cloud.google.com/storage/docs/xml-api/post-object#form_fields">POST
    *     Object Form fields</a>
    */
   public static final class PostFieldsV4 {
     private final Map<String, String> fieldsMap;
+    private static final List<String> VALID_FIELDS =
+        Arrays.asList(
+            "acl",
+            "bucket",
+            "cache-control",
+            "content-disposition",
+            "content-encoding",
+            "content-type",
+            "expires",
+            "file",
+            "key",
+            "policy",
+            "success_action_redirect",
+            "success_action_status",
+            "x-goog-algorithm",
+            "x-goog-credential",
+            "x-goog-date",
+            "x-goog-signature");
+
+    private static void validateFields(Map<String, String> fields) {
+      for (String key : fields.keySet()) {
+        if (!VALID_FIELDS.contains(key.toLowerCase())
+            && !key.startsWith(Builder.CUSTOM_FIELD_PREFIX)) {
+          throw new IllegalArgumentException("Invalid key: " + key);
+        }
+      }
+    }
 
     private PostFieldsV4(Builder builder) {
-      this.fieldsMap = builder.fieldsMap;
+      this(builder.fieldsMap);
     }
 
     private PostFieldsV4(Map<String, String> fields) {
-      this.fieldsMap = fields;
+      validateFields(fields);
+      this.fieldsMap = Collections.unmodifiableMap(fields);
     }
 
+    /**
+     * Constructs {@code PostPolicyV4.PostFieldsV4} object of the given field map.
+     *
+     * @param fields a map
+     * @return constructed object
+     * @throws IllegalArgumentException if unsupported field is specified.
+     */
     public static PostFieldsV4 of(Map<String, String> fields) {
       return new PostFieldsV4(fields);
     }
@@ -112,8 +179,9 @@ public final class PostPolicyV4 {
         return this;
       }
 
+      /** @deprecated Invocation this method has no effect */
+      @Deprecated
       public Builder setContentLength(int contentLength) {
-        fieldsMap.put("content-length", "" + contentLength);
         return this;
       }
 
@@ -160,7 +228,9 @@ public final class PostPolicyV4 {
   }
 
   /**
-   * Class for specifying conditions in a V4 POST Policy document.
+   * A helper class for specifying conditions in a V4 POST Policy document. Used in: {@link
+   * Storage#generateSignedPostPolicyV4(BlobInfo, long, TimeUnit, PostPolicyV4.PostFieldsV4,
+   * PostPolicyV4.PostConditionsV4, Storage.PostPolicyV4Option...)}
    *
    * @see <a href="https://cloud.google.com/storage/docs/authentication/signatures#policy-document">
    *     Policy document</a>
@@ -183,14 +253,14 @@ public final class PostPolicyV4 {
     }
 
     public Set<ConditionV4> getConditions() {
-      return conditions;
+      return Collections.unmodifiableSet(conditions);
     }
 
     public static class Builder {
-      Set<ConditionV4> conditions;
+      private final Set<ConditionV4> conditions;
 
       private Builder() {
-        this.conditions = new LinkedHashSet<>();
+        this(new LinkedHashSet<ConditionV4>());
       }
 
       private Builder(Set<ConditionV4> conditions) {
@@ -280,7 +350,7 @@ public final class PostPolicyV4 {
   }
 
   /**
-   * Class for a V4 POST Policy document.
+   * Class for a V4 POST Policy document. Used by Storage to construct {@code PostPolicyV4} objects.
    *
    * @see <a href="https://cloud.google.com/storage/docs/authentication/signatures#policy-document">
    *     Policy document</a>
@@ -367,9 +437,20 @@ public final class PostPolicyV4 {
   }
 
   public enum ConditionV4Type {
-    MATCHES,
-    STARTS_WITH,
-    CONTENT_LENGTH_RANGE
+    MATCHES("eq"),
+    STARTS_WITH("starts-with"),
+    CONTENT_LENGTH_RANGE("content-length-range");
+
+    private final String name;
+
+    ConditionV4Type(String name) {
+      this.name = name;
+    }
+
+    @Override
+    public String toString() {
+      return name;
+    }
   }
 
   /**
@@ -378,10 +459,10 @@ public final class PostPolicyV4 {
    * @see <a href="https://cloud.google.com/storage/docs/authentication/signatures#policy-document">
    *     Policy document</a>
    */
-  static final class ConditionV4 {
-    final ConditionV4Type type;
-    final String operand1;
-    final String operand2;
+  public static final class ConditionV4 {
+    public final ConditionV4Type type;
+    public final String operand1;
+    public final String operand2;
 
     private ConditionV4(ConditionV4Type type, String operand1, String operand2) {
       this.type = type;
@@ -400,6 +481,19 @@ public final class PostPolicyV4 {
     @Override
     public int hashCode() {
       return Objects.hash(type, operand1, operand2);
+    }
+
+    /**
+     * Examples of returned strings: {@code ["eq", "$key", "test-object"]}, {@code ["starts-with",
+     * "$acl", "public"]}, {@code ["content-length-range", 246, 266]}
+     */
+    @Override
+    public String toString() {
+      String body =
+          type == ConditionV4Type.CONTENT_LENGTH_RANGE
+              ? operand1 + ", " + operand2
+              : "\"$" + operand1 + "\", \"" + operand2 + "\"";
+      return "[\"" + type + "\", " + body + "]";
     }
   }
 }
