@@ -131,7 +131,7 @@ public final class PostPolicyV4 {
     /**
      * Constructs {@code PostPolicyV4.PostFieldsV4} object of the given field map.
      *
-     * @param fields a map the HTML form fields
+     * @param fields a map of the HTML form fields
      * @return constructed object
      * @throws IllegalArgumentException if an unsupported field is specified
      */
@@ -179,7 +179,12 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated Invocation of this method has no effect. */
+      /**
+       * @deprecated Invocation of this method has no effect, because All valid HTML form fields
+       *     except Content-Length can use exact matching. Use {@link
+       *     PostPolicyV4.PostConditionsV4.Builder#addContentLengthRangeCondition(int, int)} to
+       *     specify a range for the content-length.
+       */
       @Deprecated
       public Builder setContentLength(int contentLength) {
         return this;
