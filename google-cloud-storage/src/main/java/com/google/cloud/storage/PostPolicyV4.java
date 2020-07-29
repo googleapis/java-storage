@@ -84,7 +84,7 @@ public final class PostPolicyV4 {
    * A helper class to define fields to be specified in a V4 POST request. Instance of this class
    * helps to construct {@code PostPolicyV4} objects. Used in: {@link
    * Storage#generateSignedPostPolicyV4(BlobInfo, long, TimeUnit, PostPolicyV4.PostFieldsV4,
-   * PostPolicyV4.PostConditionsV4, Storage.PostPolicyV4Option...)}
+   * PostPolicyV4.PostConditionsV4, Storage.PostPolicyV4Option...)}.
    *
    * @see <a href="https://cloud.google.com/storage/docs/xml-api/post-object#form_fields">POST
    *     Object Form fields</a>
@@ -131,9 +131,9 @@ public final class PostPolicyV4 {
     /**
      * Constructs {@code PostPolicyV4.PostFieldsV4} object of the given field map.
      *
-     * @param fields a map
+     * @param fields a map the HTML form fields
      * @return constructed object
-     * @throws IllegalArgumentException if unsupported field is specified.
+     * @throws IllegalArgumentException if an unsupported field is specified
      */
     public static PostFieldsV4 of(Map<String, String> fields) {
       return new PostFieldsV4(fields);
@@ -179,7 +179,7 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated Invocation this method has no effect */
+      /** @deprecated Invocation of this method has no effect. */
       @Deprecated
       public Builder setContentLength(int contentLength) {
         return this;
@@ -190,7 +190,7 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated use {@link #setExpires(String)} */
+      /** @deprecated Use {@link #setExpires(String)}. */
       @Deprecated
       public Builder Expires(String expires) {
         return setExpires(expires);
@@ -211,7 +211,7 @@ public final class PostPolicyV4 {
         return this;
       }
 
-      /** @deprecated use {@link #setCustomMetadataField(String, String)} */
+      /** @deprecated Use {@link #setCustomMetadataField(String, String)}. */
       @Deprecated
       public Builder AddCustomMetadataField(String field, String value) {
         return setCustomMetadataField(field, value);
@@ -230,7 +230,7 @@ public final class PostPolicyV4 {
   /**
    * A helper class for specifying conditions in a V4 POST Policy document. Used in: {@link
    * Storage#generateSignedPostPolicyV4(BlobInfo, long, TimeUnit, PostPolicyV4.PostFieldsV4,
-   * PostPolicyV4.PostConditionsV4, Storage.PostPolicyV4Option...)}
+   * PostPolicyV4.PostConditionsV4, Storage.PostPolicyV4Option...)}.
    *
    * @see <a href="https://cloud.google.com/storage/docs/authentication/signatures#policy-document">
    *     Policy document</a>
@@ -485,7 +485,7 @@ public final class PostPolicyV4 {
 
     /**
      * Examples of returned strings: {@code ["eq", "$key", "test-object"]}, {@code ["starts-with",
-     * "$acl", "public"]}, {@code ["content-length-range", 246, 266]}
+     * "$acl", "public"]}, {@code ["content-length-range", 246, 266]}.
      */
     @Override
     public String toString() {
