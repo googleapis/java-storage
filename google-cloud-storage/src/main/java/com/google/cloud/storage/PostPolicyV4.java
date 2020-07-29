@@ -180,7 +180,7 @@ public final class PostPolicyV4 {
       }
 
       /**
-       * @deprecated Invocation of this method has no effect, because All valid HTML form fields
+       * @deprecated Invocation of this method has no effect, because all valid HTML form fields
        *     except Content-Length can use exact matching. Use {@link
        *     PostPolicyV4.PostConditionsV4.Builder#addContentLengthRangeCondition(int, int)} to
        *     specify a range for the content-length.
