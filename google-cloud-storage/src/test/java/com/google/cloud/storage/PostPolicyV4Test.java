@@ -553,4 +553,31 @@ public class PostPolicyV4Test {
       assertTrue(expected + "/" + toStringSet, toStringSet.contains(expected));
     }
   }
+
+  @Test
+  public void testPostPolicyV4Document_of_toJson() {
+    PostPolicyV4.PostConditionsV4 emptyConditions =
+        PostPolicyV4.PostConditionsV4.newBuilder().build();
+    PostPolicyV4.PostPolicyV4Document emptyDocument =
+        PostPolicyV4.PostPolicyV4Document.of("", emptyConditions);
+    String emptyJson = emptyDocument.toJson();
+    assertEquals(emptyJson, "{\"conditions\":[],\"expiration\":\"\"}");
+
+    PostPolicyV4.PostConditionsV4 postConditionsV4 =
+        PostPolicyV4.PostConditionsV4.newBuilder()
+            .addBucketCondition(PostPolicyV4.ConditionV4Type.MATCHES, "my-bucket")
+            .addKeyCondition(PostPolicyV4.ConditionV4Type.STARTS_WITH, "")
+            .addContentLengthRangeCondition(1, 1000)
+            .build();
+
+    String expiration = dateFormat.format(System.currentTimeMillis());
+    PostPolicyV4.PostPolicyV4Document document =
+        PostPolicyV4.PostPolicyV4Document.of(expiration, postConditionsV4);
+    String json = document.toJson();
+    assertEquals(
+        json,
+        "{\"conditions\":[{\"bucket\":\"my-bucket\"},[\"starts-with\",\"$key\",\"\"],[\"content-length-range\",1,1000]],\"expiration\":\""
+            + expiration
+            + "\"}");
+  }
 }
