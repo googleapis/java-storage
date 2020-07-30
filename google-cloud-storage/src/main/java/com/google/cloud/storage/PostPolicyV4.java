@@ -224,7 +224,7 @@ public final class PostPolicyV4 {
 
       public Builder setCustomMetadataField(String field, String value) {
         if (!field.startsWith(CUSTOM_FIELD_PREFIX)) {
-          field = CUSTOM_FIELD_PREFIX + value;
+          field = CUSTOM_FIELD_PREFIX + field;
         }
         fieldsMap.put(field, value);
         return this;
@@ -281,64 +281,93 @@ public final class PostPolicyV4 {
       }
 
       public Builder addAclCondition(ConditionV4Type type, String acl) {
+        checkType(type, "acl");
         conditions.add(new ConditionV4(type, "acl", acl));
         return this;
       }
 
       public Builder addBucketCondition(ConditionV4Type type, String bucket) {
+        checkType(type, "bucket");
         conditions.add(new ConditionV4(type, "bucket", bucket));
         return this;
       }
 
       public Builder addCacheControlCondition(ConditionV4Type type, String cacheControl) {
+        checkType(type, "cache-control");
         conditions.add(new ConditionV4(type, "cache-control", cacheControl));
         return this;
       }
 
       public Builder addContentDispositionCondition(
           ConditionV4Type type, String contentDisposition) {
+        checkType(type, "content-disposition");
         conditions.add(new ConditionV4(type, "content-disposition", contentDisposition));
         return this;
       }
 
       public Builder addContentEncodingCondition(ConditionV4Type type, String contentEncoding) {
+        checkType(type, "content-encoding");
         conditions.add(new ConditionV4(type, "content-encoding", contentEncoding));
         return this;
       }
 
+      /**
+       * @deprecated Invocation of this method has no effect. Use {@link
+       *     #addContentLengthRangeCondition(int, int)} to specify a range for the content-length.
+       */
       public Builder addContentLengthCondition(ConditionV4Type type, int contentLength) {
-        conditions.add(new ConditionV4(type, "content-length", "" + contentLength));
         return this;
       }
 
       public Builder addContentTypeCondition(ConditionV4Type type, String contentType) {
+        checkType(type, "content-type");
         conditions.add(new ConditionV4(type, "content-type", contentType));
         return this;
       }
 
+      /** @deprecated Use {@link #addExpiresCondition(long)} */
+      @Deprecated
       public Builder addExpiresCondition(ConditionV4Type type, long expires) {
-        conditions.add(new ConditionV4(type, "expires", dateFormat.format(expires)));
-        return this;
+        return addExpiresCondition(expires);
       }
 
+      /** @deprecated Use {@link #addExpiresCondition(String)} */
+      @Deprecated
       public Builder addExpiresCondition(ConditionV4Type type, String expires) {
-        conditions.add(new ConditionV4(type, "expires", expires));
+        return addExpiresCondition(expires);
+      }
+
+      public Builder addExpiresCondition(long expires) {
+        return addExpiresCondition(dateFormat.format(expires));
+      }
+
+      public Builder addExpiresCondition(String expires) {
+        conditions.add(new ConditionV4(ConditionV4Type.MATCHES, "expires", expires));
         return this;
       }
 
       public Builder addKeyCondition(ConditionV4Type type, String key) {
+        checkType(type, "key");
         conditions.add(new ConditionV4(type, "key", key));
         return this;
       }
 
       public Builder addSuccessActionRedirectUrlCondition(
           ConditionV4Type type, String successActionRedirectUrl) {
+        checkType(type, "success_action_redirect");
         conditions.add(new ConditionV4(type, "success_action_redirect", successActionRedirectUrl));
         return this;
       }
 
+      /** @deprecated Use {@link #addSuccessActionStatusCondition(int)} */
+      @Deprecated
       public Builder addSuccessActionStatusCondition(ConditionV4Type type, int status) {
-        conditions.add(new ConditionV4(type, "success_action_status", "" + status));
+        return addSuccessActionStatusCondition(status);
+      }
+
+      public Builder addSuccessActionStatusCondition(int status) {
+        conditions.add(
+            new ConditionV4(ConditionV4Type.MATCHES, "success_action_status", "" + status));
         return this;
       }
 
@@ -350,6 +379,12 @@ public final class PostPolicyV4 {
       Builder addCustomCondition(ConditionV4Type type, String field, String value) {
         conditions.add(new ConditionV4(type, field, value));
         return this;
+      }
+
+      private void checkType(ConditionV4Type type, String field) {
+        if (type != ConditionV4Type.MATCHES && type != ConditionV4Type.STARTS_WITH) {
+          throw new IllegalArgumentException("Field " + field + " can't use " + type);
+        }
       }
     }
   }
@@ -469,7 +504,7 @@ public final class PostPolicyV4 {
     public final String operand1;
     public final String operand2;
 
-    private ConditionV4(ConditionV4Type type, String operand1, String operand2) {
+    ConditionV4(ConditionV4Type type, String operand1, String operand2) {
       this.type = type;
       this.operand1 = operand1;
       this.operand2 = operand2;
