@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import java.util.concurrent.Callable;
 import org.junit.Test;
 
 public class PostPolicyV4Test {
+  private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
   private void assertNotSameButEqual(Map<String, String> expected, Map<String, String> returned) {
     assertNotSame(expected, returned);
@@ -217,8 +219,9 @@ public class PostPolicyV4Test {
         @Override
         public PostPolicyV4.ConditionV4 addCondition(
             PostPolicyV4.PostConditionsV4.Builder builder) {
-          builder.addExpiresCondition(2000000000000L);
-          return new PostPolicyV4.ConditionV4(eq, "expires", "2033-05-18T06:33:20Z");
+          long date = 2000000000000L;
+          builder.addExpiresCondition(date);
+          return new PostPolicyV4.ConditionV4(eq, "expires", dateFormat.format(date));
         }
 
         @Override
@@ -243,8 +246,8 @@ public class PostPolicyV4Test {
         @Override
         public PostPolicyV4.ConditionV4 addCondition(
             PostPolicyV4.PostConditionsV4.Builder builder) {
-          builder.addExpiresCondition(range, 2000000000000L);
-          return new PostPolicyV4.ConditionV4(eq, "expires", "2033-05-18T06:33:20Z");
+          builder.addExpiresCondition(range, 0);
+          return new PostPolicyV4.ConditionV4(eq, "expires", dateFormat.format(0));
         }
 
         @Override
