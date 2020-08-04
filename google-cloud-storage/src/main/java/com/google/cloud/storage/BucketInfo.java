@@ -1004,11 +1004,9 @@ public class BucketInfo implements Serializable {
 
     abstract Builder setEtag(String etag);
 
-    /** Sets the creation time of the bucket's. */
-    public abstract Builder setCreateTime(Long createTime);
+    abstract Builder setCreateTime(Long createTime);
 
-    /** Sets the modification time of the bucket's. */
-    public abstract Builder setUpdateTime(Long updateTime);
+    abstract Builder setUpdateTime(Long updateTime);
 
     abstract Builder setMetageneration(Long metageneration);
 
@@ -1234,13 +1232,13 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    public Builder setCreateTime(Long createTime) {
+    Builder setCreateTime(Long createTime) {
       this.createTime = createTime;
       return this;
     }
 
     @Override
-    public Builder setUpdateTime(Long updateTime) {
+    Builder setUpdateTime(Long updateTime) {
       this.updateTime = updateTime;
       return this;
     }

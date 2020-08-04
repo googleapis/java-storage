@@ -3537,26 +3537,16 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketCreateTimeAndUpdateTime() throws ExecutionException, InterruptedException {
+  public void testBucketUpdateTime() throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
     BucketInfo bucketInfo =
-        BucketInfo.newBuilder(bucketName)
-            .setLocation("us")
-            .setVersioningEnabled(true)
-            .setCreateTime(System.currentTimeMillis())
-            .build();
+        BucketInfo.newBuilder(bucketName).setLocation("us").setVersioningEnabled(true).build();
     try {
       Bucket bucket = storage.create(bucketInfo);
       assertThat(bucket).isNotNull();
       assertThat(bucket.getCreateTime()).isNotNull();
 
-      Bucket updatedBucket =
-          bucket
-              .toBuilder()
-              .setVersioningEnabled(false)
-              .setUpdateTime(System.currentTimeMillis())
-              .build()
-              .update();
+      Bucket updatedBucket = bucket.toBuilder().setVersioningEnabled(false).build().update();
       assertThat(updatedBucket.versioningEnabled()).isFalse();
       assertThat(updatedBucket.getUpdateTime()).isNotNull();
     } finally {
