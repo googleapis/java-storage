@@ -277,7 +277,6 @@ public class HttpStorageRpcTest {
   public void testCreateBucket() throws Exception {
     byte[] content = "{\"name\":\"yyy\"}".getBytes(UTF_8);
     String url = BASE_URL + '?' + URL_PROJECT;
-    mockResponse("POST", url, new TestResponse(401, null));
     RpcRequestHolder holder = mockResponse("POST", url, new TestResponse(200, content));
 
     Bucket created = rpc.create(new Bucket().setName("xxx"), new HashMap());
