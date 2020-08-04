@@ -69,6 +69,7 @@ public class BucketTest {
   private static final User OWNER = new User("user@gmail.com");
   private static final String SELF_LINK = "http://storage/b/n";
   private static final Long CREATE_TIME = System.currentTimeMillis();
+  private static final Long UPDATE_TIME = CREATE_TIME - 1L;
   private static final List<Cors> CORS = Collections.singletonList(Cors.newBuilder().build());
   private static final List<Acl> DEFAULT_ACL =
       Collections.singletonList(Acl.of(User.ofAllAuthenticatedUsers(), WRITER));
@@ -111,6 +112,7 @@ public class BucketTest {
           .setSelfLink(SELF_LINK)
           .setCors(CORS)
           .setCreateTime(CREATE_TIME)
+          .setUpdateTime(UPDATE_TIME)
           .setDefaultAcl(DEFAULT_ACL)
           .setDeleteRules(DELETE_RULES)
           .setLifecycleRules(LIFECYCLE_RULES)
@@ -803,6 +805,7 @@ public class BucketTest {
             .setSelfLink(SELF_LINK)
             .setCors(CORS)
             .setCreateTime(CREATE_TIME)
+            .setUpdateTime(UPDATE_TIME)
             .setDefaultAcl(DEFAULT_ACL)
             .setDeleteRules(DELETE_RULES)
             .setLifecycleRules(LIFECYCLE_RULES)
@@ -828,6 +831,7 @@ public class BucketTest {
     assertEquals(OWNER, bucket.getOwner());
     assertEquals(SELF_LINK, bucket.getSelfLink());
     assertEquals(CREATE_TIME, bucket.getCreateTime());
+    assertEquals(UPDATE_TIME, bucket.getUpdateTime());
     assertEquals(CORS, bucket.getCors());
     assertEquals(DEFAULT_ACL, bucket.getDefaultAcl());
     assertEquals(DELETE_RULES, bucket.getDeleteRules());

@@ -596,8 +596,14 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
-    Builder setCreateTime(Long createTime) {
+    public Builder setCreateTime(Long createTime) {
       infoBuilder.setCreateTime(createTime);
+      return this;
+    }
+
+    @Override
+    public Builder setUpdateTime(Long updateTime) {
+      infoBuilder.setUpdateTime(updateTime);
       return this;
     }
 

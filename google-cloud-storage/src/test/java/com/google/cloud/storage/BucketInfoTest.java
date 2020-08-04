@@ -17,9 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
@@ -56,6 +54,7 @@ public class BucketInfoTest {
   private static final User OWNER = new User("user@gmail.com");
   private static final String SELF_LINK = "http://storage/b/n";
   private static final Long CREATE_TIME = System.currentTimeMillis();
+  private static final Long UPDATE_TIME = CREATE_TIME - 1L;
   private static final List<Cors> CORS = Collections.singletonList(Cors.newBuilder().build());
   private static final List<Acl> DEFAULT_ACL =
       Collections.singletonList(Acl.of(User.ofAllAuthenticatedUsers(), Role.WRITER));
@@ -117,6 +116,7 @@ public class BucketInfoTest {
           .setSelfLink(SELF_LINK)
           .setCors(CORS)
           .setCreateTime(CREATE_TIME)
+          .setUpdateTime(UPDATE_TIME)
           .setDefaultAcl(DEFAULT_ACL)
           .setDeleteRules(DELETE_RULES)
           .setLifecycleRules(LIFECYCLE_RULES)
@@ -148,6 +148,7 @@ public class BucketInfoTest {
           .setSelfLink(SELF_LINK)
           .setCors(CORS)
           .setCreateTime(CREATE_TIME)
+          .setUpdateTime(UPDATE_TIME)
           .setDefaultAcl(DEFAULT_ACL)
           .setDeleteRules(DELETE_RULES)
           .setLifecycleRules(LIFECYCLE_RULES)
@@ -202,6 +203,7 @@ public class BucketInfoTest {
     assertEquals(OWNER, BUCKET_INFO.getOwner());
     assertEquals(SELF_LINK, BUCKET_INFO.getSelfLink());
     assertEquals(CREATE_TIME, BUCKET_INFO.getCreateTime());
+    assertEquals(UPDATE_TIME, BUCKET_INFO.getUpdateTime());
     assertEquals(CORS, BUCKET_INFO.getCors());
     assertEquals(DEFAULT_ACL, BUCKET_INFO.getDefaultAcl());
     assertEquals(DELETE_RULES, BUCKET_INFO.getDeleteRules());
@@ -223,6 +225,7 @@ public class BucketInfoTest {
   }
 
   @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
   public void testToPbAndFromPb() {
     compareBuckets(BUCKET_INFO, BucketInfo.fromPb(BUCKET_INFO.toPb()));
     BucketInfo bucketInfo =
@@ -245,6 +248,7 @@ public class BucketInfoTest {
     assertEquals(expected.getOwner(), value.getOwner());
     assertEquals(expected.getSelfLink(), value.getSelfLink());
     assertEquals(expected.getCreateTime(), value.getCreateTime());
+    assertEquals(expected.getUpdateTime(), value.getUpdateTime());
     assertEquals(expected.getCors(), value.getCors());
     assertEquals(expected.getDefaultAcl(), value.getDefaultAcl());
     assertEquals(expected.getDeleteRules(), value.getDeleteRules());
