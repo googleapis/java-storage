@@ -110,7 +110,7 @@ public class HttpStorageRpcTest {
           new GZIPInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
       return new String(ByteStreams.toByteArray(gzipInputStream), UTF_8);
     } catch (IOException e) {
-      throw new Error(e);
+      throw new AssertionError("Unexpected exception", e);
     }
   }
 
