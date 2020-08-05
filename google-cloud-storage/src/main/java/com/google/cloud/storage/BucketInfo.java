@@ -580,7 +580,7 @@ public class BucketInfo implements Serializable {
         return noncurrentTimeBefore;
       }
 
-      /** Returns the custom time before in RFC 3339 format. */
+      /* Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").*/
       public DateTime getCustomTimeBefore() {
         return customTimeBefore;
       }
@@ -679,8 +679,8 @@ public class BucketInfo implements Serializable {
         }
 
         /**
-         * Sets the timestamp in RFC 3339 format. This condition is satisfied when the custom time
-         * on an object is before this timestamp.
+         * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+         * This condition is satisfied when the custom time on an object is before this date.
          */
         public Builder setCustomTimeBefore(DateTime customTimeBefore) {
           this.customTimeBefore = customTimeBefore;
