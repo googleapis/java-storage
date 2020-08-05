@@ -160,6 +160,33 @@ class MockData {
   }
 }
 
+class HttpTransportFactoryMock implements HttpTransportFactory {
+
+  final Queue<MockData> mockData;
+
+  HttpTransportFactoryMock(Queue<MockData> mockData) {
+    this.mockData = mockData;
+  }
+
+  @Override
+  public HttpTransport create() {
+    return new HttpTransport() {
+      @Override
+      protected LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
+        if (mockData.isEmpty()) {
+          throw new IllegalStateException("No test data provided");
+        }
+        MockData data = mockData.poll();
+        assertEquals(data.method, method);
+        assertEquals(data.url, url);
+        TestRequest testRequest = new TestRequest(data.response);
+        data.rpcRequestHolder.setRequest(testRequest);
+        return testRequest;
+      }
+    };
+  }
+}
+
 public class HttpStorageRpcTest {
 
   // object under test, created before each test case
@@ -167,7 +194,7 @@ public class HttpStorageRpcTest {
 
   // Objects for a test case: one object per one RPC mock.
   // A test creates as many MockData objects as it issues RPC calls.
-  private static final Queue<MockData> TEST_MOCK_DATA = new ArrayDeque<>();
+  private Queue<MockData> testMockData;
 
   private static final String BASE_URL = "https://storage.googleapis.com/storage/v1/b";
   private static final String URL_PROJECT = "project=projectId&projection=full";
@@ -200,40 +227,6 @@ public class HttpStorageRpcTest {
   private static final StorageRpcFactory RPC_FACTORY_MOCK =
       mock(StorageRpcFactory.class, UNEXPECTED_CALL_ANSWER);
 
-  private static final HttpTransportFactory TRANSPORT_FACTORY_MOCK =
-      new HttpTransportFactory() {
-        @Override
-        public HttpTransport create() {
-          return new HttpTransport() {
-            @Override
-            protected LowLevelHttpRequest buildRequest(String method, String url)
-                throws IOException {
-              if (TEST_MOCK_DATA.isEmpty()) {
-                throw new IllegalStateException("No test data provided");
-              }
-              MockData data = TEST_MOCK_DATA.poll();
-              assertEquals(data.method, method);
-              assertEquals(data.url, url);
-              TestRequest testRequest = new TestRequest(data.response);
-              data.rpcRequestHolder.setRequest(testRequest);
-              return testRequest;
-            }
-          };
-        }
-      };
-
-  private static final HttpTransportOptions TRANSPORT_OPTIONS =
-      HttpTransportOptions.newBuilder().setHttpTransportFactory(TRANSPORT_FACTORY_MOCK).build();
-
-  private static final StorageOptions STORAGE_OPTIONS =
-      StorageOptions.newBuilder()
-          .setProjectId("projectId")
-          .setClock(TIME_SOURCE)
-          .setServiceRpcFactory(RPC_FACTORY_MOCK)
-          .setRetrySettings(ServiceOptions.getNoRetrySettings())
-          .setTransportOptions(TRANSPORT_OPTIONS)
-          .build();
-
   /**
    * Adds mock parameters for the RPC call.
    *
@@ -242,10 +235,9 @@ public class HttpStorageRpcTest {
    * @param response HTTP response object to be returned
    * @return a holder object which will contain the Http Request made by RPC
    */
-  private static RpcRequestHolder mockResponse(
-      String method, String url, LowLevelHttpResponse response) {
+  private RpcRequestHolder mockResponse(String method, String url, LowLevelHttpResponse response) {
     RpcRequestHolder holder = new RpcRequestHolder();
-    TEST_MOCK_DATA.add(new MockData(method, url, response, holder));
+    testMockData.add(new MockData(method, url, response, holder));
     return holder;
   }
 
@@ -263,13 +255,25 @@ public class HttpStorageRpcTest {
 
   @Before
   public void setUp() throws Exception {
-    rpc = new HttpStorageRpc(STORAGE_OPTIONS);
-    TEST_MOCK_DATA.clear();
+    testMockData = new ArrayDeque<>();
+    HttpTransportFactoryMock factoryMock = new HttpTransportFactoryMock(testMockData);
+    HttpTransportOptions transportOptions =
+        HttpTransportOptions.newBuilder().setHttpTransportFactory(factoryMock).build();
+    StorageOptions storageOptions =
+        StorageOptions.newBuilder()
+            .setProjectId("projectId")
+            .setClock(TIME_SOURCE)
+            .setServiceRpcFactory(RPC_FACTORY_MOCK)
+            .setRetrySettings(ServiceOptions.getNoRetrySettings())
+            .setTransportOptions(transportOptions)
+            .build();
+
+    rpc = new HttpStorageRpc(storageOptions);
   }
 
   @After
   public void tearDown() throws Exception {
-    assertTrue("TEST_MOCK_DATA must be clear at the end", TEST_MOCK_DATA.isEmpty());
+    assertTrue("testMockData must be clear at the end", testMockData.isEmpty());
   }
 
   @Test
