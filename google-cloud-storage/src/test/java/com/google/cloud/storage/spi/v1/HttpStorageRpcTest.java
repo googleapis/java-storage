@@ -51,13 +51,122 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+class TestRequest extends LowLevelHttpRequest {
+  private final LowLevelHttpResponse response;
+  private final Map<String, String> addedHeaders = new HashMap<>();
+
+  TestRequest(LowLevelHttpResponse response) {
+    this.response = response;
+  }
+
+  @Override
+  public void addHeader(String name, String value) throws IOException {
+    if (addedHeaders != null) {
+      addedHeaders.put(name, value);
+    }
+  }
+
+  @Override
+  public LowLevelHttpResponse execute() throws IOException {
+    return response;
+  }
+};
+
+class TestResponse extends LowLevelHttpResponse {
+
+  private final int statusCode;
+  private final byte[] bytes;
+
+  TestResponse(int statusCode, byte[] bytes) {
+    this.statusCode = statusCode;
+    this.bytes = bytes;
+  }
+
+  @Override
+  public InputStream getContent() throws IOException {
+    return bytes == null ? null : new ByteArrayInputStream(bytes);
+  }
+
+  @Override
+  public String getContentEncoding() throws IOException {
+    return "UTF-8";
+  }
+
+  @Override
+  public long getContentLength() throws IOException {
+    return bytes == null ? 0 : bytes.length;
+  }
+
+  @Override
+  public String getContentType() throws IOException {
+    return "application/test";
+  }
+
+  @Override
+  public String getStatusLine() throws IOException {
+    return "status: " + statusCode;
+  }
+
+  @Override
+  public int getStatusCode() throws IOException {
+    return statusCode;
+  }
+
+  @Override
+  public String getReasonPhrase() throws IOException {
+    return "reason phrase";
+  }
+
+  @Override
+  public int getHeaderCount() throws IOException {
+    return 0;
+  }
+
+  @Override
+  public String getHeaderName(int i) throws IOException {
+    return null;
+  }
+
+  @Override
+  public String getHeaderValue(int i) throws IOException {
+    return null;
+  }
+}
+
+class RpcRequestHolder {
+  TestRequest request = null;
+
+  void setRequest(TestRequest request) {
+    this.request = request;
+  }
+
+  TestRequest getRequest() {
+    return request;
+  }
+}
+
+class MockData {
+  final String method;
+  final String url;
+  final LowLevelHttpResponse response;
+  final RpcRequestHolder rpcRequestHolder;
+
+  MockData(
+      String method, String url, LowLevelHttpResponse response, RpcRequestHolder requestHeaders) {
+    this.method = method;
+    this.url = url;
+    this.response = response;
+    this.rpcRequestHolder = requestHeaders;
+  }
+}
+
 public class HttpStorageRpcTest {
 
   // object under test, created before each test case
   private HttpStorageRpc rpc;
 
   // Objects for a test case: one object per one RPC mock.
-  // A test creates as many MockData objects as many RPC call it issues.
+  // A test creates as many MockData objects as it issues RPC calls.
   private static final Queue<MockData> TEST_MOCK_DATA = new ArrayDeque<>();
 
   private static final String BASE_URL = "https://storage.googleapis.com/storage/v1/b";
@@ -90,88 +199,6 @@ public class HttpStorageRpcTest {
 
   private static final StorageRpcFactory RPC_FACTORY_MOCK =
       mock(StorageRpcFactory.class, UNEXPECTED_CALL_ANSWER);
-
-  private static class TestRequest extends LowLevelHttpRequest {
-    private final LowLevelHttpResponse response;
-    private final Map<String, String> addedHeaders = new HashMap<>();
-
-    TestRequest(LowLevelHttpResponse response) {
-      this.response = response;
-    }
-
-    @Override
-    public void addHeader(String name, String value) throws IOException {
-      if (addedHeaders != null) {
-        addedHeaders.put(name, value);
-      }
-    }
-
-    @Override
-    public LowLevelHttpResponse execute() throws IOException {
-      return response;
-    }
-  };
-
-  private static class TestResponse extends LowLevelHttpResponse {
-
-    private final int statusCode;
-    private final byte[] bytes;
-
-    TestResponse(int statusCode, byte[] bytes) {
-      this.statusCode = statusCode;
-      this.bytes = bytes;
-    }
-
-    @Override
-    public InputStream getContent() throws IOException {
-      return bytes == null ? null : new ByteArrayInputStream(bytes);
-    }
-
-    @Override
-    public String getContentEncoding() throws IOException {
-      return "UTF-8";
-    }
-
-    @Override
-    public long getContentLength() throws IOException {
-      return bytes == null ? 0 : bytes.length;
-    }
-
-    @Override
-    public String getContentType() throws IOException {
-      return "application/test";
-    }
-
-    @Override
-    public String getStatusLine() throws IOException {
-      return "status: " + statusCode;
-    }
-
-    @Override
-    public int getStatusCode() throws IOException {
-      return statusCode;
-    }
-
-    @Override
-    public String getReasonPhrase() throws IOException {
-      return "reason phrase";
-    }
-
-    @Override
-    public int getHeaderCount() throws IOException {
-      return 0;
-    }
-
-    @Override
-    public String getHeaderName(int i) throws IOException {
-      return null;
-    }
-
-    @Override
-    public String getHeaderValue(int i) throws IOException {
-      return null;
-    }
-  }
 
   private static final HttpTransportFactory TRANSPORT_FACTORY_MOCK =
       new HttpTransportFactory() {
@@ -206,33 +233,6 @@ public class HttpStorageRpcTest {
           .setRetrySettings(ServiceOptions.getNoRetrySettings())
           .setTransportOptions(TRANSPORT_OPTIONS)
           .build();
-
-  static class RpcRequestHolder {
-    TestRequest request = null;
-
-    void setRequest(TestRequest request) {
-      this.request = request;
-    }
-
-    TestRequest getRequest() {
-      return request;
-    }
-  }
-
-  static class MockData {
-    final String method;
-    final String url;
-    final LowLevelHttpResponse response;
-    final RpcRequestHolder rpcRequestHolder;
-
-    MockData(
-        String method, String url, LowLevelHttpResponse response, RpcRequestHolder requestHeaders) {
-      this.method = method;
-      this.url = url;
-      this.response = response;
-      this.rpcRequestHolder = requestHeaders;
-    }
-  }
 
   /**
    * Adds mock parameters for the RPC call.
