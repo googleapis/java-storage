@@ -433,7 +433,7 @@ public class BucketInfo implements Serializable {
               .setCustomTimeBefore(
                   lifecycleCondition.getCustomTimeBefore() == null
                       ? null
-                      : new DateTime(lifecycleCondition.getCustomTimeBefore().getValue()))
+                      : new DateTime(true, lifecycleCondition.getCustomTimeBefore().getValue(), 0))
               .setDaysSinceCustomTime(lifecycleCondition.getDaysSinceCustomTime());
 
       rule.setCondition(condition);
