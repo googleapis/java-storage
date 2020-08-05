@@ -34,13 +34,14 @@ import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.spi.StorageRpcFactory;
+import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.zip.GZIPInputStream;
@@ -57,7 +58,7 @@ public class HttpStorageRpcTest {
 
   // Objects for a test case: one object per one RPC mock.
   // A test creates as many MockData objects as many RPC call it issues.
-  private static final Queue<MockData> TEST_MOCK_DATA = new LinkedList<>();
+  private static final Queue<MockData> TEST_MOCK_DATA = new ArrayDeque<>();
 
   private static final String BASE_URL = "https://storage.googleapis.com/storage/v1/b";
   private static final String URL_PROJECT = "project=projectId&projection=full";
@@ -252,11 +253,9 @@ public class HttpStorageRpcTest {
     try {
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       request.getStreamingContent().writeTo(outputStream);
-      GZIPInputStream is =
+      GZIPInputStream gzipInputStream =
           new GZIPInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
-      byte[] buffer = new byte[1000000];
-      int size = is.read(buffer);
-      return new String(buffer, 0, size, UTF_8);
+      return new String(ByteStreams.toByteArray(gzipInputStream), UTF_8);
     } catch (IOException e) {
       throw new Error(e);
     }
