@@ -3552,8 +3552,7 @@ public class ITStorageTest {
       assertThat(updatedBucket.versioningEnabled()).isFalse();
       assertThat(updatedBucket.getUpdateTime()).isNotNull();
       assertThat(updatedBucket.getCreateTime()).isEqualTo(bucket.getCreateTime());
-      assertThat(updatedBucket.getUpdateTime()).isNotEqualTo(bucket.getCreateTime());
-      assertThat(updatedBucket.getUpdateTime()).isNotEqualTo(bucket.getUpdateTime());
+      assertThat(updatedBucket.getUpdateTime()).isGreaterThan(bucket.getCreateTime());
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
