@@ -56,7 +56,7 @@ public class BucketInfoTest {
   private static final User OWNER = new User("user@gmail.com");
   private static final String SELF_LINK = "http://storage/b/n";
   private static final Long CREATE_TIME = System.currentTimeMillis();
-  private static final Long UPDATE_TIME = CREATE_TIME - 1L;
+  private static final Long UPDATE_TIME = CREATE_TIME;
   private static final List<Cors> CORS = Collections.singletonList(Cors.newBuilder().build());
   private static final List<Acl> DEFAULT_ACL =
       Collections.singletonList(Acl.of(User.ofAllAuthenticatedUsers(), Role.WRITER));
