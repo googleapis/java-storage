@@ -3535,4 +3535,26 @@ public class ITStorageTest {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
+
+  @Test
+  public void testBucketUpdateTime() throws ExecutionException, InterruptedException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName).setLocation("us").setVersioningEnabled(true).build();
+    try {
+      Bucket bucket = storage.create(bucketInfo);
+      assertThat(bucket).isNotNull();
+      assertThat(bucket.versioningEnabled()).isTrue();
+      assertThat(bucket.getCreateTime()).isNotNull();
+      assertThat(bucket.getUpdateTime()).isEqualTo(bucket.getCreateTime());
+
+      Bucket updatedBucket = bucket.toBuilder().setVersioningEnabled(false).build().update();
+      assertThat(updatedBucket.versioningEnabled()).isFalse();
+      assertThat(updatedBucket.getUpdateTime()).isNotNull();
+      assertThat(updatedBucket.getCreateTime()).isEqualTo(bucket.getCreateTime());
+      assertThat(updatedBucket.getUpdateTime()).isGreaterThan(bucket.getCreateTime());
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
+  }
 }
