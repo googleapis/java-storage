@@ -23,12 +23,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.LowLevelHttpRequest;
 import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.core.ApiClock;
 import com.google.api.services.storage.model.Bucket;
-import com.google.auth.http.HttpTransportFactory;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.StorageException;
@@ -38,7 +36,6 @@ import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,142 +47,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
-class TestRequest extends LowLevelHttpRequest {
-  private final LowLevelHttpResponse response;
-  private final Map<String, String> addedHeaders = new HashMap<>();
-
-  TestRequest(LowLevelHttpResponse response) {
-    this.response = response;
-  }
-
-  @Override
-  public void addHeader(String name, String value) throws IOException {
-    if (addedHeaders != null) {
-      addedHeaders.put(name, value);
-    }
-  }
-
-  @Override
-  public LowLevelHttpResponse execute() throws IOException {
-    return response;
-  }
-};
-
-class TestResponse extends LowLevelHttpResponse {
-
-  private final int statusCode;
-  private final byte[] bytes;
-
-  TestResponse(int statusCode, byte[] bytes) {
-    this.statusCode = statusCode;
-    this.bytes = bytes;
-  }
-
-  @Override
-  public InputStream getContent() throws IOException {
-    return bytes == null ? null : new ByteArrayInputStream(bytes);
-  }
-
-  @Override
-  public String getContentEncoding() throws IOException {
-    return "UTF-8";
-  }
-
-  @Override
-  public long getContentLength() throws IOException {
-    return bytes == null ? 0 : bytes.length;
-  }
-
-  @Override
-  public String getContentType() throws IOException {
-    return "application/test";
-  }
-
-  @Override
-  public String getStatusLine() throws IOException {
-    return "status: " + statusCode;
-  }
-
-  @Override
-  public int getStatusCode() throws IOException {
-    return statusCode;
-  }
-
-  @Override
-  public String getReasonPhrase() throws IOException {
-    return "reason phrase";
-  }
-
-  @Override
-  public int getHeaderCount() throws IOException {
-    return 0;
-  }
-
-  @Override
-  public String getHeaderName(int i) throws IOException {
-    return null;
-  }
-
-  @Override
-  public String getHeaderValue(int i) throws IOException {
-    return null;
-  }
-}
-
-class RpcRequestHolder {
-  TestRequest request = null;
-
-  void setRequest(TestRequest request) {
-    this.request = request;
-  }
-
-  TestRequest getRequest() {
-    return request;
-  }
-}
-
-class MockData {
-  final String method;
-  final String url;
-  final LowLevelHttpResponse response;
-  final RpcRequestHolder rpcRequestHolder;
-
-  MockData(
-      String method, String url, LowLevelHttpResponse response, RpcRequestHolder requestHeaders) {
-    this.method = method;
-    this.url = url;
-    this.response = response;
-    this.rpcRequestHolder = requestHeaders;
-  }
-}
-
-class HttpTransportFactoryMock implements HttpTransportFactory {
-
-  final Queue<MockData> mockData;
-
-  HttpTransportFactoryMock(Queue<MockData> mockData) {
-    this.mockData = mockData;
-  }
-
-  @Override
-  public HttpTransport create() {
-    return new HttpTransport() {
-      @Override
-      protected LowLevelHttpRequest buildRequest(String method, String url) throws IOException {
-        if (mockData.isEmpty()) {
-          throw new IllegalStateException("No test data provided");
-        }
-        MockData data = mockData.poll();
-        assertEquals(data.method, method);
-        assertEquals(data.url, url);
-        TestRequest testRequest = new TestRequest(data.response);
-        data.rpcRequestHolder.setRequest(testRequest);
-        return testRequest;
-      }
-    };
-  }
-}
 
 public class HttpStorageRpcTest {
 
@@ -199,7 +60,7 @@ public class HttpStorageRpcTest {
   private static final String BASE_URL = "https://storage.googleapis.com/storage/v1/b";
   private static final String URL_PROJECT = "project=projectId&projection=full";
 
-  private static final Answer UNEXPECTED_CALL_ANSWER =
+  private static final Answer<Object> UNEXPECTED_CALL_ANSWER =
       new Answer<Object>() {
         @Override
         public Object answer(InvocationOnMock invocation) {
@@ -208,7 +69,7 @@ public class HttpStorageRpcTest {
                   + invocation.getMethod()
                   + " with "
                   + Arrays.toString(invocation.getArguments()));
-        };
+        }
       };
 
   private static final ApiClock TIME_SOURCE =
@@ -254,9 +115,9 @@ public class HttpStorageRpcTest {
   }
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     testMockData = new ArrayDeque<>();
-    HttpTransportFactoryMock factoryMock = new HttpTransportFactoryMock(testMockData);
+    TestHttpTransportFactory factoryMock = new TestHttpTransportFactory(testMockData);
     HttpTransportOptions transportOptions =
         HttpTransportOptions.newBuilder().setHttpTransportFactory(factoryMock).build();
     StorageOptions storageOptions =
@@ -272,12 +133,12 @@ public class HttpStorageRpcTest {
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     assertTrue("testMockData must be clear at the end", testMockData.isEmpty());
   }
 
   @Test
-  public void testCreateBucket() throws Exception {
+  public void testCreateBucket() {
     byte[] content = "{\"name\":\"yyy\"}".getBytes(UTF_8);
     String url = BASE_URL + '?' + URL_PROJECT;
     RpcRequestHolder holder = mockResponse("POST", url, new TestResponse(200, content));
@@ -290,9 +151,9 @@ public class HttpStorageRpcTest {
   }
 
   @Test
-  public void testCreateBucketWithOptions() throws Exception {
+  public void testCreateBucketWithOptions() {
     byte[] content = "{}".getBytes(UTF_8);
-    Map map = new HashMap();
+    Map<StorageRpc.Option, String> map = new HashMap<>();
     map.put(StorageRpc.Option.PREDEFINED_ACL, "value1");
     map.put(StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL, "value2");
     mockResponse(
@@ -303,7 +164,7 @@ public class HttpStorageRpcTest {
   }
 
   @Test
-  public void testCreateBucketWithError() throws Exception {
+  public void testCreateBucketWithError() {
     String url = BASE_URL + '?' + URL_PROJECT;
     mockResponse("POST", url, new TestResponse(400, null));
     try {
