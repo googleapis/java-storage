@@ -19,7 +19,10 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
 import static com.google.cloud.storage.Acl.Role.READER;
 import static com.google.cloud.storage.Acl.Role.WRITER;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Acl.Project;
