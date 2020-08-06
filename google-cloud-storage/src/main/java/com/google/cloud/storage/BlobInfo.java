@@ -930,8 +930,8 @@ public class BlobInfo implements Serializable {
   }
 
   /**
-   * Returns the time at which the object's storage class was last changed. When the object is
-   * initially created, it will be set to timeCreated.
+   * Returns the time that the object's storage class was last changed or the time of the object
+   * creation.
    */
   public Long getTimeStorageClassUpdated() {
     return timeStorageClassUpdated;
