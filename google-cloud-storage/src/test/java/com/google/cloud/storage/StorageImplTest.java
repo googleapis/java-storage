@@ -29,6 +29,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.util.DateTime;
 import com.google.api.core.ApiClock;
 import com.google.api.gax.paging.Page;
 import com.google.api.services.storage.model.Policy.Bindings;
@@ -2495,5 +2496,41 @@ public class StorageImplTest {
     assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
     assertEquals(outputFields.get("key"), "my-object");
     assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
+  }
+
+  @Test
+  public void testBucketLifecycleRules() {
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder("b")
+            .setLocation("us")
+            .setLifecycleRules(
+                ImmutableList.of(
+                    new BucketInfo.LifecycleRule(
+                        BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
+                            StorageClass.COLDLINE),
+                        BucketInfo.LifecycleRule.LifecycleCondition.newBuilder()
+                            .setAge(1)
+                            .setNumberOfNewerVersions(3)
+                            .setIsLive(false)
+                            .setCreatedBefore(new DateTime(System.currentTimeMillis()))
+                            .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+                            .setDaysSinceNoncurrentTime(30)
+                            .setNoncurrentTimeBefore(new DateTime(System.currentTimeMillis()))
+                            .build())))
+            .build();
+    EasyMock.expect(
+            storageRpcMock.create(bucketInfo.toPb(), new HashMap<StorageRpc.Option, Object>()))
+        .andReturn(bucketInfo.toPb());
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    Bucket bucket = storage.create(bucketInfo);
+    BucketInfo.LifecycleRule lifecycleRule = bucket.getLifecycleRules().get(0);
+    assertEquals(3, lifecycleRule.getCondition().getNumberOfNewerVersions().intValue());
+    assertNotNull(lifecycleRule.getCondition().getCreatedBefore());
+    assertFalse(lifecycleRule.getCondition().getIsLive());
+    assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
+    assertEquals(1, lifecycleRule.getCondition().getMatchesStorageClass().size());
+    assertEquals(30, lifecycleRule.getCondition().getDaysSinceNoncurrentTime().intValue());
+    assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBefore());
   }
 }

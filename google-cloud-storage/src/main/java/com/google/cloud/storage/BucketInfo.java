@@ -425,7 +425,8 @@ public class BucketInfo implements Serializable {
               .setNoncurrentTimeBefore(
                   lifecycleCondition.getNoncurrentTimeBefore() == null
                       ? null
-                      : new DateTime(lifecycleCondition.getNoncurrentTimeBefore().getValue(), 0));
+                      : new DateTime(
+                          true, lifecycleCondition.getNoncurrentTimeBefore().getValue(), 0));
 
       rule.setCondition(condition);
 
@@ -554,7 +555,9 @@ public class BucketInfo implements Serializable {
         return daysSinceNoncurrentTime;
       }
 
-      /** Returns the timestamp in RFC 3339 format. */
+      /**
+       * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       */
       public DateTime getNoncurrentTimeBefore() {
         return noncurrentTimeBefore;
       }
@@ -635,9 +638,9 @@ public class BucketInfo implements Serializable {
         }
 
         /**
-         * Sets the timestamp in RFC 3339 format. This condition is satisfied when the noncurrent
-         * time on an object is before this timestamp. This condition is relevant only for versioned
-         * objects.
+         * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+         * This condition is satisfied when the noncurrent time on an object is before this date.
+         * This condition is relevant only for versioned objects.
          */
         public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
           this.noncurrentTimeBefore = noncurrentTimeBefore;
