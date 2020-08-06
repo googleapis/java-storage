@@ -411,6 +411,12 @@ public class Blob extends BlobInfo {
     }
 
     @Override
+    Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
+      infoBuilder.setTimeStorageClassUpdated(timeStorageClassUpdated);
+      return this;
+    }
+
+    @Override
     Builder setMetageneration(Long metageneration) {
       infoBuilder.setMetageneration(metageneration);
       return this;

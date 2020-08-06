@@ -19,10 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
 import static com.google.cloud.storage.Acl.Role.READER;
 import static com.google.cloud.storage.Acl.Role.WRITER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Acl.Project;
@@ -75,6 +72,7 @@ public class BlobInfoTest {
   private static final String KMS_KEY_NAME =
       "projects/p/locations/kr-loc/keyRings/kr/cryptoKeys/key";
   private static final StorageClass STORAGE_CLASS = StorageClass.COLDLINE;
+  private static final Long TIME_STORAGE_CLASS_UPDATED = CREATE_TIME;
   private static final Boolean EVENT_BASED_HOLD = true;
   private static final Boolean TEMPORARY_HOLD = true;
   private static final Long RETENTION_EXPIRATION_TIME = 10L;
@@ -104,6 +102,7 @@ public class BlobInfoTest {
           .setCreateTime(CREATE_TIME)
           .setCustomTime(CUSTOM_TIME)
           .setStorageClass(STORAGE_CLASS)
+          .setTimeStorageClassUpdated(TIME_STORAGE_CLASS_UPDATED)
           .setKmsKeyName(KMS_KEY_NAME)
           .setEventBasedHold(EVENT_BASED_HOLD)
           .setTemporaryHold(TEMPORARY_HOLD)
@@ -199,6 +198,7 @@ public class BlobInfoTest {
     assertEquals(CREATE_TIME, BLOB_INFO.getCreateTime());
     assertEquals(CUSTOM_TIME, BLOB_INFO.getCustomTime());
     assertEquals(STORAGE_CLASS, BLOB_INFO.getStorageClass());
+    assertEquals(TIME_STORAGE_CLASS_UPDATED, BLOB_INFO.getTimeStorageClassUpdated());
     assertEquals(KMS_KEY_NAME, BLOB_INFO.getKmsKeyName());
     assertEquals(EVENT_BASED_HOLD, BLOB_INFO.getEventBasedHold());
     assertEquals(TEMPORARY_HOLD, BLOB_INFO.getTemporaryHold());
@@ -264,6 +264,7 @@ public class BlobInfoTest {
     assertEquals(expected.getCustomTime(), value.getCustomTime());
     assertEquals(expected.getUpdateTime(), value.getUpdateTime());
     assertEquals(expected.getStorageClass(), value.getStorageClass());
+    assertEquals(expected.getTimeStorageClassUpdated(), value.getTimeStorageClassUpdated());
     assertEquals(expected.getKmsKeyName(), value.getKmsKeyName());
     assertEquals(expected.getEventBasedHold(), value.getEventBasedHold());
     assertEquals(expected.getTemporaryHold(), value.getTemporaryHold());
@@ -319,6 +320,7 @@ public class BlobInfoTest {
     assertEquals(0L, (long) blobInfo.getSize());
     assertNull(blobInfo.getUpdateTime());
     assertNull(blobInfo.getStorageClass());
+    assertNull(blobInfo.getTimeStorageClassUpdated());
     assertNull(blobInfo.getKmsKeyName());
     assertNull(blobInfo.getEventBasedHold());
     assertNull(blobInfo.getTemporaryHold());

@@ -92,6 +92,8 @@ public class BlobTest {
   private static final Long UPDATE_TIME = DELETE_TIME - 1L;
   private static final Long CREATE_TIME = UPDATE_TIME - 1L;
   private static final Long CUSTOM_TIME = CREATE_TIME - 1L;
+  private static final StorageClass STORAGE_CLASS = StorageClass.COLDLINE;
+  private static final Long TIME_STORAGE_CLASS_UPDATED = CREATE_TIME;
   private static final String ENCRYPTION_ALGORITHM = "AES256";
   private static final String KEY_SHA256 = "keySha";
   private static final BlobInfo.CustomerEncryption CUSTOMER_ENCRYPTION =
@@ -124,6 +126,8 @@ public class BlobTest {
           .setUpdateTime(UPDATE_TIME)
           .setCreateTime(CREATE_TIME)
           .setCustomTime(CUSTOM_TIME)
+          .setStorageClass(STORAGE_CLASS)
+          .setTimeStorageClassUpdated(TIME_STORAGE_CLASS_UPDATED)
           .setCustomerEncryption(CUSTOMER_ENCRYPTION)
           .setKmsKeyName(KMS_KEY_NAME)
           .setEventBasedHold(EVENT_BASED_HOLD)
@@ -513,6 +517,8 @@ public class BlobTest {
             .setCrc32c(CRC32)
             .setCreateTime(CREATE_TIME)
             .setCustomTime(CUSTOM_TIME)
+            .setStorageClass(STORAGE_CLASS)
+            .setTimeStorageClassUpdated(TIME_STORAGE_CLASS_UPDATED)
             .setCustomerEncryption(CUSTOMER_ENCRYPTION)
             .setKmsKeyName(KMS_KEY_NAME)
             .setEventBasedHold(EVENT_BASED_HOLD)
@@ -543,6 +549,8 @@ public class BlobTest {
     assertEquals(CRC32_HEX_STRING, blob.getCrc32cToHexString());
     assertEquals(CREATE_TIME, blob.getCreateTime());
     assertEquals(CUSTOM_TIME, blob.getCustomTime());
+    assertEquals(STORAGE_CLASS, blob.getStorageClass());
+    assertEquals(TIME_STORAGE_CLASS_UPDATED, blob.getTimeStorageClassUpdated());
     assertEquals(CUSTOMER_ENCRYPTION, blob.getCustomerEncryption());
     assertEquals(KMS_KEY_NAME, blob.getKmsKeyName());
     assertEquals(EVENT_BASED_HOLD, blob.getEventBasedHold());
@@ -576,6 +584,8 @@ public class BlobTest {
     assertNull(blob.getCrc32c());
     assertNull(blob.getCrc32cToHexString());
     assertNull(blob.getCreateTime());
+    assertNull(blob.getStorageClass());
+    assertNull(blob.getTimeStorageClassUpdated());
     assertNull(blob.getCustomerEncryption());
     assertNull(blob.getKmsKeyName());
     assertNull(blob.getEventBasedHold());
