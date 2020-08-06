@@ -4,7 +4,7 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/java-storage.git",
-        "sha": "f8a4b12517c661881d7b7c65f796c1c8f1cf3ae9"
+        "sha": "f0e945e14662b86594298557b83151d3cb7e1ebb"
       }
     },
     {
@@ -79,7 +79,6 @@
     ".kokoro/release/stage.sh",
     ".kokoro/trampoline.sh",
     "CODE_OF_CONDUCT.md",
-    "CONTRIBUTING.md",
     "LICENSE",
     "README.md",
     "codecov.yaml",
