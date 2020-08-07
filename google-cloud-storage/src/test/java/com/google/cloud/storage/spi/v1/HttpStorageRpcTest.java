@@ -102,16 +102,12 @@ public class HttpStorageRpcTest {
     return holder;
   }
 
-  private static String getUnzippedContent(LowLevelHttpRequest request) {
-    try {
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      request.getStreamingContent().writeTo(outputStream);
-      GZIPInputStream gzipInputStream =
-          new GZIPInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
-      return new String(ByteStreams.toByteArray(gzipInputStream), UTF_8);
-    } catch (IOException e) {
-      throw new AssertionError("Unexpected exception", e);
-    }
+  private static String getUnzippedContent(LowLevelHttpRequest request) throws IOException {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    request.getStreamingContent().writeTo(outputStream);
+    GZIPInputStream gzipInputStream =
+        new GZIPInputStream(new ByteArrayInputStream(outputStream.toByteArray()));
+    return new String(ByteStreams.toByteArray(gzipInputStream), UTF_8);
   }
 
   @Before
@@ -138,7 +134,7 @@ public class HttpStorageRpcTest {
   }
 
   @Test
-  public void testCreateBucket() {
+  public void testCreateBucket() throws IOException {
     byte[] content = "{\"name\":\"yyy\"}".getBytes(UTF_8);
     String url = BASE_URL + '?' + URL_PROJECT;
     RpcRequestHolder holder = mockResponse("POST", url, new TestResponse(200, content));
