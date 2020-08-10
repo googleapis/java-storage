@@ -44,6 +44,7 @@ class HttpStorageRpcSpans {
   static final String SPAN_NAME_OPEN_REWRITE = getTraceSpanName("openRewrite(RewriteRequest)");
   static final String SPAN_NAME_CONTINUE_REWRITE =
       getTraceSpanName("continueRewrite(RewriteResponse)");
+  static final String SPAN_NAME_ABORT = getTraceSpanName("abort(String)");
   static final String SPAN_NAME_GET_BUCKET_ACL = getTraceSpanName("getAcl(String,String,Map)");
   static final String SPAN_NAME_DELETE_BUCKET_ACL =
       getTraceSpanName("deleteAcl(String,String,Map)");

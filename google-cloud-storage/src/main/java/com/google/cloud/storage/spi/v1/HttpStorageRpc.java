@@ -882,6 +882,48 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
+  public void abort(String uploadId) {
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_ABORT);
+    Scope scope = tracer.withSpan(span);
+    try {
+      GenericUrl url = new GenericUrl(uploadId);
+      HttpRequest httpRequest = storage.getRequestFactory().buildDeleteRequest(url);
+      int code;
+      String message;
+      IOException exception = null;
+      HttpResponse response = null;
+      try {
+        response = httpRequest.execute();
+        code = response.getStatusCode();
+        message = response.getStatusMessage();
+      } catch (HttpResponseException ex) {
+        exception = ex;
+        code = ex.getStatusCode();
+        message = ex.getStatusMessage();
+      } finally {
+        if (response != null) {
+          response.disconnect();
+        }
+      }
+      if (code != 499) {
+        if (exception != null) {
+          throw exception;
+        }
+        GoogleJsonError error = new GoogleJsonError();
+        error.setCode(code);
+        error.setMessage(message);
+        throw translate(error);
+      }
+    } catch (IOException ex) {
+      span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
+      throw translate(ex);
+    } finally {
+      scope.close();
+      span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
+    }
+  }
+
+  @Override
   public String open(String signedURL) {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_OPEN);
     Scope scope = tracer.withSpan(span);

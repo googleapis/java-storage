@@ -2693,6 +2693,17 @@ public interface Storage extends Service<StorageOptions> {
   WriteChannel writer(URL signedURL);
 
   /**
+   * Aborts resumeable upload. Further attempts to write to or close the channel will result in
+   * {@code StorageException} with the code {@code 499}.
+   *
+   * @param channel an instance crated either by {@link #writer(BlobInfo, BlobWriteOption...)} or by
+   *     {@link #writer(URL)} method.
+   * @throws IllegalArgumentException if inappropriate channel is given
+   * @throws StorageException upon failure
+   */
+  void abort(WriteChannel channel);
+
+  /**
    * Generates a signed URL for a blob. If you have a blob that you want to allow access to for a
    * fixed amount of time, you can use this method to generate a URL that is only valid within a
    * certain time period. This is particularly useful if you don't want publicly accessible blobs,

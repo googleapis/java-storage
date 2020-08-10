@@ -156,6 +156,11 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
+  public void abort(String uploadId) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
   public RewriteResponse continueRewrite(RewriteResponse previousResponse) {
     throw new UnsupportedOperationException("Not implemented yet");
   }

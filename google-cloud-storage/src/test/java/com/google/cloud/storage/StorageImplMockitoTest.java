@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mock;
 
 import com.google.api.core.ApiClock;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.BaseWriteChannel;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
@@ -57,6 +58,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -1310,6 +1312,42 @@ public class StorageImplMockitoTest {
       fail();
     } catch (StorageException e) {
       assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testAbort() {
+    final AtomicBoolean isAborted = new AtomicBoolean(false);
+    WriteChannel writer =
+        new BlobWriteChannel(options, "http://example.com") {
+          @Override
+          void cancelUpload() {
+            isAborted.set(true);
+          }
+        };
+    new StorageImpl(options).abort(writer);
+    assertTrue(isAborted.get());
+  }
+
+  @Test
+  public void testAbortNegative() {
+    WriteChannel writer =
+        new BaseWriteChannel(null, null, null) {
+          @Override
+          protected void flushBuffer(int i, boolean b) {
+            throw new IllegalStateException();
+          }
+
+          @Override
+          protected BaseState.Builder stateBuilder() {
+            throw new IllegalStateException();
+          }
+        };
+
+    try {
+      new StorageImpl(options).abort(writer);
+    } catch (IllegalArgumentException e) {
+      assertEquals("channel is not created by Storage", e.getMessage());
     }
   }
 }

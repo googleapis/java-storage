@@ -357,6 +357,13 @@ public interface StorageRpc extends ServiceRpc {
   RewriteResponse openRewrite(RewriteRequest rewriteRequest);
 
   /**
+   * Aborts the given resumable upload.
+   *
+   * @throws StorageException upon failure
+   */
+  void abort(String uploadId);
+
+  /**
    * Continues rewriting on an already open rewrite channel.
    *
    * @throws StorageException upon failure

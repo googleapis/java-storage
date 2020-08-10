@@ -696,6 +696,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return new BlobWriteChannel(getOptions(), signedURL);
   }
 
+  @Override
+  public void abort(WriteChannel channel) {
+    if (!(channel instanceof BlobWriteChannel)) {
+      throw new IllegalArgumentException("channel is not created by Storage");
+    }
+    BlobWriteChannel blobWriteChannel = (BlobWriteChannel) channel;
+    blobWriteChannel.cancelUpload();
+  }
+
   private BlobWriteChannel writer(BlobInfo blobInfo, BlobTargetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = optionMap(blobInfo, options);
     return new BlobWriteChannel(getOptions(), blobInfo, optionsMap);
