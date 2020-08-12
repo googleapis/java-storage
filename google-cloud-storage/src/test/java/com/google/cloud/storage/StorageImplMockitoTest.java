@@ -1151,8 +1151,12 @@ public class StorageImplMockitoTest {
     ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
         Tuple.of(cursor, Iterables.transform(bucketInfoList, BucketInfo.TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(EMPTY_RPC_OPTIONS)).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(EMPTY_RPC_OPTIONS);
+
     initializeService();
     ImmutableList<Bucket> bucketList = ImmutableList.of(expectedBucket1, expectedBucket2);
     Page<Bucket> page = storage.list();
@@ -1162,10 +1166,11 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testListBucketsEmpty() {
-    EasyMock.expect(storageRpcMock.list(EMPTY_RPC_OPTIONS))
-        .andReturn(
-            Tuple.<String, Iterable<com.google.api.services.storage.model.Bucket>>of(null, null));
-    EasyMock.replay(storageRpcMock);
+    doReturn(Tuple.<String, Iterable<com.google.api.services.storage.model.Bucket>>of(null, null))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(EMPTY_RPC_OPTIONS);
+
     initializeService();
     Page<Bucket> page = storage.list();
     assertNull(page.getNextPageToken());
@@ -1179,8 +1184,12 @@ public class StorageImplMockitoTest {
     ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
         Tuple.of(cursor, Iterables.transform(bucketInfoList, BucketInfo.TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(BUCKET_LIST_OPTIONS)).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_LIST_OPTIONS);
+
     initializeService();
     ImmutableList<Bucket> bucketList = ImmutableList.of(expectedBucket1, expectedBucket2);
     Page<Bucket> page = storage.list(BUCKET_LIST_PAGE_SIZE, BUCKET_LIST_PREFIX);
@@ -1191,12 +1200,17 @@ public class StorageImplMockitoTest {
   @Test
   public void testListBucketsWithSelectedFields() {
     String cursor = "cursor";
-    Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
+
     ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
         Tuple.of(cursor, Iterables.transform(bucketInfoList, BucketInfo.TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(EasyMock.capture(capturedOptions))).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(capturedOptions.capture());
     initializeService();
     ImmutableList<Bucket> bucketList = ImmutableList.of(expectedBucket1, expectedBucket2);
     Page<Bucket> page = storage.list(BUCKET_LIST_FIELDS);
@@ -1215,12 +1229,16 @@ public class StorageImplMockitoTest {
   @Test
   public void testListBucketsWithEmptyFields() {
     String cursor = "cursor";
-    Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
     ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
         Tuple.of(cursor, Iterables.transform(bucketInfoList, BucketInfo.TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(EasyMock.capture(capturedOptions))).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(capturedOptions.capture());
     initializeService();
     ImmutableList<Bucket> bucketList = ImmutableList.of(expectedBucket1, expectedBucket2);
     Page<Bucket> page = storage.list(BUCKET_LIST_EMPTY_FIELDS);
@@ -1236,13 +1254,29 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testListBucketsWithException() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).list(EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.list();
+      fail();
+    } catch (StorageException e) {
+      assertEquals(STORAGE_FAILURE.toString(), e.getMessage());
+    }
+  }
+
+  @Test
   public void testListBlobs() {
     String cursor = "cursor";
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(BUCKET_NAME1, EMPTY_RPC_OPTIONS)).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+
     initializeService();
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page = storage.list(BUCKET_NAME1);
@@ -1252,11 +1286,13 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testListBlobsEmpty() {
-    EasyMock.expect(storageRpcMock.list(BUCKET_NAME1, EMPTY_RPC_OPTIONS))
-        .andReturn(
+    doReturn(
             Tuple.<String, Iterable<com.google.api.services.storage.model.StorageObject>>of(
-                null, null));
-    EasyMock.replay(storageRpcMock);
+                null, null))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+
     initializeService();
     Page<Blob> page = storage.list(BUCKET_NAME1);
     assertNull(page.getNextPageToken());
@@ -1270,8 +1306,10 @@ public class StorageImplMockitoTest {
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(BUCKET_NAME1, BLOB_LIST_OPTIONS)).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_NAME1, BLOB_LIST_OPTIONS);
     initializeService();
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page =
@@ -1283,14 +1321,16 @@ public class StorageImplMockitoTest {
   @Test
   public void testListBlobsWithSelectedFields() {
     String cursor = "cursor";
-    Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
-    EasyMock.expect(
-        storageRpcMock.list(EasyMock.eq(BUCKET_NAME1), EasyMock.capture(capturedOptions)))
-        .andReturn(result);
-    EasyMock.replay(storageRpcMock);
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(Mockito.eq(BUCKET_NAME1), capturedOptions.capture());
+
     initializeService();
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page =
@@ -1318,14 +1358,16 @@ public class StorageImplMockitoTest {
   @Test
   public void testListBlobsWithEmptyFields() {
     String cursor = "cursor";
-    Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
+    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
+        ArgumentCaptor.forClass(Map.class);
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
-    EasyMock.expect(
-        storageRpcMock.list(EasyMock.eq(BUCKET_NAME1), EasyMock.capture(capturedOptions)))
-        .andReturn(result);
-    EasyMock.replay(storageRpcMock);
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(Mockito.eq(BUCKET_NAME1), capturedOptions.capture());
+
     initializeService();
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page =
@@ -1356,8 +1398,11 @@ public class StorageImplMockitoTest {
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(BUCKET_NAME1, options)).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_NAME1, options);
+
     initializeService();
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page = storage.list(BUCKET_NAME1, Storage.BlobListOption.currentDirectory());
@@ -1373,8 +1418,11 @@ public class StorageImplMockitoTest {
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(BUCKET_NAME1, options)).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_NAME1, options);
+
     initializeService();
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page = storage.list(BUCKET_NAME1, Storage.BlobListOption.delimiter(delimiter));
@@ -1393,8 +1441,11 @@ public class StorageImplMockitoTest {
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
         Tuple.of(cursor, Iterables.transform(blobInfoList, BlobInfo.INFO_TO_PB_FUNCTION));
-    EasyMock.expect(storageRpcMock.list(BUCKET_NAME1, options)).andReturn(result);
-    EasyMock.replay(storageRpcMock);
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_NAME1, options);
+
     initializeService();
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page =
@@ -1404,6 +1455,18 @@ public class StorageImplMockitoTest {
             Storage.BlobListOption.endOffset(endOffset));
     assertEquals(cursor, page.getNextPageToken());
     assertArrayEquals(blobList.toArray(), Iterables.toArray(page.getValues(), Blob.class));
+  }
+
+  @Test
+  public void testListBlobsWithException() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).list(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.list(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertEquals(STORAGE_FAILURE.toString(), e.getMessage());
+    }
   }
 
   private void verifyChannelRead(ReadChannel channel, byte[] bytes) throws IOException {
