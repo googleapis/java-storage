@@ -602,6 +602,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    Builder setUpdateTime(Long updateTime) {
+      infoBuilder.setUpdateTime(updateTime);
+      return this;
+    }
+
+    @Override
     Builder setMetageneration(Long metageneration) {
       infoBuilder.setMetageneration(metageneration);
       return this;

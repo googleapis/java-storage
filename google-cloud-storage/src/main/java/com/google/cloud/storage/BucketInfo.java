@@ -84,6 +84,7 @@ public class BucketInfo implements Serializable {
   private final List<LifecycleRule> lifecycleRules;
   private final String etag;
   private final Long createTime;
+  private final Long updateTime;
   private final Long metageneration;
   private final List<Cors> cors;
   private final List<Acl> acl;
@@ -1059,6 +1060,8 @@ public class BucketInfo implements Serializable {
 
     abstract Builder setCreateTime(Long createTime);
 
+    abstract Builder setUpdateTime(Long updateTime);
+
     abstract Builder setMetageneration(Long metageneration);
 
     abstract Builder setLocationType(String locationType);
@@ -1144,6 +1147,7 @@ public class BucketInfo implements Serializable {
     private String location;
     private String etag;
     private Long createTime;
+    private Long updateTime;
     private Long metageneration;
     private List<Cors> cors;
     private List<Acl> acl;
@@ -1167,6 +1171,7 @@ public class BucketInfo implements Serializable {
       name = bucketInfo.name;
       etag = bucketInfo.etag;
       createTime = bucketInfo.createTime;
+      updateTime = bucketInfo.updateTime;
       metageneration = bucketInfo.metageneration;
       location = bucketInfo.location;
       storageClass = bucketInfo.storageClass;
@@ -1287,6 +1292,12 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    Builder setUpdateTime(Long updateTime) {
+      this.updateTime = updateTime;
+      return this;
+    }
+
+    @Override
     Builder setMetageneration(Long metageneration) {
       this.metageneration = metageneration;
       return this;
@@ -1391,6 +1402,7 @@ public class BucketInfo implements Serializable {
     name = builder.name;
     etag = builder.etag;
     createTime = builder.createTime;
+    updateTime = builder.updateTime;
     metageneration = builder.metageneration;
     location = builder.location;
     storageClass = builder.storageClass;
@@ -1520,6 +1532,14 @@ public class BucketInfo implements Serializable {
   /** Returns the time at which the bucket was created. */
   public Long getCreateTime() {
     return createTime;
+  }
+
+  /**
+   * Returns the last modification time of the bucket's metadata expressed as the number of
+   * milliseconds since the Unix epoch.
+   */
+  public Long getUpdateTime() {
+    return updateTime;
   }
 
   /** Returns the metadata generation of this bucket. */
@@ -1704,6 +1724,9 @@ public class BucketInfo implements Serializable {
     if (createTime != null) {
       bucketPb.setTimeCreated(new DateTime(createTime));
     }
+    if (updateTime != null) {
+      bucketPb.setUpdated(new DateTime(updateTime));
+    }
     if (metageneration != null) {
       bucketPb.setMetageneration(metageneration);
     }
@@ -1850,6 +1873,9 @@ public class BucketInfo implements Serializable {
     }
     if (bucketPb.getTimeCreated() != null) {
       builder.setCreateTime(bucketPb.getTimeCreated().getValue());
+    }
+    if (bucketPb.getUpdated() != null) {
+      builder.setUpdateTime(bucketPb.getUpdated().getValue());
     }
     if (bucketPb.getLocation() != null) {
       builder.setLocation(bucketPb.getLocation());
