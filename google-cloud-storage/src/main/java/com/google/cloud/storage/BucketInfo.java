@@ -640,8 +640,9 @@ public class BucketInfo implements Serializable {
 
         /**
          * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
-         * This condition is satisfied when the noncurrent time on an object is before this date.
-         * This condition is relevant only for versioned objects.
+         * Note that only date part will be considered, if the time is specified it will be
+         * truncated. This condition is satisfied when the noncurrent time on an object is before
+         * this date. This condition is relevant only for versioned objects.
          */
         public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
           this.noncurrentTimeBefore = noncurrentTimeBefore;
