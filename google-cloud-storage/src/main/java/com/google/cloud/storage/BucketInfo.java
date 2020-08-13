@@ -680,7 +680,9 @@ public class BucketInfo implements Serializable {
 
         /**
          * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
-         * This condition is satisfied when the custom time on an object is before this date.
+         * Note that only date part will be considered, if the time is specified it will be
+         * truncated. This condition is satisfied when the custom time on an object is before this
+         * date in UTC.
          */
         public Builder setCustomTimeBefore(DateTime customTimeBefore) {
           this.customTimeBefore = customTimeBefore;
