@@ -84,10 +84,19 @@ public class PostPolicyV4Test {
   @Test
   public void testPostPolicyV4_ofMalformedURL() {
     try {
-      PostPolicyV4.of("not a url", new HashMap<String, String>());
+      PostPolicyV4.of("example.com", new HashMap<String, String>());
       fail();
     } catch (IllegalArgumentException e) {
-      assertEquals("java.net.MalformedURLException: no protocol: not a url", e.getMessage());
+      assertEquals("example.com is not an absolute URL", e.getMessage());
+    }
+
+    try {
+      PostPolicyV4.of("Scio nescio", new HashMap<String, String>());
+      fail();
+    } catch (IllegalArgumentException e) {
+      assertEquals(
+          "java.net.URISyntaxException: Illegal character in path at index 4: Scio nescio",
+          e.getMessage());
     }
   }
 

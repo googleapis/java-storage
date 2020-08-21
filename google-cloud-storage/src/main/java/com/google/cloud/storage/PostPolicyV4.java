@@ -18,8 +18,8 @@ package com.google.cloud.storage;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,8 +48,10 @@ public final class PostPolicyV4 {
 
   private PostPolicyV4(String url, Map<String, String> fields) {
     try {
-      new URL(url);
-    } catch (MalformedURLException e) {
+      if (!new URI(url).isAbsolute()) {
+        throw new IllegalArgumentException(url + " is not an absolute URL");
+      }
+    } catch (URISyntaxException e) {
       throw new IllegalArgumentException(e);
     }
     PostFieldsV4.validateFields(fields);
