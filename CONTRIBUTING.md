@@ -48,7 +48,7 @@ integration tests.
 
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service/account.json
-export IT_SERVICE_ACCOUNT_EMAIL=my-service-account@my-project.gserviceaccount.com
+export IT_SERVICE_ACCOUNT_EMAIL=my-service-account@my-project.iam.gserviceaccount.com
 mvn -Penable-integration-tests clean verify
 ```
 
