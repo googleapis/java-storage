@@ -351,7 +351,9 @@ public class BucketInfo implements Serializable {
           && condition.getAge() == null
           && condition.getCreatedBefore() == null
           && condition.getMatchesStorageClass() == null
-          && condition.getNumberOfNewerVersions() == null) {
+          && condition.getNumberOfNewerVersions() == null
+          && condition.getDaysSinceNoncurrentTime() == null
+          && condition.getNoncurrentTimeBefore() == null) {
         throw new IllegalArgumentException(
             "You must specify at least one condition to use object lifecycle "
                 + "management. Please see https://cloud.google.com/storage/docs/lifecycle for details.");
@@ -419,7 +421,13 @@ public class BucketInfo implements Serializable {
                       ? null
                       : transform(
                           lifecycleCondition.getMatchesStorageClass(),
-                          Functions.toStringFunction()));
+                          Functions.toStringFunction()))
+              .setDaysSinceNoncurrentTime(lifecycleCondition.getDaysSinceNoncurrentTime())
+              .setNoncurrentTimeBefore(
+                  lifecycleCondition.getNoncurrentTimeBefore() == null
+                      ? null
+                      : new DateTime(
+                          true, lifecycleCondition.getNoncurrentTimeBefore().getValue(), 0));
 
       rule.setCondition(condition);
 
@@ -462,7 +470,9 @@ public class BucketInfo implements Serializable {
                             public StorageClass apply(String storageClass) {
                               return StorageClass.valueOf(storageClass);
                             }
-                          }));
+                          }))
+              .setDaysSinceNoncurrentTime(condition.getDaysSinceNoncurrentTime())
+              .setNoncurrentTimeBefore(condition.getNoncurrentTimeBefore());
 
       return new LifecycleRule(lifecycleAction, conditionBuilder.build());
     }
@@ -480,6 +490,8 @@ public class BucketInfo implements Serializable {
       private final Integer numberOfNewerVersions;
       private final Boolean isLive;
       private final List<StorageClass> matchesStorageClass;
+      private final Integer daysSinceNoncurrentTime;
+      private final DateTime noncurrentTimeBefore;
 
       private LifecycleCondition(Builder builder) {
         this.age = builder.age;
@@ -487,6 +499,8 @@ public class BucketInfo implements Serializable {
         this.numberOfNewerVersions = builder.numberOfNewerVersions;
         this.isLive = builder.isLive;
         this.matchesStorageClass = builder.matchesStorageClass;
+        this.daysSinceNoncurrentTime = builder.daysSinceNoncurrentTime;
+        this.noncurrentTimeBefore = builder.noncurrentTimeBefore;
       }
 
       public Builder toBuilder() {
@@ -495,7 +509,9 @@ public class BucketInfo implements Serializable {
             .setCreatedBefore(this.createdBefore)
             .setNumberOfNewerVersions(this.numberOfNewerVersions)
             .setIsLive(this.isLive)
-            .setMatchesStorageClass(this.matchesStorageClass);
+            .setMatchesStorageClass(this.matchesStorageClass)
+            .setDaysSinceNoncurrentTime(this.daysSinceNoncurrentTime)
+            .setNoncurrentTimeBefore(this.noncurrentTimeBefore);
       }
 
       public static Builder newBuilder() {
@@ -510,6 +526,8 @@ public class BucketInfo implements Serializable {
             .add("numberofNewerVersions", numberOfNewerVersions)
             .add("isLive", isLive)
             .add("matchesStorageClass", matchesStorageClass)
+            .add("daysSinceNoncurrentTime", daysSinceNoncurrentTime)
+            .add("noncurrentTimeBefore", noncurrentTimeBefore)
             .toString();
       }
 
@@ -533,6 +551,18 @@ public class BucketInfo implements Serializable {
         return matchesStorageClass;
       }
 
+      /** Returns the number of days elapsed since the noncurrent timestamp of an object. */
+      public Integer getDaysSinceNoncurrentTime() {
+        return daysSinceNoncurrentTime;
+      }
+
+      /**
+       * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       */
+      public DateTime getNoncurrentTimeBefore() {
+        return noncurrentTimeBefore;
+      }
+
       /** Builder for {@code LifecycleCondition}. */
       public static class Builder {
         private Integer age;
@@ -540,6 +570,8 @@ public class BucketInfo implements Serializable {
         private Integer numberOfNewerVersions;
         private Boolean isLive;
         private List<StorageClass> matchesStorageClass;
+        private Integer daysSinceNoncurrentTime;
+        private DateTime noncurrentTimeBefore;
 
         private Builder() {}
 
@@ -591,6 +623,29 @@ public class BucketInfo implements Serializable {
          */
         public Builder setMatchesStorageClass(List<StorageClass> matchesStorageClass) {
           this.matchesStorageClass = matchesStorageClass;
+          return this;
+        }
+
+        /**
+         * Sets the number of days elapsed since the noncurrent timestamp of an object. The
+         * condition is satisfied if the days elapsed is at least this number. This condition is
+         * relevant only for versioned objects. The value of the field must be a nonnegative
+         * integer. If it's zero, the object version will become eligible for Lifecycle action as
+         * soon as it becomes noncurrent.
+         */
+        public Builder setDaysSinceNoncurrentTime(Integer daysSinceNoncurrentTime) {
+          this.daysSinceNoncurrentTime = daysSinceNoncurrentTime;
+          return this;
+        }
+
+        /**
+         * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+         * Note that only date part will be considered, if the time is specified it will be
+         * truncated. This condition is satisfied when the noncurrent time on an object is before
+         * this date. This condition is relevant only for versioned objects.
+         */
+        public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
+          this.noncurrentTimeBefore = noncurrentTimeBefore;
           return this;
         }
 
