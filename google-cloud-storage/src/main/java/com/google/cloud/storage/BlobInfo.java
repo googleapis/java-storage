@@ -261,7 +261,20 @@ public class BlobInfo implements Serializable {
      */
     public abstract Builder setCrc32c(String crc32c);
 
-    /** Sets the custom time for an object. */
+    /**
+     * Sets the custom time for an object. Once set it can't be unset and only changed to a custom
+     * datetime in the future. If the custom_time must be unset, you must either perform a rewrite
+     * operation or upload the data again.
+     *
+     * <p>Example of setting the custom_time.
+     *
+     * <pre>{@code
+     * String bucketName = "my-unique-bucket";
+     * String blobName = "my-blob-name";
+     * long customTime = 1598423868301L;
+     * BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).setCustomTime(customTime).build();
+     * }</pre>
+     */
     public abstract Builder setCustomTime(Long customTime);
 
     /**
