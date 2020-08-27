@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.112.0](https://www.github.com/googleapis/java-storage/compare/v1.111.2...v1.112.0) (2020-08-27)
+
+
+### Features
+
+* add support of customTime metadata ([#413](https://www.github.com/googleapis/java-storage/issues/413)) ([6f4585e](https://www.github.com/googleapis/java-storage/commit/6f4585eb6706390865cf5fb565fa8062d0071045))
+* add support of customTimeBefore and daysSinceCustomTime ([#396](https://www.github.com/googleapis/java-storage/issues/396)) ([1af8288](https://www.github.com/googleapis/java-storage/commit/1af8288016f2526ddbe221ef22dc705e28b18b77))
+* add support of daysSinceNoncurrentTime and noncurrentTimeBefore OLM options ([#335](https://www.github.com/googleapis/java-storage/issues/335)) ([1e3e88a](https://www.github.com/googleapis/java-storage/commit/1e3e88a391651421469e5c7a8216a788eaa4ba5a))
+* add support of null to remove the CORS configuration from bucket  ([#438](https://www.github.com/googleapis/java-storage/issues/438)) ([f8a4b12](https://www.github.com/googleapis/java-storage/commit/f8a4b12517c661881d7b7c65f796c1c8f1cf3ae9))
+* add support of startOffset and endOffset ([#430](https://www.github.com/googleapis/java-storage/issues/430)) ([38c1c34](https://www.github.com/googleapis/java-storage/commit/38c1c34937eeacd126cf6d62bf85fb9db90e1702))
+* auto content-type on blob creation ([#338](https://www.github.com/googleapis/java-storage/issues/338)) ([66d1eb7](https://www.github.com/googleapis/java-storage/commit/66d1eb793383b9e83992824b392cedd28d54609f))
+* expose updateTime field of the bucket ([#449](https://www.github.com/googleapis/java-storage/issues/449)) ([f0e945e](https://www.github.com/googleapis/java-storage/commit/f0e945e14662b86594298557b83151d3cb7e1ebb))
+
+
+### Bug Fixes
+
+* Ignore CONTRIBUTING.md ([#447](https://www.github.com/googleapis/java-storage/issues/447)) ([bdacdc9](https://www.github.com/googleapis/java-storage/commit/bdacdc93a107108add5bd9dc00473997534aa761)), closes [#446](https://www.github.com/googleapis/java-storage/issues/446) [#446](https://www.github.com/googleapis/java-storage/issues/446)
+* PostPolicyV4 classes could be improved ([#442](https://www.github.com/googleapis/java-storage/issues/442)) ([8602b81](https://www.github.com/googleapis/java-storage/commit/8602b81eae95868e184fd4ab290396707bd21a8e))
+* **docs:** example of Storage#testIamPermissions ([#434](https://www.github.com/googleapis/java-storage/issues/434)) ([275f452](https://www.github.com/googleapis/java-storage/commit/275f452a5993f95a84fb603a5f4b436238b39439))
+* PostPolicyV4.PostFieldsV4.Builder.addCustomMetadataField() allows to add prefixed an not prefixed custom fields ([#398](https://www.github.com/googleapis/java-storage/issues/398)) ([02dc3b5](https://www.github.com/googleapis/java-storage/commit/02dc3b5e5377d8848c889647e72102cd9acc646d))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.30.10 ([#423](https://www.github.com/googleapis/java-storage/issues/423)) ([fbfa9ec](https://www.github.com/googleapis/java-storage/commit/fbfa9ecf277794e07d9a3c46d5b5022f54c37afd))
+* update dependency com.google.api.grpc:grpc-google-cloud-kms-v1 to v0.86.1 ([#463](https://www.github.com/googleapis/java-storage/issues/463)) ([cf94230](https://www.github.com/googleapis/java-storage/commit/cf94230a5f02dcc16e364aa528d97046d80f59a0))
+* update dependency com.google.api.grpc:proto-google-cloud-kms-v1 to v0.86.1 ([#464](https://www.github.com/googleapis/java-storage/issues/464)) ([6c372fa](https://www.github.com/googleapis/java-storage/commit/6c372fa81e49ac74bdda6f9b10914fac42767247))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20200611-1.30.10 ([#428](https://www.github.com/googleapis/java-storage/issues/428)) ([6ef57eb](https://www.github.com/googleapis/java-storage/commit/6ef57ebc9eeddc90f13ef87274e8ab0b7eb53290))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20200727-1.30.10 ([#457](https://www.github.com/googleapis/java-storage/issues/457)) ([edfd1e6](https://www.github.com/googleapis/java-storage/commit/edfd1e69e886adb04b98b54b3a63768c7e82b1e0))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.8.4 ([#452](https://www.github.com/googleapis/java-storage/issues/452)) ([12bc02d](https://www.github.com/googleapis/java-storage/commit/12bc02d7bc05e584cad4362628155333630fbcba))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.8.6 ([#458](https://www.github.com/googleapis/java-storage/issues/458)) ([f8d6e15](https://www.github.com/googleapis/java-storage/commit/f8d6e158a06aec926fb7bc42f10483d56696a37e))
+
 ### [1.111.2](https://www.github.com/googleapis/java-storage/compare/v1.111.1...v1.111.2) (2020-07-10)
 
 
