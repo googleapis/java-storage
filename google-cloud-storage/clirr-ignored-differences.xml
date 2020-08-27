@@ -26,9 +26,4 @@
         <method>com.google.cloud.storage.BucketInfo$Builder setUpdateTime(java.lang.Long)</method>
         <differenceType>7013</differenceType>
     </difference>
-    <difference>
-        <className>com/google/cloud/storage/BlobInfo$Builder</className>
-        <method>com.google.cloud.storage.BlobInfo$Builder setCustomTime(java.lang.Long)</method>
-        <differenceType>7013</differenceType>
-    </difference>
 </differences>
