@@ -353,7 +353,9 @@ public class BucketInfo implements Serializable {
           && condition.getMatchesStorageClass() == null
           && condition.getNumberOfNewerVersions() == null
           && condition.getDaysSinceNoncurrentTime() == null
-          && condition.getNoncurrentTimeBefore() == null) {
+          && condition.getNoncurrentTimeBefore() == null
+          && condition.getCustomTimeBefore() == null
+          && condition.getDaysSinceCustomTime() == null) {
         throw new IllegalArgumentException(
             "You must specify at least one condition to use object lifecycle "
                 + "management. Please see https://cloud.google.com/storage/docs/lifecycle for details.");
@@ -427,7 +429,12 @@ public class BucketInfo implements Serializable {
                   lifecycleCondition.getNoncurrentTimeBefore() == null
                       ? null
                       : new DateTime(
-                          true, lifecycleCondition.getNoncurrentTimeBefore().getValue(), 0));
+                          true, lifecycleCondition.getNoncurrentTimeBefore().getValue(), 0))
+              .setCustomTimeBefore(
+                  lifecycleCondition.getCustomTimeBefore() == null
+                      ? null
+                      : new DateTime(true, lifecycleCondition.getCustomTimeBefore().getValue(), 0))
+              .setDaysSinceCustomTime(lifecycleCondition.getDaysSinceCustomTime());
 
       rule.setCondition(condition);
 
@@ -472,7 +479,9 @@ public class BucketInfo implements Serializable {
                             }
                           }))
               .setDaysSinceNoncurrentTime(condition.getDaysSinceNoncurrentTime())
-              .setNoncurrentTimeBefore(condition.getNoncurrentTimeBefore());
+              .setNoncurrentTimeBefore(condition.getNoncurrentTimeBefore())
+              .setCustomTimeBefore(condition.getCustomTimeBefore())
+              .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
 
       return new LifecycleRule(lifecycleAction, conditionBuilder.build());
     }
@@ -492,6 +501,8 @@ public class BucketInfo implements Serializable {
       private final List<StorageClass> matchesStorageClass;
       private final Integer daysSinceNoncurrentTime;
       private final DateTime noncurrentTimeBefore;
+      private final DateTime customTimeBefore;
+      private final Integer daysSinceCustomTime;
 
       private LifecycleCondition(Builder builder) {
         this.age = builder.age;
@@ -501,6 +512,8 @@ public class BucketInfo implements Serializable {
         this.matchesStorageClass = builder.matchesStorageClass;
         this.daysSinceNoncurrentTime = builder.daysSinceNoncurrentTime;
         this.noncurrentTimeBefore = builder.noncurrentTimeBefore;
+        this.customTimeBefore = builder.customTimeBefore;
+        this.daysSinceCustomTime = builder.daysSinceCustomTime;
       }
 
       public Builder toBuilder() {
@@ -511,7 +524,9 @@ public class BucketInfo implements Serializable {
             .setIsLive(this.isLive)
             .setMatchesStorageClass(this.matchesStorageClass)
             .setDaysSinceNoncurrentTime(this.daysSinceNoncurrentTime)
-            .setNoncurrentTimeBefore(this.noncurrentTimeBefore);
+            .setNoncurrentTimeBefore(this.noncurrentTimeBefore)
+            .setCustomTimeBefore(this.customTimeBefore)
+            .setDaysSinceCustomTime(this.daysSinceCustomTime);
       }
 
       public static Builder newBuilder() {
@@ -528,6 +543,8 @@ public class BucketInfo implements Serializable {
             .add("matchesStorageClass", matchesStorageClass)
             .add("daysSinceNoncurrentTime", daysSinceNoncurrentTime)
             .add("noncurrentTimeBefore", noncurrentTimeBefore)
+            .add("customTimeBefore", customTimeBefore)
+            .add("daysSinceCustomTime", daysSinceCustomTime)
             .toString();
       }
 
@@ -563,6 +580,16 @@ public class BucketInfo implements Serializable {
         return noncurrentTimeBefore;
       }
 
+      /* Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").*/
+      public DateTime getCustomTimeBefore() {
+        return customTimeBefore;
+      }
+
+      /** Returns the number of days elapsed since the user-specified timestamp set on an object. */
+      public Integer getDaysSinceCustomTime() {
+        return daysSinceCustomTime;
+      }
+
       /** Builder for {@code LifecycleCondition}. */
       public static class Builder {
         private Integer age;
@@ -572,6 +599,8 @@ public class BucketInfo implements Serializable {
         private List<StorageClass> matchesStorageClass;
         private Integer daysSinceNoncurrentTime;
         private DateTime noncurrentTimeBefore;
+        private DateTime customTimeBefore;
+        private Integer daysSinceCustomTime;
 
         private Builder() {}
 
@@ -646,6 +675,27 @@ public class BucketInfo implements Serializable {
          */
         public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
           this.noncurrentTimeBefore = noncurrentTimeBefore;
+          return this;
+        }
+
+        /**
+         * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+         * Note that only date part will be considered, if the time is specified it will be
+         * truncated. This condition is satisfied when the custom time on an object is before this
+         * date in UTC.
+         */
+        public Builder setCustomTimeBefore(DateTime customTimeBefore) {
+          this.customTimeBefore = customTimeBefore;
+          return this;
+        }
+
+        /**
+         * Sets the number of days elapsed since the user-specified timestamp set on an object. The
+         * condition is satisfied if the days elapsed is at least this number. If no custom
+         * timestamp is specified on an object, the condition does not apply.
+         */
+        public Builder setDaysSinceCustomTime(Integer daysSinceCustomTime) {
+          this.daysSinceCustomTime = daysSinceCustomTime;
           return this;
         }
 

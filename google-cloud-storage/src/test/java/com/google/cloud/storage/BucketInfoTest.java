@@ -338,6 +338,8 @@ public class BucketInfoTest {
                     .setNumberOfNewerVersions(10)
                     .setDaysSinceNoncurrentTime(30)
                     .setNoncurrentTimeBefore(new DateTime(System.currentTimeMillis()))
+                    .setCustomTimeBefore(new DateTime(System.currentTimeMillis()))
+                    .setDaysSinceCustomTime(30)
                     .build())
             .toPb();
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
@@ -345,6 +347,9 @@ public class BucketInfoTest {
     assertEquals(10, lifecycleRule.getCondition().getNumNewerVersions().intValue());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceNoncurrentTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBefore());
+    assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
+    assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
+    assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
   }
 
   @Test
