@@ -435,6 +435,12 @@ public class Blob extends BlobInfo {
     }
 
     @Override
+    public Builder setCustomTime(Long customTime) {
+      infoBuilder.setCustomTime(customTime);
+      return this;
+    }
+
+    @Override
     Builder setIsDirectory(boolean isDirectory) {
       infoBuilder.setIsDirectory(isDirectory);
       return this;

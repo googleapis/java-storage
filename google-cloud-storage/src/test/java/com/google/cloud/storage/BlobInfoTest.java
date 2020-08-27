@@ -67,6 +67,7 @@ public class BlobInfoTest {
   private static final Long SIZE = 1024L;
   private static final Long UPDATE_TIME = DELETE_TIME - 1L;
   private static final Long CREATE_TIME = UPDATE_TIME - 1L;
+  private static final Long CUSTOM_TIME = CREATE_TIME - 1L;
   private static final String ENCRYPTION_ALGORITHM = "AES256";
   private static final String KEY_SHA256 = "keySha";
   private static final CustomerEncryption CUSTOMER_ENCRYPTION =
@@ -101,6 +102,7 @@ public class BlobInfoTest {
           .setSize(SIZE)
           .setUpdateTime(UPDATE_TIME)
           .setCreateTime(CREATE_TIME)
+          .setCustomTime(CUSTOM_TIME)
           .setStorageClass(STORAGE_CLASS)
           .setKmsKeyName(KMS_KEY_NAME)
           .setEventBasedHold(EVENT_BASED_HOLD)
@@ -195,6 +197,7 @@ public class BlobInfoTest {
     assertEquals(SIZE, BLOB_INFO.getSize());
     assertEquals(UPDATE_TIME, BLOB_INFO.getUpdateTime());
     assertEquals(CREATE_TIME, BLOB_INFO.getCreateTime());
+    assertEquals(CUSTOM_TIME, BLOB_INFO.getCustomTime());
     assertEquals(STORAGE_CLASS, BLOB_INFO.getStorageClass());
     assertEquals(KMS_KEY_NAME, BLOB_INFO.getKmsKeyName());
     assertEquals(EVENT_BASED_HOLD, BLOB_INFO.getEventBasedHold());
@@ -214,6 +217,7 @@ public class BlobInfoTest {
     assertNull(DIRECTORY_INFO.getCrc32c());
     assertNull(DIRECTORY_INFO.getCrc32cToHexString());
     assertNull(DIRECTORY_INFO.getCreateTime());
+    assertNull(DIRECTORY_INFO.getCustomTime());
     assertNull(DIRECTORY_INFO.getDeleteTime());
     assertNull(DIRECTORY_INFO.getEtag());
     assertNull(DIRECTORY_INFO.getGeneration());
@@ -257,6 +261,7 @@ public class BlobInfoTest {
     assertEquals(expected.getOwner(), value.getOwner());
     assertEquals(expected.getSelfLink(), value.getSelfLink());
     assertEquals(expected.getSize(), value.getSize());
+    assertEquals(expected.getCustomTime(), value.getCustomTime());
     assertEquals(expected.getUpdateTime(), value.getUpdateTime());
     assertEquals(expected.getStorageClass(), value.getStorageClass());
     assertEquals(expected.getKmsKeyName(), value.getKmsKeyName());
@@ -299,6 +304,7 @@ public class BlobInfoTest {
     assertNull(blobInfo.getCrc32c());
     assertNull(blobInfo.getCrc32cToHexString());
     assertNull(blobInfo.getCreateTime());
+    assertNull(blobInfo.getCustomTime());
     assertNull(blobInfo.getDeleteTime());
     assertNull(blobInfo.getEtag());
     assertNull(blobInfo.getGeneration());
