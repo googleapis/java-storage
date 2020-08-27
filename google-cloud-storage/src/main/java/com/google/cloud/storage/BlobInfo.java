@@ -276,7 +276,9 @@ public class BlobInfo implements Serializable {
      * }</pre>
      */
     public Builder setCustomTime(Long customTime) {
-      return this;
+      throw new UnsupportedOperationException(
+          "Override setCustomTime with your own implementation,"
+              + " or use com.google.cloud.storage.Blob.");
     }
 
     /**
