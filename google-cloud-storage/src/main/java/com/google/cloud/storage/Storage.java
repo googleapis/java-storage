@@ -106,7 +106,9 @@ public interface Storage extends Service<StorageOptions> {
     BILLING("billing"),
     DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold"),
     RETENTION_POLICY("retentionPolicy"),
-    IAMCONFIGURATION("iamConfiguration");
+    IAMCONFIGURATION("iamConfiguration"),
+    LOGGING("logging"),
+    UPDATED("updated");
 
     static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(NAME);
 
@@ -151,7 +153,8 @@ public interface Storage extends Service<StorageOptions> {
     EVENT_BASED_HOLD("eventBasedHold"),
     TEMPORARY_HOLD("temporaryHold"),
     RETENTION_EXPIRATION_TIME("retentionExpirationTime"),
-    UPDATED("updated");
+    UPDATED("updated"),
+    CUSTOM_TIME("customTime");
 
     static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
 
