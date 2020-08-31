@@ -16,6 +16,7 @@
   </parent>
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
+    <kms.version>0.86.1</kms.version>
   </properties>
   <dependencies>
     <dependency>
@@ -117,13 +118,13 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>grpc-google-cloud-kms-v1</artifactId>
-      <version>0.86.1</version>
+      <version>${kms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>proto-google-cloud-kms-v1</artifactId>
-      <version>0.86.1</version>
+      <version>${kms.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
