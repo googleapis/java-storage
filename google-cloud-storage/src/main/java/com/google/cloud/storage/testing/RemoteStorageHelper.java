@@ -88,7 +88,8 @@ public class RemoteStorageHelper {
                                   Storage.BlobField.EVENT_BASED_HOLD,
                                   Storage.BlobField.TEMPORARY_HOLD))
                           .iterateAll()) {
-                    if (blob.getEventBasedHold() == true || blob.getTemporaryHold() == true) {
+                    if (Boolean.TRUE.equals(blob.getEventBasedHold())
+                        || Boolean.TRUE.equals(blob.getTemporaryHold())) {
                       storage.update(
                           blob.toBuilder().setTemporaryHold(false).setEventBasedHold(false).build(),
                           Storage.BlobTargetOption.userProject(
