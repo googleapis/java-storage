@@ -411,7 +411,7 @@ public class Blob extends BlobInfo {
     }
 
     @Override
-    Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
+    public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
       infoBuilder.setTimeStorageClassUpdated(timeStorageClassUpdated);
       return this;
     }

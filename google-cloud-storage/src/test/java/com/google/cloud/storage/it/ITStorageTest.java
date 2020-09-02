@@ -3581,7 +3581,7 @@ public class ITStorageTest {
     assertThat(remoteBlob.getUpdateTime()).isEqualTo(remoteBlob.getCreateTime());
     assertThat(remoteBlob.getTimeStorageClassUpdated()).isEqualTo(remoteBlob.getCreateTime());
 
-    // You can't change an object's storage class directly, the only way is to rewrite the object
+    // We can't change an object's storage class directly, the only way is to rewrite the object
     // with the desired storage class.
     BlobId blobId = BlobId.of(BUCKET, blobName);
     Storage.CopyRequest request =

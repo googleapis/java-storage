@@ -154,7 +154,8 @@ public interface Storage extends Service<StorageOptions> {
     TEMPORARY_HOLD("temporaryHold"),
     RETENTION_EXPIRATION_TIME("retentionExpirationTime"),
     UPDATED("updated"),
-    CUSTOM_TIME("customTime");
+    CUSTOM_TIME("customTime"),
+    TIME_STORAGE_CLASS_UPDATED("timeStorageClassUpdated");
 
     static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
 

@@ -298,7 +298,15 @@ public class BlobInfo implements Serializable {
     /** Sets the blob's storage class. */
     public abstract Builder setStorageClass(StorageClass storageClass);
 
-    abstract Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated);
+    /**
+     * Sets the modification time of an object's storage class. Once set it can't be unset directly,
+     * the only way is to rewrite the object with the desired storage class.
+     */
+    public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
+      throw new UnsupportedOperationException(
+          "Override setTimeStorageClassUpdated with your own implementation,"
+              + " or use com.google.cloud.storage.Blob.");
+    }
 
     /** Sets the blob's user provided metadata. */
     public abstract Builder setMetadata(Map<String, String> metadata);
@@ -570,7 +578,7 @@ public class BlobInfo implements Serializable {
     }
 
     @Override
-    Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
+    public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
       this.timeStorageClassUpdated = timeStorageClassUpdated;
       return this;
     }
