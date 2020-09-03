@@ -96,6 +96,7 @@ public class BlobInfo implements Serializable {
   private final String contentDisposition;
   private final String contentLanguage;
   private final StorageClass storageClass;
+  private final Long timeStorageClassUpdated;
   private final Integer componentCount;
   private final boolean isDirectory;
   private final CustomerEncryption customerEncryption;
@@ -297,6 +298,16 @@ public class BlobInfo implements Serializable {
     /** Sets the blob's storage class. */
     public abstract Builder setStorageClass(StorageClass storageClass);
 
+    /**
+     * Sets the modification time of an object's storage class. Once set it can't be unset directly,
+     * the only way is to rewrite the object with the desired storage class.
+     */
+    public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
+      throw new UnsupportedOperationException(
+          "Override setTimeStorageClassUpdated with your own implementation,"
+              + " or use com.google.cloud.storage.Blob.");
+    }
+
     /** Sets the blob's user provided metadata. */
     public abstract Builder setMetadata(Map<String, String> metadata);
 
@@ -356,6 +367,7 @@ public class BlobInfo implements Serializable {
     private Boolean isDirectory;
     private CustomerEncryption customerEncryption;
     private StorageClass storageClass;
+    private Long timeStorageClassUpdated;
     private String kmsKeyName;
     private Boolean eventBasedHold;
     private Boolean temporaryHold;
@@ -391,6 +403,7 @@ public class BlobInfo implements Serializable {
       createTime = blobInfo.createTime;
       isDirectory = blobInfo.isDirectory;
       storageClass = blobInfo.storageClass;
+      timeStorageClassUpdated = blobInfo.timeStorageClassUpdated;
       kmsKeyName = blobInfo.kmsKeyName;
       eventBasedHold = blobInfo.eventBasedHold;
       temporaryHold = blobInfo.temporaryHold;
@@ -565,6 +578,12 @@ public class BlobInfo implements Serializable {
     }
 
     @Override
+    public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
+      this.timeStorageClassUpdated = timeStorageClassUpdated;
+      return this;
+    }
+
+    @Override
     Builder setMetageneration(Long metageneration) {
       this.metageneration = metageneration;
       return this;
@@ -657,6 +676,7 @@ public class BlobInfo implements Serializable {
     createTime = builder.createTime;
     isDirectory = firstNonNull(builder.isDirectory, Boolean.FALSE);
     storageClass = builder.storageClass;
+    timeStorageClassUpdated = builder.timeStorageClassUpdated;
     kmsKeyName = builder.kmsKeyName;
     eventBasedHold = builder.eventBasedHold;
     temporaryHold = builder.temporaryHold;
@@ -917,6 +937,14 @@ public class BlobInfo implements Serializable {
     return storageClass;
   }
 
+  /**
+   * Returns the time that the object's storage class was last changed or the time of the object
+   * creation.
+   */
+  public Long getTimeStorageClassUpdated() {
+    return timeStorageClassUpdated;
+  }
+
   /** Returns the Cloud KMS key used to encrypt the blob, if any. */
   public String getKmsKeyName() {
     return kmsKeyName;
@@ -1048,6 +1076,9 @@ public class BlobInfo implements Serializable {
     }
     if (storageClass != null) {
       storageObject.setStorageClass(storageClass.toString());
+    }
+    if (timeStorageClassUpdated != null) {
+      storageObject.setTimeStorageClassUpdated(new DateTime(timeStorageClassUpdated));
     }
 
     Map<String, String> pbMetadata = metadata;
@@ -1192,6 +1223,9 @@ public class BlobInfo implements Serializable {
     }
     if (storageObject.getStorageClass() != null) {
       builder.setStorageClass(StorageClass.valueOf(storageObject.getStorageClass()));
+    }
+    if (storageObject.getTimeStorageClassUpdated() != null) {
+      builder.setTimeStorageClassUpdated(storageObject.getTimeStorageClassUpdated().getValue());
     }
     if (storageObject.getKmsKeyName() != null) {
       builder.setKmsKeyName(storageObject.getKmsKeyName());

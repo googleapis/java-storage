@@ -3567,4 +3567,42 @@ public class ITStorageTest {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
+
+  @Test
+  public void testBlobTimeStorageClassUpdated() {
+    String blobName = "test-blob-with-storage-class";
+    StorageClass storageClass = StorageClass.COLDLINE;
+    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).setStorageClass(storageClass).build();
+    Blob remoteBlob = storage.create(blob);
+    assertThat(remoteBlob).isNotNull();
+    assertThat(remoteBlob.getBucket()).isEqualTo(blob.getBucket());
+    assertThat(remoteBlob.getName()).isEqualTo(blob.getName());
+    assertThat(remoteBlob.getCreateTime()).isNotNull();
+    assertThat(remoteBlob.getUpdateTime()).isEqualTo(remoteBlob.getCreateTime());
+    assertThat(remoteBlob.getTimeStorageClassUpdated()).isEqualTo(remoteBlob.getCreateTime());
+
+    // We can't change an object's storage class directly, the only way is to rewrite the object
+    // with the desired storage class.
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    Storage.CopyRequest request =
+        Storage.CopyRequest.newBuilder()
+            .setSource(blobId)
+            .setTarget(BlobInfo.newBuilder(blobId).setStorageClass(StorageClass.STANDARD).build())
+            .build();
+    Blob updatedBlob1 = storage.copy(request).getResult();
+    assertThat(updatedBlob1.getTimeStorageClassUpdated()).isNotNull();
+    assertThat(updatedBlob1.getCreateTime()).isGreaterThan(remoteBlob.getCreateTime());
+    assertThat(updatedBlob1.getUpdateTime()).isGreaterThan(remoteBlob.getCreateTime());
+    assertThat(updatedBlob1.getTimeStorageClassUpdated())
+        .isGreaterThan(remoteBlob.getTimeStorageClassUpdated());
+
+    // Updates the other properties of the blob's to check the difference between blob updateTime
+    // and timeStorageClassUpdated.
+    Blob updatedBlob2 = updatedBlob1.toBuilder().setContentType(CONTENT_TYPE).build().update();
+    assertThat(updatedBlob2.getUpdateTime())
+        .isGreaterThan(updatedBlob2.getTimeStorageClassUpdated());
+    assertThat(updatedBlob2.getTimeStorageClassUpdated())
+        .isEqualTo(updatedBlob1.getTimeStorageClassUpdated());
+    assertThat(updatedBlob2.delete()).isTrue();
+  }
 }
