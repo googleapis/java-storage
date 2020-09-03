@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.113.0](https://www.github.com/googleapis/java-storage/compare/v1.112.0...v1.113.0) (2020-09-03)
+
+
+### Features
+
+* expose timeStorageClassUpdated property of blob's ([#456](https://www.github.com/googleapis/java-storage/issues/456)) ([57853ec](https://www.github.com/googleapis/java-storage/commit/57853ec7fbc2f3188d8da991001660a4f6008632))
+
+
+### Bug Fixes
+
+* add missing FieldSelector inside BucketField and BlobField ([#484](https://www.github.com/googleapis/java-storage/issues/484)) ([c2aa9cf](https://www.github.com/googleapis/java-storage/commit/c2aa9cf6fb4c7f407cbfce85b338b735ceafe1dc))
+* prevent NPE in RemoteStorageHelper.cleanBuckets ([#492](https://www.github.com/googleapis/java-storage/issues/492)) ([db358c8](https://www.github.com/googleapis/java-storage/commit/db358c8b53f7ba3084c5566c9abf4033bf29783f))
+* set IT_SERVICE_ACCOUNT_EMAIL for nightly integration test ([#479](https://www.github.com/googleapis/java-storage/issues/479)) ([23c379e](https://www.github.com/googleapis/java-storage/commit/23c379e4d28e4fb319db047c7d46654d9a8b9a61))
+
+
+### Documentation
+
+* update libraries-bom ([#494](https://www.github.com/googleapis/java-storage/issues/494)) ([6b015da](https://www.github.com/googleapis/java-storage/commit/6b015da57d42f468c9b3d1f86476407a61cd14ea))
+* update link ([#490](https://www.github.com/googleapis/java-storage/issues/490)) ([6cd5dfa](https://www.github.com/googleapis/java-storage/commit/6cd5dface9cc14f2ec6729e5b842bcee91c1ad34))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.9.0 ([#493](https://www.github.com/googleapis/java-storage/issues/493)) ([0e4f70f](https://www.github.com/googleapis/java-storage/commit/0e4f70f7f70784fee91be499def9734d8af61be9))
+* update kms.version to v0.87.0 ([#489](https://www.github.com/googleapis/java-storage/issues/489)) ([a045d54](https://www.github.com/googleapis/java-storage/commit/a045d5400234595f102a8b8d594539dbfd5f295e))
+
 ## [1.112.0](https://www.github.com/googleapis/java-storage/compare/v1.111.2...v1.112.0) (2020-08-27)
 
 
