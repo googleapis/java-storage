@@ -154,7 +154,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             .setMd5(EMPTY_BYTE_ARRAY_MD5)
             .setCrc32c(EMPTY_BYTE_ARRAY_CRC32C)
             .build();
-    return internalCreate(updatedInfo, EMPTY_BYTE_ARRAY, options);
+    return internalCreate(updatedInfo, EMPTY_BYTE_ARRAY, 0, 0, options);
   }
 
   @Override
@@ -168,23 +168,26 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                 BaseEncoding.base64()
                     .encode(Ints.toByteArray(Hashing.crc32c().hashBytes(content).asInt())))
             .build();
-    return internalCreate(updatedInfo, content, options);
+    return internalCreate(updatedInfo, content, 0, content.length, options);
   }
 
   @Override
   public Blob create(
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     content = firstNonNull(content, EMPTY_BYTE_ARRAY);
-    byte[] subContent = Arrays.copyOfRange(content, offset, offset + length);
     BlobInfo updatedInfo =
         blobInfo
             .toBuilder()
-            .setMd5(BaseEncoding.base64().encode(Hashing.md5().hashBytes(subContent).asBytes()))
+            .setMd5(
+                BaseEncoding.base64()
+                    .encode(Hashing.md5().hashBytes(content, offset, length).asBytes()))
             .setCrc32c(
                 BaseEncoding.base64()
-                    .encode(Ints.toByteArray(Hashing.crc32c().hashBytes(subContent).asInt())))
+                    .encode(
+                        Ints.toByteArray(
+                            Hashing.crc32c().hashBytes(content, offset, length).asInt())))
             .build();
-    return internalCreate(updatedInfo, subContent, options);
+    return internalCreate(updatedInfo, content, offset, length, options);
   }
 
   @Override
@@ -199,7 +202,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return Blob.fromPb(this, storageRpc.create(blobPb, inputStreamParam, optionsMap));
   }
 
-  private Blob internalCreate(BlobInfo info, final byte[] content, BlobTargetOption... options) {
+  private Blob internalCreate(
+      BlobInfo info,
+      final byte[] content,
+      final int offset,
+      final int length,
+      BlobTargetOption... options) {
     Preconditions.checkNotNull(content);
     final StorageObject blobPb = info.toPb();
     final Map<StorageRpc.Option, ?> optionsMap = optionMap(info, options);
@@ -210,7 +218,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               new Callable<StorageObject>() {
                 @Override
                 public StorageObject call() {
-                  return storageRpc.create(blobPb, new ByteArrayInputStream(content), optionsMap);
+                  return storageRpc.create(
+                      blobPb, new ByteArrayInputStream(content, offset, length), optionsMap);
                 }
               },
               getOptions().getRetrySettings(),
