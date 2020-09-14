@@ -72,7 +72,7 @@ public class BlobInfo implements Serializable {
           return blobInfo.toPb();
         }
       };
-
+  private static final String cryptoKeyVersions = "/cryptoKeyVersions/";
   private static final long serialVersionUID = -5625857076205028976L;
   private final BlobId blobId;
   private final String generatedId;
@@ -1096,8 +1096,8 @@ public class BlobInfo implements Serializable {
       storageObject.setRetentionExpirationTime(new DateTime(retentionExpirationTime));
     }
     storageObject.setKmsKeyName(
-        kmsKeyName != null && kmsKeyName.contains("/cryptoKeyVersions/")
-            ? kmsKeyName.substring(0, kmsKeyName.indexOf("/cryptoKeyVersions/"))
+        kmsKeyName != null && kmsKeyName.contains(cryptoKeyVersions)
+            ? kmsKeyName.substring(0, kmsKeyName.indexOf(cryptoKeyVersions))
             : kmsKeyName);
     storageObject.setEventBasedHold(eventBasedHold);
     storageObject.setTemporaryHold(temporaryHold);
