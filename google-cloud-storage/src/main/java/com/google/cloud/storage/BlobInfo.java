@@ -1095,8 +1095,10 @@ public class BlobInfo implements Serializable {
     if (retentionExpirationTime != null) {
       storageObject.setRetentionExpirationTime(new DateTime(retentionExpirationTime));
     }
-
-    storageObject.setKmsKeyName(kmsKeyName);
+    storageObject.setKmsKeyName(
+        kmsKeyName != null && kmsKeyName.contains("/cryptoKeyVersions/")
+            ? kmsKeyName.substring(0, kmsKeyName.indexOf("/cryptoKeyVersions/"))
+            : kmsKeyName);
     storageObject.setEventBasedHold(eventBasedHold);
     storageObject.setTemporaryHold(temporaryHold);
     storageObject.setMetadata(pbMetadata);
