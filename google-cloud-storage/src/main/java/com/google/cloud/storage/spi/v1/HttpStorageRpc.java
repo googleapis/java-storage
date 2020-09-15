@@ -90,6 +90,7 @@ public class HttpStorageRpc implements StorageRpc {
   public static final String NO_ACL_PROJECTION = "noAcl";
   private static final String ENCRYPTION_KEY_PREFIX = "x-goog-encryption-";
   private static final String SOURCE_ENCRYPTION_KEY_PREFIX = "x-goog-copy-source-encryption-";
+  private static final String CRYPTO_KEY_VERSIONS = "/cryptoKeyVersions/";
 
   // declare this HttpStatus code here as it's not included in java.net.HttpURLConnection
   private static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
@@ -832,6 +833,10 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_OPEN);
     Scope scope = tracer.withSpan(span);
     try {
+      String kmsKey = object.getKmsKeyName();
+      if (kmsKey != null && kmsKey.contains(CRYPTO_KEY_VERSIONS)) {
+        object.setKmsKeyName(kmsKey.substring(0, kmsKey.indexOf(CRYPTO_KEY_VERSIONS)));
+      }
       Insert req = storage.objects().insert(object.getBucket(), object);
       GenericUrl url = req.buildHttpRequest().getUrl();
       String scheme = url.getScheme();
