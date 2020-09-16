@@ -322,6 +322,11 @@ public class BlobInfo implements Serializable {
 
     abstract Builder setCustomerEncryption(CustomerEncryption customerEncryption);
 
+    /**
+     * Sets a customer-managed key for server-side encryption of the blob. Note that the kmsKeyName
+     * must be without resource id ("/cryptoKeyVersions/..") otherwise the requests will fail with a
+     * 400 Bad Request response.
+     */
     abstract Builder setKmsKeyName(String kmsKeyName);
 
     /** Sets the blob's event-based hold. */

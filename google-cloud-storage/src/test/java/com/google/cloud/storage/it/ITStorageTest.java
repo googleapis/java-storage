@@ -3605,23 +3605,4 @@ public class ITStorageTest {
         .isEqualTo(updatedBlob1.getTimeStorageClassUpdated());
     assertThat(updatedBlob2.delete()).isTrue();
   }
-
-  @Test
-  public void testWriterWithKmsKeyName() throws IOException {
-    // Write an empty object with a kmsKeyName.
-    String blobName = "test-empty-blob";
-    BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
-    Blob blob =
-        storage.create(blobInfo, Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
-
-    // Create a writer using blob that already has metadata received from Storage API.
-    int numberOfBytes;
-    try (WriteChannel writer = blob.writer()) {
-      byte[] content = BLOB_STRING_CONTENT.getBytes(UTF_8);
-      numberOfBytes = writer.write(ByteBuffer.wrap(content, 0, content.length));
-    }
-    assertThat(numberOfBytes).isEqualTo(27);
-    assertThat(blob.getKmsKeyName()).isNotNull();
-    assertThat(storage.delete(BUCKET, blobName)).isTrue();
-  }
 }
