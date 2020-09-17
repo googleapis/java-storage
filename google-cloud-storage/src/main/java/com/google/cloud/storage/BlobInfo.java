@@ -323,9 +323,11 @@ public class BlobInfo implements Serializable {
     abstract Builder setCustomerEncryption(CustomerEncryption customerEncryption);
 
     /**
-     * Sets a customer-managed key for server-side encryption of the blob. Note that the kmsKeyName
-     * must be without resource id ("/cryptoKeyVersions/..") otherwise the requests will fail with a
-     * 400 Bad Request response.
+     * Sets a customer-managed key for server-side encryption of the blob.
+     *
+     * <p>Note that only KMS key name will be considered (for
+     * instance,"projects/project-id/locations/us/keyRings/lab1/cryptoKeys/test-key"), if the
+     * cryptoKeyVersions is specified it will be truncated.
      */
     abstract Builder setKmsKeyName(String kmsKeyName);
 
@@ -625,7 +627,12 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setKmsKeyName(String kmsKeyName) {
-      this.kmsKeyName = kmsKeyName;
+      String cryptoKeyVersions = "/cryptoKeyVersions/";
+      if (kmsKeyName != null && kmsKeyName.contains(cryptoKeyVersions)) {
+        this.kmsKeyName = kmsKeyName.substring(0, kmsKeyName.indexOf(cryptoKeyVersions));
+      } else {
+        this.kmsKeyName = kmsKeyName;
+      }
       return this;
     }
 
