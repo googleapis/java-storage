@@ -637,8 +637,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setKmsKeyName(String kmsKeyName) {
-      this.kmsKeyName =
-          kmsKeyName != null && kmsKeyName.contains("cryptoKeyVersions") ? "" : kmsKeyName;
+      this.kmsKeyName = kmsKeyName;
       return this;
     }
 

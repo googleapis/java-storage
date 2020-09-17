@@ -832,6 +832,10 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_OPEN);
     Scope scope = tracer.withSpan(span);
     try {
+      String kmsKeyName = object.getKmsKeyName();
+      if (kmsKeyName != null && kmsKeyName.contains("cryptoKeyVersions")) {
+        object.setKmsKeyName("");
+      }
       Insert req = storage.objects().insert(object.getBucket(), object);
       GenericUrl url = req.buildHttpRequest().getUrl();
       String scheme = url.getScheme();
