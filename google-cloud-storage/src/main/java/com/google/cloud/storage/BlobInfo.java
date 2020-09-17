@@ -72,7 +72,6 @@ public class BlobInfo implements Serializable {
           return blobInfo.toPb();
         }
       };
-
   private static final long serialVersionUID = -5625857076205028976L;
   private final BlobId blobId;
   private final String generatedId;
@@ -323,6 +322,23 @@ public class BlobInfo implements Serializable {
 
     abstract Builder setCustomerEncryption(CustomerEncryption customerEncryption);
 
+    /**
+     * Sets a customer-managed key for server-side encryption of the blob. Note that when a KMS key
+     * is used to encrypt Cloud Storage object, object resource metadata will store the version of
+     * the KMS cryptographic. If a {@code Blob} with KMS Key metadata is used to upload a new
+     * version of the object then the existing kmsKeyName version value can't be used in the upload
+     * request and the client instead ignores it.
+     *
+     * <p>Example of setting the KMS key name
+     *
+     * <pre>{@code
+     * String bucketName = "my-unique-bucket";
+     * String blobName = "my-blob-name";
+     * String kmsKeyName = "projects/project-id/locations/us/keyRings/lab1/cryptoKeys/test-key"
+     * BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
+     * Blob blob = storage.create(blobInfo, Storage.BlobTargetOption.kmsKeyName(kmsKeyName));
+     * }</pre>
+     */
     abstract Builder setKmsKeyName(String kmsKeyName);
 
     /** Sets the blob's event-based hold. */
@@ -1095,7 +1111,6 @@ public class BlobInfo implements Serializable {
     if (retentionExpirationTime != null) {
       storageObject.setRetentionExpirationTime(new DateTime(retentionExpirationTime));
     }
-
     storageObject.setKmsKeyName(kmsKeyName);
     storageObject.setEventBasedHold(eventBasedHold);
     storageObject.setTemporaryHold(temporaryHold);
