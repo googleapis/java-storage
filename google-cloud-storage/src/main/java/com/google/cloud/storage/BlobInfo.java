@@ -323,11 +323,21 @@ public class BlobInfo implements Serializable {
     abstract Builder setCustomerEncryption(CustomerEncryption customerEncryption);
 
     /**
-     * Sets a customer-managed key for server-side encryption of the blob.
+     * Sets a customer-managed key for server-side encryption of the blob. Note that when a KMS key
+     * is used to encrypt Cloud Storage object, object resource metadata will store the version of
+     * the KMS cryptographic. If a {@code Blob} with KMS Key metadata is used to upload a new
+     * version of the object then the existing kmsKeyName version value can't be used in the upload
+     * request and the client instead ignores it.
      *
-     * <p>Note that only KMS key name will be considered (for
-     * instance,"projects/project-id/locations/us/keyRings/lab1/cryptoKeys/test-key"), if the
-     * cryptoKeyVersions is specified it will be truncated.
+     * <p>Example of setting the KMS key name
+     *
+     * <pre>{@code
+     * String bucketName = "my-unique-bucket";
+     * String blobName = "my-blob-name";
+     * String kmsKeyName = "projects/project-id/locations/us/keyRings/lab1/cryptoKeys/test-key"
+     * BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
+     * Blob blob = storage.create(blobInfo, Storage.BlobTargetOption.kmsKeyName(kmsKeyName));
+     * }</pre>
      */
     abstract Builder setKmsKeyName(String kmsKeyName);
 
@@ -627,12 +637,8 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setKmsKeyName(String kmsKeyName) {
-      String cryptoKeyVersions = "/cryptoKeyVersions/";
-      if (kmsKeyName != null && kmsKeyName.contains(cryptoKeyVersions)) {
-        this.kmsKeyName = kmsKeyName.substring(0, kmsKeyName.indexOf(cryptoKeyVersions));
-      } else {
-        this.kmsKeyName = kmsKeyName;
-      }
+      this.kmsKeyName =
+          kmsKeyName != null && kmsKeyName.contains("cryptoKeyVersions") ? "" : kmsKeyName;
       return this;
     }
 
