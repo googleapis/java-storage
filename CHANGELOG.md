@@ -1,5 +1,23 @@
 # Changelog
 
+### [1.113.1](https://www.github.com/googleapis/java-storage/compare/v1.113.0...v1.113.1) (2020-09-17)
+
+
+### Bug Fixes
+
+* KMS Bad Key error when using existing Blob context to overwrite object ([#507](https://www.github.com/googleapis/java-storage/issues/507)) ([4d9c490](https://www.github.com/googleapis/java-storage/commit/4d9c49027e4746ee273902694441886c2f43188d))
+* When passing a sub-array (offset, length) to the Storage#create method the array is needlessly cloned  ([#506](https://www.github.com/googleapis/java-storage/issues/506)) ([9415bb7](https://www.github.com/googleapis/java-storage/commit/9415bb7bdb42d8012ca457a90070b616e6bbec19)), closes [#505](https://www.github.com/googleapis/java-storage/issues/505)
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20200814-1.30.10 ([#499](https://www.github.com/googleapis/java-storage/issues/499)) ([af91d7d](https://www.github.com/googleapis/java-storage/commit/af91d7da4117fb22992d6a860af61f72906e0aa1))
+
+
+### Documentation
+
+* update libraries-bom ([#504](https://www.github.com/googleapis/java-storage/issues/504)) ([0e58c1c](https://www.github.com/googleapis/java-storage/commit/0e58c1cb2b6a890e567b043188613021592f2bc8))
+
 ## [1.113.0](https://www.github.com/googleapis/java-storage/compare/v1.112.0...v1.113.0) (2020-09-03)
 
 
