@@ -19,6 +19,7 @@ import synthtool.languages.java as java
 AUTOSYNTH_MULTIPLE_COMMITS = True
 
 java.common_templates(excludes=[
+  '.kokoro/nightly/integration.cfg',
   '.kokoro/presubmit/integration.cfg',
   'CONTRIBUTING.md'
 ])
