@@ -1,0 +1,18 @@
+{
+  "sources": [
+    {
+      "git": {
+        "name": ".",
+        "remote": "https://github.com/googleapis/java-storage.git",
+        "sha": "abfb41214327f9f50501a0cfb8aa5ed310c15909"
+      }
+    },
+    {
+      "git": {
+        "name": "synthtool",
+        "remote": "https://github.com/googleapis/synthtool.git",
+        "sha": "477764cc4ee6db346d3febef2bb1ea0abf27de52"
+      }
+    }
+  ]
+}
