@@ -1,5 +1,23 @@
 # Changelog
 
+### [1.113.2](https://www.github.com/googleapis/java-storage/compare/v1.113.1...v1.113.2) (2020-10-26)
+
+
+### Documentation
+
+* update libraries-bom ([#540](https://www.github.com/googleapis/java-storage/issues/540)) ([54987e1](https://www.github.com/googleapis/java-storage/commit/54987e1ba35d99db680ab2ad6ac86a6b74c7c705))
+* update libraries-bom ([#552](https://www.github.com/googleapis/java-storage/issues/552)) ([c4df018](https://www.github.com/googleapis/java-storage/commit/c4df01875b8f088bd65bcd0353e1b74a18b9582c))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.30.11 ([#575](https://www.github.com/googleapis/java-storage/issues/575)) ([99838e6](https://www.github.com/googleapis/java-storage/commit/99838e63f9a71095c4d8f6c99622a9aee2e5d26d))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20200927-1.30.10 ([#539](https://www.github.com/googleapis/java-storage/issues/539)) ([5e49013](https://www.github.com/googleapis/java-storage/commit/5e49013add340e4d8287e00b8d4a9c499df80205))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.10.0 ([#529](https://www.github.com/googleapis/java-storage/issues/529)) ([dc58856](https://www.github.com/googleapis/java-storage/commit/dc58856c2548013a495b62cc6bb696ada24d2557))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.10.2 ([#549](https://www.github.com/googleapis/java-storage/issues/549)) ([c59c28d](https://www.github.com/googleapis/java-storage/commit/c59c28d97a9eb4e811921c7cad637d67c2be16be))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.12.1 ([#566](https://www.github.com/googleapis/java-storage/issues/566)) ([f1dedfb](https://www.github.com/googleapis/java-storage/commit/f1dedfbf9f47c87c7f7fea5e6c1c7c1af35b060e))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.13.0 ([#570](https://www.github.com/googleapis/java-storage/issues/570)) ([ef55f49](https://www.github.com/googleapis/java-storage/commit/ef55f49230f58863195782b5fe0f84285a316aef))
+
 ### [1.113.1](https://www.github.com/googleapis/java-storage/compare/v1.113.0...v1.113.1) (2020-09-17)
 
 
