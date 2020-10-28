@@ -748,6 +748,51 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
+  public long getCurrentUploadOffset(String uploadId) {
+    try {
+      GenericUrl url = new GenericUrl(uploadId);
+      HttpRequest httpRequest = storage.getRequestFactory().buildPutRequest(url, null);
+
+      httpRequest.getHeaders().setContentRange("bytes */*");
+      // Turn off automatic redirects.
+      // HTTP 308 are returned if upload is incomplete.
+      // See: https://cloud.google.com/storage/docs/performing-resumable-uploads
+      httpRequest.setFollowRedirects(false);
+
+      HttpResponse response = null;
+      try {
+        response = httpRequest.execute();
+        int code = response.getStatusCode();
+        String message = response.getStatusMessage();
+        if (code == 201 || code == 200) {
+          throw new StorageException(0, "Resumable upload is already complete.");
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("Not sure what occurred. Here's debugging information:\n");
+        sb.append("Response:\n").append(response.toString()).append("\n\n");
+        throw new StorageException(0, sb.toString());
+      } catch (HttpResponseException ex) {
+        int code = ex.getStatusCode();
+        if (code == 308 && ex.getHeaders().getRange() == null) {
+          // No progress has been made.
+          return 0;
+        } else {
+          // API returns last byte received offset
+          String range = ex.getHeaders().getRange();
+          // Return next byte offset by adding 1 to last byte received offset
+          return Long.parseLong(range.substring(range.indexOf("-") + 1)) + 1;
+        }
+      } finally {
+        if (response != null) {
+          response.disconnect();
+        }
+      }
+    } catch (IOException ex) {
+      throw translate(ex);
+    }
+  }
+
+  @Override
   public StorageObject writeWithResponse(
       String uploadId,
       byte[] toWrite,
