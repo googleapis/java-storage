@@ -51,6 +51,15 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   // Contains metadata of the updated object or null if upload is not completed.
   private StorageObject storageObject;
 
+  // Detect if flushBuffer() is being retried or not.
+  // TODO: I don't think this is thread safe, and there's probably a better way to detect a retry
+  // occuring.
+  private boolean retrying = false;
+
+  boolean isRetrying() {
+    return retrying;
+  }
+
   StorageObject getStorageObject() {
     return storageObject;
   }
@@ -63,11 +72,105 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
               new Runnable() {
                 @Override
                 public void run() {
-                  storageObject =
-                      getOptions()
-                          .getStorageRpcV1()
-                          .writeWithResponse(
-                              getUploadId(), getBuffer(), 0, getPosition(), length, last);
+                  if (!isRetrying()) {
+                    // Enable isRetrying state to reduce number of calls to getCurrentUploadOffset()
+                    retrying = true;
+                    storageObject =
+                        getOptions()
+                            .getStorageRpcV1()
+                            .writeWithResponse(
+                                getUploadId(), getBuffer(), 0, getPosition(), length, last);
+                  } else {
+                    // Retriable interruption occurred.
+                    // Variables:
+                    // chunk = getBuffer()
+                    // localNextByteOffset == getPosition()
+                    // chunkSize = getChunkSize()
+                    //
+                    // Case 1: localNextByteOffset == 0 && remoteNextByteOffset == 0:
+                    // we are retrying from first chunk start from 0 offset.
+                    //
+                    // Case 2: localNextByteOffset == remoteNextByteOffset:
+                    // Special case of Case 1 when a chunk is retried.
+                    //
+                    // Case 3: localNextByteOffset < remoteNextByteOffset
+                    //             && driftOffset < chunkSize:
+                    // Upload progressed and localNextByteOffset is not in-sync with
+                    // remoteNextByteOffset and driftOffset is less than chunkSize.
+                    // driftOffset must be less than chunkSize for it to retry using
+                    // chunk maintained in memory.
+                    // Find the driftOffset by subtracting localNextByteOffset from
+                    // remoteNextByteOffset.
+                    // Use driftOffset to determine where to restart from using the chunk in
+                    // memory.
+                    //
+                    // Case 4: localNextByteOffset < remoteNextByteOffset
+                    //            && driftOffset == chunkSize:
+                    // Special case of Case 3.
+                    // If chunkSize is equal to driftOffset then remoteNextByteOffset has moved on
+                    // to the next chunk.
+                    //
+                    // Case 5: localNextByteOffset < remoteNextByteOffset
+                    //            && driftOffset > chunkSize:
+                    // Throw exception as remoteNextByteOffset has drifted beyond the retriable
+                    // chunk maintained in memory. This is not possible unless there's multiple
+                    // clients uploading to the same resumable upload session.
+                    //
+                    // Case 6: localNextByteOffset > remoteNextByteOffset:
+                    // For completeness, this case is not possible because it would require retrying
+                    // a 400 status code which is not allowed.
+                    //
+                    // Get remote offset from API
+                    long remoteNextByteOffset =
+                        getOptions().getStorageRpcV1().getCurrentUploadOffset(getUploadId());
+                    long localNextByteOffset = getPosition();
+                    int driftOffset = (int) (remoteNextByteOffset - localNextByteOffset);
+                    int retryChunkLength = length - driftOffset;
+
+                    if (localNextByteOffset == 0 && remoteNextByteOffset == 0
+                        || localNextByteOffset == remoteNextByteOffset) {
+                      // Case 1 and 2
+                      storageObject =
+                          getOptions()
+                              .getStorageRpcV1()
+                              .writeWithResponse(
+                                  getUploadId(), getBuffer(), 0, getPosition(), length, last);
+                    } else if (localNextByteOffset < remoteNextByteOffset
+                        && driftOffset < getChunkSize()) {
+                      // Case 3
+                      storageObject =
+                          getOptions()
+                              .getStorageRpcV1()
+                              .writeWithResponse(
+                                  getUploadId(),
+                                  getBuffer(),
+                                  driftOffset,
+                                  remoteNextByteOffset,
+                                  retryChunkLength,
+                                  last);
+                    } else if (localNextByteOffset < remoteNextByteOffset
+                        && driftOffset == getChunkSize()) {
+                      // Case 4
+                      // Continue to next chunk
+                      retrying = false;
+                      return;
+                    } else {
+                      // Case 5
+                      StringBuilder sb = new StringBuilder();
+                      sb.append(
+                          "Remote offset has progressed beyond starting byte offset of next chunk.");
+                      sb.append(
+                          "This may be a symptom of multiple clients uploading to the same upload session.\n\n");
+                      sb.append("For debugging purposes:\n");
+                      sb.append("uploadId: ").append(getUploadId()).append('\n');
+                      sb.append("localNextByteOffset: ").append(localNextByteOffset).append('\n');
+                      sb.append("remoteNextByteOffset: ").append(remoteNextByteOffset).append('\n');
+                      sb.append("driftOffset: ").append(driftOffset).append("\n\n");
+                      throw new StorageException(0, sb.toString());
+                    }
+                  }
+                  // Request was successful and retrying state is now disabled.
+                  retrying = false;
                 }
               }),
           getOptions().getRetrySettings(),

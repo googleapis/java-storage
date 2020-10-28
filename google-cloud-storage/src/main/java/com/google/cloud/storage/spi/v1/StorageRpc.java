@@ -329,6 +329,15 @@ public interface StorageRpc extends ServiceRpc {
       boolean last);
 
   /**
+   * Requests current byte offset from Cloud Storage API. Used to recover from a failure in some
+   * bytes were committed successfully to the open resumable session.
+   *
+   * @param uploadId resumable upload ID URL
+   * @throws StorageException upon failure
+   */
+  long getCurrentUploadOffset(String uploadId);
+
+  /**
    * Writes the provided bytes to a storage object at the provided location. If {@code last=true}
    * returns metadata of the updated object, otherwise returns null.
    *
