@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.113.3](https://www.github.com/googleapis/java-storage/compare/v1.113.2...v1.113.3) (2020-11-06)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.14.1 ([#592](https://www.github.com/googleapis/java-storage/issues/592)) ([25e8e6a](https://www.github.com/googleapis/java-storage/commit/25e8e6a01dde517fd42cfc8ae59b8555ea0a2831))
+* update kms.version to v0.87.1 ([#595](https://www.github.com/googleapis/java-storage/issues/595)) ([1e399cd](https://www.github.com/googleapis/java-storage/commit/1e399cd33755e647bf08f4a82af932320cab655d))
+
 ### [1.113.2](https://www.github.com/googleapis/java-storage/compare/v1.113.1...v1.113.2) (2020-10-26)
 
 
