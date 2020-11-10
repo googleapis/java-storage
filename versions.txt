@@ -1,4 +1,4 @@
 # Format:
 # module:released-version:current-version
 
-google-cloud-storage:1.113.2:1.113.3-SNAPSHOT
+google-cloud-storage:1.113.3:1.113.3
