@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.113.4](https://www.github.com/googleapis/java-storage/compare/v1.113.3...v1.113.4) (2020-11-13)
+
+
+### Bug Fixes
+
+* retry using remote offset ([#604](https://www.github.com/googleapis/java-storage/issues/604)) ([216b52c](https://www.github.com/googleapis/java-storage/commit/216b52c54d34eaf1307788809a3512c461adf381))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.15.0 ([#610](https://www.github.com/googleapis/java-storage/issues/610)) ([ac65e5b](https://www.github.com/googleapis/java-storage/commit/ac65e5b0bd324d5726504bb3405c758675a56ddc))
+
 ### [1.113.3](https://www.github.com/googleapis/java-storage/compare/v1.113.2...v1.113.3) (2020-11-06)
 
 
