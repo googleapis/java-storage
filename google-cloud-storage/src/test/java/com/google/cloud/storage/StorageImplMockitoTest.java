@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -1884,7 +1885,7 @@ public class StorageImplMockitoTest {
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -1913,7 +1914,7 @@ public class StorageImplMockitoTest {
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -1942,7 +1943,7 @@ public class StorageImplMockitoTest {
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
     request =
         Storage.CopyRequest.newBuilder()
             .setSource(BLOB_INFO2.getBlobId())
@@ -1952,7 +1953,7 @@ public class StorageImplMockitoTest {
     writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -1981,7 +1982,7 @@ public class StorageImplMockitoTest {
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
     request =
         Storage.CopyRequest.newBuilder()
             .setSource(BLOB_INFO2.getBlobId())
@@ -1991,7 +1992,7 @@ public class StorageImplMockitoTest {
     writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -2020,7 +2021,7 @@ public class StorageImplMockitoTest {
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -2052,7 +2053,7 @@ public class StorageImplMockitoTest {
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
     assertEquals(expectedBlob1, writer.getResult());
     assertTrue(writer.isDone());
     assertEquals(42L, writer.getTotalBytesCopied());
@@ -2090,6 +2091,6 @@ public class StorageImplMockitoTest {
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 }
