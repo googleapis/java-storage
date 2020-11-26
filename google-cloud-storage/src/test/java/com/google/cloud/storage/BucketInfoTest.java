@@ -72,10 +72,12 @@ public class BucketInfoTest {
               LifecycleAction.newDeleteAction(),
               LifecycleCondition.newBuilder().setAge(5).build()));
   private static final String INDEX_PAGE = "index.html";
+  private static final String PUBLIC_ACCESS_PREVENTION_ENFORCED = "enforced";
   private static final BucketInfo.IamConfiguration IAM_CONFIGURATION =
       BucketInfo.IamConfiguration.newBuilder()
           .setIsUniformBucketLevelAccessEnabled(true)
           .setUniformBucketLevelAccessLockedTime(System.currentTimeMillis())
+          .setPublicAccessPrevention(PUBLIC_ACCESS_PREVENTION_ENFORCED)
           .build();
   private static final BucketInfo.Logging LOGGING =
       BucketInfo.Logging.newBuilder()
@@ -358,11 +360,13 @@ public class BucketInfoTest {
         BucketInfo.IamConfiguration.newBuilder()
             .setIsUniformBucketLevelAccessEnabled(true)
             .setUniformBucketLevelAccessLockedTime(System.currentTimeMillis())
+            .setPublicAccessPrevention(PUBLIC_ACCESS_PREVENTION_ENFORCED)
             .build()
             .toPb();
 
     assertEquals(Boolean.TRUE, iamConfiguration.getUniformBucketLevelAccess().getEnabled());
     assertNotNull(iamConfiguration.getUniformBucketLevelAccess().getLockedTime());
+    assertEquals(PUBLIC_ACCESS_PREVENTION_ENFORCED, iamConfiguration.getPublicAccessPrevention());
   }
 
   @Test
