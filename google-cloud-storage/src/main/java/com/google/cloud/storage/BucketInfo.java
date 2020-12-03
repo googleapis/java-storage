@@ -220,7 +220,7 @@ public class BucketInfo implements Serializable {
           .setPublicAccessPrevention(
               publicAccessPrevention == null
                   ? null
-                  : PublicAccessPrevention.valueOf(publicAccessPrevention))
+                  : PublicAccessPrevention.valueOf(publicAccessPrevention.toUpperCase()))
           .build();
     }
 
