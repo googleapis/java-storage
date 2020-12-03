@@ -77,7 +77,7 @@ public class BucketInfoTest {
       BucketInfo.IamConfiguration.newBuilder()
           .setIsUniformBucketLevelAccessEnabled(true)
           .setUniformBucketLevelAccessLockedTime(System.currentTimeMillis())
-          .setPublicAccessPrevention(PUBLIC_ACCESS_PREVENTION_ENFORCED)
+          .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
           .build();
   private static final BucketInfo.Logging LOGGING =
       BucketInfo.Logging.newBuilder()
@@ -360,13 +360,15 @@ public class BucketInfoTest {
         BucketInfo.IamConfiguration.newBuilder()
             .setIsUniformBucketLevelAccessEnabled(true)
             .setUniformBucketLevelAccessLockedTime(System.currentTimeMillis())
-            .setPublicAccessPrevention(PUBLIC_ACCESS_PREVENTION_ENFORCED)
+            .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
             .build()
             .toPb();
 
     assertEquals(Boolean.TRUE, iamConfiguration.getUniformBucketLevelAccess().getEnabled());
     assertNotNull(iamConfiguration.getUniformBucketLevelAccess().getLockedTime());
-    assertEquals(PUBLIC_ACCESS_PREVENTION_ENFORCED, iamConfiguration.getPublicAccessPrevention());
+    assertEquals(
+        BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
+        iamConfiguration.getPublicAccessPrevention());
   }
 
   @Test

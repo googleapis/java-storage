@@ -3236,6 +3236,55 @@ public class ITStorageTest {
   }
 
   @Test
+  public void testUnspecifiedAndEnforcedPublicAccessPreventionOnBucket() throws Exception {
+    String papBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      BucketInfo.IamConfiguration iamConfiguration =
+          BucketInfo.IamConfiguration.newBuilder()
+              .setIsUniformBucketLevelAccessEnabled(true)
+              .build();
+      Bucket bucket =
+          storage.create(
+              Bucket.newBuilder(papBucket).setIamConfiguration(iamConfiguration).build());
+      assertEquals(
+          BucketInfo.PublicAccessPrevention.UNSPECIFIED.getValue(),
+          bucket.getIamConfiguration().getPublicAccessPrevention().getValue());
+      assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+
+      bucket
+          .toBuilder()
+          .setIamConfiguration(
+              iamConfiguration
+                  .toBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                  .build())
+          .build()
+          .update();
+      Bucket remoteBucket =
+          storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      assertEquals(
+          BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
+          remoteBucket.getIamConfiguration().getPublicAccessPrevention().getValue());
+
+      remoteBucket
+          .toBuilder()
+          .setIamConfiguration(
+              iamConfiguration.toBuilder().setIsUniformBucketLevelAccessEnabled(false).build())
+          .build()
+          .update();
+      remoteBucket =
+          storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      assertEquals(
+          BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
+          remoteBucket.getIamConfiguration().getPublicAccessPrevention().getValue());
+      assertFalse(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
+    }
+  }
+
+  @Test
   public void testUploadUsingSignedURL() throws Exception {
     String blobName = "test-signed-url-upload";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
