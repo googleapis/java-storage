@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.113.5](https://www.github.com/googleapis/java-storage/compare/v1.113.4...v1.113.5) (2020-12-07)
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.1 ([#611](https://www.github.com/googleapis/java-storage/issues/611)) ([7c4c759](https://www.github.com/googleapis/java-storage/commit/7c4c759d8bca9c20252e06e02eb8ead3bd9f88d6))
+* update dependency com.google.api.grpc:grpc-google-cloud-kms-v1 to v0.87.2 ([#625](https://www.github.com/googleapis/java-storage/issues/625)) ([243a3cb](https://www.github.com/googleapis/java-storage/commit/243a3cb1506b2e2d609210dc4e9608637c06d7f3))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20201112-1.30.10 ([#613](https://www.github.com/googleapis/java-storage/issues/613)) ([b0e24db](https://www.github.com/googleapis/java-storage/commit/b0e24db88c784fd05988a813bd8b29aeff0739f2))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20201112-1.31.0 ([#641](https://www.github.com/googleapis/java-storage/issues/641)) ([11da9c7](https://www.github.com/googleapis/java-storage/commit/11da9c7e9058c508423e7b2f84c897ab3e9ab3f3))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.16.0 ([#639](https://www.github.com/googleapis/java-storage/issues/639)) ([68a3af9](https://www.github.com/googleapis/java-storage/commit/68a3af9b12c0e05d2cf59fb58aceab15323e29b1))
+* update dependency org.apache.httpcomponents:httpcore to v4.4.14 ([#637](https://www.github.com/googleapis/java-storage/issues/637)) ([af53902](https://www.github.com/googleapis/java-storage/commit/af5390239ffd1e157f066a1009b7bb18fa6264ec))
+
 ### [1.113.4](https://www.github.com/googleapis/java-storage/compare/v1.113.3...v1.113.4) (2020-11-13)
 
 
