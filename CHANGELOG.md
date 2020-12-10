@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.113.6](https://www.github.com/googleapis/java-storage/compare/v1.113.5...v1.113.6) (2020-12-10)
+
+
+### Bug Fixes
+
+* content-length missing in offset request ([#647](https://www.github.com/googleapis/java-storage/issues/647)) ([3cd3815](https://www.github.com/googleapis/java-storage/commit/3cd3815c62603d05d4c571ba1affeaf91e4d8040))
+
+
+### Dependencies
+
+* update kms.version to v0.87.3 ([#646](https://www.github.com/googleapis/java-storage/issues/646)) ([c93896a](https://www.github.com/googleapis/java-storage/commit/c93896a5007b48753809de806ddaf6c8df6e9d56))
+
 ### [1.113.5](https://www.github.com/googleapis/java-storage/compare/v1.113.4...v1.113.5) (2020-12-07)
 
 
