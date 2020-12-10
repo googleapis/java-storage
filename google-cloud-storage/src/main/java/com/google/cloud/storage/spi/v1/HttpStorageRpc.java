@@ -24,6 +24,7 @@ import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.ByteArrayContent;
+import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
@@ -751,7 +752,8 @@ public class HttpStorageRpc implements StorageRpc {
   public long getCurrentUploadOffset(String uploadId) {
     try {
       GenericUrl url = new GenericUrl(uploadId);
-      HttpRequest httpRequest = storage.getRequestFactory().buildPutRequest(url, null);
+      HttpRequest httpRequest =
+          storage.getRequestFactory().buildPutRequest(url, new EmptyContent());
 
       httpRequest.getHeaders().setContentRange("bytes */*");
       // Turn off automatic redirects.
@@ -763,7 +765,6 @@ public class HttpStorageRpc implements StorageRpc {
       try {
         response = httpRequest.execute();
         int code = response.getStatusCode();
-        String message = response.getStatusMessage();
         if (code == 201 || code == 200) {
           throw new StorageException(0, "Resumable upload is already complete.");
         }
@@ -776,11 +777,17 @@ public class HttpStorageRpc implements StorageRpc {
         if (code == 308 && ex.getHeaders().getRange() == null) {
           // No progress has been made.
           return 0;
-        } else {
+        } else if (code == 308 && ex.getHeaders().getRange() != null) {
           // API returns last byte received offset
           String range = ex.getHeaders().getRange();
           // Return next byte offset by adding 1 to last byte received offset
           return Long.parseLong(range.substring(range.indexOf("-") + 1)) + 1;
+        } else {
+          // Not certain what went wrong
+          StringBuilder sb = new StringBuilder();
+          sb.append("Not sure what occurred. Here's debugging information:\n");
+          sb.append("Response:\n").append(ex.toString()).append("\n\n");
+          throw new StorageException(0, sb.toString());
         }
       } finally {
         if (response != null) {
