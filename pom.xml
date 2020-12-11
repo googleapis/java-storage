@@ -63,7 +63,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <github.global.server>github</github.global.server>
     <site.installationModule>google-cloud-storage-parent</site.installationModule>
-    <google.cloud.shared-dependencies.version>0.15.0</google.cloud.shared-dependencies.version>
+    <google.cloud.shared-dependencies.version>0.16.0</google.cloud.shared-dependencies.version>
   </properties>
 
   <dependencyManagement>
@@ -79,7 +79,7 @@
       <dependency>
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-storage</artifactId>
-        <version>v1-rev20201112-1.30.10</version>
+        <version>v1-rev20201112-1.31.0</version>
       </dependency>
       <dependency>
         <groupId>org.easymock</groupId>
@@ -120,7 +120,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
-        <version>4.4.13</version>
+        <version>4.4.14</version>
         <scope>test</scope>
       </dependency>
 
