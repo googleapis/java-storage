@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
-import static com.google.cloud.storage.testing.ApiPolicyMatcher.eqApiPolicy;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -28,6 +27,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -83,9 +84,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.easymock.Capture;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -1667,9 +1665,10 @@ public class StorageImplMockitoTest {
   @Test
   public void testUpdateBucket() {
     BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
-    EasyMock.expect(storageRpcMock.patch(updatedBucketInfo.toPb(), EMPTY_RPC_OPTIONS))
-        .andReturn(updatedBucketInfo.toPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(updatedBucketInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBucketInfo.toPb(), EMPTY_RPC_OPTIONS);
     initializeService();
     Bucket bucket = storage.update(updatedBucketInfo);
     assertEquals(new Bucket(storage, new BucketInfo.BuilderImpl(updatedBucketInfo)), bucket);
@@ -1678,9 +1677,10 @@ public class StorageImplMockitoTest {
   @Test
   public void testUpdateBucketWithOptions() {
     BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
-    EasyMock.expect(storageRpcMock.patch(updatedBucketInfo.toPb(), BUCKET_TARGET_OPTIONS))
-        .andReturn(updatedBucketInfo.toPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(updatedBucketInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBucketInfo.toPb(), BUCKET_TARGET_OPTIONS);
     initializeService();
     Bucket bucket =
         storage.update(
@@ -1689,11 +1689,27 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testUpdateBucketFailure() {
+    BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patch(updatedBucketInfo.toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.update(updatedBucketInfo);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testUpdateBlob() {
     BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
-    EasyMock.expect(storageRpcMock.patch(updatedBlobInfo.toPb(), EMPTY_RPC_OPTIONS))
-        .andReturn(updatedBlobInfo.toPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(updatedBlobInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBlobInfo.toPb(), EMPTY_RPC_OPTIONS);
     initializeService();
     Blob blob = storage.update(updatedBlobInfo);
     assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(updatedBlobInfo)), blob);
@@ -1702,9 +1718,10 @@ public class StorageImplMockitoTest {
   @Test
   public void testUpdateBlobWithOptions() {
     BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
-    EasyMock.expect(storageRpcMock.patch(updatedBlobInfo.toPb(), BLOB_TARGET_OPTIONS_UPDATE))
-        .andReturn(updatedBlobInfo.toPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(updatedBlobInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBlobInfo.toPb(), BLOB_TARGET_OPTIONS_UPDATE);
     initializeService();
     Blob blob =
         storage.update(updatedBlobInfo, BLOB_TARGET_METAGENERATION, BLOB_TARGET_PREDEFINED_ACL);
@@ -1712,40 +1729,68 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testUpdateBlobFailure() {
+    BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).patch(updatedBlobInfo.toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.update(updatedBlobInfo);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testDeleteBucket() {
-    EasyMock.expect(storageRpcMock.delete(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
     initializeService();
     assertTrue(storage.delete(BUCKET_NAME1));
   }
 
   @Test
   public void testDeleteBucketWithOptions() {
-    EasyMock.expect(
-        storageRpcMock.delete(BucketInfo.of(BUCKET_NAME1).toPb(), BUCKET_SOURCE_OPTIONS))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BucketInfo.of(BUCKET_NAME1).toPb(), BUCKET_SOURCE_OPTIONS);
     initializeService();
     assertTrue(storage.delete(BUCKET_NAME1, BUCKET_SOURCE_METAGENERATION));
   }
 
   @Test
+  public void testDeleteBucketFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .delete(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.delete(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testDeleteBlob() {
-    EasyMock.expect(
-        storageRpcMock.delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
     initializeService();
     assertTrue(storage.delete(BUCKET_NAME1, BLOB_NAME1));
   }
 
   @Test
   public void testDeleteBlobWithOptions() {
-    EasyMock.expect(
-        storageRpcMock.delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_SOURCE_OPTIONS))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_SOURCE_OPTIONS);
     initializeService();
     assertTrue(
         storage.delete(
@@ -1754,9 +1799,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testDeleteBlobWithOptionsFromBlobId() {
-    EasyMock.expect(storageRpcMock.delete(BLOB_INFO1.getBlobId().toPb(), BLOB_SOURCE_OPTIONS))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BLOB_INFO1.getBlobId().toPb(), BLOB_SOURCE_OPTIONS);
     initializeService();
     assertTrue(
         storage.delete(
@@ -1766,19 +1812,33 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testDeleteBlobFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.delete(BUCKET_NAME1, BLOB_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testCompose() {
     Storage.ComposeRequest req =
         Storage.ComposeRequest.newBuilder()
             .addSource(BLOB_NAME2, BLOB_NAME3)
             .setTarget(BLOB_INFO1)
             .build();
-    EasyMock.expect(
-        storageRpcMock.compose(
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .compose(
             ImmutableList.of(BLOB_INFO2.toPb(), BLOB_INFO3.toPb()),
             BLOB_INFO1.toPb(),
-            EMPTY_RPC_OPTIONS))
-        .andReturn(BLOB_INFO1.toPb());
-    EasyMock.replay(storageRpcMock);
+            EMPTY_RPC_OPTIONS);
     initializeService();
     Blob blob = storage.compose(req);
     assertEquals(expectedBlob1, blob);
@@ -1792,21 +1852,44 @@ public class StorageImplMockitoTest {
             .setTarget(BLOB_INFO1)
             .setTargetOptions(BLOB_TARGET_GENERATION, BLOB_TARGET_METAGENERATION)
             .build();
-    EasyMock.expect(
-        storageRpcMock.compose(
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .compose(
             ImmutableList.of(BLOB_INFO2.toPb(), BLOB_INFO3.toPb()),
             BLOB_INFO1.toPb(),
-            BLOB_TARGET_OPTIONS_COMPOSE))
-        .andReturn(BLOB_INFO1.toPb());
-    EasyMock.replay(storageRpcMock);
+            BLOB_TARGET_OPTIONS_COMPOSE);
     initializeService();
     Blob blob = storage.compose(req);
     assertEquals(expectedBlob1, blob);
   }
 
   @Test
+  public void testComposeFailure() {
+    Storage.ComposeRequest req =
+        Storage.ComposeRequest.newBuilder()
+            .addSource(BLOB_NAME2, BLOB_NAME3)
+            .setTarget(BLOB_INFO1)
+            .build();
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .compose(
+            ImmutableList.of(BLOB_INFO2.toPb(), BLOB_INFO3.toPb()),
+            BLOB_INFO1.toPb(),
+            EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.compose(req);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testCopy() {
-    Storage.CopyRequest request = Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
+    Storage.CopyRequest request =
+        Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
     StorageRpc.RewriteRequest rpcRequest =
         new StorageRpc.RewriteRequest(
             request.getSource().toPb(),
@@ -1817,13 +1900,15 @@ public class StorageImplMockitoTest {
             null);
     StorageRpc.RewriteResponse rpcResponse =
         new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
-    EasyMock.expect(storageRpcMock.openRewrite(rpcRequest)).andReturn(rpcResponse);
-    EasyMock.replay(storageRpcMock);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
     initializeService();
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -1844,13 +1929,15 @@ public class StorageImplMockitoTest {
             null);
     StorageRpc.RewriteResponse rpcResponse =
         new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
-    EasyMock.expect(storageRpcMock.openRewrite(rpcRequest)).andReturn(rpcResponse);
-    EasyMock.replay(storageRpcMock);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
     initializeService();
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -1871,13 +1958,15 @@ public class StorageImplMockitoTest {
             null);
     StorageRpc.RewriteResponse rpcResponse =
         new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
-    EasyMock.expect(storageRpcMock.openRewrite(rpcRequest)).andReturn(rpcResponse).times(2);
-    EasyMock.replay(storageRpcMock);
+    doReturn(rpcResponse, rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
     initializeService();
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
     request =
         Storage.CopyRequest.newBuilder()
             .setSource(BLOB_INFO2.getBlobId())
@@ -1887,7 +1976,7 @@ public class StorageImplMockitoTest {
     writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -1908,13 +1997,15 @@ public class StorageImplMockitoTest {
             null);
     StorageRpc.RewriteResponse rpcResponse =
         new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
-    EasyMock.expect(storageRpcMock.openRewrite(rpcRequest)).andReturn(rpcResponse).times(2);
-    EasyMock.replay(storageRpcMock);
+    doReturn(rpcResponse, rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
     initializeService();
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
     request =
         Storage.CopyRequest.newBuilder()
             .setSource(BLOB_INFO2.getBlobId())
@@ -1924,7 +2015,7 @@ public class StorageImplMockitoTest {
     writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
@@ -1945,18 +2036,21 @@ public class StorageImplMockitoTest {
             null);
     StorageRpc.RewriteResponse rpcResponse =
         new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
-    EasyMock.expect(storageRpcMock.openRewrite(rpcRequest)).andReturn(rpcResponse);
-    EasyMock.replay(storageRpcMock);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
     initializeService();
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
   }
 
   @Test
   public void testCopyMultipleRequests() {
-    Storage.CopyRequest request = Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
+    Storage.CopyRequest request =
+        Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
     StorageRpc.RewriteRequest rpcRequest =
         new StorageRpc.RewriteRequest(
             request.getSource().toPb(),
@@ -1969,14 +2063,20 @@ public class StorageImplMockitoTest {
         new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
     StorageRpc.RewriteResponse rpcResponse2 =
         new StorageRpc.RewriteResponse(rpcRequest, BLOB_INFO1.toPb(), 42L, true, "token", 42L);
-    EasyMock.expect(storageRpcMock.openRewrite(rpcRequest)).andReturn(rpcResponse1);
-    EasyMock.expect(storageRpcMock.continueRewrite(rpcResponse1)).andReturn(rpcResponse2);
-    EasyMock.replay(storageRpcMock);
+    doReturn(rpcResponse1)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+
+    doReturn(rpcResponse2)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .continueRewrite(rpcResponse1);
     initializeService();
     CopyWriter writer = storage.copy(request);
     assertEquals(42L, writer.getBlobSize());
     assertEquals(21L, writer.getTotalBytesCopied());
-    assertTrue(!writer.isDone());
+    assertFalse(writer.isDone());
     assertEquals(expectedBlob1, writer.getResult());
     assertTrue(writer.isDone());
     assertEquals(42L, writer.getTotalBytesCopied());
@@ -1984,11 +2084,45 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testCopyFailure() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            EMPTY_RPC_OPTIONS,
+            false,
+            BLOB_INFO2.toPb(),
+            EMPTY_RPC_OPTIONS,
+            null);
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).openRewrite(rpcRequest);
+    initializeService();
+    try {
+      storage.copy(request);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+
+    StorageRpc.RewriteResponse rpcResponse =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+  }
+
+  @Test
   public void testReadAllBytes() {
-    EasyMock.expect(
-        storageRpcMock.load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS))
-        .andReturn(BLOB_CONTENT);
-    EasyMock.replay(storageRpcMock);
+    doReturn(BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
     initializeService();
     byte[] readBytes = storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1);
     assertArrayEquals(BLOB_CONTENT, readBytes);
@@ -1996,10 +2130,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testReadAllBytesWithOptions() {
-    EasyMock.expect(
-        storageRpcMock.load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_SOURCE_OPTIONS))
-        .andReturn(BLOB_CONTENT);
-    EasyMock.replay(storageRpcMock);
+    doReturn(BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_SOURCE_OPTIONS);
     initializeService();
     byte[] readBytes =
         storage.readAllBytes(
@@ -2008,26 +2142,27 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testReadAllBytesWithDecriptionKey() {
-    EasyMock.expect(
-        storageRpcMock.load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), ENCRYPTION_KEY_OPTIONS))
-        .andReturn(BLOB_CONTENT)
-        .times(2);
-    EasyMock.replay(storageRpcMock);
+  public void testReadAllBytesWithDecryptionKey() {
+    doReturn(BLOB_CONTENT, BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), ENCRYPTION_KEY_OPTIONS);
     initializeService();
     byte[] readBytes =
         storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1, Storage.BlobSourceOption.decryptionKey(KEY));
     assertArrayEquals(BLOB_CONTENT, readBytes);
     readBytes =
-        storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1, Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
+        storage.readAllBytes(
+            BUCKET_NAME1, BLOB_NAME1, Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
     assertArrayEquals(BLOB_CONTENT, readBytes);
   }
 
   @Test
   public void testReadAllBytesFromBlobIdWithOptions() {
-    EasyMock.expect(storageRpcMock.load(BLOB_INFO1.getBlobId().toPb(), BLOB_SOURCE_OPTIONS))
-        .andReturn(BLOB_CONTENT);
-    EasyMock.replay(storageRpcMock);
+    doReturn(BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BLOB_INFO1.getBlobId().toPb(), BLOB_SOURCE_OPTIONS);
     initializeService();
     byte[] readBytes =
         storage.readAllBytes(
@@ -2038,38 +2173,63 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testReadAllBytesFromBlobIdWithDecriptionKey() {
-    EasyMock.expect(storageRpcMock.load(BLOB_INFO1.getBlobId().toPb(), ENCRYPTION_KEY_OPTIONS))
-        .andReturn(BLOB_CONTENT)
-        .times(2);
-    EasyMock.replay(storageRpcMock);
+  public void testReadAllBytesFromBlobIdWithDecryptionKey() {
+    doReturn(BLOB_CONTENT, BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BLOB_INFO1.getBlobId().toPb(), ENCRYPTION_KEY_OPTIONS);
+
     initializeService();
     byte[] readBytes =
         storage.readAllBytes(BLOB_INFO1.getBlobId(), Storage.BlobSourceOption.decryptionKey(KEY));
     assertArrayEquals(BLOB_CONTENT, readBytes);
     readBytes =
-        storage.readAllBytes(BLOB_INFO1.getBlobId(), Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
+        storage.readAllBytes(
+            BLOB_INFO1.getBlobId(), Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
     assertArrayEquals(BLOB_CONTENT, readBytes);
   }
 
   @Test
+  public void testReadAllBytesFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testBatch() {
-    RpcBatch batchMock = EasyMock.mock(RpcBatch.class);
-    EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
-    EasyMock.replay(batchMock, storageRpcMock);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
     initializeService();
     StorageBatch batch = storage.batch();
     assertSame(options, batch.getOptions());
     assertSame(storageRpcMock, batch.getStorageRpc());
     assertSame(batchMock, batch.getBatch());
-    EasyMock.verify(batchMock);
+  }
+
+  @Test
+  public void testBatchFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).createBatch();
+    initializeService();
+    try {
+      storage.batch();
+      fail();
+    } catch (RuntimeException e) {
+      assertSame(STORAGE_FAILURE, e);
+    }
   }
 
   @Test
   public void testSignUrl()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2112,8 +2272,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlWithHostName()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2161,9 +2320,8 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlLeadingSlash()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
+          UnsupportedEncodingException {
     String blobName = "/b1";
-    EasyMock.replay(storageRpcMock);
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2208,9 +2366,8 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlLeadingSlashWithHostName()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
+          UnsupportedEncodingException {
     String blobName = "/b1";
-    EasyMock.replay(storageRpcMock);
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2259,8 +2416,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlWithOptions()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2314,8 +2470,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlWithOptionsAndHostName()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2370,8 +2525,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlForBlobWithSpecialChars()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2424,8 +2578,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlForBlobWithSpecialCharsAndHostName()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2482,8 +2635,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlWithExtHeaders()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2542,8 +2694,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlWithExtHeadersAndHostName()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2603,8 +2754,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlForBlobWithSlashes()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2651,8 +2801,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testSignUrlForBlobWithSlashesAndHostName()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2703,8 +2852,7 @@ public class StorageImplMockitoTest {
   @Test
   public void testV2SignUrlWithQueryParams()
       throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
-      UnsupportedEncodingException {
-    EasyMock.replay(storageRpcMock);
+          UnsupportedEncodingException {
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2772,7 +2920,6 @@ public class StorageImplMockitoTest {
   // TODO(b/144304815): Remove this test once all conformance tests contain query param test cases.
   @Test
   public void testV4SignUrlWithQueryParams() {
-    EasyMock.replay(storageRpcMock);
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -2830,173 +2977,234 @@ public class StorageImplMockitoTest {
   public void testGetAllArray() {
     BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
     BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
-    RpcBatch batchMock = EasyMock.createMock(RpcBatch.class);
-    Capture<RpcBatch.Callback<StorageObject>> callback1 = Capture.newInstance();
-    Capture<RpcBatch.Callback<StorageObject>> callback2 = Capture.newInstance();
-    batchMock.addGet(
-        EasyMock.eq(blobId1.toPb()),
-        EasyMock.capture(callback1),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    batchMock.addGet(
-        EasyMock.eq(blobId2.toPb()),
-        EasyMock.capture(callback2),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
-    batchMock.submit();
-    EasyMock.replay(storageRpcMock, batchMock);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addGet(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
     initializeService();
+
     List<Blob> resultBlobs = storage.get(blobId1, blobId2);
-    callback1.getValue().onSuccess(BLOB_INFO1.toPb());
-    callback2.getValue().onFailure(new GoogleJsonError());
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onFailure(new GoogleJsonError());
+    callback.getAllValues().get(1).onSuccess(BLOB_INFO2.toPb());
     assertEquals(2, resultBlobs.size());
-    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO1)), resultBlobs.get(0));
-    assertNull(resultBlobs.get(1));
-    EasyMock.verify(batchMock);
+    assertNull(resultBlobs.get(0));
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO2)), resultBlobs.get(1));
   }
 
   @Test
   public void testGetAllArrayIterable() {
     BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
     BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
-    RpcBatch batchMock = EasyMock.createMock(RpcBatch.class);
-    Capture<RpcBatch.Callback<StorageObject>> callback1 = Capture.newInstance();
-    Capture<RpcBatch.Callback<StorageObject>> callback2 = Capture.newInstance();
-    batchMock.addGet(
-        EasyMock.eq(blobId1.toPb()),
-        EasyMock.capture(callback1),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    batchMock.addGet(
-        EasyMock.eq(blobId2.toPb()),
-        EasyMock.capture(callback2),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
-    batchMock.submit();
-    EasyMock.replay(storageRpcMock, batchMock);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addGet(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
     initializeService();
+
     List<Blob> resultBlobs = storage.get(ImmutableList.of(blobId1, blobId2));
-    callback1.getValue().onSuccess(BLOB_INFO1.toPb());
-    callback2.getValue().onFailure(new GoogleJsonError());
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onFailure(new GoogleJsonError());
+    callback.getAllValues().get(1).onSuccess(BLOB_INFO2.toPb());
     assertEquals(2, resultBlobs.size());
-    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO1)), resultBlobs.get(0));
-    assertNull(resultBlobs.get(1));
-    EasyMock.verify(batchMock);
+    assertNull(resultBlobs.get(0));
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO2)), resultBlobs.get(1));
   }
 
   @Test
   public void testDeleteAllArray() {
     BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
     BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
-    RpcBatch batchMock = EasyMock.createMock(RpcBatch.class);
-    Capture<RpcBatch.Callback<Void>> callback1 = Capture.newInstance();
-    Capture<RpcBatch.Callback<Void>> callback2 = Capture.newInstance();
-    batchMock.addDelete(
-        EasyMock.eq(blobId1.toPb()),
-        EasyMock.capture(callback1),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    batchMock.addDelete(
-        EasyMock.eq(blobId2.toPb()),
-        EasyMock.capture(callback2),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
-    batchMock.submit();
-    EasyMock.replay(storageRpcMock, batchMock);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<Void>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addDelete(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
     initializeService();
+
     List<Boolean> result = storage.delete(blobId1, blobId2);
-    callback1.getValue().onSuccess(null);
-    callback2.getValue().onFailure(new GoogleJsonError());
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, result.size());
+    callback.getAllValues().get(0).onFailure(new GoogleJsonError());
+    callback.getAllValues().get(1).onSuccess(null);
     assertEquals(2, result.size());
-    assertTrue(result.get(0));
-    assertFalse(result.get(1));
-    EasyMock.verify(batchMock);
+    assertFalse(result.get(0));
+    assertTrue(result.get(1));
   }
 
   @Test
   public void testDeleteAllIterable() {
     BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
     BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
-    RpcBatch batchMock = EasyMock.createMock(RpcBatch.class);
-    Capture<RpcBatch.Callback<Void>> callback1 = Capture.newInstance();
-    Capture<RpcBatch.Callback<Void>> callback2 = Capture.newInstance();
-    batchMock.addDelete(
-        EasyMock.eq(blobId1.toPb()),
-        EasyMock.capture(callback1),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    batchMock.addDelete(
-        EasyMock.eq(blobId2.toPb()),
-        EasyMock.capture(callback2),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
-    batchMock.submit();
-    EasyMock.replay(storageRpcMock, batchMock);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<Void>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addDelete(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
     initializeService();
-    List<Boolean> result = storage.delete(blobId1, blobId2);
-    callback1.getValue().onSuccess(null);
-    callback2.getValue().onFailure(new GoogleJsonError());
+
+    List<Boolean> result = storage.delete(ImmutableList.of(blobId1, blobId2));
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, result.size());
+    callback.getAllValues().get(0).onSuccess(null);
+    callback.getAllValues().get(1).onFailure(new GoogleJsonError());
     assertEquals(2, result.size());
     assertTrue(result.get(0));
     assertFalse(result.get(1));
-    EasyMock.verify(batchMock);
   }
 
   @Test
   public void testUpdateAllArray() {
-    RpcBatch batchMock = EasyMock.createMock(RpcBatch.class);
-    Capture<RpcBatch.Callback<StorageObject>> callback1 = Capture.newInstance();
-    Capture<RpcBatch.Callback<StorageObject>> callback2 = Capture.newInstance();
-    batchMock.addPatch(
-        EasyMock.eq(BLOB_INFO1.toPb()),
-        EasyMock.capture(callback1),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    batchMock.addPatch(
-        EasyMock.eq(BLOB_INFO2.toPb()),
-        EasyMock.capture(callback2),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
-    batchMock.submit();
-    EasyMock.replay(storageRpcMock, batchMock);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addPatch(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
     initializeService();
+
     List<Blob> resultBlobs = storage.update(BLOB_INFO1, BLOB_INFO2);
-    callback1.getValue().onSuccess(BLOB_INFO1.toPb());
-    callback2.getValue().onFailure(new GoogleJsonError());
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onSuccess(BLOB_INFO1.toPb());
+    callback.getAllValues().get(1).onFailure(new GoogleJsonError());
     assertEquals(2, resultBlobs.size());
     assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO1)), resultBlobs.get(0));
     assertNull(resultBlobs.get(1));
-    EasyMock.verify(batchMock);
   }
 
   @Test
   public void testUpdateAllIterable() {
-    RpcBatch batchMock = EasyMock.createMock(RpcBatch.class);
-    Capture<RpcBatch.Callback<StorageObject>> callback1 = Capture.newInstance();
-    Capture<RpcBatch.Callback<StorageObject>> callback2 = Capture.newInstance();
-    batchMock.addPatch(
-        EasyMock.eq(BLOB_INFO1.toPb()),
-        EasyMock.capture(callback1),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    batchMock.addPatch(
-        EasyMock.eq(BLOB_INFO2.toPb()),
-        EasyMock.capture(callback2),
-        EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
-    EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
-    batchMock.submit();
-    EasyMock.replay(storageRpcMock, batchMock);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addPatch(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
     initializeService();
+
     List<Blob> resultBlobs = storage.update(ImmutableList.of(BLOB_INFO1, BLOB_INFO2));
-    callback1.getValue().onSuccess(BLOB_INFO1.toPb());
-    callback2.getValue().onFailure(new GoogleJsonError());
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onSuccess(BLOB_INFO1.toPb());
+    callback.getAllValues().get(1).onFailure(new GoogleJsonError());
     assertEquals(2, resultBlobs.size());
     assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO1)), resultBlobs.get(0));
     assertNull(resultBlobs.get(1));
-    EasyMock.verify(batchMock);
+  }
+
+  @Test
+  public void testGetDeleteUpdateAllFailure() {
+    BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
+
+    Answer answer =
+        new Answer<Object>() {
+          @Override
+          public Object answer(InvocationOnMock invocation) {
+            throw STORAGE_FAILURE;
+          };
+        };
+
+    RpcBatch batchMock = mock(RpcBatch.class, answer);
+    doReturn(batchMock, batchMock, batchMock, batchMock, batchMock, batchMock)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createBatch();
+
+    initializeService();
+
+    for (int i = 0; i < 6; i++) {
+      try {
+        if (i == 0) {
+          storage.get(blobId1, blobId2);
+        } else if (i == 1) {
+          storage.get(ImmutableList.of(blobId1, blobId2));
+        } else if (i == 2) {
+          storage.delete(blobId1, blobId2);
+        } else if (i == 3) {
+          storage.delete(ImmutableList.of(blobId1, blobId2));
+        } else if (i == 4) {
+          storage.update(BLOB_INFO1, BLOB_INFO2);
+        } else if (i == 5) {
+          storage.update(ImmutableList.of(BLOB_INFO1, BLOB_INFO2));
+        }
+        fail();
+      } catch (RuntimeException e) {
+        assertSame(STORAGE_FAILURE, e);
+      }
+    }
   }
 
   @Test
   public void testGetBucketAcl() {
-    EasyMock.expect(
-        storageRpcMock.getAcl(
-            BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>()))
-        .andReturn(ACL.toBucketPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(ACL.toBucketPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+
     initializeService();
     Acl acl = storage.getAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
     assertEquals(ACL, acl);
@@ -3004,67 +3212,140 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetBucketAclNull() {
-    EasyMock.expect(
-        storageRpcMock.getAcl(
-            BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>()))
-        .andReturn(null);
-    EasyMock.replay(storageRpcMock);
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+
     initializeService();
     assertNull(storage.getAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
   }
 
   @Test
+  public void testGetBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.getAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testDeleteBucketAcl() {
-    EasyMock.expect(
-        storageRpcMock.deleteAcl(
-            BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>()))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
     initializeService();
     assertTrue(storage.deleteAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
   }
 
   @Test
+  public void testDeleteBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.deleteAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testCreateBucketAcl() {
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
-    EasyMock.expect(
-        storageRpcMock.createAcl(
-            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>()))
-        .andReturn(returnedAcl.toBucketPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(returnedAcl.toBucketPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
     initializeService();
     Acl acl = storage.createAcl(BUCKET_NAME1, ACL);
     assertEquals(returnedAcl, acl);
   }
 
   @Test
+  public void testCreateBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.createAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testUpdateBucketAcl() {
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
-    EasyMock.expect(
-        storageRpcMock.patchAcl(
-            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>()))
-        .andReturn(returnedAcl.toBucketPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(returnedAcl.toBucketPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
     initializeService();
     Acl acl = storage.updateAcl(BUCKET_NAME1, ACL);
     assertEquals(returnedAcl, acl);
   }
 
   @Test
+  public void testUpdateBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.updateAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testListBucketAcl() {
-    EasyMock.expect(storageRpcMock.listAcls(BUCKET_NAME1, new HashMap<StorageRpc.Option, Object>()))
-        .andReturn(ImmutableList.of(ACL.toBucketPb(), OTHER_ACL.toBucketPb()));
-    EasyMock.replay(storageRpcMock);
+    doReturn(ImmutableList.of(ACL.toBucketPb(), OTHER_ACL.toBucketPb()))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .listAcls(BUCKET_NAME1, new HashMap<StorageRpc.Option, Object>());
     initializeService();
     List<Acl> acls = storage.listAcls(BUCKET_NAME1);
     assertEquals(ImmutableList.of(ACL, OTHER_ACL), acls);
   }
 
   @Test
+  public void testListBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .listAcls(BUCKET_NAME1, new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.listAcls(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testGetDefaultBucketAcl() {
-    EasyMock.expect(storageRpcMock.getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers"))
-        .andReturn(ACL.toObjectPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(ACL.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
     initializeService();
     Acl acl = storage.getDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
     assertEquals(ACL, acl);
@@ -3072,60 +3353,134 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetDefaultBucketAclNull() {
-    EasyMock.expect(storageRpcMock.getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers"))
-        .andReturn(null);
-    EasyMock.replay(storageRpcMock);
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
     initializeService();
     assertNull(storage.getDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
   }
 
   @Test
+  public void tesGetDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.getDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testDeleteDefaultBucketAcl() {
-    EasyMock.expect(storageRpcMock.deleteDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers"))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .deleteDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
     initializeService();
     assertTrue(storage.deleteDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
   }
 
   @Test
+  public void testDeleteDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .deleteDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.deleteDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testCreateDefaultBucketAcl() {
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
-    EasyMock.expect(storageRpcMock.createDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1)))
-        .andReturn(returnedAcl.toObjectPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
     initializeService();
     Acl acl = storage.createDefaultAcl(BUCKET_NAME1, ACL);
     assertEquals(returnedAcl, acl);
   }
 
   @Test
+  public void testCreateDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .createDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
+    initializeService();
+    try {
+      storage.createDefaultAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testUpdateDefaultBucketAcl() {
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
-    EasyMock.expect(storageRpcMock.patchDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1)))
-        .andReturn(returnedAcl.toObjectPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patchDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
     initializeService();
     Acl acl = storage.updateDefaultAcl(BUCKET_NAME1, ACL);
     assertEquals(returnedAcl, acl);
   }
 
   @Test
+  public void testUpdateDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patchDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
+    initializeService();
+    try {
+      storage.updateDefaultAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testListDefaultBucketAcl() {
-    EasyMock.expect(storageRpcMock.listDefaultAcls(BUCKET_NAME1))
-        .andReturn(ImmutableList.of(ACL.toObjectPb(), OTHER_ACL.toObjectPb()));
-    EasyMock.replay(storageRpcMock);
+    doReturn(ImmutableList.of(ACL.toObjectPb(), OTHER_ACL.toObjectPb()))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .listDefaultAcls(BUCKET_NAME1);
     initializeService();
     List<Acl> acls = storage.listDefaultAcls(BUCKET_NAME1);
     assertEquals(ImmutableList.of(ACL, OTHER_ACL), acls);
   }
 
   @Test
+  public void testListDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).listDefaultAcls(BUCKET_NAME1);
+    initializeService();
+    try {
+      storage.listDefaultAcls(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testGetBlobAcl() {
     BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
-    EasyMock.expect(storageRpcMock.getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers"))
-        .andReturn(ACL.toObjectPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(ACL.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
     initializeService();
     Acl acl = storage.getAcl(blobId, Acl.User.ofAllAuthenticatedUsers());
     assertEquals(ACL, acl);
@@ -3134,70 +3489,160 @@ public class StorageImplMockitoTest {
   @Test
   public void testGetBlobAclNull() {
     BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
-    EasyMock.expect(storageRpcMock.getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers"))
-        .andReturn(null);
-    EasyMock.replay(storageRpcMock);
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
     initializeService();
     assertNull(storage.getAcl(blobId, Acl.User.ofAllAuthenticatedUsers()));
   }
 
   @Test
+  public void testGetBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.getAcl(blobId, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testDeleteBlobAcl() {
     BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
-    EasyMock.expect(
-        storageRpcMock.deleteAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers"))
-        .andReturn(true);
-    EasyMock.replay(storageRpcMock);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
     initializeService();
     assertTrue(storage.deleteAcl(blobId, Acl.User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void testDeleteBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.deleteAcl(blobId, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
   }
 
   @Test
   public void testCreateBlobAcl() {
     BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
-    EasyMock.expect(
-        storageRpcMock.createAcl(
-            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L)))
-        .andReturn(returnedAcl.toObjectPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
     initializeService();
     Acl acl = storage.createAcl(blobId, ACL);
     assertEquals(returnedAcl, acl);
   }
 
   @Test
+  public void testCreateBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
+    initializeService();
+    try {
+      storage.createAcl(blobId, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testUpdateBlobAcl() {
     BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
-    EasyMock.expect(
-        storageRpcMock.patchAcl(
-            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L)))
-        .andReturn(returnedAcl.toObjectPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
     initializeService();
     Acl acl = storage.updateAcl(blobId, ACL);
     assertEquals(returnedAcl, acl);
   }
 
   @Test
+  public void testUpdateBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
+    initializeService();
+    try {
+      storage.updateAcl(blobId, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testListBlobAcl() {
     BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
-    EasyMock.expect(storageRpcMock.listAcls(BUCKET_NAME1, BLOB_NAME1, 42L))
-        .andReturn(ImmutableList.of(ACL.toObjectPb(), OTHER_ACL.toObjectPb()));
-    EasyMock.replay(storageRpcMock);
+    doReturn(ImmutableList.of(ACL.toObjectPb(), OTHER_ACL.toObjectPb()))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .listAcls(BUCKET_NAME1, BLOB_NAME1, 42L);
     initializeService();
     List<Acl> acls = storage.listAcls(blobId);
     assertEquals(ImmutableList.of(ACL, OTHER_ACL), acls);
   }
 
   @Test
+  public void testListBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).listAcls(BUCKET_NAME1, BLOB_NAME1, 42L);
+    initializeService();
+    try {
+      storage.listAcls(blobId);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testGetIamPolicy() {
-    EasyMock.expect(storageRpcMock.getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS))
-        .andReturn(API_POLICY1);
-    EasyMock.replay(storageRpcMock);
+    doReturn(API_POLICY1)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
     initializeService();
     assertEquals(LIB_POLICY1, storage.getIamPolicy(BUCKET_NAME1));
+  }
+
+  @Test
+  public void testGetIamPolicyFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.getIamPolicy(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
   }
 
   @Test
@@ -3247,15 +3692,16 @@ public class StorageImplMockitoTest {
             .setVersion(1)
             .build();
 
-    EasyMock.expect(storageRpcMock.getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS))
-        .andReturn(API_POLICY1);
-    EasyMock.expect(
-        storageRpcMock.setIamPolicy(
-            EasyMock.eq(BUCKET_NAME1),
-            eqApiPolicy(preCommitApiPolicy),
-            EasyMock.eq(EMPTY_RPC_OPTIONS)))
-        .andReturn(postCommitApiPolicy);
-    EasyMock.replay(storageRpcMock);
+    doReturn(API_POLICY1)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+
+    doReturn(postCommitApiPolicy)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .setIamPolicy(BUCKET_NAME1, preCommitApiPolicy, EMPTY_RPC_OPTIONS);
+
     initializeService();
 
     Policy currentPolicy = storage.getIamPolicy(BUCKET_NAME1);
@@ -3270,44 +3716,76 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testSetIamPolicyFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .setIamPolicy(
+            any(String.class),
+            any(com.google.api.services.storage.model.Policy.class),
+            any(Map.class));
+    initializeService();
+    try {
+      storage.setIamPolicy(BUCKET_NAME1, Policy.newBuilder().build());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testTestIamPermissionsNull() {
-    ImmutableList<Boolean> expectedPermissions = ImmutableList.of(false, false, false);
-    ImmutableList<String> checkedPermissions =
+    List<Boolean> expectedPermissions = ImmutableList.of(false, false, false);
+    List<String> checkedPermissions =
         ImmutableList.of(
             "storage.buckets.get", "storage.buckets.getIamPolicy", "storage.objects.list");
+    doReturn(new TestIamPermissionsResponse())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .testIamPermissions(BUCKET_NAME1, checkedPermissions, EMPTY_RPC_OPTIONS);
 
-    EasyMock.expect(
-        storageRpcMock.testIamPermissions(BUCKET_NAME1, checkedPermissions, EMPTY_RPC_OPTIONS))
-        .andReturn(new TestIamPermissionsResponse());
-    EasyMock.replay(storageRpcMock);
     initializeService();
     assertEquals(expectedPermissions, storage.testIamPermissions(BUCKET_NAME1, checkedPermissions));
   }
 
   @Test
   public void testTestIamPermissionsNonNull() {
-    ImmutableList<Boolean> expectedPermissions = ImmutableList.of(true, false, true);
-    ImmutableList<String> checkedPermissions =
+    List<Boolean> expectedPermissions = ImmutableList.of(true, false, true);
+    List<String> checkedPermissions =
         ImmutableList.of(
             "storage.buckets.get", "storage.buckets.getIamPolicy", "storage.objects.list");
 
-    EasyMock.expect(
-        storageRpcMock.testIamPermissions(BUCKET_NAME1, checkedPermissions, EMPTY_RPC_OPTIONS))
-        .andReturn(
+    doReturn(
             new TestIamPermissionsResponse()
-                .setPermissions(ImmutableList.of("storage.objects.list", "storage.buckets.get")));
-    EasyMock.replay(storageRpcMock);
+                .setPermissions(ImmutableList.of("storage.objects.list", "storage.buckets.get")))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .testIamPermissions(BUCKET_NAME1, checkedPermissions, EMPTY_RPC_OPTIONS);
     initializeService();
     assertEquals(expectedPermissions, storage.testIamPermissions(BUCKET_NAME1, checkedPermissions));
   }
 
   @Test
+  public void testTestIamPolicyFailure() {
+    List<String> permissions = ImmutableList.of("test");
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .testIamPermissions(BUCKET_NAME1, permissions, EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.testIamPermissions(BUCKET_NAME1, permissions);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testLockRetentionPolicy() {
-    EasyMock.expect(
-        storageRpcMock.lockRetentionPolicy(
-            BUCKET_INFO3.toPb(), BUCKET_TARGET_OPTIONS_LOCK_RETENTION_POLICY))
-        .andReturn(BUCKET_INFO3.toPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(BUCKET_INFO3.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .lockRetentionPolicy(BUCKET_INFO3.toPb(), BUCKET_TARGET_OPTIONS_LOCK_RETENTION_POLICY);
+
     initializeService();
     Bucket bucket =
         storage.lockRetentionPolicy(
@@ -3316,22 +3794,53 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testLockRetentionPolicyFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .lockRetentionPolicy(BUCKET_INFO3.toPb(), BUCKET_TARGET_OPTIONS_LOCK_RETENTION_POLICY);
+    initializeService();
+    try {
+      storage.lockRetentionPolicy(
+          BUCKET_INFO3, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_USER_PROJECT);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testGetServiceAccount() {
-    EasyMock.expect(storageRpcMock.getServiceAccount("projectId"))
-        .andReturn(SERVICE_ACCOUNT.toPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(SERVICE_ACCOUNT.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getServiceAccount("projectId");
     initializeService();
     ServiceAccount serviceAccount = storage.getServiceAccount("projectId");
     assertEquals(SERVICE_ACCOUNT, serviceAccount);
   }
 
   @Test
+  public void testGetServiceAccountFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).getServiceAccount("projectId");
+    initializeService();
+    try {
+      storage.getServiceAccount("projectId");
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
   public void testRetryableException() {
     BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
-    EasyMock.expect(storageRpcMock.get(blob.toPb(), EMPTY_RPC_OPTIONS))
-        .andThrow(new StorageException(500, "internalError"))
-        .andReturn(BLOB_INFO1.toPb());
-    EasyMock.replay(storageRpcMock);
+
+    doThrow(new StorageException(500, "internalError"))
+        .doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(blob.toPb(), EMPTY_RPC_OPTIONS);
+
     storage =
         options
             .toBuilder()
@@ -3347,9 +3856,10 @@ public class StorageImplMockitoTest {
   public void testNonRetryableException() {
     BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
     String exceptionMessage = "Not Implemented";
-    EasyMock.expect(storageRpcMock.get(blob.toPb(), EMPTY_RPC_OPTIONS))
-        .andThrow(new StorageException(501, exceptionMessage));
-    EasyMock.replay(storageRpcMock);
+    doThrow(new StorageException(501, exceptionMessage))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(blob.toPb(), EMPTY_RPC_OPTIONS);
     storage =
         options
             .toBuilder()
@@ -3369,9 +3879,11 @@ public class StorageImplMockitoTest {
   public void testRuntimeException() {
     BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
     String exceptionMessage = "Artificial runtime exception";
-    EasyMock.expect(storageRpcMock.get(blob.toPb(), EMPTY_RPC_OPTIONS))
-        .andThrow(new RuntimeException(exceptionMessage));
-    EasyMock.replay(storageRpcMock);
+    doThrow(new RuntimeException(exceptionMessage))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(blob.toPb(), EMPTY_RPC_OPTIONS);
+
     storage =
         options
             .toBuilder()
@@ -3388,8 +3900,7 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testWriterWithSignedURL() throws MalformedURLException {
-    EasyMock.expect(storageRpcMock.open(SIGNED_URL)).andReturn("upload-id");
-    EasyMock.replay(storageRpcMock);
+    doReturn("upload-id").doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).open(SIGNED_URL);
     initializeService();
     WriteChannel writer = new BlobWriteChannel(options, new URL(SIGNED_URL));
     assertNotNull(writer);
@@ -3398,7 +3909,6 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testV4PostPolicy() {
-    EasyMock.replay(storageRpcMock);
     ServiceAccountCredentials credentials =
         ServiceAccountCredentials.newBuilder()
             .setClientEmail(ACCOUNT)
@@ -3494,10 +4004,10 @@ public class StorageImplMockitoTest {
                             .setDaysSinceCustomTime(30)
                             .build())))
             .build();
-    EasyMock.expect(
-        storageRpcMock.create(bucketInfo.toPb(), new HashMap<StorageRpc.Option, Object>()))
-        .andReturn(bucketInfo.toPb());
-    EasyMock.replay(storageRpcMock);
+    doReturn(bucketInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(bucketInfo.toPb(), new HashMap<StorageRpc.Option, Object>());
     initializeService();
     Bucket bucket = storage.create(bucketInfo);
     BucketInfo.LifecycleRule lifecycleRule = bucket.getLifecycleRules().get(0);
@@ -3511,5 +4021,4 @@ public class StorageImplMockitoTest {
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
   }
-
 }
