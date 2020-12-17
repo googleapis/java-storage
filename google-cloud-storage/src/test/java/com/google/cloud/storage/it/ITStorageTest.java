@@ -3246,11 +3246,32 @@ public class ITStorageTest {
       Bucket bucket =
           storage.create(
               Bucket.newBuilder(papBucket).setIamConfiguration(iamConfiguration).build());
+      assertNull(bucket.getIamConfiguration().getPublicAccessPrevention());
+
+      // Set unspecified public access prevention on bucket
+      bucket
+          .toBuilder()
+          .setIamConfiguration(
+              iamConfiguration
+                  .toBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
+                  .build())
+          .build()
+          .update();
+      Bucket unspecifiedPublicAccessPreventionBucket =
+          storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
       assertEquals(
           BucketInfo.PublicAccessPrevention.UNSPECIFIED.getValue(),
-          bucket.getIamConfiguration().getPublicAccessPrevention().getValue());
-      assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+          unspecifiedPublicAccessPreventionBucket
+              .getIamConfiguration()
+              .getPublicAccessPrevention()
+              .getValue());
+      assertTrue(
+          unspecifiedPublicAccessPreventionBucket
+              .getIamConfiguration()
+              .isUniformBucketLevelAccessEnabled());
 
+      // Set enforced public access prevention on bucket
       bucket
           .toBuilder()
           .setIamConfiguration(
@@ -3260,24 +3281,33 @@ public class ITStorageTest {
                   .build())
           .build()
           .update();
-      Bucket remoteBucket =
+      Bucket enforcedPublicAccessPreventionBucket =
           storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
       assertEquals(
           BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
-          remoteBucket.getIamConfiguration().getPublicAccessPrevention().getValue());
+          enforcedPublicAccessPreventionBucket
+              .getIamConfiguration()
+              .getPublicAccessPrevention()
+              .getValue());
 
-      remoteBucket
+      enforcedPublicAccessPreventionBucket
           .toBuilder()
           .setIamConfiguration(
               iamConfiguration.toBuilder().setIsUniformBucketLevelAccessEnabled(false).build())
           .build()
           .update();
-      remoteBucket =
+      enforcedPublicAccessPreventionBucket =
           storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
       assertEquals(
           BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
-          remoteBucket.getIamConfiguration().getPublicAccessPrevention().getValue());
-      assertFalse(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+          enforcedPublicAccessPreventionBucket
+              .getIamConfiguration()
+              .getPublicAccessPrevention()
+              .getValue());
+      assertFalse(
+          enforcedPublicAccessPreventionBucket
+              .getIamConfiguration()
+              .isUniformBucketLevelAccessEnabled());
 
     } finally {
       RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);

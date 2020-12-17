@@ -271,16 +271,13 @@ public class BucketInfo implements Serializable {
 
       /**
        * Sets the bucket's Public Access Prevention configuration. Currently supported options are
-       * 'unspecified' (default) or 'enforced'.
+       * 'unspecified' or 'enforced'.
        *
        * @see <a
        *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
        */
       public Builder setPublicAccessPrevention(PublicAccessPrevention publicAccessPrevention) {
-        this.publicAccessPrevention =
-            publicAccessPrevention == null
-                ? publicAccessPrevention.UNSPECIFIED
-                : publicAccessPrevention;
+        this.publicAccessPrevention = publicAccessPrevention;
         return this;
       }
 

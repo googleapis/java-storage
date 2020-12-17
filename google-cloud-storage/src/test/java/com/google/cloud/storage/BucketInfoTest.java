@@ -72,7 +72,6 @@ public class BucketInfoTest {
               LifecycleAction.newDeleteAction(),
               LifecycleCondition.newBuilder().setAge(5).build()));
   private static final String INDEX_PAGE = "index.html";
-  private static final String PUBLIC_ACCESS_PREVENTION_ENFORCED = "enforced";
   private static final BucketInfo.IamConfiguration IAM_CONFIGURATION =
       BucketInfo.IamConfiguration.newBuilder()
           .setIsUniformBucketLevelAccessEnabled(true)
