@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -2380,7 +2379,7 @@ public class StorageImplMockitoTest {
             14,
             TimeUnit.DAYS,
             Storage.SignUrlOption.withHostName("https://example.com"));
-    String escapedBlobName = Rfc3986UriEncode(blobName, false);
+    String escapedBlobName = SignedUrlEncodingHelper.Rfc3986UriEncode(blobName, false);
     String stringUrl = url.toString();
     String expectedUrl =
         new StringBuilder("https://example.com/")
@@ -2765,7 +2764,7 @@ public class StorageImplMockitoTest {
     String blobName = "/foo/bar/baz #%20other cool stuff.txt";
     URL url =
         storage.signUrl(BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(), 14, TimeUnit.DAYS);
-    String escapedBlobName = Rfc3986UriEncode(blobName, false);
+    String escapedBlobName = SignedUrlEncodingHelper.Rfc3986UriEncode(blobName, false);
     String stringUrl = url.toString();
     String expectedUrl =
         new StringBuilder("https://storage.googleapis.com/")
@@ -2816,7 +2815,7 @@ public class StorageImplMockitoTest {
             14,
             TimeUnit.DAYS,
             Storage.SignUrlOption.withHostName("https://example.com"));
-    String escapedBlobName = Rfc3986UriEncode(blobName, false);
+    String escapedBlobName = SignedUrlEncodingHelper.Rfc3986UriEncode(blobName, false);
     String stringUrl = url.toString();
     String expectedUrl =
         new StringBuilder("https://example.com/")
@@ -3944,10 +3943,10 @@ public class StorageImplMockitoTest {
     assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
 
     // test fields, no conditions
-    policy =
+    PostPolicyV4 policy2 =
         storage.generateSignedPostPolicyV4(
             BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, conditions);
-    outputFields = policy.getFields();
+    outputFields = policy2.getFields();
 
     assertTrue(outputFields.containsKey("x-goog-date"));
     assertTrue(outputFields.containsKey("x-goog-credential"));
@@ -3955,13 +3954,13 @@ public class StorageImplMockitoTest {
     assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
     assertEquals(outputFields.get("content-type"), "image/jpeg");
     assertEquals(outputFields.get("key"), "my-object");
-    assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy2.getUrl());
 
     // test conditions, no fields
-    policy =
+    PostPolicyV4 policy3 =
         storage.generateSignedPostPolicyV4(
             BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, fields);
-    outputFields = policy.getFields();
+    outputFields = policy3.getFields();
     assertTrue(outputFields.containsKey("x-goog-date"));
     assertTrue(outputFields.containsKey("x-goog-credential"));
     assertTrue(outputFields.containsKey("x-goog-signature"));
@@ -3970,16 +3969,16 @@ public class StorageImplMockitoTest {
     assertEquals(outputFields.get("key"), "my-object");
 
     // test no conditions no fields
-    policy =
+    PostPolicyV4 policy4 =
         storage.generateSignedPostPolicyV4(
             BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS);
-    outputFields = policy.getFields();
+    outputFields = policy4.getFields();
     assertTrue(outputFields.containsKey("x-goog-date"));
     assertTrue(outputFields.containsKey("x-goog-credential"));
     assertTrue(outputFields.containsKey("x-goog-signature"));
     assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
     assertEquals(outputFields.get("key"), "my-object");
-    assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy4.getUrl());
   }
 
   @Test
