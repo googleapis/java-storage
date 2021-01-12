@@ -3611,22 +3611,17 @@ public class ITStorageTest {
     // Write an empty object with a kmsKeyName.
     String blobName = "test-empty-blob";
     BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
-    Storage storage =
-        StorageOptions.newBuilder().setHost("http://localhost:8080").build().getService();
-    storage.create(BucketInfo.of(BUCKET));
     Blob blob =
-        storage.create(blobInfo); // , Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
+        storage.create(blobInfo, Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
 
     // Create a writer using blob that already has metadata received from Storage API.
-    int numberOfBytes = 0;
-    int iterations = 1024 * 1024;
+    int numberOfBytes;
     try (WriteChannel writer = blob.writer()) {
-      for (int i = 0; i < iterations; i++) {
-        byte[] content = BLOB_STRING_CONTENT.getBytes(UTF_8);
-        numberOfBytes += writer.write(ByteBuffer.wrap(content, 0, content.length));
-      }
+      byte[] content = BLOB_STRING_CONTENT.getBytes(UTF_8);
+      numberOfBytes = writer.write(ByteBuffer.wrap(content, 0, content.length));
     }
-    assertThat(numberOfBytes).isEqualTo(27 * iterations);
+    assertThat(numberOfBytes).isEqualTo(27);
+    assertThat(blob.getKmsKeyName()).isNotNull();
     assertThat(storage.delete(BUCKET, blobName)).isTrue();
   }
 }
