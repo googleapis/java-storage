@@ -120,6 +120,14 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                     // For completeness, this case is not possible because it would require retrying
                     // a 400 status code which is not allowed.
                     //
+                    // Case 7: remoteNextByteOffset==-1 && last == true
+                    // Upload is complete and retry occurred in the "last" chunk. Data sent was
+                    // received by the service.
+                    //
+                    // Case 8: remoteNextByteOffset==-1 && last == false
+                    // Upload was completed by another client because this retry did not occur
+                    // during the last chunk.
+                    //
                     // Get remote offset from API
                     long remoteNextByteOffset =
                         getOptions().getStorageRpcV1().getCurrentUploadOffset(getUploadId());
@@ -154,7 +162,8 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                       // Continue to next chunk
                       retrying = false;
                       return;
-                    } else {
+                    } else if (localNextByteOffset < remoteNextByteOffset
+                        && driftOffset > getChunkSize()) {
                       // Case 5
                       StringBuilder sb = new StringBuilder();
                       sb.append(
@@ -167,6 +176,13 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                       sb.append("remoteNextByteOffset: ").append(remoteNextByteOffset).append('\n');
                       sb.append("driftOffset: ").append(driftOffset).append("\n\n");
                       throw new StorageException(0, sb.toString());
+                    } else if (remoteNextByteOffset == -1 && last) {
+                      // Case 7
+                      retrying = false;
+                      return;
+                    } else if (remoteNextByteOffset == -1 && !last) {
+                      // Case 8
+                      throw new StorageException(0, "Resumable upload is already complete.");
                     }
                   }
                   // Request was successful and retrying state is now disabled.
