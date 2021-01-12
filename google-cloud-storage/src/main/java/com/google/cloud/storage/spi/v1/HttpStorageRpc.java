@@ -888,7 +888,10 @@ public class HttpStorageRpc implements StorageRpc {
       if (kmsKeyName != null && kmsKeyName.contains("cryptoKeyVersions")) {
         object.setKmsKeyName("");
       }
-      Insert req = storage.objects().insert(object.getBucket(), object)
+      Insert req =
+          storage
+              .objects()
+              .insert(object.getBucket(), object)
               .setName(object.getName())
               .setProjection(Option.PROJECTION.getString(options))
               .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
@@ -898,13 +901,8 @@ public class HttpStorageRpc implements StorageRpc {
               .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
               .setUserProject(Option.USER_PROJECT.getString(options))
               .setKmsKeyName(Option.KMS_KEY_NAME.getString(options));
-      GenericUrl url = req.buildHttpRequest().getUrl();
-      String scheme = url.getScheme();
-      String host = url.getHost();
-      int port = url.getPort();
-      port = port > 0 ? port : url.toURL().getDefaultPort();
-      String path = "/upload" + url.getRawPath();
-      url = new GenericUrl(scheme + "://" + host + ":" + port + path);
+      GenericUrl url = req.buildHttpRequestUrl();
+      url.setRawPath("/upload" + url.getRawPath());
       url.set("uploadType", "resumable");
 
       JsonFactory jsonFactory = storage.getJsonFactory();
