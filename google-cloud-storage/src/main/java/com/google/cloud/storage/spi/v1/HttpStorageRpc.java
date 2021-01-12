@@ -888,38 +888,30 @@ public class HttpStorageRpc implements StorageRpc {
       if (kmsKeyName != null && kmsKeyName.contains("cryptoKeyVersions")) {
         object.setKmsKeyName("");
       }
-      Insert req = storage.objects().insert(object.getBucket(), object);
-      GenericUrl url = req.buildHttpRequest().getUrl();
-      String scheme = url.getScheme();
-      String host = url.getHost();
-      int port = url.getPort();
-      port = port > 0 ? port : url.toURL().getDefaultPort();
-      String path = "/upload" + url.getRawPath();
-      url = new GenericUrl(scheme + "://" + host + ":" + port + path);
+      Insert req =
+          storage
+              .objects()
+              .insert(object.getBucket(), object)
+              .setName(object.getName())
+              .setProjection(Option.PROJECTION.getString(options))
+              .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
+              .setIfMetagenerationMatch(Option.IF_METAGENERATION_MATCH.getLong(options))
+              .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
+              .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
+              .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+              .setUserProject(Option.USER_PROJECT.getString(options))
+              .setKmsKeyName(Option.KMS_KEY_NAME.getString(options));
+      GenericUrl url = req.buildHttpRequestUrl();
+      url.setRawPath("/upload" + url.getRawPath());
       url.set("uploadType", "resumable");
-      url.set("name", object.getName());
-      for (Option option : options.keySet()) {
-        Object content = option.get(options);
-        if (content != null) {
-          url.set(option.value(), content.toString());
-        }
-      }
+
       JsonFactory jsonFactory = storage.getJsonFactory();
       HttpRequestFactory requestFactory = storage.getRequestFactory();
       HttpRequest httpRequest =
           requestFactory.buildPostRequest(url, new JsonHttpContent(jsonFactory, object));
       HttpHeaders requestHeaders = httpRequest.getHeaders();
       requestHeaders.set("X-Upload-Content-Type", detectContentType(object, options));
-      String key = Option.CUSTOMER_SUPPLIED_KEY.getString(options);
-      if (key != null) {
-        BaseEncoding base64 = BaseEncoding.base64();
-        HashFunction hashFunction = Hashing.sha256();
-        requestHeaders.set("x-goog-encryption-algorithm", "AES256");
-        requestHeaders.set("x-goog-encryption-key", key);
-        requestHeaders.set(
-            "x-goog-encryption-key-sha256",
-            base64.encode(hashFunction.hashBytes(base64.decode(key)).asBytes()));
-      }
+      setEncryptionHeaders(requestHeaders, "x-goog-encryption-", options);
       HttpResponse response = httpRequest.execute();
       if (response.getStatusCode() != 200) {
         GoogleJsonError error = new GoogleJsonError();
