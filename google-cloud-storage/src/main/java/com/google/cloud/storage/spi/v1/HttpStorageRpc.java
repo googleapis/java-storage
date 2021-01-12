@@ -766,7 +766,7 @@ public class HttpStorageRpc implements StorageRpc {
         response = httpRequest.execute();
         int code = response.getStatusCode();
         if (code == 201 || code == 200) {
-          throw new StorageException(0, "Resumable upload is already complete.");
+          return -1;
         }
         StringBuilder sb = new StringBuilder();
         sb.append("Not sure what occurred. Here's debugging information:\n");
