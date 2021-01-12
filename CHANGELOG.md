@@ -1,5 +1,19 @@
 # Changelog
 
+### [1.113.9](https://www.github.com/googleapis/java-storage/compare/v1.113.8...v1.113.9) (2021-01-12)
+
+
+### Bug Fixes
+
+* last chunk is retriable ([#677](https://www.github.com/googleapis/java-storage/issues/677)) ([44f49e0](https://www.github.com/googleapis/java-storage/commit/44f49e0a33c3e541d9f8b22622ffff17cc8b8eaa))
+* unnecessary options in resumable upload URL ([#679](https://www.github.com/googleapis/java-storage/issues/679)) ([d31a39b](https://www.github.com/googleapis/java-storage/commit/d31a39b88b2d8adb04549330f9b8ff1c1a516b69))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.17.1 ([#678](https://www.github.com/googleapis/java-storage/issues/678)) ([d4a237f](https://www.github.com/googleapis/java-storage/commit/d4a237f4dff9dd870a69d5da9d690c14d4e88610))
+* update kms.version to v0.87.5 ([#662](https://www.github.com/googleapis/java-storage/issues/662)) ([20e7c1f](https://www.github.com/googleapis/java-storage/commit/20e7c1f10a233df6d4660b31d26cd95a6d4002e9))
+
 ### [1.113.8](https://www.github.com/googleapis/java-storage/compare/v1.113.7...v1.113.8) (2020-12-16)
 
 
