@@ -3337,6 +3337,9 @@ public class ITStorageTest {
               .update();
       assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertTrue(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertEquals(
+          bucket.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
     } finally {
       RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
     }
