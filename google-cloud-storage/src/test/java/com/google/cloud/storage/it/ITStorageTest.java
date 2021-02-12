@@ -3288,7 +3288,7 @@ public class ITStorageTest {
                   .build())
           .build()
           .update();
-      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.values()));
+      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
           BucketInfo.PublicAccessPrevention.UNSPECIFIED);
@@ -3306,6 +3306,7 @@ public class ITStorageTest {
         fail("pap: expected adding AllUsers ACL to object to succeed");
       }
 
+      // Now, making bucket public should succeed.
       try {
         storage.setIamPolicy(
             papBucket,
@@ -3321,6 +3322,21 @@ public class ITStorageTest {
       } catch (StorageException storageException) {
         fail("pap: expected adding AllUsers policy to bucket to succeed");
       }
+
+      // Updating UBLA should not affect PAP setting.
+      bucket =
+          bucket
+              .toBuilder()
+              .setIamConfiguration(
+                  bucket
+                      .getIamConfiguration()
+                      .toBuilder()
+                      .setIsUniformBucketLevelAccessEnabled(true)
+                      .build())
+              .build()
+              .update();
+      assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertTrue(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
     } finally {
       RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
     }
