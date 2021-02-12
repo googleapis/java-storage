@@ -3239,37 +3239,88 @@ public class ITStorageTest {
   public void testUnspecifiedAndEnforcedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = RemoteStorageHelper.generateBucketName();
     try {
-      Bucket bucket = storage.create(Bucket.newBuilder(papBucket).build());
+      Bucket bucket =
+          storage.create(
+              Bucket.newBuilder(papBucket)
+                  .setIamConfiguration(
+                      BucketInfo.IamConfiguration.newBuilder()
+                          .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                          .build())
+                  .build());
+      // Making bucket public should fail.
+      try {
+        storage.setIamPolicy(
+            papBucket,
+            Policy.newBuilder()
+                .setVersion(3)
+                .setBindings(
+                    ImmutableList.<com.google.cloud.Binding>of(
+                        com.google.cloud.Binding.newBuilder()
+                            .setRole("roles/storage.objectViewer")
+                            .addMembers("allUsers")
+                            .build()))
+                .build());
+        fail("pap: expected adding AllUsers policy to bucket should fail");
+      } catch (StorageException storageException) {
+        // Expected storage exception.
+      }
 
-      // Set unspecified public access prevention on bucket
-      BucketInfo.IamConfiguration iamConfiguration =
-          BucketInfo.IamConfiguration.newBuilder()
-              .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
-              .build();
-      Bucket unspecifiedPublicAccessPreventionBucket =
-          bucket.toBuilder().setIamConfiguration(iamConfiguration).build().update();
+      // Making object public via ACL should fail.
+      try {
+        // Create a public object
+        bucket.create(
+            "pap-test-object",
+            "".getBytes(),
+            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+        fail("pap: expected adding AllUsers ACL to object should fail");
+      } catch (StorageException storageException) {
+        // Expected storage exception.
+      }
 
+      // Update PAP setting to unspecified should work and not affect UBLA setting.
+      bucket
+          .toBuilder()
+          .setIamConfiguration(
+              bucket
+                  .getIamConfiguration()
+                  .toBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
+                  .build())
+          .build()
+          .update();
+      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.values()));
       assertEquals(
-          BucketInfo.PublicAccessPrevention.UNSPECIFIED,
-          unspecifiedPublicAccessPreventionBucket
-              .getIamConfiguration()
-              .getPublicAccessPrevention());
+          bucket.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
+      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
-      // Set enforced public access prevention on bucket
-      Bucket enforcedPublicAccessPreventionBucket =
-          bucket
-              .toBuilder()
-              .setIamConfiguration(
-                  iamConfiguration
-                      .toBuilder()
-                      .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                      .build())
-              .build()
-              .update();
+      // Now, making object public or making bucket public should succeed.
+      try {
+        // Create a public object
+        bucket.create(
+            "pap-test-object",
+            "".getBytes(),
+            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+      } catch (StorageException storageException) {
+        fail("pap: expected adding AllUsers ACL to object to succeed");
+      }
 
-      assertEquals(
-          BucketInfo.PublicAccessPrevention.ENFORCED,
-          enforcedPublicAccessPreventionBucket.getIamConfiguration().getPublicAccessPrevention());
+      try {
+        storage.setIamPolicy(
+            papBucket,
+            Policy.newBuilder()
+                .setVersion(3)
+                .setBindings(
+                    ImmutableList.<com.google.cloud.Binding>of(
+                        com.google.cloud.Binding.newBuilder()
+                            .setRole("roles/storage.objectViewer")
+                            .addMembers("allUsers")
+                            .build()))
+                .build());
+      } catch (StorageException storageException) {
+        fail("pap: expected adding AllUsers policy to bucket to succeed");
+      }
     } finally {
       RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
     }
