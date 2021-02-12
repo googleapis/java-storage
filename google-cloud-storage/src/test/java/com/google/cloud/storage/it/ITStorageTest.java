@@ -3239,76 +3239,37 @@ public class ITStorageTest {
   public void testUnspecifiedAndEnforcedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = RemoteStorageHelper.generateBucketName();
     try {
-      BucketInfo.IamConfiguration iamConfiguration =
-          BucketInfo.IamConfiguration.newBuilder()
-              .setIsUniformBucketLevelAccessEnabled(true)
-              .build();
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(papBucket).setIamConfiguration(iamConfiguration).build());
-      assertNull(bucket.getIamConfiguration().getPublicAccessPrevention());
+      Bucket bucket = storage.create(Bucket.newBuilder(papBucket).build());
 
       // Set unspecified public access prevention on bucket
-      bucket
-          .toBuilder()
-          .setIamConfiguration(
-              iamConfiguration
-                  .toBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
-                  .build())
-          .build()
-          .update();
+      BucketInfo.IamConfiguration iamConfiguration =
+          BucketInfo.IamConfiguration.newBuilder()
+              .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
+              .build();
       Bucket unspecifiedPublicAccessPreventionBucket =
-          storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+          bucket.toBuilder().setIamConfiguration(iamConfiguration).build().update();
+
       assertEquals(
-          BucketInfo.PublicAccessPrevention.UNSPECIFIED.getValue(),
+          BucketInfo.PublicAccessPrevention.UNSPECIFIED,
           unspecifiedPublicAccessPreventionBucket
               .getIamConfiguration()
-              .getPublicAccessPrevention()
-              .getValue());
-      assertTrue(
-          unspecifiedPublicAccessPreventionBucket
-              .getIamConfiguration()
-              .isUniformBucketLevelAccessEnabled());
+              .getPublicAccessPrevention());
 
       // Set enforced public access prevention on bucket
-      bucket
-          .toBuilder()
-          .setIamConfiguration(
-              iamConfiguration
-                  .toBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                  .build())
-          .build()
-          .update();
       Bucket enforcedPublicAccessPreventionBucket =
-          storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
-      assertEquals(
-          BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
-          enforcedPublicAccessPreventionBucket
-              .getIamConfiguration()
-              .getPublicAccessPrevention()
-              .getValue());
+          bucket
+              .toBuilder()
+              .setIamConfiguration(
+                  iamConfiguration
+                      .toBuilder()
+                      .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                      .build())
+              .build()
+              .update();
 
-      enforcedPublicAccessPreventionBucket
-          .toBuilder()
-          .setIamConfiguration(
-              iamConfiguration.toBuilder().setIsUniformBucketLevelAccessEnabled(false).build())
-          .build()
-          .update();
-      enforcedPublicAccessPreventionBucket =
-          storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
       assertEquals(
-          BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
-          enforcedPublicAccessPreventionBucket
-              .getIamConfiguration()
-              .getPublicAccessPrevention()
-              .getValue());
-      assertFalse(
-          enforcedPublicAccessPreventionBucket
-              .getIamConfiguration()
-              .isUniformBucketLevelAccessEnabled());
-
+          BucketInfo.PublicAccessPrevention.ENFORCED,
+          enforcedPublicAccessPreventionBucket.getIamConfiguration().getPublicAccessPrevention());
     } finally {
       RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
     }
