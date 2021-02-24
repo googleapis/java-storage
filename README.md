@@ -38,7 +38,7 @@ If you are using Maven without BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>1.113.9</version>
+  <version>1.113.10</version>
 </dependency>
 
 ```
@@ -51,12 +51,12 @@ compile 'com.google.cloud:google-cloud-storage'
 ```
 If you are using Gradle without BOM, add this to your dependencies
 ```Groovy
-compile 'com.google.cloud:google-cloud-storage:1.113.9'
+compile 'com.google.cloud:google-cloud-storage:1.113.11'
 ```
 
 If you are using SBT, add this to your dependencies
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.113.9"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "1.113.11"
 ```
 
 ## Authentication

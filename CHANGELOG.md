@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.113.11](https://www.github.com/googleapis/java-storage/compare/v1.113.10...v1.113.11) (2021-02-19)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.19.0 ([#719](https://www.github.com/googleapis/java-storage/issues/719)) ([5831bfa](https://www.github.com/googleapis/java-storage/commit/5831bfae3afeab9b044c8d53ebf6a2ce79bc9950))
+
 ### [1.113.10](https://www.github.com/googleapis/java-storage/compare/v1.113.9...v1.113.10) (2021-02-17)
 
 
