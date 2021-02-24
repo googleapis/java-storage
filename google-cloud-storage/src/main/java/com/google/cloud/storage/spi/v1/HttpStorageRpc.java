@@ -766,6 +766,7 @@ public class HttpStorageRpc implements StorageRpc {
         response = httpRequest.execute();
         int code = response.getStatusCode();
         if (code == 201 || code == 200) {
+          // Upload completed successfully
           return -1;
         }
         StringBuilder sb = new StringBuilder();
@@ -783,11 +784,7 @@ public class HttpStorageRpc implements StorageRpc {
           // Return next byte offset by adding 1 to last byte received offset
           return Long.parseLong(range.substring(range.indexOf("-") + 1)) + 1;
         } else {
-          // Not certain what went wrong
-          StringBuilder sb = new StringBuilder();
-          sb.append("Not sure what occurred. Here's debugging information:\n");
-          sb.append("Response:\n").append(ex.toString()).append("\n\n");
-          throw new StorageException(0, sb.toString());
+          throw translate(ex);
         }
       } finally {
         if (response != null) {
