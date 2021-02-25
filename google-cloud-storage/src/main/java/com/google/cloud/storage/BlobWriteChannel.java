@@ -65,155 +65,135 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
     return storageObject;
   }
 
+  private StorageObject transmitChunk(
+      int chunkOffset, int chunkLength, long nextOffset, boolean last) {
+    return getOptions()
+        .getStorageRpcV1()
+        .writeWithResponse(getUploadId(), getBuffer(), chunkOffset, nextOffset, chunkLength, last);
+  }
+
+  private long getRemotePosition() {
+    return getOptions().getStorageRpcV1().getCurrentUploadOffset(getUploadId());
+  }
+
+  private StorageObject getRemoteStorageObject() {
+    return getOptions().getStorageRpcV1().get(getEntity().toPb(), null);
+  }
+
+  private StorageException unrecoverableState(
+      int chunkOffset, int chunkLength, long localOffset, long remoteOffset, boolean last) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Unable to recover in upload.\n");
+    sb.append(
+        "This may be a symptom of multiple clients uploading to the same upload session.\n\n");
+    sb.append("For debugging purposes:\n");
+    sb.append("uploadId: ").append(getUploadId()).append('\n');
+    sb.append("chunkOffset: ").append(chunkOffset).append('\n');
+    sb.append("chunkLength: ").append(chunkLength).append('\n');
+    sb.append("localOffset: ").append(localOffset).append('\n');
+    sb.append("remoteOffset: ").append(remoteOffset).append('\n');
+    sb.append("lastChunk: ").append(last).append("\n\n");
+    return new StorageException(0, sb.toString());
+  }
+
+  // Retriable interruption occurred.
+  // Variables:
+  // chunk = getBuffer()
+  // localNextByteOffset == getPosition()
+  // chunkSize = getChunkSize()
+  //
+  // Case 1: localNextByteOffset == remoteNextByteOffset:
+  // Retrying the entire chunk
+  //
+  // Case 2: localNextByteOffset < remoteNextByteOffset
+  //             && driftOffset < chunkSize:
+  // Upload progressed and localNextByteOffset is not in-sync with
+  // remoteNextByteOffset and driftOffset is less than chunkSize.
+  // driftOffset must be less than chunkSize for it to retry using
+  // chunk maintained in memory.
+  // Find the driftOffset by subtracting localNextByteOffset from
+  // remoteNextByteOffset.
+  // Use driftOffset to determine where to restart from using the chunk in
+  // memory.
+  //
+  // Case 3: localNextByteOffset < remoteNextByteOffset
+  //            && driftOffset == chunkSize:
+  // Special case of Case 2.
+  // If chunkSize is equal to driftOffset then remoteNextByteOffset has moved on
+  // to the next chunk.
+  //
+  // Case 4: localNextByteOffset < remoteNextByteOffset
+  //            && driftOffset > chunkSize:
+  // Throw exception as remoteNextByteOffset has drifted beyond the retriable
+  // chunk maintained in memory. This is not possible unless there's multiple
+  // clients uploading to the same resumable upload session.
+  //
+  // Case 5: localNextByteOffset > remoteNextByteOffset:
+  // For completeness, this case is not possible because it would require retrying
+  // a 400 status code which is not allowed.
+  //
+  // Case 6: remoteNextByteOffset==-1 && last == true
+  // Upload is complete and retry occurred in the "last" chunk. Data sent was
+  // received by the service.
+  //
+  // Case 7: remoteNextByteOffset==-1 && last == false && !checkingForLastChunk
+  // Not last chunk and are not checkingForLastChunk, allow for the client to
+  // catch up to final chunk which meets
+  // Case 6.
+  //
+  // Case 8: remoteNextByteOffset==-1 && last == false && checkingForLastChunk
+  // Not last chunk and checkingForLastChunk means this is the second time we
+  // hit this case, meaning the upload was completed by a different client.
+  //
+  // Case 9: Only possible if the client local offset continues beyond the remote
+  // offset which is not possible.
+  //
   @Override
-  protected void flushBuffer(final int length, final boolean last) {
+  protected void flushBuffer(final int length, final boolean lastChunk) {
     try {
       runWithRetries(
           callable(
               new Runnable() {
                 @Override
                 public void run() {
+                  // Get remote offset from API
+                  final long localPosition = getPosition();
+                  final long remotePosition = isRetrying() ? getRemotePosition() : getPosition();
+                  final int chunkOffset = (int) (remotePosition - localPosition);
+                  final int chunkLength = length - chunkOffset;
+                  final boolean uploadCompletedAlready = remotePosition == -1;
+                  // Enable isRetrying state to reduce number of calls to getCurrentUploadOffset()
                   if (!isRetrying()) {
-                    // Enable isRetrying state to reduce number of calls to getCurrentUploadOffset()
                     retrying = true;
-                    storageObject =
-                        getOptions()
-                            .getStorageRpcV1()
-                            .writeWithResponse(
-                                getUploadId(), getBuffer(), 0, getPosition(), length, last);
-                  } else {
-                    // Retriable interruption occurred.
-                    // Variables:
-                    // chunk = getBuffer()
-                    // localNextByteOffset == getPosition()
-                    // chunkSize = getChunkSize()
-                    //
-                    // Case 1: localNextByteOffset == remoteNextByteOffset:
-                    // Retrying the entire chunk
-                    //
-                    // Case 2: localNextByteOffset < remoteNextByteOffset
-                    //             && driftOffset < chunkSize:
-                    // Upload progressed and localNextByteOffset is not in-sync with
-                    // remoteNextByteOffset and driftOffset is less than chunkSize.
-                    // driftOffset must be less than chunkSize for it to retry using
-                    // chunk maintained in memory.
-                    // Find the driftOffset by subtracting localNextByteOffset from
-                    // remoteNextByteOffset.
-                    // Use driftOffset to determine where to restart from using the chunk in
-                    // memory.
-                    //
-                    // Case 3: localNextByteOffset < remoteNextByteOffset
-                    //            && driftOffset == chunkSize:
-                    // Special case of Case 2.
-                    // If chunkSize is equal to driftOffset then remoteNextByteOffset has moved on
-                    // to the next chunk.
-                    //
-                    // Case 4: localNextByteOffset < remoteNextByteOffset
-                    //            && driftOffset > chunkSize:
-                    // Throw exception as remoteNextByteOffset has drifted beyond the retriable
-                    // chunk maintained in memory. This is not possible unless there's multiple
-                    // clients uploading to the same resumable upload session.
-                    //
-                    // Case 5: localNextByteOffset > remoteNextByteOffset:
-                    // For completeness, this case is not possible because it would require retrying
-                    // a 400 status code which is not allowed.
-                    //
-                    // Case 6: remoteNextByteOffset==-1 && last == true
-                    // Upload is complete and retry occurred in the "last" chunk. Data sent was
-                    // received by the service.
-                    //
-                    // Case 7: remoteNextByteOffset==-1 && last == false && !checkingForLastChunk
-                    // Not last chunk and are not checkingForLastChunk, allow for the client to
-                    // catch up to final chunk which meets
-                    // Case 6.
-                    //
-                    // Case 8: remoteNextByteOffset==-1 && last == false && checkingForLastChunk
-                    // Not last chunk and checkingForLastChunk means this is the second time we
-                    // hit this case, meaning the upload was completed by a different client.
-                    //
-                    // Case 9: Only possible if the client local offset continues beyond the remote
-                    // offset which is not possible.
-                    //
-                    // Get remote offset from API
-                    long remoteNextByteOffset =
-                        getOptions().getStorageRpcV1().getCurrentUploadOffset(getUploadId());
-                    long localNextByteOffset = getPosition();
-                    int driftOffset = (int) (remoteNextByteOffset - localNextByteOffset);
-                    int retryChunkLength = length - driftOffset;
-                    if (localNextByteOffset == remoteNextByteOffset) {
-                      // Case 1
-                      storageObject =
-                          getOptions()
-                              .getStorageRpcV1()
-                              .writeWithResponse(
-                                  getUploadId(), getBuffer(), 0, getPosition(), length, last);
-                    } else if (localNextByteOffset < remoteNextByteOffset
-                        && driftOffset < getChunkSize()) {
-                      // Case 2
-                      storageObject =
-                          getOptions()
-                              .getStorageRpcV1()
-                              .writeWithResponse(
-                                  getUploadId(),
-                                  getBuffer(),
-                                  driftOffset,
-                                  remoteNextByteOffset,
-                                  retryChunkLength,
-                                  last);
-                    } else if (localNextByteOffset < remoteNextByteOffset
-                        && driftOffset == getChunkSize()) {
-                      // Case 3
-                      // How does bigquery handle this logic?
-                      // Continue to next chunk
-                      retrying = false;
-                      return;
-                    } else if (localNextByteOffset < remoteNextByteOffset
-                        && driftOffset > getChunkSize()) {
-                      // Case 4
-                      StringBuilder sb = new StringBuilder();
-                      sb.append(
-                          "Remote offset has progressed beyond starting byte offset of next chunk.");
-                      sb.append(
-                          "This may be a symptom of multiple clients uploading to the same upload session.\n\n");
-                      sb.append("For debugging purposes:\n");
-                      sb.append("uploadId: ").append(getUploadId()).append('\n');
-                      sb.append("localNextByteOffset: ").append(localNextByteOffset).append('\n');
-                      sb.append("remoteNextByteOffset: ").append(remoteNextByteOffset).append('\n');
-                      sb.append("driftOffset: ").append(driftOffset).append("\n\n");
-                      throw new StorageException(0, sb.toString());
-                    } else if (remoteNextByteOffset == -1 && last) {
-                      // Case 6
-                      if (storageObject == null) {
-                        // Request object metadata
-                        storageObject =
-                            getOptions().getStorageRpcV1().get(getEntity().toPb(), null);
-                      }
-                      retrying = false;
-                      return;
-                    } else if (remoteNextByteOffset == -1 && !last && !checkingForLastChunk) {
-                      // Case 7
-                      // Make sure this is the last chunk.
-                      checkingForLastChunk = true;
-                      // Continue onto next chunk in case this is the last chunk
-                      return;
-                    } else if (remoteNextByteOffset == -1 && !last && checkingForLastChunk) {
-                      // Case 8
-                      throw new StorageException(0, "Resumable upload is already complete.");
-                    } else {
-                      // Case 9
-                      StringBuilder sb = new StringBuilder();
-                      sb.append(
-                          "Local offset has progressed beyond the remote byte offset of next chunk.\n\n");
-                      sb.append("For debugging purposes:\n");
-                      sb.append("uploadId: ").append(getUploadId()).append('\n');
-                      sb.append("localNextByteOffset: ").append(localNextByteOffset).append('\n');
-                      sb.append("remoteNextByteOffset: ").append(remoteNextByteOffset).append('\n');
-                      sb.append("driftOffset: ").append(driftOffset).append("\n\n");
-                      throw new StorageException(0, sb.toString());
-                    }
                   }
-                  // Request was successful and retrying state is now disabled.
-                  retrying = false;
+                  if (uploadCompletedAlready && lastChunk) {
+                    // Case 6
+                    if (storageObject == null) {
+                      // Request object metadata
+                      storageObject = getRemoteStorageObject();
+                    }
+                    retrying = false;
+                  } else if (remotePosition >= localPosition && chunkOffset < getChunkSize()) {
+                    // Case 1 && Case 2
+                    // We are in a position to send a chunk
+                    storageObject =
+                        transmitChunk(chunkOffset, chunkLength, remotePosition, lastChunk);
+                    retrying = false;
+                  } else if (localPosition < remotePosition && chunkOffset == getChunkSize()) {
+                    // Case 3
+                    // Continue to next chunk to catch up with remotePosition we are one chunk
+                    // behind
+                    retrying = false;
+                  } else if (uploadCompletedAlready && !lastChunk && !checkingForLastChunk) {
+                    // Case 7
+                    // Make sure this is the second to last chunk.
+                    checkingForLastChunk = true;
+                    // Continue onto next chunk in case this is the last chunk
+                  } else {
+                    // Case 4 && Case 8 && Case 9
+                    throw unrecoverableState(
+                        chunkOffset, chunkLength, localPosition, remotePosition, lastChunk);
+                  }
                 }
               }),
           getOptions().getRetrySettings(),
