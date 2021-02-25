@@ -163,6 +163,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                     } else if (localNextByteOffset < remoteNextByteOffset
                         && driftOffset == getChunkSize()) {
                       // Case 3
+                      // How does bigquery handle this logic?
                       // Continue to next chunk
                       retrying = false;
                       return;

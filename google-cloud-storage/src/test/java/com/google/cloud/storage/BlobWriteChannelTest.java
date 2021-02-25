@@ -169,7 +169,7 @@ public class BlobWriteChannelTest {
   }
 
   @Test
-  public void testWriteWithDriftRetryCase1And2() throws IOException {
+  public void testWriteWithRetryFullChunk() throws IOException {
     StorageException exception = new StorageException(new SocketException("Socket closed"));
     ByteBuffer buffer = randomBuffer(MIN_CHUNK_SIZE);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
@@ -208,7 +208,7 @@ public class BlobWriteChannelTest {
   }
 
   @Test
-  public void testWriteWithDriftRetryCase3() throws IOException {
+  public void testWriteWithRemoteProgressMade() throws IOException {
     StorageException exception = new StorageException(new SocketException("Socket closed"));
     ByteBuffer buffer = randomBuffer(MIN_CHUNK_SIZE);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
@@ -222,6 +222,7 @@ public class BlobWriteChannelTest {
                 eq(MIN_CHUNK_SIZE),
                 eq(false)))
         .andThrow(exception);
+    // Simulate GCS received 10 bytes but not the rest of the chunk
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(10L);
     expect(
             storageRpcMock.writeWithResponse(
@@ -280,7 +281,7 @@ public class BlobWriteChannelTest {
   }
 
   @Test
-  public void testWriteWithDriftRetryCase5() throws IOException {
+  public void testWriteWithUnreachableRemoteOffset() throws IOException {
     StorageException exception = new StorageException(new SocketException("Socket closed"));
     ByteBuffer buffer = randomBuffer(MIN_CHUNK_SIZE);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
@@ -310,7 +311,7 @@ public class BlobWriteChannelTest {
   }
 
   @Test
-  public void testWriteWithDriftRetryCase7And8() throws IOException {
+  public void testWriteWithRetryAndObjectMetadata() throws IOException {
     StorageException exception = new StorageException(new SocketException("Socket closed"));
     ByteBuffer buffer = randomBuffer(MIN_CHUNK_SIZE);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
@@ -348,7 +349,7 @@ public class BlobWriteChannelTest {
   }
 
   @Test
-  public void testWriteWithDriftRetryCase9() throws IOException {
+  public void testWriteWithUploadCompletedByAnotherClient() throws IOException {
     StorageException exception = new StorageException(new SocketException("Socket closed"));
     StorageException completedException =
         new StorageException(0, "Resumable upload is already complete.");
@@ -392,7 +393,7 @@ public class BlobWriteChannelTest {
   }
 
   @Test
-  public void testWriteWithDriftRetryCase10() throws IOException {
+  public void testWriteWithLocalOffsetGoingBeyondRemoteOffset() throws IOException {
     StorageException exception = new StorageException(new SocketException("Socket closed"));
     ByteBuffer buffer = randomBuffer(MIN_CHUNK_SIZE);
     Capture<byte[]> capturedBuffer = Capture.newInstance();
