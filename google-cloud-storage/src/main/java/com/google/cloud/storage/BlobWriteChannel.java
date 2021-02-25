@@ -161,19 +161,24 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                   final long remotePosition = isRetrying() ? getRemotePosition() : getPosition();
                   final int chunkOffset = (int) (remotePosition - localPosition);
                   final int chunkLength = length - chunkOffset;
-                  final boolean uploadCompletedAlready = remotePosition == -1;
+                  final boolean uploadAlreadyComplete = remotePosition == -1;
                   // Enable isRetrying state to reduce number of calls to getCurrentUploadOffset()
                   if (!isRetrying()) {
                     retrying = true;
                   }
-                  if (uploadCompletedAlready && lastChunk) {
+                  if (uploadAlreadyComplete && !lastChunk && !checkingForLastChunk) {
+                    // Case 7
+                    // Make sure this is the second to last chunk.
+                    checkingForLastChunk = true;
+                    // Continue onto next chunk in case this is the last chunk
+                  } else if (uploadAlreadyComplete && lastChunk) {
                     // Case 6
                     if (storageObject == null) {
                       // Request object metadata
                       storageObject = getRemoteStorageObject();
                     }
                     retrying = false;
-                  } else if (remotePosition >= localPosition && chunkOffset < getChunkSize()) {
+                  } else if (localPosition <= remotePosition && chunkOffset < getChunkSize()) {
                     // Case 1 && Case 2
                     // We are in a position to send a chunk
                     storageObject =
@@ -184,11 +189,6 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                     // Continue to next chunk to catch up with remotePosition we are one chunk
                     // behind
                     retrying = false;
-                  } else if (uploadCompletedAlready && !lastChunk && !checkingForLastChunk) {
-                    // Case 7
-                    // Make sure this is the second to last chunk.
-                    checkingForLastChunk = true;
-                    // Continue onto next chunk in case this is the last chunk
                   } else {
                     // Case 4 && Case 8 && Case 9
                     throw unrecoverableState(
