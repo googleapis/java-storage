@@ -3624,24 +3624,4 @@ public class ITStorageTest {
     assertThat(blob.getKmsKeyName()).isNotNull();
     assertThat(storage.delete(BUCKET, blobName)).isTrue();
   }
-
-  @Test
-  public void testWriterLargeBlob() throws IOException {
-    // Write an empty object with a kmsKeyName.
-    String blobName = "test-empty-blob";
-    BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
-    Blob blob = storage.create(blobInfo);
-
-    // Create a writer using blob that already has metadata received from Storage API.
-    final int max_iterations = 1024 * 1024 * 10;
-    int numberOfBytes = 0;
-    byte[] content = BLOB_STRING_CONTENT.getBytes(UTF_8);
-    try (WriteChannel writer = blob.writer()) {
-      for (int i = 0; i < max_iterations; i++) {
-        numberOfBytes += writer.write(ByteBuffer.wrap(content, 0, content.length));
-      }
-    }
-    assertThat(numberOfBytes).isEqualTo(max_iterations * content.length);
-    assertThat(storage.delete(BUCKET, blobName)).isTrue();
-  }
 }
