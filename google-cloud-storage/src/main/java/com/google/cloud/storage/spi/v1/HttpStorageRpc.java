@@ -32,6 +32,7 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.json.JsonHttpContent;
@@ -765,7 +766,8 @@ public class HttpStorageRpc implements StorageRpc {
       try {
         response = httpRequest.execute();
         int code = response.getStatusCode();
-        if (code == 201 || code == 200) {
+        if (HttpStatusCodes.isSuccess(code)) {
+          // Upload completed successfully
           return -1;
         }
         StringBuilder sb = new StringBuilder();
@@ -774,20 +776,18 @@ public class HttpStorageRpc implements StorageRpc {
         throw new StorageException(0, sb.toString());
       } catch (HttpResponseException ex) {
         int code = ex.getStatusCode();
-        if (code == 308 && ex.getHeaders().getRange() == null) {
-          // No progress has been made.
-          return 0;
-        } else if (code == 308 && ex.getHeaders().getRange() != null) {
+        if (code == 308) {
+          if (ex.getHeaders().getRange() == null) {
+            // No progress has been made.
+            return 0;
+          }
           // API returns last byte received offset
           String range = ex.getHeaders().getRange();
           // Return next byte offset by adding 1 to last byte received offset
           return Long.parseLong(range.substring(range.indexOf("-") + 1)) + 1;
         } else {
-          // Not certain what went wrong
-          StringBuilder sb = new StringBuilder();
-          sb.append("Not sure what occurred. Here's debugging information:\n");
-          sb.append("Response:\n").append(ex.toString()).append("\n\n");
-          throw new StorageException(0, sb.toString());
+          // Something else occurred like a 5xx so translate and throw.
+          throw translate(ex);
         }
       } finally {
         if (response != null) {
