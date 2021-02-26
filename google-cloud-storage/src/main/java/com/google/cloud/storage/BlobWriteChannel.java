@@ -66,10 +66,10 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   }
 
   private StorageObject transmitChunk(
-      int chunkOffset, int chunkLength, long nextOffset, boolean last) {
+      int chunkOffset, int chunkLength, long position, boolean last) {
     return getOptions()
         .getStorageRpcV1()
-        .writeWithResponse(getUploadId(), getBuffer(), chunkOffset, nextOffset, chunkLength, last);
+        .writeWithResponse(getUploadId(), getBuffer(), chunkOffset, position, chunkLength, last);
   }
 
   private long getRemotePosition() {
@@ -81,7 +81,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   }
 
   private StorageException unrecoverableState(
-      int chunkOffset, int chunkLength, long localOffset, long remoteOffset, boolean last) {
+      int chunkOffset, int chunkLength, long localPosition, long remotePosition, boolean last) {
     StringBuilder sb = new StringBuilder();
     sb.append("Unable to recover in upload.\n");
     sb.append(
@@ -90,8 +90,8 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
     sb.append("uploadId: ").append(getUploadId()).append('\n');
     sb.append("chunkOffset: ").append(chunkOffset).append('\n');
     sb.append("chunkLength: ").append(chunkLength).append('\n');
-    sb.append("localOffset: ").append(localOffset).append('\n');
-    sb.append("remoteOffset: ").append(remoteOffset).append('\n');
+    sb.append("localOffset: ").append(localPosition).append('\n');
+    sb.append("remoteOffset: ").append(remotePosition).append('\n');
     sb.append("lastChunk: ").append(last).append("\n\n");
     return new StorageException(0, sb.toString());
   }
@@ -158,26 +158,32 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                 public void run() {
                   // Get remote offset from API
                   final long localPosition = getPosition();
+                  // For each request it should be possible to retry from its location in this code
                   final long remotePosition = isRetrying() ? getRemotePosition() : getPosition();
                   final int chunkOffset = (int) (remotePosition - localPosition);
                   final int chunkLength = length - chunkOffset;
                   final boolean uploadAlreadyComplete = remotePosition == -1;
-                  // Enable isRetrying state to reduce number of calls to getCurrentUploadOffset()
+                  // Enable isRetrying state to reduce number of calls to getRemotePosition()
                   if (!isRetrying()) {
                     retrying = true;
                   }
-                  if (uploadAlreadyComplete && !lastChunk && !checkingForLastChunk) {
+                  if (uploadAlreadyComplete && lastChunk) {
+                    // Case 6
+                    // Request object metadata if not available
+                    if (storageObject == null) {
+                      storageObject = getRemoteStorageObject();
+                    }
+                    // Verify that with the final chunk we match the blob length
+                    if (storageObject.getSize().longValue() != getPosition() + length) {
+                      throw unrecoverableState(
+                          chunkOffset, chunkLength, localPosition, remotePosition, lastChunk);
+                    }
+                    retrying = false;
+                  } else if (uploadAlreadyComplete && !lastChunk && !checkingForLastChunk) {
                     // Case 7
                     // Make sure this is the second to last chunk.
                     checkingForLastChunk = true;
                     // Continue onto next chunk in case this is the last chunk
-                  } else if (uploadAlreadyComplete && lastChunk) {
-                    // Case 6
-                    if (storageObject == null) {
-                      // Request object metadata
-                      storageObject = getRemoteStorageObject();
-                    }
-                    retrying = false;
                   } else if (localPosition <= remotePosition && chunkOffset < getChunkSize()) {
                     // Case 1 && Case 2
                     // We are in a position to send a chunk

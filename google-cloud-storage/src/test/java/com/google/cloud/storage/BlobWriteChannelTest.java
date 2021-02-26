@@ -41,6 +41,7 @@ import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
@@ -334,7 +335,8 @@ public class BlobWriteChannelTest {
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(-1L);
     expect(storageRpcMock.get(BLOB_INFO.toPb(), null)).andThrow(socketClosedException);
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(-1L);
-    expect(storageRpcMock.get(BLOB_INFO.toPb(), null)).andReturn(new StorageObject());
+    expect(storageRpcMock.get(BLOB_INFO.toPb(), null))
+        .andReturn(BLOB_INFO.toPb().setSize(BigInteger.valueOf(MIN_CHUNK_SIZE)));
     replay(storageRpcMock);
     writer = new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);
     writer.setChunkSize(MIN_CHUNK_SIZE);
@@ -483,7 +485,8 @@ public class BlobWriteChannelTest {
                 eq(true)))
         .andThrow(socketClosedException);
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(-1L);
-    expect(storageRpcMock.get(BLOB_INFO.toPb(), null)).andReturn(BLOB_INFO.toPb());
+    expect(storageRpcMock.get(BLOB_INFO.toPb(), null))
+        .andReturn(BLOB_INFO.toPb().setSize(BigInteger.valueOf(MIN_CHUNK_SIZE)));
     replay(storageRpcMock);
     writer = new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);
     assertEquals(MIN_CHUNK_SIZE, writer.write(buffer));
