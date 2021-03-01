@@ -1,5 +1,20 @@
 # Changelog
 
+### [1.113.12](https://www.github.com/googleapis/java-storage/compare/v1.113.11...v1.113.12) (2021-02-26)
+
+
+### Bug Fixes
+
+* retrying get remote offset and recover from last chunk failures. ([#726](https://www.github.com/googleapis/java-storage/issues/726)) ([b41b881](https://www.github.com/googleapis/java-storage/commit/b41b88109e13b5ebbd0393d1f264225c12876be6))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.2 ([#686](https://www.github.com/googleapis/java-storage/issues/686)) ([6b1f036](https://www.github.com/googleapis/java-storage/commit/6b1f0361376167719ec5456181134136d27d1d3c))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.20.0 ([#732](https://www.github.com/googleapis/java-storage/issues/732)) ([c98413d](https://www.github.com/googleapis/java-storage/commit/c98413df9d9514340aed78b5a4d5e596760bb616))
+* update kms.version to v0.87.7 ([#724](https://www.github.com/googleapis/java-storage/issues/724)) ([3229bd8](https://www.github.com/googleapis/java-storage/commit/3229bd860f3a4d700a969aa9e922bbf6b5c1ca10))
+* update kms.version to v0.87.8 ([#733](https://www.github.com/googleapis/java-storage/issues/733)) ([a21b75f](https://www.github.com/googleapis/java-storage/commit/a21b75fa846f373970298dd98f8f3520fc2b3c97))
+
 ### [1.113.11](https://www.github.com/googleapis/java-storage/compare/v1.113.10...v1.113.11) (2021-02-19)
 
 
