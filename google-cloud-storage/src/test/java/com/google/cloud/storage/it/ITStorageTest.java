@@ -3262,7 +3262,9 @@ public class ITStorageTest {
                 .build());
         fail("pap: expected adding allUsers policy to bucket should fail");
       } catch (StorageException storageException) {
-        // Expected storage exception.
+        // Creating a bucket with roles/storage.objectViewer is not
+        // allowed when publicAccessPrevention is enabled.
+        assertEquals(storageException.getCode(), 412);
       }
 
       // Making object public via ACL should fail.
@@ -3274,7 +3276,9 @@ public class ITStorageTest {
             Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
         fail("pap: expected adding allUsers ACL to object should fail");
       } catch (StorageException storageException) {
-        // Expected storage exception.
+        // Creating an object with allUsers roles/storage.viewer permission
+        // is not allowed. When Public Access Prevention is enabled.
+        assertEquals(storageException.getCode(), 412);
       }
 
       // Update PAP setting to unspecified should work and not affect UBLA setting.

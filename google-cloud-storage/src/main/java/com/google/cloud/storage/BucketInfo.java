@@ -103,6 +103,7 @@ public class BucketInfo implements Serializable {
 
   public enum PublicAccessPrevention {
     ENFORCED("enforced"),
+    // Default value for Public Access Prevention
     UNSPECIFIED("unspecified");
 
     private final String value;
@@ -125,9 +126,9 @@ public class BucketInfo implements Serializable {
   public static class IamConfiguration implements Serializable {
     private static final long serialVersionUID = -8671736104909424616L;
 
-    private Boolean isUniformBucketLevelAccessEnabled;
-    private Long uniformBucketLevelAccessLockedTime;
-    private PublicAccessPrevention publicAccessPrevention;
+    private final Boolean isUniformBucketLevelAccessEnabled;
+    private final Long uniformBucketLevelAccessLockedTime;
+    private final PublicAccessPrevention publicAccessPrevention;
 
     @Override
     public boolean equals(Object o) {
