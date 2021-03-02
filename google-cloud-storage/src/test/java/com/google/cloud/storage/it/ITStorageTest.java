@@ -3260,7 +3260,7 @@ public class ITStorageTest {
                             .addMembers("allUsers")
                             .build()))
                 .build());
-        fail("pap: expected adding AllUsers policy to bucket should fail");
+        fail("pap: expected adding allUsers policy to bucket should fail");
       } catch (StorageException storageException) {
         // Expected storage exception.
       }
@@ -3272,7 +3272,7 @@ public class ITStorageTest {
             "pap-test-object",
             "".getBytes(),
             Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
-        fail("pap: expected adding AllUsers ACL to object should fail");
+        fail("pap: expected adding allUsers ACL to object should fail");
       } catch (StorageException storageException) {
         // Expected storage exception.
       }
@@ -3303,7 +3303,7 @@ public class ITStorageTest {
             "".getBytes(),
             Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
       } catch (StorageException storageException) {
-        fail("pap: expected adding AllUsers ACL to object to succeed");
+        fail("pap: expected adding allUsers ACL to object to succeed");
       }
 
       // Now, making bucket public should succeed.
@@ -3320,7 +3320,7 @@ public class ITStorageTest {
                             .build()))
                 .build());
       } catch (StorageException storageException) {
-        fail("pap: expected adding AllUsers policy to bucket to succeed");
+        fail("pap: expected adding allUsers policy to bucket to succeed");
       }
 
       // Updating UBLA should not affect PAP setting.
