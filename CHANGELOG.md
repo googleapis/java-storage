@@ -1,5 +1,88 @@
 # Changelog
 
+### [1.113.12](https://www.github.com/googleapis/java-storage/compare/v1.113.11...v1.113.12) (2021-02-26)
+
+
+### Bug Fixes
+
+* retrying get remote offset and recover from last chunk failures. ([#726](https://www.github.com/googleapis/java-storage/issues/726)) ([b41b881](https://www.github.com/googleapis/java-storage/commit/b41b88109e13b5ebbd0393d1f264225c12876be6))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.2 ([#686](https://www.github.com/googleapis/java-storage/issues/686)) ([6b1f036](https://www.github.com/googleapis/java-storage/commit/6b1f0361376167719ec5456181134136d27d1d3c))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.20.0 ([#732](https://www.github.com/googleapis/java-storage/issues/732)) ([c98413d](https://www.github.com/googleapis/java-storage/commit/c98413df9d9514340aed78b5a4d5e596760bb616))
+* update kms.version to v0.87.7 ([#724](https://www.github.com/googleapis/java-storage/issues/724)) ([3229bd8](https://www.github.com/googleapis/java-storage/commit/3229bd860f3a4d700a969aa9e922bbf6b5c1ca10))
+* update kms.version to v0.87.8 ([#733](https://www.github.com/googleapis/java-storage/issues/733)) ([a21b75f](https://www.github.com/googleapis/java-storage/commit/a21b75fa846f373970298dd98f8f3520fc2b3c97))
+
+### [1.113.11](https://www.github.com/googleapis/java-storage/compare/v1.113.10...v1.113.11) (2021-02-19)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.19.0 ([#719](https://www.github.com/googleapis/java-storage/issues/719)) ([5831bfa](https://www.github.com/googleapis/java-storage/commit/5831bfae3afeab9b044c8d53ebf6a2ce79bc9950))
+
+### [1.113.10](https://www.github.com/googleapis/java-storage/compare/v1.113.9...v1.113.10) (2021-02-17)
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20210127-1.31.0 ([#706](https://www.github.com/googleapis/java-storage/issues/706)) ([04db8f7](https://www.github.com/googleapis/java-storage/commit/04db8f7b87644559685d4c05a67a74e4c8bea364))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.18.0 ([#683](https://www.github.com/googleapis/java-storage/issues/683)) ([6f172eb](https://www.github.com/googleapis/java-storage/commit/6f172eba6fd6e9c11a1f49569249ea6e714ea91f))
+* update kms.version to v0.87.6 ([#702](https://www.github.com/googleapis/java-storage/issues/702)) ([a50c333](https://www.github.com/googleapis/java-storage/commit/a50c333f6e944fa4c6bdf9613cddca7c4fe79652))
+
+### [1.113.9](https://www.github.com/googleapis/java-storage/compare/v1.113.8...v1.113.9) (2021-01-12)
+
+
+### Bug Fixes
+
+* last chunk is retriable ([#677](https://www.github.com/googleapis/java-storage/issues/677)) ([44f49e0](https://www.github.com/googleapis/java-storage/commit/44f49e0a33c3e541d9f8b22622ffff17cc8b8eaa))
+* unnecessary options in resumable upload URL ([#679](https://www.github.com/googleapis/java-storage/issues/679)) ([d31a39b](https://www.github.com/googleapis/java-storage/commit/d31a39b88b2d8adb04549330f9b8ff1c1a516b69))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.17.1 ([#678](https://www.github.com/googleapis/java-storage/issues/678)) ([d4a237f](https://www.github.com/googleapis/java-storage/commit/d4a237f4dff9dd870a69d5da9d690c14d4e88610))
+* update kms.version to v0.87.5 ([#662](https://www.github.com/googleapis/java-storage/issues/662)) ([20e7c1f](https://www.github.com/googleapis/java-storage/commit/20e7c1f10a233df6d4660b31d26cd95a6d4002e9))
+
+### [1.113.8](https://www.github.com/googleapis/java-storage/compare/v1.113.7...v1.113.8) (2020-12-16)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.17.0 ([#659](https://www.github.com/googleapis/java-storage/issues/659)) ([5fa03fa](https://www.github.com/googleapis/java-storage/commit/5fa03fa14aa9ee29e7b1b27b783ab873052b97c6))
+
+### [1.113.7](https://www.github.com/googleapis/java-storage/compare/v1.113.6...v1.113.7) (2020-12-14)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.16.1 ([f1fc884](https://www.github.com/googleapis/java-storage/commit/f1fc884851ee602d737f3e4191acb1f8450c8f2c))
+
+### [1.113.6](https://www.github.com/googleapis/java-storage/compare/v1.113.5...v1.113.6) (2020-12-10)
+
+
+### Bug Fixes
+
+* content-length missing in offset request ([#647](https://www.github.com/googleapis/java-storage/issues/647)) ([3cd3815](https://www.github.com/googleapis/java-storage/commit/3cd3815c62603d05d4c571ba1affeaf91e4d8040))
+
+
+### Dependencies
+
+* update kms.version to v0.87.3 ([#646](https://www.github.com/googleapis/java-storage/issues/646)) ([c93896a](https://www.github.com/googleapis/java-storage/commit/c93896a5007b48753809de806ddaf6c8df6e9d56))
+
+### [1.113.5](https://www.github.com/googleapis/java-storage/compare/v1.113.4...v1.113.5) (2020-12-07)
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.1 ([#611](https://www.github.com/googleapis/java-storage/issues/611)) ([7c4c759](https://www.github.com/googleapis/java-storage/commit/7c4c759d8bca9c20252e06e02eb8ead3bd9f88d6))
+* update dependency com.google.api.grpc:grpc-google-cloud-kms-v1 to v0.87.2 ([#625](https://www.github.com/googleapis/java-storage/issues/625)) ([243a3cb](https://www.github.com/googleapis/java-storage/commit/243a3cb1506b2e2d609210dc4e9608637c06d7f3))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20201112-1.30.10 ([#613](https://www.github.com/googleapis/java-storage/issues/613)) ([b0e24db](https://www.github.com/googleapis/java-storage/commit/b0e24db88c784fd05988a813bd8b29aeff0739f2))
+* update dependency com.google.apis:google-api-services-storage to v1-rev20201112-1.31.0 ([#641](https://www.github.com/googleapis/java-storage/issues/641)) ([11da9c7](https://www.github.com/googleapis/java-storage/commit/11da9c7e9058c508423e7b2f84c897ab3e9ab3f3))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.16.0 ([#639](https://www.github.com/googleapis/java-storage/issues/639)) ([68a3af9](https://www.github.com/googleapis/java-storage/commit/68a3af9b12c0e05d2cf59fb58aceab15323e29b1))
+* update dependency org.apache.httpcomponents:httpcore to v4.4.14 ([#637](https://www.github.com/googleapis/java-storage/issues/637)) ([af53902](https://www.github.com/googleapis/java-storage/commit/af5390239ffd1e157f066a1009b7bb18fa6264ec))
+
 ### [1.113.4](https://www.github.com/googleapis/java-storage/compare/v1.113.3...v1.113.4) (2020-11-13)
 
 

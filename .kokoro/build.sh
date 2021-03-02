@@ -29,7 +29,7 @@ echo ${JOB_TYPE}
 
 # attempt to install 3 times with exponential backoff (starting with 10 seconds)
 retry_with_backoff 3 10 \
-  mvn install -B -V \
+  mvn install -B -V -ntp \
     -DskipTests=true \
     -Dclirr.skip=true \
     -Denforcer.skip=true \
@@ -60,6 +60,7 @@ javadoc)
     ;;
 integration)
     mvn -B ${INTEGRATION_TEST_ARGS} \
+      -ntp \
       -Penable-integration-tests \
       -DtrimStackTrace=false \
       -Dclirr.skip=true \
@@ -81,6 +82,7 @@ samples)
         pushd ${SAMPLES_DIR}
         mvn -B \
           -Penable-samples \
+          -ntp \
           -DtrimStackTrace=false \
           -Dclirr.skip=true \
           -Denforcer.skip=true \
@@ -110,8 +112,8 @@ bash .kokoro/coerce_logs.sh
 
 if [[ "${ENABLE_BUILD_COP}" == "true" ]]
 then
-    chmod +x ${KOKORO_GFILE_DIR}/linux_amd64/buildcop
-    ${KOKORO_GFILE_DIR}/linux_amd64/buildcop -repo=googleapis/java-storage
+    chmod +x ${KOKORO_GFILE_DIR}/linux_amd64/flakybot
+    ${KOKORO_GFILE_DIR}/linux_amd64/flakybot -repo=googleapis/java-storage
 fi
 
 echo "exiting with ${RETURN_CODE}"
