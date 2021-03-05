@@ -264,6 +264,9 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       uploadHelper(Channels.newChannel(content), writer, bufferSize);
     }
     StorageObject objectProto = blobWriteChannel.getStorageObject();
+    if (objectProto == null) {
+      return get(blobInfo.getBlobId(), null);
+    }
     return Blob.fromPb(this, objectProto);
   }
 
