@@ -25,6 +25,8 @@ import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.common.collect.Maps;
+
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -77,7 +79,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   }
 
   private StorageObject getRemoteStorageObject() {
-    return getOptions().getStorageRpcV1().get(getEntity().toPb(), null);
+    return getOptions().getStorageRpcV1().get(getEntity().toPb(), Maps.newEnumMap(StorageRpc.Option.class));
   }
 
   private StorageException unrecoverableState(

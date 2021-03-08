@@ -3404,21 +3404,32 @@ public class ITStorageTest {
 
   @Test
   public void testUploadFromDownloadTo() throws Exception {
-    String blobName = "test-uploadFrom-downloadTo-blob";
-    BlobId blobId = BlobId.of(BUCKET, blobName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-
     Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
-    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
-    Blob blob = storage.createFrom(blobInfo, tempFileFrom);
-    assertEquals(BUCKET, blob.getBucket());
-    assertEquals(blobName, blob.getName());
-    assertEquals(BLOB_BYTE_CONTENT.length, (long) blob.getSize());
+    Random rnd = new Random();
+    byte[] bytes = new byte[1024*1024*30]; // 30MiB
+    rnd.nextBytes(bytes);
+    Files.write(tempFileFrom, bytes);
+    final int iterations = 10;
+    final int totalBytes = bytes.length * iterations;
+    long startTime = System.nanoTime();
+    for (int i = 0; i < iterations; i++) {
+      String blobName = "test-uploadFrom-downloadTo-blob";
+      BlobId blobId = BlobId.of(BUCKET, blobName);
+      BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
-    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
-    storage.get(blobId).downloadTo(tempFileTo);
-    byte[] readBytes = Files.readAllBytes(tempFileTo);
-    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+      Blob blob = storage.createFrom(blobInfo, tempFileFrom);
+      assertEquals(BUCKET, blob.getBucket());
+      assertEquals(blobName, blob.getName());
+      assertEquals(bytes.length, (long) blob.getSize());
+
+//      Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
+//      storage.get(blobId).downloadTo(tempFileTo);
+//      byte[] readBytes = Files.readAllBytes(tempFileTo);
+//      assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
+    }
+    long endTime = System.nanoTime();
+    double deltaInSeconds = (endTime - startTime) / 1_000_000_000.0;
+    System.out.println((8*totalBytes/deltaInSeconds)/(1024*1024));
   }
 
   @Test
