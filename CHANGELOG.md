@@ -1,5 +1,17 @@
 # Changelog
 
+### [1.113.13](https://www.github.com/googleapis/java-storage/compare/v1.113.12...v1.113.13) (2021-03-08)
+
+
+### Bug Fixes
+
+* npe in createFrom ([#746](https://www.github.com/googleapis/java-storage/issues/746)) ([9ed9d13](https://www.github.com/googleapis/java-storage/commit/9ed9d1389e92766b66e2b8b4fb78b44d96d98803))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.3 ([#737](https://www.github.com/googleapis/java-storage/issues/737)) ([71b3842](https://www.github.com/googleapis/java-storage/commit/71b384233226531eabc1bd8eebf716ec53708afc))
+
 ### [1.113.12](https://www.github.com/googleapis/java-storage/compare/v1.113.11...v1.113.12) (2021-02-26)
 
 
