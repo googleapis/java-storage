@@ -3235,18 +3235,21 @@ public class ITStorageTest {
     }
   }
 
+  private Bucket generatePublicAccessPreventionBucket(String bucketName) {
+    return storage.create(
+        Bucket.newBuilder(bucketName)
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                    .build())
+            .build());
+  }
+
   @Test
-  public void testUnspecifiedAndEnforcedPublicAccessPreventionOnBucket() throws Exception {
+  public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = RemoteStorageHelper.generateBucketName();
     try {
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(papBucket)
-                  .setIamConfiguration(
-                      BucketInfo.IamConfiguration.newBuilder()
-                          .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                          .build())
-                  .build());
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket);
       // Making bucket public should fail.
       try {
         storage.setIamPolicy(
@@ -3280,24 +3283,16 @@ public class ITStorageTest {
         // is not allowed. When Public Access Prevention is enabled.
         assertEquals(storageException.getCode(), 412);
       }
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
+    }
+  }
 
-      // Update PAP setting to unspecified should work and not affect UBLA setting.
-      bucket
-          .toBuilder()
-          .setIamConfiguration(
-              bucket
-                  .getIamConfiguration()
-                  .toBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
-                  .build())
-          .build()
-          .update();
-      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
-      assertEquals(
-          bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
-      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+  @Test
+  public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
+    String papBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket);
 
       // Now, making object public or making bucket public should succeed.
       try {
@@ -3326,6 +3321,34 @@ public class ITStorageTest {
       } catch (StorageException storageException) {
         fail("pap: expected adding allUsers policy to bucket to succeed");
       }
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
+    }
+  }
+
+  @Test
+  public void testUblaWithPublicAccessPreventionOnBucket() throws Exception {
+    String papBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket);
+
+      // Update PAP setting to unspecified should work and not affect UBLA setting.
+      bucket
+          .toBuilder()
+          .setIamConfiguration(
+              bucket
+                  .getIamConfiguration()
+                  .toBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
+                  .build())
+          .build()
+          .update();
+      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      assertEquals(
+          bucket.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
+      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
       // Updating UBLA should not affect PAP setting.
       bucket =
