@@ -101,6 +101,12 @@ public class BucketInfo implements Serializable {
   private final String locationType;
   private final Logging logging;
 
+  /**
+   * Public Access Prevention enum with expected values.
+   *
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
+   */
   public enum PublicAccessPrevention {
     ENFORCED("enforced"),
     // Default value for Public Access Prevention
@@ -122,6 +128,8 @@ public class BucketInfo implements Serializable {
    *
    * @see <a href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">uniform
    *     bucket-level access</a>
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
    */
   public static class IamConfiguration implements Serializable {
     private static final long serialVersionUID = -8671736104909424616L;
