@@ -3235,12 +3235,15 @@ public class ITStorageTest {
     }
   }
 
-  private Bucket generatePublicAccessPreventionBucket(String bucketName) {
+  private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
     return storage.create(
         Bucket.newBuilder(bucketName)
             .setIamConfiguration(
                 BucketInfo.IamConfiguration.newBuilder()
-                    .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                    .setPublicAccessPrevention(
+                        enforced
+                            ? BucketInfo.PublicAccessPrevention.ENFORCED
+                            : BucketInfo.PublicAccessPrevention.UNSPECIFIED)
                     .build())
             .build());
   }
@@ -3249,7 +3252,7 @@ public class ITStorageTest {
   public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = RemoteStorageHelper.generateBucketName();
     try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket);
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, true);
       // Making bucket public should fail.
       try {
         storage.setIamPolicy(
@@ -3292,7 +3295,7 @@ public class ITStorageTest {
   public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = RemoteStorageHelper.generateBucketName();
     try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket);
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
 
       // Now, making object public or making bucket public should succeed.
       try {
@@ -3327,26 +3330,31 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testUblaWithPublicAccessPreventionOnBucket() throws Exception {
+  public void testUBLAWithPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = RemoteStorageHelper.generateBucketName();
     try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket);
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
+      assertEquals(
+          bucket.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
+      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
-      // Update PAP setting to unspecified should work and not affect UBLA setting.
+      // Update PAP setting to ENFORCED and should not affect UBLA setting.
       bucket
           .toBuilder()
           .setIamConfiguration(
               bucket
                   .getIamConfiguration()
                   .toBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.UNSPECIFIED)
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
                   .build())
           .build()
           .update();
       bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
+          BucketInfo.PublicAccessPrevention.ENFORCED);
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
@@ -3366,7 +3374,7 @@ public class ITStorageTest {
       assertTrue(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
+          BucketInfo.PublicAccessPrevention.ENFORCED);
     } finally {
       RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
     }
