@@ -109,7 +109,9 @@ public class BucketInfo implements Serializable {
    */
   public enum PublicAccessPrevention {
     ENFORCED("enforced"),
-    // Default value for Public Access Prevention
+    /**
+     * Default value for Public Access Prevention
+     */
     UNSPECIFIED("unspecified");
 
     private final String value;
@@ -280,7 +282,7 @@ public class BucketInfo implements Serializable {
 
       /**
        * Sets the bucket's Public Access Prevention configuration. Currently supported options are
-       * 'unspecified' or 'enforced'.
+       * {@link PublicAccessPrevention#UNSPECIFIED} or {@link PublicAccessPrevention#ENFORCED}
        *
        * @see <a
        *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
