@@ -2053,11 +2053,11 @@ public class ITStorageTest {
 
     // try to download blobs from a public bucket
     String landsatBucket = "gcp-public-data-landsat";
-    String landsatPrefix = "LC08/PRE/044/034/LC80440342016259LGN00/";
-    String landsatBlob = landsatPrefix + "LC80440342016259LGN00_MTL.txt";
+    String landsatPrefix = "LC08/01/001/002/LC08_L1GT_001002_20160817_20170322_01_T2/";
+    String landsatBlob = landsatPrefix + "LC08_L1GT_001002_20160817_20170322_01_T2_ANG.txt";
     byte[] bytes = unauthorizedStorage.readAllBytes(landsatBucket, landsatBlob);
 
-    assertThat(bytes.length).isEqualTo(7903);
+    assertThat(bytes.length).isEqualTo(117255);
     int numBlobs = 0;
     Iterator<Blob> blobIterator =
         unauthorizedStorage
@@ -2068,7 +2068,7 @@ public class ITStorageTest {
       numBlobs++;
       blobIterator.next();
     }
-    assertThat(numBlobs).isEqualTo(13);
+    assertThat(numBlobs).isEqualTo(14);
 
     // try to download blobs from a bucket that requires authentication
     // authenticated client will succeed
