@@ -20,6 +20,7 @@ import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.storage.model.Bucket;
@@ -368,6 +369,22 @@ public class BucketInfoTest {
     assertEquals(
         BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
         iamConfiguration.getPublicAccessPrevention());
+  }
+
+  @Test
+  public void testPapValueOfIamConfiguration() {
+    try {
+      Bucket.IamConfiguration iamConfiguration = new Bucket.IamConfiguration();
+      Bucket.IamConfiguration.UniformBucketLevelAccess uniformBucketLevelAccess =
+          new Bucket.IamConfiguration.UniformBucketLevelAccess();
+      iamConfiguration.setUniformBucketLevelAccess(uniformBucketLevelAccess);
+      iamConfiguration.setPublicAccessPrevention("random-string");
+      BucketInfo.IamConfiguration.fromPb(iamConfiguration);
+      fail("Expected an IllegalArgumentException when passing in a bad");
+    } catch (IllegalArgumentException ex) {
+      // expected IllegalArgumentException because random-string does not map to an enum value
+      assertTrue(ex.getMessage().contains("random-string"));
+    }
   }
 
   @Test

@@ -109,9 +109,7 @@ public class BucketInfo implements Serializable {
    */
   public enum PublicAccessPrevention {
     ENFORCED("enforced"),
-    /**
-     * Default value for Public Access Prevention
-     */
+    /** Default value for Public Access Prevention */
     UNSPECIFIED("unspecified");
 
     private final String value;
@@ -225,13 +223,22 @@ public class BucketInfo implements Serializable {
       DateTime lockedTime = uniformBucketLevelAccess.getLockedTime();
       String publicAccessPrevention = iamConfiguration.getPublicAccessPrevention();
 
+      PublicAccessPrevention publicAccessPreventionValue = null;
+
+      try {
+        if (publicAccessPrevention != null) {
+          publicAccessPreventionValue =
+              PublicAccessPrevention.valueOf(publicAccessPrevention.toUpperCase());
+        }
+      } catch (IllegalArgumentException ex) {
+        throw new IllegalArgumentException(
+            "IamConfiguration: Received an unexpected value of " + publicAccessPrevention);
+      }
+
       return newBuilder()
           .setIsUniformBucketLevelAccessEnabled(uniformBucketLevelAccess.getEnabled())
           .setUniformBucketLevelAccessLockedTime(lockedTime == null ? null : lockedTime.getValue())
-          .setPublicAccessPrevention(
-              publicAccessPrevention == null
-                  ? null
-                  : PublicAccessPrevention.valueOf(publicAccessPrevention.toUpperCase()))
+          .setPublicAccessPrevention(publicAccessPreventionValue)
           .build();
     }
 
