@@ -4,7 +4,7 @@
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.113.15-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>1.113.15</version><!-- {x-version-update:google-cloud-storage:current} -->
   <name>Storage Parent</name>
   <url>https://github.com/googleapis/java-storage</url>
   <description>
