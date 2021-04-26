@@ -1,5 +1,18 @@
 # Changelog
 
+### [1.113.16](https://www.github.com/googleapis/java-storage/compare/v1.113.15...v1.113.16) (2021-04-23)
+
+
+### Bug Fixes
+
+* release scripts from issuing overlapping phases ([#784](https://www.github.com/googleapis/java-storage/issues/784)) ([36751f5](https://www.github.com/googleapis/java-storage/commit/36751f5de9708ac9e23550f67256fb05ebf1f69e))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.21.1 ([#789](https://www.github.com/googleapis/java-storage/issues/789)) ([c005e87](https://www.github.com/googleapis/java-storage/commit/c005e877a7d64c4bbd2ed267526d8025ea29a9ad))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v1 ([#794](https://www.github.com/googleapis/java-storage/issues/794)) ([195fead](https://www.github.com/googleapis/java-storage/commit/195fead94dea4c50f7e285e0a7a1578fa5b6265d))
+
 ### [1.113.15](https://www.github.com/googleapis/java-storage/compare/v1.113.14...v1.113.15) (2021-04-13)
 
 
