@@ -1,0 +1,186 @@
+{
+  "schema": "1.0",
+  "comment": "This file maps proto services/RPCs to the corresponding library clients/methods",
+  "language": "java",
+  "protoPackage": "google.storage.v1",
+  "libraryPackage": "com.google.cloud.google.storage.v1",
+  "services": {
+    "Storage": {
+      "clients": {
+        "grpc": {
+          "libraryClient": "StorageClient",
+          "rpcs": {
+            "ComposeObject": {
+              "methods": ["composeObject", "composeObjectCallable"]
+            },
+            "CopyObject": {
+              "methods": ["copyObject", "copyObjectCallable"]
+            },
+            "CreateHmacKey": {
+              "methods": ["createHmacKey", "createHmacKeyCallable"]
+            },
+            "DeleteBucket": {
+              "methods": ["deleteBucket", "deleteBucketCallable"]
+            },
+            "DeleteBucketAccessControl": {
+              "methods": ["deleteBucketAccessControl", "deleteBucketAccessControlCallable"]
+            },
+            "DeleteDefaultObjectAccessControl": {
+              "methods": ["deleteDefaultObjectAccessControl", "deleteDefaultObjectAccessControlCallable"]
+            },
+            "DeleteHmacKey": {
+              "methods": ["deleteHmacKey", "deleteHmacKeyCallable"]
+            },
+            "DeleteNotification": {
+              "methods": ["deleteNotification", "deleteNotificationCallable"]
+            },
+            "DeleteObject": {
+              "methods": ["deleteObject", "deleteObjectCallable"]
+            },
+            "DeleteObjectAccessControl": {
+              "methods": ["deleteObjectAccessControl", "deleteObjectAccessControlCallable"]
+            },
+            "GetBucket": {
+              "methods": ["getBucket", "getBucketCallable"]
+            },
+            "GetBucketAccessControl": {
+              "methods": ["getBucketAccessControl", "getBucketAccessControlCallable"]
+            },
+            "GetBucketIamPolicy": {
+              "methods": ["getBucketIamPolicy", "getBucketIamPolicyCallable"]
+            },
+            "GetDefaultObjectAccessControl": {
+              "methods": ["getDefaultObjectAccessControl", "getDefaultObjectAccessControlCallable"]
+            },
+            "GetHmacKey": {
+              "methods": ["getHmacKey", "getHmacKeyCallable"]
+            },
+            "GetNotification": {
+              "methods": ["getNotification", "getNotificationCallable"]
+            },
+            "GetObject": {
+              "methods": ["getObject", "getObjectCallable"]
+            },
+            "GetObjectAccessControl": {
+              "methods": ["getObjectAccessControl", "getObjectAccessControlCallable"]
+            },
+            "GetObjectIamPolicy": {
+              "methods": ["getObjectIamPolicy", "getObjectIamPolicyCallable"]
+            },
+            "GetObjectMedia": {
+              "methods": ["getObjectMediaCallable"]
+            },
+            "GetServiceAccount": {
+              "methods": ["getServiceAccount", "getServiceAccountCallable"]
+            },
+            "InsertBucket": {
+              "methods": ["insertBucket", "insertBucketCallable"]
+            },
+            "InsertBucketAccessControl": {
+              "methods": ["insertBucketAccessControl", "insertBucketAccessControlCallable"]
+            },
+            "InsertDefaultObjectAccessControl": {
+              "methods": ["insertDefaultObjectAccessControl", "insertDefaultObjectAccessControlCallable"]
+            },
+            "InsertNotification": {
+              "methods": ["insertNotification", "insertNotificationCallable"]
+            },
+            "InsertObject": {
+              "methods": ["insertObjectCallable"]
+            },
+            "InsertObjectAccessControl": {
+              "methods": ["insertObjectAccessControl", "insertObjectAccessControlCallable"]
+            },
+            "ListBucketAccessControls": {
+              "methods": ["listBucketAccessControls", "listBucketAccessControlsCallable"]
+            },
+            "ListBuckets": {
+              "methods": ["listBuckets", "listBucketsCallable"]
+            },
+            "ListChannels": {
+              "methods": ["listChannels", "listChannelsCallable"]
+            },
+            "ListDefaultObjectAccessControls": {
+              "methods": ["listDefaultObjectAccessControls", "listDefaultObjectAccessControlsCallable"]
+            },
+            "ListHmacKeys": {
+              "methods": ["listHmacKeys", "listHmacKeysCallable"]
+            },
+            "ListNotifications": {
+              "methods": ["listNotifications", "listNotificationsCallable"]
+            },
+            "ListObjectAccessControls": {
+              "methods": ["listObjectAccessControls", "listObjectAccessControlsCallable"]
+            },
+            "ListObjects": {
+              "methods": ["listObjects", "listObjectsCallable"]
+            },
+            "LockBucketRetentionPolicy": {
+              "methods": ["lockBucketRetentionPolicy", "lockBucketRetentionPolicyCallable"]
+            },
+            "PatchBucket": {
+              "methods": ["patchBucket", "patchBucketCallable"]
+            },
+            "PatchBucketAccessControl": {
+              "methods": ["patchBucketAccessControl", "patchBucketAccessControlCallable"]
+            },
+            "PatchDefaultObjectAccessControl": {
+              "methods": ["patchDefaultObjectAccessControl", "patchDefaultObjectAccessControlCallable"]
+            },
+            "PatchObject": {
+              "methods": ["patchObject", "patchObjectCallable"]
+            },
+            "PatchObjectAccessControl": {
+              "methods": ["patchObjectAccessControl", "patchObjectAccessControlCallable"]
+            },
+            "QueryWriteStatus": {
+              "methods": ["queryWriteStatus", "queryWriteStatusCallable"]
+            },
+            "RewriteObject": {
+              "methods": ["rewriteObject", "rewriteObjectCallable"]
+            },
+            "SetBucketIamPolicy": {
+              "methods": ["setBucketIamPolicy", "setBucketIamPolicyCallable"]
+            },
+            "SetObjectIamPolicy": {
+              "methods": ["setObjectIamPolicy", "setObjectIamPolicyCallable"]
+            },
+            "StartResumableWrite": {
+              "methods": ["startResumableWrite", "startResumableWriteCallable"]
+            },
+            "StopChannel": {
+              "methods": ["stopChannel", "stopChannelCallable"]
+            },
+            "TestBucketIamPermissions": {
+              "methods": ["testBucketIamPermissions", "testBucketIamPermissionsCallable"]
+            },
+            "TestObjectIamPermissions": {
+              "methods": ["testObjectIamPermissions", "testObjectIamPermissionsCallable"]
+            },
+            "UpdateBucket": {
+              "methods": ["updateBucket", "updateBucketCallable"]
+            },
+            "UpdateBucketAccessControl": {
+              "methods": ["updateBucketAccessControl", "updateBucketAccessControlCallable"]
+            },
+            "UpdateDefaultObjectAccessControl": {
+              "methods": ["updateDefaultObjectAccessControl", "updateDefaultObjectAccessControlCallable"]
+            },
+            "UpdateHmacKey": {
+              "methods": ["updateHmacKey", "updateHmacKeyCallable"]
+            },
+            "UpdateObject": {
+              "methods": ["updateObject", "updateObjectCallable"]
+            },
+            "UpdateObjectAccessControl": {
+              "methods": ["updateObjectAccessControl", "updateObjectAccessControlCallable"]
+            },
+            "WatchAllObjects": {
+              "methods": ["watchAllObjects", "watchAllObjectsCallable"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
