@@ -49,6 +49,11 @@ pushd target/docfx-yml
 python3 -m docuploader create-metadata \
  --name ${NAME} \
  --version ${VERSION} \
+ --xrefs devsite://java/gax \
+ --xrefs devsite://java/google-cloud-core \
+ --xrefs devsite://java/api-common \
+ --xrefs devsite://java/proto-google-common-protos \
+ --xrefs devsite://java/google-api-client \
  --language java
 
 # upload yml to production bucket
