@@ -110,7 +110,8 @@ public class BucketInfo implements Serializable {
   public enum PublicAccessPrevention {
     ENFORCED("enforced"),
     /** Default value for Public Access Prevention */
-    UNSPECIFIED("unspecified");
+    UNSPECIFIED("unspecified"),
+    UNKNOWN(null);
 
     private final String value;
 
@@ -120,6 +121,15 @@ public class BucketInfo implements Serializable {
 
     public String getValue() {
       return value;
+    }
+
+    public static PublicAccessPrevention parse(String value) {
+      String upper = value.toUpperCase();
+      try {
+        return valueOf(upper);
+      } catch (IllegalArgumentException ignore) {
+        return UNKNOWN;
+      }
     }
   }
 
@@ -224,15 +234,8 @@ public class BucketInfo implements Serializable {
       String publicAccessPrevention = iamConfiguration.getPublicAccessPrevention();
 
       PublicAccessPrevention publicAccessPreventionValue = null;
-
-      try {
-        if (publicAccessPrevention != null) {
-          publicAccessPreventionValue =
-              PublicAccessPrevention.valueOf(publicAccessPrevention.toUpperCase());
-        }
-      } catch (IllegalArgumentException ex) {
-        throw new IllegalArgumentException(
-            "IamConfiguration: Received an unexpected value of " + publicAccessPrevention);
+      if (publicAccessPrevention != null) {
+        publicAccessPreventionValue = PublicAccessPrevention.parse(publicAccessPrevention);
       }
 
       return newBuilder()

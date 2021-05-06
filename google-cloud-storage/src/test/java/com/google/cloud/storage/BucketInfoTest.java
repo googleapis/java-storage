@@ -20,7 +20,6 @@ import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.storage.model.Bucket;
@@ -32,11 +31,13 @@ import com.google.cloud.storage.BucketInfo.AgeDeleteRule;
 import com.google.cloud.storage.BucketInfo.CreatedBeforeDeleteRule;
 import com.google.cloud.storage.BucketInfo.DeleteRule;
 import com.google.cloud.storage.BucketInfo.DeleteRule.Type;
+import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.IsLiveDeleteRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
+import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -373,18 +374,14 @@ public class BucketInfoTest {
 
   @Test
   public void testPapValueOfIamConfiguration() {
-    try {
-      Bucket.IamConfiguration iamConfiguration = new Bucket.IamConfiguration();
-      Bucket.IamConfiguration.UniformBucketLevelAccess uniformBucketLevelAccess =
-          new Bucket.IamConfiguration.UniformBucketLevelAccess();
-      iamConfiguration.setUniformBucketLevelAccess(uniformBucketLevelAccess);
-      iamConfiguration.setPublicAccessPrevention("random-string");
-      BucketInfo.IamConfiguration.fromPb(iamConfiguration);
-      fail("Expected an IllegalArgumentException when passing in a bad");
-    } catch (IllegalArgumentException ex) {
-      // expected IllegalArgumentException because random-string does not map to an enum value
-      assertTrue(ex.getMessage().contains("random-string"));
-    }
+    Bucket.IamConfiguration iamConfiguration = new Bucket.IamConfiguration();
+    Bucket.IamConfiguration.UniformBucketLevelAccess uniformBucketLevelAccess =
+        new Bucket.IamConfiguration.UniformBucketLevelAccess();
+    iamConfiguration.setUniformBucketLevelAccess(uniformBucketLevelAccess);
+    iamConfiguration.setPublicAccessPrevention("random-string");
+    IamConfiguration fromPb = IamConfiguration.fromPb(iamConfiguration);
+
+    assertEquals(PublicAccessPrevention.UNKNOWN, fromPb.getPublicAccessPrevention());
   }
 
   @Test
