@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +112,10 @@ public class BucketInfo implements Serializable {
     ENFORCED("enforced"),
     /** Default value for Public Access Prevention */
     UNSPECIFIED("unspecified"),
+    /**
+     * If the api returns a value that isn't defined in {@link PublicAccessPrevention} this value
+     * will be returned.
+     */
     UNKNOWN(null);
 
     private final String value;
