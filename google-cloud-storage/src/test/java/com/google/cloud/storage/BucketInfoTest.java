@@ -18,9 +18,12 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.api.client.json.JsonGenerator;
+import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
@@ -41,6 +44,8 @@ import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -370,6 +375,24 @@ public class BucketInfoTest {
     assertEquals(
         BucketInfo.PublicAccessPrevention.ENFORCED.getValue(),
         iamConfiguration.getPublicAccessPrevention());
+  }
+
+  @Test
+  public void testPublicAccessPrevention_ensureAbsentWhenUnknown() throws IOException {
+    StringWriter stringWriter = new StringWriter();
+    JsonGenerator jsonGenerator = JacksonFactory.getDefaultInstance()
+        .createJsonGenerator(stringWriter);
+
+    jsonGenerator.serialize(BucketInfo.IamConfiguration.newBuilder()
+        .setIsUniformBucketLevelAccessEnabled(true)
+        .setUniformBucketLevelAccessLockedTime(System.currentTimeMillis())
+        .setPublicAccessPrevention(PublicAccessPrevention.UNKNOWN)
+        .build()
+        .toPb()
+    );
+    jsonGenerator.flush();
+
+    assertFalse(stringWriter.getBuffer().toString().contains("publicAccessPrevention"));
   }
 
   @Test
