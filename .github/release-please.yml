@@ -5,4 +5,4 @@ branches:
   - bumpMinorPreMajor: true
     handleGHRelease: true
     releaseType: java-lts
-    branch: sp-release
+    branch: 1.113.14-sp
