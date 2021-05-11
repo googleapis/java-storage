@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.113.14-sp.1](https://www.github.com/googleapis/java-storage/compare/1.113.14...v1.113.14-sp.1) (2021-05-11)
+
+
+### Bug Fixes
+
+* **test:** update blob paths used in storage.it.ITStorageTest#testDownloadPublicBlobWithoutAuthentication ([#759](https://www.github.com/googleapis/java-storage/issues/759)) ([#818](https://www.github.com/googleapis/java-storage/issues/818)) ([86f0250](https://www.github.com/googleapis/java-storage/commit/86f0250c1ad2dc33e353af3d41037c0b1a8dff87))
+
 ### [1.113.14](https://www.github.com/googleapis/java-storage/compare/v1.113.13...v1.113.14) (2021-03-11)
 
 
