@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Google Storage bucket metadata;
@@ -99,6 +100,8 @@ public class BucketInfo implements Serializable {
   private final IamConfiguration iamConfiguration;
   private final String locationType;
   private final Logging logging;
+
+  private static final Logger log = Logger.getLogger(BucketInfo.class.getName());
 
   /**
    * The Bucket's IAM Configuration.
@@ -351,9 +354,11 @@ public class BucketInfo implements Serializable {
           && condition.getCreatedBefore() == null
           && condition.getMatchesStorageClass() == null
           && condition.getNumberOfNewerVersions() == null) {
-        throw new IllegalArgumentException(
-            "You must specify at least one condition to use object lifecycle "
-                + "management. Please see https://cloud.google.com/storage/docs/lifecycle for details.");
+        log.warning(
+            "Creating a lifecycle condition with no supported conditions:\n"
+                + this
+                + "\nAttempting to update with this rule may cause errors. Please update "
+                + " to the latest version of google-cloud-storage");
       }
 
       this.lifecycleAction = action;
