@@ -359,9 +359,11 @@ public class BucketInfo implements Serializable {
           && condition.getNoncurrentTimeBefore() == null
           && condition.getCustomTimeBefore() == null
           && condition.getDaysSinceCustomTime() == null) {
-        log.warning("Creating a lifecycle condition with no supported conditions:\n"
+        log.warning(
+            "Creating a lifecycle condition with no supported conditions:\n"
                 + this
-                + "\nAttempting to update with this rule may cause errors.");
+                + "\nAttempting to update with this rule may cause errors. Please update "
+                + " to the latest version of google-cloud-storage");
       }
 
       this.lifecycleAction = action;
