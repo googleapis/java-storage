@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.114.0](https://www.github.com/googleapis/java-storage/compare/v1.113.16...v1.114.0) (2021-05-13)
+
+
+### Features
+
+* Remove client side vaildation for lifecycle conditions ([#816](https://www.github.com/googleapis/java-storage/issues/816)) ([5ec84cc](https://www.github.com/googleapis/java-storage/commit/5ec84cc2935a4787dd14a207d27501878f5849d5))
+
+
+### Bug Fixes
+
+* **test:** update blob paths used in storage.it.ITStorageTest#testDownloadPublicBlobWithoutAuthentication ([#759](https://www.github.com/googleapis/java-storage/issues/759)) ([#817](https://www.github.com/googleapis/java-storage/issues/817)) ([1a576ca](https://www.github.com/googleapis/java-storage/commit/1a576ca3945b51d7a678aa2414be91b3c6b2d55e))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.5 ([#820](https://www.github.com/googleapis/java-storage/issues/820)) ([9e1bc0b](https://www.github.com/googleapis/java-storage/commit/9e1bc0b42abdaab0b11d761ecdbb92f6116aacd2))
+* update dependency com.google.api.grpc:grpc-google-cloud-kms-v1 to v0.88.3 ([#797](https://www.github.com/googleapis/java-storage/issues/797)) ([747e7e4](https://www.github.com/googleapis/java-storage/commit/747e7e463c028b9cf8a406b7536b1916c1d52c01))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v1.1.0 ([#815](https://www.github.com/googleapis/java-storage/issues/815)) ([e210de9](https://www.github.com/googleapis/java-storage/commit/e210de93452243242be7d3d719d00da723632335))
+
 ### [1.113.16](https://www.github.com/googleapis/java-storage/compare/v1.113.15...v1.113.16) (2021-04-23)
 
 
