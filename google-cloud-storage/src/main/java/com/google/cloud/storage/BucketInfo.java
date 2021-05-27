@@ -1843,11 +1843,9 @@ public class BucketInfo implements Serializable {
     if (deleteRules != null || lifecycleRules != null) {
       Lifecycle lifecycle = new Lifecycle();
 
-      if (
-          (deleteRules == null && lifecycleRules.isEmpty())
+      if ((deleteRules == null && lifecycleRules.isEmpty())
           || (lifecycleRules == null && deleteRules.isEmpty())
-          || (deleteRules != null && deleteRules.isEmpty() && lifecycleRules.isEmpty())
-      ) {
+          || (deleteRules != null && deleteRules.isEmpty() && lifecycleRules.isEmpty())) {
         lifecycle.setRule(Collections.<Rule>emptyList());
       } else {
         Set<Rule> rules = new HashSet<>();
@@ -1878,7 +1876,7 @@ public class BucketInfo implements Serializable {
           lifecycle.setRule(ImmutableList.copyOf(rules));
         }
       }
-      
+
       bucketPb.setLifecycle(lifecycle);
     }
 

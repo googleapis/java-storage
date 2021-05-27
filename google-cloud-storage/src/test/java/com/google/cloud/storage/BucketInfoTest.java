@@ -390,49 +390,37 @@ public class BucketInfoTest {
 
   @Test
   public void testRuleMappingIsCorrect_deleteLifecycleRules() {
-    Bucket bucket = bi()
-        .deleteLifecycleRules()
-        .build().toPb();
+    Bucket bucket = bi().deleteLifecycleRules().build().toPb();
     assertEquals(EMPTY_LIFECYCLE, bucket.getLifecycle());
   }
 
   @Test
   @SuppressWarnings({"deprecation"})
   public void testRuleMappingIsCorrect_setDeleteRules_null() {
-    Bucket bucket = bi()
-        .setDeleteRules(null)
-        .build().toPb();
+    Bucket bucket = bi().setDeleteRules(null).build().toPb();
     assertNull(bucket.getLifecycle());
   }
 
   @Test
   @SuppressWarnings({"deprecation"})
   public void testRuleMappingIsCorrect_setDeleteRules_empty() {
-    Bucket bucket = bi()
-        .setDeleteRules(Collections.<DeleteRule>emptyList())
-        .build().toPb();
+    Bucket bucket = bi().setDeleteRules(Collections.<DeleteRule>emptyList()).build().toPb();
     assertEquals(EMPTY_LIFECYCLE, bucket.getLifecycle());
   }
 
   @Test
   public void testRuleMappingIsCorrect_setLifecycleRules_empty() {
-    Bucket bucket = bi()
-        .setLifecycleRules(Collections.<LifecycleRule>emptyList())
-        .build().toPb();
+    Bucket bucket = bi().setLifecycleRules(Collections.<LifecycleRule>emptyList()).build().toPb();
     assertEquals(EMPTY_LIFECYCLE, bucket.getLifecycle());
   }
 
-
   @Test
   public void testRuleMappingIsCorrect_setLifeCycleRules_nonEmpty() {
-    LifecycleRule lifecycleRule = new LifecycleRule(
-        LifecycleAction.newDeleteAction(),
-        LifecycleCondition.newBuilder().setAge(10).build());
-    Rule lifecycleDeleteAfter10 =
-        lifecycleRule.toPb();
-    Bucket bucket = bi()
-        .setLifecycleRules(ImmutableList.of(lifecycleRule))
-        .build().toPb();
+    LifecycleRule lifecycleRule =
+        new LifecycleRule(
+            LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(10).build());
+    Rule lifecycleDeleteAfter10 = lifecycleRule.toPb();
+    Bucket bucket = bi().setLifecycleRules(ImmutableList.of(lifecycleRule)).build().toPb();
     assertEquals(lifecycle(lifecycleDeleteAfter10), bucket.getLifecycle());
   }
 
@@ -441,9 +429,7 @@ public class BucketInfoTest {
   public void testRuleMappingIsCorrect_setDeleteRules_nonEmpty() {
     DeleteRule deleteRule = DELETE_RULES.get(0);
     Rule deleteRuleAge5 = deleteRule.toPb();
-    Bucket bucket = bi()
-        .setDeleteRules(ImmutableList.of(deleteRule))
-        .build().toPb();
+    Bucket bucket = bi().setDeleteRules(ImmutableList.of(deleteRule)).build().toPb();
     assertEquals(lifecycle(deleteRuleAge5), bucket.getLifecycle());
   }
 
@@ -461,5 +447,4 @@ public class BucketInfoTest {
     String bucketId = "bucketId";
     return BucketInfo.newBuilder(bucketId);
   }
-
 }
