@@ -104,25 +104,25 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-api</artifactId>
-      <version>1.36.1</version>
+      <version>1.36.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-netty-shaded</artifactId>
-      <version>1.36.1</version>
+      <version>1.36.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-auth</artifactId>
-      <version>1.36.1</version>
+      <version>1.36.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-stub</artifactId>
-      <version>1.36.1</version>
+      <version>1.36.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
