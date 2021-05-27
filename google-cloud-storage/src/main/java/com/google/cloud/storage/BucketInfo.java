@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1838,33 +1839,46 @@ public class BucketInfo implements Serializable {
       website.setNotFoundPage(notFoundPage);
       bucketPb.setWebsite(website);
     }
-    Set<Rule> rules = new HashSet<>();
-    if (deleteRules != null) {
-      rules.addAll(
-          transform(
-              deleteRules,
-              new Function<DeleteRule, Rule>() {
-                @Override
-                public Rule apply(DeleteRule deleteRule) {
-                  return deleteRule.toPb();
-                }
-              }));
-    }
-    if (lifecycleRules != null) {
-      rules.addAll(
-          transform(
-              lifecycleRules,
-              new Function<LifecycleRule, Rule>() {
-                @Override
-                public Rule apply(LifecycleRule lifecycleRule) {
-                  return lifecycleRule.toPb();
-                }
-              }));
-    }
 
-    if (!rules.isEmpty()) {
+    if (deleteRules != null || lifecycleRules != null) {
       Lifecycle lifecycle = new Lifecycle();
-      lifecycle.setRule(ImmutableList.copyOf(rules));
+
+      if (
+          (deleteRules == null && lifecycleRules.isEmpty())
+          || (lifecycleRules == null && deleteRules.isEmpty())
+          || (deleteRules != null && deleteRules.isEmpty() && lifecycleRules.isEmpty())
+      ) {
+        lifecycle.setRule(Collections.<Rule>emptyList());
+      } else {
+        Set<Rule> rules = new HashSet<>();
+        if (deleteRules != null) {
+          rules.addAll(
+              transform(
+                  deleteRules,
+                  new Function<DeleteRule, Rule>() {
+                    @Override
+                    public Rule apply(DeleteRule deleteRule) {
+                      return deleteRule.toPb();
+                    }
+                  }));
+        }
+        if (lifecycleRules != null) {
+          rules.addAll(
+              transform(
+                  lifecycleRules,
+                  new Function<LifecycleRule, Rule>() {
+                    @Override
+                    public Rule apply(LifecycleRule lifecycleRule) {
+                      return lifecycleRule.toPb();
+                    }
+                  }));
+        }
+
+        if (!rules.isEmpty()) {
+          lifecycle.setRule(ImmutableList.copyOf(rules));
+        }
+      }
+      
       bucketPb.setLifecycle(lifecycle);
     }
 

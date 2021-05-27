@@ -19,10 +19,12 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.services.storage.model.Bucket;
+import com.google.api.services.storage.model.Bucket.Lifecycle;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Role;
@@ -39,6 +41,7 @@ import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -171,6 +174,8 @@ public class BucketInfoTest {
           .setRetentionPolicyIsLocked(RETENTION_POLICY_IS_LOCKED)
           .setLogging(LOGGING)
           .build();
+
+  private static final Lifecycle EMPTY_LIFECYCLE = lifecycle(Collections.<Rule>emptyList());
 
   @Test
   public void testToBuilder() {
@@ -376,4 +381,85 @@ public class BucketInfoTest {
     assertEquals("test-bucket", logging.getLogBucket());
     assertEquals("test-", logging.getLogObjectPrefix());
   }
+
+  @Test
+  public void testRuleMappingIsCorrect_noMutations() {
+    Bucket bucket = bi().build().toPb();
+    assertNull(bucket.getLifecycle());
+  }
+
+  @Test
+  public void testRuleMappingIsCorrect_deleteLifecycleRules() {
+    Bucket bucket = bi()
+        .deleteLifecycleRules()
+        .build().toPb();
+    assertEquals(EMPTY_LIFECYCLE, bucket.getLifecycle());
+  }
+
+  @Test
+  @SuppressWarnings({"deprecation"})
+  public void testRuleMappingIsCorrect_setDeleteRules_null() {
+    Bucket bucket = bi()
+        .setDeleteRules(null)
+        .build().toPb();
+    assertNull(bucket.getLifecycle());
+  }
+
+  @Test
+  @SuppressWarnings({"deprecation"})
+  public void testRuleMappingIsCorrect_setDeleteRules_empty() {
+    Bucket bucket = bi()
+        .setDeleteRules(Collections.<DeleteRule>emptyList())
+        .build().toPb();
+    assertEquals(EMPTY_LIFECYCLE, bucket.getLifecycle());
+  }
+
+  @Test
+  public void testRuleMappingIsCorrect_setLifecycleRules_empty() {
+    Bucket bucket = bi()
+        .setLifecycleRules(Collections.<LifecycleRule>emptyList())
+        .build().toPb();
+    assertEquals(EMPTY_LIFECYCLE, bucket.getLifecycle());
+  }
+
+
+  @Test
+  public void testRuleMappingIsCorrect_setLifeCycleRules_nonEmpty() {
+    LifecycleRule lifecycleRule = new LifecycleRule(
+        LifecycleAction.newDeleteAction(),
+        LifecycleCondition.newBuilder().setAge(10).build());
+    Rule lifecycleDeleteAfter10 =
+        lifecycleRule.toPb();
+    Bucket bucket = bi()
+        .setLifecycleRules(ImmutableList.of(lifecycleRule))
+        .build().toPb();
+    assertEquals(lifecycle(lifecycleDeleteAfter10), bucket.getLifecycle());
+  }
+
+  @Test
+  @SuppressWarnings({"deprecation"})
+  public void testRuleMappingIsCorrect_setDeleteRules_nonEmpty() {
+    DeleteRule deleteRule = DELETE_RULES.get(0);
+    Rule deleteRuleAge5 = deleteRule.toPb();
+    Bucket bucket = bi()
+        .setDeleteRules(ImmutableList.of(deleteRule))
+        .build().toPb();
+    assertEquals(lifecycle(deleteRuleAge5), bucket.getLifecycle());
+  }
+
+  private static Lifecycle lifecycle(Rule... rules) {
+    return lifecycle(Arrays.asList(rules));
+  }
+
+  private static Lifecycle lifecycle(List<Rule> rules) {
+    Lifecycle emptyLifecycle = new Lifecycle();
+    emptyLifecycle.setRule(rules);
+    return emptyLifecycle;
+  }
+
+  private static BucketInfo.Builder bi() {
+    String bucketId = "bucketId";
+    return BucketInfo.newBuilder(bucketId);
+  }
+
 }
