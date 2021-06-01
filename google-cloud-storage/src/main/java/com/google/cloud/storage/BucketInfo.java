@@ -1843,6 +1843,14 @@ public class BucketInfo implements Serializable {
     if (deleteRules != null || lifecycleRules != null) {
       Lifecycle lifecycle = new Lifecycle();
 
+      // Here we determine if we need to "clear" any defined Lifecycle rules by explicitly setting
+      // the Rule list of lifecycle to the empty list.
+      // In order for us to clear the rules, one of the three following must be true:
+      //   1. deleteRules is null while lifecycleRules is non-null and empty
+      //   2. lifecycleRules is null while deleteRules is non-null and empty
+      //   3. lifecycleRules is non-null and empty while deleteRules is non-null and empty
+      // If none of the above three is true, we will interpret as the Lifecycle rules being
+      // updated to the defined set of DeleteRule and LifecycleRule.
       if ((deleteRules == null && lifecycleRules.isEmpty())
           || (lifecycleRules == null && deleteRules.isEmpty())
           || (deleteRules != null && deleteRules.isEmpty() && lifecycleRules.isEmpty())) {
