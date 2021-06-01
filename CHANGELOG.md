@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.115.0](https://www.github.com/googleapis/java-storage/compare/v1.114.0...v1.115.0) (2021-06-01)
+
+
+### Features
+
+* add `gcf-owl-bot[bot]` to `ignoreAuthors` ([#837](https://www.github.com/googleapis/java-storage/issues/837)) ([fe8e98a](https://www.github.com/googleapis/java-storage/commit/fe8e98a229f472c1f29d206d937690660bfa1444))
+
+
+### Bug Fixes
+
+* improve error detection and reporting for BlobWriteChannel retry state ([#846](https://www.github.com/googleapis/java-storage/issues/846)) ([d0f2184](https://www.github.com/googleapis/java-storage/commit/d0f2184f4dd2d99a4315f260f35421358d14a2df)), closes [#839](https://www.github.com/googleapis/java-storage/issues/839)
+* update BucketInfo translation code to properly handle lifecycle rules ([#852](https://www.github.com/googleapis/java-storage/issues/852)) ([3b1df1d](https://www.github.com/googleapis/java-storage/commit/3b1df1d00a459b134103bc8738f0294188502a37)), closes [#850](https://www.github.com/googleapis/java-storage/issues/850)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v1.2.0 ([#836](https://www.github.com/googleapis/java-storage/issues/836)) ([c1752ce](https://www.github.com/googleapis/java-storage/commit/c1752ce17d5d723d0ea36c41d98ae2bc9201fec2))
+* update kms.version to v0.88.4 ([#830](https://www.github.com/googleapis/java-storage/issues/830)) ([7e3dc28](https://www.github.com/googleapis/java-storage/commit/7e3dc287e4285a9312393179671a78c569e7e869))
+* update kms.version to v0.89.0 ([#855](https://www.github.com/googleapis/java-storage/issues/855)) ([29236e9](https://www.github.com/googleapis/java-storage/commit/29236e9d2eefb0e64b1b9bbfc532f4c3ae3e9ea4))
+
 ## [1.114.0](https://www.github.com/googleapis/java-storage/compare/v1.113.16...v1.114.0) (2021-05-13)
 
 
