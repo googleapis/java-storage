@@ -3370,6 +3370,7 @@ public class ITStorageTest {
       fail("StorageException was expected");
     } catch (StorageException e) {
       assertEquals(412, e.getCode());
+      assertEquals("conditionNotMet", e.getReason());
     }
 
     Blob updated = blob.reload();
