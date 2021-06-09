@@ -34,7 +34,7 @@ branchProtectionRules:
       - units (11)
       - 'Kokoro - Test: Integration'
       - cla/google
-  - pattern: 1.106.1
+  - pattern: 1.106.1-patch
     isAdminEnforced: true
     requiredApprovingReviewCount: 1
     requiresCodeOwnerReviews: true
