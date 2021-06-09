@@ -681,7 +681,6 @@ public class HttpStorageRpc implements StorageRpc {
             .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
             .setUserProject(Option.USER_PROJECT.getString(options));
     setEncryptionHeaders(req.getRequestHeaders(), ENCRYPTION_KEY_PREFIX, options);
-    req.setReturnRawInputStream(true);
     return req;
   }
 
@@ -692,9 +691,15 @@ public class HttpStorageRpc implements StorageRpc {
     Scope scope = tracer.withSpan(span);
     try {
       Get req = createReadRequest(from, options);
+      Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
+      if (shouldReturnRawInputStream != null ) {
+        req.setReturnRawInputStream(shouldReturnRawInputStream);
+      } else {
+        req.setReturnRawInputStream(false);
+      }
       req.getMediaHttpDownloader().setBytesDownloaded(position);
       req.getMediaHttpDownloader().setDirectDownloadEnabled(true);
-      req.executeMediaAndDownloadTo(outputStream);
+      req.executeMedia().download(outputStream);
       return req.getMediaHttpDownloader().getNumBytesDownloaded();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -717,6 +722,12 @@ public class HttpStorageRpc implements StorageRpc {
     try {
       checkArgument(position >= 0, "Position should be non-negative, is " + position);
       Get req = createReadRequest(from, options);
+      Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
+      if (shouldReturnRawInputStream != null ) {
+        req.setReturnRawInputStream(shouldReturnRawInputStream);
+      } else {
+        req.setReturnRawInputStream(true);
+      }
       StringBuilder range = new StringBuilder();
       range.append("bytes=").append(position).append("-").append(position + bytes - 1);
       HttpHeaders requestHeaders = req.getRequestHeaders();

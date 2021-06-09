@@ -68,7 +68,8 @@ public interface StorageRpc extends ServiceRpc {
     SERVICE_ACCOUNT_EMAIL("serviceAccount"),
     SHOW_DELETED_KEYS("showDeletedKeys"),
     REQUESTED_POLICY_VERSION("optionsRequestedPolicyVersion"),
-    DETECT_CONTENT_TYPE("detectContentType");
+    DETECT_CONTENT_TYPE("detectContentType"),
+    RETURN_RAW_INPUT_STREAM("returnRawInputStream");
 
     private final String value;
 
