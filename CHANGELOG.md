@@ -1,5 +1,82 @@
 # Changelog
 
+## [1.115.0](https://www.github.com/googleapis/java-storage/compare/v1.114.0...v1.115.0) (2021-06-01)
+
+
+### Features
+
+* add `gcf-owl-bot[bot]` to `ignoreAuthors` ([#837](https://www.github.com/googleapis/java-storage/issues/837)) ([fe8e98a](https://www.github.com/googleapis/java-storage/commit/fe8e98a229f472c1f29d206d937690660bfa1444))
+
+
+### Bug Fixes
+
+* improve error detection and reporting for BlobWriteChannel retry state ([#846](https://www.github.com/googleapis/java-storage/issues/846)) ([d0f2184](https://www.github.com/googleapis/java-storage/commit/d0f2184f4dd2d99a4315f260f35421358d14a2df)), closes [#839](https://www.github.com/googleapis/java-storage/issues/839)
+* update BucketInfo translation code to properly handle lifecycle rules ([#852](https://www.github.com/googleapis/java-storage/issues/852)) ([3b1df1d](https://www.github.com/googleapis/java-storage/commit/3b1df1d00a459b134103bc8738f0294188502a37)), closes [#850](https://www.github.com/googleapis/java-storage/issues/850)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v1.2.0 ([#836](https://www.github.com/googleapis/java-storage/issues/836)) ([c1752ce](https://www.github.com/googleapis/java-storage/commit/c1752ce17d5d723d0ea36c41d98ae2bc9201fec2))
+* update kms.version to v0.88.4 ([#830](https://www.github.com/googleapis/java-storage/issues/830)) ([7e3dc28](https://www.github.com/googleapis/java-storage/commit/7e3dc287e4285a9312393179671a78c569e7e869))
+* update kms.version to v0.89.0 ([#855](https://www.github.com/googleapis/java-storage/issues/855)) ([29236e9](https://www.github.com/googleapis/java-storage/commit/29236e9d2eefb0e64b1b9bbfc532f4c3ae3e9ea4))
+
+## [1.114.0](https://www.github.com/googleapis/java-storage/compare/v1.113.16...v1.114.0) (2021-05-13)
+
+
+### Features
+
+* Remove client side vaildation for lifecycle conditions ([#816](https://www.github.com/googleapis/java-storage/issues/816)) ([5ec84cc](https://www.github.com/googleapis/java-storage/commit/5ec84cc2935a4787dd14a207d27501878f5849d5))
+
+
+### Bug Fixes
+
+* **test:** update blob paths used in storage.it.ITStorageTest#testDownloadPublicBlobWithoutAuthentication ([#759](https://www.github.com/googleapis/java-storage/issues/759)) ([#817](https://www.github.com/googleapis/java-storage/issues/817)) ([1a576ca](https://www.github.com/googleapis/java-storage/commit/1a576ca3945b51d7a678aa2414be91b3c6b2d55e))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.5 ([#820](https://www.github.com/googleapis/java-storage/issues/820)) ([9e1bc0b](https://www.github.com/googleapis/java-storage/commit/9e1bc0b42abdaab0b11d761ecdbb92f6116aacd2))
+* update dependency com.google.api.grpc:grpc-google-cloud-kms-v1 to v0.88.3 ([#797](https://www.github.com/googleapis/java-storage/issues/797)) ([747e7e4](https://www.github.com/googleapis/java-storage/commit/747e7e463c028b9cf8a406b7536b1916c1d52c01))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v1.1.0 ([#815](https://www.github.com/googleapis/java-storage/issues/815)) ([e210de9](https://www.github.com/googleapis/java-storage/commit/e210de93452243242be7d3d719d00da723632335))
+
+### [1.113.16](https://www.github.com/googleapis/java-storage/compare/v1.113.15...v1.113.16) (2021-04-23)
+
+
+### Bug Fixes
+
+* release scripts from issuing overlapping phases ([#784](https://www.github.com/googleapis/java-storage/issues/784)) ([36751f5](https://www.github.com/googleapis/java-storage/commit/36751f5de9708ac9e23550f67256fb05ebf1f69e))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.21.1 ([#789](https://www.github.com/googleapis/java-storage/issues/789)) ([c005e87](https://www.github.com/googleapis/java-storage/commit/c005e877a7d64c4bbd2ed267526d8025ea29a9ad))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v1 ([#794](https://www.github.com/googleapis/java-storage/issues/794)) ([195fead](https://www.github.com/googleapis/java-storage/commit/195fead94dea4c50f7e285e0a7a1578fa5b6265d))
+
+### [1.113.15](https://www.github.com/googleapis/java-storage/compare/v1.113.14...v1.113.15) (2021-04-13)
+
+
+### Bug Fixes
+
+* **test:** update blob paths used in storage.it.ITStorageTest#testDownloadPublicBlobWithoutAuthentication ([#759](https://www.github.com/googleapis/java-storage/issues/759)) ([9a6619c](https://www.github.com/googleapis/java-storage/commit/9a6619c39a89e2c2ee8d0000d595d09ac7b7825f))
+* typo ([#779](https://www.github.com/googleapis/java-storage/issues/779)) ([3c3d6b4](https://www.github.com/googleapis/java-storage/commit/3c3d6b487648fde4eb956ce8912cd680a4440f8d))
+
+
+### Dependencies
+
+* update dependency com.google.api-client:google-api-client to v1.31.4 ([#774](https://www.github.com/googleapis/java-storage/issues/774)) ([ad9ff7b](https://www.github.com/googleapis/java-storage/commit/ad9ff7b801d0c5fb39f72c7118c319f4e45084a0))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.21.0 ([#771](https://www.github.com/googleapis/java-storage/issues/771)) ([5605095](https://www.github.com/googleapis/java-storage/commit/5605095ed796327879a930c12526b3c5b1409b17))
+* update kms.version to v0.88.1 ([#758](https://www.github.com/googleapis/java-storage/issues/758)) ([3e57ea9](https://www.github.com/googleapis/java-storage/commit/3e57ea9a2f5f7013e997469c5ca32be8cef2a4a4))
+* update kms.version to v0.88.2 ([#778](https://www.github.com/googleapis/java-storage/issues/778)) ([6edfc4c](https://www.github.com/googleapis/java-storage/commit/6edfc4ced2bdae9878ecdbc5ef636ac39bdb5881))
+* update truth ([#767](https://www.github.com/googleapis/java-storage/issues/767)) ([4e5ee03](https://www.github.com/googleapis/java-storage/commit/4e5ee0398e700baf4f88224f66309e426f9532d7))
+
+### [1.113.14](https://www.github.com/googleapis/java-storage/compare/v1.113.13...v1.113.14) (2021-03-11)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v0.20.1 ([#749](https://www.github.com/googleapis/java-storage/issues/749)) ([bb42107](https://www.github.com/googleapis/java-storage/commit/bb42107ff10148e14e112ff78534753f2ebc7dd9))
+* update kms.version to v0.88.0 ([#753](https://www.github.com/googleapis/java-storage/issues/753)) ([eaedb64](https://www.github.com/googleapis/java-storage/commit/eaedb6456f2f427a7f2f3f3d6bd13d0d49fd269b))
+
 ### [1.113.13](https://www.github.com/googleapis/java-storage/compare/v1.113.12...v1.113.13) (2021-03-08)
 
 
