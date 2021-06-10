@@ -20,21 +20,26 @@ scriptDir=$(realpath $(dirname "${BASH_SOURCE[0]}"))
 ## cd to the parent directory, i.e. the root of the git repo
 cd ${scriptDir}/..
 
+# include common functions
+source ${scriptDir}/common.sh
+
 # Print out Java version
 java -version
 echo ${JOB_TYPE}
 
-mvn install -B -V \
-  -DskipTests=true \
-  -Dclirr.skip=true \
-  -Denforcer.skip=true \
-  -Dmaven.javadoc.skip=true \
-  -Dgcloud.download.skip=true \
-  -T 1C
+# attempt to install 3 times with exponential backoff (starting with 10 seconds)
+retry_with_backoff 3 10 \
+  mvn install -B -V -ntp \
+    -DskipTests=true \
+    -Dclirr.skip=true \
+    -Denforcer.skip=true \
+    -Dmaven.javadoc.skip=true \
+    -Dgcloud.download.skip=true \
+    -T 1C
 
-# if GOOGLE_APPLICATION_CREDIENTIALS is specified as a relative path prepend Kokoro root directory onto it
+# if GOOGLE_APPLICATION_CREDENTIALS is specified as a relative path, prepend Kokoro root directory onto it
 if [[ ! -z "${GOOGLE_APPLICATION_CREDENTIALS}" && "${GOOGLE_APPLICATION_CREDENTIALS}" != /* ]]; then
-    export GOOGLE_APPLICATION_CREDENTIALS=$(realpath ${KOKORO_ROOT}/src/${GOOGLE_APPLICATION_CREDENTIALS})
+    export GOOGLE_APPLICATION_CREDENTIALS=$(realpath ${KOKORO_GFILE_DIR}/${GOOGLE_APPLICATION_CREDENTIALS})
 fi
 
 RETURN_CODE=0
@@ -46,9 +51,7 @@ test)
     RETURN_CODE=$?
     ;;
 lint)
-    mvn \
-      -Penable-samples \
-      com.coveo:fmt-maven-plugin:check
+    mvn com.coveo:fmt-maven-plugin:check
     RETURN_CODE=$?
     ;;
 javadoc)
@@ -57,6 +60,7 @@ javadoc)
     ;;
 integration)
     mvn -B ${INTEGRATION_TEST_ARGS} \
+      -ntp \
       -Penable-integration-tests \
       -DtrimStackTrace=false \
       -Dclirr.skip=true \
@@ -66,11 +70,24 @@ integration)
     RETURN_CODE=$?
     ;;
 samples)
-    if [[ -f samples/pom.xml ]]
+    SAMPLES_DIR=samples
+    # only run ITs in snapshot/ on presubmit PRs. run ITs in all 3 samples/ subdirectories otherwise.
+    if [[ ! -z ${KOKORO_GITHUB_PULL_REQUEST_NUMBER} ]]
     then
-        pushd samples
+      SAMPLES_DIR=samples/snapshot
+    fi
+
+    if [[ -f ${SAMPLES_DIR}/pom.xml ]]
+    then
+        for FILE in ${KOKORO_GFILE_DIR}/secret_manager/*-samples-secrets; do
+          [[ -f "$FILE" ]] || continue
+          source "$FILE"
+        done
+
+        pushd ${SAMPLES_DIR}
         mvn -B \
           -Penable-samples \
+          -ntp \
           -DtrimStackTrace=false \
           -Dclirr.skip=true \
           -Denforcer.skip=true \
@@ -100,8 +117,8 @@ bash .kokoro/coerce_logs.sh
 
 if [[ "${ENABLE_BUILD_COP}" == "true" ]]
 then
-    chmod +x ${KOKORO_GFILE_DIR}/linux_amd64/buildcop
-    ${KOKORO_GFILE_DIR}/linux_amd64/buildcop -repo=googleapis/java-storage
+    chmod +x ${KOKORO_GFILE_DIR}/linux_amd64/flakybot
+    ${KOKORO_GFILE_DIR}/linux_amd64/flakybot -repo=googleapis/java-storage
 fi
 
 echo "exiting with ${RETURN_CODE}"
