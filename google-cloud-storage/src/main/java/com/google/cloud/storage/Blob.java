@@ -118,7 +118,7 @@ public class Blob extends BlobInfo {
         case USER_PROJECT:
           return Storage.BlobSourceOption.userProject((String) getValue());
         case RETURN_RAW_INPUT_STREAM:
-                return Storage.BlobSourceOption.shouldReturnRawInputStream((boolean) getValue());
+          return Storage.BlobSourceOption.shouldReturnRawInputStream((boolean) getValue());
         default:
           throw new AssertionError("Unexpected enum value");
       }
@@ -206,10 +206,12 @@ public class Blob extends BlobInfo {
 
     /**
      * Returns an option for whether the request should return the raw input stream, instead of
-     * automatically decompressing the content. By default, this is true.
+     * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
+     * true for ReadChannel.read().
      */
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
-      return new BlobSourceOption(StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
+      return new BlobSourceOption(
+          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
     }
 
     static Storage.BlobSourceOption[] toSourceOptions(

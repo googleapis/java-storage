@@ -850,10 +850,12 @@ public interface Storage extends Service<StorageOptions> {
 
     /**
      * Returns an option for whether the request should return the raw input stream, instead of
-     * automatically decompressing the content. By default, this is true.
+     * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
+     * true for ReadChannel.read().
      */
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
-      return new BlobSourceOption(StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
+      return new BlobSourceOption(
+          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
     }
   }
 
@@ -968,10 +970,12 @@ public interface Storage extends Service<StorageOptions> {
 
     /**
      * Returns an option for whether the request should return the raw input stream, instead of
-     * automatically decompressing the content. By default, this is true.
+     * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
+     * true for ReadChannel.read().
      */
     public static BlobGetOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
-      return new BlobGetOption(StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
+      return new BlobGetOption(
+          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
     }
   }
 

@@ -692,7 +692,7 @@ public class HttpStorageRpc implements StorageRpc {
     try {
       Get req = createReadRequest(from, options);
       Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
-      if (shouldReturnRawInputStream != null ) {
+      if (shouldReturnRawInputStream != null) {
         req.setReturnRawInputStream(shouldReturnRawInputStream);
       } else {
         req.setReturnRawInputStream(false);
@@ -723,7 +723,7 @@ public class HttpStorageRpc implements StorageRpc {
       checkArgument(position >= 0, "Position should be non-negative, is " + position);
       Get req = createReadRequest(from, options);
       Boolean shouldReturnRawInputStream = Option.RETURN_RAW_INPUT_STREAM.getBoolean(options);
-      if (shouldReturnRawInputStream != null ) {
+      if (shouldReturnRawInputStream != null) {
         req.setReturnRawInputStream(shouldReturnRawInputStream);
       } else {
         req.setReturnRawInputStream(true);

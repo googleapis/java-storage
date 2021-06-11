@@ -817,7 +817,8 @@ public class ITStorageTest {
 
     String blobName = "zipped_blob";
     BlobId blobId = BlobId.of(BUCKET, blobName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
 
     storage.createFrom(blobInfo, gzippedFile.toPath());
 
@@ -826,10 +827,13 @@ public class ITStorageTest {
 
     blob.downloadTo(rawInputGzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(true));
 
-    assertArrayEquals(Files.readAllBytes(gzippedFile.toPath()), Files.readAllBytes(rawInputGzippedFile));
+    assertArrayEquals(
+        Files.readAllBytes(gzippedFile.toPath()), Files.readAllBytes(rawInputGzippedFile));
 
     Path unzippedFile = File.createTempFile("unzippedfile", ".txt").toPath();
-    storage.get(blobId).downloadTo(unzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(false));
+    storage
+        .get(blobId)
+        .downloadTo(unzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(false));
 
     assertArrayEquals("hello world".getBytes(), Files.readAllBytes(unzippedFile));
   }
