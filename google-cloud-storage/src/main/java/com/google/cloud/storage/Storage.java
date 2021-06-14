@@ -847,6 +847,16 @@ public interface Storage extends Service<StorageOptions> {
     public static BlobSourceOption userProject(String userProject) {
       return new BlobSourceOption(StorageRpc.Option.USER_PROJECT, userProject);
     }
+
+    /**
+     * Returns an option for whether the request should return the raw input stream, instead of
+     * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
+     * true for ReadChannel.read().
+     */
+    public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
+      return new BlobSourceOption(
+          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
+    }
   }
 
   /** Class for specifying blob get options. */
@@ -859,6 +869,10 @@ public interface Storage extends Service<StorageOptions> {
     }
 
     private BlobGetOption(StorageRpc.Option rpcOption, String value) {
+      super(rpcOption, value);
+    }
+
+    private BlobGetOption(StorageRpc.Option rpcOption, boolean value) {
       super(rpcOption, value);
     }
 
@@ -952,6 +966,16 @@ public interface Storage extends Service<StorageOptions> {
      */
     public static BlobGetOption decryptionKey(String key) {
       return new BlobGetOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, key);
+    }
+
+    /**
+     * Returns an option for whether the request should return the raw input stream, instead of
+     * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
+     * true for ReadChannel.read().
+     */
+    public static BlobGetOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
+      return new BlobGetOption(
+          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
     }
   }
 

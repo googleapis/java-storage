@@ -104,6 +104,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -127,6 +128,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -800,6 +802,40 @@ public class ITStorageTest {
     } catch (StorageException e) {
       assertThat(e.getMessage()).contains("Invalid argument");
     }
+  }
+
+  @Test
+  public void testGetBlobRawInput() throws IOException {
+    Path file = File.createTempFile("temp", ".txt").toPath();
+    Files.write(file, "hello world".getBytes());
+
+    File gzippedFile = File.createTempFile("temp", ".gz");
+
+    GZIPOutputStream gzipOutputStream = new GZIPOutputStream(new FileOutputStream(gzippedFile));
+    Files.copy(file, gzipOutputStream);
+    gzipOutputStream.close();
+
+    String blobName = "zipped_blob";
+    BlobId blobId = BlobId.of(BUCKET, blobName);
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
+
+    storage.createFrom(blobInfo, gzippedFile.toPath());
+
+    Path rawInputGzippedFile = File.createTempFile("rawinputgzippedfile", ".txt").toPath();
+    Blob blob = storage.get(blobId);
+
+    blob.downloadTo(rawInputGzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(true));
+
+    assertArrayEquals(
+        Files.readAllBytes(gzippedFile.toPath()), Files.readAllBytes(rawInputGzippedFile));
+
+    Path unzippedFile = File.createTempFile("unzippedfile", ".txt").toPath();
+    storage
+        .get(blobId)
+        .downloadTo(unzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(false));
+
+    assertArrayEquals("hello world".getBytes(), Files.readAllBytes(unzippedFile));
   }
 
   @Test(timeout = 5000)
