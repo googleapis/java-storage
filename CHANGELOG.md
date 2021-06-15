@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.116.0](https://www.github.com/googleapis/java-storage/compare/v1.115.0...v1.116.0) (2021-06-14)
+
+
+### Features
+
+* Add shouldReturnRawInputStream option to Get requests ([#872](https://www.github.com/googleapis/java-storage/issues/872)) ([474dfae](https://www.github.com/googleapis/java-storage/commit/474dfaec09d591455cecc77b08461efff1010c3a))
+
+
+### Bug Fixes
+
+* **ci:** remove linkage-monitor to pass 1.106.1 patch ci ([#862](https://www.github.com/googleapis/java-storage/issues/862)) ([94a9159](https://www.github.com/googleapis/java-storage/commit/94a915958f888cfbf4110d06a7f64be135dc141e))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v1.3.0 ([#863](https://www.github.com/googleapis/java-storage/issues/863)) ([37bfd5e](https://www.github.com/googleapis/java-storage/commit/37bfd5e3cf1c62767ff8033366cca66c2e8e6e4c))
+* update kms.version ([#860](https://www.github.com/googleapis/java-storage/issues/860)) ([f1430ff](https://www.github.com/googleapis/java-storage/commit/f1430ffea07696ea808369fcd287187c14afc9a2))
+* update kms.version to v0.89.3 ([#873](https://www.github.com/googleapis/java-storage/issues/873)) ([ee7c236](https://www.github.com/googleapis/java-storage/commit/ee7c2368928c050befb809a2d61bd6ffc92bdc88))
+
 ## [1.115.0](https://www.github.com/googleapis/java-storage/compare/v1.114.0...v1.115.0) (2021-06-01)
 
 
