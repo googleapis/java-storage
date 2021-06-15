@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.106.1](https://www.github.com/googleapis/java-storage/compare/v1.106.0...v1.106.1) (2021-06-15)
+
+
+### Bug Fixes
+
+* patch life cycle validation fix ([a861628](https://www.github.com/googleapis/java-storage/commit/a861628981e916600c68bac90b2822b003f1b16e))
+
 ## [1.106.0](https://www.github.com/googleapis/java-storage/compare/v1.105.2...v1.106.0) (2020-03-17)
 
 
