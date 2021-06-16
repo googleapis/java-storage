@@ -40,15 +40,31 @@ branchProtectionRules:
     requiresCodeOwnerReviews: true
     requiresStrictStatusChecks: false
     requiredStatusCheckContexts:
-    - dependencies (8)
-    - dependencies (11)
-    - lint
-    - clirr
-    - units (7)
-    - units (8)
-    - units (11)
-    - 'Kokoro - Test: Integration'
-    - cla/google
+      - dependencies (8)
+      - dependencies (11)
+      - lint
+      - clirr
+      - units (7)
+      - units (8)
+      - units (11)
+      - 'Kokoro - Test: Integration'
+      - cla/google
+  - pattern: 1.111.3-patch
+    isAdminEnforced: true
+    requiredApprovingReviewCount: 1
+    requiresCodeOwnerReviews: true
+    requiresStrictStatusChecks: false
+    requiredStatusCheckContexts:
+      - dependencies (8)
+      - dependencies (11)
+      - linkage-monitor
+      - lint
+      - clirr
+      - units (7)
+      - units (8)
+      - units (11)
+      - 'Kokoro - Test: Integration'
+      - cla/google
 permissionRules:
   - team: yoshi-admins
     permission: admin

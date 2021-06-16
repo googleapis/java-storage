@@ -10,4 +10,7 @@ branches:
     handleGHRelease: true
     releaseType: java-yoshi
     branch: 1.106.1-patch
-    
+  - bumpMinorPreMajor: true
+    handleGHRelease: true
+    releaseType: java-yoshi
+    branch: 1.111.3-patch
