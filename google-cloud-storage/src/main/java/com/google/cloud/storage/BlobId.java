@@ -22,6 +22,7 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Google Storage Object identifier. A {@code BlobId} object includes the name of the containing
@@ -54,6 +55,11 @@ public final class BlobId implements Serializable {
   /** Returns blob's data generation. Used for versioning. */
   public Long getGeneration() {
     return generation;
+  }
+
+  /** Returns this blob's Storage url which can be used with gsutil */
+  public String toStorageUrl() {
+    return "gs://" + bucket + "/" + name;
   }
 
   @Override
@@ -112,6 +118,21 @@ public final class BlobId implements Serializable {
    */
   public static BlobId of(String bucket, String name, Long generation) {
     return new BlobId(checkNotNull(bucket), checkNotNull(name), generation);
+  }
+
+  /**
+   * Creates a {@code BlobId} object.
+   *
+   * @param storageUrl the Storage url to create the blob from
+   */
+  public static BlobId fromStorageUrl(String storageUrl) {
+    if(!Pattern.matches("gs://.*/.*", storageUrl)) {
+      throw new IllegalArgumentException(storageUrl + " is not a valid Storage URL");
+    }
+    String bucketName = storageUrl.split("/")[2];
+    String blobName = storageUrl.split(bucketName + "/")[1];
+
+    return BlobId.of(bucketName, blobName);
   }
 
   static BlobId fromPb(StorageObject storageObject) {
