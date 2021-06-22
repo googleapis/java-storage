@@ -1,5 +1,18 @@
 # Changelog
 
+### [1.111.3](https://www.github.com/googleapis/java-storage/compare/v1.111.2...v1.111.3) (2021-06-22)
+
+
+### Features
+
+* configure initial sp version ([#883](https://www.github.com/googleapis/java-storage/issues/883)) ([e245942](https://www.github.com/googleapis/java-storage/commit/e245942f4a7ede328e2e301b0956a0c0ccd763bd)), closes [#853](https://www.github.com/googleapis/java-storage/issues/853)
+
+
+### Bug Fixes
+
+* library should release as 1.111.3 ([#892](https://www.github.com/googleapis/java-storage/issues/892)) ([3c38a86](https://www.github.com/googleapis/java-storage/commit/3c38a864a5bfddd72e801c45876ec57ea5f0928c))
+* patch life cycle validation fix ([#887](https://www.github.com/googleapis/java-storage/issues/887)) ([fbc1422](https://www.github.com/googleapis/java-storage/commit/fbc14229e64f744f0a30d3f42737addbaa442893))
+
 ### [1.111.2](https://www.github.com/googleapis/java-storage/compare/v1.111.1...v1.111.2) (2020-07-10)
 
 
