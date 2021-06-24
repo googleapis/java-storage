@@ -14,6 +14,7 @@
 # limitations under the License.
 
 set -eo pipefail
+shopt -s nullglob
 
 ## Get the directory of the build script
 scriptDir=$(realpath $(dirname "${BASH_SOURCE[0]}"))
@@ -31,8 +32,9 @@ export MAVEN_OPTS="-Xmx1024m -XX:MaxPermSize=128m"
 
 # this should run maven enforcer
 retry_with_backoff 3 10 \
-  mvn install -B -V \
+  mvn install -B -V -ntp \
     -DskipTests=true \
+    -Dmaven.javadoc.skip=true \
     -Dclirr.skip=true
 
 mvn -B dependency:analyze -DfailOnWarning=true
@@ -43,12 +45,13 @@ function completenessCheck() {
   # Output dep list with compile scope generated using the original pom
   # Running mvn dependency:list on Java versions that support modules will also include the module of the dependency.
   # This is stripped from the output as it is not present in the flattened pom.
+  # Only dependencies with 'compile' or 'runtime' scope are included from original dependency list.
   msg "Generating dependency list using original pom..."
-  mvn dependency:list -f pom.xml -Dsort=true | grep '\[INFO]    .*:.*:.*:.*:.*' | sed -e s/\\s--\\smodule.*// | grep -v ':test$' >.org-list.txt
+  mvn dependency:list -f pom.xml -DincludeScope=runtime -Dsort=true | grep '\[INFO]    .*:.*:.*:.*:.*' | sed -e 's/ --.*//' >.org-list.txt
 
-  # Output dep list generated using the flattened pom (test scope deps are ommitted)
+  # Output dep list generated using the flattened pom (only 'compile' and 'runtime' scopes)
   msg "Generating dependency list using flattened pom..."
-  mvn dependency:list -f .flattened-pom.xml -Dsort=true | grep '\[INFO]    .*:.*:.*:.*:.*' >.new-list.txt
+  mvn dependency:list -f .flattened-pom.xml -DincludeScope=runtime -Dsort=true | grep '\[INFO]    .*:.*:.*:.*:.*' >.new-list.txt
 
   # Compare two dependency lists
   msg "Comparing dependency lists..."
@@ -68,7 +71,7 @@ function completenessCheck() {
 set +e
 
 error_count=0
-for path in $(find -name ".flattened-pom.xml")
+for path in **/.flattened-pom.xml
 do
   # Check flattened pom in each dir that contains it for completeness
   dir=$(dirname "$path")
