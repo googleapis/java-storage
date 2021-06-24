@@ -32,6 +32,14 @@ public class BlobIdTest {
   }
 
   @Test
+  public void testToFromGsUtilUri() {
+    BlobId blobId = BlobId.fromGsUtilUri("gs://bucket/path/to/blob");
+    assertEquals("bucket", blobId.getBucket());
+    assertEquals("path/to/blob", blobId.getName());
+    assertEquals("gs://bucket/path/to/blob", blobId.toGsUtilUri());
+  }
+
+  @Test
   public void testEquals() {
     compareBlobIds(BLOB, BlobId.of("b", "n"));
   }
