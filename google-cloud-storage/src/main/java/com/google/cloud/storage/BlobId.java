@@ -58,7 +58,7 @@ public final class BlobId implements Serializable {
   }
 
   /** Returns this blob's Storage url which can be used with gsutil */
-  public String toStorageUrl() {
+  public String toGsUtilUri() {
     return "gs://" + bucket + "/" + name;
   }
 
@@ -123,14 +123,16 @@ public final class BlobId implements Serializable {
   /**
    * Creates a {@code BlobId} object.
    *
-   * @param storageUrl the Storage url to create the blob from
+   * @param gsUtilUri the Storage url to create the blob from
    */
-  public static BlobId fromStorageUrl(String storageUrl) {
-    if(!Pattern.matches("gs://.*/.*", storageUrl)) {
-      throw new IllegalArgumentException(storageUrl + " is not a valid Storage URL");
+  public static BlobId fromGsUtilUri(String gsUtilUri) {
+    if (!Pattern.matches("gs://.*/.*", gsUtilUri)) {
+      throw new IllegalArgumentException(
+          gsUtilUri + " is not a valid gsutil URI (i.e. \"gs://bucket/blob\")");
     }
-    String bucketName = storageUrl.split("/")[2];
-    String blobName = storageUrl.split(bucketName + "/")[1];
+    int blobNameStartIndex = gsUtilUri.indexOf('/', 5);
+    String bucketName = gsUtilUri.substring(5, blobNameStartIndex);
+    String blobName = gsUtilUri.substring(blobNameStartIndex + 1);
 
     return BlobId.of(bucketName, blobName);
   }

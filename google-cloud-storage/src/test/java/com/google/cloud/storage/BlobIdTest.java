@@ -32,11 +32,11 @@ public class BlobIdTest {
   }
 
   @Test
-  public void testToFromStorageUrl() {
-    BlobId blobId = BlobId.fromStorageUrl("gs://bucket/path/to/blob");
+  public void testToFromGsUtilUri() {
+    BlobId blobId = BlobId.fromGsUtilUri("gs://bucket/path/to/blob");
     assertEquals("bucket", blobId.getBucket());
     assertEquals("path/to/blob", blobId.getName());
-    assertEquals("gs://bucket/path/to/blob", blobId.toStorageUrl());
+    assertEquals("gs://bucket/path/to/blob", blobId.toGsUtilUri());
   }
 
   @Test
