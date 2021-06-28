@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.117.0](https://www.github.com/googleapis/java-storage/compare/v1.116.0...v1.117.0) (2021-06-28)
+
+
+### Features
+
+* Add from and to storage url options for BlobId ([#888](https://www.github.com/googleapis/java-storage/issues/888)) ([1876a58](https://www.github.com/googleapis/java-storage/commit/1876a580f904d095ca6621c1e2f38c3a6e253276))
+* add support of public access prevention ([#636](https://www.github.com/googleapis/java-storage/issues/636)) ([3d1e482](https://www.github.com/googleapis/java-storage/commit/3d1e48208c44c35c8e3761913bcd05c438e81069))
+
+
+### Bug Fixes
+
+* Add `shopt -s nullglob` to dependencies script ([#894](https://www.github.com/googleapis/java-storage/issues/894)) ([901fd33](https://www.github.com/googleapis/java-storage/commit/901fd335c8d2f2e49844dee2adfa318a98ed99ba))
+* Update dependencies.sh to not break on mac ([#879](https://www.github.com/googleapis/java-storage/issues/879)) ([bc6d1d9](https://www.github.com/googleapis/java-storage/commit/bc6d1d9e211fbbb1accd1019c8eed4bc55ca421c))
+
+
+### Documentation
+
+* add notice about broken OLM experience ([#898](https://www.github.com/googleapis/java-storage/issues/898)) ([73e7cdf](https://www.github.com/googleapis/java-storage/commit/73e7cdf162be76a8438160f4c7f2070fb6fb5ea6))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20210127-1.31.5 ([#889](https://www.github.com/googleapis/java-storage/issues/889)) ([99138a4](https://www.github.com/googleapis/java-storage/commit/99138a4cd3523cc634e3c5283a775a1c245b6201))
+
 ## [1.116.0](https://www.github.com/googleapis/java-storage/compare/v1.115.0...v1.116.0) (2021-06-14)
 
 
