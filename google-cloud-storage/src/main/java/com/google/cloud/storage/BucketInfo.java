@@ -106,16 +106,55 @@ public class BucketInfo implements Serializable {
   private static final Logger log = Logger.getLogger(BucketInfo.class.getName());
 
   /**
+   * Public Access Prevention enum with expected values.
+   *
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
+   */
+  public enum PublicAccessPrevention {
+    ENFORCED("enforced"),
+    /** Default value for Public Access Prevention */
+    UNSPECIFIED("unspecified"),
+    /**
+     * If the api returns a value that isn't defined in {@link PublicAccessPrevention} this value
+     * will be returned.
+     */
+    UNKNOWN(null);
+
+    private final String value;
+
+    PublicAccessPrevention(String value) {
+      this.value = value;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    public static PublicAccessPrevention parse(String value) {
+      String upper = value.toUpperCase();
+      try {
+        return valueOf(upper);
+      } catch (IllegalArgumentException ignore) {
+        return UNKNOWN;
+      }
+    }
+  }
+
+  /**
    * The Bucket's IAM Configuration.
    *
    * @see <a href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">uniform
    *     bucket-level access</a>
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
    */
   public static class IamConfiguration implements Serializable {
     private static final long serialVersionUID = -8671736104909424616L;
 
-    private Boolean isUniformBucketLevelAccessEnabled;
-    private Long uniformBucketLevelAccessLockedTime;
+    private final Boolean isUniformBucketLevelAccessEnabled;
+    private final Long uniformBucketLevelAccessLockedTime;
+    private final PublicAccessPrevention publicAccessPrevention;
 
     @Override
     public boolean equals(Object o) {
@@ -129,12 +168,16 @@ public class BucketInfo implements Serializable {
 
     @Override
     public int hashCode() {
-      return Objects.hash(isUniformBucketLevelAccessEnabled, uniformBucketLevelAccessLockedTime);
+      return Objects.hash(
+          isUniformBucketLevelAccessEnabled,
+          uniformBucketLevelAccessLockedTime,
+          publicAccessPrevention);
     }
 
     private IamConfiguration(Builder builder) {
       this.isUniformBucketLevelAccessEnabled = builder.isUniformBucketLevelAccessEnabled;
       this.uniformBucketLevelAccessLockedTime = builder.uniformBucketLevelAccessLockedTime;
+      this.publicAccessPrevention = builder.publicAccessPrevention;
     }
 
     public static Builder newBuilder() {
@@ -145,6 +188,7 @@ public class BucketInfo implements Serializable {
       Builder builder = new Builder();
       builder.isUniformBucketLevelAccessEnabled = isUniformBucketLevelAccessEnabled;
       builder.uniformBucketLevelAccessLockedTime = uniformBucketLevelAccessLockedTime;
+      builder.publicAccessPrevention = publicAccessPrevention;
       return builder;
     }
 
@@ -168,6 +212,11 @@ public class BucketInfo implements Serializable {
       return uniformBucketLevelAccessLockedTime;
     }
 
+    /** Returns the Public Access Prevention. * */
+    public PublicAccessPrevention getPublicAccessPrevention() {
+      return publicAccessPrevention;
+    }
+
     Bucket.IamConfiguration toPb() {
       Bucket.IamConfiguration iamConfiguration = new Bucket.IamConfiguration();
 
@@ -180,6 +229,8 @@ public class BucketInfo implements Serializable {
               : new DateTime(uniformBucketLevelAccessLockedTime));
 
       iamConfiguration.setUniformBucketLevelAccess(uniformBucketLevelAccess);
+      iamConfiguration.setPublicAccessPrevention(
+          publicAccessPrevention == null ? null : publicAccessPrevention.getValue());
 
       return iamConfiguration;
     }
@@ -188,10 +239,17 @@ public class BucketInfo implements Serializable {
       Bucket.IamConfiguration.UniformBucketLevelAccess uniformBucketLevelAccess =
           iamConfiguration.getUniformBucketLevelAccess();
       DateTime lockedTime = uniformBucketLevelAccess.getLockedTime();
+      String publicAccessPrevention = iamConfiguration.getPublicAccessPrevention();
+
+      PublicAccessPrevention publicAccessPreventionValue = null;
+      if (publicAccessPrevention != null) {
+        publicAccessPreventionValue = PublicAccessPrevention.parse(publicAccessPrevention);
+      }
 
       return newBuilder()
           .setIsUniformBucketLevelAccessEnabled(uniformBucketLevelAccess.getEnabled())
           .setUniformBucketLevelAccessLockedTime(lockedTime == null ? null : lockedTime.getValue())
+          .setPublicAccessPrevention(publicAccessPreventionValue)
           .build();
     }
 
@@ -199,6 +257,7 @@ public class BucketInfo implements Serializable {
     public static class Builder {
       private Boolean isUniformBucketLevelAccessEnabled;
       private Long uniformBucketLevelAccessLockedTime;
+      private PublicAccessPrevention publicAccessPrevention;
 
       /** Deprecated in favor of setIsUniformBucketLevelAccessEnabled(). */
       @Deprecated
@@ -236,6 +295,18 @@ public class BucketInfo implements Serializable {
        */
       Builder setUniformBucketLevelAccessLockedTime(Long uniformBucketLevelAccessLockedTime) {
         this.uniformBucketLevelAccessLockedTime = uniformBucketLevelAccessLockedTime;
+        return this;
+      }
+
+      /**
+       * Sets the bucket's Public Access Prevention configuration. Currently supported options are
+       * {@link PublicAccessPrevention#UNSPECIFIED} or {@link PublicAccessPrevention#ENFORCED}
+       *
+       * @see <a
+       *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
+       */
+      public Builder setPublicAccessPrevention(PublicAccessPrevention publicAccessPrevention) {
+        this.publicAccessPrevention = publicAccessPrevention;
         return this;
       }
 

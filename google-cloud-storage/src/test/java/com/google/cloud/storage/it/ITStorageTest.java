@@ -3271,6 +3271,151 @@ public class ITStorageTest {
     }
   }
 
+  private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
+    return storage.create(
+        Bucket.newBuilder(bucketName)
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setPublicAccessPrevention(
+                        enforced
+                            ? BucketInfo.PublicAccessPrevention.ENFORCED
+                            : BucketInfo.PublicAccessPrevention.UNSPECIFIED)
+                    .build())
+            .build());
+  }
+
+  @Test
+  public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
+    String papBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, true);
+      // Making bucket public should fail.
+      try {
+        storage.setIamPolicy(
+            papBucket,
+            Policy.newBuilder()
+                .setVersion(3)
+                .setBindings(
+                    ImmutableList.<com.google.cloud.Binding>of(
+                        com.google.cloud.Binding.newBuilder()
+                            .setRole("roles/storage.objectViewer")
+                            .addMembers("allUsers")
+                            .build()))
+                .build());
+        fail("pap: expected adding allUsers policy to bucket should fail");
+      } catch (StorageException storageException) {
+        // Creating a bucket with roles/storage.objectViewer is not
+        // allowed when publicAccessPrevention is enabled.
+        assertEquals(storageException.getCode(), 412);
+      }
+
+      // Making object public via ACL should fail.
+      try {
+        // Create a public object
+        bucket.create(
+            "pap-test-object",
+            "".getBytes(),
+            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+        fail("pap: expected adding allUsers ACL to object should fail");
+      } catch (StorageException storageException) {
+        // Creating an object with allUsers roles/storage.viewer permission
+        // is not allowed. When Public Access Prevention is enabled.
+        assertEquals(storageException.getCode(), 412);
+      }
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
+    }
+  }
+
+  @Test
+  public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
+    String papBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
+
+      // Now, making object public or making bucket public should succeed.
+      try {
+        // Create a public object
+        bucket.create(
+            "pap-test-object",
+            "".getBytes(),
+            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+      } catch (StorageException storageException) {
+        fail("pap: expected adding allUsers ACL to object to succeed");
+      }
+
+      // Now, making bucket public should succeed.
+      try {
+        storage.setIamPolicy(
+            papBucket,
+            Policy.newBuilder()
+                .setVersion(3)
+                .setBindings(
+                    ImmutableList.<com.google.cloud.Binding>of(
+                        com.google.cloud.Binding.newBuilder()
+                            .setRole("roles/storage.objectViewer")
+                            .addMembers("allUsers")
+                            .build()))
+                .build());
+      } catch (StorageException storageException) {
+        fail("pap: expected adding allUsers policy to bucket to succeed");
+      }
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
+    }
+  }
+
+  @Test
+  public void testUBLAWithPublicAccessPreventionOnBucket() throws Exception {
+    String papBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
+      assertEquals(
+          bucket.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
+      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+
+      // Update PAP setting to ENFORCED and should not affect UBLA setting.
+      bucket
+          .toBuilder()
+          .setIamConfiguration(
+              bucket
+                  .getIamConfiguration()
+                  .toBuilder()
+                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
+                  .build())
+          .build()
+          .update();
+      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      assertEquals(
+          bucket.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.ENFORCED);
+      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+
+      // Updating UBLA should not affect PAP setting.
+      bucket =
+          bucket
+              .toBuilder()
+              .setIamConfiguration(
+                  bucket
+                      .getIamConfiguration()
+                      .toBuilder()
+                      .setIsUniformBucketLevelAccessEnabled(true)
+                      .build())
+              .build()
+              .update();
+      assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertTrue(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertEquals(
+          bucket.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.ENFORCED);
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
+    }
+  }
+
   @Test
   public void testUploadUsingSignedURL() throws Exception {
     String blobName = "test-signed-url-upload";
