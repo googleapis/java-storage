@@ -3421,15 +3421,23 @@ public class ITStorageTest {
     String blobName = "test-signed-url-upload";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
     assertNotNull(storage.create(blob));
+    Map<String, String> extensionHeaders = new HashMap<>();
+    extensionHeaders.put("x-goog-resumable", "start");
     for (Storage.SignUrlOption urlStyle :
         Arrays.asList(
             Storage.SignUrlOption.withPathStyle(),
             Storage.SignUrlOption.withVirtualHostedStyle())) {
       URL signUrl =
           storage.signUrl(
-              blob, 1, TimeUnit.HOURS, Storage.SignUrlOption.httpMethod(HttpMethod.POST), urlStyle);
+              blob,
+              1,
+              TimeUnit.HOURS,
+              Storage.SignUrlOption.httpMethod(HttpMethod.POST),
+              Storage.SignUrlOption.withExtHeaders(extensionHeaders),
+              urlStyle);
       byte[] bytesArrayToUpload = BLOB_STRING_CONTENT.getBytes();
-      try (WriteChannel writer = storage.writer(signUrl)) {
+      Storage unauthenticatedStorage = StorageOptions.getUnauthenticatedInstance().getService();
+      try (WriteChannel writer = unauthenticatedStorage.writer(signUrl)) {
         writer.write(ByteBuffer.wrap(bytesArrayToUpload, 0, bytesArrayToUpload.length));
       }
 
