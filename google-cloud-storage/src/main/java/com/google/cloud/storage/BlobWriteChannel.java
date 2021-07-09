@@ -25,7 +25,6 @@ import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.collect.Maps;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.Map;
@@ -76,12 +75,6 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
 
   private long getRemotePosition() {
     return getOptions().getStorageRpcV1().getCurrentUploadOffset(getUploadId());
-  }
-
-  private StorageObject getRemoteStorageObject() {
-    return getOptions()
-        .getStorageRpcV1()
-        .get(getEntity().toPb(), Maps.newEnumMap(StorageRpc.Option.class));
   }
 
   private static StorageException unrecoverableState(
@@ -212,8 +205,12 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                   if (uploadAlreadyComplete && lastChunk) {
                     // Case 6
                     // Request object metadata if not available
+                    long totalBytes = getPosition() + length;
                     if (storageObject == null) {
-                      storageObject = getRemoteStorageObject();
+                      storageObject =
+                          getOptions()
+                              .getStorageRpcV1()
+                              .queryResumableUpload(getUploadId(), totalBytes);
                     }
                     // the following checks are defined here explicitly to provide a more
                     // informative if either storageObject is unable to be resolved or it's size is
@@ -239,7 +236,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                           remotePosition,
                           lastChunk);
                     }
-                    if (size.longValue() != getPosition() + length) {
+                    if (size.longValue() != totalBytes) {
                       throw unrecoverableState(
                           getUploadId(),
                           chunkOffset,

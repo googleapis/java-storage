@@ -338,6 +338,8 @@ public interface StorageRpc extends ServiceRpc {
    */
   long getCurrentUploadOffset(String uploadId);
 
+  StorageObject queryResumableUpload(String uploadId, long totalBytes);
+
   /**
    * Writes the provided bytes to a storage object at the provided location. If {@code last=true}
    * returns metadata of the updated object, otherwise returns null.

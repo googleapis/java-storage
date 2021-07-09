@@ -811,6 +811,27 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
+  public StorageObject queryResumableUpload(String uploadId, long totalBytes) {
+    try {
+      GenericUrl url = new GenericUrl(uploadId);
+      HttpRequest req = storage.getRequestFactory().buildPutRequest(url, new EmptyContent());
+      req.getHeaders().setContentRange(String.format("bytes */%s", totalBytes));
+      req.setParser(storage.getObjectParser());
+      HttpResponse response = req.execute();
+      // If the response is 200
+      if (response.getStatusCode() == 200) {
+        return response.parseAs(StorageObject.class);
+        // String s = response.parseAsString();
+        // throw new RuntimeException("kaboobm");
+      } else {
+        throw buildStorageException(response.getStatusCode(), response.getStatusMessage());
+      }
+    } catch (IOException ex) {
+      throw translate(ex);
+    }
+  }
+
+  @Override
   public StorageObject writeWithResponse(
       String uploadId,
       byte[] toWrite,
@@ -875,10 +896,7 @@ public class HttpStorageRpc implements StorageRpc {
         if (exception != null) {
           throw exception;
         }
-        GoogleJsonError error = new GoogleJsonError();
-        error.setCode(code);
-        error.setMessage(message);
-        throw translate(error);
+        throw buildStorageException(code, message);
       }
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -925,10 +943,7 @@ public class HttpStorageRpc implements StorageRpc {
       setEncryptionHeaders(requestHeaders, "x-goog-encryption-", options);
       HttpResponse response = httpRequest.execute();
       if (response.getStatusCode() != 200) {
-        GoogleJsonError error = new GoogleJsonError();
-        error.setCode(response.getStatusCode());
-        error.setMessage(response.getStatusMessage());
-        throw translate(error);
+        throw buildStorageException(response.getStatusCode(), response.getStatusMessage());
       }
       return response.getHeaders().getLocation();
     } catch (IOException ex) {
@@ -958,10 +973,7 @@ public class HttpStorageRpc implements StorageRpc {
       requestHeaders.set("x-goog-resumable", "start");
       HttpResponse response = httpRequest.execute();
       if (response.getStatusCode() != 201) {
-        GoogleJsonError error = new GoogleJsonError();
-        error.setCode(response.getStatusCode());
-        error.setMessage(response.getStatusMessage());
-        throw translate(error);
+        throw buildStorageException(response.getStatusCode(), response.getStatusMessage());
       }
       return response.getHeaders().getLocation();
     } catch (IOException ex) {
@@ -1620,5 +1632,12 @@ public class HttpStorageRpc implements StorageRpc {
       scope.close();
       span.end(HttpStorageRpcSpans.END_SPAN_OPTIONS);
     }
+  }
+
+  private static StorageException buildStorageException(int statusCode, String statusMessage) {
+    GoogleJsonError error = new GoogleJsonError();
+    error.setCode(statusCode);
+    error.setMessage(statusMessage);
+    return translate(error);
   }
 }

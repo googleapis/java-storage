@@ -145,6 +145,11 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
+  public StorageObject queryResumableUpload(String uploadId, long totalBytes) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
   public StorageObject writeWithResponse(
       String uploadId,
       byte[] toWrite,
