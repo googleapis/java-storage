@@ -821,8 +821,6 @@ public class HttpStorageRpc implements StorageRpc {
       // If the response is 200
       if (response.getStatusCode() == 200) {
         return response.parseAs(StorageObject.class);
-        // String s = response.parseAsString();
-        // throw new RuntimeException("kaboobm");
       } else {
         throw buildStorageException(response.getStatusCode(), response.getStatusMessage());
       }
