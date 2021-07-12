@@ -282,7 +282,7 @@ public class StorageRpcTestBase implements StorageRpc {
   }
 
   @Override
-  public boolean deleteNotification(String bucket, String notification) {
+  public boolean deleteNotification(String bucket, String id) {
     throw new UnsupportedOperationException("Not implemented yet");
   }
 
@@ -293,6 +293,11 @@ public class StorageRpcTestBase implements StorageRpc {
 
   @Override
   public Notification createNotification(String bucket, Notification notification) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
+  public Notification getNotification(String bucket, String id) {
     throw new UnsupportedOperationException("Not implemented yet");
   }
 

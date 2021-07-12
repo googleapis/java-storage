@@ -31,4 +31,29 @@
         <method>long getCurrentUploadOffset(java.lang.String)</method>
         <differenceType>7012</differenceType>
     </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>*.Notification createNotification(*.String, *.NotificationInfo)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>*.Notification getNotification(*.String, *.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>java.util.List listNotifications(*.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/Storage</className>
+        <method>boolean deleteNotification(*.String, *.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+        <method>*.model.Notification getNotification(*.String, *.String)</method>
+        <differenceType>7012</differenceType>
+    </difference>
 </differences>
