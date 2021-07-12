@@ -956,6 +956,10 @@ public class HttpStorageRpc implements StorageRpc {
       HttpHeaders requestHeaders = httpRequest.getHeaders();
       requestHeaders.set("X-Upload-Content-Type", "");
       requestHeaders.set("x-goog-resumable", "start");
+      // Using the x-goog-api-client header causes a signature mismatch with signed URLs generated
+      // outside the Java storage client
+      requestHeaders.remove("x-goog-api-client");
+
       HttpResponse response = httpRequest.execute();
       if (response.getStatusCode() != 201) {
         GoogleJsonError error = new GoogleJsonError();
