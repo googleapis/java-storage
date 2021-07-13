@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.118.0](https://www.github.com/googleapis/java-storage/compare/v1.117.1...v1.118.0) (2021-07-13)
+
+
+### Features
+
+* fix signed url mismatch in BlobWriteChannel ([#915](https://www.github.com/googleapis/java-storage/issues/915)) ([8b05867](https://www.github.com/googleapis/java-storage/commit/8b0586757523cfc550c62ff264eea3eebbd7f32e))
+
+
+### Bug Fixes
+
+* correct lastChunk retry logic in BlobWriteChannel ([#918](https://www.github.com/googleapis/java-storage/issues/918)) ([ab0228c](https://www.github.com/googleapis/java-storage/commit/ab0228c95df831d79f4a9c993908e5700dab5aa7))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20210127-1.32.1 ([#910](https://www.github.com/googleapis/java-storage/issues/910)) ([2c54acc](https://www.github.com/googleapis/java-storage/commit/2c54acca0653a96773ab3606a8d97299e9fdf045))
+* update kms.version to v0.90.0 ([#911](https://www.github.com/googleapis/java-storage/issues/911)) ([1050725](https://www.github.com/googleapis/java-storage/commit/1050725c91b4375340ba113568ba04538c7f52fc))
+
 ### [1.117.1](https://www.github.com/googleapis/java-storage/compare/v1.117.0...v1.117.1) (2021-06-30)
 
 
