@@ -354,7 +354,7 @@ public interface StorageRpc extends ServiceRpc {
    * @param totalBytes the total number of bytes that should have been written.
    * @throws StorageException if the upload is incomplete or does not exist
    */
-  StorageObject queryResumableUpload(String uploadId, long totalBytes);
+  StorageObject queryCompletedResumableUpload(String uploadId, long totalBytes);
 
   /**
    * Writes the provided bytes to a storage object at the provided location. If {@code last=true}

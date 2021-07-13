@@ -811,7 +811,7 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
-  public StorageObject queryResumableUpload(String uploadId, long totalBytes) {
+  public StorageObject queryCompletedResumableUpload(String uploadId, long totalBytes) {
     try {
       GenericUrl url = new GenericUrl(uploadId);
       HttpRequest req = storage.getRequestFactory().buildPutRequest(url, new EmptyContent());

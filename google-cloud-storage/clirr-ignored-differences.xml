@@ -33,7 +33,7 @@
     </difference>
     <difference>
         <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>com.google.api.services.storage.model.StorageObject queryResumableUpload(java.lang.String, long)</method>
+        <method>com.google.api.services.storage.model.StorageObject queryCompletedResumableUpload(java.lang.String, long)</method>
         <differenceType>7012</differenceType>
     </difference>
 </differences>

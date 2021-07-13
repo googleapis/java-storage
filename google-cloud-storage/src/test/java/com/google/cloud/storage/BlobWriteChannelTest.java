@@ -333,10 +333,10 @@ public class BlobWriteChannelTest {
         .andThrow(socketClosedException);
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(-1L);
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(-1L);
-    expect(storageRpcMock.queryResumableUpload(eq(UPLOAD_ID), eq((long) MIN_CHUNK_SIZE)))
+    expect(storageRpcMock.queryCompletedResumableUpload(eq(UPLOAD_ID), eq((long) MIN_CHUNK_SIZE)))
         .andThrow(socketClosedException);
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(-1L);
-    expect(storageRpcMock.queryResumableUpload(eq(UPLOAD_ID), eq((long) MIN_CHUNK_SIZE)))
+    expect(storageRpcMock.queryCompletedResumableUpload(eq(UPLOAD_ID), eq((long) MIN_CHUNK_SIZE)))
         .andReturn(BLOB_INFO.toPb().setSize(BigInteger.valueOf(MIN_CHUNK_SIZE)));
     replay(storageRpcMock);
     writer = new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);
@@ -486,7 +486,7 @@ public class BlobWriteChannelTest {
                 eq(true)))
         .andThrow(socketClosedException);
     expect(storageRpcMock.getCurrentUploadOffset(eq(UPLOAD_ID))).andReturn(-1L);
-    expect(storageRpcMock.queryResumableUpload(eq(UPLOAD_ID), eq((long) MIN_CHUNK_SIZE)))
+    expect(storageRpcMock.queryCompletedResumableUpload(eq(UPLOAD_ID), eq((long) MIN_CHUNK_SIZE)))
         .andReturn(BLOB_INFO.toPb().setSize(BigInteger.valueOf(MIN_CHUNK_SIZE)));
     replay(storageRpcMock);
     writer = new BlobWriteChannel(options, BLOB_INFO, EMPTY_RPC_OPTIONS);

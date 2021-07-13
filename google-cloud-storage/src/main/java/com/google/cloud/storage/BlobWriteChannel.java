@@ -210,7 +210,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                       storageObject =
                           getOptions()
                               .getStorageRpcV1()
-                              .queryResumableUpload(getUploadId(), totalBytes);
+                              .queryCompletedResumableUpload(getUploadId(), totalBytes);
                     }
                     // the following checks are defined here explicitly to provide a more
                     // informative if either storageObject is unable to be resolved or it's size is
