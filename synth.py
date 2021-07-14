@@ -18,6 +18,20 @@ import synthtool.languages.java as java
 
 AUTOSYNTH_MULTIPLE_COMMITS = True
 
+service='storage'
+version='v2'
+
+java.bazel_library(
+    service=service,
+    version=version,
+    proto_path=f'google/{service}/{version}',
+    bazel_target=f'//google/{service}/{version}:google-cloud-{service}-{version}-java',
+)
+
+java.format_code('google-cloud-storage/src')
+java.format_code(f'grpc-google-cloud-{service}-{version}/src')
+java.format_code(f'proto-google-cloud-{service}-{version}/src')
+
 java.common_templates(excludes=[
   '.kokoro/nightly/integration.cfg',
   '.kokoro/presubmit/integration.cfg',
