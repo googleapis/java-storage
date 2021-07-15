@@ -16,20 +16,29 @@
 
 package com.google.cloud.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
+import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.util.DateTime;
 import com.google.api.core.ApiClock;
 import com.google.api.gax.paging.Page;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.api.services.storage.model.TestIamPermissionsResponse;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
@@ -37,6 +46,7 @@ import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.spi.StorageRpcFactory;
+import com.google.cloud.storage.spi.v1.RpcBatch;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -45,22 +55,35 @@ import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.crypto.spec.SecretKeySpec;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -1636,5 +1659,2365 @@ public class StorageImplMockitoTest {
     } catch (StorageException e) {
       assertSame(STORAGE_FAILURE, e.getCause());
     }
+  }
+
+  @Test
+  public void testUpdateBucket() {
+    BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
+    doReturn(updatedBucketInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBucketInfo.toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    Bucket bucket = storage.update(updatedBucketInfo);
+    assertEquals(new Bucket(storage, new BucketInfo.BuilderImpl(updatedBucketInfo)), bucket);
+  }
+
+  @Test
+  public void testUpdateBucketWithOptions() {
+    BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
+    doReturn(updatedBucketInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBucketInfo.toPb(), BUCKET_TARGET_OPTIONS);
+    initializeService();
+    Bucket bucket =
+        storage.update(
+            updatedBucketInfo, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_PREDEFINED_ACL);
+    assertEquals(new Bucket(storage, new BucketInfo.BuilderImpl(updatedBucketInfo)), bucket);
+  }
+
+  @Test
+  public void testUpdateBucketFailure() {
+    BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patch(updatedBucketInfo.toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.update(updatedBucketInfo);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testUpdateBlob() {
+    BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
+    doReturn(updatedBlobInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBlobInfo.toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    Blob blob = storage.update(updatedBlobInfo);
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(updatedBlobInfo)), blob);
+  }
+
+  @Test
+  public void testUpdateBlobWithOptions() {
+    BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
+    doReturn(updatedBlobInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patch(updatedBlobInfo.toPb(), BLOB_TARGET_OPTIONS_UPDATE);
+    initializeService();
+    Blob blob =
+        storage.update(updatedBlobInfo, BLOB_TARGET_METAGENERATION, BLOB_TARGET_PREDEFINED_ACL);
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(updatedBlobInfo)), blob);
+  }
+
+  @Test
+  public void testUpdateBlobFailure() {
+    BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).patch(updatedBlobInfo.toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.update(updatedBlobInfo);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testDeleteBucket() {
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    assertTrue(storage.delete(BUCKET_NAME1));
+  }
+
+  @Test
+  public void testDeleteBucketWithOptions() {
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BucketInfo.of(BUCKET_NAME1).toPb(), BUCKET_SOURCE_OPTIONS);
+    initializeService();
+    assertTrue(storage.delete(BUCKET_NAME1, BUCKET_SOURCE_METAGENERATION));
+  }
+
+  @Test
+  public void testDeleteBucketFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .delete(BucketInfo.of(BUCKET_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.delete(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testDeleteBlob() {
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    assertTrue(storage.delete(BUCKET_NAME1, BLOB_NAME1));
+  }
+
+  @Test
+  public void testDeleteBlobWithOptions() {
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_SOURCE_OPTIONS);
+    initializeService();
+    assertTrue(
+        storage.delete(
+            BUCKET_NAME1, BLOB_NAME1, BLOB_SOURCE_GENERATION, BLOB_SOURCE_METAGENERATION));
+  }
+
+  @Test
+  public void testDeleteBlobWithOptionsFromBlobId() {
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .delete(BLOB_INFO1.getBlobId().toPb(), BLOB_SOURCE_OPTIONS);
+    initializeService();
+    assertTrue(
+        storage.delete(
+            BLOB_INFO1.getBlobId(),
+            BLOB_SOURCE_GENERATION_FROM_BLOB_ID,
+            BLOB_SOURCE_METAGENERATION));
+  }
+
+  @Test
+  public void testDeleteBlobFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .delete(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.delete(BUCKET_NAME1, BLOB_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testCompose() {
+    Storage.ComposeRequest req =
+        Storage.ComposeRequest.newBuilder()
+            .addSource(BLOB_NAME2, BLOB_NAME3)
+            .setTarget(BLOB_INFO1)
+            .build();
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .compose(
+            ImmutableList.of(BLOB_INFO2.toPb(), BLOB_INFO3.toPb()),
+            BLOB_INFO1.toPb(),
+            EMPTY_RPC_OPTIONS);
+    initializeService();
+    Blob blob = storage.compose(req);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testComposeWithOptions() {
+    Storage.ComposeRequest req =
+        Storage.ComposeRequest.newBuilder()
+            .addSource(BLOB_NAME2, BLOB_NAME3)
+            .setTarget(BLOB_INFO1)
+            .setTargetOptions(BLOB_TARGET_GENERATION, BLOB_TARGET_METAGENERATION)
+            .build();
+    doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .compose(
+            ImmutableList.of(BLOB_INFO2.toPb(), BLOB_INFO3.toPb()),
+            BLOB_INFO1.toPb(),
+            BLOB_TARGET_OPTIONS_COMPOSE);
+    initializeService();
+    Blob blob = storage.compose(req);
+    assertEquals(expectedBlob1, blob);
+  }
+
+  @Test
+  public void testComposeFailure() {
+    Storage.ComposeRequest req =
+        Storage.ComposeRequest.newBuilder()
+            .addSource(BLOB_NAME2, BLOB_NAME3)
+            .setTarget(BLOB_INFO1)
+            .build();
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .compose(
+            ImmutableList.of(BLOB_INFO2.toPb(), BLOB_INFO3.toPb()),
+            BLOB_INFO1.toPb(),
+            EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.compose(req);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testCopy() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            EMPTY_RPC_OPTIONS,
+            false,
+            BLOB_INFO2.toPb(),
+            EMPTY_RPC_OPTIONS,
+            null);
+    StorageRpc.RewriteResponse rpcResponse =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+  }
+
+  @Test
+  public void testCopyWithOptions() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.newBuilder()
+            .setSource(BLOB_INFO2.getBlobId())
+            .setSourceOptions(BLOB_SOURCE_GENERATION, BLOB_SOURCE_METAGENERATION)
+            .setTarget(BLOB_INFO1, BLOB_TARGET_GENERATION, BLOB_TARGET_METAGENERATION)
+            .build();
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            BLOB_SOURCE_OPTIONS_COPY,
+            true,
+            request.getTarget().toPb(),
+            BLOB_TARGET_OPTIONS_COMPOSE,
+            null);
+    StorageRpc.RewriteResponse rpcResponse =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+  }
+
+  @Test
+  public void testCopyWithEncryptionKey() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.newBuilder()
+            .setSource(BLOB_INFO2.getBlobId())
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(KEY))
+            .setTarget(BLOB_INFO1, Storage.BlobTargetOption.encryptionKey(BASE64_KEY))
+            .build();
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            ENCRYPTION_KEY_OPTIONS,
+            true,
+            request.getTarget().toPb(),
+            ENCRYPTION_KEY_OPTIONS,
+            null);
+    StorageRpc.RewriteResponse rpcResponse =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    doReturn(rpcResponse, rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+    request =
+        Storage.CopyRequest.newBuilder()
+            .setSource(BLOB_INFO2.getBlobId())
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(BASE64_KEY))
+            .setTarget(BLOB_INFO1, Storage.BlobTargetOption.encryptionKey(KEY))
+            .build();
+    writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+  }
+
+  @Test
+  public void testCopyFromEncryptionKeyToKmsKeyName() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.newBuilder()
+            .setSource(BLOB_INFO2.getBlobId())
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(KEY))
+            .setTarget(BLOB_INFO1, Storage.BlobTargetOption.kmsKeyName(KMS_KEY_NAME))
+            .build();
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            ENCRYPTION_KEY_OPTIONS,
+            true,
+            request.getTarget().toPb(),
+            KMS_KEY_NAME_OPTIONS,
+            null);
+    StorageRpc.RewriteResponse rpcResponse =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    doReturn(rpcResponse, rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+    request =
+        Storage.CopyRequest.newBuilder()
+            .setSource(BLOB_INFO2.getBlobId())
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(BASE64_KEY))
+            .setTarget(BLOB_INFO1, Storage.BlobTargetOption.kmsKeyName(KMS_KEY_NAME))
+            .build();
+    writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+  }
+
+  @Test
+  public void testCopyWithOptionsFromBlobId() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.newBuilder()
+            .setSource(BLOB_INFO1.getBlobId())
+            .setSourceOptions(BLOB_SOURCE_GENERATION_FROM_BLOB_ID, BLOB_SOURCE_METAGENERATION)
+            .setTarget(BLOB_INFO1, BLOB_TARGET_GENERATION, BLOB_TARGET_METAGENERATION)
+            .build();
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            BLOB_SOURCE_OPTIONS_COPY,
+            true,
+            request.getTarget().toPb(),
+            BLOB_TARGET_OPTIONS_COMPOSE,
+            null);
+    StorageRpc.RewriteResponse rpcResponse =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+  }
+
+  @Test
+  public void testCopyMultipleRequests() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            EMPTY_RPC_OPTIONS,
+            false,
+            BLOB_INFO2.toPb(),
+            EMPTY_RPC_OPTIONS,
+            null);
+    StorageRpc.RewriteResponse rpcResponse1 =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    StorageRpc.RewriteResponse rpcResponse2 =
+        new StorageRpc.RewriteResponse(rpcRequest, BLOB_INFO1.toPb(), 42L, true, "token", 42L);
+    doReturn(rpcResponse1)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+
+    doReturn(rpcResponse2)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .continueRewrite(rpcResponse1);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+    assertEquals(expectedBlob1, writer.getResult());
+    assertTrue(writer.isDone());
+    assertEquals(42L, writer.getTotalBytesCopied());
+    assertEquals(42L, writer.getBlobSize());
+  }
+
+  @Test
+  public void testCopyFailure() {
+    Storage.CopyRequest request =
+        Storage.CopyRequest.of(BLOB_INFO1.getBlobId(), BLOB_INFO2.getBlobId());
+    StorageRpc.RewriteRequest rpcRequest =
+        new StorageRpc.RewriteRequest(
+            request.getSource().toPb(),
+            EMPTY_RPC_OPTIONS,
+            false,
+            BLOB_INFO2.toPb(),
+            EMPTY_RPC_OPTIONS,
+            null);
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).openRewrite(rpcRequest);
+    initializeService();
+    try {
+      storage.copy(request);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+
+    StorageRpc.RewriteResponse rpcResponse =
+        new StorageRpc.RewriteResponse(rpcRequest, null, 42L, false, "token", 21L);
+    doReturn(rpcResponse)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .openRewrite(rpcRequest);
+    initializeService();
+    CopyWriter writer = storage.copy(request);
+    assertEquals(42L, writer.getBlobSize());
+    assertEquals(21L, writer.getTotalBytesCopied());
+    assertFalse(writer.isDone());
+  }
+
+  @Test
+  public void testReadAllBytes() {
+    doReturn(BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    byte[] readBytes = storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1);
+    assertArrayEquals(BLOB_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testReadAllBytesWithOptions() {
+    doReturn(BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), BLOB_SOURCE_OPTIONS);
+    initializeService();
+    byte[] readBytes =
+        storage.readAllBytes(
+            BUCKET_NAME1, BLOB_NAME1, BLOB_SOURCE_GENERATION, BLOB_SOURCE_METAGENERATION);
+    assertArrayEquals(BLOB_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testReadAllBytesWithDecryptionKey() {
+    doReturn(BLOB_CONTENT, BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), ENCRYPTION_KEY_OPTIONS);
+    initializeService();
+    byte[] readBytes =
+        storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1, Storage.BlobSourceOption.decryptionKey(KEY));
+    assertArrayEquals(BLOB_CONTENT, readBytes);
+    readBytes =
+        storage.readAllBytes(
+            BUCKET_NAME1, BLOB_NAME1, Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
+    assertArrayEquals(BLOB_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testReadAllBytesFromBlobIdWithOptions() {
+    doReturn(BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BLOB_INFO1.getBlobId().toPb(), BLOB_SOURCE_OPTIONS);
+    initializeService();
+    byte[] readBytes =
+        storage.readAllBytes(
+            BLOB_INFO1.getBlobId(),
+            BLOB_SOURCE_GENERATION_FROM_BLOB_ID,
+            BLOB_SOURCE_METAGENERATION);
+    assertArrayEquals(BLOB_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testReadAllBytesFromBlobIdWithDecryptionKey() {
+    doReturn(BLOB_CONTENT, BLOB_CONTENT)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .load(BLOB_INFO1.getBlobId().toPb(), ENCRYPTION_KEY_OPTIONS);
+
+    initializeService();
+    byte[] readBytes =
+        storage.readAllBytes(BLOB_INFO1.getBlobId(), Storage.BlobSourceOption.decryptionKey(KEY));
+    assertArrayEquals(BLOB_CONTENT, readBytes);
+    readBytes =
+        storage.readAllBytes(
+            BLOB_INFO1.getBlobId(), Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
+    assertArrayEquals(BLOB_CONTENT, readBytes);
+  }
+
+  @Test
+  public void testReadAllBytesFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .load(BlobId.of(BUCKET_NAME1, BLOB_NAME1).toPb(), EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testBatch() {
+    RpcBatch batchMock = mock(RpcBatch.class);
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
+    initializeService();
+    StorageBatch batch = storage.batch();
+    assertSame(options, batch.getOptions());
+    assertSame(storageRpcMock, batch.getStorageRpc());
+    assertSame(batchMock, batch.getBatch());
+  }
+
+  @Test
+  public void testBatchFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).createBatch();
+    initializeService();
+    try {
+      storage.batch();
+      fail();
+    } catch (RuntimeException e) {
+      assertSame(STORAGE_FAILURE, e);
+    }
+  }
+
+  @Test
+  public void testSignUrl()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    URL url = storage.signUrl(BLOB_INFO1, 14, TimeUnit.DAYS);
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://storage.googleapis.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.GET)
+        .append("\n\n\n")
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append('/')
+        .append(BLOB_NAME1);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlWithHostName()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    URL url =
+        storage.signUrl(
+            BLOB_INFO1,
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.withHostName("https://example.com"));
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://example.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.GET)
+        .append("\n\n\n")
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append('/')
+        .append(BLOB_NAME1);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlLeadingSlash()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    String blobName = "/b1";
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    URL url =
+        storage.signUrl(BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(), 14, TimeUnit.DAYS);
+    String expectedResourcePath = "/b1";
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://storage.googleapis.com/")
+            .append(BUCKET_NAME1)
+            .append("/")
+            .append(expectedResourcePath)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.GET)
+        .append("\n\n\n")
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append("/")
+        .append(expectedResourcePath);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlLeadingSlashWithHostName()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    String blobName = "/b1";
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    URL url =
+        storage.signUrl(
+            BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(),
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.withHostName("https://example.com"));
+    String escapedBlobName = SignedUrlEncodingHelper.Rfc3986UriEncode(blobName, false);
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://example.com/")
+            .append(BUCKET_NAME1)
+            .append("/")
+            .append(escapedBlobName)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.GET)
+        .append("\n\n\n")
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append("/")
+        .append(escapedBlobName);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlWithOptions()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    URL url =
+        storage.signUrl(
+            BLOB_INFO1,
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.httpMethod(HttpMethod.POST),
+            Storage.SignUrlOption.withContentType(),
+            Storage.SignUrlOption.withMd5());
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://storage.googleapis.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.POST)
+        .append('\n')
+        .append(BLOB_INFO1.getMd5())
+        .append('\n')
+        .append(BLOB_INFO1.getContentType())
+        .append('\n')
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append('/')
+        .append(BLOB_NAME1);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlWithOptionsAndHostName()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    URL url =
+        storage.signUrl(
+            BLOB_INFO1,
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.httpMethod(HttpMethod.POST),
+            Storage.SignUrlOption.withContentType(),
+            Storage.SignUrlOption.withMd5(),
+            Storage.SignUrlOption.withHostName("https://example.com"));
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://example.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.POST)
+        .append('\n')
+        .append(BLOB_INFO1.getMd5())
+        .append('\n')
+        .append(BLOB_INFO1.getContentType())
+        .append('\n')
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append('/')
+        .append(BLOB_NAME1);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlForBlobWithSpecialChars()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    Map<Character, String> encodingCharsToTest =
+        new HashMap<Character, String>(RFC3986_URI_ENCODING_MAP);
+    // Signed URL specs say that '/' is not encoded in the resource name (path segment of the URI).
+    encodingCharsToTest.put('/', "/");
+    for (Map.Entry<Character, String> entry : encodingCharsToTest.entrySet()) {
+      String blobName = "/a" + entry.getKey() + "b";
+      URL url =
+          storage.signUrl(BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(), 14, TimeUnit.DAYS);
+      String expectedBlobName = "/a" + entry.getValue() + "b";
+      String stringUrl = url.toString();
+      String expectedUrl =
+          new StringBuilder("https://storage.googleapis.com/")
+              .append(BUCKET_NAME1)
+              .append("/")
+              .append(expectedBlobName)
+              .append("?GoogleAccessId=")
+              .append(ACCOUNT)
+              .append("&Expires=")
+              .append(42L + 1209600)
+              .append("&Signature=")
+              .toString();
+      assertTrue(stringUrl.startsWith(expectedUrl));
+      String signature = stringUrl.substring(expectedUrl.length());
+
+      StringBuilder signedMessageBuilder = new StringBuilder();
+      signedMessageBuilder
+          .append(HttpMethod.GET)
+          .append("\n\n\n")
+          .append(42L + 1209600)
+          .append("\n/")
+          .append(BUCKET_NAME1)
+          .append("/")
+          .append(expectedBlobName);
+
+      Signature signer = Signature.getInstance("SHA256withRSA");
+      signer.initVerify(publicKey);
+      signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+      assertTrue(
+          signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+    }
+  }
+
+  @Test
+  public void testSignUrlForBlobWithSpecialCharsAndHostName()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    Map<Character, String> encodingCharsToTest =
+        new HashMap<Character, String>(RFC3986_URI_ENCODING_MAP);
+    // Signed URL specs say that '/' is not encoded in the resource name (path segment of the URI).
+    encodingCharsToTest.put('/', "/");
+    for (Map.Entry<Character, String> entry : encodingCharsToTest.entrySet()) {
+      String blobName = "/a" + entry.getKey() + "b";
+      URL url =
+          storage.signUrl(
+              BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(),
+              14,
+              TimeUnit.DAYS,
+              Storage.SignUrlOption.withHostName("https://example.com"));
+      String expectedBlobName = "/a" + entry.getValue() + "b";
+      String stringUrl = url.toString();
+      String expectedUrl =
+          new StringBuilder("https://example.com/")
+              .append(BUCKET_NAME1)
+              .append("/")
+              .append(expectedBlobName)
+              .append("?GoogleAccessId=")
+              .append(ACCOUNT)
+              .append("&Expires=")
+              .append(42L + 1209600)
+              .append("&Signature=")
+              .toString();
+      assertTrue(stringUrl.startsWith(expectedUrl));
+      String signature = stringUrl.substring(expectedUrl.length());
+
+      StringBuilder signedMessageBuilder = new StringBuilder();
+      signedMessageBuilder
+          .append(HttpMethod.GET)
+          .append("\n\n\n")
+          .append(42L + 1209600)
+          .append("\n/")
+          .append(BUCKET_NAME1)
+          .append("/")
+          .append(expectedBlobName);
+
+      Signature signer = Signature.getInstance("SHA256withRSA");
+      signer.initVerify(publicKey);
+      signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+      assertTrue(
+          signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+    }
+  }
+
+  @Test
+  public void testSignUrlWithExtHeaders()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    Map<String, String> extHeaders = new HashMap<String, String>();
+    extHeaders.put("x-goog-acl", "public-read");
+    extHeaders.put("x-goog-meta-owner", "myself");
+    URL url =
+        storage.signUrl(
+            BLOB_INFO1,
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.httpMethod(HttpMethod.PUT),
+            Storage.SignUrlOption.withContentType(),
+            Storage.SignUrlOption.withExtHeaders(extHeaders));
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://storage.googleapis.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.PUT)
+        .append('\n')
+        .append('\n')
+        .append(BLOB_INFO1.getContentType())
+        .append('\n')
+        .append(42L + 1209600)
+        .append('\n')
+        .append("x-goog-acl:public-read\n")
+        .append("x-goog-meta-owner:myself\n")
+        .append('/')
+        .append(BUCKET_NAME1)
+        .append('/')
+        .append(BLOB_NAME1);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlWithExtHeadersAndHostName()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+    Map<String, String> extHeaders = new HashMap<String, String>();
+    extHeaders.put("x-goog-acl", "public-read");
+    extHeaders.put("x-goog-meta-owner", "myself");
+    URL url =
+        storage.signUrl(
+            BLOB_INFO1,
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.httpMethod(HttpMethod.PUT),
+            Storage.SignUrlOption.withContentType(),
+            Storage.SignUrlOption.withExtHeaders(extHeaders),
+            Storage.SignUrlOption.withHostName("https://example.com"));
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://example.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.PUT)
+        .append('\n')
+        .append('\n')
+        .append(BLOB_INFO1.getContentType())
+        .append('\n')
+        .append(42L + 1209600)
+        .append('\n')
+        .append("x-goog-acl:public-read\n")
+        .append("x-goog-meta-owner:myself\n")
+        .append('/')
+        .append(BUCKET_NAME1)
+        .append('/')
+        .append(BLOB_NAME1);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlForBlobWithSlashes()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    String blobName = "/foo/bar/baz #%20other cool stuff.txt";
+    URL url =
+        storage.signUrl(BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(), 14, TimeUnit.DAYS);
+    String escapedBlobName = SignedUrlEncodingHelper.Rfc3986UriEncode(blobName, false);
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://storage.googleapis.com/")
+            .append(BUCKET_NAME1)
+            .append("/")
+            .append(escapedBlobName)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.GET)
+        .append("\n\n\n")
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append("/")
+        .append(escapedBlobName);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testSignUrlForBlobWithSlashesAndHostName()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    String blobName = "/foo/bar/baz #%20other cool stuff.txt";
+    URL url =
+        storage.signUrl(
+            BlobInfo.newBuilder(BUCKET_NAME1, blobName).build(),
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.withHostName("https://example.com"));
+    String escapedBlobName = SignedUrlEncodingHelper.Rfc3986UriEncode(blobName, false);
+    String stringUrl = url.toString();
+    String expectedUrl =
+        new StringBuilder("https://example.com/")
+            .append(BUCKET_NAME1)
+            .append("/")
+            .append(escapedBlobName)
+            .append("?GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedUrl));
+    String signature = stringUrl.substring(expectedUrl.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.GET)
+        .append("\n\n\n")
+        .append(42L + 1209600)
+        .append("\n/")
+        .append(BUCKET_NAME1)
+        .append("/")
+        .append(escapedBlobName);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  @Test
+  public void testV2SignUrlWithQueryParams()
+      throws NoSuchAlgorithmException, InvalidKeyException, SignatureException,
+          UnsupportedEncodingException {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    String dispositionNotEncoded = "attachment; filename=\"" + BLOB_NAME1 + "\"";
+    String dispositionEncoded = "attachment%3B%20filename%3D%22" + BLOB_NAME1 + "%22";
+    URL url =
+        storage.signUrl(
+            BLOB_INFO1,
+            14,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.withPathStyle(),
+            Storage.SignUrlOption.withV2Signature(),
+            Storage.SignUrlOption.withQueryParams(
+                ImmutableMap.<String, String>of(
+                    "response-content-disposition", dispositionNotEncoded)));
+
+    String stringUrl = url.toString();
+
+    String expectedPrefix =
+        new StringBuilder("https://storage.googleapis.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            // Query params aren't sorted for V2 signatures; user-supplied params are inserted at
+            // the start of the query string, before the required auth params.
+            .append("?response-content-disposition=")
+            .append(dispositionEncoded)
+            .append("&GoogleAccessId=")
+            .append(ACCOUNT)
+            .append("&Expires=")
+            .append(42L + 1209600)
+            .append("&Signature=")
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedPrefix));
+    String signature = stringUrl.substring(expectedPrefix.length());
+
+    StringBuilder signedMessageBuilder = new StringBuilder();
+    signedMessageBuilder
+        .append(HttpMethod.GET)
+        .append('\n')
+        // No value for Content-MD5, blank
+        .append('\n')
+        // No value for Content-Type, blank
+        .append('\n')
+        // Expiration line:
+        .append(42L + 1209600)
+        .append('\n')
+        // Resource line:
+        .append('/')
+        .append(BUCKET_NAME1)
+        .append('/')
+        .append(BLOB_NAME1);
+
+    Signature signer = Signature.getInstance("SHA256withRSA");
+    signer.initVerify(publicKey);
+    signer.update(signedMessageBuilder.toString().getBytes(UTF_8));
+    assertTrue(
+        signer.verify(BaseEncoding.base64().decode(URLDecoder.decode(signature, UTF_8.name()))));
+  }
+
+  // TODO(b/144304815): Remove this test once all conformance tests contain query param test cases.
+  @Test
+  public void testV4SignUrlWithQueryParams() {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    String dispositionNotEncoded = "attachment; filename=\"" + BLOB_NAME1 + "\"";
+    String dispositionEncoded = "attachment%3B%20filename%3D%22" + BLOB_NAME1 + "%22";
+    URL url =
+        storage.signUrl(
+            BLOB_INFO1,
+            6,
+            TimeUnit.DAYS,
+            Storage.SignUrlOption.withPathStyle(),
+            Storage.SignUrlOption.withV4Signature(),
+            Storage.SignUrlOption.withQueryParams(
+                ImmutableMap.<String, String>of(
+                    "response-content-disposition", dispositionNotEncoded)));
+    String stringUrl = url.toString();
+    String expectedPrefix =
+        new StringBuilder("https://storage.googleapis.com/")
+            .append(BUCKET_NAME1)
+            .append('/')
+            .append(BLOB_NAME1)
+            .append('?')
+            .toString();
+    assertTrue(stringUrl.startsWith(expectedPrefix));
+    String restOfUrl = stringUrl.substring(expectedPrefix.length());
+
+    Pattern pattern =
+        Pattern.compile(
+            // We use the same code to construct the canonical request query string as we do to
+            // construct the query string used in the final URL, so this query string should also be
+            // sorted correctly, except for the trailing x-goog-signature param.
+            new StringBuilder("X-Goog-Algorithm=GOOG4-RSA-SHA256")
+                .append("&X-Goog-Credential=[^&]+")
+                .append("&X-Goog-Date=[^&]+")
+                .append("&X-Goog-Expires=[^&]+")
+                .append("&X-Goog-SignedHeaders=[^&]+")
+                .append("&response-content-disposition=[^&]+")
+                // Signature is always tacked onto the end of the final URL; it's not sorted w/ the
+                // other params above, since the signature is not known when you're constructing the
+                // query string line of the canonical request string.
+                .append("&X-Goog-Signature=.*")
+                .toString());
+    Matcher matcher = pattern.matcher(restOfUrl);
+    assertTrue(restOfUrl, matcher.matches());
+
+    // Make sure query param was encoded properly.
+    assertNotEquals(-1, restOfUrl.indexOf("&response-content-disposition=" + dispositionEncoded));
+  }
+
+  @Test
+  public void testGetAllArray() {
+    BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addGet(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
+    initializeService();
+
+    List<Blob> resultBlobs = storage.get(blobId1, blobId2);
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onFailure(new GoogleJsonError());
+    callback.getAllValues().get(1).onSuccess(BLOB_INFO2.toPb());
+    assertEquals(2, resultBlobs.size());
+    assertNull(resultBlobs.get(0));
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO2)), resultBlobs.get(1));
+  }
+
+  @Test
+  public void testGetAllArrayIterable() {
+    BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addGet(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
+    initializeService();
+
+    List<Blob> resultBlobs = storage.get(ImmutableList.of(blobId1, blobId2));
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onFailure(new GoogleJsonError());
+    callback.getAllValues().get(1).onSuccess(BLOB_INFO2.toPb());
+    assertEquals(2, resultBlobs.size());
+    assertNull(resultBlobs.get(0));
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO2)), resultBlobs.get(1));
+  }
+
+  @Test
+  public void testDeleteAllArray() {
+    BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<Void>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addDelete(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
+    initializeService();
+
+    List<Boolean> result = storage.delete(blobId1, blobId2);
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, result.size());
+    callback.getAllValues().get(0).onFailure(new GoogleJsonError());
+    callback.getAllValues().get(1).onSuccess(null);
+    assertEquals(2, result.size());
+    assertFalse(result.get(0));
+    assertTrue(result.get(1));
+  }
+
+  @Test
+  public void testDeleteAllIterable() {
+    BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<Void>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addDelete(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
+    initializeService();
+
+    List<Boolean> result = storage.delete(ImmutableList.of(blobId1, blobId2));
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, result.size());
+    callback.getAllValues().get(0).onSuccess(null);
+    callback.getAllValues().get(1).onFailure(new GoogleJsonError());
+    assertEquals(2, result.size());
+    assertTrue(result.get(0));
+    assertFalse(result.get(1));
+  }
+
+  @Test
+  public void testUpdateAllArray() {
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addPatch(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
+    initializeService();
+
+    List<Blob> resultBlobs = storage.update(BLOB_INFO1, BLOB_INFO2);
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onSuccess(BLOB_INFO1.toPb());
+    callback.getAllValues().get(1).onFailure(new GoogleJsonError());
+    assertEquals(2, resultBlobs.size());
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO1)), resultBlobs.get(0));
+    assertNull(resultBlobs.get(1));
+  }
+
+  @Test
+  public void testUpdateAllIterable() {
+    RpcBatch batchMock = mock(RpcBatch.class);
+    ArgumentCaptor<StorageObject> storageObject = ArgumentCaptor.forClass(StorageObject.class);
+    ArgumentCaptor<RpcBatch.Callback<StorageObject>> callback =
+        ArgumentCaptor.forClass(RpcBatch.Callback.class);
+    doNothing()
+        .doNothing()
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(batchMock)
+        .addPatch(
+            storageObject.capture(),
+            callback.capture(),
+            Mockito.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
+    doReturn(batchMock).doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).createBatch();
+    initializeService();
+
+    List<Blob> resultBlobs = storage.update(ImmutableList.of(BLOB_INFO1, BLOB_INFO2));
+
+    assertEquals(BLOB_NAME1, storageObject.getAllValues().get(0).getName());
+    assertEquals(BLOB_NAME2, storageObject.getAllValues().get(1).getName());
+    assertEquals(0, resultBlobs.size());
+    callback.getAllValues().get(0).onSuccess(BLOB_INFO1.toPb());
+    callback.getAllValues().get(1).onFailure(new GoogleJsonError());
+    assertEquals(2, resultBlobs.size());
+    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO1)), resultBlobs.get(0));
+    assertNull(resultBlobs.get(1));
+  }
+
+  @Test
+  public void testGetDeleteUpdateAllFailure() {
+    BlobId blobId1 = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    BlobId blobId2 = BlobId.of(BUCKET_NAME1, BLOB_NAME2);
+
+    Answer answer =
+        new Answer<Object>() {
+          @Override
+          public Object answer(InvocationOnMock invocation) {
+            throw STORAGE_FAILURE;
+          };
+        };
+
+    RpcBatch batchMock = mock(RpcBatch.class, answer);
+    doReturn(batchMock, batchMock, batchMock, batchMock, batchMock, batchMock)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createBatch();
+
+    initializeService();
+
+    for (int i = 0; i < 6; i++) {
+      try {
+        if (i == 0) {
+          storage.get(blobId1, blobId2);
+        } else if (i == 1) {
+          storage.get(ImmutableList.of(blobId1, blobId2));
+        } else if (i == 2) {
+          storage.delete(blobId1, blobId2);
+        } else if (i == 3) {
+          storage.delete(ImmutableList.of(blobId1, blobId2));
+        } else if (i == 4) {
+          storage.update(BLOB_INFO1, BLOB_INFO2);
+        } else if (i == 5) {
+          storage.update(ImmutableList.of(BLOB_INFO1, BLOB_INFO2));
+        }
+        fail();
+      } catch (RuntimeException e) {
+        assertSame(STORAGE_FAILURE, e);
+      }
+    }
+  }
+
+  @Test
+  public void testGetBucketAcl() {
+    doReturn(ACL.toBucketPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+
+    initializeService();
+    Acl acl = storage.getAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+    assertEquals(ACL, acl);
+  }
+
+  @Test
+  public void testGetBucketAclNull() {
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+
+    initializeService();
+    assertNull(storage.getAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void testGetBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.getAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testDeleteBucketAcl() {
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    assertTrue(storage.deleteAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void testDeleteBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, "allAuthenticatedUsers", new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.deleteAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testCreateBucketAcl() {
+    Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
+    doReturn(returnedAcl.toBucketPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    Acl acl = storage.createAcl(BUCKET_NAME1, ACL);
+    assertEquals(returnedAcl, acl);
+  }
+
+  @Test
+  public void testCreateBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.createAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testUpdateBucketAcl() {
+    Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
+    doReturn(returnedAcl.toBucketPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    Acl acl = storage.updateAcl(BUCKET_NAME1, ACL);
+    assertEquals(returnedAcl, acl);
+  }
+
+  @Test
+  public void testUpdateBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toBucketPb().setBucket(BUCKET_NAME1), new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.updateAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testListBucketAcl() {
+    doReturn(ImmutableList.of(ACL.toBucketPb(), OTHER_ACL.toBucketPb()))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .listAcls(BUCKET_NAME1, new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    List<Acl> acls = storage.listAcls(BUCKET_NAME1);
+    assertEquals(ImmutableList.of(ACL, OTHER_ACL), acls);
+  }
+
+  @Test
+  public void testListBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .listAcls(BUCKET_NAME1, new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    try {
+      storage.listAcls(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testGetDefaultBucketAcl() {
+    doReturn(ACL.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
+    initializeService();
+    Acl acl = storage.getDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+    assertEquals(ACL, acl);
+  }
+
+  @Test
+  public void testGetDefaultBucketAclNull() {
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
+    initializeService();
+    assertNull(storage.getDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void tesGetDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .getDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.getDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testDeleteDefaultBucketAcl() {
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .deleteDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
+    initializeService();
+    assertTrue(storage.deleteDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void testDeleteDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .deleteDefaultAcl(BUCKET_NAME1, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.deleteDefaultAcl(BUCKET_NAME1, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testCreateDefaultBucketAcl() {
+    Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
+    initializeService();
+    Acl acl = storage.createDefaultAcl(BUCKET_NAME1, ACL);
+    assertEquals(returnedAcl, acl);
+  }
+
+  @Test
+  public void testCreateDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .createDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
+    initializeService();
+    try {
+      storage.createDefaultAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testUpdateDefaultBucketAcl() {
+    Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patchDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
+    initializeService();
+    Acl acl = storage.updateDefaultAcl(BUCKET_NAME1, ACL);
+    assertEquals(returnedAcl, acl);
+  }
+
+  @Test
+  public void testUpdateDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patchDefaultAcl(ACL.toObjectPb().setBucket(BUCKET_NAME1));
+    initializeService();
+    try {
+      storage.updateDefaultAcl(BUCKET_NAME1, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testListDefaultBucketAcl() {
+    doReturn(ImmutableList.of(ACL.toObjectPb(), OTHER_ACL.toObjectPb()))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .listDefaultAcls(BUCKET_NAME1);
+    initializeService();
+    List<Acl> acls = storage.listDefaultAcls(BUCKET_NAME1);
+    assertEquals(ImmutableList.of(ACL, OTHER_ACL), acls);
+  }
+
+  @Test
+  public void testListDefaultBucketAclFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).listDefaultAcls(BUCKET_NAME1);
+    initializeService();
+    try {
+      storage.listDefaultAcls(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testGetBlobAcl() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doReturn(ACL.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
+    initializeService();
+    Acl acl = storage.getAcl(blobId, Acl.User.ofAllAuthenticatedUsers());
+    assertEquals(ACL, acl);
+  }
+
+  @Test
+  public void testGetBlobAclNull() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doReturn(null)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
+    initializeService();
+    assertNull(storage.getAcl(blobId, Acl.User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void testGetBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .getAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.getAcl(blobId, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testDeleteBlobAcl() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doReturn(true)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
+    initializeService();
+    assertTrue(storage.deleteAcl(blobId, Acl.User.ofAllAuthenticatedUsers()));
+  }
+
+  @Test
+  public void testDeleteBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .deleteAcl(BUCKET_NAME1, BLOB_NAME1, 42L, "allAuthenticatedUsers");
+    initializeService();
+    try {
+      storage.deleteAcl(blobId, Acl.User.ofAllAuthenticatedUsers());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testCreateBlobAcl() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
+    initializeService();
+    Acl acl = storage.createAcl(blobId, ACL);
+    assertEquals(returnedAcl, acl);
+  }
+
+  @Test
+  public void testCreateBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .createAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
+    initializeService();
+    try {
+      storage.createAcl(blobId, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testUpdateBlobAcl() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
+    doReturn(returnedAcl.toObjectPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
+    initializeService();
+    Acl acl = storage.updateAcl(blobId, ACL);
+    assertEquals(returnedAcl, acl);
+  }
+
+  @Test
+  public void testUpdateBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .patchAcl(
+            ACL.toObjectPb().setBucket(BUCKET_NAME1).setObject(BLOB_NAME1).setGeneration(42L));
+    initializeService();
+    try {
+      storage.updateAcl(blobId, ACL);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testListBlobAcl() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doReturn(ImmutableList.of(ACL.toObjectPb(), OTHER_ACL.toObjectPb()))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .listAcls(BUCKET_NAME1, BLOB_NAME1, 42L);
+    initializeService();
+    List<Acl> acls = storage.listAcls(blobId);
+    assertEquals(ImmutableList.of(ACL, OTHER_ACL), acls);
+  }
+
+  @Test
+  public void testListBlobAclFailure() {
+    BlobId blobId = BlobId.of(BUCKET_NAME1, BLOB_NAME1, 42L);
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).listAcls(BUCKET_NAME1, BLOB_NAME1, 42L);
+    initializeService();
+    try {
+      storage.listAcls(blobId);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testGetIamPolicy() {
+    doReturn(API_POLICY1)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+    initializeService();
+    assertEquals(LIB_POLICY1, storage.getIamPolicy(BUCKET_NAME1));
+  }
+
+  @Test
+  public void testGetIamPolicyFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.getIamPolicy(BUCKET_NAME1);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testSetIamPolicy() {
+    com.google.api.services.storage.model.Policy preCommitApiPolicy =
+        new com.google.api.services.storage.model.Policy()
+            .setBindings(
+                ImmutableList.of(
+                    new com.google.api.services.storage.model.Policy.Bindings()
+                        .setMembers(ImmutableList.of("allUsers"))
+                        .setRole("roles/storage.objectViewer"),
+                    new com.google.api.services.storage.model.Policy.Bindings()
+                        .setMembers(
+                            ImmutableList.of("user:test1@gmail.com", "user:test2@gmail.com"))
+                        .setRole("roles/storage.objectAdmin"),
+                    new com.google.api.services.storage.model.Policy.Bindings()
+                        .setMembers(ImmutableList.of("group:test-group@gmail.com"))
+                        .setRole("roles/storage.admin")))
+            .setEtag(POLICY_ETAG1)
+            .setVersion(1);
+    // postCommitApiPolicy is identical but for the etag, which has been updated.
+    com.google.api.services.storage.model.Policy postCommitApiPolicy =
+        new com.google.api.services.storage.model.Policy()
+            .setBindings(
+                ImmutableList.of(
+                    new com.google.api.services.storage.model.Policy.Bindings()
+                        .setMembers(ImmutableList.of("allUsers"))
+                        .setRole("roles/storage.objectViewer"),
+                    new com.google.api.services.storage.model.Policy.Bindings()
+                        .setMembers(
+                            ImmutableList.of("user:test1@gmail.com", "user:test2@gmail.com"))
+                        .setRole("roles/storage.objectAdmin"),
+                    new com.google.api.services.storage.model.Policy.Bindings()
+                        .setMembers(ImmutableList.of("group:test-group@gmail.com"))
+                        .setRole("roles/storage.admin")))
+            .setEtag(POLICY_ETAG2)
+            .setVersion(1);
+    Policy postCommitLibPolicy =
+        Policy.newBuilder()
+            .addIdentity(StorageRoles.objectViewer(), Identity.allUsers())
+            .addIdentity(
+                StorageRoles.objectAdmin(),
+                Identity.user("test1@gmail.com"),
+                Identity.user("test2@gmail.com"))
+            .addIdentity(StorageRoles.admin(), Identity.group("test-group@gmail.com"))
+            .setEtag(POLICY_ETAG2)
+            .setVersion(1)
+            .build();
+
+    doReturn(API_POLICY1)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getIamPolicy(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
+
+    doReturn(postCommitApiPolicy)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .setIamPolicy(BUCKET_NAME1, preCommitApiPolicy, EMPTY_RPC_OPTIONS);
+
+    initializeService();
+
+    Policy currentPolicy = storage.getIamPolicy(BUCKET_NAME1);
+    Policy updatedPolicy =
+        storage.setIamPolicy(
+            BUCKET_NAME1,
+            currentPolicy
+                .toBuilder()
+                .addIdentity(StorageRoles.admin(), Identity.group("test-group@gmail.com"))
+                .build());
+    assertEquals(updatedPolicy, postCommitLibPolicy);
+  }
+
+  @Test
+  public void testSetIamPolicyFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .setIamPolicy(
+            any(String.class),
+            any(com.google.api.services.storage.model.Policy.class),
+            any(Map.class));
+    initializeService();
+    try {
+      storage.setIamPolicy(BUCKET_NAME1, Policy.newBuilder().build());
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testTestIamPermissionsNull() {
+    List<Boolean> expectedPermissions = ImmutableList.of(false, false, false);
+    List<String> checkedPermissions =
+        ImmutableList.of(
+            "storage.buckets.get", "storage.buckets.getIamPolicy", "storage.objects.list");
+    doReturn(new TestIamPermissionsResponse())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .testIamPermissions(BUCKET_NAME1, checkedPermissions, EMPTY_RPC_OPTIONS);
+
+    initializeService();
+    assertEquals(expectedPermissions, storage.testIamPermissions(BUCKET_NAME1, checkedPermissions));
+  }
+
+  @Test
+  public void testTestIamPermissionsNonNull() {
+    List<Boolean> expectedPermissions = ImmutableList.of(true, false, true);
+    List<String> checkedPermissions =
+        ImmutableList.of(
+            "storage.buckets.get", "storage.buckets.getIamPolicy", "storage.objects.list");
+
+    doReturn(
+            new TestIamPermissionsResponse()
+                .setPermissions(ImmutableList.of("storage.objects.list", "storage.buckets.get")))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .testIamPermissions(BUCKET_NAME1, checkedPermissions, EMPTY_RPC_OPTIONS);
+    initializeService();
+    assertEquals(expectedPermissions, storage.testIamPermissions(BUCKET_NAME1, checkedPermissions));
+  }
+
+  @Test
+  public void testTestIamPolicyFailure() {
+    List<String> permissions = ImmutableList.of("test");
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .testIamPermissions(BUCKET_NAME1, permissions, EMPTY_RPC_OPTIONS);
+    initializeService();
+    try {
+      storage.testIamPermissions(BUCKET_NAME1, permissions);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testLockRetentionPolicy() {
+    doReturn(BUCKET_INFO3.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .lockRetentionPolicy(BUCKET_INFO3.toPb(), BUCKET_TARGET_OPTIONS_LOCK_RETENTION_POLICY);
+
+    initializeService();
+    Bucket bucket =
+        storage.lockRetentionPolicy(
+            BUCKET_INFO3, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_USER_PROJECT);
+    assertEquals(expectedBucket3, bucket);
+  }
+
+  @Test
+  public void testLockRetentionPolicyFailure() {
+    doThrow(STORAGE_FAILURE)
+        .when(storageRpcMock)
+        .lockRetentionPolicy(BUCKET_INFO3.toPb(), BUCKET_TARGET_OPTIONS_LOCK_RETENTION_POLICY);
+    initializeService();
+    try {
+      storage.lockRetentionPolicy(
+          BUCKET_INFO3, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_USER_PROJECT);
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testGetServiceAccount() {
+    doReturn(SERVICE_ACCOUNT.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .getServiceAccount("projectId");
+    initializeService();
+    ServiceAccount serviceAccount = storage.getServiceAccount("projectId");
+    assertEquals(SERVICE_ACCOUNT, serviceAccount);
+  }
+
+  @Test
+  public void testGetServiceAccountFailure() {
+    doThrow(STORAGE_FAILURE).when(storageRpcMock).getServiceAccount("projectId");
+    initializeService();
+    try {
+      storage.getServiceAccount("projectId");
+      fail();
+    } catch (StorageException e) {
+      assertSame(STORAGE_FAILURE, e.getCause());
+    }
+  }
+
+  @Test
+  public void testRetryableException() {
+    BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+
+    doThrow(new StorageException(500, "internalError"))
+        .doReturn(BLOB_INFO1.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(blob.toPb(), EMPTY_RPC_OPTIONS);
+
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
+            .build()
+            .getService();
+    initializeServiceDependentObjects();
+    Blob readBlob = storage.get(blob);
+    assertEquals(expectedBlob1, readBlob);
+  }
+
+  @Test
+  public void testNonRetryableException() {
+    BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    String exceptionMessage = "Not Implemented";
+    doThrow(new StorageException(501, exceptionMessage))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(blob.toPb(), EMPTY_RPC_OPTIONS);
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
+            .build()
+            .getService();
+    initializeServiceDependentObjects();
+    try {
+      storage.get(blob);
+      Assert.fail();
+    } catch (StorageException ex) {
+      Assert.assertNotNull(ex.getMessage());
+    }
+  }
+
+  @Test
+  public void testRuntimeException() {
+    BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
+    String exceptionMessage = "Artificial runtime exception";
+    doThrow(new RuntimeException(exceptionMessage))
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .get(blob.toPb(), EMPTY_RPC_OPTIONS);
+
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(ServiceOptions.getDefaultRetrySettings())
+            .build()
+            .getService();
+    try {
+      storage.get(blob);
+      Assert.fail();
+    } catch (StorageException ex) {
+      Assert.assertNotNull(ex.getMessage());
+    }
+  }
+
+  @Test
+  public void testWriterWithSignedURL() throws MalformedURLException {
+    doReturn("upload-id").doThrow(UNEXPECTED_CALL_EXCEPTION).when(storageRpcMock).open(SIGNED_URL);
+    initializeService();
+    WriteChannel writer = new BlobWriteChannel(options, new URL(SIGNED_URL));
+    assertNotNull(writer);
+    assertTrue(writer.isOpen());
+  }
+
+  @Test
+  public void testV4PostPolicy() {
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.newBuilder()
+            .setClientEmail(ACCOUNT)
+            .setPrivateKey(privateKey)
+            .build();
+    storage = options.toBuilder().setCredentials(credentials).build().getService();
+
+    PostPolicyV4.PostFieldsV4 fields =
+        PostPolicyV4.PostFieldsV4.newBuilder().setAcl("public-read").build();
+    PostPolicyV4.PostConditionsV4 conditions =
+        PostPolicyV4.PostConditionsV4.newBuilder()
+            .addContentTypeCondition(PostPolicyV4.ConditionV4Type.MATCHES, "image/jpeg")
+            .build();
+
+    // test fields and conditions
+    PostPolicyV4 policy =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(),
+            7,
+            TimeUnit.DAYS,
+            fields,
+            conditions);
+
+    Map<String, String> outputFields = policy.getFields();
+
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("content-type"), "image/jpeg");
+    assertEquals(outputFields.get("acl"), "public-read");
+    assertEquals(outputFields.get("key"), "my-object");
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy.getUrl());
+
+    // test fields, no conditions
+    PostPolicyV4 policy2 =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, conditions);
+    outputFields = policy2.getFields();
+
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("content-type"), "image/jpeg");
+    assertEquals(outputFields.get("key"), "my-object");
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy2.getUrl());
+
+    // test conditions, no fields
+    PostPolicyV4 policy3 =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS, fields);
+    outputFields = policy3.getFields();
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("acl"), "public-read");
+    assertEquals(outputFields.get("key"), "my-object");
+
+    // test no conditions no fields
+    PostPolicyV4 policy4 =
+        storage.generateSignedPostPolicyV4(
+            BlobInfo.newBuilder("my-bucket", "my-object").build(), 7, TimeUnit.DAYS);
+    outputFields = policy4.getFields();
+    assertTrue(outputFields.containsKey("x-goog-date"));
+    assertTrue(outputFields.containsKey("x-goog-credential"));
+    assertTrue(outputFields.containsKey("x-goog-signature"));
+    assertEquals(outputFields.get("x-goog-algorithm"), "GOOG4-RSA-SHA256");
+    assertEquals(outputFields.get("key"), "my-object");
+    assertEquals("https://storage.googleapis.com/my-bucket/", policy4.getUrl());
+  }
+
+  @Test
+  public void testBucketLifecycleRules() {
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder("b")
+            .setLocation("us")
+            .setLifecycleRules(
+                ImmutableList.of(
+                    new BucketInfo.LifecycleRule(
+                        BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
+                            StorageClass.COLDLINE),
+                        BucketInfo.LifecycleRule.LifecycleCondition.newBuilder()
+                            .setAge(1)
+                            .setNumberOfNewerVersions(3)
+                            .setIsLive(false)
+                            .setCreatedBefore(new DateTime(System.currentTimeMillis()))
+                            .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+                            .setDaysSinceNoncurrentTime(30)
+                            .setNoncurrentTimeBefore(new DateTime(System.currentTimeMillis()))
+                            .setCustomTimeBefore(new DateTime(System.currentTimeMillis()))
+                            .setDaysSinceCustomTime(30)
+                            .build())))
+            .build();
+    doReturn(bucketInfo.toPb())
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .create(bucketInfo.toPb(), new HashMap<StorageRpc.Option, Object>());
+    initializeService();
+    Bucket bucket = storage.create(bucketInfo);
+    BucketInfo.LifecycleRule lifecycleRule = bucket.getLifecycleRules().get(0);
+    assertEquals(3, lifecycleRule.getCondition().getNumberOfNewerVersions().intValue());
+    assertNotNull(lifecycleRule.getCondition().getCreatedBefore());
+    assertFalse(lifecycleRule.getCondition().getIsLive());
+    assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
+    assertEquals(1, lifecycleRule.getCondition().getMatchesStorageClass().size());
+    assertEquals(30, lifecycleRule.getCondition().getDaysSinceNoncurrentTime().intValue());
+    assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBefore());
+    assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
+    assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
   }
 }
