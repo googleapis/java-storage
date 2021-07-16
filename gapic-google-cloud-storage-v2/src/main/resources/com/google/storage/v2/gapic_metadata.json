@@ -1,0 +1,30 @@
+{
+  "schema": "1.0",
+  "comment": "This file maps proto services/RPCs to the corresponding library clients/methods",
+  "language": "java",
+  "protoPackage": "google.storage.v2",
+  "libraryPackage": "com.google.storage.v2",
+  "services": {
+    "Storage": {
+      "clients": {
+        "grpc": {
+          "libraryClient": "StorageClient",
+          "rpcs": {
+            "QueryWriteStatus": {
+              "methods": ["queryWriteStatus", "queryWriteStatus", "queryWriteStatusCallable"]
+            },
+            "ReadObject": {
+              "methods": ["readObjectCallable"]
+            },
+            "StartResumableWrite": {
+              "methods": ["startResumableWrite", "startResumableWriteCallable"]
+            },
+            "WriteObject": {
+              "methods": ["writeObjectCallable"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
