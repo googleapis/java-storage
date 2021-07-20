@@ -28,7 +28,6 @@ import com.google.cloud.conformance.storage.v1.TestFile;
 import com.google.cloud.conformance.storage.v1.UrlStyle;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.base.Charsets;
-import com.google.common.base.Strings;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.JsonFormat;
@@ -117,17 +116,6 @@ public class V4PostPolicyTest {
 
     PolicyConditions conditions = policyInput.getConditions();
 
-    if (!Strings.isNullOrEmpty(fields.get("success_action_redirect"))) {
-      builder.addSuccessActionRedirectUrlCondition(
-          PostPolicyV4.ConditionV4Type.MATCHES, fields.get("success_action_redirect"));
-    }
-
-    if (!Strings.isNullOrEmpty(fields.get("success_action_status"))) {
-      builder.addSuccessActionStatusCondition(
-          PostPolicyV4.ConditionV4Type.MATCHES,
-          Integer.parseInt(fields.get("success_action_status")));
-    }
-
     if (conditions != null) {
       if (!conditions.getStartsWithList().isEmpty()) {
         builder.addCustomCondition(
@@ -166,17 +154,25 @@ public class V4PostPolicyTest {
             style);
 
     String expectedPolicy = testData.getPolicyOutput().getExpectedDecodedPolicy();
+
     StringBuilder escapedPolicy = new StringBuilder();
 
     // Java automatically unescapes the unicode escapes in the conformance tests, so we need to
     // manually re-escape them
-    for (char c : expectedPolicy.toCharArray()) {
+    char[] expectedPolicyArray = expectedPolicy.toCharArray();
+    for (int i = 0; i < expectedPolicyArray.length; i++) {
+      char c = expectedPolicyArray[i];
       if (c >= 128) {
         escapedPolicy.append(String.format("\\u%04x", (int) c));
       } else {
         switch (c) {
           case '\\':
-            escapedPolicy.append("\\\\");
+            // quotes aren't unescaped, so leave any "\"" found alone
+            if (expectedPolicyArray[i + 1] == '"') {
+              escapedPolicy.append("\\");
+            } else {
+              escapedPolicy.append("\\\\");
+            }
             break;
           case '\b':
             escapedPolicy.append("\\b");
@@ -202,6 +198,7 @@ public class V4PostPolicyTest {
       }
     }
     assertEquals(testData.getPolicyOutput().getFieldsMap(), policy.getFields());
+
     assertEquals(
         escapedPolicy.toString(),
         new String(BaseEncoding.base64().decode(policy.getFields().get("policy"))));
