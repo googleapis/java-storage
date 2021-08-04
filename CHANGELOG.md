@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.119.0](https://www.github.com/googleapis/java-storage/compare/v1.118.0...v1.119.0) (2021-08-04)
+
+
+### Features
+
+* configure initial sp version ([#937](https://www.github.com/googleapis/java-storage/issues/937)) ([68a8847](https://www.github.com/googleapis/java-storage/commit/68a8847646afd742da52d8011e01fb0e612623f1))
+
 ## [1.118.0](https://www.github.com/googleapis/java-storage/compare/v1.117.1...v1.118.0) (2021-07-13)
 
 
