@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://www.github.com/googleapis/java-storage/compare/v1.118.1...v2.0.0) (2021-08-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to java8 (#950)
+
+### Features
+
+* migrate to java8 ([#950](https://www.github.com/googleapis/java-storage/issues/950)) ([839bcc1](https://www.github.com/googleapis/java-storage/commit/839bcc174ff1c2f5536130d880a5c6e2559b5793))
+
 ### [1.118.1](https://www.github.com/googleapis/java-storage/compare/v1.118.0...v1.118.1) (2021-08-06)
 
 
