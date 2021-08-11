@@ -27,7 +27,7 @@ class HttpStorageRpcSpans {
   static final String SPAN_NAME_CREATE_OBJECT =
       getTraceSpanName("create(StorageObject,InputStream,Map)");
   static final String SPAN_NAME_LIST_BUCKETS = getTraceSpanName("list(Map)");
-  static final String SPAN_NAME_LIST_OBJECTS = getTraceSpanName("create(String,Map)");
+  static final String SPAN_NAME_LIST_OBJECTS = getTraceSpanName("list(String,Map)");
   static final String SPAN_NAME_GET_BUCKET = getTraceSpanName("get(Bucket,Map)");
   static final String SPAN_NAME_GET_OBJECT = getTraceSpanName("get(StorageObject,Map)");
   static final String SPAN_NAME_PATCH_BUCKET = getTraceSpanName("patch(Bucket,Map)");
