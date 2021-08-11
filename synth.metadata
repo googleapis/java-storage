@@ -4,7 +4,14 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/java-storage.git",
-        "sha": "22755f009d83fd440dc46992a3913a1a6539a0ec"
+        "sha": "0ea286b335ef98feb3ae00437357d62eb2a917bd"
+      }
+    },
+    {
+      "git": {
+        "name": "googleapis",
+        "remote": "https://github.com/googleapis/googleapis.git",
+        "sha": "eb7c9d1c3915851dd8b357ee950e0467490bce34"
       }
     },
     {
@@ -12,6 +19,17 @@
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
         "sha": "1a2878d6909dd10ca4e3c1b5943d6622e996054e"
+      }
+    }
+  ],
+  "destinations": [
+    {
+      "client": {
+        "source": "googleapis",
+        "apiName": "storage",
+        "apiVersion": "v2",
+        "language": "java",
+        "generator": "bazel"
       }
     }
   ],
@@ -81,8 +99,66 @@
     "LICENSE",
     "SECURITY.md",
     "codecov.yaml",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageClient.java",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageSettings.java",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/package-info.java",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/GrpcStorageCallableFactory.java",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/GrpcStorageStub.java",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/StorageStub.java",
+    "gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/stub/StorageStubSettings.java",
+    "gapic-google-cloud-storage-v2/src/main/resources/com/google/storage/v2/gapic_metadata.json",
+    "gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/MockStorage.java",
+    "gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/MockStorageImpl.java",
+    "gapic-google-cloud-storage-v2/src/test/java/com/google/storage/v2/StorageClientTest.java",
+    "grpc-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageGrpc.java",
     "java.header",
     "license-checks.xml",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Bucket.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketAccessControl.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketAccessControlOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/BucketOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ChecksummedData.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ChecksummedDataOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonObjectRequestParams.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonObjectRequestParamsOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonRequestParams.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/CommonRequestParamsOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ContentRange.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ContentRangeOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Object.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectAccessControl.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectAccessControlOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectChecksums.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectChecksumsOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ObjectOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/Owner.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/OwnerOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/PredefinedObjectAcl.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectTeam.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ProjectTeamOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusRequest.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusRequestOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusResponse.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/QueryWriteStatusResponseOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectRequest.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectRequestOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectResponse.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ReadObjectResponseOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ServiceConstants.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/ServiceConstantsOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteRequest.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteRequestOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteResponse.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StartResumableWriteResponseOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/StorageProto.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectRequest.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectRequestOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectResponse.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectResponseOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectSpec.java",
+    "proto-google-cloud-storage-v2/src/main/java/com/google/storage/v2/WriteObjectSpecOrBuilder.java",
+    "proto-google-cloud-storage-v2/src/main/proto/google/storage/v2/storage.proto",
     "renovate.json",
     "samples/install-without-bom/pom.xml",
     "samples/pom.xml",
