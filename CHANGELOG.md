@@ -1,6 +1,6 @@
 # Changelog
 
-## [2.0.1](https://www.github.com/googleapis/java-storage/compare/v2.0.0...v2.1.0) (2021-08-11)
+## [2.0.1](https://www.github.com/googleapis/java-storage/compare/v2.0.0...v2.0.1) (2021-08-11)
 
 
 ### Features
