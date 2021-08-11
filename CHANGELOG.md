@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.1.0](https://www.github.com/googleapis/java-storage/compare/v2.0.0...v2.1.0) (2021-08-11)
+
+
+### Features
+
+* generate storage v2 gapic client ([#960](https://www.github.com/googleapis/java-storage/issues/960)) ([fb2f9d4](https://www.github.com/googleapis/java-storage/commit/fb2f9d489e42b57f61642ce9e0c1a65fe91c9c45))
+
+
+### Bug Fixes
+
+* incorrectly labeled span list(String,Map) ([#946](https://www.github.com/googleapis/java-storage/issues/946)) ([0c1fdcf](https://www.github.com/googleapis/java-storage/commit/0c1fdcfe89609b10c148f0dc6026084d2f49b1b7))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.0.1 ([#961](https://www.github.com/googleapis/java-storage/issues/961)) ([69543dc](https://www.github.com/googleapis/java-storage/commit/69543dcba2fce1028e5fac25a59e1defe6465f06))
+
 ## [2.0.0](https://www.github.com/googleapis/java-storage/compare/v1.118.1...v2.0.0) (2021-08-09)
 
 
