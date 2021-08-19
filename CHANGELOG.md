@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.0.2](https://www.github.com/googleapis/java-storage/compare/v2.0.1...v2.0.2) (2021-08-19)
+
+
+### Dependencies
+
+* update kms.version to v0.91.1 ([#956](https://www.github.com/googleapis/java-storage/issues/956)) ([53d24e9](https://www.github.com/googleapis/java-storage/commit/53d24e9d3e27c0319fa3b6837c926484b1bd56a4))
+
 ## [2.0.1](https://www.github.com/googleapis/java-storage/compare/v2.0.0...v2.0.1) (2021-08-11)
 
 
