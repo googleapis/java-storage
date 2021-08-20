@@ -451,7 +451,7 @@ public final class PostPolicyV4 {
         } else {
           switch (c) {
             case '\\':
-              // The JsonObject/JsonArray operations above handle quote escapes, so leave any "/""
+              // The JsonObject/JsonArray operations above handle quote escapes, so leave any "\""
               // found alone
               if (jsonArray[i + 1] == '"') {
                 escapedJson.append("\\");
