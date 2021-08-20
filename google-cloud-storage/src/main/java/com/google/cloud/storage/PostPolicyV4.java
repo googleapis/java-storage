@@ -443,13 +443,21 @@ public final class PostPolicyV4 {
       StringBuilder escapedJson = new StringBuilder();
 
       // Certain characters in a policy must be escaped
-      for (char c : json.toCharArray()) {
+      char[] jsonArray = json.toCharArray();
+      for (int i = 0; i < jsonArray.length; i++) {
+        char c = jsonArray[i];
         if (c >= 128) { // is a unicode character
           escapedJson.append(String.format("\\u%04x", (int) c));
         } else {
           switch (c) {
             case '\\':
-              escapedJson.append("\\\\");
+              // The JsonObject/JsonArray operations above handle quote escapes, so leave any "\""
+              // found alone
+              if (jsonArray[i + 1] == '"') {
+                escapedJson.append("\\");
+              } else {
+                escapedJson.append("\\\\");
+              }
               break;
             case '\b':
               escapedJson.append("\\b");
