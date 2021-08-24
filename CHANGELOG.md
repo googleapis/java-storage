@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://www.github.com/googleapis/java-storage/compare/v2.0.2...v2.1.0) (2021-08-24)
+
+
+### Features
+
+* fix post policy escape bug, update conformance tests ([#924](https://www.github.com/googleapis/java-storage/issues/924)) ([d8329c3](https://www.github.com/googleapis/java-storage/commit/d8329c34fe19fd8c6bba5579aa3c55490c1d4e6f))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.1.0 ([#976](https://www.github.com/googleapis/java-storage/issues/976)) ([5cac14d](https://www.github.com/googleapis/java-storage/commit/5cac14d7785ef3798c379d17cd44500958d9cc6a))
+* update kms.version to v0.91.2 ([#977](https://www.github.com/googleapis/java-storage/issues/977)) ([1c60e6e](https://www.github.com/googleapis/java-storage/commit/1c60e6e6a34f662478043989b5b0bddea32cc5bf))
+
 ### [2.0.2](https://www.github.com/googleapis/java-storage/compare/v2.0.1...v2.0.2) (2021-08-19)
 
 
