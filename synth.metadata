@@ -4,14 +4,15 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/java-storage.git",
-        "sha": "247d4a84c49ff2df3756adfb17aef4efa5ed10da"
+        "sha": "6129252686e73e34a21814e4f9557774a7d1221c"
       }
     },
     {
       "git": {
         "name": "googleapis",
         "remote": "https://github.com/googleapis/googleapis.git",
-        "sha": "eb7c9d1c3915851dd8b357ee950e0467490bce34"
+        "sha": "e1738ee972b49fd0c4d4718b035444495142b781",
+        "internalRef": "391407209"
       }
     },
     {
