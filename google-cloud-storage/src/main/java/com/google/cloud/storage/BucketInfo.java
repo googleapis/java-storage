@@ -414,8 +414,8 @@ public class BucketInfo implements Serializable {
    *
    * <p>Versions 1.50.0-1.111.2 of this library don’t support the CustomTimeBefore,
    * DaysSinceCustomTime, DaysSinceNoncurrentTime and NoncurrentTimeBefore lifecycle conditions. To
-   * read GCS objects with those lifecycle conditions, update your Java client library to version
-   * 1.112.0 or higher.
+   * read GCS objects with those lifecycle conditions, update your Java client library to the latest
+   * version.
    *
    * @see <a href="https://cloud.google.com/storage/docs/lifecycle#actions">Object Lifecycle
    *     Management</a>
