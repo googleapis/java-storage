@@ -110,6 +110,12 @@
         <artifactId>google-cloud-conformance-tests</artifactId>
         <version>0.2.0</version>
         <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
