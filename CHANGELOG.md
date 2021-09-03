@@ -1,5 +1,19 @@
 # Changelog
 
+### [2.1.1](https://www.github.com/googleapis/java-storage/compare/v2.1.0...v2.1.1) (2021-09-03)
+
+
+### Documentation
+
+* Modify OLM notice to recommend upgrading to latest version. ([#932](https://www.github.com/googleapis/java-storage/issues/932)) ([be72433](https://www.github.com/googleapis/java-storage/commit/be72433ef5446db880e44f103a7d120f444f183f))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-conformance-tests to v0.2.0 ([#982](https://www.github.com/googleapis/java-storage/issues/982)) ([c7460a3](https://www.github.com/googleapis/java-storage/commit/c7460a3ffef81ef2f651b582a97139c0523d1eab))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.2.0 ([#989](https://www.github.com/googleapis/java-storage/issues/989)) ([6745c9e](https://www.github.com/googleapis/java-storage/commit/6745c9e5a9d3a907873b989ca8f8a47edd833523))
+* update kms.version to v0.91.3 ([#991](https://www.github.com/googleapis/java-storage/issues/991)) ([1f15022](https://www.github.com/googleapis/java-storage/commit/1f15022a590bce4f80dcb86d150b8e3dbe43aec9))
+
 ## [2.1.0](https://www.github.com/googleapis/java-storage/compare/v2.0.2...v2.1.0) (2021-08-24)
 
 
