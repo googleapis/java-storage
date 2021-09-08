@@ -4,7 +4,7 @@
       "git": {
         "name": ".",
         "remote": "https://github.com/googleapis/java-storage.git",
-        "sha": "5505cacd1f55bacdd04fa0551598c283f34a95a6"
+        "sha": "c339b721d88e533c441e15d18287adb83b418581"
       }
     },
     {
@@ -19,7 +19,7 @@
       "git": {
         "name": "synthtool",
         "remote": "https://github.com/googleapis/synthtool.git",
-        "sha": "17ee6e5c08f2eb47029beee4776ce990e56b3925"
+        "sha": "df5093b950d4aafd49a4c7758d74c44485263ada"
       }
     }
   ],
@@ -59,7 +59,6 @@
     ".kokoro/common.sh",
     ".kokoro/continuous/common.cfg",
     ".kokoro/continuous/java8.cfg",
-    ".kokoro/continuous/readme.cfg",
     ".kokoro/dependencies.sh",
     ".kokoro/nightly/common.cfg",
     ".kokoro/nightly/java11.cfg",
