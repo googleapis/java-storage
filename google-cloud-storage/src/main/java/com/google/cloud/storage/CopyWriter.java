@@ -16,11 +16,8 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.RetryHelper.runWithRetries;
-
 import com.google.cloud.Restorable;
 import com.google.cloud.RestorableState;
-import com.google.cloud.RetryHelper;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteResponse;
@@ -28,7 +25,7 @@ import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 /**
  * Google Storage blob copy writer. A {@code CopyWriter} object allows to copy both blob's data and
@@ -100,21 +97,11 @@ public class CopyWriter implements Restorable<CopyWriter> {
    */
   public void copyChunk() {
     if (!isDone()) {
-      try {
-        this.rewriteResponse =
-            runWithRetries(
-                new Callable<RewriteResponse>() {
-                  @Override
-                  public RewriteResponse call() {
-                    return storageRpc.continueRewrite(rewriteResponse);
-                  }
-                },
-                serviceOptions.getRetrySettings(),
-                StorageImpl.EXCEPTION_HANDLER,
-                serviceOptions.getClock());
-      } catch (RetryHelper.RetryHelperException e) {
-        throw StorageException.translateAndThrow(e);
-      }
+      this.rewriteResponse =
+          Retrying.run(
+              serviceOptions,
+              () -> storageRpc.continueRewrite(rewriteResponse),
+              Function.identity());
     }
   }
 
