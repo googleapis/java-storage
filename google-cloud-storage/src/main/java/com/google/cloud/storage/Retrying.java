@@ -18,13 +18,28 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.RetryHelper.runWithRetries;
 
+import com.google.api.core.ApiClock;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.BaseService;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
-public final class Retrying {
+final class Retrying {
 
+  /**
+   * A convenience wrapper around {@link com.google.cloud.RetryHelper#runWithRetries(Callable, RetrySettings, ResultRetryAlgorithm, ApiClock)}
+   * that gives us centralized error translation and reduces some duplication in how we resolved
+   * the {@link RetrySettings} and {@link ApiClock}.
+   * @param options The {@link StorageOptions} which {@link RetrySettings} and {@link ApiClock} will be resolved from.
+   * @param c The {@link Callable} which will be passed to runWithRetries producing some {@code T}, can optionally return null
+   * @param f A post process mapping {@link Function} which can be used to transform the result from {@code c} if it is successful and non-null
+   * @param <T> The result type of {@code c}
+   * @param <U> The result type of any mapping that takes place via {@code f}
+   * @return A {@code U} (possibly null) after applying {@code f} to the result of {@code c}
+   * @throws StorageException if {@code c} fails due to any retry exhaustion
+   */
   static <T, U> U run(StorageOptions options, Callable<T> c, Function<T, U> f) {
     try {
       T answer =
