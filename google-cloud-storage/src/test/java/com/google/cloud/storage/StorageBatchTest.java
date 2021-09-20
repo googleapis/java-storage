@@ -54,6 +54,8 @@ public class StorageBatchTest {
     BlobTargetOption.generationMatch(), BlobTargetOption.metagenerationMatch()
   };
   private static final GoogleJsonError GOOGLE_JSON_ERROR = new GoogleJsonError();
+  private final RetryAlgorithmManager retryAlgorithmManager =
+      StorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   private StorageOptions optionsMock;
   private StorageRpc storageRpcMock;
@@ -67,6 +69,9 @@ public class StorageBatchTest {
     storageRpcMock = EasyMock.createMock(StorageRpc.class);
     batchMock = EasyMock.createMock(RpcBatch.class);
     EasyMock.expect(optionsMock.getStorageRpcV1()).andReturn(storageRpcMock);
+    EasyMock.expect(optionsMock.getRetryAlgorithmManager())
+        .andReturn(retryAlgorithmManager)
+        .anyTimes();
     EasyMock.expect(storageRpcMock.createBatch()).andReturn(batchMock);
     EasyMock.replay(optionsMock, storageRpcMock, batchMock, storage);
     storageBatch = new StorageBatch(optionsMock);
@@ -165,8 +170,11 @@ public class StorageBatchTest {
   @Test
   public void testUpdateWithOptions() {
     EasyMock.reset(storage, batchMock, optionsMock);
-    EasyMock.expect(storage.getOptions()).andReturn(optionsMock).times(2);
-    EasyMock.expect(optionsMock.getService()).andReturn(storage);
+    EasyMock.expect(storage.getOptions()).andReturn(optionsMock).anyTimes();
+    EasyMock.expect(optionsMock.getService()).andReturn(storage).anyTimes();
+    EasyMock.expect(optionsMock.getRetryAlgorithmManager())
+        .andReturn(retryAlgorithmManager)
+        .anyTimes();
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addPatch(
@@ -216,8 +224,11 @@ public class StorageBatchTest {
   @Test
   public void testGetWithOptions() {
     EasyMock.reset(storage, batchMock, optionsMock);
-    EasyMock.expect(storage.getOptions()).andReturn(optionsMock).times(2);
-    EasyMock.expect(optionsMock.getService()).andReturn(storage);
+    EasyMock.expect(storage.getOptions()).andReturn(optionsMock).anyTimes();
+    EasyMock.expect(optionsMock.getService()).andReturn(storage).anyTimes();
+    EasyMock.expect(optionsMock.getRetryAlgorithmManager())
+        .andReturn(retryAlgorithmManager)
+        .anyTimes();
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addGet(

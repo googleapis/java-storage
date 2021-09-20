@@ -38,7 +38,6 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ServiceOptions;
-import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
@@ -55,7 +54,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.InvalidKeyException;
@@ -2146,16 +2144,6 @@ public class StorageImplTest {
     } catch (StorageException ex) {
       Assert.assertNotNull(ex.getMessage());
     }
-  }
-
-  @Test
-  public void testWriterWithSignedURL() throws MalformedURLException {
-    EasyMock.expect(storageRpcMock.open(SIGNED_URL)).andReturn("upload-id");
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    WriteChannel writer = new BlobWriteChannel(options, new URL(SIGNED_URL));
-    assertNotNull(writer);
-    assertTrue(writer.isOpen());
   }
 
   @Test

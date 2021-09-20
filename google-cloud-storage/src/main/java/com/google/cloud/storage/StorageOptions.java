@@ -25,6 +25,7 @@ import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
@@ -35,6 +36,8 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   private static final String GCS_SCOPE = "https://www.googleapis.com/auth/devstorage.full_control";
   private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
+
+  private final RetryAlgorithmManager retryAlgorithmManager;
 
   public static class DefaultStorageFactory implements StorageFactory {
 
@@ -58,6 +61,8 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
   public static class Builder extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
 
+    private RetryAlgorithmManager retryAlgorithmManager;
+
     private Builder() {}
 
     private Builder(StorageOptions options) {
@@ -73,14 +78,30 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
       return super.setTransportOptions(transportOptions);
     }
 
+    Builder setUseLegacyRetryAlgorithms() {
+      return setRetryAlgorithmManager(new LegacyRetryAlgorithmManager());
+    }
+
+    Builder setUseDefaultRetryAlgorithms() {
+      return setRetryAlgorithmManager(new NewRetryAlgorithmManager());
+    }
+
+    private Builder setRetryAlgorithmManager(RetryAlgorithmManager retryAlgorithmManager) {
+      this.retryAlgorithmManager = retryAlgorithmManager;
+      return this;
+    }
+
     @Override
     public StorageOptions build() {
-      return new StorageOptions(this);
+      return new StorageOptions(this, new StorageDefaults());
     }
   }
 
-  private StorageOptions(Builder builder) {
-    super(StorageFactory.class, StorageRpcFactory.class, builder, new StorageDefaults());
+  private StorageOptions(Builder builder, StorageDefaults serviceDefaults) {
+    super(StorageFactory.class, StorageRpcFactory.class, builder, serviceDefaults);
+    this.retryAlgorithmManager =
+        MoreObjects.firstNonNull(
+            builder.retryAlgorithmManager, serviceDefaults.getRetryAlgorithmManager());
   }
 
   private static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {
@@ -98,6 +119,10 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     @Override
     public TransportOptions getDefaultTransportOptions() {
       return getDefaultHttpTransportOptions();
+    }
+
+    public RetryAlgorithmManager getRetryAlgorithmManager() {
+      return new LegacyRetryAlgorithmManager();
     }
   }
 
@@ -119,6 +144,10 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
   protected StorageRpc getStorageRpcV1() {
     return (StorageRpc) getRpc();
+  }
+
+  protected RetryAlgorithmManager getRetryAlgorithmManager() {
+    return retryAlgorithmManager;
   }
 
   /** Returns a default {@code StorageOptions} instance. */

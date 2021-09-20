@@ -136,6 +136,8 @@ public class BucketTest {
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
   private static final Key KEY =
       new SecretKeySpec(BaseEncoding.base64().decode(BASE64_KEY), "AES256");
+  private final RetryAlgorithmManager retryAlgorithmManager =
+      StorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   private Storage storage;
   private Storage serviceMockReturnsOptions = createMock(Storage.class);
@@ -154,9 +156,11 @@ public class BucketTest {
     verify(storage);
   }
 
-  private void initializeExpectedBucket(int optionsCalls) {
-    expect(serviceMockReturnsOptions.getOptions()).andReturn(mockOptions).times(optionsCalls);
+  private void initializeExpectedBucket() {
+    expect(serviceMockReturnsOptions.getOptions()).andReturn(mockOptions).anyTimes();
     replay(serviceMockReturnsOptions);
+    expect(mockOptions.getRetryAlgorithmManager()).andReturn(retryAlgorithmManager).anyTimes();
+    replay(mockOptions);
     expectedBucket = new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(BUCKET_INFO));
     blobResults =
         ImmutableList.of(
@@ -177,7 +181,7 @@ public class BucketTest {
 
   @Test
   public void testExists_True() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     Storage.BucketGetOption[] expectedOptions = {Storage.BucketGetOption.fields()};
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.get(BUCKET_INFO.getName(), expectedOptions)).andReturn(expectedBucket);
@@ -188,7 +192,7 @@ public class BucketTest {
 
   @Test
   public void testExists_False() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     Storage.BucketGetOption[] expectedOptions = {Storage.BucketGetOption.fields()};
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.get(BUCKET_INFO.getName(), expectedOptions)).andReturn(null);
@@ -199,7 +203,7 @@ public class BucketTest {
 
   @Test
   public void testReload() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BucketInfo updatedInfo = BUCKET_INFO.toBuilder().setNotFoundPage("p").build();
     Bucket expectedUpdatedBucket =
         new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(updatedInfo));
@@ -213,7 +217,7 @@ public class BucketTest {
 
   @Test
   public void testReloadNull() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.get(BUCKET_INFO.getName())).andReturn(null);
     replay(storage);
@@ -223,7 +227,7 @@ public class BucketTest {
 
   @Test
   public void testReloadWithOptions() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BucketInfo updatedInfo = BUCKET_INFO.toBuilder().setNotFoundPage("p").build();
     Bucket expectedUpdatedBucket =
         new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(updatedInfo));
@@ -238,7 +242,7 @@ public class BucketTest {
 
   @Test
   public void testUpdate() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     Bucket expectedUpdatedBucket = expectedBucket.toBuilder().setNotFoundPage("p").build();
     expect(storage.getOptions()).andReturn(mockOptions).times(2);
     expect(storage.update(expectedUpdatedBucket)).andReturn(expectedUpdatedBucket);
@@ -251,7 +255,7 @@ public class BucketTest {
 
   @Test
   public void testDelete() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.delete(BUCKET_INFO.getName())).andReturn(true);
     replay(storage);
@@ -261,7 +265,7 @@ public class BucketTest {
 
   @Test
   public void testList() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     PageImpl<Blob> expectedBlobPage = new PageImpl<>(null, "c", blobResults);
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.list(BUCKET_INFO.getName())).andReturn(expectedBlobPage);
@@ -280,7 +284,7 @@ public class BucketTest {
 
   @Test
   public void testGet() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     Blob expectedBlob =
         new Blob(
             serviceMockReturnsOptions,
@@ -296,7 +300,7 @@ public class BucketTest {
 
   @Test
   public void testGetAllArray() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     List<BlobId> blobIds =
         Lists.transform(
@@ -315,7 +319,7 @@ public class BucketTest {
 
   @Test
   public void testGetAllIterable() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     List<BlobId> blobIds =
         Lists.transform(
@@ -334,7 +338,7 @@ public class BucketTest {
 
   @Test
   public void testCreate() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info = BlobInfo.newBuilder("b", "n").setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
     byte[] content = {0xD, 0xE, 0xA, 0xD};
@@ -348,7 +352,7 @@ public class BucketTest {
 
   @Test
   public void testCreateNoContentType() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info = BlobInfo.newBuilder("b", "n").build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
     byte[] content = {0xD, 0xE, 0xA, 0xD};
@@ -362,7 +366,7 @@ public class BucketTest {
 
   @Test
   public void testCreateWithOptions() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info =
         BlobInfo.newBuilder(BlobId.of("b", "n", 42L))
             .setContentType(CONTENT_TYPE)
@@ -399,7 +403,7 @@ public class BucketTest {
 
   @Test
   public void testCreateWithEncryptionKey() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info = BlobInfo.newBuilder(BlobId.of("b", "n")).setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
     byte[] content = {0xD, 0xE, 0xA, 0xD};
@@ -415,7 +419,7 @@ public class BucketTest {
 
   @Test
   public void testCreateWithKmsKeyName() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info = BlobInfo.newBuilder(BlobId.of("b", "n")).setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
     byte[] content = {0xD, 0xE, 0xA, 0xD};
@@ -432,7 +436,7 @@ public class BucketTest {
 
   @Test
   public void testCreateNotExists() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info =
         BlobInfo.newBuilder(BlobId.of("b", "n", 0L)).setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
@@ -448,7 +452,7 @@ public class BucketTest {
 
   @Test
   public void testCreateWithWrongGenerationOptions() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);
     initializeBucket();
@@ -468,7 +472,7 @@ public class BucketTest {
 
   @Test
   public void testCreateWithWrongMetagenerationOptions() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);
     initializeBucket();
@@ -489,7 +493,7 @@ public class BucketTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStream() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info = BlobInfo.newBuilder("b", "n").setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
     byte[] content = {0xD, 0xE, 0xA, 0xD};
@@ -505,7 +509,7 @@ public class BucketTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamNoContentType() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info = BlobInfo.newBuilder("b", "n").build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
     byte[] content = {0xD, 0xE, 0xA, 0xD};
@@ -521,7 +525,7 @@ public class BucketTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamWithOptions() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info =
         BlobInfo.newBuilder(BlobId.of("b", "n", 42L))
             .setContentType(CONTENT_TYPE)
@@ -566,7 +570,7 @@ public class BucketTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamWithEncryptionKey() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info = BlobInfo.newBuilder(BlobId.of("b", "n")).setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
     byte[] content = {0xD, 0xE, 0xA, 0xD};
@@ -584,7 +588,7 @@ public class BucketTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateFromStreamNotExists() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     BlobInfo info =
         BlobInfo.newBuilder(BlobId.of("b", "n", 0L)).setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = new Blob(serviceMockReturnsOptions, new BlobInfo.BuilderImpl(info));
@@ -602,7 +606,7 @@ public class BucketTest {
 
   @Test
   public void testCreateFromStreamWithWrongGenerationOptions() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);
     initializeBucket();
@@ -623,7 +627,7 @@ public class BucketTest {
 
   @Test
   public void testCreateFromStreamWithWrongMetagenerationOptions() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     replay(storage);
     initializeBucket();
@@ -644,7 +648,7 @@ public class BucketTest {
 
   @Test
   public void testGetAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.getAcl(BUCKET_INFO.getName(), User.ofAllAuthenticatedUsers())).andReturn(ACL);
     replay(storage);
@@ -654,7 +658,7 @@ public class BucketTest {
 
   @Test
   public void testDeleteAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.deleteAcl(BUCKET_INFO.getName(), User.ofAllAuthenticatedUsers()))
         .andReturn(true);
@@ -665,7 +669,7 @@ public class BucketTest {
 
   @Test
   public void testCreateAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
     expect(storage.createAcl(BUCKET_INFO.getName(), ACL)).andReturn(returnedAcl);
@@ -676,7 +680,7 @@ public class BucketTest {
 
   @Test
   public void testUpdateAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
     expect(storage.updateAcl(BUCKET_INFO.getName(), ACL)).andReturn(returnedAcl);
@@ -687,7 +691,7 @@ public class BucketTest {
 
   @Test
   public void testListAcls() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.listAcls(BUCKET_INFO.getName())).andReturn(ACLS);
     replay(storage);
@@ -697,7 +701,7 @@ public class BucketTest {
 
   @Test
   public void testGetDefaultAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.getDefaultAcl(BUCKET_INFO.getName(), User.ofAllAuthenticatedUsers()))
         .andReturn(ACL);
@@ -708,7 +712,7 @@ public class BucketTest {
 
   @Test
   public void testDeleteDefaultAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.deleteDefaultAcl(BUCKET_INFO.getName(), User.ofAllAuthenticatedUsers()))
         .andReturn(true);
@@ -719,7 +723,7 @@ public class BucketTest {
 
   @Test
   public void testCreateDefaultAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
     expect(storage.createDefaultAcl(BUCKET_INFO.getName(), ACL)).andReturn(returnedAcl);
@@ -730,7 +734,7 @@ public class BucketTest {
 
   @Test
   public void testUpdateDefaultAcl() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     Acl returnedAcl = ACL.toBuilder().setEtag("ETAG").setId("ID").build();
     expect(storage.updateDefaultAcl(BUCKET_INFO.getName(), ACL)).andReturn(returnedAcl);
@@ -741,7 +745,7 @@ public class BucketTest {
 
   @Test
   public void testListDefaultAcls() throws Exception {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions);
     expect(storage.listDefaultAcls(BUCKET_INFO.getName())).andReturn(ACLS);
     replay(storage);
@@ -751,7 +755,7 @@ public class BucketTest {
 
   @Test
   public void testLockRetention() throws Exception {
-    initializeExpectedBucket(5);
+    initializeExpectedBucket();
     Bucket expectedRetentionLockedBucket =
         expectedBucket
             .toBuilder()
@@ -790,7 +794,7 @@ public class BucketTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testBuilder() {
-    initializeExpectedBucket(4);
+    initializeExpectedBucket();
     expect(storage.getOptions()).andReturn(mockOptions).times(4);
     replay(storage);
     Bucket.Builder builder =
@@ -854,7 +858,7 @@ public class BucketTest {
 
   @Test
   public void testDeleteLifecycleRules() {
-    initializeExpectedBucket(6);
+    initializeExpectedBucket();
     Bucket bucket =
         new Bucket(serviceMockReturnsOptions, new BucketInfo.BuilderImpl(FULL_BUCKET_INFO));
     assertThat(bucket.getLifecycleRules()).hasSize(1);
@@ -870,7 +874,7 @@ public class BucketTest {
 
   @Test
   public void testUpdateBucketLogging() {
-    initializeExpectedBucket(6);
+    initializeExpectedBucket();
     BucketInfo.Logging logging =
         BucketInfo.Logging.newBuilder()
             .setLogBucket("logs-bucket")
@@ -893,7 +897,7 @@ public class BucketTest {
 
   @Test
   public void testRemoveBucketCORS() {
-    initializeExpectedBucket(6);
+    initializeExpectedBucket();
     List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
     List<HttpMethod> httpMethods = ImmutableList.of(HttpMethod.GET);
     List<String> responseHeaders = ImmutableList.of("Content-Type");

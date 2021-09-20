@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.RetryHelper.runWithRetries;
 
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.ExceptionHandler;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
@@ -31,7 +32,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 
 /** Default implementation for ReadChannel. */
 class BlobReadChannel implements ReadChannel {
@@ -41,6 +41,7 @@ class BlobReadChannel implements ReadChannel {
   private final StorageOptions serviceOptions;
   private final BlobId blob;
   private final Map<StorageRpc.Option, ?> requestOptions;
+  private final RetryAlgorithmManager retryAlgorithmManager;
   private String lastEtag;
   private long position;
   private boolean isOpen;
@@ -57,6 +58,7 @@ class BlobReadChannel implements ReadChannel {
     this.serviceOptions = serviceOptions;
     this.blob = blob;
     this.requestOptions = requestOptions;
+    this.retryAlgorithmManager = serviceOptions.getRetryAlgorithmManager();
     isOpen = true;
     storageRpc = serviceOptions.getStorageRpcV1();
     storageObject = blob.toPb();
@@ -119,24 +121,21 @@ class BlobReadChannel implements ReadChannel {
       }
       final int toRead = Math.max(byteBuffer.remaining(), chunkSize);
       try {
+        ExceptionHandler exceptionHandler =
+            retryAlgorithmManager.getForObjectsGet(storageObject, requestOptions);
         Tuple<String, byte[]> result =
             runWithRetries(
-                new Callable<Tuple<String, byte[]>>() {
-                  @Override
-                  public Tuple<String, byte[]> call() {
-                    return storageRpc.read(storageObject, requestOptions, position, toRead);
-                  }
-                },
+                () -> storageRpc.read(storageObject, requestOptions, position, toRead),
                 serviceOptions.getRetrySettings(),
-                StorageImpl.EXCEPTION_HANDLER,
+                exceptionHandler,
                 serviceOptions.getClock());
-        if (result.y().length > 0 && lastEtag != null && !Objects.equals(result.x(), lastEtag)) {
-          StringBuilder messageBuilder = new StringBuilder();
-          messageBuilder.append("Blob ").append(blob).append(" was updated while reading");
-          throw new IOException(messageBuilder.toString());
+        String etag = result.x();
+        byte[] bytes = result.y();
+        if (bytes.length > 0 && lastEtag != null && !Objects.equals(etag, lastEtag)) {
+          throw new IOException("Blob " + blob + " was updated while reading");
         }
-        lastEtag = result.x();
-        buffer = result.y();
+        lastEtag = etag;
+        buffer = bytes;
       } catch (RetryHelper.RetryHelperException e) {
         throw new IOException(e);
       }

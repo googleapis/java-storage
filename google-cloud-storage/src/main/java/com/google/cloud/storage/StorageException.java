@@ -78,7 +78,26 @@ public final class StorageException extends BaseHttpServiceException {
    */
   public static StorageException translateAndThrow(RetryHelperException ex) {
     BaseServiceException.translate(ex);
-    throw new StorageException(UNKNOWN_CODE, ex.getMessage(), ex.getCause());
+    throw getStorageException(ex);
+  }
+
+  private static StorageException getStorageException(Throwable t) {
+    return new StorageException(UNKNOWN_CODE, t.getMessage(), t.getCause());
+  }
+
+  /**
+   * Attempt to find an Exception which is a {@link BaseServiceException} If neither {@code t} or
+   * {@code t.getCause()} are a {@code BaseServiceException} a {@link StorageException} will be
+   * created with an unknown status code.
+   */
+  static BaseServiceException coalesce(Throwable t) {
+    if (t instanceof BaseServiceException) {
+      return (BaseServiceException) t;
+    }
+    if (t.getCause() instanceof BaseServiceException) {
+      return (BaseServiceException) t.getCause();
+    }
+    return getStorageException(t);
   }
 
   /**
