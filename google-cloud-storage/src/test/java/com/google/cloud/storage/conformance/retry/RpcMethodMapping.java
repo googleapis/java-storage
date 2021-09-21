@@ -134,10 +134,11 @@ final class RpcMethodMapping {
 
   static RpcMethodMapping notImplemented(RpcMethod method) {
     return new Builder(0, method)
-        .withTest(
+        .withSetup(
             (s, c) -> {
               throw new AssumptionViolatedException("not implemented");
             })
+        .withTest(CtxFunction.identity())
         .build();
   }
 

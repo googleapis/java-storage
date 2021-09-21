@@ -22,7 +22,7 @@ import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.blob
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.bucketInfo;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.Policy;
@@ -1195,7 +1195,8 @@ final class RpcMethodMappings {
                                               tmpOutFile); // TODO: Why does this exist, varargs
                                       // should suffice
                                       byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                                      assertEquals(c.getHelloWorldUtf8Bytes(), downloadedBytes);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1212,10 +1213,10 @@ final class RpcMethodMappings {
                                       state
                                           .getBlob()
                                           .downloadTo(
-                                              tmpOutFile,
-                                              Blob.BlobSourceOption.metagenerationMatch());
+                                              tmpOutFile, Blob.BlobSourceOption.generationMatch());
                                       byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                                      assertEquals(c.getHelloWorldUtf8Bytes(), downloadedBytes);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1230,7 +1231,8 @@ final class RpcMethodMappings {
                                       ByteArrayOutputStream baos = new ByteArrayOutputStream();
                                       state.getBlob().downloadTo(baos);
                                       byte[] downloadedBytes = baos.toByteArray();
-                                      assertEquals(c.getHelloWorldUtf8Bytes(), downloadedBytes);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1246,9 +1248,10 @@ final class RpcMethodMappings {
                                       state
                                           .getBlob()
                                           .downloadTo(
-                                              baos, Blob.BlobSourceOption.metagenerationMatch());
+                                              baos, Blob.BlobSourceOption.generationMatch());
                                       byte[] downloadedBytes = baos.toByteArray();
-                                      assertEquals(c.getHelloWorldUtf8Bytes(), downloadedBytes);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1261,7 +1264,8 @@ final class RpcMethodMappings {
                                 ctx.peek(
                                     state -> {
                                       byte[] downloadedBytes = state.getBlob().getContent();
-                                      assertEquals(c.getHelloWorldUtf8Bytes(), downloadedBytes);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1278,7 +1282,8 @@ final class RpcMethodMappings {
                                               .getBlob()
                                               .getContent(
                                                   Blob.BlobSourceOption.metagenerationMatch());
-                                      assertEquals(c.getHelloWorldUtf8Bytes(), downloadedBytes);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(

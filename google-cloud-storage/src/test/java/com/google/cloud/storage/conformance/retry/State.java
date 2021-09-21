@@ -304,9 +304,12 @@ final class State {
   }
 
   private <T> State newStateWith(Key<T> key, T t) {
-    requireNonNull(t, () -> String.format("null value provided for %s", key.name));
     Map<Key<?>, Object> tmp = new HashMap<>(data);
-    tmp.put(key, t);
+    if (t != null) {
+      tmp.put(key, t);
+    } else {
+      tmp.remove(key);
+    }
     return new State(ImmutableMap.copyOf(tmp));
   }
 
