@@ -20,6 +20,8 @@ import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.blob
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.blobInfoWithGenerationZero;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.blobInfoWithoutGeneration;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.bucketInfo;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.serviceAccount;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Truth.assertThat;
@@ -835,6 +837,7 @@ final class RpcMethodMappings {
       private static void create(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(25, hmacKey.create)
+                .withSetup(defaultSetup.andThen(serviceAccount))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(

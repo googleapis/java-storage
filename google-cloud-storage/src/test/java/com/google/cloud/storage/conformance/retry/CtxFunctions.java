@@ -97,10 +97,10 @@ final class CtxFunctions {
           Blob resolvedBlob = ctx.getStorage().create(blobInfo);
           return ctx.map(s -> s.with(resolvedBlob));
         };
-    private static final CtxFunction serviceAccount =
+    static final CtxFunction serviceAccount =
         (ctx, c) ->
             ctx.map(s -> s.with(ServiceAccount.of(c.getServiceAccountSigner().getAccount())));
-    private static final CtxFunction hmacKey =
+    static final CtxFunction hmacKey =
         (ctx, c) -> ctx.map(s -> s.with(ctx.getStorage().createHmacKey(s.getServiceAccount())));
 
     private static final CtxFunction processResources =
