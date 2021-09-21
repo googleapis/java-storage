@@ -537,15 +537,14 @@ final class RpcMethodMappings {
             RpcMethodMapping.newBuilder(122, buckets.patch)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    bucketInfo.andThen(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .update(
-                                                state.getBucketInfo(),
-                                                BucketTargetOption.metagenerationMatch())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .update(
+                                            state.getBucket(),
+                                            BucketTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(101, buckets.patch)
