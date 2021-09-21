@@ -1195,7 +1195,8 @@ final class RpcMethodMappings {
                                               tmpOutFile); // TODO: Why does this exist, varargs
                                       // should suffice
                                       byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                                      assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1212,10 +1213,10 @@ final class RpcMethodMappings {
                                       state
                                           .getBlob()
                                           .downloadTo(
-                                              tmpOutFile,
-                                              Blob.BlobSourceOption.generationMatch());
+                                              tmpOutFile, Blob.BlobSourceOption.generationMatch());
                                       byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                                      assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1230,7 +1231,8 @@ final class RpcMethodMappings {
                                       ByteArrayOutputStream baos = new ByteArrayOutputStream();
                                       state.getBlob().downloadTo(baos);
                                       byte[] downloadedBytes = baos.toByteArray();
-                                      assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1248,7 +1250,8 @@ final class RpcMethodMappings {
                                           .downloadTo(
                                               baos, Blob.BlobSourceOption.generationMatch());
                                       byte[] downloadedBytes = baos.toByteArray();
-                                      assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
@@ -1261,7 +1264,8 @@ final class RpcMethodMappings {
                                 ctx.peek(
                                     state -> {
                                       byte[] downloadedBytes = state.getBlob().getContent();
-                                      assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
                                     })))
                 .build());
         a.add(
