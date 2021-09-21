@@ -117,7 +117,7 @@ final class CtxFunctions {
 
           if (!resources.isEmpty()) {
             throw new IllegalStateException(
-                String.format("Unhandled Method Resource [%s]", Joiner.on(", ")));
+                String.format("Unhandled Method Resource [%s]", Joiner.on(", ").join(resources)));
           }
 
           return f.apply(ctx, c);
