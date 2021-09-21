@@ -71,7 +71,14 @@ final class CtxFunctions {
         (ctx, c) ->
             ctx.map(state -> state.with(ctx.getStorage().get(state.getBucketInfo().getName())));
     static final CtxFunction blobWithGeneration =
-        (ctx, c) -> ctx.map(state -> state.with(ctx.getStorage().get(state.getBlobId())));
+        (ctx, c) ->
+            ctx.map(
+                state ->
+                    state.with(
+                        ctx.getStorage()
+                            .create(
+                                BlobInfo.newBuilder(state.getBlobId()).build(),
+                                c.getHelloWorldUtf8Bytes())));
     static final CtxFunction createEmptyBlob =
         (ctx, c) -> ctx.map(state -> state.with(ctx.getStorage().create(state.getBlobInfo())));
   }
