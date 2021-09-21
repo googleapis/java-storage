@@ -49,8 +49,8 @@ public final class ParallelParameterized extends Parameterized {
               .setNameFormat("parallel-test-runner-%02d")
               .build();
       // attempt to leave some space for the testbench server running alongside these tests
-      int coreCount = Runtime.getRuntime().availableProcessors() - 2;
-      int threadCount = Math.max(2, coreCount);
+      int coreCount = Runtime.getRuntime().availableProcessors();
+      int threadCount = Math.max(1, coreCount) * 2;
       LOGGER.info("Using up to " + threadCount + " threads to run tests.");
       executorService = Executors.newFixedThreadPool(threadCount, threadFactory);
       childCounter = new Phaser();
