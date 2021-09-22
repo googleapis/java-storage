@@ -35,6 +35,7 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Storage;
@@ -776,6 +777,22 @@ final class RpcMethodMappings {
       private static void delete(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(26, hmacKey.delete)
+                .withSetup(
+                    defaultSetup.andThen(
+                        (ctx, c) ->
+                            ctx.map(
+                                state -> {
+                                  Storage storage = ctx.getStorage();
+                                  HmacKeyMetadata metadata = state.getHmacKey().getMetadata();
+                                  // for delete we're only using the metadata, clear the key that
+                                  // was populated
+                                  // in defaultSetup and specify the updated metadata
+                                  return state
+                                      .withHmacKey(null)
+                                      .with(
+                                          storage.updateHmacKeyState(
+                                              metadata, HmacKeyState.INACTIVE));
+                                })))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -783,7 +800,7 @@ final class RpcMethodMappings {
                                 state.consume(
                                     () ->
                                         ctx.getStorage()
-                                            .deleteHmacKey(state.getHmacKey().getMetadata()))))
+                                            .deleteHmacKey(state.getHmacKeyMetadata()))))
                 .build());
       }
 
@@ -832,7 +849,7 @@ final class RpcMethodMappings {
                     (ctx, c) ->
                         ctx.map(
                             state ->
-                                state.with(
+                                state.withHmacKey(
                                     ctx.getStorage().createHmacKey(state.getServiceAccount()))))
                 .build());
       }
@@ -1131,7 +1148,8 @@ final class RpcMethodMappings {
                                     ByteStreams.copy(reader, write);
                                   } catch (IOException e) {
                                     if (e.getCause() instanceof RetryHelperException) {
-                                      RetryHelperException cause = (RetryHelperException) e.getCause();
+                                      RetryHelperException cause =
+                                          (RetryHelperException) e.getCause();
                                       if (cause.getCause() instanceof BaseServiceException) {
                                         throw cause.getCause();
                                       }
@@ -1157,7 +1175,8 @@ final class RpcMethodMappings {
                                     ByteStreams.copy(reader, write);
                                   } catch (IOException e) {
                                     if (e.getCause() instanceof RetryHelperException) {
-                                      RetryHelperException cause = (RetryHelperException) e.getCause();
+                                      RetryHelperException cause =
+                                          (RetryHelperException) e.getCause();
                                       if (cause.getCause() instanceof BaseServiceException) {
                                         throw cause.getCause();
                                       }

@@ -27,6 +27,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.common.base.Joiner;
@@ -101,7 +102,12 @@ final class CtxFunctions {
         (ctx, c) ->
             ctx.map(s -> s.with(ServiceAccount.of(c.getServiceAccountSigner().getAccount())));
     static final CtxFunction hmacKey =
-        (ctx, c) -> ctx.map(s -> s.with(ctx.getStorage().createHmacKey(s.getServiceAccount())));
+        (ctx, c) ->
+            ctx.map(
+                s -> {
+                  HmacKey hmacKey1 = ctx.getStorage().createHmacKey(s.getServiceAccount());
+                  return s.withHmacKey(hmacKey1).with(hmacKey1.getMetadata());
+                });
 
     private static final CtxFunction processResources =
         (ctx, c) -> {
