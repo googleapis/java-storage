@@ -32,6 +32,7 @@ import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.util.JsonFormat;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +41,7 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -332,10 +334,12 @@ public class ITRetryConformanceTest {
 
     /**
      * Filtering predicate in which only those test cases which match up to the specified {@code
-     * mappingId} will be included and run.
+     * mappingIds} will be included and run.
      */
-    static BiPredicate<RpcMethod, TestRetryConformance> individualMapping(int mappingId) {
-      return (m, c) -> c.getMappingId() == mappingId;
+    static BiPredicate<RpcMethod, TestRetryConformance> specificMappings(int... mappingIds) {
+      ImmutableSet<Integer> set = Arrays.stream(mappingIds).boxed()
+          .collect(ImmutableSet.toImmutableSet());
+      return (m, c) -> set.contains(c.getMappingId());
     }
 
     static final class Builder {
