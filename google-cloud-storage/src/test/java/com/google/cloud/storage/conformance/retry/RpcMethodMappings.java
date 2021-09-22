@@ -27,8 +27,10 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import com.google.cloud.BaseServiceException;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
@@ -73,6 +75,7 @@ import com.google.common.io.ByteStreams;
 import com.google.errorprone.annotations.Immutable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -1120,11 +1123,20 @@ final class RpcMethodMappings {
                         (ctx, c) ->
                             ctx.peek(
                                 state -> {
-                                  ReadChannel reader =
-                                      ctx.getStorage().reader(ctx.getState().getBlobId());
-                                  WritableByteChannel write =
-                                      Channels.newChannel(NullOutputStream.INSTANCE);
-                                  ByteStreams.copy(reader, write);
+                                  try {
+                                    ReadChannel reader =
+                                        ctx.getStorage().reader(ctx.getState().getBlobId());
+                                    WritableByteChannel write =
+                                        Channels.newChannel(NullOutputStream.INSTANCE);
+                                    ByteStreams.copy(reader, write);
+                                  } catch (IOException e) {
+                                    if (e.getCause() instanceof RetryHelperException) {
+                                      RetryHelperException cause = (RetryHelperException) e.getCause();
+                                      if (cause.getCause() instanceof BaseServiceException) {
+                                        throw cause.getCause();
+                                      }
+                                    }
+                                  }
                                 })))
                 .build());
         a.add(
@@ -1134,14 +1146,23 @@ final class RpcMethodMappings {
                         (ctx, c) ->
                             ctx.peek(
                                 state -> {
-                                  ReadChannel reader =
-                                      ctx.getStorage()
-                                          .reader(
-                                              ctx.getState().getBlobId().getBucket(),
-                                              ctx.getState().getBlobId().getName());
-                                  WritableByteChannel write =
-                                      Channels.newChannel(NullOutputStream.INSTANCE);
-                                  ByteStreams.copy(reader, write);
+                                  try {
+                                    ReadChannel reader =
+                                        ctx.getStorage()
+                                            .reader(
+                                                ctx.getState().getBlobId().getBucket(),
+                                                ctx.getState().getBlobId().getName());
+                                    WritableByteChannel write =
+                                        Channels.newChannel(NullOutputStream.INSTANCE);
+                                    ByteStreams.copy(reader, write);
+                                  } catch (IOException e) {
+                                    if (e.getCause() instanceof RetryHelperException) {
+                                      RetryHelperException cause = (RetryHelperException) e.getCause();
+                                      if (cause.getCause() instanceof BaseServiceException) {
+                                        throw cause.getCause();
+                                      }
+                                    }
+                                  }
                                 })))
                 .build());
         a.add(
