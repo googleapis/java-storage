@@ -337,8 +337,8 @@ public class ITRetryConformanceTest {
      * mappingIds} will be included and run.
      */
     static BiPredicate<RpcMethod, TestRetryConformance> specificMappings(int... mappingIds) {
-      ImmutableSet<Integer> set = Arrays.stream(mappingIds).boxed()
-          .collect(ImmutableSet.toImmutableSet());
+      ImmutableSet<Integer> set =
+          Arrays.stream(mappingIds).boxed().collect(ImmutableSet.toImmutableSet());
       return (m, c) -> set.contains(c.getMappingId());
     }
 
