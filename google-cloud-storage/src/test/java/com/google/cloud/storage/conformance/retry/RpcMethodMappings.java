@@ -20,17 +20,22 @@ import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.blob
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.blobInfoWithGenerationZero;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.blobInfoWithoutGeneration;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.bucketInfo;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.serviceAccount;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import com.google.cloud.BaseServiceException;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Storage;
@@ -71,6 +76,7 @@ import com.google.common.io.ByteStreams;
 import com.google.errorprone.annotations.Immutable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -535,15 +541,14 @@ final class RpcMethodMappings {
             RpcMethodMapping.newBuilder(122, buckets.patch)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    bucketInfo.andThen(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .update(
-                                                state.getBucketInfo(),
-                                                BucketTargetOption.metagenerationMatch())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .update(
+                                            state.getBucket(),
+                                            BucketTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(101, buckets.patch)
@@ -590,29 +595,17 @@ final class RpcMethodMappings {
                                                 BucketTargetOption.metagenerationMatch())))))
                 .build());
         a.add(
-            RpcMethodMapping.newBuilder(99, buckets.lockRetentionPolicy)
-                .withTest(
-                    bucketInfo
-                        .andThen(Rpc.bucket)
-                        .andThen(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state -> state.with(state.getBucket().lockRetentionPolicy()))))
-                .build());
-        a.add(
             RpcMethodMapping.newBuilder(100, buckets.lockRetentionPolicy)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    bucketInfo
-                        .andThen(Rpc.bucket)
-                        .andThen(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .lockRetentionPolicy(
-                                                    BucketTargetOption.metagenerationMatch())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBucket()
+                                        .lockRetentionPolicy(
+                                            BucketTargetOption.metagenerationMatch()))))
                 .build());
       }
 
@@ -784,6 +777,22 @@ final class RpcMethodMappings {
       private static void delete(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(26, hmacKey.delete)
+                .withSetup(
+                    defaultSetup.andThen(
+                        (ctx, c) ->
+                            ctx.map(
+                                state -> {
+                                  Storage storage = ctx.getStorage();
+                                  HmacKeyMetadata metadata = state.getHmacKey().getMetadata();
+                                  // for delete we're only using the metadata, clear the key that
+                                  // was populated
+                                  // in defaultSetup and specify the updated metadata
+                                  return state
+                                      .withHmacKey(null)
+                                      .with(
+                                          storage.updateHmacKeyState(
+                                              metadata, HmacKeyState.INACTIVE));
+                                })))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -791,7 +800,7 @@ final class RpcMethodMappings {
                                 state.consume(
                                     () ->
                                         ctx.getStorage()
-                                            .deleteHmacKey(state.getHmacKey().getMetadata()))))
+                                            .deleteHmacKey(state.getHmacKeyMetadata()))))
                 .build());
       }
 
@@ -835,11 +844,12 @@ final class RpcMethodMappings {
       private static void create(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(25, hmacKey.create)
+                .withSetup(defaultSetup.andThen(serviceAccount))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
                             state ->
-                                state.with(
+                                state.withHmacKey(
                                     ctx.getStorage().createHmacKey(state.getServiceAccount()))))
                 .build());
       }
@@ -1130,11 +1140,21 @@ final class RpcMethodMappings {
                         (ctx, c) ->
                             ctx.peek(
                                 state -> {
-                                  ReadChannel reader =
-                                      ctx.getStorage().reader(ctx.getState().getBlobId());
-                                  WritableByteChannel write =
-                                      Channels.newChannel(NullOutputStream.INSTANCE);
-                                  ByteStreams.copy(reader, write);
+                                  try {
+                                    ReadChannel reader =
+                                        ctx.getStorage().reader(ctx.getState().getBlobId());
+                                    WritableByteChannel write =
+                                        Channels.newChannel(NullOutputStream.INSTANCE);
+                                    ByteStreams.copy(reader, write);
+                                  } catch (IOException e) {
+                                    if (e.getCause() instanceof RetryHelperException) {
+                                      RetryHelperException cause =
+                                          (RetryHelperException) e.getCause();
+                                      if (cause.getCause() instanceof BaseServiceException) {
+                                        throw cause.getCause();
+                                      }
+                                    }
+                                  }
                                 })))
                 .build());
         a.add(
@@ -1144,14 +1164,24 @@ final class RpcMethodMappings {
                         (ctx, c) ->
                             ctx.peek(
                                 state -> {
-                                  ReadChannel reader =
-                                      ctx.getStorage()
-                                          .reader(
-                                              ctx.getState().getBlobId().getBucket(),
-                                              ctx.getState().getBlobId().getName());
-                                  WritableByteChannel write =
-                                      Channels.newChannel(NullOutputStream.INSTANCE);
-                                  ByteStreams.copy(reader, write);
+                                  try {
+                                    ReadChannel reader =
+                                        ctx.getStorage()
+                                            .reader(
+                                                ctx.getState().getBlobId().getBucket(),
+                                                ctx.getState().getBlobId().getName());
+                                    WritableByteChannel write =
+                                        Channels.newChannel(NullOutputStream.INSTANCE);
+                                    ByteStreams.copy(reader, write);
+                                  } catch (IOException e) {
+                                    if (e.getCause() instanceof RetryHelperException) {
+                                      RetryHelperException cause =
+                                          (RetryHelperException) e.getCause();
+                                      if (cause.getCause() instanceof BaseServiceException) {
+                                        throw cause.getCause();
+                                      }
+                                    }
+                                  }
                                 })))
                 .build());
         a.add(

@@ -211,7 +211,7 @@ final class State {
     return getValue(KEY_HMAC_KEY);
   }
 
-  public State with(HmacKey hmacKey) {
+  public State withHmacKey(HmacKey hmacKey) {
     return newStateWith(KEY_HMAC_KEY, hmacKey);
   }
 
