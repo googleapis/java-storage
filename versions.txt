@@ -1,7 +1,7 @@
 # Format:
 # module:released-version:current-version
 
-google-cloud-storage:2.1.6:2.1.6
-gapic-google-cloud-storage-v2:2.1.6-alpha:2.1.6-alpha
-grpc-google-cloud-storage-v2:2.1.6-alpha:2.1.6-alpha
-proto-google-cloud-storage-v2:2.1.6-alpha:2.1.6-alpha
+google-cloud-storage:2.1.6:2.1.7-SNAPSHOT
+gapic-google-cloud-storage-v2:2.1.6-alpha:2.1.7-alpha-SNAPSHOT
+grpc-google-cloud-storage-v2:2.1.6-alpha:2.1.7-alpha-SNAPSHOT
+proto-google-cloud-storage-v2:2.1.6-alpha:2.1.7-alpha-SNAPSHOT
