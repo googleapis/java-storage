@@ -100,6 +100,7 @@ public class CopyWriter implements Restorable<CopyWriter> {
       this.rewriteResponse =
           Retrying.run(
               serviceOptions,
+              serviceOptions.getRetryAlgorithmManager().getForObjectsCopy(),
               () -> storageRpc.continueRewrite(rewriteResponse),
               Function.identity());
     }

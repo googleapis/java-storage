@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.RetryHelper.runWithRetries;
 import static com.google.cloud.storage.Blob.BlobSourceOption.toGetOptions;
 import static com.google.cloud.storage.Blob.BlobSourceOption.toSourceOptions;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -25,9 +24,8 @@ import static java.util.concurrent.Executors.callable;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
+import com.google.cloud.ExceptionHandler;
 import com.google.cloud.ReadChannel;
-import com.google.cloud.RetryHelper;
-import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Storage.BlobTargetOption;
@@ -35,7 +33,6 @@ import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.base.Function;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.CountingOutputStream;
 import java.io.IOException;
@@ -50,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * An object in Google Cloud Storage. A {@code Blob} object includes the {@code BlobId} instance,
@@ -78,17 +76,8 @@ public class Blob extends BlobInfo {
   private static final long serialVersionUID = -6806832496717441434L;
 
   private final StorageOptions options;
+  private final RetryAlgorithmManager retryAlgorithmManager;
   private transient Storage storage;
-
-  static final Function<Tuple<Storage, StorageObject>, Blob> BLOB_FROM_PB_FUNCTION =
-      new Function<Tuple<Storage, StorageObject>, Blob>() {
-        @Override
-        public Blob apply(Tuple<Storage, StorageObject> pb) {
-          return Blob.fromPb(pb.x(), pb.y());
-        }
-      };
-
-  private static final int DEFAULT_CHUNK_SIZE = 2 * 1024 * 1024;
 
   /** Class for specifying blob source options when {@code Blob} methods are used. */
   public static class BlobSourceOption extends Option {
@@ -258,26 +247,18 @@ public class Blob extends BlobInfo {
   public void downloadTo(OutputStream outputStream, BlobSourceOption... options) {
     final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
     final StorageRpc storageRpc = this.options.getStorageRpcV1();
+    StorageObject pb = getBlobId().toPb();
     final Map<StorageRpc.Option, ?> requestOptions = StorageImpl.optionMap(getBlobId(), options);
-    try {
-      runWithRetries(
-          callable(
-              new Runnable() {
-                @Override
-                public void run() {
-                  storageRpc.read(
-                      getBlobId().toPb(),
-                      requestOptions,
-                      countingOutputStream.getCount(),
-                      countingOutputStream);
-                }
-              }),
-          this.options.getRetrySettings(),
-          StorageImpl.EXCEPTION_HANDLER,
-          this.options.getClock());
-    } catch (RetryHelper.RetryHelperException e) {
-      StorageException.translateAndThrow(e);
-    }
+    ExceptionHandler exceptionHandler = retryAlgorithmManager.getForObjectsGet(pb, requestOptions);
+    Retrying.run(
+        this.options,
+        exceptionHandler,
+        callable(
+            () -> {
+              storageRpc.read(
+                  pb, requestOptions, countingOutputStream.getCount(), countingOutputStream);
+            }),
+        Function.identity());
   }
 
   /**
@@ -506,6 +487,7 @@ public class Blob extends BlobInfo {
     super(infoBuilder);
     this.storage = checkNotNull(storage);
     this.options = storage.getOptions();
+    this.retryAlgorithmManager = storage.getOptions().getRetryAlgorithmManager();
   }
 
   /**
