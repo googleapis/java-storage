@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.core.ApiFutures;
 import com.google.cloud.ExceptionHandler;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import java.net.URL;
@@ -42,7 +41,7 @@ final class ResumableMedia {
   static Supplier<String> startUploadForSignedUrl(
       final StorageOptions storageOptions, final URL signedURL, ExceptionHandler exceptionHandler) {
     if (!isValidSignedURL(signedURL.getQuery())) {
-      ApiFutures.immediateFailedFuture(new StorageException(2, "invalid signedURL"));
+      throw new StorageException(2, "invalid signedURL");
     }
     return () ->
         Retrying.run(
