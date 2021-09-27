@@ -220,13 +220,8 @@ class LegacyRetryAlgorithmManager implements RetryAlgorithmManager {
   }
 
   @Override
-  public ExceptionHandler getForObjectsCopy() {
-    return BaseService.EXCEPTION_HANDLER;
-  }
-
-  @Override
   public ExceptionHandler getForObjectsCompose(
-      List<StorageObject> sources, StorageObject target, Map<StorageRpc.Option, ?> targetOptions) {
+      List<StorageObject> sources, StorageObject target, Map<StorageRpc.Option, ?> optionsMap) {
     return BaseService.EXCEPTION_HANDLER;
   }
 

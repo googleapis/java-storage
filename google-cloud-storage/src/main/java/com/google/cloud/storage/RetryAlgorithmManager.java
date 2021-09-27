@@ -105,10 +105,8 @@ interface RetryAlgorithmManager extends Serializable {
 
   ExceptionHandler getForObjectsRewrite(RewriteRequest pb);
 
-  ExceptionHandler getForObjectsCopy();
-
   ExceptionHandler getForObjectsCompose(
-      List<StorageObject> sources, StorageObject target, Map<StorageRpc.Option, ?> targetOptions);
+      List<StorageObject> sources, StorageObject target, Map<StorageRpc.Option, ?> optionsMap);
 
   ExceptionHandler getForResumableUploadSessionCreate(Map<StorageRpc.Option, ?> optionsMap);
   /** Resumable upload has differing 429 handling */
