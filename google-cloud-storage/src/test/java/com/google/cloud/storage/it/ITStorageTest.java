@@ -3296,7 +3296,7 @@ public class ITStorageTest {
                     .setPublicAccessPrevention(
                         enforced
                             ? BucketInfo.PublicAccessPrevention.ENFORCED
-                            : BucketInfo.PublicAccessPrevention.UNSPECIFIED)
+                            : BucketInfo.PublicAccessPrevention.INHERITED)
                     .build())
             .build());
   }
@@ -3389,7 +3389,7 @@ public class ITStorageTest {
       Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.UNSPECIFIED);
+          BucketInfo.PublicAccessPrevention.INHERITED);
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
