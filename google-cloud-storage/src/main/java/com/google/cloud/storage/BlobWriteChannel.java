@@ -25,7 +25,7 @@ import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.collect.Maps;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -77,20 +77,52 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
     return getOptions().getStorageRpcV1().getCurrentUploadOffset(getUploadId());
   }
 
-  private StorageObject getRemoteStorageObject() {
-    return getOptions()
-        .getStorageRpcV1()
-        .get(getEntity().toPb(), Maps.newEnumMap(StorageRpc.Option.class));
+  private static StorageException unrecoverableState(
+      String uploadId,
+      int chunkOffset,
+      int chunkLength,
+      long localPosition,
+      long remotePosition,
+      boolean last) {
+    return unrecoverableState(
+        uploadId,
+        chunkOffset,
+        chunkLength,
+        localPosition,
+        remotePosition,
+        last,
+        "Unable to recover in upload.\nThis may be a symptom of multiple clients uploading to the same upload session.");
   }
 
-  private StorageException unrecoverableState(
-      int chunkOffset, int chunkLength, long localPosition, long remotePosition, boolean last) {
+  private static StorageException errorResolvingMetadataLastChunk(
+      String uploadId,
+      int chunkOffset,
+      int chunkLength,
+      long localPosition,
+      long remotePosition,
+      boolean last) {
+    return unrecoverableState(
+        uploadId,
+        chunkOffset,
+        chunkLength,
+        localPosition,
+        remotePosition,
+        last,
+        "Unable to load object metadata to determine if last chunk was successfully written");
+  }
+
+  private static StorageException unrecoverableState(
+      String uploadId,
+      int chunkOffset,
+      int chunkLength,
+      long localPosition,
+      long remotePosition,
+      boolean last,
+      String message) {
     StringBuilder sb = new StringBuilder();
-    sb.append("Unable to recover in upload.\n");
-    sb.append(
-        "This may be a symptom of multiple clients uploading to the same upload session.\n\n");
+    sb.append(message).append("\n\n");
     sb.append("For debugging purposes:\n");
-    sb.append("uploadId: ").append(getUploadId()).append('\n');
+    sb.append("uploadId: ").append(uploadId).append('\n');
     sb.append("chunkOffset: ").append(chunkOffset).append('\n');
     sb.append("chunkLength: ").append(chunkLength).append('\n');
     sb.append("localOffset: ").append(localPosition).append('\n');
@@ -162,7 +194,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                   // Get remote offset from API
                   final long localPosition = getPosition();
                   // For each request it should be possible to retry from its location in this code
-                  final long remotePosition = isRetrying() ? getRemotePosition() : getPosition();
+                  final long remotePosition = isRetrying() ? getRemotePosition() : localPosition;
                   final int chunkOffset = (int) (remotePosition - localPosition);
                   final int chunkLength = length - chunkOffset;
                   final boolean uploadAlreadyComplete = remotePosition == -1;
@@ -173,13 +205,45 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                   if (uploadAlreadyComplete && lastChunk) {
                     // Case 6
                     // Request object metadata if not available
+                    long totalBytes = getPosition() + length;
                     if (storageObject == null) {
-                      storageObject = getRemoteStorageObject();
+                      storageObject =
+                          getOptions()
+                              .getStorageRpcV1()
+                              .queryCompletedResumableUpload(getUploadId(), totalBytes);
+                    }
+                    // the following checks are defined here explicitly to provide a more
+                    // informative if either storageObject is unable to be resolved or it's size is
+                    // unable to be determined. This scenario is a very rare case of failure that
+                    // can arise when packets are lost.
+                    if (storageObject == null) {
+                      throw errorResolvingMetadataLastChunk(
+                          getUploadId(),
+                          chunkOffset,
+                          chunkLength,
+                          localPosition,
+                          remotePosition,
+                          lastChunk);
                     }
                     // Verify that with the final chunk we match the blob length
-                    if (storageObject.getSize().longValue() != getPosition() + length) {
+                    BigInteger size = storageObject.getSize();
+                    if (size == null) {
+                      throw errorResolvingMetadataLastChunk(
+                          getUploadId(),
+                          chunkOffset,
+                          chunkLength,
+                          localPosition,
+                          remotePosition,
+                          lastChunk);
+                    }
+                    if (size.longValue() != totalBytes) {
                       throw unrecoverableState(
-                          chunkOffset, chunkLength, localPosition, remotePosition, lastChunk);
+                          getUploadId(),
+                          chunkOffset,
+                          chunkLength,
+                          localPosition,
+                          remotePosition,
+                          lastChunk);
                     }
                     retrying = false;
                   } else if (uploadAlreadyComplete && !lastChunk && !checkingForLastChunk) {
@@ -201,7 +265,12 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                   } else {
                     // Case 4 && Case 8 && Case 9
                     throw unrecoverableState(
-                        chunkOffset, chunkLength, localPosition, remotePosition, lastChunk);
+                        getUploadId(),
+                        chunkOffset,
+                        chunkLength,
+                        localPosition,
+                        remotePosition,
+                        lastChunk);
                   }
                 }
               }),

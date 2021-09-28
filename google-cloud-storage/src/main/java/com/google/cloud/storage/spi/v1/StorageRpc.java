@@ -338,6 +338,24 @@ public interface StorageRpc extends ServiceRpc {
   long getCurrentUploadOffset(String uploadId);
 
   /**
+   * Attempts to retrieve the StorageObject from a completed resumable upload. When a resumable
+   * upload completes, the response will be the up-to-date StorageObject metadata. This up-to-date
+   * metadata can then be used to validate the total size of the object along with new generation
+   * and other information.
+   *
+   * <p>If for any reason, the response to the final PUT to a resumable upload is not received, this
+   * method can be used to query for the up-to-date StorageObject. If the upload is complete, this
+   * method can be used to access the StorageObject independently from any other liveness or
+   * conditional criteria requirements that are otherwise applicable when using {@link
+   * #get(StorageObject, Map)}.
+   *
+   * @param uploadId resumable upload ID URL
+   * @param totalBytes the total number of bytes that should have been written.
+   * @throws StorageException if the upload is incomplete or does not exist
+   */
+  StorageObject queryCompletedResumableUpload(String uploadId, long totalBytes);
+
+  /**
    * Writes the provided bytes to a storage object at the provided location. If {@code last=true}
    * returns metadata of the updated object, otherwise returns null.
    *
