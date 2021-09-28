@@ -115,6 +115,7 @@ public class BucketInfo implements Serializable {
     ENFORCED("enforced"),
     /**
      * Default value for Public Access Prevention
+     *
      * @deprecated use {@link #INHERITED}
      */
     @Deprecated
