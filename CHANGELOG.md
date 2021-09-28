@@ -1,5 +1,12 @@
 # Changelog
 
+### [1.113.14-sp.2](https://www.github.com/googleapis/java-storage/compare/1.113.14-sp.1...v1.113.14-sp.2) (2021-09-28)
+
+
+### Bug Fixes
+
+* **1.113.14-sp:** backport critical bug fixes ([#993](https://www.github.com/googleapis/java-storage/issues/993)) ([447d35d](https://www.github.com/googleapis/java-storage/commit/447d35d5dabc42e5d61b1bbad0ad7a01a29d83a3))
+
 ### [1.113.14-sp.1](https://www.github.com/googleapis/java-storage/compare/1.113.14...v1.113.14-sp.1) (2021-05-11)
 
 
