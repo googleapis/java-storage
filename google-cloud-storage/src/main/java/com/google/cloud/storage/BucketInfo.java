@@ -113,13 +113,19 @@ public class BucketInfo implements Serializable {
    */
   public enum PublicAccessPrevention {
     ENFORCED("enforced"),
-    /** Default value for Public Access Prevention */
-    UNSPECIFIED("unspecified"),
+    /**
+     * Default value for Public Access Prevention
+     *
+     * @deprecated use {@link #INHERITED}
+     */
+    @Deprecated
+    UNSPECIFIED("inherited"),
     /**
      * If the api returns a value that isn't defined in {@link PublicAccessPrevention} this value
      * will be returned.
      */
-    UNKNOWN(null);
+    UNKNOWN(null),
+    INHERITED("inherited");
 
     private final String value;
 
@@ -133,10 +139,14 @@ public class BucketInfo implements Serializable {
 
     public static PublicAccessPrevention parse(String value) {
       String upper = value.toUpperCase();
-      try {
-        return valueOf(upper);
-      } catch (IllegalArgumentException ignore) {
-        return UNKNOWN;
+      switch (upper) {
+        case "ENFORCED":
+          return ENFORCED;
+        case "UNSPECIFIED":
+        case "INHERITED":
+          return INHERITED;
+        default:
+          return UNKNOWN;
       }
     }
   }
@@ -300,7 +310,7 @@ public class BucketInfo implements Serializable {
 
       /**
        * Sets the bucket's Public Access Prevention configuration. Currently supported options are
-       * {@link PublicAccessPrevention#UNSPECIFIED} or {@link PublicAccessPrevention#ENFORCED}
+       * {@link PublicAccessPrevention#INHERITED} or {@link PublicAccessPrevention#ENFORCED}
        *
        * @see <a
        *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
