@@ -16,17 +16,24 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.google.cloud.BaseService;
 import com.google.cloud.ExceptionHandler;
+import com.google.cloud.storage.spi.v1.StorageRpc;
 import java.net.URL;
+import java.util.function.Supplier;
 import org.junit.Assert;
 import org.junit.Test;
 
 public final class ResumableMediaTest {
-  private static final String SIGNED_URL =
-      "http://www.test.com/test-bucket/test1.txt?GoogleAccessId=testClient-test@test.com&Expires=1553839761&Signature=MJUBXAZ7";
+  private static final String SIGNED_URL_INVALID =
+      "http://localhost/test-bucket/test1.txt?GoogAccessId=testClient-test@test.com&Expires=1553839761&Signature=MJUBXAZ7";
+  private static final String SIGNED_URL_VALID =
+      "http://localhost/test-bucket/test1.txt?GoogleAccessId=testClient-test@test.com&Expires=1553839761&Signature=MJUBXAZ7";
 
   private final ExceptionHandler createResultExceptionHandler = BaseService.EXCEPTION_HANDLER;
 
@@ -35,12 +42,25 @@ public final class ResumableMediaTest {
     try {
       ResumableMedia.startUploadForSignedUrl(
               StorageOptions.newBuilder().build(),
-              new URL(SIGNED_URL),
+              new URL(SIGNED_URL_INVALID),
               createResultExceptionHandler)
           .get();
       Assert.fail();
     } catch (StorageException ex) {
       assertNotNull(ex.getMessage());
     }
+  }
+
+  @Test
+  public void startUploadForSignedUrl_whenUrlValid() throws Exception {
+    StorageRpc rpc = mock(StorageRpc.class);
+    StorageOptions options = StorageOptions.newBuilder().setServiceRpcFactory(opts -> rpc).build();
+
+    URL url = new URL(SIGNED_URL_VALID);
+    when(rpc.open(url.toString())).thenReturn("upload-id");
+
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForSignedUrl(options, url, createResultExceptionHandler);
+    assertThat(uploadIdSupplier.get()).isEqualTo("upload-id");
   }
 }
