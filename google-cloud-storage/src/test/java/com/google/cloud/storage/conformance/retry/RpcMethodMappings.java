@@ -612,6 +612,7 @@ final class RpcMethodMappings {
       private static void setIamPolicy(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(18, buckets.setIamPolicy)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -619,7 +620,23 @@ final class RpcMethodMappings {
                                 state.with(
                                     ctx.getStorage()
                                         .setIamPolicy(
-                                            c.getBucketName(), Policy.newBuilder().build()))))
+                                            state.getBucket().getName(),
+                                            Policy.newBuilder().build()))))
+                .build()); // TODO: configure policy
+        a.add(
+            RpcMethodMapping.newBuilder(240, buckets.setIamPolicy)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .setIamPolicy(
+                                            state.getBucket().getName(),
+                                            Policy.newBuilder().build(),
+                                            BucketSourceOption.metagenerationMatch(
+                                                state.getBucket().getMetageneration())))))
                 .build()); // TODO: configure policy
       }
 
@@ -829,6 +846,7 @@ final class RpcMethodMappings {
       private static void update(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(29, hmacKey.update)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -1005,59 +1023,52 @@ final class RpcMethodMappings {
             RpcMethodMapping.newBuilder(36, objects.delete)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
-                    blobIdWithoutGeneration.andThen(
-                        (ctx, c) ->
-                            ctx.map(
-                                state -> state.with(ctx.getStorage().delete(state.getBlobId())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(ctx.getStorage().delete(state.getBlob().getBlobId()))))
                 .build()); // TODO: Why does this exist, varargs should suffice
         a.add(
             RpcMethodMapping.newBuilder(37, objects.delete)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    blobIdWithoutGeneration.andThen(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .delete(
-                                                state.getBlobId(),
-                                                BlobSourceOption.metagenerationMatch(1L))))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .delete(
+                                            state.getBlob().getBlobId(),
+                                            BlobSourceOption.generationMatch()))))
                 .build()); // TODO: Correct arg?
         a.add(
             RpcMethodMapping.newBuilder(38, objects.delete)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    blobIdWithoutGeneration.andThen(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .delete(
-                                                state.getBlobId().getBucket(),
-                                                state.getBlobId().getName(),
-                                                BlobSourceOption.metagenerationMatch(1L))))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .delete(
+                                            state.getBlob().getBlobId().getBucket(),
+                                            state.getBlob().getBlobId().getName(),
+                                            BlobSourceOption.generationMatch(
+                                                state.getBlob().getGeneration())))))
                 .build()); // TODO: Correct arg?
         a.add(
             RpcMethodMapping.newBuilder(67, objects.delete)
-                .withTest(
-                    blobIdWithoutGeneration
-                        .andThen(Rpc.blobWithGeneration)
-                        .andThen((ctx, c) -> ctx.peek(state -> state.getBlob().delete())))
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withTest((ctx, c) -> ctx.peek(state -> state.getBlob().delete()))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(68, objects.delete)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    blobIdWithoutGeneration
-                        .andThen(Rpc.blobWithGeneration)
-                        .andThen(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state ->
-                                        state
-                                            .getBlob()
-                                            .delete(Blob.BlobSourceOption.metagenerationMatch()))))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state ->
+                                state.getBlob().delete(Blob.BlobSourceOption.generationMatch())))
                 .build());
       }
 
@@ -1770,51 +1781,41 @@ final class RpcMethodMappings {
       private static void patch(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(56, objects.patch)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
-                    blobIdWithoutGeneration
-                        .andThen(Rpc.blobWithGeneration)
-                        .andThen(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            ctx.getStorage().update(ctx.getState().getBlob())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> state.with(ctx.getStorage().update(ctx.getState().getBlob()))))
                 .build()); // TODO: Why does this exist, varargs should suffice
         a.add(
             RpcMethodMapping.newBuilder(57, objects.patch)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    blobIdWithoutGeneration
-                        .andThen(Rpc.blobWithGeneration)
-                        .andThen(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            ctx.getStorage()
-                                                .update(
-                                                    ctx.getState().getBlob(),
-                                                    BlobTargetOption.metagenerationMatch())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .update(
+                                            ctx.getState().getBlob(),
+                                            BlobTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(79, objects.patch)
-                .withTest(
-                    blobIdWithoutGeneration
-                        .andThen(Rpc.blobWithGeneration)
-                        .andThen((ctx, c) -> ctx.peek(state -> state.getBlob().update())))
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withTest((ctx, c) -> ctx.peek(state -> state.getBlob().update()))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(80, objects.patch)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                    blobIdWithoutGeneration
-                        .andThen(Rpc.blobWithGeneration)
-                        .andThen(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBlob()
-                                                .update(BlobTargetOption.generationMatch())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBlob()
+                                        .update(BlobTargetOption.metagenerationMatch()))))
                 .build()); // TODO: Correct arg?
       }
 
