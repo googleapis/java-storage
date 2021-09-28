@@ -1,5 +1,17 @@
 # Changelog
 
+### [2.1.7](https://www.github.com/googleapis/java-storage/compare/v2.1.6...v2.1.7) (2021-09-28)
+
+
+### Bug Fixes
+
+* update PAP to use inherited instead of unspecified ([#1051](https://www.github.com/googleapis/java-storage/issues/1051)) ([6d73e46](https://www.github.com/googleapis/java-storage/commit/6d73e4631777542996a0ea815b482f5c19a8927d))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20210918-1.32.1 ([#1046](https://www.github.com/googleapis/java-storage/issues/1046)) ([2c79005](https://www.github.com/googleapis/java-storage/commit/2c79005d29ee0b279850c7008b1afbb302f9c90d))
+
 ### [2.1.6](https://www.github.com/googleapis/java-storage/compare/v2.1.5...v2.1.6) (2021-09-24)
 
 
