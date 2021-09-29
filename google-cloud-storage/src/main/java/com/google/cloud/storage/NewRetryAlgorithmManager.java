@@ -35,7 +35,7 @@ import java.util.Map;
 
 final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
 
-  public static final Interceptor INTERCEPTOR_IDEMPOTENT =
+  private static final Interceptor INTERCEPTOR_IDEMPOTENT =
       new InterceptorImpl(
           true,
           ImmutableSet.<Integer>builder()
@@ -46,11 +46,11 @@ final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
               .add(503)
               .add(504)
               .build());
-  public static final Interceptor INTERCEPTOR_IDEMPOTENT_RESUMABLE =
+  private static final Interceptor INTERCEPTOR_IDEMPOTENT_RESUMABLE =
       new InterceptorImpl(
           true,
           ImmutableSet.<Integer>builder().add(408).add(500).add(502).add(503).add(504).build());
-  public static final Interceptor INTERCEPTOR_NON_IDEMPOTENT =
+  private static final Interceptor INTERCEPTOR_NON_IDEMPOTENT =
       new InterceptorImpl(false, ImmutableSet.<Integer>builder().build());
 
   private static final ExceptionHandler IDEMPOTENT_HANDLER =
