@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,8 +32,7 @@ import org.junit.Test;
 public class PostPolicyV4Test {
   private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-  private void assertNotSameButEqual(Map<String, String> expected, Map<String, String> returned) {
-    assertNotSame(expected, returned);
+  private void assertMapsEquals(Map<String, String> expected, Map<String, String> returned) {
     assertEquals("map sizes", expected.size(), returned.size());
     for (String key : expected.keySet()) {
       assertEquals("value of $" + key, expected.get(key), returned.get(key));
@@ -78,7 +76,7 @@ public class PostPolicyV4Test {
     String url = "http://example.com";
     PostPolicyV4 policy = PostPolicyV4.of(url, ALL_FIELDS);
     assertEquals(url, policy.getUrl());
-    assertNotSameButEqual(ALL_FIELDS, policy.getFields());
+    assertMapsEquals(ALL_FIELDS, policy.getFields());
   }
 
   @Test
@@ -115,7 +113,7 @@ public class PostPolicyV4Test {
   @Test
   public void testPostFieldsV4_of() {
     PostPolicyV4.PostFieldsV4 fields = PostPolicyV4.PostFieldsV4.of(ALL_FIELDS);
-    assertNotSameButEqual(ALL_FIELDS, fields.getFieldsMap());
+    assertMapsEquals(ALL_FIELDS, fields.getFieldsMap());
   }
 
   @Test
@@ -157,7 +155,7 @@ public class PostPolicyV4Test {
     expectedUpdated.put("content-type", "new-content-type");
     expectedUpdated.put("success_action_status", "42");
     Map<String, String> updated = builder.build().getFieldsMap();
-    assertNotSameButEqual(expectedUpdated, updated);
+    assertMapsEquals(expectedUpdated, updated);
   }
 
   @Test
