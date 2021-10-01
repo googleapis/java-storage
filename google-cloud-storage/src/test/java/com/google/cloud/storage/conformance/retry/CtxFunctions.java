@@ -29,6 +29,8 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.ServiceAccount;
+import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.common.base.Joiner;
 import java.util.HashSet;
@@ -46,9 +48,35 @@ import java.util.HashSet;
  */
 final class CtxFunctions {
 
-  private static final class Util {
+  static final class Util {
     private static final CtxFunction blobIdAndBlobInfo =
         (ctx, c) -> ctx.map(state -> state.with(BlobInfo.newBuilder(state.getBlobId()).build()));
+
+    static final CtxFunction composeRequest =
+        (ctx, c) ->
+            ctx.map(
+                state -> {
+                  Blob blob = state.getBlob();
+                  String bucket = blob.getBucket();
+                  final BlobInfo target;
+                  if (c.isPreconditionsProvided()) {
+                    target = BlobInfo.newBuilder(BlobId.of(bucket, "blob-full", 0L)).build();
+                  } else {
+                    target = BlobInfo.newBuilder(BlobId.of(bucket, "blob-full")).build();
+                  }
+                  ComposeRequest.Builder builder =
+                      ComposeRequest.newBuilder()
+                          // source bucket is resolved from the target, as compose must be within
+                          // the same bucket
+                          .addSource(blob.getName(), blob.getGeneration())
+                          .addSource(blob.getName(), blob.getGeneration())
+                          .setTarget(target);
+                  if (c.isPreconditionsProvided()) {
+                    builder = builder.setTargetOptions(BlobTargetOption.generationMatch());
+                  }
+                  ComposeRequest r = builder.build();
+                  return state.with(r);
+                });
   }
 
   static final class Local {

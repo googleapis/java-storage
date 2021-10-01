@@ -284,7 +284,7 @@ final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
   @Override
   public ExceptionHandler getForObjectsCompose(
       List<StorageObject> sources, StorageObject target, Map<StorageRpc.Option, ?> optionsMap) {
-    return optionsMap.containsKey(StorageRpc.Option.IF_METAGENERATION_MATCH)
+    return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
         ? IDEMPOTENT_HANDLER
         : NON_IDEMPOTENT_HANDLER;
   }

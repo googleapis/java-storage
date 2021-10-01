@@ -30,6 +30,7 @@ import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.ServiceAccount;
+import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.conformance.retry.Functions.VoidFunction;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.Immutable;
@@ -75,6 +76,7 @@ final class State {
       new Key<>("testIamPermissionsResults");
   private static final Key<List<Acl>> KEY_ACLS = new Key<>("acls");
   private static final Key<byte[]> KEY_BYTES = new Key<>("bytes");
+  private static final Key<ComposeRequest> KEY_COMPOSE_REQUEST = new Key<>("composeRequest");
 
   private final ImmutableMap<Key<?>, Object> data;
 
@@ -291,6 +293,18 @@ final class State {
     List<T> collect =
         StreamSupport.stream(page.iterateAll().spliterator(), false).collect(Collectors.toList());
     return newStateWith(KEY_LIST_OBJECTS, collect);
+  }
+
+  public State with(ComposeRequest composeRequest) {
+    return newStateWith(KEY_COMPOSE_REQUEST, composeRequest);
+  }
+
+  public ComposeRequest getComposeRequest() {
+    return getValue(KEY_COMPOSE_REQUEST);
+  }
+
+  public boolean hasComposeRequest() {
+    return hasValue(KEY_COMPOSE_REQUEST);
   }
 
   private <T> T getValue(Key<T> key) {
