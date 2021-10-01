@@ -97,10 +97,11 @@ public class CopyWriter implements Restorable<CopyWriter> {
    */
   public void copyChunk() {
     if (!isDone()) {
+      RewriteRequest rewriteRequest = rewriteResponse.rewriteRequest;
       this.rewriteResponse =
           Retrying.run(
               serviceOptions,
-              serviceOptions.getRetryAlgorithmManager().getForObjectsCopy(),
+              serviceOptions.getRetryAlgorithmManager().getForObjectsRewrite(rewriteRequest),
               () -> storageRpc.continueRewrite(rewriteResponse),
               Function.identity());
     }

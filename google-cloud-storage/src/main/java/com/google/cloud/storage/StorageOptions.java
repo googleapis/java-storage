@@ -146,7 +146,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     return (StorageRpc) getRpc();
   }
 
-  protected RetryAlgorithmManager getRetryAlgorithmManager() {
+  RetryAlgorithmManager getRetryAlgorithmManager() {
     return retryAlgorithmManager;
   }
 
