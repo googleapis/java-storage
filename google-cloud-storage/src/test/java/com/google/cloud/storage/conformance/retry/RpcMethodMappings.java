@@ -23,7 +23,6 @@ import static com.google.cloud.storage.conformance.retry.CtxFunctions.Local.buck
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.serviceAccount;
 import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -45,12 +44,12 @@ import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
-import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.Storage.UriScheme;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Local;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Rpc;
+import com.google.cloud.storage.conformance.retry.CtxFunctions.Util;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.bucket_acl;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.buckets;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.default_object_acl;
@@ -1824,17 +1823,23 @@ final class RpcMethodMappings {
       private static void compose(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(35, objects.compose)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withSetup(defaultSetup.andThen(Util.composeRequest))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
                             state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .compose(
-                                            ComposeRequest.of(
-                                                c.getBucketName(),
-                                                newArrayList("blob-part-1", "blob-part-2"),
-                                                "blob-full")))))
+                                state.with(ctx.getStorage().compose(state.getComposeRequest()))))
+                .build());
+        a.add(
+            RpcMethodMapping.newBuilder(241, objects.compose)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withSetup(defaultSetup.andThen(Util.composeRequest))
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(ctx.getStorage().compose(state.getComposeRequest()))))
                 .build());
       }
 
