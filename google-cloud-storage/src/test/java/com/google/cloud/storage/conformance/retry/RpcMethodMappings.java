@@ -514,9 +514,7 @@ final class RpcMethodMappings {
       private static void list(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(15, buckets.list)
-                .withTest(
-                    (ctx, c) ->
-                        ctx.map(state -> state.consume(ctx.getStorage().list())))
+                .withTest((ctx, c) -> ctx.map(state -> state.consume(ctx.getStorage().list())))
                 .build());
       }
 
