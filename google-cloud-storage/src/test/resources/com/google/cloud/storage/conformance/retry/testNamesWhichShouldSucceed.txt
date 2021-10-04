@@ -18,6 +18,7 @@ TestRetryConformance/1-[return-503_return-503]-storage.buckets.get-94
 TestRetryConformance/1-[return-503_return-503]-storage.buckets.get-96
 TestRetryConformance/1-[return-503_return-503]-storage.buckets.getIamPolicy-13
 TestRetryConformance/1-[return-503_return-503]-storage.buckets.insert-14
+TestRetryConformance/1-[return-503_return-503]-storage.buckets.list-15
 TestRetryConformance/1-[return-503_return-503]-storage.buckets.testIamPermissions-19
 TestRetryConformance/1-[return-503_return-503]-storage.default_object_acl.get-103
 TestRetryConformance/1-[return-503_return-503]-storage.default_object_acl.get-21
@@ -63,6 +64,7 @@ TestRetryConformance/1-[return-reset-connection_return-503]-storage.buckets.get-
 TestRetryConformance/1-[return-reset-connection_return-503]-storage.buckets.get-96
 TestRetryConformance/1-[return-reset-connection_return-503]-storage.buckets.getIamPolicy-13
 TestRetryConformance/1-[return-reset-connection_return-503]-storage.buckets.insert-14
+TestRetryConformance/1-[return-reset-connection_return-503]-storage.buckets.list-15
 TestRetryConformance/1-[return-reset-connection_return-503]-storage.buckets.testIamPermissions-19
 TestRetryConformance/1-[return-reset-connection_return-503]-storage.default_object_acl.get-103
 TestRetryConformance/1-[return-reset-connection_return-503]-storage.default_object_acl.get-21
@@ -108,6 +110,7 @@ TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage
 TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage.buckets.get-96
 TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage.buckets.getIamPolicy-13
 TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage.buckets.insert-14
+TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage.buckets.list-15
 TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage.buckets.testIamPermissions-19
 TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage.default_object_acl.get-103
 TestRetryConformance/1-[return-reset-connection_return-reset-connection]-storage.default_object_acl.get-21
@@ -277,6 +280,7 @@ TestRetryConformance/5-[return-400]-storage.buckets.get-94
 TestRetryConformance/5-[return-400]-storage.buckets.get-96
 TestRetryConformance/5-[return-400]-storage.buckets.getIamPolicy-13
 TestRetryConformance/5-[return-400]-storage.buckets.insert-14
+TestRetryConformance/5-[return-400]-storage.buckets.list-15
 TestRetryConformance/5-[return-400]-storage.buckets.patch-101
 TestRetryConformance/5-[return-400]-storage.buckets.patch-17
 TestRetryConformance/5-[return-400]-storage.buckets.setIamPolicy-18
@@ -370,6 +374,7 @@ TestRetryConformance/5-[return-401]-storage.buckets.get-94
 TestRetryConformance/5-[return-401]-storage.buckets.get-96
 TestRetryConformance/5-[return-401]-storage.buckets.getIamPolicy-13
 TestRetryConformance/5-[return-401]-storage.buckets.insert-14
+TestRetryConformance/5-[return-401]-storage.buckets.list-15
 TestRetryConformance/5-[return-401]-storage.buckets.patch-101
 TestRetryConformance/5-[return-401]-storage.buckets.patch-17
 TestRetryConformance/5-[return-401]-storage.buckets.setIamPolicy-18
@@ -454,6 +459,7 @@ TestRetryConformance/6-[return-503_return-400]-storage.buckets.get-12
 TestRetryConformance/6-[return-503_return-400]-storage.buckets.get-95
 TestRetryConformance/6-[return-503_return-400]-storage.buckets.get-97
 TestRetryConformance/6-[return-503_return-400]-storage.buckets.getIamPolicy-13
+TestRetryConformance/6-[return-503_return-400]-storage.buckets.list-15
 TestRetryConformance/6-[return-503_return-400]-storage.buckets.lockRetentionPolicy-100
 TestRetryConformance/6-[return-503_return-400]-storage.buckets.patch-101
 TestRetryConformance/6-[return-503_return-400]-storage.buckets.patch-122
@@ -511,6 +517,7 @@ TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.get-
 TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.get-95
 TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.get-97
 TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.getIamPolicy-13
+TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.list-15
 TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.lockRetentionPolicy-100
 TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.patch-101
 TestRetryConformance/6-[return-reset-connection_return-401]-storage.buckets.patch-122
