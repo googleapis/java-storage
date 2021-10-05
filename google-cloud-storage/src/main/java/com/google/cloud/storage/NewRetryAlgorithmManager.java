@@ -274,9 +274,7 @@ final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
 
   @Override
   public ExceptionHandler getForObjectsRewrite(RewriteRequest pb) {
-    return (pb.sourceOptions.containsKey(StorageRpc.Option.IF_SOURCE_GENERATION_MATCH)
-                || pb.sourceOptions.containsKey(StorageRpc.Option.IF_GENERATION_MATCH))
-            && pb.targetOptions.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+    return pb.targetOptions.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
         ? IDEMPOTENT_HANDLER
         : NON_IDEMPOTENT_HANDLER;
   }

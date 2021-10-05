@@ -33,6 +33,7 @@ import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -1839,15 +1840,35 @@ final class RpcMethodMappings {
       private static void rewrite(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(58, objects.rewrite)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .copy(
-                                            CopyRequest.of(
-                                                c.getBucketName(), "blob-source", "blob-target")))))
+                            state -> {
+                              CopyRequest copyRequest =
+                                  CopyRequest.newBuilder()
+                                      .setSource(c.getBucketName(), c.getObjectName())
+                                      .setTarget(
+                                          BlobId.of(c.getBucketName(), "destination-blob"),
+                                          BlobTargetOption.doesNotExist())
+                                      .build();
+                              return state.with(ctx.getStorage().copy(copyRequest));
+                            }))
+                .build());
+        a.add(
+            RpcMethodMapping.newBuilder(242, objects.rewrite)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              CopyRequest copyRequest =
+                                  CopyRequest.newBuilder()
+                                      .setSource(c.getBucketName(), c.getObjectName())
+                                      .setTarget(BlobId.of(c.getBucketName(), "destination-blob"))
+                                      .build();
+                              return state.with(ctx.getStorage().copy(copyRequest));
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(81, objects.rewrite)
