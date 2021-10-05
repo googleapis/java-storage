@@ -1872,6 +1872,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(81, objects.rewrite)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobIdWithoutGeneration
                         .andThen(Rpc.blobWithGeneration)
@@ -1884,6 +1885,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(82, objects.rewrite)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobIdWithoutGeneration
                         .andThen(Rpc.blobWithGeneration)
@@ -1901,6 +1903,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(83, objects.rewrite)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobIdWithoutGeneration
                         .andThen(Rpc.blobWithGeneration)
@@ -1916,6 +1919,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(84, objects.rewrite)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobIdWithoutGeneration
                         .andThen(Rpc.blobWithGeneration)
@@ -1933,6 +1937,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(85, objects.rewrite)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobIdWithoutGeneration
                         .andThen(Rpc.blobWithGeneration)
@@ -1950,6 +1955,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(86, objects.rewrite)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobIdWithoutGeneration
                         .andThen(Rpc.blobWithGeneration)
