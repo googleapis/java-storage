@@ -1840,8 +1840,6 @@ final class RpcMethodMappings {
       private static void rewrite(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(58, objects.rewrite)
-                // Question: Retries occurred when they shouldn't have but withApplicable disabled
-                // this case. Is there an alternate for negative case?
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
                     (ctx, c) ->
@@ -1859,8 +1857,6 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(242, objects.rewrite)
-                // Question: Retries occurred when they shouldn't have but withApplicable disabled
-                // this case. Is there an alternate for negative case?
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     (ctx, c) ->
