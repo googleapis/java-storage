@@ -101,9 +101,11 @@ final class RetryTestFixture implements TestRule {
         } finally {
           LOGGER.fine("Verifying end state of retry_test resource...");
           try {
-            if (testSuccess && retryTest != null) {
+            if (retryTest != null) {
               RetryTestResource postTestState = testBench.getRetryTest(retryTest);
-              assertTrue("expected completed to be true, but was false", postTestState.completed);
+              if (testSuccess) {
+                assertTrue("expected completed to be true, but was false", postTestState.completed);
+              }
             }
           } finally {
             LOGGER.fine("Verifying end state of retry_test resource complete");
