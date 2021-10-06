@@ -143,10 +143,7 @@ final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
   @Override
   public ExceptionHandler getForBucketsSetIamPolicy(
       String bucket, Policy pb, Map<StorageRpc.Option, ?> optionsMap) {
-    // TODO: Include etag when it is supported by the library
-    return optionsMap.containsKey(StorageRpc.Option.IF_METAGENERATION_MATCH)
-        ? IDEMPOTENT_HANDLER
-        : NON_IDEMPOTENT_HANDLER;
+    return pb.getEtag() != null ? IDEMPOTENT_HANDLER : NON_IDEMPOTENT_HANDLER;
   }
 
   @Override

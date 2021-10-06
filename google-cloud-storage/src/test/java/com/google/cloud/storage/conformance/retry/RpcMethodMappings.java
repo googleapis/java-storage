@@ -27,6 +27,8 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.BaseServiceException;
+import com.google.cloud.Binding;
+import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RetryHelper.RetryHelperException;
@@ -48,6 +50,7 @@ import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.Storage.UriScheme;
+import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Local;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Rpc;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Util;
@@ -66,6 +69,7 @@ import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.Not
 import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.ObjectAcl;
 import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.Objects;
 import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.ServiceAccount;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
@@ -614,8 +618,22 @@ final class RpcMethodMappings {
                                     ctx.getStorage()
                                         .setIamPolicy(
                                             state.getBucket().getName(),
-                                            Policy.newBuilder().build()))))
-                .build()); // TODO: configure policy
+                                            Policy.newBuilder()
+                                                .setVersion(3)
+                                                .setBindings(
+                                                    ImmutableList.of(
+                                                        Binding.newBuilder()
+                                                            .setRole(
+                                                                StorageRoles.legacyBucketOwner()
+                                                                    .toString())
+                                                            .setMembers(
+                                                                ImmutableList.of(
+                                                                    Identity.projectOwner(
+                                                                            "project-id")
+                                                                        .getValue()))
+                                                            .build()))
+                                                .build()))))
+                .build());
         a.add(
             RpcMethodMapping.newBuilder(240, buckets.setIamPolicy)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
@@ -627,10 +645,24 @@ final class RpcMethodMappings {
                                     ctx.getStorage()
                                         .setIamPolicy(
                                             state.getBucket().getName(),
-                                            Policy.newBuilder().build(),
-                                            BucketSourceOption.metagenerationMatch(
-                                                state.getBucket().getMetageneration())))))
-                .build()); // TODO: configure policy
+                                            Policy.newBuilder()
+                                                .setEtag("h??")
+                                                .setVersion(3)
+                                                .setBindings(
+                                                    ImmutableList.of(
+                                                        Binding.newBuilder()
+                                                            .setRole(
+                                                                StorageRoles.legacyBucketOwner()
+                                                                    .toString())
+                                                            .setMembers(
+                                                                ImmutableList.of(
+                                                                    Identity.projectOwner(
+                                                                            "project-id")
+                                                                        .getValue()))
+                                                            .build()))
+                                                .build(),
+                                            BucketSourceOption.userProject("project-id")))))
+                .build());
       }
 
       private static void testIamPermission(ArrayList<RpcMethodMapping> a) {
