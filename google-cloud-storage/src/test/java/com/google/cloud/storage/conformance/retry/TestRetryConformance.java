@@ -58,6 +58,7 @@ final class TestRetryConformance {
     BASE_ID = formatter.format(now).replaceAll("[:]", "").substring(0, 6);
   }
 
+  private final String projectId;
   private final String bucketName;
   private final String bucketName2;
   private final String userProject;
@@ -78,16 +79,18 @@ final class TestRetryConformance {
   private final int mappingId;
 
   TestRetryConformance(
+      String projectId,
       String host,
       int scenarioId,
       Method method,
       InstructionList instruction,
       boolean preconditionsProvided,
       boolean expectSuccess) {
-    this(host, scenarioId, method, instruction, preconditionsProvided, expectSuccess, 0);
+    this(projectId, host, scenarioId, method, instruction, preconditionsProvided, expectSuccess, 0);
   }
 
   TestRetryConformance(
+      String projectId,
       String host,
       int scenarioId,
       Method method,
@@ -95,6 +98,7 @@ final class TestRetryConformance {
       boolean preconditionsProvided,
       boolean expectSuccess,
       int mappingId) {
+    this.projectId = projectId;
     this.host = host;
     this.scenarioId = scenarioId;
     this.method = requireNonNull(method, "method must be non null");
@@ -114,6 +118,10 @@ final class TestRetryConformance {
         String.format("%s_s%03d-%s-m%03d_prj1", BASE_ID, scenarioId, instructionsString, mappingId);
     this.objectName =
         String.format("%s_s%03d-%s-m%03d_obj1", BASE_ID, scenarioId, instructionsString, mappingId);
+  }
+
+  public String getProjectId() {
+    return projectId;
   }
 
   public String getHost() {
