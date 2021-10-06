@@ -248,24 +248,29 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .deleteAcl(c.getBucketName(), User.ofAllUsers()))))
-                .build()); // TODO: Why does this exist, varargs should suffice
+                            state -> {
+                              boolean deleteSuccess =
+                                  ctx.getStorage().deleteAcl(c.getBucketName(), User.ofAllUsers());
+                              assertTrue(deleteSuccess);
+                              return state.with(deleteSuccess);
+                            }))
+                .build());
         a.add(
             RpcMethodMapping.newBuilder(2, bucket_acl.delete)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .deleteAcl(
-                                            c.getBucketName(),
-                                            User.ofAllUsers(),
-                                            BucketSourceOption.userProject(c.getUserProject())))))
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage()
+                                      .deleteAcl(
+                                          c.getBucketName(),
+                                          User.ofAllUsers(),
+                                          BucketSourceOption.userProject(c.getUserProject()));
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(87, bucket_acl.delete)
@@ -275,11 +280,12 @@ final class RpcMethodMappings {
                         .andThen(
                             (ctx, c) ->
                                 ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .deleteAcl(state.getAcl().getEntity())))))
+                                    state -> {
+                                      boolean success =
+                                          state.getBucket().deleteAcl(state.getAcl().getEntity());
+                                      assertTrue(success);
+                                      return state.with(success);
+                                    })))
                 .build());
       }
 
@@ -431,12 +437,15 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .delete(
-                                            c.getBucketName(),
-                                            BucketSourceOption.userProject(c.getUserProject())))))
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage()
+                                      .delete(
+                                          c.getBucketName(),
+                                          BucketSourceOption.userProject(c.getUserProject()));
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(92, buckets.delete)
@@ -444,7 +453,13 @@ final class RpcMethodMappings {
                     bucketInfo
                         .andThen(Rpc.bucket)
                         .andThen(
-                            (ctx, c) -> ctx.map(state -> state.with(state.getBucket().delete()))))
+                            (ctx, c) ->
+                                ctx.map(
+                                    state -> {
+                                      boolean success = state.getBucket().delete();
+                                      assertTrue(success);
+                                      return state.with(success);
+                                    })))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(93, buckets.delete)
@@ -452,11 +467,14 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    state
-                                        .getBucket()
-                                        .delete(Bucket.BucketSourceOption.metagenerationMatch()))))
+                            state -> {
+                              boolean success =
+                                  state
+                                      .getBucket()
+                                      .delete(Bucket.BucketSourceOption.metagenerationMatch());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
       }
 
@@ -470,7 +488,14 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(94, buckets.get)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
-                .withTest((ctx, c) -> ctx.map(state -> state.with(state.getBucket().exists())))
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              boolean success = state.getBucket().exists();
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(95, buckets.get)
@@ -478,11 +503,14 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    state
-                                        .getBucket()
-                                        .exists(Bucket.BucketSourceOption.metagenerationMatch()))))
+                            state -> {
+                              boolean success =
+                                  state
+                                      .getBucket()
+                                      .exists(Bucket.BucketSourceOption.metagenerationMatch());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(96, buckets.get)
@@ -699,11 +727,14 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .deleteDefaultAcl(
-                                            c.getBucketName(), state.getAcl().getEntity()))))
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage()
+                                      .deleteDefaultAcl(
+                                          c.getBucketName(), state.getAcl().getEntity());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(102, default_object_acl.delete)
@@ -713,11 +744,14 @@ final class RpcMethodMappings {
                         .andThen(
                             (ctx, c) ->
                                 ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .deleteDefaultAcl(state.getAcl().getEntity())))))
+                                    state -> {
+                                      boolean success =
+                                          state
+                                              .getBucket()
+                                              .deleteDefaultAcl(state.getAcl().getEntity());
+                                      assertTrue(success);
+                                      return state.with(success);
+                                    })))
                 .build());
       }
 
@@ -928,11 +962,13 @@ final class RpcMethodMappings {
                     blobIdWithoutGeneration.andThen(
                         (ctx, c) ->
                             ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .deleteAcl(
-                                                state.getBlobId(), state.getAcl().getEntity())))))
+                                state -> {
+                                  boolean success =
+                                      ctx.getStorage()
+                                          .deleteAcl(state.getBlobId(), state.getAcl().getEntity());
+                                  assertTrue(success);
+                                  return state.with(success);
+                                })))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(62, object_acl.delete)
@@ -942,11 +978,12 @@ final class RpcMethodMappings {
                         .andThen(
                             (ctx, c) ->
                                 ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBlob()
-                                                .deleteAcl(state.getAcl().getEntity())))))
+                                    state -> {
+                                      boolean success =
+                                          state.getBlob().deleteAcl(state.getAcl().getEntity());
+                                      assertTrue(success);
+                                      return state.with(success);
+                                    })))
                 .build());
       }
 
@@ -1060,8 +1097,12 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(ctx.getStorage().delete(state.getBlob().getBlobId()))))
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage().delete(state.getBlob().getBlobId());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build()); // TODO: Why does this exist, varargs should suffice
         a.add(
             RpcMethodMapping.newBuilder(37, objects.delete)
@@ -1069,12 +1110,15 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .delete(
-                                            state.getBlob().getBlobId(),
-                                            BlobSourceOption.generationMatch()))))
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage()
+                                      .delete(
+                                          state.getBlob().getBlobId(),
+                                          BlobSourceOption.generationMatch());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build()); // TODO: Correct arg?
         a.add(
             RpcMethodMapping.newBuilder(38, objects.delete)
@@ -1082,14 +1126,17 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.with(
-                                    ctx.getStorage()
-                                        .delete(
-                                            state.getBlob().getBlobId().getBucket(),
-                                            state.getBlob().getBlobId().getName(),
-                                            BlobSourceOption.generationMatch(
-                                                state.getBlob().getGeneration())))))
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage()
+                                      .delete(
+                                          state.getBlob().getBlobId().getBucket(),
+                                          state.getBlob().getBlobId().getName(),
+                                          BlobSourceOption.generationMatch(
+                                              state.getBlob().getGeneration()));
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build()); // TODO: Correct arg?
         a.add(
             RpcMethodMapping.newBuilder(67, objects.delete)
