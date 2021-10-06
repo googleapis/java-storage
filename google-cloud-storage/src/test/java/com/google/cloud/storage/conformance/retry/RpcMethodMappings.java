@@ -639,7 +639,7 @@ final class RpcMethodMappings {
                                                             .setMembers(
                                                                 ImmutableList.of(
                                                                     Identity.projectOwner(
-                                                                            "project-id")
+                                                                            c.getProjectId())
                                                                         .getValue()))
                                                             .build()))
                                                 .build()))))
@@ -667,11 +667,11 @@ final class RpcMethodMappings {
                                                             .setMembers(
                                                                 ImmutableList.of(
                                                                     Identity.projectOwner(
-                                                                            "project-id")
+                                                                            c.getProjectId())
                                                                         .getValue()))
                                                             .build()))
                                                 .build(),
-                                            BucketSourceOption.userProject("project-id")))))
+                                            BucketSourceOption.userProject(c.getProjectId())))))
                 .build());
       }
 

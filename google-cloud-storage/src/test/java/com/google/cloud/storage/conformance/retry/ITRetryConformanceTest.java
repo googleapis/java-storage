@@ -136,6 +136,7 @@ public class ITRetryConformanceTest {
             .setRetryTestsJsonResourcePath(
                 "com/google/cloud/conformance/storage/v1/retry_tests.json")
             .setMappings(new RpcMethodMappings())
+            .setProjectId("conformance-tests")
             .setHost(TEST_BENCH.getBaseUri().replaceAll("https?://", ""))
             .setTestAllowFilter(RetryTestCaseResolver.includeAll())
             .build();
@@ -182,18 +183,21 @@ public class ITRetryConformanceTest {
     private final BiPredicate<RpcMethod, TestRetryConformance> testAllowFilter;
     private final Random rand;
     private final String host;
+    private final String projectId;
 
     RetryTestCaseResolver(
         String retryTestsJsonResourcePath,
         RpcMethodMappings mappings,
         BiPredicate<RpcMethod, TestRetryConformance> testAllowFilter,
         Random rand,
-        String host) {
+        String host,
+        String projectId) {
       this.retryTestsJsonResourcePath = retryTestsJsonResourcePath;
       this.mappings = mappings;
       this.testAllowFilter = testAllowFilter;
       this.rand = rand;
       this.host = host;
+      this.projectId = projectId;
     }
 
     /** Load, permute and generate all RetryTestCases which are to be run in this suite */
@@ -254,6 +258,7 @@ public class ITRetryConformanceTest {
             if (mappings.isEmpty()) {
               TestRetryConformance testRetryConformance =
                   new TestRetryConformance(
+                      projectId,
                       host,
                       testCase.getId(),
                       method,
@@ -268,6 +273,7 @@ public class ITRetryConformanceTest {
               for (RpcMethodMapping mapping : mappings) {
                 TestRetryConformance testRetryConformance =
                     new TestRetryConformance(
+                        projectId,
                         host,
                         testCase.getId(),
                         method,
@@ -348,6 +354,7 @@ public class ITRetryConformanceTest {
       private String host;
       private BiPredicate<RpcMethod, TestRetryConformance> testAllowFilter;
       private final Random rand;
+      private String projectId;
 
       public Builder() {
         this.rand = resolveRand();
@@ -374,6 +381,11 @@ public class ITRetryConformanceTest {
         return this;
       }
 
+      public Builder setProjectId(String projectId) {
+        this.projectId = projectId;
+        return this;
+      }
+
       /**
        * Set the allow filter for determining if a particular {@link RpcMethod} and {@link
        * TestRetryConformance} should be included in the generated test suite.
@@ -391,7 +403,8 @@ public class ITRetryConformanceTest {
             requireNonNull(mappings, "mappings must be non null"),
             requireNonNull(testAllowFilter, "testAllowList must be non null"),
             rand,
-            host);
+            requireNonNull(host, "host must be non null"),
+            requireNonNull(projectId, "projectId must be non null"));
       }
 
       /**
