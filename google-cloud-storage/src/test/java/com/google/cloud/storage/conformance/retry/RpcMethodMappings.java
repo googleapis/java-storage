@@ -549,6 +549,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(101, buckets.patch)
+                .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
                     bucketInfo
                         .andThen(Rpc.bucket)
@@ -561,6 +562,15 @@ final class RpcMethodMappings {
                                                 .getBucket()
                                                 .update(
                                                     BucketTargetOption.metagenerationMatch())))))
+                .build());
+        a.add(
+            RpcMethodMapping.newBuilder(243, buckets.patch)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withTest(
+                    bucketInfo
+                        .andThen(Rpc.bucket)
+                        .andThen(
+                            (ctx, c) -> ctx.map(state -> state.with(state.getBucket().update()))))
                 .build());
       }
 
@@ -588,7 +598,7 @@ final class RpcMethodMappings {
                                     state.with(
                                         ctx.getStorage()
                                             .lockRetentionPolicy(
-                                                state.getBucketInfo(),
+                                                state.getBucket(),
                                                 BucketTargetOption.metagenerationMatch())))))
                 .build());
         a.add(

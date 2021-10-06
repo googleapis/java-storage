@@ -129,9 +129,8 @@ final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
   @Override
   public ExceptionHandler getForBucketsLockRetentionPolicy(
       Bucket pb, Map<StorageRpc.Option, ?> optionsMap) {
-    return optionsMap.containsKey(StorageRpc.Option.IF_METAGENERATION_MATCH)
-        ? IDEMPOTENT_HANDLER
-        : NON_IDEMPOTENT_HANDLER;
+    // Always idempotent because IfMetagenerationMatch is required
+    return IDEMPOTENT_HANDLER;
   }
 
   @Override
