@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.HmacKeyMetadata;
@@ -328,6 +329,9 @@ final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
         //noinspection StatementWithEmptyBody
         if (cause instanceof GoogleJsonResponseException) {
           // this is handled by the case for BaseServiceException below
+        } else if (cause instanceof HttpResponseException) {
+          int code = ((HttpResponseException) cause).getStatusCode();
+          return shouldRetryCode(code);
         } else if (cause instanceof IOException) {
           IOException ioException = (IOException) cause;
           return BaseServiceException.isRetryable(idempotent, ioException)
@@ -338,13 +342,17 @@ final class NewRetryAlgorithmManager implements RetryAlgorithmManager {
 
       if (exception instanceof BaseServiceException) {
         int code = ((BaseServiceException) exception).getCode();
-        if (retryableCodes.contains(code)) {
-          return RetryResult.RETRY;
-        } else {
-          return RetryResult.NO_RETRY;
-        }
+        return shouldRetryCode(code);
       }
       return RetryResult.CONTINUE_EVALUATION;
+    }
+
+    private RetryResult shouldRetryCode(int code) {
+      if (retryableCodes.contains(code)) {
+        return RetryResult.RETRY;
+      } else {
+        return RetryResult.NO_RETRY;
+      }
     }
   }
 }

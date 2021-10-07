@@ -52,6 +52,7 @@ import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.Storage.UriScheme;
 import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Local;
+import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Rpc;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Util;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.bucket_acl;
@@ -1611,21 +1612,17 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(78, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withSetup(
+                    defaultSetup.andThen(blobInfoWithoutGeneration).andThen(ResourceSetup.object))
                 .withTest(
-                    blobInfoWithoutGeneration
-                        .andThen(Rpc.createEmptyBlob)
-                        .andThen(Rpc.blobWithGeneration)
-                        .andThen(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      try (WriteChannel writer =
-                                          state
-                                              .getBlob()
-                                              .writer(BlobWriteOption.generationMatch())) {
-                                        writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
-                                      }
-                                    })))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              try (WriteChannel writer =
+                                  state.getBlob().writer(BlobWriteOption.generationMatch())) {
+                                writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
+                              }
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(108, objects.insert)

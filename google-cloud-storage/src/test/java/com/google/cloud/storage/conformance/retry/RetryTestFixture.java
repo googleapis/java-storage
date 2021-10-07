@@ -18,7 +18,6 @@ package com.google.cloud.storage.conformance.retry;
 
 import static org.junit.Assert.assertTrue;
 
-import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.conformance.storage.v1.InstructionList;
@@ -143,14 +142,17 @@ final class RetryTestFixture implements TestRule {
             .setProjectId(testRetryConformance.getProjectId());
     builder = PackagePrivateMethodWorkarounds.useNewRetryAlgorithmManager(builder);
     if (forTest) {
-      builder.setHeaderProvider(
-          new FixedHeaderProvider() {
-            @Override
-            public Map<String, String> getHeaders() {
-              return ImmutableMap.of(
-                  "x-retry-test-id", retryTest.id, "User-Agent", "java-conformance-tests/");
-            }
-          });
+      builder
+          .setHeaderProvider(
+              new FixedHeaderProvider() {
+                @Override
+                public Map<String, String> getHeaders() {
+                  return ImmutableMap.of(
+                      "x-retry-test-id", retryTest.id, "User-Agent", "java-conformance-tests/");
+                }
+              })
+          .setRetrySettings(
+              StorageOptions.getDefaultRetrySettings().toBuilder().setMaxAttempts(3).build());
     } else {
       builder
           .setHeaderProvider(
@@ -160,7 +162,8 @@ final class RetryTestFixture implements TestRule {
                   return ImmutableMap.of("User-Agent", "java-conformance-tests/");
                 }
               })
-          .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build());
+          .setRetrySettings(
+              StorageOptions.getDefaultRetrySettings().toBuilder().setMaxAttempts(1).build());
     }
     return builder.build().getService();
   }
