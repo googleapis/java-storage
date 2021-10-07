@@ -1477,19 +1477,18 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(48, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withSetup(defaultSetup.andThen(blobInfoWithGenerationZero))
                 .withTest(
-                    blobInfoWithGenerationZero.andThen(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .create(
-                                                ctx.getState().getBlobInfo(),
-                                                new ByteArrayInputStream(
-                                                    c.getHelloWorldUtf8Bytes()),
-                                                BlobWriteOption.generationMatch())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .create(
+                                            ctx.getState().getBlobInfo(),
+                                            new ByteArrayInputStream(c.getHelloWorldUtf8Bytes()),
+                                            BlobWriteOption.generationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(49, objects.insert)
@@ -1717,17 +1716,16 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(114, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withSetup(defaultSetup.andThen(blobInfoWithoutGeneration))
                 .withTest(
-                    blobInfoWithoutGeneration.andThen(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .create(
-                                                ctx.getState().getBlobInfo(),
-                                                new ByteArrayInputStream(
-                                                    c.getHelloWorldUtf8Bytes()))))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .create(
+                                            ctx.getState().getBlobInfo(),
+                                            new ByteArrayInputStream(c.getHelloWorldUtf8Bytes())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(115, objects.insert)
