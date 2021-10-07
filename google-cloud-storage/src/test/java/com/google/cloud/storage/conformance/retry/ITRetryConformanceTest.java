@@ -138,7 +138,7 @@ public class ITRetryConformanceTest {
             .setMappings(new RpcMethodMappings())
             .setProjectId("conformance-tests")
             .setHost(TEST_BENCH.getBaseUri().replaceAll("https?://", ""))
-            .setTestAllowFilter(RetryTestCaseResolver.includeAll())
+            .setTestAllowFilter(RetryTestCaseResolver.specificMappings(54))
             .build();
 
     return resolver.getRetryTestCases().stream()
