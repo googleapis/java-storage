@@ -1595,7 +1595,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(77, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobInfoWithoutGeneration
                         .andThen(Rpc.createEmptyBlob)
@@ -1787,7 +1787,7 @@ final class RpcMethodMappings {
                                                 .create(
                                                     c.getObjectName(),
                                                     c.getHelloWorldUtf8Bytes(),
-                                                    Bucket.BlobTargetOption.generationMatch(1L))))))
+                                                    Bucket.BlobTargetOption.doesNotExist())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(119, objects.insert)
