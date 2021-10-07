@@ -113,13 +113,13 @@ final class CtxFunctions {
   }
 
   static final class ResourceSetup {
-    private static final CtxFunction bucket =
+    static final CtxFunction bucket =
         (ctx, c) -> {
           BucketInfo bucketInfo = BucketInfo.newBuilder(c.getBucketName()).build();
           Bucket resolvedBucket = ctx.getStorage().create(bucketInfo);
           return ctx.map(s -> s.with(resolvedBucket));
         };
-    private static final CtxFunction object =
+    static final CtxFunction object =
         (ctx, c) -> {
           BlobInfo blobInfo =
               BlobInfo.newBuilder(ctx.getState().getBucket().getName(), c.getObjectName()).build();
