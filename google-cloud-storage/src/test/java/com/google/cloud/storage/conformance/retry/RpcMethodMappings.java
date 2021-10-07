@@ -1540,7 +1540,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(52, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobInfoWithoutGeneration.andThen(
                         (ctx, c) ->
@@ -1807,7 +1807,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(120, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     bucketInfo
                         .andThen(Rpc.bucket)
@@ -1822,11 +1822,11 @@ final class RpcMethodMappings {
                                                     c.getObjectName(),
                                                     new ByteArrayInputStream(
                                                         c.getHelloWorldUtf8Bytes()),
-                                                    Bucket.BlobWriteOption.generationMatch(1L))))))
+                                                    Bucket.BlobWriteOption.doesNotExist())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(121, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     bucketInfo
                         .andThen(Rpc.bucket)
@@ -1842,7 +1842,7 @@ final class RpcMethodMappings {
                                                     new ByteArrayInputStream(
                                                         c.getHelloWorldUtf8Bytes()),
                                                     "text/plain);charset=utf-8",
-                                                    Bucket.BlobWriteOption.generationMatch(1L))))))
+                                                    Bucket.BlobWriteOption.doesNotExist())))))
                 .build());
       }
 
