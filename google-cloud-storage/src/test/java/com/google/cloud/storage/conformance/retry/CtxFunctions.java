@@ -48,10 +48,12 @@ import java.util.HashSet;
  */
 final class CtxFunctions {
 
-  static final class Util {
-    private static final CtxFunction blobIdAndBlobInfo =
-        (ctx, c) -> ctx.map(state -> state.with(BlobInfo.newBuilder(state.getBlobId()).build()));
+  static final class Local {
+    static final CtxFunction blobCopy =
+        (ctx, c) -> ctx.map(s -> s.withCopyDest(BlobId.of(c.getBucketName2(), c.getObjectName())));
 
+    static final CtxFunction bucketInfo =
+        (ctx, c) -> ctx.map(s -> s.with(BucketInfo.of(c.getBucketName())));
     static final CtxFunction composeRequest =
         (ctx, c) ->
             ctx.map(
@@ -77,37 +79,20 @@ final class CtxFunctions {
                   ComposeRequest r = builder.build();
                   return state.with(r);
                 });
-  }
-
-  static final class Local {
-    static final CtxFunction blobCopy =
-        (ctx, c) -> ctx.map(s -> s.withCopyDest(BlobId.of(c.getBucketName2(), c.getObjectName())));
-
-    static final CtxFunction bucketInfo =
-        (ctx, c) -> ctx.map(s -> s.with(BucketInfo.of(c.getBucketName())));
-    static final CtxFunction blobIdWithoutGeneration =
+    private static final CtxFunction blobIdAndBlobInfo =
+        (ctx, c) -> ctx.map(
+            state -> state.with(BlobInfo.newBuilder(state.getBlobId()).build()));
+    private static final CtxFunction blobIdWithoutGeneration =
         (ctx, c) -> ctx.map(s -> s.with(BlobId.of(c.getBucketName(), c.getObjectName())));
-    static final CtxFunction blobIdWithGenerationZero =
+    private static final CtxFunction blobIdWithGenerationZero =
         (ctx, c) -> ctx.map(s -> s.with(BlobId.of(c.getBucketName(), c.getObjectName(), 0L)));
     static final CtxFunction blobInfoWithoutGeneration =
-        blobIdWithoutGeneration.andThen(Util.blobIdAndBlobInfo);
+        blobIdWithoutGeneration.andThen(blobIdAndBlobInfo);
     static final CtxFunction blobInfoWithGenerationZero =
-        blobIdWithGenerationZero.andThen(Util.blobIdAndBlobInfo);
+        blobIdWithGenerationZero.andThen(blobIdAndBlobInfo);
   }
 
   static final class Rpc {
-    static final CtxFunction bucket =
-        (ctx, c) ->
-            ctx.map(state -> state.with(ctx.getStorage().get(state.getBucketInfo().getName())));
-    static final CtxFunction blobWithGeneration =
-        (ctx, c) ->
-            ctx.map(
-                state ->
-                    state.with(
-                        ctx.getStorage()
-                            .create(
-                                BlobInfo.newBuilder(state.getBlobId()).build(),
-                                c.getHelloWorldUtf8Bytes())));
     static final CtxFunction createEmptyBlob =
         (ctx, c) -> ctx.map(state -> state.with(ctx.getStorage().create(state.getBlobInfo())));
   }
@@ -123,8 +108,8 @@ final class CtxFunctions {
         (ctx, c) -> {
           BlobInfo blobInfo =
               BlobInfo.newBuilder(ctx.getState().getBucket().getName(), c.getObjectName()).build();
-          Blob resolvedBlob = ctx.getStorage().create(blobInfo);
-          return ctx.map(s -> s.with(resolvedBlob));
+          Blob resolvedBlob = ctx.getStorage().create(blobInfo, c.getHelloWorldUtf8Bytes());
+          return ctx.map(s -> s.with(resolvedBlob).with((BlobInfo) resolvedBlob).with(resolvedBlob.getBlobId()));
         };
     static final CtxFunction serviceAccount =
         (ctx, c) ->
