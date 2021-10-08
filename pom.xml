@@ -81,8 +81,15 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>2.28.2</version>
+        <version>4.0.0</version>
         <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <!-- explicitly defined below -->
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.objenesis</groupId>
