@@ -1571,6 +1571,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(54, objects.insert)
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     blobInfoWithoutGeneration.andThen(
                         (ctx, c) ->
@@ -1583,12 +1584,28 @@ final class RpcMethodMappings {
                                           1,
                                           TimeUnit.HOURS,
                                           SignUrlOption.httpMethod(HttpMethod.POST),
+                                          // TODO: Instead of using bucketBoundHostname fix Signer
+                                          // to get BaseUri from StorageOptions
+                                          // NOTE(frankyn/benwhitehead): testbench expects HTTP
+                                          // scheme and we are using a hack to get around
+                                          // the lack of scheme manipulation by using
+                                          // bucketBoundHostname to select HTTP
+                                          // scheme instead. Bucket name is not present explicitly
+                                          // in bucketBoundHostname because it's
+                                          // expected to be referred to by the Bucket Bound Hostname
+                                          // so we must append it, being the hack,
+                                          // to get around the limitation.
                                           SignUrlOption.withBucketBoundHostname(
-                                              c.getHost(), UriScheme.HTTP),
+                                              c.getHost()
+                                                  + "/"
+                                                  + c.getBucketName()
+                                                  + "/"
+                                                  + c.getObjectName(),
+                                              UriScheme.HTTP),
                                           SignUrlOption.withExtHeaders(
                                               ImmutableMap.of("x-goog-resumable", "start")),
                                           SignUrlOption.signWith(c.getServiceAccountSigner()),
-                                          SignUrlOption.withV2Signature());
+                                          SignUrlOption.withV4Signature());
                                   try (WriteChannel writer = storage.writer(signedUrl)) {
                                     writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
                                   }
