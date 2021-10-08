@@ -80,8 +80,7 @@ final class CtxFunctions {
                   return state.with(r);
                 });
     private static final CtxFunction blobIdAndBlobInfo =
-        (ctx, c) -> ctx.map(
-            state -> state.with(BlobInfo.newBuilder(state.getBlobId()).build()));
+        (ctx, c) -> ctx.map(state -> state.with(BlobInfo.newBuilder(state.getBlobId()).build()));
     private static final CtxFunction blobIdWithoutGeneration =
         (ctx, c) -> ctx.map(s -> s.with(BlobId.of(c.getBucketName(), c.getObjectName())));
     private static final CtxFunction blobIdWithGenerationZero =
@@ -109,7 +108,11 @@ final class CtxFunctions {
           BlobInfo blobInfo =
               BlobInfo.newBuilder(ctx.getState().getBucket().getName(), c.getObjectName()).build();
           Blob resolvedBlob = ctx.getStorage().create(blobInfo, c.getHelloWorldUtf8Bytes());
-          return ctx.map(s -> s.with(resolvedBlob).with((BlobInfo) resolvedBlob).with(resolvedBlob.getBlobId()));
+          return ctx.map(
+              s ->
+                  s.with(resolvedBlob)
+                      .with((BlobInfo) resolvedBlob)
+                      .with(resolvedBlob.getBlobId()));
         };
     static final CtxFunction serviceAccount =
         (ctx, c) ->

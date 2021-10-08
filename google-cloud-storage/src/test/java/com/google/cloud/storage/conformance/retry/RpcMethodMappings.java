@@ -270,14 +270,14 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(87, bucket_acl.delete)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state -> {
-                                      boolean success =
-                                          state.getBucket().deleteAcl(state.getAcl().getEntity());
-                                      assertTrue(success);
-                                      return state.with(success);
-                                    }))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              boolean success =
+                                  state.getBucket().deleteAcl(state.getAcl().getEntity());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
       }
 
@@ -307,11 +307,10 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(88, bucket_acl.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state.getBucket().getAcl(state.getAcl().getEntity()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(state.getBucket().getAcl(state.getAcl().getEntity()))))
                 .build());
       }
 
@@ -341,10 +340,8 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(89, bucket_acl.insert)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(state.getBucket().createAcl(state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(state -> state.with(state.getBucket().createAcl(state.getAcl()))))
                 .build());
       }
 
@@ -371,8 +368,7 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(90, bucket_acl.list)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(state -> state.withAcls(state.getBucket().listAcls())))
+                    (ctx, c) -> ctx.map(state -> state.withAcls(state.getBucket().listAcls())))
                 .build());
       }
 
@@ -402,10 +398,8 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(91, bucket_acl.patch)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(state.getBucket().updateAcl(state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(state -> state.with(state.getBucket().updateAcl(state.getAcl()))))
                 .build());
       }
     }
@@ -430,13 +424,13 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(92, buckets.delete)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state -> {
-                                      boolean success = state.getBucket().delete();
-                                      assertTrue(success);
-                                      return state.with(success);
-                                    }))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              boolean success = state.getBucket().delete();
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(93, buckets.delete)
@@ -514,10 +508,9 @@ final class RpcMethodMappings {
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.bucketInfo))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(ctx.getStorage().create(state.getBucketInfo()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> state.with(ctx.getStorage().create(state.getBucketInfo()))))
                 .build());
       }
 
@@ -533,10 +526,8 @@ final class RpcMethodMappings {
             RpcMethodMapping.newBuilder(17, buckets.patch)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(ctx.getStorage().update(state.getBucket()))))
+                    (ctx, c) ->
+                        ctx.map(state -> state.with(ctx.getStorage().update(state.getBucket()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(122, buckets.patch)
@@ -555,20 +546,18 @@ final class RpcMethodMappings {
             RpcMethodMapping.newBuilder(101, buckets.patch)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .update(
-                                                    BucketTargetOption.metagenerationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBucket()
+                                        .update(BucketTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(243, buckets.patch)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
-                .withTest(
-                            (ctx, c) -> ctx.map(state -> state.with(state.getBucket().update())))
+                .withTest((ctx, c) -> ctx.map(state -> state.with(state.getBucket().update())))
                 .build());
       }
 
@@ -589,14 +578,14 @@ final class RpcMethodMappings {
             RpcMethodMapping.newBuilder(16, buckets.lockRetentionPolicy)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .lockRetentionPolicy(
-                                                state.getBucket(),
-                                                BucketTargetOption.metagenerationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .lockRetentionPolicy(
+                                            state.getBucket(),
+                                            BucketTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(100, buckets.lockRetentionPolicy)
@@ -708,16 +697,14 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(102, default_object_acl.delete)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state -> {
-                                      boolean success =
-                                          state
-                                              .getBucket()
-                                              .deleteDefaultAcl(state.getAcl().getEntity());
-                                      assertTrue(success);
-                                      return state.with(success);
-                                    }))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              boolean success =
+                                  state.getBucket().deleteDefaultAcl(state.getAcl().getEntity());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
       }
 
@@ -736,13 +723,11 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(103, default_object_acl.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .getDefaultAcl(state.getAcl().getEntity()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state.getBucket().getDefaultAcl(state.getAcl().getEntity()))))
                 .build());
       }
 
@@ -760,11 +745,10 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(104, default_object_acl.insert)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state.getBucket().createDefaultAcl(state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(state.getBucket().createDefaultAcl(state.getAcl()))))
                 .build());
       }
 
@@ -781,9 +765,8 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(105, default_object_acl.list)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state -> state.withAcls(state.getBucket().listDefaultAcls())))
+                    (ctx, c) ->
+                        ctx.map(state -> state.withAcls(state.getBucket().listDefaultAcls())))
                 .build());
       }
 
@@ -801,11 +784,10 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(106, default_object_acl.patch)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state.getBucket().updateDefaultAcl(state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(state.getBucket().updateDefaultAcl(state.getAcl()))))
                 .build());
       }
 
@@ -912,27 +894,28 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(30, object_acl.delete)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state -> {
-                                  boolean success =
-                                      ctx.getStorage()
-                                          .deleteAcl(state.getBlob().getBlobId(), state.getAcl().getEntity());
-                                  assertTrue(success);
-                                  return state.with(success);
-                                }))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage()
+                                      .deleteAcl(
+                                          state.getBlob().getBlobId(), state.getAcl().getEntity());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(62, object_acl.delete)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state -> {
-                                      boolean success =
-                                          state.getBlob().deleteAcl(state.getAcl().getEntity());
-                                      assertTrue(success);
-                                      return state.with(success);
-                                    }))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              boolean success =
+                                  state.getBlob().deleteAcl(state.getAcl().getEntity());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
                 .build());
       }
 
@@ -940,22 +923,22 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(31, object_acl.get)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .getAcl(
-                                                state.getBlob().getBlobId(), state.getAcl().getEntity()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .getAcl(
+                                            state.getBlob().getBlobId(),
+                                            state.getAcl().getEntity()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(63, object_acl.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state.getBlob().getAcl(state.getAcl().getEntity()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(state.getBlob().getAcl(state.getAcl().getEntity()))))
                 .build());
       }
 
@@ -963,20 +946,18 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(32, object_acl.insert)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .createAcl(state.getBlob().getBlobId(), state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .createAcl(state.getBlob().getBlobId(), state.getAcl()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(64, object_acl.insert)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(state.getBlob().createAcl(state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(state -> state.with(state.getBlob().createAcl(state.getAcl()))))
                 .build());
       }
 
@@ -984,16 +965,15 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(33, object_acl.list)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.withAcls(ctx.getStorage().listAcls(state.getBlob().getBlobId()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.withAcls(
+                                    ctx.getStorage().listAcls(state.getBlob().getBlobId()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(65, object_acl.list)
-                .withTest(
-                            (ctx, c) ->
-                                ctx.map(state -> state.withAcls(state.getBlob().listAcls())))
+                .withTest((ctx, c) -> ctx.map(state -> state.withAcls(state.getBlob().listAcls())))
                 .build());
       }
 
@@ -1001,20 +981,18 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(34, object_acl.patch)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .updateAcl(state.getBlob().getBlobId(), state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .updateAcl(state.getBlob().getBlobId(), state.getAcl()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(66, object_acl.patch)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(state.getBlob().updateAcl(state.getAcl()))))
+                    (ctx, c) ->
+                        ctx.map(state -> state.with(state.getBlob().updateAcl(state.getAcl()))))
                 .build());
       }
 
@@ -1093,10 +1071,9 @@ final class RpcMethodMappings {
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state -> state.with(ctx.getStorage().get(
-                                    state.getBlob().getBlobId()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> state.with(ctx.getStorage().get(state.getBlob().getBlobId()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(239, objects.get)
@@ -1108,231 +1085,219 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(40, objects.get)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .get(
-                                                state.getBlob().getBlobId(),
-                                                BlobGetOption.metagenerationMatch(state.getBlob().getMetageneration())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .get(
+                                            state.getBlob().getBlobId(),
+                                            BlobGetOption.metagenerationMatch(
+                                                state.getBlob().getMetageneration())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(41, objects.get)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .get(
-                                                state.getBlob().getBlobId().getBucket(),
-                                                state.getBlob().getBlobId().getName(),
-                                                BlobGetOption.metagenerationMatch(state.getBlob().getMetageneration())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .get(
+                                            state.getBlob().getBlobId().getBucket(),
+                                            state.getBlob().getBlobId().getName(),
+                                            BlobGetOption.metagenerationMatch(
+                                                state.getBlob().getMetageneration())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(42, objects.get)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state -> state.with(
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
                                     ctx.getStorage()
                                         .readAllBytes(
                                             state.getBlob().getBlobId(),
-                                            BlobSourceOption.metagenerationMatch(state.getBlob().getMetageneration())))))
+                                            BlobSourceOption.metagenerationMatch(
+                                                state.getBlob().getMetageneration())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(43, objects.get)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state -> state.with(
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
                                     ctx.getStorage()
                                         .readAllBytes(
                                             state.getBlob().getBlobId().getBucket(),
                                             state.getBlob().getBlobId().getName(),
-                                            BlobSourceOption.metagenerationMatch(state.getBlob().getMetageneration())))))
+                                            BlobSourceOption.metagenerationMatch(
+                                                state.getBlob().getMetageneration())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(44, objects.get)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.peek(
-                                state -> {
-                                  try {
-                                    ReadChannel reader =
-                                        ctx.getStorage().reader(
-                                            ctx.getState().getBlob().getBlobId());
-                                    WritableByteChannel write =
-                                        Channels.newChannel(ByteStreams.nullOutputStream());
-                                    ByteStreams.copy(reader, write);
-                                  } catch (IOException e) {
-                                    if (e.getCause() instanceof RetryHelperException) {
-                                      RetryHelperException cause =
-                                          (RetryHelperException) e.getCause();
-                                      if (cause.getCause() instanceof BaseServiceException) {
-                                        throw cause.getCause();
-                                      }
-                                    }
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              try {
+                                ReadChannel reader =
+                                    ctx.getStorage().reader(ctx.getState().getBlob().getBlobId());
+                                WritableByteChannel write =
+                                    Channels.newChannel(ByteStreams.nullOutputStream());
+                                ByteStreams.copy(reader, write);
+                              } catch (IOException e) {
+                                if (e.getCause() instanceof RetryHelperException) {
+                                  RetryHelperException cause = (RetryHelperException) e.getCause();
+                                  if (cause.getCause() instanceof BaseServiceException) {
+                                    throw cause.getCause();
                                   }
-                                }))
+                                }
+                              }
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(45, objects.get)
                 .withTest(
-                        (ctx, c) ->
-                            ctx.peek(
-                                state -> {
-                                  try {
-                                    ReadChannel reader =
-                                        ctx.getStorage()
-                                            .reader(
-                                                ctx.getState().getBlob().getBlobId().getBucket(),
-                                                ctx.getState().getBlob().getBlobId().getName());
-                                    WritableByteChannel write =
-                                        Channels.newChannel(ByteStreams.nullOutputStream());
-                                    ByteStreams.copy(reader, write);
-                                  } catch (IOException e) {
-                                    if (e.getCause() instanceof RetryHelperException) {
-                                      RetryHelperException cause =
-                                          (RetryHelperException) e.getCause();
-                                      if (cause.getCause() instanceof BaseServiceException) {
-                                        throw cause.getCause();
-                                      }
-                                    }
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              try {
+                                ReadChannel reader =
+                                    ctx.getStorage()
+                                        .reader(
+                                            ctx.getState().getBlob().getBlobId().getBucket(),
+                                            ctx.getState().getBlob().getBlobId().getName());
+                                WritableByteChannel write =
+                                    Channels.newChannel(ByteStreams.nullOutputStream());
+                                ByteStreams.copy(reader, write);
+                              } catch (IOException e) {
+                                if (e.getCause() instanceof RetryHelperException) {
+                                  RetryHelperException cause = (RetryHelperException) e.getCause();
+                                  if (cause.getCause() instanceof BaseServiceException) {
+                                    throw cause.getCause();
                                   }
-                                }))
+                                }
+                              }
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(60, objects.get)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
-                .withTest(
-                            (ctx, c) -> ctx.peek(state -> assertTrue(state.getBlob().exists())))
+                .withTest((ctx, c) -> ctx.peek(state -> assertTrue(state.getBlob().exists())))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(61, objects.get)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state ->
-                                        assertTrue(
-                                            state
-                                                .getBlob()
-                                                .exists(Blob.BlobSourceOption.generationMatch()))))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state ->
+                                assertTrue(
+                                    state
+                                        .getBlob()
+                                        .exists(Blob.BlobSourceOption.generationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(69, objects.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      Path tmpOutFile =
-                                          Files.createTempFile(c.getMethod().getName(), ".txt");
-                                      state
-                                          .getBlob()
-                                          .downloadTo(
-                                              tmpOutFile);
-                                      // should suffice
-                                      byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                                      assertThat(downloadedBytes)
-                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
-                                    }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              Path tmpOutFile =
+                                  Files.createTempFile(c.getMethod().getName(), ".txt");
+                              state.getBlob().downloadTo(tmpOutFile);
+                              // should suffice
+                              byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
+                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(70, objects.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      Path tmpOutFile =
-                                          Files.createTempFile(c.getMethod().getName(), ".txt");
-                                      state
-                                          .getBlob()
-                                          .downloadTo(
-                                              tmpOutFile, Blob.BlobSourceOption.generationMatch());
-                                      byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                                      assertThat(downloadedBytes)
-                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
-                                    }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              Path tmpOutFile =
+                                  Files.createTempFile(c.getMethod().getName(), ".txt");
+                              state
+                                  .getBlob()
+                                  .downloadTo(tmpOutFile, Blob.BlobSourceOption.generationMatch());
+                              byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
+                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(71, objects.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                      state.getBlob().downloadTo(baos);
-                                      byte[] downloadedBytes = baos.toByteArray();
-                                      assertThat(downloadedBytes)
-                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
-                                    }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                              state.getBlob().downloadTo(baos);
+                              byte[] downloadedBytes = baos.toByteArray();
+                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(72, objects.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                      state
-                                          .getBlob()
-                                          .downloadTo(
-                                              baos, Blob.BlobSourceOption.generationMatch());
-                                      byte[] downloadedBytes = baos.toByteArray();
-                                      assertThat(downloadedBytes)
-                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
-                                    }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                              state
+                                  .getBlob()
+                                  .downloadTo(baos, Blob.BlobSourceOption.generationMatch());
+                              byte[] downloadedBytes = baos.toByteArray();
+                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(73, objects.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      byte[] downloadedBytes = state.getBlob().getContent();
-                                      assertThat(downloadedBytes)
-                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
-                                    }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              byte[] downloadedBytes = state.getBlob().getContent();
+                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(74, objects.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      byte[] downloadedBytes =
-                                          state
-                                              .getBlob()
-                                              .getContent(
-                                                  Blob.BlobSourceOption.metagenerationMatch());
-                                      assertThat(downloadedBytes)
-                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
-                                    }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              byte[] downloadedBytes =
+                                  state
+                                      .getBlob()
+                                      .getContent(Blob.BlobSourceOption.metagenerationMatch());
+                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(75, objects.get)
-                .withTest(
-                        (ctx, c) -> ctx.peek(state -> state.getBlob().reload()))
+                .withTest((ctx, c) -> ctx.peek(state -> state.getBlob().reload()))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(76, objects.get)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state ->
-                                        state
-                                            .getBlob()
-                                            .reload(Blob.BlobSourceOption.metagenerationMatch())))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state ->
+                                state
+                                    .getBlob()
+                                    .reload(Blob.BlobSourceOption.metagenerationMatch())))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(107, objects.get)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state -> state.with(state.getBucket().get(c.getObjectName()))))
+                    (ctx, c) ->
+                        ctx.map(state -> state.with(state.getBucket().get(c.getObjectName()))))
                 .build());
       }
 
@@ -1342,32 +1307,32 @@ final class RpcMethodMappings {
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .create(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldUtf8Bytes(),
-                                                BlobTargetOption.generationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .create(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldUtf8Bytes(),
+                                            BlobTargetOption.generationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(47, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .create(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldUtf8Bytes(),
-                                                0,
-                                                c.getHelloWorldUtf8Bytes().length / 2,
-                                                BlobTargetOption.generationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .create(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldUtf8Bytes(),
+                                            0,
+                                            c.getHelloWorldUtf8Bytes().length / 2,
+                                            BlobTargetOption.generationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(48, objects.insert)
@@ -1389,139 +1354,141 @@ final class RpcMethodMappings {
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .createFrom(
-                                                ctx.getState().getBlobInfo(),
-                                                new ByteArrayInputStream(
-                                                    c.getHelloWorldUtf8Bytes()),
-                                                BlobWriteOption.generationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .createFrom(
+                                            ctx.getState().getBlobInfo(),
+                                            new ByteArrayInputStream(c.getHelloWorldUtf8Bytes()),
+                                            BlobWriteOption.generationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(50, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .createFrom(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldFilePath(),
-                                                BlobWriteOption.generationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .createFrom(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldFilePath(),
+                                            BlobWriteOption.generationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(51, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .createFrom(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldFilePath(),
-                                                _2MiB,
-                                                BlobWriteOption.generationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .createFrom(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldFilePath(),
+                                            _2MiB,
+                                            BlobWriteOption.generationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(52, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.peek(
-                                state -> {
-                                  try (WriteChannel writer =
-                                      ctx.getStorage().writer(ctx.getState().getBlobInfo())) {
-                                    writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
-                                  }
-                                }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              try (WriteChannel writer =
+                                  ctx.getStorage().writer(ctx.getState().getBlobInfo())) {
+                                writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
+                              }
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(53, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.peek(
-                                state -> {
-                                  try (WriteChannel writer =
-                                      ctx.getStorage()
-                                          .writer(
-                                              ctx.getState().getBlobInfo(),
-                                              BlobWriteOption.generationMatch())) {
-                                    writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
-                                  }
-                                }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              try (WriteChannel writer =
+                                  ctx.getStorage()
+                                      .writer(
+                                          ctx.getState().getBlobInfo(),
+                                          BlobWriteOption.generationMatch())) {
+                                writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
+                              }
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(54, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.peek(
-                                state -> {
-                                  Storage storage = ctx.getStorage();
-                                  URL signedUrl =
-                                      storage.signUrl(
-                                          state.getBlobInfo(),
-                                          1,
-                                          TimeUnit.HOURS,
-                                          SignUrlOption.httpMethod(HttpMethod.POST),
-                                          // TODO(#1094): Instead of using bucketBoundHostname fix
-                                          //   Signer to get BaseUri from StorageOptions
-                                          // NOTE(frankyn/benwhitehead): testbench expects HTTP
-                                          // scheme and we are using a hack to get around
-                                          // the lack of scheme manipulation by using
-                                          // bucketBoundHostname to select HTTP
-                                          // scheme instead. Bucket name is not present explicitly
-                                          // in bucketBoundHostname because it's
-                                          // expected to be referred to by the Bucket Bound Hostname
-                                          // so we must append it, being the hack,
-                                          // to get around the limitation.
-                                          SignUrlOption.withBucketBoundHostname(
-                                              c.getHost()
-                                                  + "/"
-                                                  + c.getBucketName()
-                                                  + "/"
-                                                  + c.getObjectName(),
-                                              UriScheme.HTTP),
-                                          SignUrlOption.withExtHeaders(
-                                              ImmutableMap.of("x-goog-resumable", "start")),
-                                          SignUrlOption.signWith(c.getServiceAccountSigner()),
-                                          SignUrlOption.withV4Signature());
-                                  try (WriteChannel writer = storage.writer(signedUrl)) {
-                                    writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
-                                  }
-                                }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              Storage storage = ctx.getStorage();
+                              URL signedUrl =
+                                  storage.signUrl(
+                                      state.getBlobInfo(),
+                                      1,
+                                      TimeUnit.HOURS,
+                                      SignUrlOption.httpMethod(HttpMethod.POST),
+                                      // TODO(#1094): Instead of using bucketBoundHostname fix
+                                      //   Signer to get BaseUri from StorageOptions
+                                      // NOTE(frankyn/benwhitehead): testbench expects HTTP scheme
+                                      // and we are using a hack to get around the lack of scheme
+                                      // manipulation by using bucketBoundHostname to select HTTP
+                                      // scheme instead. Bucket name is not present explicitly in
+                                      // bucketBoundHostname because it's expected to be referred to
+                                      // by the Bucket Bound Hostname so we must append it, being
+                                      // the hack, to get around the limitation.
+                                      SignUrlOption.withBucketBoundHostname(
+                                          c.getHost()
+                                              + "/"
+                                              + c.getBucketName()
+                                              + "/"
+                                              + c.getObjectName(),
+                                          UriScheme.HTTP),
+                                      SignUrlOption.withExtHeaders(
+                                          ImmutableMap.of("x-goog-resumable", "start")),
+                                      SignUrlOption.signWith(c.getServiceAccountSigner()),
+                                      SignUrlOption.withV4Signature());
+                              try (WriteChannel writer = storage.writer(signedUrl)) {
+                                writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
+                              }
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(77, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
-                .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration).andThen(Rpc.createEmptyBlob))
+                .withSetup(
+                    defaultSetup
+                        .andThen(Local.blobInfoWithoutGeneration)
+                        .andThen(Rpc.createEmptyBlob))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.peek(
-                                    state -> {
-                                      try (WriteChannel writer = state.getBlob().writer()) {
-                                        writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
-                                      }
-                                    }))
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              try (WriteChannel writer = state.getBlob().writer()) {
+                                writer.write(ByteBuffer.wrap(c.getHelloWorldUtf8Bytes()));
+                              }
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(78, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withSetup(
-                    defaultSetup.andThen(Local.blobInfoWithoutGeneration).andThen(ResourceSetup.object))
+                    defaultSetup
+                        .andThen(Local.blobInfoWithoutGeneration)
+                        .andThen(ResourceSetup.object))
                 .withTest(
                     (ctx, c) ->
                         ctx.peek(
@@ -1593,30 +1560,30 @@ final class RpcMethodMappings {
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .create(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldUtf8Bytes()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .create(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldUtf8Bytes()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(113, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .create(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldUtf8Bytes(),
-                                                0,
-                                                c.getHelloWorldUtf8Bytes().length / 2))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .create(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldUtf8Bytes(),
+                                            0,
+                                            c.getHelloWorldUtf8Bytes().length / 2))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(114, objects.insert)
@@ -1637,108 +1604,105 @@ final class RpcMethodMappings {
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .createFrom(
-                                                ctx.getState().getBlobInfo(),
-                                                new ByteArrayInputStream(
-                                                    c.getHelloWorldUtf8Bytes())))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .createFrom(
+                                            ctx.getState().getBlobInfo(),
+                                            new ByteArrayInputStream(c.getHelloWorldUtf8Bytes())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(116, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .createFrom(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldFilePath()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .createFrom(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldFilePath()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(117, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
-                        (ctx, c) ->
-                            ctx.map(
-                                state ->
-                                    state.with(
-                                        ctx.getStorage()
-                                            .createFrom(
-                                                ctx.getState().getBlobInfo(),
-                                                c.getHelloWorldFilePath(),
-                                                _2MiB))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .createFrom(
+                                            ctx.getState().getBlobInfo(),
+                                            c.getHelloWorldFilePath(),
+                                            _2MiB))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(118, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .create(
-                                                    c.getObjectName(),
-                                                    c.getHelloWorldUtf8Bytes(),
-                                                    Bucket.BlobTargetOption.doesNotExist()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBucket()
+                                        .create(
+                                            c.getObjectName(),
+                                            c.getHelloWorldUtf8Bytes(),
+                                            Bucket.BlobTargetOption.doesNotExist()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(119, objects.insert)
                 .withApplicable(TestRetryConformance::isPreconditionsProvided)
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .create(
-                                                    c.getObjectName(),
-                                                    c.getHelloWorldUtf8Bytes(),
-                                                    "text/plain);charset=utf-8",
-                                                    Bucket.BlobTargetOption.doesNotExist()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBucket()
+                                        .create(
+                                            c.getObjectName(),
+                                            c.getHelloWorldUtf8Bytes(),
+                                            "text/plain);charset=utf-8",
+                                            Bucket.BlobTargetOption.doesNotExist()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(120, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .create(
-                                                    c.getObjectName(),
-                                                    new ByteArrayInputStream(
-                                                        c.getHelloWorldUtf8Bytes()),
-                                                    Bucket.BlobWriteOption.doesNotExist()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBucket()
+                                        .create(
+                                            c.getObjectName(),
+                                            new ByteArrayInputStream(c.getHelloWorldUtf8Bytes()),
+                                            Bucket.BlobWriteOption.doesNotExist()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(121, objects.insert)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBucket()
-                                                .create(
-                                                    c.getObjectName(),
-                                                    new ByteArrayInputStream(
-                                                        c.getHelloWorldUtf8Bytes()),
-                                                    "text/plain);charset=utf-8",
-                                                    Bucket.BlobWriteOption.doesNotExist()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBucket()
+                                        .create(
+                                            c.getObjectName(),
+                                            new ByteArrayInputStream(c.getHelloWorldUtf8Bytes()),
+                                            "text/plain);charset=utf-8",
+                                            Bucket.BlobWriteOption.doesNotExist()))))
                 .build());
       }
 
@@ -1855,84 +1819,80 @@ final class RpcMethodMappings {
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobCopy))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(state.getBlob().copyTo(state.getCopyDest()))))
+                    (ctx, c) ->
+                        ctx.map(state -> state.with(state.getBlob().copyTo(state.getCopyDest()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(82, objects.rewrite)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobCopy))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBlob()
-                                                .copyTo(
-                                                    state.getCopyDest(),
-                                                    Blob.BlobSourceOption.metagenerationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBlob()
+                                        .copyTo(
+                                            state.getCopyDest(),
+                                            Blob.BlobSourceOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(83, objects.rewrite)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobCopy))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBlob()
-                                                .copyTo(state.getCopyDest().getBucket()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state.getBlob().copyTo(state.getCopyDest().getBucket()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(84, objects.rewrite)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobCopy))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBlob()
-                                                .copyTo(
-                                                    state.getCopyDest().getBucket(),
-                                                    Blob.BlobSourceOption.metagenerationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBlob()
+                                        .copyTo(
+                                            state.getCopyDest().getBucket(),
+                                            Blob.BlobSourceOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(85, objects.rewrite)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobCopy))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBlob()
-                                                .copyTo(
-                                                    state.getCopyDest().getBucket(),
-                                                    state.getCopyDest().getName()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBlob()
+                                        .copyTo(
+                                            state.getCopyDest().getBucket(),
+                                            state.getCopyDest().getName()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(86, objects.rewrite)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobCopy))
                 .withTest(
-                            (ctx, c) ->
-                                ctx.map(
-                                    state ->
-                                        state.with(
-                                            state
-                                                .getBlob()
-                                                .copyTo(
-                                                    state.getCopyDest().getBucket(),
-                                                    state.getCopyDest().getName(),
-                                                    Blob.BlobSourceOption.metagenerationMatch()))))
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBlob()
+                                        .copyTo(
+                                            state.getCopyDest().getBucket(),
+                                            state.getCopyDest().getName(),
+                                            Blob.BlobSourceOption.metagenerationMatch()))))
                 .build());
       }
 
@@ -1955,5 +1915,4 @@ final class RpcMethodMappings {
       private static void put(ArrayList<RpcMethodMapping> a) {}
     }
   }
-
 }
