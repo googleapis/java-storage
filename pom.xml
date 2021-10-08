@@ -83,6 +83,13 @@
         <artifactId>mockito-core</artifactId>
         <version>4.0.0</version>
         <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <!-- explicitly defined below -->
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.objenesis</groupId>
