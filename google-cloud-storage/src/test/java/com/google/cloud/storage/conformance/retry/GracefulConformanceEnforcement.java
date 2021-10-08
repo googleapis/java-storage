@@ -32,7 +32,7 @@ import org.junit.runners.model.Statement;
 /**
  * As the adherence of {@link com.google.cloud.storage.Storage} to the retry conformance test suite
  * is an ongoing effort, we need a way in which those tests which are not yet in compliance do not
- * server as blockers for other features and commits.
+ * serve as blockers for other features and commits.
  *
  * <p>This class provides a transparent means of enforcing the reporting of failed tests when ran in
  * a CI environment. When a test is run, if it fails for any reason the test name will be checked
