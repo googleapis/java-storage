@@ -1820,7 +1820,7 @@ final class RpcMethodMappings {
                                                     c.getObjectName(),
                                                     c.getHelloWorldUtf8Bytes(),
                                                     "text/plain);charset=utf-8",
-                                                    Bucket.BlobTargetOption.generationMatch(1L))))))
+                                                    Bucket.BlobTargetOption.doesNotExist())))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(120, objects.insert)
