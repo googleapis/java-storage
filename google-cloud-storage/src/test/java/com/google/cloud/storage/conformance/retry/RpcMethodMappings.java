@@ -50,6 +50,7 @@ import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Local;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Rpc;
+import com.google.cloud.storage.conformance.retry.Functions.EConsumer;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.bucket_acl;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.buckets;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.default_object_acl;
@@ -229,6 +230,16 @@ final class RpcMethodMappings {
       LOGGER.info(String.format("Current max mapping index is: %d%n", max.getAsInt()));
     } else {
       throw new IllegalStateException("No mappings defined");
+    }
+  }
+
+  private static void withTempFile(String prefix, String suffix, EConsumer<Path> f)
+      throws Throwable {
+    Path tmpOutFile = Files.createTempFile(prefix, suffix);
+    try {
+      f.consume(tmpOutFile);
+    } finally {
+      Files.delete(tmpOutFile);
     }
   }
 
@@ -1205,29 +1216,35 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.peek(
-                            state -> {
-                              Path tmpOutFile =
-                                  Files.createTempFile(c.getMethod().getName(), ".txt");
-                              state.getBlob().downloadTo(tmpOutFile);
-                              // should suffice
-                              byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
-                            }))
+                            state ->
+                                withTempFile(
+                                    c.getMethod().getName(),
+                                    ".txt",
+                                    (tmpOutFile) -> {
+                                      state.getBlob().downloadTo(tmpOutFile);
+                                      byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
+                                    })))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(70, objects.get)
                 .withTest(
                     (ctx, c) ->
                         ctx.peek(
-                            state -> {
-                              Path tmpOutFile =
-                                  Files.createTempFile(c.getMethod().getName(), ".txt");
-                              state
-                                  .getBlob()
-                                  .downloadTo(tmpOutFile, Blob.BlobSourceOption.generationMatch());
-                              byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
-                              assertThat(downloadedBytes).isEqualTo(c.getHelloWorldUtf8Bytes());
-                            }))
+                            state ->
+                                withTempFile(
+                                    c.getMethod().getName(),
+                                    ".txt",
+                                    (tmpOutFile) -> {
+                                      state
+                                          .getBlob()
+                                          .downloadTo(
+                                              tmpOutFile, Blob.BlobSourceOption.generationMatch());
+                                      byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
+                                    })))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(71, objects.get)
