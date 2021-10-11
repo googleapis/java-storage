@@ -49,11 +49,28 @@ import java.util.HashSet;
 final class CtxFunctions {
 
   static final class Local {
+
+    /**
+     * Populate a copy destination for the state present in the ctx.
+     *
+     * @see State#getCopyDest()
+     */
     static final CtxFunction blobCopy =
         (ctx, c) -> ctx.map(s -> s.withCopyDest(BlobId.of(c.getBucketName2(), c.getObjectName())));
 
+    /**
+     * Populate a bucket info for the state present in the ctx.
+     *
+     * this is primarily useful in the case when you want to insert a bucket during the test
+     * @see State#getBucketInfo()
+     */
     static final CtxFunction bucketInfo =
         (ctx, c) -> ctx.map(s -> s.with(BucketInfo.of(c.getBucketName())));
+    /**
+     * Populate a compose request for the state present in the ctx.
+     *
+     * @see State#getComposeRequest()
+     */
     static final CtxFunction composeRequest =
         (ctx, c) ->
             ctx.map(
@@ -85,8 +102,22 @@ final class CtxFunctions {
         (ctx, c) -> ctx.map(s -> s.with(BlobId.of(c.getBucketName(), c.getObjectName())));
     private static final CtxFunction blobIdWithGenerationZero =
         (ctx, c) -> ctx.map(s -> s.with(BlobId.of(c.getBucketName(), c.getObjectName(), 0L)));
+    /**
+     * Populate a blobId and blob info for the state present in the ctx which specifies a null
+     * generation. Use when a generation value shouldn't be part of a request or other evaluation.
+     *
+     * @see State#getBlobId()
+     * @see State#getBlobInfo()
+     */
     static final CtxFunction blobInfoWithoutGeneration =
         blobIdWithoutGeneration.andThen(blobIdAndBlobInfo);
+    /**
+     * Populate a blobId and blob info for the state present in the ctx which specifies a generation
+     * of 0 (zero).
+     *
+     * @see State#getBlobId()
+     * @see State#getBlobInfo()
+     */
     static final CtxFunction blobInfoWithGenerationZero =
         blobIdWithGenerationZero.andThen(blobIdAndBlobInfo);
   }
@@ -97,12 +128,22 @@ final class CtxFunctions {
   }
 
   static final class ResourceSetup {
-    static final CtxFunction bucket =
+    private static final CtxFunction bucket =
         (ctx, c) -> {
           BucketInfo bucketInfo = BucketInfo.newBuilder(c.getBucketName()).build();
           Bucket resolvedBucket = ctx.getStorage().create(bucketInfo);
           return ctx.map(s -> s.with(resolvedBucket));
         };
+    /**
+     * Create a new object in the {@link State#getBucket()} and populate a blobId, blob info and
+     * blob for the state present in the ctx.
+     *
+     * This method will issue an RPC.
+     *
+     * @see State#getBlob()
+     * @see State#getBlobId()
+     * @see State#getBlobInfo()
+     */
     static final CtxFunction object =
         (ctx, c) -> {
           BlobInfo blobInfo =
@@ -117,7 +158,7 @@ final class CtxFunctions {
     static final CtxFunction serviceAccount =
         (ctx, c) ->
             ctx.map(s -> s.with(ServiceAccount.of(c.getServiceAccountSigner().getAccount())));
-    static final CtxFunction hmacKey =
+    private static final CtxFunction hmacKey =
         (ctx, c) ->
             ctx.map(
                 s -> {
