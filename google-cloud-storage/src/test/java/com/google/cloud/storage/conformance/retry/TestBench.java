@@ -148,8 +148,11 @@ final class TestBench implements TestRule {
       @Override
       public void evaluate() throws Throwable {
         Path tempDirectory = Files.createTempDirectory("retry-conformance-server");
-        File outFile = tempDirectory.resolve("stdout").toFile();
-        File errFile = tempDirectory.resolve("stderr").toFile();
+        Path outPath = tempDirectory.resolve("stdout");
+        Path errPath = tempDirectory.resolve("stderr");
+
+        File outFile = outPath.toFile();
+        File errFile = errPath.toFile();
         LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
         LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
         String dockerImage = String.format("%s:%s", dockerImageName, dockerImageTag);
@@ -230,8 +233,8 @@ final class TestBench implements TestRule {
           process.destroy();
           if (cleanupStrategy == CleanupStrategy.ALWAYS
               || (success && cleanupStrategy == CleanupStrategy.ONLY_ON_SUCCESS)) {
-            outFile.delete();
-            errFile.delete();
+            Files.delete(errPath);
+            Files.delete(outPath);
             Files.delete(tempDirectory);
           }
         }
