@@ -61,7 +61,8 @@ final class CtxFunctions {
     /**
      * Populate a bucket info for the state present in the ctx.
      *
-     * this is primarily useful in the case when you want to insert a bucket during the test
+     * <p>this is primarily useful in the case when you want to insert a bucket during the test
+     *
      * @see State#getBucketInfo()
      */
     static final CtxFunction bucketInfo =
@@ -96,6 +97,7 @@ final class CtxFunctions {
                   ComposeRequest r = builder.build();
                   return state.with(r);
                 });
+
     private static final CtxFunction blobIdAndBlobInfo =
         (ctx, c) -> ctx.map(state -> state.with(BlobInfo.newBuilder(state.getBlobId()).build()));
     private static final CtxFunction blobIdWithoutGeneration =
@@ -138,7 +140,7 @@ final class CtxFunctions {
      * Create a new object in the {@link State#getBucket()} and populate a blobId, blob info and
      * blob for the state present in the ctx.
      *
-     * This method will issue an RPC.
+     * <p>This method will issue an RPC.
      *
      * @see State#getBlob()
      * @see State#getBlobId()
@@ -155,6 +157,7 @@ final class CtxFunctions {
                       .with((BlobInfo) resolvedBlob)
                       .with(resolvedBlob.getBlobId()));
         };
+
     static final CtxFunction serviceAccount =
         (ctx, c) ->
             ctx.map(s -> s.with(ServiceAccount.of(c.getServiceAccountSigner().getAccount())));
