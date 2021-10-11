@@ -86,7 +86,7 @@ final class RetryTestFixture implements TestRule {
         boolean testSuccess = false;
         boolean testSkipped = false;
         try {
-          LOGGER.finer("Setting up retry_test resource...");
+          LOGGER.fine("Setting up retry_test resource...");
           RetryTestResource retryTestResource =
               newRetryTestResource(
                   testRetryConformance.getMethod(), testRetryConformance.getInstruction());
