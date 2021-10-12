@@ -148,26 +148,7 @@ public class ITRetryConformanceTest {
             .setMappings(new RpcMethodMappings())
             .setProjectId("conformance-tests")
             .setHost(TEST_BENCH.getBaseUri().replaceAll("https?://", ""))
-            .setTestAllowFilter(
-                RetryTestCaseResolver.includeAll()
-                // .and((m, c) -> RpcMethod.storage.objects.list.equals(m))
-                // .and((m, c) -> m instanceof RpcMethod.storage.hmacKey)
-                // .and((m, c) -> !RpcMethod.storage.hmacKey.create.equals(m))
-                // .and((m, c) -> RpcMethod.storage.hmacKey.delete.equals(m))
-                // .and(RetryTestCaseResolver.specificMappings(52, 54, 118, 119, 120, 121))
-                // .and(RetryTestCaseResolver.specificMappings(0))
-                // .and((m, c) -> ImmutableSet.of(2).contains(c.getScenarioId()))
-                // .and(
-                //     (m, c) -> {
-                //       com.google.protobuf.ProtocolStringList list =
-                //           c.getInstruction().getInstructionsList();
-                //       // return list.get(list.size() - 1).equals("return-reset-connection");
-                //       // return list.get(0).equals("return-503");
-                //       return
-                // list.equals(com.google.common.collect.Lists.newArrayList("return-503",
-                // "return-503"));
-                //     })
-                )
+            .setTestAllowFilter(RetryTestCaseResolver.includeAll())
             .build();
 
     return resolver.getRetryTestCases().stream()
