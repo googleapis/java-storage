@@ -36,18 +36,18 @@ import org.junit.runners.model.Statement;
  *
  * <p>This class provides a transparent means of enforcing the reporting of failed tests when ran in
  * a CI environment. When a test is run, if it fails for any reason the test name will be checked
- * against a list of known complying tests. If the tests name is missing from the known list, then
- * the failure will be wrapped in an assumption failure to show up as a skipped test rather than a
- * failed one.
+ * against an allow list of known failing tests. If the tests name is present in the allow list,
+ * then the failure will be wrapped in an assumption failure to show up as a skipped test rather
+ * than a failed one.
  */
 final class GracefulConformanceEnforcement implements TestRule {
 
   private final String testName;
-  private final Set<String> testNamesWhichShouldSucceed;
+  private final Set<String> testNamesWhichCanFail;
 
   public GracefulConformanceEnforcement(String testName) {
     this.testName = testName;
-    this.testNamesWhichShouldSucceed = loadTestNamesWhichShouldSucceed();
+    this.testNamesWhichCanFail = loadTestNamesWhichCanFail();
   }
 
   @Override
@@ -61,14 +61,13 @@ final class GracefulConformanceEnforcement implements TestRule {
           // pass through any assumption/ignore errors as they are
           throw e;
         } catch (Throwable t) {
-          if (testNamesWhichShouldSucceed.contains(testName)) {
+          if (!testNamesWhichCanFail.contains(testName)) {
             throw t;
           } else {
             if (isRunningInCI()) {
               throw new AssumptionViolatedException(
                   String.format(
-                      "Test %s is not expected to succeed yet, downgrading failure to ignored.",
-                      testName),
+                      "Test %s is allowed to fail, downgrading failure to ignored.", testName),
                   t);
             } else {
               throw t;
@@ -84,11 +83,11 @@ final class GracefulConformanceEnforcement implements TestRule {
         || "integration".equals(System.getenv("JOB_TYPE"));
   }
 
-  private static Set<String> loadTestNamesWhichShouldSucceed() {
+  private static Set<String> loadTestNamesWhichCanFail() {
     ClassLoader cl = Thread.currentThread().getContextClassLoader();
     InputStream inputStream =
         cl.getResourceAsStream(
-            "com/google/cloud/storage/conformance/retry/testNamesWhichShouldSucceed.txt");
+            "com/google/cloud/storage/conformance/retry/testNamesWhichCanFail.txt");
     assertNotNull(inputStream);
     try {
       return CharStreams.readLines(new InputStreamReader(inputStream)).stream()
