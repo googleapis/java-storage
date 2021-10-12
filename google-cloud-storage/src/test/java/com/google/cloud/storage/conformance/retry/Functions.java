@@ -61,13 +61,4 @@ final class Functions {
   interface EConsumer<A> {
     void consume(A a) throws Throwable;
   }
-
-  /**
-   * Define a function which has a void return. This is definition is absolutely not pure and only
-   * exists because some methods on the public api for storage have void return type.
-   */
-  @FunctionalInterface
-  interface VoidFunction {
-    void apply() throws Throwable;
-  }
 }
