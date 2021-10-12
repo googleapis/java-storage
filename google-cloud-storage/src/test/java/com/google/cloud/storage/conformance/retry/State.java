@@ -31,7 +31,6 @@ import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage.ComposeRequest;
-import com.google.cloud.storage.conformance.retry.Functions.VoidFunction;
 import com.google.common.collect.ImmutableMap;
 import com.google.errorprone.annotations.Immutable;
 import java.util.HashMap;
@@ -90,11 +89,6 @@ final class State {
 
   static State empty() {
     return EMPTY;
-  }
-
-  public State consume(VoidFunction f) throws Throwable {
-    f.apply();
-    return this;
   }
 
   public boolean hasAcl() {

@@ -828,11 +828,11 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state ->
-                                state.consume(
-                                    () ->
-                                        ctx.getStorage()
-                                            .deleteHmacKey(state.getHmacKeyMetadata()))))
+                            state -> {
+                              ctx.getStorage().deleteHmacKey(state.getHmacKeyMetadata());
+                              // clear the metadata from the state now that we've deleted it
+                              return state.with((HmacKeyMetadata) null);
+                            }))
                 .build());
       }
 

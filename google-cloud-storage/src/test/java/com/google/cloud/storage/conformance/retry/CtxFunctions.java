@@ -18,6 +18,7 @@ package com.google.cloud.storage.conformance.retry;
 
 import static com.google.common.collect.Sets.newHashSet;
 
+import com.google.api.gax.paging.Page;
 import com.google.cloud.conformance.storage.v1.Resource;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
@@ -28,7 +29,10 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.HmacKey;
+import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
+import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
+import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
@@ -203,17 +207,46 @@ final class CtxFunctions {
   }
 
   static final class ResourceTeardown {
-    static final CtxFunction object =
-        (ctx, c) -> {
-          BlobInfo blobInfo =
-              BlobInfo.newBuilder(ctx.getState().getBucket().getName(), c.getObjectName()).build();
-          ctx.getStorage().delete(blobInfo.getBlobId());
-          return ctx.map(s -> s.with((Blob) null));
-        };
-    static final CtxFunction bucket =
-        (ctx, c) -> {
-          ctx.getState().getBucket().delete();
-          return ctx.map(s -> s.with((Bucket) null));
-        };
+    private static final CtxFunction deleteAllObjects =
+        (ctx, c) ->
+            ctx.map(
+                s -> {
+                  Storage storage = ctx.getStorage();
+                  deleteBucket(storage, c.getBucketName());
+                  deleteBucket(storage, c.getBucketName2());
+                  State newState =
+                      s.with((Blob) null)
+                          .with((BlobInfo) null)
+                          .with((BlobId) null)
+                          .with((Bucket) null);
+
+                  if (s.hasHmacKeyMetadata()) {
+                    HmacKeyMetadata metadata = s.getHmacKeyMetadata();
+                    if (metadata.getState() == HmacKeyState.ACTIVE) {
+                      metadata = storage.updateHmacKeyState(metadata, HmacKeyState.INACTIVE);
+                    }
+                    storage.deleteHmacKey(metadata);
+                    newState.with((HmacKeyMetadata) null).withHmacKey(null);
+                  }
+
+                  return newState;
+                });
+
+    static final CtxFunction defaultTeardown = deleteAllObjects;
+
+    private static void deleteBucket(Storage storage, String bucketName) {
+      Bucket bucket = storage.get(bucketName);
+      if (bucket != null) {
+        emptyBucket(storage, bucketName);
+        bucket.delete();
+      }
+    }
+
+    private static void emptyBucket(Storage storage, String bucketName) {
+      Page<Blob> blobs = storage.list(bucketName);
+      for (Blob blob : blobs.iterateAll()) {
+        blob.delete();
+      }
+    }
   }
 }

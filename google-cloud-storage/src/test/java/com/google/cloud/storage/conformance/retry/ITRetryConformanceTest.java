@@ -51,7 +51,9 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.junit.After;
 import org.junit.AssumptionViolatedException;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -80,6 +82,9 @@ public class ITRetryConformanceTest {
 
   private final TestRetryConformance testRetryConformance;
   private final RpcMethodMapping mapping;
+  private Storage nonTestStorage;
+  private Storage testStorage;
+  private Ctx ctx;
 
   public ITRetryConformanceTest(
       TestRetryConformance testRetryConformance, RpcMethodMapping mapping) {
@@ -91,35 +96,40 @@ public class ITRetryConformanceTest {
         new RetryTestFixture(CleanupStrategy.ALWAYS, TEST_BENCH, testRetryConformance);
   }
 
+  @Before
+  public void setUp() throws Throwable {
+    LOGGER.fine("Running setup...");
+    nonTestStorage = retryTestFixture.getNonTestStorage();
+    testStorage = retryTestFixture.getTestStorage();
+    // it's important to keep these two ctx assignments separate to allow for teardown to work in
+    // the case setup fails for some reason
+    ctx = ctx(nonTestStorage, empty());
+    ctx = mapping.getSetup().apply(ctx, testRetryConformance).leftMap(s -> testStorage);
+    LOGGER.fine("Running setup complete");
+  }
+
+  @After
+  public void tearDown() throws Throwable {
+    LOGGER.fine("Running teardown...");
+    getReplaceStorageInObjectsFromCtx()
+        .andThen(mapping.getTearDown())
+        .apply(ctx, testRetryConformance);
+    LOGGER.fine("Running teardown complete");
+  }
+
   /**
    * Run an individual test case. 1. Create two storage clients, one for setup/teardown and one for
    * test execution 2. Run setup 3. Run test 4. Run teardown
    */
   @Test
   public void test() throws Throwable {
-    Storage nonTestStorage = retryTestFixture.getNonTestStorage();
-    Storage testStorage = retryTestFixture.getTestStorage();
-
-    Ctx ctx = ctx(nonTestStorage, empty());
-
-    LOGGER.fine("Running setup...");
-    Ctx postSetupCtx =
-        mapping.getSetup().apply(ctx, testRetryConformance).leftMap(s -> testStorage);
-    LOGGER.fine("Running setup complete");
-
     LOGGER.fine("Running test...");
-    Ctx postTestCtx =
+    ctx =
         getReplaceStorageInObjectsFromCtx()
             .andThen(mapping.getTest())
-            .apply(postSetupCtx, testRetryConformance)
+            .apply(ctx, testRetryConformance)
             .leftMap(s -> nonTestStorage);
     LOGGER.fine("Running test complete");
-
-    LOGGER.fine("Running teardown...");
-    getReplaceStorageInObjectsFromCtx()
-        .andThen(mapping.getTearDown())
-        .apply(postTestCtx, testRetryConformance);
-    LOGGER.fine("Running teardown complete");
   }
 
   /**
