@@ -829,10 +829,12 @@ final class RpcMethodMappings {
                     (ctx, c) ->
                         ctx.map(
                             state ->
-                                state.consume(
-                                    () ->
-                                        ctx.getStorage()
-                                            .deleteHmacKey(state.getHmacKeyMetadata()))))
+                                state
+                                    .consume(
+                                        () ->
+                                            ctx.getStorage()
+                                                .deleteHmacKey(state.getHmacKeyMetadata()))
+                                    .with((HmacKeyMetadata) null)))
                 .build());
       }
 

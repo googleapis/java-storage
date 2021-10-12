@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup;
+import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceTeardown;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.common.base.Preconditions;
 import com.google.errorprone.annotations.Immutable;
@@ -152,7 +153,13 @@ final class RpcMethodMapping {
     private CtxFunction tearDown;
 
     Builder(int mappingId, RpcMethod method) {
-      this(mappingId, method, x -> true, ResourceSetup.defaultSetup, null, CtxFunction.identity());
+      this(
+          mappingId,
+          method,
+          x -> true,
+          ResourceSetup.defaultSetup,
+          null,
+          ResourceTeardown.defaultTeardown);
     }
 
     private Builder(
@@ -179,7 +186,7 @@ final class RpcMethodMapping {
     }
 
     public Builder withTest(CtxFunction test) {
-      return new Builder(mappingId, method, applicable, setup, test, CtxFunction.identity());
+      return new Builder(mappingId, method, applicable, setup, test, tearDown);
     }
 
     public Builder withTearDown(CtxFunction tearDown) {

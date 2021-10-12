@@ -51,7 +51,9 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.junit.After;
 import org.junit.AssumptionViolatedException;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -80,6 +82,9 @@ public class ITRetryConformanceTest {
 
   private final TestRetryConformance testRetryConformance;
   private final RpcMethodMapping mapping;
+  private Storage nonTestStorage;
+  private Storage testStorage;
+  private Ctx ctx;
 
   public ITRetryConformanceTest(
       TestRetryConformance testRetryConformance, RpcMethodMapping mapping) {
@@ -91,35 +96,40 @@ public class ITRetryConformanceTest {
         new RetryTestFixture(CleanupStrategy.ALWAYS, TEST_BENCH, testRetryConformance);
   }
 
+  @Before
+  public void setUp() throws Throwable {
+    LOGGER.fine("Running setup...");
+    nonTestStorage = retryTestFixture.getNonTestStorage();
+    testStorage = retryTestFixture.getTestStorage();
+    // it's important to keep these two ctx assignments separate to allow for teardown to work in
+    // the case setup fails for some reason
+    ctx = ctx(nonTestStorage, empty());
+    ctx = mapping.getSetup().apply(ctx, testRetryConformance).leftMap(s -> testStorage);
+    LOGGER.fine("Running setup complete");
+  }
+
+  @After
+  public void tearDown() throws Throwable {
+    LOGGER.fine("Running teardown...");
+    getReplaceStorageInObjectsFromCtx()
+        .andThen(mapping.getTearDown())
+        .apply(ctx, testRetryConformance);
+    LOGGER.fine("Running teardown complete");
+  }
+
   /**
    * Run an individual test case. 1. Create two storage clients, one for setup/teardown and one for
    * test execution 2. Run setup 3. Run test 4. Run teardown
    */
   @Test
   public void test() throws Throwable {
-    Storage nonTestStorage = retryTestFixture.getNonTestStorage();
-    Storage testStorage = retryTestFixture.getTestStorage();
-
-    Ctx ctx = ctx(nonTestStorage, empty());
-
-    LOGGER.fine("Running setup...");
-    Ctx postSetupCtx =
-        mapping.getSetup().apply(ctx, testRetryConformance).leftMap(s -> testStorage);
-    LOGGER.fine("Running setup complete");
-
     LOGGER.fine("Running test...");
-    Ctx postTestCtx =
+    ctx =
         getReplaceStorageInObjectsFromCtx()
             .andThen(mapping.getTest())
-            .apply(postSetupCtx, testRetryConformance)
+            .apply(ctx, testRetryConformance)
             .leftMap(s -> nonTestStorage);
     LOGGER.fine("Running test complete");
-
-    LOGGER.fine("Running teardown...");
-    getReplaceStorageInObjectsFromCtx()
-        .andThen(mapping.getTearDown())
-        .apply(postTestCtx, testRetryConformance);
-    LOGGER.fine("Running teardown complete");
   }
 
   /**
@@ -138,7 +148,26 @@ public class ITRetryConformanceTest {
             .setMappings(new RpcMethodMappings())
             .setProjectId("conformance-tests")
             .setHost(TEST_BENCH.getBaseUri().replaceAll("https?://", ""))
-            .setTestAllowFilter(RetryTestCaseResolver.includeAll())
+            .setTestAllowFilter(
+                RetryTestCaseResolver.includeAll()
+                // .and((m, c) -> RpcMethod.storage.objects.list.equals(m))
+                // .and((m, c) -> m instanceof RpcMethod.storage.hmacKey)
+                // .and((m, c) -> !RpcMethod.storage.hmacKey.create.equals(m))
+                // .and((m, c) -> RpcMethod.storage.hmacKey.delete.equals(m))
+                // .and(RetryTestCaseResolver.specificMappings(52, 54, 118, 119, 120, 121))
+                // .and(RetryTestCaseResolver.specificMappings(0))
+                // .and((m, c) -> ImmutableSet.of(2).contains(c.getScenarioId()))
+                // .and(
+                //     (m, c) -> {
+                //       com.google.protobuf.ProtocolStringList list =
+                //           c.getInstruction().getInstructionsList();
+                //       // return list.get(list.size() - 1).equals("return-reset-connection");
+                //       // return list.get(0).equals("return-503");
+                //       return
+                // list.equals(com.google.common.collect.Lists.newArrayList("return-503",
+                // "return-503"));
+                //     })
+                )
             .build();
 
     return resolver.getRetryTestCases().stream()
