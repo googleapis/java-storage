@@ -23,6 +23,11 @@
     </difference>
     <difference>
         <className>com/google/cloud/storage/BucketInfo$Builder</className>
+        <method>com.google.cloud.storage.BucketInfo$Builder setRpo(com.google.cloud.storage.Rpo)</method>
+        <differenceType>7013</differenceType>
+    </difference>
+    <difference>
+        <className>com/google/cloud/storage/BucketInfo$Builder</className>
         <method>com.google.cloud.storage.BucketInfo$Builder setUpdateTime(java.lang.Long)</method>
         <differenceType>7013</differenceType>
     </difference>

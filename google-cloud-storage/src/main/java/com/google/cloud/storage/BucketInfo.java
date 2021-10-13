@@ -92,6 +92,7 @@ public class BucketInfo implements Serializable {
   private final List<Acl> acl;
   private final List<Acl> defaultAcl;
   private final String location;
+  private final Rpo rpo;
   private final StorageClass storageClass;
   private final Map<String, String> labels;
   private final String defaultKmsKeyName;
@@ -1185,6 +1186,8 @@ public class BucketInfo implements Serializable {
     /** Deletes the lifecycle rules of this bucket. */
     public abstract Builder deleteLifecycleRules();
 
+    public abstract Builder setRpo(Rpo rpo);
+
     /**
      * Sets the bucket's storage class. This defines how blobs in the bucket are stored and
      * determines the SLA and the cost of storage. A list of supported values is available <a
@@ -1286,6 +1289,7 @@ public class BucketInfo implements Serializable {
     private String notFoundPage;
     private List<DeleteRule> deleteRules;
     private List<LifecycleRule> lifecycleRules;
+    private Rpo rpo;
     private StorageClass storageClass;
     private String location;
     private String etag;
@@ -1317,6 +1321,7 @@ public class BucketInfo implements Serializable {
       updateTime = bucketInfo.updateTime;
       metageneration = bucketInfo.metageneration;
       location = bucketInfo.location;
+      rpo = bucketInfo.rpo;
       storageClass = bucketInfo.storageClass;
       cors = bucketInfo.cors;
       acl = bucketInfo.acl;
@@ -1407,6 +1412,12 @@ public class BucketInfo implements Serializable {
     public Builder deleteLifecycleRules() {
       setDeleteRules(null);
       setLifecycleRules(null);
+      return this;
+    }
+
+    @Override
+    public Builder setRpo(Rpo rpo) {
+      this.rpo = rpo;
       return this;
     }
 
@@ -1548,6 +1559,7 @@ public class BucketInfo implements Serializable {
     updateTime = builder.updateTime;
     metageneration = builder.metageneration;
     location = builder.location;
+    rpo = builder.rpo;
     storageClass = builder.storageClass;
     cors = builder.cors;
     acl = builder.acl;
@@ -1707,6 +1719,10 @@ public class BucketInfo implements Serializable {
    */
   public String getLocationType() {
     return locationType;
+  }
+
+  public Rpo getRpo() {
+    return rpo;
   }
 
   /**
@@ -1879,6 +1895,9 @@ public class BucketInfo implements Serializable {
     if (locationType != null) {
       bucketPb.setLocationType(locationType);
     }
+    if (rpo != null) {
+      bucketPb.setRpo(rpo.toString());
+    }
     if (storageClass != null) {
       bucketPb.setStorageClass(storageClass.toString());
     }
@@ -2041,6 +2060,9 @@ public class BucketInfo implements Serializable {
     }
     if (bucketPb.getLocation() != null) {
       builder.setLocation(bucketPb.getLocation());
+    }
+    if (bucketPb.getRpo() != null) {
+      builder.setRpo(Rpo.valueOf(bucketPb.getRpo()));
     }
     if (bucketPb.getStorageClass() != null) {
       builder.setStorageClass(StorageClass.valueOf(bucketPb.getStorageClass()));

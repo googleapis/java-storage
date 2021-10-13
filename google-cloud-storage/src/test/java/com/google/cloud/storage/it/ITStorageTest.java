@@ -54,34 +54,16 @@ import com.google.cloud.kms.v1.KeyManagementServiceGrpc;
 import com.google.cloud.kms.v1.KeyManagementServiceGrpc.KeyManagementServiceBlockingStub;
 import com.google.cloud.kms.v1.KeyRingName;
 import com.google.cloud.kms.v1.LocationName;
-import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.*;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
-import com.google.cloud.storage.CopyWriter;
-import com.google.cloud.storage.Cors;
-import com.google.cloud.storage.HmacKey;
-import com.google.cloud.storage.HttpMethod;
-import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
-import com.google.cloud.storage.ServiceAccount;
-import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.BucketField;
-import com.google.cloud.storage.StorageBatch;
-import com.google.cloud.storage.StorageBatchResult;
-import com.google.cloud.storage.StorageClass;
-import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.Option;
@@ -3938,6 +3920,25 @@ public class ITStorageTest {
     ByteArrayOutputStream actualData = new ByteArrayOutputStream();
     blobGen2.downloadTo(actualData);
     assertArrayEquals(randStringBytes, actualData.toByteArray());
+  }
+
+  @Test
+  public void testRpoConfig() {
+    String rpoBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      Bucket bucket = storage.create(
+              BucketInfo.newBuilder(rpoBucket)
+                      .setLocation("NAM4")
+                      .setRpo(Rpo.ASYNC_TURBO)
+                      .build());
+      assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
+
+      bucket.toBuilder().setRpo(Rpo.DEFAULT).build().update();
+
+      assertEquals("DEFAULT", storage.get(rpoBucket).getRpo().toString());
+    } finally {
+      storage.delete(rpoBucket);
+    }
   }
 
   private static String randString(Random rand, int length) {
