@@ -417,23 +417,12 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * SHA256 hash value of the encryption key.
+     * In raw bytes format (not base64-encoded).
      * </pre>
      *
-     * <code>string key_sha256 = 2;</code>
+     * <code>bytes key_sha256_bytes = 3;</code>
      *
-     * @return The keySha256.
-     */
-    java.lang.String getKeySha256();
-    /**
-     *
-     *
-     * <pre>
-     * SHA256 hash value of the encryption key.
-     * </pre>
-     *
-     * <code>string key_sha256 = 2;</code>
-     *
-     * @return The bytes for keySha256.
+     * @return The keySha256Bytes.
      */
     com.google.protobuf.ByteString getKeySha256Bytes();
   }
@@ -458,7 +447,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
 
     private CustomerEncryption() {
       encryptionAlgorithm_ = "";
-      keySha256_ = "";
+      keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
     }
 
     @java.lang.Override
@@ -497,11 +486,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
                 encryptionAlgorithm_ = s;
                 break;
               }
-            case 18:
+            case 26:
               {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                keySha256_ = s;
+                keySha256Bytes_ = input.readBytes();
                 break;
               }
             default:
@@ -587,53 +574,23 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       }
     }
 
-    public static final int KEY_SHA256_FIELD_NUMBER = 2;
-    private volatile java.lang.Object keySha256_;
+    public static final int KEY_SHA256_BYTES_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString keySha256Bytes_;
     /**
      *
      *
      * <pre>
      * SHA256 hash value of the encryption key.
+     * In raw bytes format (not base64-encoded).
      * </pre>
      *
-     * <code>string key_sha256 = 2;</code>
+     * <code>bytes key_sha256_bytes = 3;</code>
      *
-     * @return The keySha256.
-     */
-    @java.lang.Override
-    public java.lang.String getKeySha256() {
-      java.lang.Object ref = keySha256_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        keySha256_ = s;
-        return s;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * SHA256 hash value of the encryption key.
-     * </pre>
-     *
-     * <code>string key_sha256 = 2;</code>
-     *
-     * @return The bytes for keySha256.
+     * @return The keySha256Bytes.
      */
     @java.lang.Override
     public com.google.protobuf.ByteString getKeySha256Bytes() {
-      java.lang.Object ref = keySha256_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        keySha256_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+      return keySha256Bytes_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -653,8 +610,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       if (!getEncryptionAlgorithmBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, encryptionAlgorithm_);
       }
-      if (!getKeySha256Bytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, keySha256_);
+      if (!keySha256Bytes_.isEmpty()) {
+        output.writeBytes(3, keySha256Bytes_);
       }
       unknownFields.writeTo(output);
     }
@@ -668,8 +625,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       if (!getEncryptionAlgorithmBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, encryptionAlgorithm_);
       }
-      if (!getKeySha256Bytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, keySha256_);
+      if (!keySha256Bytes_.isEmpty()) {
+        size += com.google.protobuf.CodedOutputStream.computeBytesSize(3, keySha256Bytes_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -688,7 +645,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
           (com.google.storage.v2.Object.CustomerEncryption) obj;
 
       if (!getEncryptionAlgorithm().equals(other.getEncryptionAlgorithm())) return false;
-      if (!getKeySha256().equals(other.getKeySha256())) return false;
+      if (!getKeySha256Bytes().equals(other.getKeySha256Bytes())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -702,8 +659,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + ENCRYPTION_ALGORITHM_FIELD_NUMBER;
       hash = (53 * hash) + getEncryptionAlgorithm().hashCode();
-      hash = (37 * hash) + KEY_SHA256_FIELD_NUMBER;
-      hash = (53 * hash) + getKeySha256().hashCode();
+      hash = (37 * hash) + KEY_SHA256_BYTES_FIELD_NUMBER;
+      hash = (53 * hash) + getKeySha256Bytes().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -853,7 +810,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         super.clear();
         encryptionAlgorithm_ = "";
 
-        keySha256_ = "";
+        keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
 
         return this;
       }
@@ -883,7 +840,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         com.google.storage.v2.Object.CustomerEncryption result =
             new com.google.storage.v2.Object.CustomerEncryption(this);
         result.encryptionAlgorithm_ = encryptionAlgorithm_;
-        result.keySha256_ = keySha256_;
+        result.keySha256Bytes_ = keySha256Bytes_;
         onBuilt();
         return result;
       }
@@ -940,9 +897,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
           encryptionAlgorithm_ = other.encryptionAlgorithm_;
           onChanged();
         }
-        if (!other.getKeySha256().isEmpty()) {
-          keySha256_ = other.keySha256_;
-          onChanged();
+        if (other.getKeySha256Bytes() != com.google.protobuf.ByteString.EMPTY) {
+          setKeySha256Bytes(other.getKeySha256Bytes());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -1080,108 +1036,60 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         return this;
       }
 
-      private java.lang.Object keySha256_ = "";
+      private com.google.protobuf.ByteString keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
       /**
        *
        *
        * <pre>
        * SHA256 hash value of the encryption key.
+       * In raw bytes format (not base64-encoded).
        * </pre>
        *
-       * <code>string key_sha256 = 2;</code>
+       * <code>bytes key_sha256_bytes = 3;</code>
        *
-       * @return The keySha256.
+       * @return The keySha256Bytes.
        */
-      public java.lang.String getKeySha256() {
-        java.lang.Object ref = keySha256_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          keySha256_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       *
-       *
-       * <pre>
-       * SHA256 hash value of the encryption key.
-       * </pre>
-       *
-       * <code>string key_sha256 = 2;</code>
-       *
-       * @return The bytes for keySha256.
-       */
+      @java.lang.Override
       public com.google.protobuf.ByteString getKeySha256Bytes() {
-        java.lang.Object ref = keySha256_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          keySha256_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
+        return keySha256Bytes_;
       }
       /**
        *
        *
        * <pre>
        * SHA256 hash value of the encryption key.
+       * In raw bytes format (not base64-encoded).
        * </pre>
        *
-       * <code>string key_sha256 = 2;</code>
+       * <code>bytes key_sha256_bytes = 3;</code>
        *
-       * @param value The keySha256 to set.
-       * @return This builder for chaining.
-       */
-      public Builder setKeySha256(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        keySha256_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * SHA256 hash value of the encryption key.
-       * </pre>
-       *
-       * <code>string key_sha256 = 2;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearKeySha256() {
-
-        keySha256_ = getDefaultInstance().getKeySha256();
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * SHA256 hash value of the encryption key.
-       * </pre>
-       *
-       * <code>string key_sha256 = 2;</code>
-       *
-       * @param value The bytes for keySha256 to set.
+       * @param value The keySha256Bytes to set.
        * @return This builder for chaining.
        */
       public Builder setKeySha256Bytes(com.google.protobuf.ByteString value) {
         if (value == null) {
           throw new NullPointerException();
         }
-        checkByteStringIsUtf8(value);
 
-        keySha256_ = value;
+        keySha256Bytes_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * SHA256 hash value of the encryption key.
+       * In raw bytes format (not base64-encoded).
+       * </pre>
+       *
+       * <code>bytes key_sha256_bytes = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearKeySha256Bytes() {
+
+        keySha256Bytes_ = getDefaultInstance().getKeySha256Bytes();
         onChanged();
         return this;
       }

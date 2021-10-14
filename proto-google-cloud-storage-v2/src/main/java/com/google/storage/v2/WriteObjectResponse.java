@@ -130,7 +130,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       implements
           com.google.protobuf.Internal.EnumLite,
           com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-    COMMITTED_SIZE(1),
+    PERSISTED_SIZE(1),
     RESOURCE(2),
     WRITESTATUS_NOT_SET(0);
     private final int value;
@@ -151,7 +151,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     public static WriteStatusCase forNumber(int value) {
       switch (value) {
         case 1:
-          return COMMITTED_SIZE;
+          return PERSISTED_SIZE;
         case 2:
           return RESOURCE;
         case 0:
@@ -170,7 +170,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     return WriteStatusCase.forNumber(writeStatusCase_);
   }
 
-  public static final int COMMITTED_SIZE_FIELD_NUMBER = 1;
+  public static final int PERSISTED_SIZE_FIELD_NUMBER = 1;
   /**
    *
    *
@@ -179,12 +179,12 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
    * from all `WriteObject` calls. Only set if the upload has not finalized.
    * </pre>
    *
-   * <code>int64 committed_size = 1;</code>
+   * <code>int64 persisted_size = 1;</code>
    *
-   * @return Whether the committedSize field is set.
+   * @return Whether the persistedSize field is set.
    */
   @java.lang.Override
-  public boolean hasCommittedSize() {
+  public boolean hasPersistedSize() {
     return writeStatusCase_ == 1;
   }
   /**
@@ -195,12 +195,12 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
    * from all `WriteObject` calls. Only set if the upload has not finalized.
    * </pre>
    *
-   * <code>int64 committed_size = 1;</code>
+   * <code>int64 persisted_size = 1;</code>
    *
-   * @return The committedSize.
+   * @return The persistedSize.
    */
   @java.lang.Override
-  public long getCommittedSize() {
+  public long getPersistedSize() {
     if (writeStatusCase_ == 1) {
       return (java.lang.Long) writeStatus_;
     }
@@ -319,7 +319,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     if (!getWriteStatusCase().equals(other.getWriteStatusCase())) return false;
     switch (writeStatusCase_) {
       case 1:
-        if (getCommittedSize() != other.getCommittedSize()) return false;
+        if (getPersistedSize() != other.getPersistedSize()) return false;
         break;
       case 2:
         if (!getResource().equals(other.getResource())) return false;
@@ -340,8 +340,8 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     hash = (19 * hash) + getDescriptor().hashCode();
     switch (writeStatusCase_) {
       case 1:
-        hash = (37 * hash) + COMMITTED_SIZE_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getCommittedSize());
+        hash = (37 * hash) + PERSISTED_SIZE_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getPersistedSize());
         break;
       case 2:
         hash = (37 * hash) + RESOURCE_FIELD_NUMBER;
@@ -585,9 +585,9 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     public Builder mergeFrom(com.google.storage.v2.WriteObjectResponse other) {
       if (other == com.google.storage.v2.WriteObjectResponse.getDefaultInstance()) return this;
       switch (other.getWriteStatusCase()) {
-        case COMMITTED_SIZE:
+        case PERSISTED_SIZE:
           {
-            setCommittedSize(other.getCommittedSize());
+            setPersistedSize(other.getPersistedSize());
             break;
           }
         case RESOURCE:
@@ -651,11 +651,11 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
      * from all `WriteObject` calls. Only set if the upload has not finalized.
      * </pre>
      *
-     * <code>int64 committed_size = 1;</code>
+     * <code>int64 persisted_size = 1;</code>
      *
-     * @return Whether the committedSize field is set.
+     * @return Whether the persistedSize field is set.
      */
-    public boolean hasCommittedSize() {
+    public boolean hasPersistedSize() {
       return writeStatusCase_ == 1;
     }
     /**
@@ -666,11 +666,11 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
      * from all `WriteObject` calls. Only set if the upload has not finalized.
      * </pre>
      *
-     * <code>int64 committed_size = 1;</code>
+     * <code>int64 persisted_size = 1;</code>
      *
-     * @return The committedSize.
+     * @return The persistedSize.
      */
-    public long getCommittedSize() {
+    public long getPersistedSize() {
       if (writeStatusCase_ == 1) {
         return (java.lang.Long) writeStatus_;
       }
@@ -684,12 +684,12 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
      * from all `WriteObject` calls. Only set if the upload has not finalized.
      * </pre>
      *
-     * <code>int64 committed_size = 1;</code>
+     * <code>int64 persisted_size = 1;</code>
      *
-     * @param value The committedSize to set.
+     * @param value The persistedSize to set.
      * @return This builder for chaining.
      */
-    public Builder setCommittedSize(long value) {
+    public Builder setPersistedSize(long value) {
       writeStatusCase_ = 1;
       writeStatus_ = value;
       onChanged();
@@ -703,11 +703,11 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
      * from all `WriteObject` calls. Only set if the upload has not finalized.
      * </pre>
      *
-     * <code>int64 committed_size = 1;</code>
+     * <code>int64 persisted_size = 1;</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearCommittedSize() {
+    public Builder clearPersistedSize() {
       if (writeStatusCase_ == 1) {
         writeStatusCase_ = 0;
         writeStatus_ = null;
