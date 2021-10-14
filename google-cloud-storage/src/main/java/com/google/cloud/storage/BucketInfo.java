@@ -1186,6 +1186,13 @@ public class BucketInfo implements Serializable {
     /** Deletes the lifecycle rules of this bucket. */
     public abstract Builder deleteLifecycleRules();
 
+    /**
+     * Sets the bucket's Recovery Point Objective (RPO). This can only be set for a dual-region
+     * bucket, and determines the speed at which data will be replicated between regions. See the
+     * {@code Rpo} class for supported values, and <a
+     * href="https://cloud.google.com/storage/docs/turbo-replication">here</a> for additional
+     * details.
+     */
     public abstract Builder setRpo(Rpo rpo);
 
     /**
@@ -1721,6 +1728,12 @@ public class BucketInfo implements Serializable {
     return locationType;
   }
 
+  /**
+   * Returns the bucket's recovery point objective (RPO). This defines how quickly data is
+   * replicated between regions in a dual-region bucket. Not defined for single-region buckets.
+   *
+   * @see <a href="https://cloud.google.com/storage/docs/turbo-replication"Turbo Replication"</a>
+   */
   public Rpo getRpo() {
     return rpo;
   }

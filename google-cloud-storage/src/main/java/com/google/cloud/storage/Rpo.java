@@ -19,7 +19,16 @@ import com.google.api.core.ApiFunction;
 import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
 
+/**
+ * Enums for the Recovery Point Objective (RPO) of dual-region buckets, which determines how fast
+ * data is replicated betweens regions.
+ *
+ * @see <a
+ *     href="https://cloud.google.com/storage/docs/turbo-replication">https://cloud.google.com/storage/docs/turbo-replication</a>
+ */
 public class Rpo extends StringEnumValue {
+
+  private static final long serialVersionUID = -3954216195295821508L;
 
   private Rpo(String constant) {
     super(constant);
@@ -29,8 +38,16 @@ public class Rpo extends StringEnumValue {
 
   private static final StringEnumType<Rpo> type = new StringEnumType(Rpo.class, CONSTRUCTOR);
 
+  /**
+   * Default recovery point objective. With this setting, there is no guarantee on the amount of
+   * time it takes for data to replicate between regions.
+   */
   public static final Rpo DEFAULT = type.createAndRegister("DEFAULT");
 
+  /**
+   * Turbo recovery point objective. With this setting, data in a dual-region bucket will replicate
+   * between regions within 15 minutes.
+   */
   public static final Rpo ASYNC_TURBO = type.createAndRegister("ASYNC_TURBO");
 
   /**
