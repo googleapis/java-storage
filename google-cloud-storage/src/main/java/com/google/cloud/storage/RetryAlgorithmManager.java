@@ -29,88 +29,203 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-interface RetryAlgorithmManager extends Serializable {
-  ExceptionHandler getForBucketAclCreate(
-      BucketAccessControl pb, Map<StorageRpc.Option, ?> optionsMap);
+final class RetryAlgorithmManager implements Serializable {
 
-  ExceptionHandler getForBucketAclDelete(String pb, Map<StorageRpc.Option, ?> optionsMap);
+  private final StorageExceptionHandlerFactory sehf;
 
-  ExceptionHandler getForBucketAclGet(String pb, Map<StorageRpc.Option, ?> optionsMap);
+  RetryAlgorithmManager(StorageExceptionHandlerFactory sehf) {
+    this.sehf = sehf;
+  }
 
-  ExceptionHandler getForBucketAclUpdate(
-      BucketAccessControl pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketAclCreate(
+      BucketAccessControl pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForBucketAclList(String pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketAclDelete(String pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsCreate(Bucket pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketAclGet(String pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsDelete(Bucket pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketAclUpdate(
+      BucketAccessControl pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsGet(Bucket pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketAclList(String pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsUpdate(Bucket pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketsCreate(Bucket pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsList(Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketsDelete(Bucket pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsLockRetentionPolicy(
-      Bucket pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketsGet(Bucket pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsGetIamPolicy(String bucket, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketsUpdate(Bucket pb, Map<StorageRpc.Option, ?> optionsMap) {
+    // TODO: Include etag when it is supported by the library
+    return optionsMap.containsKey(StorageRpc.Option.IF_METAGENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsSetIamPolicy(
-      String bucket, Policy pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketsList(Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForBucketsTestIamPermissions(
-      String bucket, List<String> permissions, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForBucketsLockRetentionPolicy(
+      Bucket pb, Map<StorageRpc.Option, ?> optionsMap) {
+    // Always idempotent because IfMetagenerationMatch is required
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForDefaultObjectAclCreate(ObjectAccessControl pb);
+  public ExceptionHandler getForBucketsGetIamPolicy(
+      String bucket, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForDefaultObjectAclDelete(String pb);
+  public ExceptionHandler getForBucketsSetIamPolicy(
+      String bucket, Policy pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return pb.getEtag() != null ? sehf.getIdempotentHandler() : sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForDefaultObjectAclGet(String pb);
+  public ExceptionHandler getForBucketsTestIamPermissions(
+      String bucket, List<String> permissions, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForDefaultObjectAclUpdate(ObjectAccessControl pb);
+  public ExceptionHandler getForDefaultObjectAclCreate(ObjectAccessControl pb) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForDefaultObjectAclList(String pb);
+  public ExceptionHandler getForDefaultObjectAclDelete(String pb) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForHmacKeyCreate(String pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForDefaultObjectAclGet(String pb) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForHmacKeyDelete(HmacKeyMetadata pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForDefaultObjectAclUpdate(ObjectAccessControl pb) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForHmacKeyGet(String accessId, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForDefaultObjectAclList(String pb) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForHmacKeyUpdate(HmacKeyMetadata pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForHmacKeyCreate(String pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForHmacKeyList(Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForHmacKeyDelete(
+      HmacKeyMetadata pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForObjectAclCreate(ObjectAccessControl aclPb);
+  public ExceptionHandler getForHmacKeyGet(String accessId, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForObjectAclDelete(String bucket, String name, Long generation, String pb);
+  public ExceptionHandler getForHmacKeyUpdate(
+      HmacKeyMetadata pb, Map<StorageRpc.Option, ?> optionsMap) {
+    // TODO: Include etag when it is supported by the library
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForObjectAclList(String bucket, String name, Long generation);
+  public ExceptionHandler getForHmacKeyList(Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForObjectAclGet(String bucket, String name, Long generation, String pb);
+  public ExceptionHandler getForObjectAclCreate(ObjectAccessControl aclPb) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForObjectAclUpdate(ObjectAccessControl aclPb);
+  public ExceptionHandler getForObjectAclDelete(
+      String bucket, String name, Long generation, String pb) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForObjectsCreate(StorageObject pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForObjectAclList(String bucket, String name, Long generation) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForObjectsDelete(StorageObject pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForObjectAclGet(
+      String bucket, String name, Long generation, String pb) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForObjectsGet(StorageObject pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForObjectAclUpdate(ObjectAccessControl aclPb) {
+    return sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForObjectsUpdate(StorageObject pb, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForObjectsCreate(
+      StorageObject pb, Map<StorageRpc.Option, ?> optionsMap) {
+    if (pb.getGeneration() != null && pb.getGeneration() == 0) {
+      return sehf.getIdempotentHandler();
+    }
+    return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForObjectsList(String bucket, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForObjectsDelete(
+      StorageObject pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForObjectsRewrite(RewriteRequest pb);
+  public ExceptionHandler getForObjectsGet(StorageObject pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForObjectsCompose(
-      List<StorageObject> sources, StorageObject target, Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForObjectsUpdate(
+      StorageObject pb, Map<StorageRpc.Option, ?> optionsMap) {
+    return optionsMap.containsKey(StorageRpc.Option.IF_METAGENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
 
-  ExceptionHandler getForResumableUploadSessionCreate(Map<StorageRpc.Option, ?> optionsMap);
-  /** Resumable upload has differing 429 handling */
-  ExceptionHandler getForResumableUploadSessionWrite(Map<StorageRpc.Option, ?> optionsMap);
+  public ExceptionHandler getForObjectsList(String bucket, Map<StorageRpc.Option, ?> optionsMap) {
+    return sehf.getIdempotentHandler();
+  }
 
-  ExceptionHandler getForServiceAccountGet(String pb);
+  public ExceptionHandler getForObjectsRewrite(RewriteRequest pb) {
+    return pb.targetOptions.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
+
+  public ExceptionHandler getForObjectsCompose(
+      List<StorageObject> sources, StorageObject target, Map<StorageRpc.Option, ?> optionsMap) {
+    return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
+
+  public ExceptionHandler getForResumableUploadSessionCreate(Map<StorageRpc.Option, ?> optionsMap) {
+    return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
+
+  public ExceptionHandler getForResumableUploadSessionWrite(Map<StorageRpc.Option, ?> optionsMap) {
+    return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+        ? sehf.getIdempotentHandler()
+        : sehf.getNonidempotentHandler();
+  }
+
+  public ExceptionHandler getForServiceAccountGet(String pb) {
+    return sehf.getIdempotentHandler();
+  }
 }

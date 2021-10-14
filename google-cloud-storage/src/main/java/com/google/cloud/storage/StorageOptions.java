@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import com.google.cloud.BaseService;
+import com.google.cloud.ExceptionHandler;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceDefaults;
 import com.google.cloud.ServiceOptions;
@@ -61,7 +63,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
   public static class Builder extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
 
-    private RetryAlgorithmManager retryAlgorithmManager;
+    private StorageExceptionHandlerFactory storageExceptionHandlerFactory;
 
     private Builder() {}
 
@@ -79,15 +81,16 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     }
 
     Builder setUseLegacyRetryAlgorithms() {
-      return setRetryAlgorithmManager(new LegacyRetryAlgorithmManager());
+      return setStorageExceptionHandlerFactory(new LegacyStorageExceptionHandlerFactory());
     }
 
     Builder setUseDefaultRetryAlgorithms() {
-      return setRetryAlgorithmManager(new NewRetryAlgorithmManager());
+      return setStorageExceptionHandlerFactory(new DefaultStorageExceptionHandlerFactory());
     }
 
-    private Builder setRetryAlgorithmManager(RetryAlgorithmManager retryAlgorithmManager) {
-      this.retryAlgorithmManager = retryAlgorithmManager;
+    private Builder setStorageExceptionHandlerFactory(
+        StorageExceptionHandlerFactory storageExceptionHandlerFactory) {
+      this.storageExceptionHandlerFactory = storageExceptionHandlerFactory;
       return this;
     }
 
@@ -100,8 +103,10 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   private StorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(StorageFactory.class, StorageRpcFactory.class, builder, serviceDefaults);
     this.retryAlgorithmManager =
-        MoreObjects.firstNonNull(
-            builder.retryAlgorithmManager, serviceDefaults.getRetryAlgorithmManager());
+        new RetryAlgorithmManager(
+            MoreObjects.firstNonNull(
+                builder.storageExceptionHandlerFactory,
+                serviceDefaults.getStorageExceptionHandlerFactory()));
   }
 
   private static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {
@@ -121,9 +126,13 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
       return getDefaultHttpTransportOptions();
     }
 
-    public RetryAlgorithmManager getRetryAlgorithmManager() {
-      return new LegacyRetryAlgorithmManager();
+    public StorageExceptionHandlerFactory getStorageExceptionHandlerFactory() {
+      return new DefaultStorageExceptionHandlerFactory();
     }
+  }
+
+  static StorageExceptionHandlerFactory getLegacyStorageExceptionHandlerFactory() {
+    return new LegacyStorageExceptionHandlerFactory();
   }
 
   public static HttpTransportOptions getDefaultHttpTransportOptions() {
@@ -178,5 +187,19 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
   public static Builder newBuilder() {
     return new Builder().setHost(DEFAULT_HOST);
+  }
+
+  private static class LegacyStorageExceptionHandlerFactory
+      implements StorageExceptionHandlerFactory {
+
+    @Override
+    public ExceptionHandler getIdempotentHandler() {
+      return BaseService.EXCEPTION_HANDLER;
+    }
+
+    @Override
+    public ExceptionHandler getNonidempotentHandler() {
+      return BaseService.EXCEPTION_HANDLER;
+    }
   }
 }
