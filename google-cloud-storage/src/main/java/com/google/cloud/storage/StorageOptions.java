@@ -127,7 +127,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     }
 
     public StorageExceptionHandlerFactory getStorageExceptionHandlerFactory() {
-      return new DefaultStorageExceptionHandlerFactory();
+      return new LegacyStorageExceptionHandlerFactory();
     }
   }
 
