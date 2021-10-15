@@ -34,8 +34,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
-import com.google.cloud.ExceptionHandler;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
@@ -826,32 +826,32 @@ public class BlobWriteChannelTest {
 
   private BlobWriteChannel newWriter() {
     Map<StorageRpc.Option, ?> optionsMap = EMPTY_RPC_OPTIONS;
-    ExceptionHandler createResultExceptionHandler =
+    ResultRetryAlgorithm<?> createResultAlgorithm =
         retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap);
-    ExceptionHandler writeResultExceptionHandler =
+    ResultRetryAlgorithm<?> writeResultAlgorithm =
         retryAlgorithmManager.getForResumableUploadSessionWrite(optionsMap);
     return BlobWriteChannel.newBuilder()
         .setStorageOptions(options)
         .setBlobInfo(BLOB_INFO)
         .setUploadIdSupplier(
             ResumableMedia.startUploadForBlobInfo(
-                options, BLOB_INFO, optionsMap, createResultExceptionHandler))
-        .setPutExceptionHandler(writeResultExceptionHandler)
+                options, BLOB_INFO, optionsMap, createResultAlgorithm))
+        .setAlgorithmForWrite(writeResultAlgorithm)
         .build();
   }
 
   private BlobWriteChannel newWriterForSignedUrl() throws MalformedURLException {
     Map<StorageRpc.Option, Object> optionsMap = Collections.emptyMap();
-    ExceptionHandler createResultExceptionHandler =
+    ResultRetryAlgorithm<?> createResultAlgorithm =
         retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap);
-    ExceptionHandler writeResultExceptionHandler =
+    ResultRetryAlgorithm<?> writeResultAlgorithm =
         retryAlgorithmManager.getForResumableUploadSessionWrite(optionsMap);
     return BlobWriteChannel.newBuilder()
         .setStorageOptions(options)
         .setUploadIdSupplier(
             ResumableMedia.startUploadForSignedUrl(
-                options, new URL(SIGNED_URL), createResultExceptionHandler))
-        .setPutExceptionHandler(writeResultExceptionHandler)
+                options, new URL(SIGNED_URL), createResultAlgorithm))
+        .setAlgorithmForWrite(writeResultAlgorithm)
         .build();
   }
 

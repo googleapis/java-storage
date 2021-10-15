@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.ExceptionHandler;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import java.net.URL;
 import java.util.Map;
@@ -29,24 +29,24 @@ final class ResumableMedia {
       final StorageOptions storageOptions,
       final BlobInfo blob,
       final Map<StorageRpc.Option, ?> optionsMap,
-      ExceptionHandler exceptionHandler) {
+      ResultRetryAlgorithm<?> algorithm) {
     return () ->
         Retrying.run(
             storageOptions,
-            exceptionHandler,
+            algorithm,
             () -> storageOptions.getStorageRpcV1().open(blob.toPb(), optionsMap),
             Function.identity());
   }
 
   static Supplier<String> startUploadForSignedUrl(
-      final StorageOptions storageOptions, final URL signedURL, ExceptionHandler exceptionHandler) {
+      final StorageOptions storageOptions, final URL signedURL, ResultRetryAlgorithm<?> algorithm) {
     if (!isValidSignedURL(signedURL.getQuery())) {
       throw new StorageException(2, "invalid signedURL");
     }
     return () ->
         Retrying.run(
             storageOptions,
-            exceptionHandler,
+            algorithm,
             () -> storageOptions.getStorageRpcV1().open(signedURL.toString()),
             Function.identity());
   }

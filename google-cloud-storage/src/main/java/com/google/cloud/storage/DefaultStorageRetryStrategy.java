@@ -24,7 +24,9 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Set;
 
-final class DefaultStorageExceptionHandlerFactory implements StorageExceptionHandlerFactory {
+final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
+
+  private static final long serialVersionUID = -6145057244885961913L;
 
   private static final Interceptor INTERCEPTOR_IDEMPOTENT =
       new InterceptorImpl(true, StorageException.RETRYABLE_ERRORS);
@@ -55,6 +57,7 @@ final class DefaultStorageExceptionHandlerFactory implements StorageExceptionHan
 
   private static class InterceptorImpl implements Interceptor {
 
+    private static final long serialVersionUID = -5153236691367895096L;
     private final boolean idempotent;
     private final ImmutableSet<BaseServiceException.Error> retryableErrors;
 
