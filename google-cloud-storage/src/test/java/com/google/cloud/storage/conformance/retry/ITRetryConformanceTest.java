@@ -20,6 +20,7 @@ import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.blobCopyW
 import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.bucketCopyWithStorage;
 import static com.google.cloud.storage.conformance.retry.Ctx.ctx;
 import static com.google.cloud.storage.conformance.retry.State.empty;
+import static com.google.common.truth.Truth.assertThat;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertNotNull;
 
@@ -151,7 +152,9 @@ public class ITRetryConformanceTest {
             .setTestAllowFilter(RetryTestCaseResolver.includeAll())
             .build();
 
-    return resolver.getRetryTestCases().stream()
+    List<RetryTestCase> retryTestCases = resolver.getRetryTestCases();
+    assertThat(retryTestCases).isNotEmpty();
+    return retryTestCases.stream()
         .map(rtc -> new Object[] {rtc.testRetryConformance, rtc.rpcMethodMapping})
         .collect(ImmutableList.toImmutableList());
   }
