@@ -5,9 +5,7 @@
 
 ### Bug Fixes
 
-* address errors raised rewites(mapping 58) ([#1066](https://www.github.com/googleapis/java-storage/issues/1066)) ([2ef5ec0](https://www.github.com/googleapis/java-storage/commit/2ef5ec0c84fcadb590cf7b12877a1332a681e812))
 * regenerate google.cloud.storage.v2 protos ([a7e3b94](https://www.github.com/googleapis/java-storage/commit/a7e3b94e4a3e03599b0dbe51fbe574ed4ea1a0d8))
-* validate non-idempotent case for 81,82,83,84,85,86 ([#1071](https://www.github.com/googleapis/java-storage/issues/1071)) ([9111d35](https://www.github.com/googleapis/java-storage/commit/9111d35d6941bb0f8782bce3a4b953f1f4674b56))
 
 
 ### Dependencies
