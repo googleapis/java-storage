@@ -1,5 +1,17 @@
 # Changelog
 
+### [2.1.8](https://www.github.com/googleapis/java-storage/compare/v2.1.7...v2.1.8) (2021-10-18)
+
+
+### Bug Fixes
+
+* regenerate google.cloud.storage.v2 protos ([a7e3b94](https://www.github.com/googleapis/java-storage/commit/a7e3b94e4a3e03599b0dbe51fbe574ed4ea1a0d8))
+
+
+### Dependencies
+
+* update kms.version to v0.93.1 ([#1079](https://www.github.com/googleapis/java-storage/issues/1079)) ([1c52b3d](https://www.github.com/googleapis/java-storage/commit/1c52b3db6699c2ad325853e95231e1a908da069f))
+
 ### [2.1.7](https://www.github.com/googleapis/java-storage/compare/v2.1.6...v2.1.7) (2021-10-04)
 
 
