@@ -3475,9 +3475,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Does not prevent access from being granted to public members 'allUsers'
-       * or 'allAuthenticatedUsers'. This setting may be enforced by Org Policy
-       * at the project/folder/organization level.
+       * No specified PublicAccessPrevention.
        * </pre>
        *
        * <code>PUBLIC_ACCESS_PREVENTION_UNSPECIFIED = 0;</code>
@@ -3495,6 +3493,17 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <code>ENFORCED = 1;</code>
        */
       ENFORCED(1),
+      /**
+       *
+       *
+       * <pre>
+       * This setting is inherited from Org Policy. Does not prevent access from
+       * being granted to public members 'allUsers' or 'allAuthenticatedUsers'.
+       * </pre>
+       *
+       * <code>INHERITED = 2;</code>
+       */
+      INHERITED(2),
       UNRECOGNIZED(-1),
       ;
 
@@ -3502,9 +3511,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Does not prevent access from being granted to public members 'allUsers'
-       * or 'allAuthenticatedUsers'. This setting may be enforced by Org Policy
-       * at the project/folder/organization level.
+       * No specified PublicAccessPrevention.
        * </pre>
        *
        * <code>PUBLIC_ACCESS_PREVENTION_UNSPECIFIED = 0;</code>
@@ -3522,6 +3529,17 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <code>ENFORCED = 1;</code>
        */
       public static final int ENFORCED_VALUE = 1;
+      /**
+       *
+       *
+       * <pre>
+       * This setting is inherited from Org Policy. Does not prevent access from
+       * being granted to public members 'allUsers' or 'allAuthenticatedUsers'.
+       * </pre>
+       *
+       * <code>INHERITED = 2;</code>
+       */
+      public static final int INHERITED_VALUE = 2;
 
       public final int getNumber() {
         if (this == UNRECOGNIZED) {
@@ -3551,6 +3569,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             return PUBLIC_ACCESS_PREVENTION_UNSPECIFIED;
           case 1:
             return ENFORCED;
+          case 2:
+            return INHERITED;
           default:
             return null;
         }
@@ -15664,10 +15684,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return A list containing the zoneAffinity.
    */
+  @java.lang.Deprecated
   public com.google.protobuf.ProtocolStringList getZoneAffinityList() {
     return zoneAffinity_;
   }
@@ -15682,10 +15705,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return The count of zoneAffinity.
    */
+  @java.lang.Deprecated
   public int getZoneAffinityCount() {
     return zoneAffinity_.size();
   }
@@ -15700,11 +15726,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @param index The index of the element to return.
    * @return The zoneAffinity at the given index.
    */
+  @java.lang.Deprecated
   public java.lang.String getZoneAffinity(int index) {
     return zoneAffinity_.get(index);
   }
@@ -15719,11 +15748,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @param index The index of the value to return.
    * @return The bytes of the zoneAffinity at the given index.
    */
+  @java.lang.Deprecated
   public com.google.protobuf.ByteString getZoneAffinityBytes(int index) {
     return zoneAffinity_.getByteString(index);
   }
@@ -21168,10 +21200,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @return A list containing the zoneAffinity.
      */
+    @java.lang.Deprecated
     public com.google.protobuf.ProtocolStringList getZoneAffinityList() {
       return zoneAffinity_.getUnmodifiableView();
     }
@@ -21186,10 +21221,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @return The count of zoneAffinity.
      */
+    @java.lang.Deprecated
     public int getZoneAffinityCount() {
       return zoneAffinity_.size();
     }
@@ -21204,11 +21242,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param index The index of the element to return.
      * @return The zoneAffinity at the given index.
      */
+    @java.lang.Deprecated
     public java.lang.String getZoneAffinity(int index) {
       return zoneAffinity_.get(index);
     }
@@ -21223,11 +21264,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the zoneAffinity at the given index.
      */
+    @java.lang.Deprecated
     public com.google.protobuf.ByteString getZoneAffinityBytes(int index) {
       return zoneAffinity_.getByteString(index);
     }
@@ -21242,12 +21286,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param index The index to set the value at.
      * @param value The zoneAffinity to set.
      * @return This builder for chaining.
      */
+    @java.lang.Deprecated
     public Builder setZoneAffinity(int index, java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
@@ -21268,11 +21315,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param value The zoneAffinity to add.
      * @return This builder for chaining.
      */
+    @java.lang.Deprecated
     public Builder addZoneAffinity(java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
@@ -21293,11 +21343,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param values The zoneAffinity to add.
      * @return This builder for chaining.
      */
+    @java.lang.Deprecated
     public Builder addAllZoneAffinity(java.lang.Iterable<java.lang.String> values) {
       ensureZoneAffinityIsMutable();
       com.google.protobuf.AbstractMessageLite.Builder.addAll(values, zoneAffinity_);
@@ -21315,10 +21368,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @return This builder for chaining.
      */
+    @java.lang.Deprecated
     public Builder clearZoneAffinity() {
       zoneAffinity_ = com.google.protobuf.LazyStringArrayList.EMPTY;
       bitField0_ = (bitField0_ & ~0x00000010);
@@ -21336,11 +21392,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * error.
      * </pre>
      *
-     * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param value The bytes of the zoneAffinity to add.
      * @return This builder for chaining.
      */
+    @java.lang.Deprecated
     public Builder addZoneAffinityBytes(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();

@@ -31,11 +31,11 @@ public interface WriteObjectResponseOrBuilder
    * from all `WriteObject` calls. Only set if the upload has not finalized.
    * </pre>
    *
-   * <code>int64 committed_size = 1;</code>
+   * <code>int64 persisted_size = 1;</code>
    *
-   * @return Whether the committedSize field is set.
+   * @return Whether the persistedSize field is set.
    */
-  boolean hasCommittedSize();
+  boolean hasPersistedSize();
   /**
    *
    *
@@ -44,11 +44,11 @@ public interface WriteObjectResponseOrBuilder
    * from all `WriteObject` calls. Only set if the upload has not finalized.
    * </pre>
    *
-   * <code>int64 committed_size = 1;</code>
+   * <code>int64 persisted_size = 1;</code>
    *
-   * @return The committedSize.
+   * @return The persistedSize.
    */
-  long getCommittedSize();
+  long getPersistedSize();
 
   /**
    *

@@ -946,10 +946,13 @@ public interface BucketOrBuilder
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return A list containing the zoneAffinity.
    */
+  @java.lang.Deprecated
   java.util.List<java.lang.String> getZoneAffinityList();
   /**
    *
@@ -962,10 +965,13 @@ public interface BucketOrBuilder
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return The count of zoneAffinity.
    */
+  @java.lang.Deprecated
   int getZoneAffinityCount();
   /**
    *
@@ -978,11 +984,14 @@ public interface BucketOrBuilder
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @param index The index of the element to return.
    * @return The zoneAffinity at the given index.
    */
+  @java.lang.Deprecated
   java.lang.String getZoneAffinity(int index);
   /**
    *
@@ -995,11 +1004,14 @@ public interface BucketOrBuilder
    * error.
    * </pre>
    *
-   * <code>repeated string zone_affinity = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @param index The index of the value to return.
    * @return The bytes of the zoneAffinity at the given index.
    */
+  @java.lang.Deprecated
   com.google.protobuf.ByteString getZoneAffinityBytes(int index);
 
   /**

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- see https://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
+<differences>
+    <!--
+      - Rename committed_size -> persisted_size
+      - * QueryWriteStatusResponse
+      - * WriteObjectResponse
+      -->
+
+    <!-- remove committed_size -->
+    <difference>
+        <differenceType>6001</differenceType>
+        <className>com/google/storage/v2/*</className>
+        <field>COMMITTED_SIZE</field>
+    </difference>
+    <difference>
+        <differenceType>6011</differenceType>
+        <className>com/google/storage/v2/*</className>
+        <field>COMMITTED_SIZE_FIELD_NUMBER</field>
+    </difference>
+    <difference>
+        <differenceType>7002</differenceType>
+        <className>com/google/storage/v2/*</className>
+        <method>* *CommittedSize(*)</method>
+    </difference>
+    <!-- add PersistedSize -->
+    <difference>
+        <differenceType>7012</differenceType>
+        <className>com/google/storage/v2/*</className>
+        <method>* *PersistedSize(*)</method>
+    </difference>
+
+    <!--
+      - Change type String key_sha256 -> bytes key_sha256_bytes
+      - * Object.CustomerEncryption
+      -->
+    <!---->
+
+    <!-- remove key_sha256 -->
+    <difference>
+        <differenceType>6011</differenceType>
+        <className>com/google/storage/v2/Object$CustomerEncryption*</className>
+        <field>KEY_SHA256_FIELD_NUMBER</field>
+    </difference>
+    <difference>
+        <differenceType>7002</differenceType>
+        <className>com/google/storage/v2/Object$CustomerEncryption*</className>
+        <method>* *KeySha256(*)</method>
+    </difference>
+    <!-- add PersistedSize -->
+    <difference>
+        <differenceType>7012</differenceType>
+        <className>com/google/storage/v2/Object$CustomerEncryption*</className>
+        <method>* *KeySha256Bytes(*)</method>
+    </difference>
+</differences>
