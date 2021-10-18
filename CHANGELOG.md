@@ -1,5 +1,19 @@
 # Changelog
 
+### [2.1.8](https://www.github.com/googleapis/java-storage/compare/v2.1.7...v2.1.8) (2021-10-18)
+
+
+### Bug Fixes
+
+* address errors raised rewites(mapping 58) ([#1066](https://www.github.com/googleapis/java-storage/issues/1066)) ([2ef5ec0](https://www.github.com/googleapis/java-storage/commit/2ef5ec0c84fcadb590cf7b12877a1332a681e812))
+* regenerate google.cloud.storage.v2 protos ([a7e3b94](https://www.github.com/googleapis/java-storage/commit/a7e3b94e4a3e03599b0dbe51fbe574ed4ea1a0d8))
+* validate non-idempotent case for 81,82,83,84,85,86 ([#1071](https://www.github.com/googleapis/java-storage/issues/1071)) ([9111d35](https://www.github.com/googleapis/java-storage/commit/9111d35d6941bb0f8782bce3a4b953f1f4674b56))
+
+
+### Dependencies
+
+* update kms.version to v0.93.1 ([#1079](https://www.github.com/googleapis/java-storage/issues/1079)) ([1c52b3d](https://www.github.com/googleapis/java-storage/commit/1c52b3db6699c2ad325853e95231e1a908da069f))
+
 ### [2.1.7](https://www.github.com/googleapis/java-storage/compare/v2.1.6...v2.1.7) (2021-10-04)
 
 
