@@ -400,7 +400,9 @@ public final class DefaultRetryHandlingBehaviorTest {
    * since our code formatter is very strict and seems to feel 475 lines of code at 100 columns is
    * better than 90 lines at 200 columns.
    *
-   * this method returns a list that essentially is a table of where each row is an individual test case
+   * <p>this method returns a list that essentially is a table of where each row is an individual
+   * test case
+   *
    * <table>
    *   <tr>
    *     <th>{@link ThrowableCategory throwable category}</th>
