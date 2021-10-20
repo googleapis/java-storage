@@ -18,6 +18,7 @@ package com.google.cloud.storage.conformance.retry;
 
 import static org.junit.Assert.assertTrue;
 
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.conformance.storage.v1.InstructionList;
@@ -141,6 +142,8 @@ final class RetryTestFixture implements TestRule {
             .setCredentials(NoCredentials.getInstance())
             .setProjectId(testRetryConformance.getProjectId());
     builder = PackagePrivateMethodWorkarounds.useDefaultStorageRetryStrategy(builder);
+    RetrySettings.Builder retrySettingsBuilder =
+        StorageOptions.getDefaultRetrySettings().toBuilder();
     if (forTest) {
       builder
           .setHeaderProvider(
@@ -148,23 +151,26 @@ final class RetryTestFixture implements TestRule {
                 @Override
                 public Map<String, String> getHeaders() {
                   return ImmutableMap.of(
-                      "x-retry-test-id", retryTest.id, "User-Agent", "java-conformance-tests/");
+                      "x-retry-test-id", retryTest.id, "User-Agent", fmtUserAgent("test"));
                 }
               })
-          .setRetrySettings(
-              StorageOptions.getDefaultRetrySettings().toBuilder().setMaxAttempts(3).build());
+          .setRetrySettings(retrySettingsBuilder.setMaxAttempts(3).build());
     } else {
       builder
           .setHeaderProvider(
               new FixedHeaderProvider() {
                 @Override
                 public Map<String, String> getHeaders() {
-                  return ImmutableMap.of("User-Agent", "java-conformance-tests/");
+                  return ImmutableMap.of("User-Agent", fmtUserAgent("non-test"));
                 }
               })
-          .setRetrySettings(
-              StorageOptions.getDefaultRetrySettings().toBuilder().setMaxAttempts(1).build());
+          .setRetrySettings(retrySettingsBuilder.setMaxAttempts(1).build());
     }
     return builder.build().getService();
+  }
+
+  private String fmtUserAgent(String testDescriptor) {
+    return String.format(
+        "%s/ (%s) java-conformance-tests/", testDescriptor, testRetryConformance.getTestName());
   }
 }
