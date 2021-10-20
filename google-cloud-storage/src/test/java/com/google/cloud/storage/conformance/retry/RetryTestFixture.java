@@ -140,7 +140,7 @@ final class RetryTestFixture implements TestRule {
             .setHost(testBench.getBaseUri())
             .setCredentials(NoCredentials.getInstance())
             .setProjectId(testRetryConformance.getProjectId());
-    builder = PackagePrivateMethodWorkarounds.useNewRetryAlgorithmManager(builder);
+    builder = PackagePrivateMethodWorkarounds.useDefaultStorageRetryStrategy(builder);
     if (forTest) {
       builder
           .setHeaderProvider(

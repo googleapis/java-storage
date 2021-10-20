@@ -21,10 +21,10 @@ import static com.google.cloud.storage.Blob.BlobSourceOption.toSourceOptions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.concurrent.Executors.callable;
 
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
-import com.google.cloud.ExceptionHandler;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
@@ -249,10 +249,10 @@ public class Blob extends BlobInfo {
     final StorageRpc storageRpc = this.options.getStorageRpcV1();
     StorageObject pb = getBlobId().toPb();
     final Map<StorageRpc.Option, ?> requestOptions = StorageImpl.optionMap(getBlobId(), options);
-    ExceptionHandler exceptionHandler = retryAlgorithmManager.getForObjectsGet(pb, requestOptions);
+    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, requestOptions);
     Retrying.run(
         this.options,
-        exceptionHandler,
+        algorithm,
         callable(
             () -> {
               storageRpc.read(

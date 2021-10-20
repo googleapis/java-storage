@@ -39,7 +39,8 @@ public final class PackagePrivateMethodWorkarounds {
     return new Blob(s, builder);
   }
 
-  public static StorageOptions.Builder useNewRetryAlgorithmManager(StorageOptions.Builder builder) {
-    return builder.setUseDefaultRetryAlgorithms();
+  public static StorageOptions.Builder useDefaultStorageRetryStrategy(
+      StorageOptions.Builder builder) {
+    return builder.setStorageRetryStrategy(StorageRetryStrategy.getDefaultStorageRetryStrategy());
   }
 }
