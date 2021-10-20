@@ -231,10 +231,10 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (!getProjectNumberBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(projectNumber_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, projectNumber_);
     }
-    if (!getTeamBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(team_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, team_);
     }
     unknownFields.writeTo(output);
@@ -246,10 +246,10 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
     if (size != -1) return size;
 
     size = 0;
-    if (!getProjectNumberBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(projectNumber_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, projectNumber_);
     }
-    if (!getTeamBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(team_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, team_);
     }
     size += unknownFields.getSerializedSize();

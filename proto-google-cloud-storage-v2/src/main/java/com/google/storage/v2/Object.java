@@ -607,7 +607,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-      if (!getEncryptionAlgorithmBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(encryptionAlgorithm_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 1, encryptionAlgorithm_);
       }
       if (!keySha256Bytes_.isEmpty()) {
@@ -622,7 +622,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       if (size != -1) return size;
 
       size = 0;
-      if (!getEncryptionAlgorithmBytes().isEmpty()) {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(encryptionAlgorithm_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, encryptionAlgorithm_);
       }
       if (!keySha256Bytes_.isEmpty()) {
@@ -2283,7 +2283,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * In a response, this field will always be set to true or false.
    * </pre>
    *
-   * <code>bool event_based_hold = 23;</code>
+   * <code>optional bool event_based_hold = 23;</code>
    *
    * @return Whether the eventBasedHold field is set.
    */
@@ -2307,7 +2307,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * In a response, this field will always be set to true or false.
    * </pre>
    *
-   * <code>bool event_based_hold = 23;</code>
+   * <code>optional bool event_based_hold = 23;</code>
    *
    * @return The eventBasedHold.
    */
@@ -2479,10 +2479,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (!getNameBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
     }
-    if (!getBucketBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, bucket_);
     }
     if (generation_ != 0L) {
@@ -2491,31 +2491,31 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (metageneration_ != 0L) {
       output.writeInt64(4, metageneration_);
     }
-    if (!getStorageClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(storageClass_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 5, storageClass_);
     }
     if (size_ != 0L) {
       output.writeInt64(6, size_);
     }
-    if (!getContentEncodingBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentEncoding_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, contentEncoding_);
     }
-    if (!getContentDispositionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentDisposition_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 8, contentDisposition_);
     }
-    if (!getCacheControlBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(cacheControl_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 9, cacheControl_);
     }
     for (int i = 0; i < acl_.size(); i++) {
       output.writeMessage(10, acl_.get(i));
     }
-    if (!getContentLanguageBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentLanguage_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 11, contentLanguage_);
     }
     if (deleteTime_ != null) {
       output.writeMessage(12, getDeleteTime());
     }
-    if (!getContentTypeBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentType_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 13, contentType_);
     }
     if (createTime_ != null) {
@@ -2530,7 +2530,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (updateTime_ != null) {
       output.writeMessage(17, getUpdateTime());
     }
-    if (!getKmsKeyBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(kmsKey_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 18, kmsKey_);
     }
     if (updateStorageClassTime_ != null) {
@@ -2565,10 +2565,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (size != -1) return size;
 
     size = 0;
-    if (!getNameBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
     }
-    if (!getBucketBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, bucket_);
     }
     if (generation_ != 0L) {
@@ -2577,31 +2577,31 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (metageneration_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, metageneration_);
     }
-    if (!getStorageClassBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(storageClass_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, storageClass_);
     }
     if (size_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, size_);
     }
-    if (!getContentEncodingBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentEncoding_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, contentEncoding_);
     }
-    if (!getContentDispositionBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentDisposition_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, contentDisposition_);
     }
-    if (!getCacheControlBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(cacheControl_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, cacheControl_);
     }
     for (int i = 0; i < acl_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, acl_.get(i));
     }
-    if (!getContentLanguageBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentLanguage_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, contentLanguage_);
     }
     if (deleteTime_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(12, getDeleteTime());
     }
-    if (!getContentTypeBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(contentType_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(13, contentType_);
     }
     if (createTime_ != null) {
@@ -2616,7 +2616,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (updateTime_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(17, getUpdateTime());
     }
-    if (!getKmsKeyBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(kmsKey_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(18, kmsKey_);
     }
     if (updateStorageClassTime_ != null) {
@@ -6623,7 +6623,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * In a response, this field will always be set to true or false.
      * </pre>
      *
-     * <code>bool event_based_hold = 23;</code>
+     * <code>optional bool event_based_hold = 23;</code>
      *
      * @return Whether the eventBasedHold field is set.
      */
@@ -6647,7 +6647,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * In a response, this field will always be set to true or false.
      * </pre>
      *
-     * <code>bool event_based_hold = 23;</code>
+     * <code>optional bool event_based_hold = 23;</code>
      *
      * @return The eventBasedHold.
      */
@@ -6671,7 +6671,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * In a response, this field will always be set to true or false.
      * </pre>
      *
-     * <code>bool event_based_hold = 23;</code>
+     * <code>optional bool event_based_hold = 23;</code>
      *
      * @param value The eventBasedHold to set.
      * @return This builder for chaining.
@@ -6698,7 +6698,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * In a response, this field will always be set to true or false.
      * </pre>
      *
-     * <code>bool event_based_hold = 23;</code>
+     * <code>optional bool event_based_hold = 23;</code>
      *
      * @return This builder for chaining.
      */
