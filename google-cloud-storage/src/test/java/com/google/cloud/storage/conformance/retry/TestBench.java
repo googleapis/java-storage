@@ -92,9 +92,7 @@ final class TestBench implements TestRule {
                 request -> {
                   request.setCurlLoggingEnabled(false);
                   request.getHeaders().setAccept("application/json");
-                  request
-                      .getHeaders()
-                      .setUserAgent("test-bench/ java-conformance-tests/");
+                  request.getHeaders().setUserAgent("test-bench/ java-conformance-tests/");
                 });
   }
 
