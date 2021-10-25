@@ -33,7 +33,7 @@ public interface ObjectChecksumsOrBuilder
    * object matches this checksum.
    * </pre>
    *
-   * <code>fixed32 crc32c = 1;</code>
+   * <code>optional fixed32 crc32c = 1;</code>
    *
    * @return Whether the crc32c field is set.
    */
@@ -48,7 +48,7 @@ public interface ObjectChecksumsOrBuilder
    * object matches this checksum.
    * </pre>
    *
-   * <code>fixed32 crc32c = 1;</code>
+   * <code>optional fixed32 crc32c = 1;</code>
    *
    * @return The crc32c.
    */
