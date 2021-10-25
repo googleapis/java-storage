@@ -26,7 +26,7 @@ import com.google.cloud.StringEnumValue;
  * @see <a
  *     href="https://cloud.google.com/storage/docs/turbo-replication">https://cloud.google.com/storage/docs/turbo-replication</a>
  */
-public class Rpo extends StringEnumValue {
+public final class Rpo extends StringEnumValue {
 
   private static final long serialVersionUID = -3954216195295821508L;
 
@@ -36,7 +36,7 @@ public class Rpo extends StringEnumValue {
 
   private static final ApiFunction<String, Rpo> CONSTRUCTOR = Rpo::new;
 
-  private static final StringEnumType<Rpo> type = new StringEnumType(Rpo.class, CONSTRUCTOR);
+  private static final StringEnumType<Rpo> type = new StringEnumType<>(Rpo.class, CONSTRUCTOR);
 
   /**
    * Default recovery point objective. With this setting, there is no guarantee on the amount of
