@@ -88,28 +88,28 @@ public final class DefaultRetryHandlingBehaviorTest {
     String message = null;
     boolean shouldRetry = c.getExpectRetry().shouldRetry;
     if (shouldRetry && !defaultShouldRetryResult && legacyShouldRetryResult) {
-      actualBehavior = Behavior.defaultMoreStrict;
+      actualBehavior = Behavior.DEFAULT_MORE_STRICT;
       message = "default is more strict";
     } else if (shouldRetry && !defaultShouldRetryResult && !legacyShouldRetryResult) {
-      actualBehavior = Behavior.same;
+      actualBehavior = Behavior.SAME;
       message = "both are rejecting when we want a retry";
     } else if (shouldRetry && defaultShouldRetryResult && legacyShouldRetryResult) {
-      actualBehavior = Behavior.same;
+      actualBehavior = Behavior.SAME;
       message = "both are allowing";
     } else if (shouldRetry && defaultShouldRetryResult && !legacyShouldRetryResult) {
-      actualBehavior = Behavior.defaultMorePermissible;
+      actualBehavior = Behavior.DEFAULT_MORE_PERMISSIBLE;
       message = "default is more permissive";
     } else if (!shouldRetry && !defaultShouldRetryResult && legacyShouldRetryResult) {
-      actualBehavior = Behavior.defaultMoreStrict;
+      actualBehavior = Behavior.DEFAULT_MORE_STRICT;
       message = "default is more strict";
     } else if (!shouldRetry && !defaultShouldRetryResult && !legacyShouldRetryResult) {
-      actualBehavior = Behavior.same;
+      actualBehavior = Behavior.SAME;
       message = "both are rejecting as expected";
     } else if (!shouldRetry && defaultShouldRetryResult && legacyShouldRetryResult) {
-      actualBehavior = Behavior.same;
+      actualBehavior = Behavior.SAME;
       message = "both are too permissive";
     } else if (!shouldRetry && defaultShouldRetryResult && !legacyShouldRetryResult) {
-      actualBehavior = Behavior.defaultMorePermissible;
+      actualBehavior = Behavior.DEFAULT_MORE_PERMISSIBLE;
       message = "default is too permissive";
     }
 
@@ -199,12 +199,14 @@ public final class DefaultRetryHandlingBehaviorTest {
     @Override
     public String toString() {
       return "Case{"
-          + "throwableCategory="
-          + throwableCategory
-          + ", handlerCategory="
+          + "handlerCategory="
           + handlerCategory
+          + ", throwableCategory="
+          + throwableCategory
           + ", expectRetry="
           + expectRetry
+          + ", expectedBehavior="
+          + expectedBehavior
           + '}';
     }
   }
@@ -226,15 +228,15 @@ public final class DefaultRetryHandlingBehaviorTest {
    * {@link StorageRetryStrategy}
    */
   enum HandlerCategory implements Function<StorageRetryStrategy, ResultRetryAlgorithm<?>> {
-    idempotent,
-    nonidempotent;
+    IDEMPOTENT,
+    NONIDEMPOTENT;
 
     @Override
     public ResultRetryAlgorithm<?> apply(StorageRetryStrategy storageRetryStrategy) {
       switch (this) {
-        case idempotent:
+        case IDEMPOTENT:
           return storageRetryStrategy.getIdempotentHandler();
-        case nonidempotent:
+        case NONIDEMPOTENT:
           return storageRetryStrategy.getNonidempotentHandler();
         default:
           throw new IllegalStateException("Unmappable HandlerCategory: " + this.name());
@@ -244,9 +246,9 @@ public final class DefaultRetryHandlingBehaviorTest {
 
   /** Some states comparing behavior between default and legacy */
   enum Behavior {
-    defaultMorePermissible,
-    same,
-    defaultMoreStrict
+    DEFAULT_MORE_PERMISSIBLE,
+    SAME,
+    DEFAULT_MORE_STRICT
   }
 
   /**
@@ -256,58 +258,59 @@ public final class DefaultRetryHandlingBehaviorTest {
    * to read names in code thereby forgoing the need to maintain a separate set of strings.
    */
   enum ThrowableCategory {
-    socketTimeoutException(C.SOCKET_TIMEOUT_EXCEPTION),
-    socketException(C.SOCKET_EXCEPTION),
-    sslException(C.SSL_EXCEPTION),
-    sslException_connectionShutdown(C.SSL_EXCEPTION_CONNECTION_SHUTDOWN),
-    sslHandshakeException(C.SSL_HANDSHAKE_EXCEPTION),
-    sslHandshakeException_causedByCertificateException(
+    SOCKET_TIMEOUT_EXCEPTION(C.SOCKET_TIMEOUT_EXCEPTION),
+    SOCKET_EXCEPTION(C.SOCKET_EXCEPTION),
+    SSL_EXCEPTION(C.SSL_EXCEPTION),
+    SSL_EXCEPTION_CONNECTION_SHUTDOWN(C.SSL_EXCEPTION_CONNECTION_SHUTDOWN),
+    SSL_HANDSHAKE_EXCEPTION(C.SSL_HANDSHAKE_EXCEPTION),
+    SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION(
         C.SSL_HANDSHAKE_EXCEPTION_CERTIFICATE_EXCEPTION),
-    insufficientData(C.INSUFFICIENT_DATA_WRITTEN),
-    errorWritingRequestBody(C.ERROR_WRITING_REQUEST_BODY),
-    httpResponseException_401(C.HTTP_401),
-    httpResponseException_403(C.HTTP_403),
-    httpResponseException_404(C.HTTP_404),
-    httpResponseException_408(C.HTTP_409),
-    httpResponseException_429(C.HTTP_429),
-    httpResponseException_500(C.HTTP_500),
-    httpResponseException_502(C.HTTP_502),
-    httpResponseException_503(C.HTTP_503),
-    httpResponseException_504(C.HTTP_504),
-    storageException_httpResponseException_401(new StorageException(C.HTTP_401)),
-    storageException_httpResponseException_403(new StorageException(C.HTTP_403)),
-    storageException_httpResponseException_404(new StorageException(C.HTTP_404)),
-    storageException_httpResponseException_408(new StorageException(C.HTTP_409)),
-    storageException_httpResponseException_429(new StorageException(C.HTTP_429)),
-    storageException_httpResponseException_500(new StorageException(C.HTTP_500)),
-    storageException_httpResponseException_502(new StorageException(C.HTTP_502)),
-    storageException_httpResponseException_503(new StorageException(C.HTTP_503)),
-    storageException_httpResponseException_504(new StorageException(C.HTTP_504)),
-    storageException_googleJsonError_401(new StorageException(C.JSON_401)),
-    storageException_googleJsonError_403(new StorageException(C.JSON_403)),
-    storageException_googleJsonError_404(new StorageException(C.JSON_404)),
-    storageException_googleJsonError_408(new StorageException(C.JSON_408)),
-    storageException_googleJsonError_429(new StorageException(C.JSON_429)),
-    storageException_googleJsonError_500(new StorageException(C.JSON_500)),
-    storageException_googleJsonError_502(new StorageException(C.JSON_502)),
-    storageException_googleJsonError_503(new StorageException(C.JSON_503)),
-    storageException_googleJsonError_504(new StorageException(C.JSON_504)),
-    storageException_socketTimeoutException(new StorageException(C.SOCKET_TIMEOUT_EXCEPTION)),
-    storageException_socketException(new StorageException(C.SOCKET_EXCEPTION)),
-    storageException_sslException(new StorageException(C.SSL_EXCEPTION)),
-    storageException_sslException_connectionShutdown(
+    INSUFFICIENT_DATA(C.INSUFFICIENT_DATA_WRITTEN),
+    ERROR_WRITING_REQUEST_BODY(C.ERROR_WRITING_REQUEST_BODY),
+    HTTP_RESPONSE_EXCEPTION_401(C.HTTP_401),
+    HTTP_RESPONSE_EXCEPTION_403(C.HTTP_403),
+    HTTP_RESPONSE_EXCEPTION_404(C.HTTP_404),
+    HTTP_RESPONSE_EXCEPTION_408(C.HTTP_409),
+    HTTP_RESPONSE_EXCEPTION_429(C.HTTP_429),
+    HTTP_RESPONSE_EXCEPTION_500(C.HTTP_500),
+    HTTP_RESPONSE_EXCEPTION_502(C.HTTP_502),
+    HTTP_RESPONSE_EXCEPTION_503(C.HTTP_503),
+    HTTP_RESPONSE_EXCEPTION_504(C.HTTP_504),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_401(new StorageException(C.HTTP_401)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_403(new StorageException(C.HTTP_403)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_404(new StorageException(C.HTTP_404)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_408(new StorageException(C.HTTP_409)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_429(new StorageException(C.HTTP_429)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_500(new StorageException(C.HTTP_500)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_502(new StorageException(C.HTTP_502)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_503(new StorageException(C.HTTP_503)),
+    STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_504(new StorageException(C.HTTP_504)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_401(new StorageException(C.JSON_401)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_403(new StorageException(C.JSON_403)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_404(new StorageException(C.JSON_404)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_408(new StorageException(C.JSON_408)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_429(new StorageException(C.JSON_429)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_500(new StorageException(C.JSON_500)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_502(new StorageException(C.JSON_502)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_503(new StorageException(C.JSON_503)),
+    STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_504(new StorageException(C.JSON_504)),
+    STORAGE_EXCEPTION_SOCKET_TIMEOUT_EXCEPTION(new StorageException(C.SOCKET_TIMEOUT_EXCEPTION)),
+    STORAGE_EXCEPTION_SOCKET_EXCEPTION(new StorageException(C.SOCKET_EXCEPTION)),
+    STORAGE_EXCEPTION_SSL_EXCEPTION(new StorageException(C.SSL_EXCEPTION)),
+    STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_SHUTDOWN(
         new StorageException(C.SSL_EXCEPTION_CONNECTION_SHUTDOWN)),
-    storageException_sslHandshakeException(new StorageException(C.SSL_HANDSHAKE_EXCEPTION)),
-    storageException_sslHandshakeException_causedByCertificateException(
+    STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION(new StorageException(C.SSL_HANDSHAKE_EXCEPTION)),
+    STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION(
         new StorageException(C.SSL_HANDSHAKE_EXCEPTION_CERTIFICATE_EXCEPTION)),
-    storageException_insufficientData(new StorageException(C.INSUFFICIENT_DATA_WRITTEN)),
-    storageException_errorWritingRequestBody(new StorageException(C.ERROR_WRITING_REQUEST_BODY)),
-    illegalArgumentException(C.ILLEGAL_ARGUMENT_EXCEPTION),
-    storageException_illegalArgumentException(
+    STORAGE_EXCEPTION_INSUFFICIENT_DATA(new StorageException(C.INSUFFICIENT_DATA_WRITTEN)),
+    STORAGE_EXCEPTION_ERROR_WRITING_REQUEST_BODY(
+        new StorageException(C.ERROR_WRITING_REQUEST_BODY)),
+    ILLEGAL_ARGUMENT_EXCEPTION(C.ILLEGAL_ARGUMENT_EXCEPTION),
+    STORAGE_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION(
         StorageException.coalesce(C.ILLEGAL_ARGUMENT_EXCEPTION)),
-    storageException_0_internalError(
+    STORAGE_EXCEPTION_0_INTERNAL_ERROR(
         new StorageException(0, "internalError", "internalError", null)),
-    storageException_0_connectionClosedPrematurely(
+    STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY(
         new StorageException(
             0, "connectionClosedPrematurely", "connectionClosedPrematurely", null)),
     ;
@@ -408,13 +411,13 @@ public final class DefaultRetryHandlingBehaviorTest {
    *     <th>{@link ThrowableCategory throwable category}</th>
    *     <th>{@link HandlerCategory handler category}</th>
    *     <th>{@link ExpectRetry whether retry is expected}</th>
-   *     <th>{@link Behavior whether the expect behavior comparison is}</th>
+   *     <th>{@link Behavior what the expected behavior comparison is}</th>
    *   </tr>
    *   <tr>
-   *     <td>{@link ThrowableCategory#storageException_googleJsonError_500 storageException_googleJsonError_500}</td>
-   *     <td>{@link HandlerCategory#nonidempotent nonidempotent}</td>
+   *     <td>{@link ThrowableCategory#STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_500 STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_500}</td>
+   *     <td>{@link HandlerCategory#NONIDEMPOTENT NONIDEMPOTENT}</td>
    *     <td>{@link ExpectRetry#NO NO}</td>
-   *     <td>{@link Behavior#defaultMoreStrict defaultMoreStrict}</td>
+   *     <td>{@link Behavior#DEFAULT_MORE_STRICT DEFAULT_MORE_STRICT}</td>
    *   </tr>
    * </table>
    */
@@ -422,477 +425,477 @@ public final class DefaultRetryHandlingBehaviorTest {
     return ImmutableList.<Case>builder()
         .add(
             new Case(
-                ThrowableCategory.errorWritingRequestBody,
-                HandlerCategory.idempotent,
+                ThrowableCategory.ERROR_WRITING_REQUEST_BODY,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.errorWritingRequestBody,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.ERROR_WRITING_REQUEST_BODY,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_401,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_401,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_401,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_401,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_403,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_403,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_403,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_403,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_404,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_404,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_404,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_404,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_408,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_408,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.httpResponseException_408,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_408,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_429,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_429,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.httpResponseException_429,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_429,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_500,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_500,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.httpResponseException_500,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_500,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_502,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_502,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.httpResponseException_502,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_502,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_503,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_503,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.httpResponseException_503,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_503,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.httpResponseException_504,
-                HandlerCategory.idempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_504,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.httpResponseException_504,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.HTTP_RESPONSE_EXCEPTION_504,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.illegalArgumentException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.ILLEGAL_ARGUMENT_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.illegalArgumentException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.ILLEGAL_ARGUMENT_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.insufficientData,
-                HandlerCategory.idempotent,
+                ThrowableCategory.INSUFFICIENT_DATA,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.insufficientData,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.INSUFFICIENT_DATA,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.socketException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.SOCKET_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.socketException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.SOCKET_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.socketTimeoutException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.SOCKET_TIMEOUT_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.socketTimeoutException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.SOCKET_TIMEOUT_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.sslException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.SSL_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.sslException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.SSL_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.sslException_connectionShutdown,
-                HandlerCategory.idempotent,
+                ThrowableCategory.SSL_EXCEPTION_CONNECTION_SHUTDOWN,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.sslException_connectionShutdown,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.SSL_EXCEPTION_CONNECTION_SHUTDOWN,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.sslHandshakeException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.SSL_HANDSHAKE_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.defaultMorePermissible),
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
             new Case(
-                ThrowableCategory.sslHandshakeException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.SSL_HANDSHAKE_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.sslHandshakeException_causedByCertificateException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.sslHandshakeException_causedByCertificateException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_errorWritingRequestBody,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_ERROR_WRITING_REQUEST_BODY,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_errorWritingRequestBody,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_ERROR_WRITING_REQUEST_BODY,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_401,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_401,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_401,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_401,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_403,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_403,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_403,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_403,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_404,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_404,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_404,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_404,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_408,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_408,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_408,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_408,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_429,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_429,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_429,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_429,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_500,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_500,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_500,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_500,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_502,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_502,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_502,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_502,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_503,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_503,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_503,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_503,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_504,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_504,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_googleJsonError_504,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_504,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_401,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_401,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_401,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_401,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_403,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_403,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_403,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_403,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_404,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_404,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_404,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_404,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_408,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_408,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_408,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_408,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_429,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_429,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_429,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_429,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_500,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_500,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_500,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_500,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_502,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_502,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_502,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_502,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_503,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_503,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_503,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_503,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_504,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_504,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_httpResponseException_504,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_HTTP_RESPONSE_EXCEPTION_504,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_illegalArgumentException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_illegalArgumentException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_ILLEGAL_ARGUMENT_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_insufficientData,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_INSUFFICIENT_DATA,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_insufficientData,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_INSUFFICIENT_DATA,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_socketException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SOCKET_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_socketException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SOCKET_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_socketTimeoutException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SOCKET_TIMEOUT_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_socketTimeoutException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SOCKET_TIMEOUT_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_sslException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_sslException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_sslException_connectionShutdown,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_SHUTDOWN,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_sslException_connectionShutdown,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_SHUTDOWN,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_sslHandshakeException,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_sslHandshakeException,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
                 ThrowableCategory
-                    .storageException_sslHandshakeException_causedByCertificateException,
-                HandlerCategory.idempotent,
+                    .STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
                 ThrowableCategory
-                    .storageException_sslHandshakeException_causedByCertificateException,
-                HandlerCategory.nonidempotent,
+                    .STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_0_connectionClosedPrematurely,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_0_connectionClosedPrematurely,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict),
+                Behavior.DEFAULT_MORE_STRICT),
             new Case(
-                ThrowableCategory.storageException_0_internalError,
-                HandlerCategory.idempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_0_INTERNAL_ERROR,
+                HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
-                Behavior.same),
+                Behavior.SAME),
             new Case(
-                ThrowableCategory.storageException_0_internalError,
-                HandlerCategory.nonidempotent,
+                ThrowableCategory.STORAGE_EXCEPTION_0_INTERNAL_ERROR,
+                HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.defaultMoreStrict))
+                Behavior.DEFAULT_MORE_STRICT))
         .build();
   }
 }
