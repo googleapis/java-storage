@@ -38,9 +38,4 @@ public final class PackagePrivateMethodWorkarounds {
     BlobInfo.BuilderImpl builder = (BlobInfo.BuilderImpl) BlobInfo.fromPb(b.toPb()).toBuilder();
     return new Blob(s, builder);
   }
-
-  public static StorageOptions.Builder useDefaultStorageRetryStrategy(
-      StorageOptions.Builder builder) {
-    return builder.setStorageRetryStrategy(StorageRetryStrategy.getDefaultStorageRetryStrategy());
-  }
 }

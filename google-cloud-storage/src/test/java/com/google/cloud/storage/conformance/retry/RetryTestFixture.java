@@ -23,7 +23,6 @@ import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
-import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.conformance.retry.TestBench.RetryTestResource;
@@ -141,7 +140,6 @@ final class RetryTestFixture implements TestRule {
             .setHost(testBench.getBaseUri())
             .setCredentials(NoCredentials.getInstance())
             .setProjectId(testRetryConformance.getProjectId());
-    builder = PackagePrivateMethodWorkarounds.useDefaultStorageRetryStrategy(builder);
     RetrySettings.Builder retrySettingsBuilder =
         StorageOptions.getDefaultRetrySettings().toBuilder();
     if (forTest) {
