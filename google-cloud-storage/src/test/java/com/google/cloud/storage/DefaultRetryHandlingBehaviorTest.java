@@ -313,6 +313,12 @@ public final class DefaultRetryHandlingBehaviorTest {
     STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY(
         new StorageException(
             0, "connectionClosedPrematurely", "connectionClosedPrematurely", null)),
+    STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY_IO_CAUSE(
+        new StorageException(
+            0,
+            "connectionClosedPrematurely",
+            "connectionClosedPrematurely",
+            C.CONNECTION_CLOSED_PREMATURELY)),
     ;
 
     private final Throwable throwable;
@@ -377,6 +383,8 @@ public final class DefaultRetryHandlingBehaviorTest {
       private static final GoogleJsonError JSON_504 = newGoogleJsonError(504, "Gateway Timeout");
       private static final IllegalArgumentException ILLEGAL_ARGUMENT_EXCEPTION =
           new IllegalArgumentException("illegal argument");
+      private static final IOException CONNECTION_CLOSED_PREMATURELY =
+          new IOException("simulated Connection closed prematurely");
 
       private static HttpResponseException newHttpResponseException(
           int httpStatusCode, String name) {
@@ -883,6 +891,16 @@ public final class DefaultRetryHandlingBehaviorTest {
                 Behavior.SAME),
             new Case(
                 ThrowableCategory.STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.DEFAULT_MORE_STRICT),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY_IO_CAUSE,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY_IO_CAUSE,
                 HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
                 Behavior.DEFAULT_MORE_STRICT),

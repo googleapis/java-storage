@@ -73,41 +73,48 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
 
     @Override
     public RetryResult beforeEval(Exception exception) {
-      Throwable t = exception;
-
-      if (t instanceof BaseServiceException) {
-        BaseServiceException storageException = (BaseServiceException) t;
-        Throwable cause = storageException.getCause();
-        // if the cause of the exception is an IOException lift it before we continue
-        // evaluation
-        if (cause instanceof IOException) {
-          t = cause;
-        }
-      }
-
-      if (t instanceof BaseServiceException) {
-        BaseServiceException baseServiceException = (BaseServiceException) t;
-        int code = baseServiceException.getCode();
-        String reason = baseServiceException.getReason();
-        return shouldRetryCode(code, reason);
-      } else if (t instanceof HttpResponseException) {
-        int code = ((HttpResponseException) t).getStatusCode();
-        return shouldRetryCode(code, null);
-      } else if (t instanceof IOException) {
-        IOException ioException = (IOException) t;
-        return BaseServiceException.isRetryable(idempotent, ioException)
-            ? RetryResult.RETRY
-            : RetryResult.NO_RETRY;
+      if (exception instanceof BaseServiceException) {
+        BaseServiceException baseServiceException = (BaseServiceException) exception;
+        return deepShouldRetry(baseServiceException);
+      } else if (exception instanceof HttpResponseException) {
+        int code = ((HttpResponseException) exception).getStatusCode();
+        return shouldRetryCodeReason(code, null);
+      } else if (exception instanceof IOException) {
+        IOException ioException = (IOException) exception;
+        return shouldRetryIOException(ioException);
       }
       return RetryResult.CONTINUE_EVALUATION;
     }
 
-    private RetryResult shouldRetryCode(Integer code, String reason) {
+    private RetryResult shouldRetryCodeReason(Integer code, String reason) {
       if (BaseServiceException.isRetryable(code, reason, idempotent, retryableErrors)) {
         return RetryResult.RETRY;
       } else {
         return RetryResult.NO_RETRY;
       }
+    }
+
+    private RetryResult shouldRetryIOException(IOException ioException) {
+      if (BaseServiceException.isRetryable(idempotent, ioException)) {
+        return RetryResult.RETRY;
+      } else {
+        return RetryResult.NO_RETRY;
+      }
+    }
+
+    private RetryResult deepShouldRetry(BaseServiceException baseServiceException) {
+      if (baseServiceException.getCode() == BaseServiceException.UNKNOWN_CODE
+          && baseServiceException.getReason() == null) {
+        final Throwable cause = baseServiceException.getCause();
+        if (cause instanceof IOException) {
+          IOException ioException = (IOException) cause;
+          return shouldRetryIOException(ioException);
+        }
+      }
+
+      int code = baseServiceException.getCode();
+      String reason = baseServiceException.getReason();
+      return shouldRetryCodeReason(code, reason);
     }
   }
 }
