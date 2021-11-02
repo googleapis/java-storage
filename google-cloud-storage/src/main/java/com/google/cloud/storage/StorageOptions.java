@@ -87,7 +87,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
      * @return the builder
      * @see StorageRetryStrategy#getDefaultStorageRetryStrategy()
      */
-    Builder setStorageRetryStrategy(StorageRetryStrategy storageRetryStrategy) {
+    public Builder setStorageRetryStrategy(StorageRetryStrategy storageRetryStrategy) {
       this.storageRetryStrategy =
           requireNonNull(storageRetryStrategy, "storageRetryStrategy must be non null");
       return this;
@@ -125,7 +125,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     }
 
     public StorageRetryStrategy getStorageRetryStrategy() {
-      return StorageRetryStrategy.getLegacyStorageRetryStrategy();
+      return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
   }
 

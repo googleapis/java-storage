@@ -29,7 +29,7 @@ import java.io.Serializable;
  * @see #getDefaultStorageRetryStrategy()
  * @see #getUniformStorageRetryStrategy()
  */
-interface StorageRetryStrategy extends Serializable {
+public interface StorageRetryStrategy extends Serializable {
 
   /**
    * Factory method to provide a {@link ResultRetryAlgorithm} which will be used to evaluate whether
