@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.2.0](https://www.github.com/googleapis/java-storage/compare/v2.1.9...v2.2.0) (2021-11-02)
+
+
+### Features
+
+* next release from mainline is 2.2.0 ([#1124](https://www.github.com/googleapis/java-storage/issues/1124)) ([53a755b](https://www.github.com/googleapis/java-storage/commit/53a755b315c0e739e33929fa5db92eb1daf32e8b))
+* update all automatic retry behavior to be idempotency aware ([#1132](https://www.github.com/googleapis/java-storage/issues/1132)) ([470b8cd](https://www.github.com/googleapis/java-storage/commit/470b8cd8a24c1c2b4be1b956d1691dbae8cf87fd))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20211018-1.32.1 ([#1123](https://www.github.com/googleapis/java-storage/issues/1123)) ([edc0e00](https://www.github.com/googleapis/java-storage/commit/edc0e00a9f0d3c48ed7abbd5b01429837298ecfb))
+* update kms.version to v0.93.2 ([#1120](https://www.github.com/googleapis/java-storage/issues/1120)) ([a5c007d](https://www.github.com/googleapis/java-storage/commit/a5c007d306c5d7fc00927be39b6879dfc7a01fcb))
+
 ### [2.1.9](https://www.github.com/googleapis/java-storage/compare/v2.1.8...v2.1.9) (2021-10-19)
 
 
