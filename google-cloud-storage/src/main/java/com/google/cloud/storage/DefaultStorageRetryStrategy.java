@@ -16,11 +16,13 @@
 
 package com.google.cloud.storage;
 
+import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.google.api.client.http.HttpResponseException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.ExceptionHandler;
 import com.google.cloud.ExceptionHandler.Interceptor;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
 import java.util.Set;
 
@@ -33,7 +35,8 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
   private static final Interceptor INTERCEPTOR_NON_IDEMPOTENT =
       new InterceptorImpl(false, ImmutableSet.of());
 
-  private static final ExceptionHandler IDEMPOTENT_HANDLER = newHandler(INTERCEPTOR_IDEMPOTENT);
+  private static final ExceptionHandler IDEMPOTENT_HANDLER =
+      newHandler(new EmptyJsonParsingExceptionInterceptor(), INTERCEPTOR_IDEMPOTENT);
   private static final ExceptionHandler NON_IDEMPOTENT_HANDLER =
       newHandler(INTERCEPTOR_NON_IDEMPOTENT);
 
@@ -47,15 +50,11 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
     return NON_IDEMPOTENT_HANDLER;
   }
 
-  private static ExceptionHandler newHandler(Interceptor interceptor) {
-    return ExceptionHandler.newBuilder()
-        .retryOn(BaseServiceException.class)
-        .retryOn(IOException.class)
-        .addInterceptors(interceptor)
-        .build();
+  private static ExceptionHandler newHandler(Interceptor... interceptors) {
+    return ExceptionHandler.newBuilder().addInterceptors(interceptors).build();
   }
 
-  private static class InterceptorImpl implements Interceptor {
+  private static class InterceptorImpl implements BaseInterceptor {
 
     private static final long serialVersionUID = -5153236691367895096L;
     private final boolean idempotent;
@@ -64,11 +63,6 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
     private InterceptorImpl(boolean idempotent, Set<BaseServiceException.Error> retryableErrors) {
       this.idempotent = idempotent;
       this.retryableErrors = ImmutableSet.copyOf(retryableErrors);
-    }
-
-    @Override
-    public RetryResult afterEval(Exception exception, RetryResult retryResult) {
-      return RetryResult.CONTINUE_EVALUATION;
     }
 
     @Override
@@ -95,7 +89,11 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
     }
 
     private RetryResult shouldRetryIOException(IOException ioException) {
-      if (BaseServiceException.isRetryable(idempotent, ioException)) {
+      if (ioException instanceof JsonEOFException && idempotent) { // Jackson
+        return RetryResult.RETRY;
+      } else if (ioException instanceof MalformedJsonException && idempotent) { // Gson
+        return RetryResult.RETRY;
+      } else if (BaseServiceException.isRetryable(idempotent, ioException)) {
         return RetryResult.RETRY;
       } else {
         return RetryResult.NO_RETRY;
@@ -115,6 +113,28 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
       int code = baseServiceException.getCode();
       String reason = baseServiceException.getReason();
       return shouldRetryCodeReason(code, reason);
+    }
+  }
+
+  private static final class EmptyJsonParsingExceptionInterceptor implements BaseInterceptor {
+    private static final long serialVersionUID = -3320984020388043628L;
+
+    @Override
+    public RetryResult beforeEval(Exception exception) {
+      if (exception instanceof IllegalArgumentException) {
+        IllegalArgumentException illegalArgumentException = (IllegalArgumentException) exception;
+        if (illegalArgumentException.getMessage().equals("no JSON input found")) {
+          return RetryResult.RETRY;
+        }
+      }
+      return RetryResult.CONTINUE_EVALUATION;
+    }
+  }
+
+  private interface BaseInterceptor extends Interceptor {
+    @Override
+    default RetryResult afterEval(Exception exception, RetryResult retryResult) {
+      return RetryResult.CONTINUE_EVALUATION;
     }
   }
 }

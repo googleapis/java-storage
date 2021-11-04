@@ -20,6 +20,8 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.truth.Truth.assertWithMessage;
 
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
@@ -27,6 +29,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -319,6 +322,14 @@ public final class DefaultRetryHandlingBehaviorTest {
             "connectionClosedPrematurely",
             "connectionClosedPrematurely",
             C.CONNECTION_CLOSED_PREMATURELY)),
+    EMPTY_JSON_PARSE_ERROR(new IllegalArgumentException("no JSON input found")),
+    JACKSON_EOF_EXCEPTION(C.JACKSON_EOF_EXCEPTION),
+    STORAGE_EXCEPTION_0_JACKSON_EOF_EXCEPTION(
+        new StorageException(0, "parse error", C.JACKSON_EOF_EXCEPTION)),
+    GSON_MALFORMED_EXCEPTION(C.GSON_MALFORMED_EXCEPTION),
+    STORAGE_EXCEPTION_0_GSON_MALFORMED_EXCEPTION(
+        new StorageException(0, "parse error", C.GSON_MALFORMED_EXCEPTION)),
+    IO_EXCEPTION(new IOException("no retry")),
     ;
 
     private final Throwable throwable;
@@ -385,6 +396,10 @@ public final class DefaultRetryHandlingBehaviorTest {
           new IllegalArgumentException("illegal argument");
       private static final IOException CONNECTION_CLOSED_PREMATURELY =
           new IOException("simulated Connection closed prematurely");
+      private static final JsonEOFException JACKSON_EOF_EXCEPTION =
+          new JsonEOFException(null, JsonToken.VALUE_STRING, "parse-exception");
+      private static final MalformedJsonException GSON_MALFORMED_EXCEPTION =
+          new MalformedJsonException("parse-exception");
 
       private static HttpResponseException newHttpResponseException(
           int httpStatusCode, String name) {
@@ -913,7 +928,67 @@ public final class DefaultRetryHandlingBehaviorTest {
                 ThrowableCategory.STORAGE_EXCEPTION_0_INTERNAL_ERROR,
                 HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
-                Behavior.DEFAULT_MORE_STRICT))
+                Behavior.DEFAULT_MORE_STRICT),
+            new Case(
+                ThrowableCategory.EMPTY_JSON_PARSE_ERROR,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.EMPTY_JSON_PARSE_ERROR,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.IO_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.IO_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.JACKSON_EOF_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.JACKSON_EOF_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_JACKSON_EOF_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_JACKSON_EOF_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.GSON_MALFORMED_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.GSON_MALFORMED_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_GSON_MALFORMED_EXCEPTION,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_GSON_MALFORMED_EXCEPTION,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME))
         .build();
   }
 }
