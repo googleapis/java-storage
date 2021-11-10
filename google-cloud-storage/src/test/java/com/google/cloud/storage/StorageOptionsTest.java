@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.google.cloud.TransportOptions;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -32,5 +34,35 @@ public class StorageOptionsTest {
     } catch (IllegalArgumentException ex) {
       Assert.assertNotNull(ex.getMessage());
     }
+  }
+
+  @Test
+  public void testConfigureHostShouldBeKeptOnToBuilder() {
+    StorageOptions opts1 = StorageOptions.newBuilder().setHost("custom-host").build();
+    StorageOptions opts2 = opts1.toBuilder().build();
+
+    assertThat(opts2.getHost()).isEqualTo("custom-host");
+  }
+
+  @Test
+  public void testToBuilderShouldSpecifyDefaultIfNotOtherwiseSet() {
+    StorageOptions opts1 = StorageOptions.newBuilder().build();
+    StorageOptions opts2 = opts1.toBuilder().build();
+
+    assertThat(opts2.getHost()).isEqualTo("https://storage.googleapis.com");
+  }
+
+  @Test
+  public void testNewBuilderSpecifiesCorrectHost() {
+    StorageOptions opts1 = StorageOptions.newBuilder().build();
+
+    assertThat(opts1.getHost()).isEqualTo("https://storage.googleapis.com");
+  }
+
+  @Test
+  public void testDefaultInstanceSpecifiesCorrectHost() {
+    StorageOptions opts1 = StorageOptions.getDefaultInstance();
+
+    assertThat(opts1.getHost()).isEqualTo("https://storage.googleapis.com");
   }
 }
