@@ -21,7 +21,24 @@ import static io.grpc.MethodDescriptor.generateFullMethodName;
  *
  *
  * <pre>
- * Manages Google Cloud Storage resources.
+ * ## API Overview and Naming Syntax
+ * The GCS gRPC API allows applications to read and write data through the
+ * abstractions of buckets and objects. For a description of these abstractions
+ * please see https://cloud.google.com/storage/docs.
+ * Resources are named as follows:
+ *   - Projects are referred to as they are defined by the Resource Manager API,
+ *     using strings like `projects/123456` or `projects/my-string-id`.
+ *   - Buckets are named using string names of the form:
+ *     `projects/{project}/buckets/{bucket}`
+ *     For globally unique buckets, `_` may be substituted for the project.
+ *   - Objects are uniquely identified by their name along with the name of the
+ *     bucket they belong to, as separate strings in this API. For example:
+ *       ReadObjectRequest {
+ *         bucket: 'projects/_/buckets/my-bucket'
+ *         object: 'my-object'
+ *       }
+ *     Note that object names can contain `/` characters, which are treated as
+ *     any other character (no special directory semantics).
  * </pre>
  */
 @javax.annotation.Generated(
@@ -252,7 +269,24 @@ public final class StorageGrpc {
    *
    *
    * <pre>
-   * Manages Google Cloud Storage resources.
+   * ## API Overview and Naming Syntax
+   * The GCS gRPC API allows applications to read and write data through the
+   * abstractions of buckets and objects. For a description of these abstractions
+   * please see https://cloud.google.com/storage/docs.
+   * Resources are named as follows:
+   *   - Projects are referred to as they are defined by the Resource Manager API,
+   *     using strings like `projects/123456` or `projects/my-string-id`.
+   *   - Buckets are named using string names of the form:
+   *     `projects/{project}/buckets/{bucket}`
+   *     For globally unique buckets, `_` may be substituted for the project.
+   *   - Objects are uniquely identified by their name along with the name of the
+   *     bucket they belong to, as separate strings in this API. For example:
+   *       ReadObjectRequest {
+   *         bucket: 'projects/_/buckets/my-bucket'
+   *         object: 'my-object'
+   *       }
+   *     Note that object names can contain `/` characters, which are treated as
+   *     any other character (no special directory semantics).
    * </pre>
    */
   public abstract static class StorageImplBase implements io.grpc.BindableService {
@@ -382,7 +416,24 @@ public final class StorageGrpc {
    *
    *
    * <pre>
-   * Manages Google Cloud Storage resources.
+   * ## API Overview and Naming Syntax
+   * The GCS gRPC API allows applications to read and write data through the
+   * abstractions of buckets and objects. For a description of these abstractions
+   * please see https://cloud.google.com/storage/docs.
+   * Resources are named as follows:
+   *   - Projects are referred to as they are defined by the Resource Manager API,
+   *     using strings like `projects/123456` or `projects/my-string-id`.
+   *   - Buckets are named using string names of the form:
+   *     `projects/{project}/buckets/{bucket}`
+   *     For globally unique buckets, `_` may be substituted for the project.
+   *   - Objects are uniquely identified by their name along with the name of the
+   *     bucket they belong to, as separate strings in this API. For example:
+   *       ReadObjectRequest {
+   *         bucket: 'projects/_/buckets/my-bucket'
+   *         object: 'my-object'
+   *       }
+   *     Note that object names can contain `/` characters, which are treated as
+   *     any other character (no special directory semantics).
    * </pre>
    */
   public static final class StorageStub extends io.grpc.stub.AbstractAsyncStub<StorageStub> {
@@ -493,7 +544,24 @@ public final class StorageGrpc {
    *
    *
    * <pre>
-   * Manages Google Cloud Storage resources.
+   * ## API Overview and Naming Syntax
+   * The GCS gRPC API allows applications to read and write data through the
+   * abstractions of buckets and objects. For a description of these abstractions
+   * please see https://cloud.google.com/storage/docs.
+   * Resources are named as follows:
+   *   - Projects are referred to as they are defined by the Resource Manager API,
+   *     using strings like `projects/123456` or `projects/my-string-id`.
+   *   - Buckets are named using string names of the form:
+   *     `projects/{project}/buckets/{bucket}`
+   *     For globally unique buckets, `_` may be substituted for the project.
+   *   - Objects are uniquely identified by their name along with the name of the
+   *     bucket they belong to, as separate strings in this API. For example:
+   *       ReadObjectRequest {
+   *         bucket: 'projects/_/buckets/my-bucket'
+   *         object: 'my-object'
+   *       }
+   *     Note that object names can contain `/` characters, which are treated as
+   *     any other character (no special directory semantics).
    * </pre>
    */
   public static final class StorageBlockingStub
@@ -563,7 +631,24 @@ public final class StorageGrpc {
    *
    *
    * <pre>
-   * Manages Google Cloud Storage resources.
+   * ## API Overview and Naming Syntax
+   * The GCS gRPC API allows applications to read and write data through the
+   * abstractions of buckets and objects. For a description of these abstractions
+   * please see https://cloud.google.com/storage/docs.
+   * Resources are named as follows:
+   *   - Projects are referred to as they are defined by the Resource Manager API,
+   *     using strings like `projects/123456` or `projects/my-string-id`.
+   *   - Buckets are named using string names of the form:
+   *     `projects/{project}/buckets/{bucket}`
+   *     For globally unique buckets, `_` may be substituted for the project.
+   *   - Objects are uniquely identified by their name along with the name of the
+   *     bucket they belong to, as separate strings in this API. For example:
+   *       ReadObjectRequest {
+   *         bucket: 'projects/_/buckets/my-bucket'
+   *         object: 'my-object'
+   *       }
+   *     Note that object names can contain `/` characters, which are treated as
+   *     any other character (no special directory semantics).
    * </pre>
    */
   public static final class StorageFutureStub
