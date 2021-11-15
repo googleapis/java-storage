@@ -65,7 +65,6 @@ public interface ObjectOrBuilder
    *
    * <pre>
    * Immutable. The name of the bucket containing this object.
-   * Example: `projects/_/buckets/foo`.
    * </pre>
    *
    * <code>
@@ -80,7 +79,6 @@ public interface ObjectOrBuilder
    *
    * <pre>
    * Immutable. The name of the bucket containing this object.
-   * Example: `projects/_/buckets/foo`.
    * </pre>
    *
    * <code>

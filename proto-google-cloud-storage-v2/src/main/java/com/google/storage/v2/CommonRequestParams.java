@@ -118,7 +118,6 @@ public final class CommonRequestParams extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. Required when using buckets with Requestor Pays feature enabled.
-   * Example: `projects/123456`.
    * </pre>
    *
    * <code>
@@ -144,7 +143,6 @@ public final class CommonRequestParams extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. Required when using buckets with Requestor Pays feature enabled.
-   * Example: `projects/123456`.
    * </pre>
    *
    * <code>
@@ -488,7 +486,6 @@ public final class CommonRequestParams extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. Required when using buckets with Requestor Pays feature enabled.
-     * Example: `projects/123456`.
      * </pre>
      *
      * <code>
@@ -513,7 +510,6 @@ public final class CommonRequestParams extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. Required when using buckets with Requestor Pays feature enabled.
-     * Example: `projects/123456`.
      * </pre>
      *
      * <code>
@@ -538,7 +534,6 @@ public final class CommonRequestParams extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. Required when using buckets with Requestor Pays feature enabled.
-     * Example: `projects/123456`.
      * </pre>
      *
      * <code>
@@ -562,7 +557,6 @@ public final class CommonRequestParams extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. Required when using buckets with Requestor Pays feature enabled.
-     * Example: `projects/123456`.
      * </pre>
      *
      * <code>
@@ -582,7 +576,6 @@ public final class CommonRequestParams extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. Required when using buckets with Requestor Pays feature enabled.
-     * Example: `projects/123456`.
      * </pre>
      *
      * <code>

@@ -1215,7 +1215,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Immutable. The name of the bucket containing this object.
-   * Example: `projects/_/buckets/foo`.
    * </pre>
    *
    * <code>
@@ -1241,7 +1240,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Immutable. The name of the bucket containing this object.
-   * Example: `projects/_/buckets/foo`.
    * </pre>
    *
    * <code>
@@ -3498,7 +3496,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The name of the bucket containing this object.
-     * Example: `projects/_/buckets/foo`.
      * </pre>
      *
      * <code>
@@ -3523,7 +3520,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The name of the bucket containing this object.
-     * Example: `projects/_/buckets/foo`.
      * </pre>
      *
      * <code>
@@ -3548,7 +3544,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The name of the bucket containing this object.
-     * Example: `projects/_/buckets/foo`.
      * </pre>
      *
      * <code>
@@ -3572,7 +3567,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The name of the bucket containing this object.
-     * Example: `projects/_/buckets/foo`.
      * </pre>
      *
      * <code>
@@ -3592,7 +3586,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The name of the bucket containing this object.
-     * Example: `projects/_/buckets/foo`.
      * </pre>
      *
      * <code>
