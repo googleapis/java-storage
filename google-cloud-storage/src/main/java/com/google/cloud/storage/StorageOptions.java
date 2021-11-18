@@ -166,7 +166,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   @SuppressWarnings("unchecked")
   @Override
   public Builder toBuilder() {
-    return new Builder(this).setHost(DEFAULT_HOST);
+    return new Builder(this);
   }
 
   @Override
