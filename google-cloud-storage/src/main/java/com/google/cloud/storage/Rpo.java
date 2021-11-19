@@ -21,7 +21,7 @@ import com.google.cloud.StringEnumValue;
 
 /**
  * Enums for the Recovery Point Objective (RPO) of dual-region buckets, which determines how fast
- * data is replicated betweens regions.
+ * data is replicated between regions.
  *
  * @see <a
  *     href="https://cloud.google.com/storage/docs/turbo-replication">https://cloud.google.com/storage/docs/turbo-replication</a>
