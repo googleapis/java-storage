@@ -12,5 +12,7 @@
   "distribution_name": "com.google.cloud:google-cloud-storage",
   "codeowner_team": "@googleapis/cloud-storage-dpe",
   "api_id": "storage.googleapis.com",
-  "requires_billing": true
+  "requires_billing": true,
+  "extra_versioned_modules": "gapic-google-cloud-storage-v2",
+  "excluded_poms": "google-cloud-storage-bom"
 }

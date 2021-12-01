@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>22.0.0</version>
+      <version>24.0.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -41,7 +41,7 @@ If you are using Maven without BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.1.1</version>
+  <version>2.2.1</version>
 </dependency>
 
 ```
@@ -49,20 +49,20 @@ If you are using Maven without BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:23.0.0')
+implementation platform('com.google.cloud:libraries-bom:24.0.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
 ```
 If you are using Gradle without BOM, add this to your dependencies
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage:2.1.1'
+implementation 'com.google.cloud:google-cloud-storage:2.2.1'
 ```
 
 If you are using SBT, add this to your dependencies
 
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.1.1"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.2.1"
 ```
 
 ## Authentication
@@ -149,7 +149,7 @@ Blob blob = storage.create(blobInfo, "a simple blob".getBytes(UTF_8));
 ```
 
 A complete example for creating a blob can be found at
-[CreateBlob.java](https://github.com/googleapis/google-cloud-java/tree/main/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/CreateBlob.java).
+[CreateBlob.java](https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/CreateBlob.java).
 
 At this point, you will be able to see your newly created bucket and blob on the Google Developers Console.
 
@@ -164,7 +164,7 @@ String contentString = new String(content, UTF_8);
 ```
 
 A complete example for accessing blobs can be found at
-[CreateBlob.java](https://github.com/googleapis/google-cloud-java/tree/main/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/CreateBlob.java).
+[CreateBlob.java](https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/CreateBlob.java).
 
 #### Updating data
 Another thing we may want to do is update a blob. The following snippet shows how to update a Storage blob if it exists.
@@ -182,7 +182,7 @@ if (blob != null) {
 ```
 
 The complete source code can be found at
-[UpdateBlob.java](https://github.com/googleapis/google-cloud-java/tree/main/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/UpdateBlob.java).
+[UpdateBlob.java](https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/UpdateBlob.java).
 
 #### Listing buckets and contents of buckets
 Suppose that you've added more buckets and blobs, and now you want to see the names of your buckets and the contents
@@ -205,7 +205,7 @@ for (Bucket bucket : storage.list().iterateAll()) {
 #### Complete source code
 
 In
-[CreateAndListBucketsAndBlobs.java](https://github.com/googleapis/google-cloud-java/tree/main/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/CreateAndListBucketsAndBlobs.java)
+[CreateAndListBucketsAndBlobs.java](https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/CreateAndListBucketsAndBlobs.java)
 we put together examples creating and listing buckets and blobs into one program. The program assumes that you are
 running on Compute Engine or from your own desktop. To run the example on App Engine, simply move
 the code from the main method to your application's servlet class and change the print statements to
@@ -213,10 +213,10 @@ display on your webpage.
 
 ### Example Applications
 
-- [`StorageExample`](https://github.com/googleapis/google-cloud-java/tree/main/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/StorageExample.java) is a simple command line interface that provides some of Cloud Storage's functionality.  Read more about using the application on the [`StorageExample` docs page](https://github.com/googleapis/google-cloud-java/blob/main/google-cloud-examples/README.md).
-- [`Bookshelf`](https://github.com/GoogleCloudPlatform/getting-started-java/tree/main/bookshelf) - An App Engine application that manages a virtual bookshelf.
+- [`StorageExample`](https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/StorageExample.java) is a simple command line interface that provides some of Cloud Storage's functionality.  Read more about using the application on the [`StorageExample` docs page](https://github.com/googleapis/google-cloud-java/blob/master/google-cloud-examples/README.md).
+- [`Bookshelf`](https://github.com/GoogleCloudPlatform/getting-started-java/tree/master/bookshelf) - An App Engine application that manages a virtual bookshelf.
   - This app uses `google-cloud` to interface with Cloud Datastore and Cloud Storage. It also uses Cloud SQL, another Google Cloud Platform service.
-- [`Flexible Environment/Storage example`](https://github.com/GoogleCloudPlatform/java-docs-samples/tree/main/flexible/cloudstorage) - An app that uploads files to a public Cloud Storage bucket on the App Engine Flexible Environment runtime.
+- [`Flexible Environment/Storage example`](https://github.com/GoogleCloudPlatform/java-docs-samples/tree/master/flexible/cloudstorage) - An app that uploads files to a public Cloud Storage bucket on the App Engine Flexible Environment runtime.
 
 
 
@@ -237,7 +237,7 @@ To get help, follow the instructions in the [shared Troubleshooting document][tr
 
 ## Supported Java Versions
 
-Java 7 or above is required for using this client.
+Java 8 or above is required for using this client.
 
 Google's Java client libraries,
 [Google Cloud Client Libraries][cloudlibs]
@@ -306,7 +306,6 @@ Apache 2.0 - See [LICENSE][license] for more information.
 
 Java Version | Status
 ------------ | ------
-Java 7 | [![Kokoro CI][kokoro-badge-image-1]][kokoro-badge-link-1]
 Java 8 | [![Kokoro CI][kokoro-badge-image-2]][kokoro-badge-link-2]
 Java 8 OSX | [![Kokoro CI][kokoro-badge-image-3]][kokoro-badge-link-3]
 Java 8 Windows | [![Kokoro CI][kokoro-badge-image-4]][kokoro-badge-link-4]
@@ -315,7 +314,7 @@ Java 11 | [![Kokoro CI][kokoro-badge-image-5]][kokoro-badge-link-5]
 Java is a registered trademark of Oracle and/or its affiliates.
 
 [product-docs]: https://cloud.google.com/storage
-[javadocs]: https://googleapis.dev/java/google-cloud-storage/latest/index.html
+[javadocs]: https://cloud.google.com/java/docs/reference/google-cloud-storage/latest/history
 [kokoro-badge-image-1]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java7.svg
 [kokoro-badge-link-1]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java7.html
 [kokoro-badge-image-2]: http://storage.googleapis.com/cloud-devrel-public/java/badges/java-storage/java8.svg
