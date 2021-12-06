@@ -549,11 +549,12 @@ public class BucketInfo implements Serializable {
           break;
         default:
           log.warning(
-              "Creating a lifecycle rule with no supported actions: "
-                  + rule
-                  + ". Attempting to update with this rule may cause errors. Please "
+              "The lifecycle action "
+                  + action.getType()
+                  + " is not supported by this version of the library. "
+                  + "Attempting to update with this rule may cause errors. Please "
                   + "update to the latest version of google-cloud-storage.");
-          lifecycleAction = LifecycleAction.newLifecycleAction(action.getType());
+          lifecycleAction = LifecycleAction.newLifecycleAction("Unknown action");
       }
 
       Rule.Condition condition = rule.getCondition();

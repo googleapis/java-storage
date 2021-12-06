@@ -363,6 +363,17 @@ public class BucketInfoTest {
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
+
+    Rule unsupportedRule =
+        new LifecycleRule(
+                LifecycleAction.newLifecycleAction("This action type doesn't exist"),
+                LifecycleCondition.newBuilder().setAge(10).build())
+            .toPb();
+    unsupportedRule.setAction(
+        unsupportedRule.getAction().setType("This action type also doesn't exist"));
+
+    LifecycleRule.fromPb(
+        unsupportedRule); // If this doesn't throw an exception, unsupported rules are working
   }
 
   @Test
