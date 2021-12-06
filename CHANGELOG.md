@@ -1,5 +1,24 @@
 # Changelog
 
+### [2.2.2](https://www.github.com/googleapis/java-storage/compare/v2.2.1...v2.2.2) (2021-12-06)
+
+
+### Bug Fixes
+
+* update StorageOptions to not overwrite any previously set host ([#1142](https://www.github.com/googleapis/java-storage/issues/1142)) ([05375c0](https://www.github.com/googleapis/java-storage/commit/05375c0b9b6f9fde2e6cefb1af6a695aa3b01732))
+
+
+### Documentation
+
+* Add comments to GCS gRPC API proto spec to describe how naming work ([#1139](https://www.github.com/googleapis/java-storage/issues/1139)) ([417c525](https://www.github.com/googleapis/java-storage/commit/417c5250eb7ad1a7b04a055a39d72e6536a63e18))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20211201-1.32.1 ([#1165](https://www.github.com/googleapis/java-storage/issues/1165)) ([9031836](https://www.github.com/googleapis/java-storage/commit/90318368e69d7677c49e985eb58ff1b61d878ec9))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.5.1 ([#1163](https://www.github.com/googleapis/java-storage/issues/1163)) ([feca2c6](https://www.github.com/googleapis/java-storage/commit/feca2c6342786ef3fb699c459067c015bd374a13))
+* update kms.version to v0.94.0 ([#1164](https://www.github.com/googleapis/java-storage/issues/1164)) ([8653783](https://www.github.com/googleapis/java-storage/commit/86537836a3b96f369e1cad59c692d350047414f7))
+
 ### [2.2.1](https://www.github.com/googleapis/java-storage/compare/v2.2.0...v2.2.1) (2021-11-15)
 
 
