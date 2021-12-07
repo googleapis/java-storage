@@ -76,10 +76,6 @@
       <artifactId>proto-google-iam-v1</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.api.grpc</groupId>
-      <artifactId>proto-google-cloud-storage-v2</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
     </dependency>
@@ -122,11 +118,6 @@
       <groupId>com.google.api.grpc</groupId>
       <artifactId>grpc-google-cloud-kms-v1</artifactId>
       <version>${kms.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.google.api.grpc</groupId>
-      <artifactId>grpc-google-cloud-storage-v2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
