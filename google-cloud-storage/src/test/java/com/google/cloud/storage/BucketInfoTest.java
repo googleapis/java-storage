@@ -314,6 +314,10 @@ public class BucketInfoTest {
     for (DeleteRule delRule : rules) {
       assertEquals(delRule, DeleteRule.fromPb(delRule.toPb()));
     }
+    Rule unsupportedRule =
+        new Rule().setAction(new Rule.Action().setType("This action doesn't exist"));
+    DeleteRule.fromPb(
+        unsupportedRule); // if this doesn't throw an exception, unsupported rules work
   }
 
   @Test

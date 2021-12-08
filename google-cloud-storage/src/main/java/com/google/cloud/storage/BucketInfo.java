@@ -812,16 +812,12 @@ public class BucketInfo implements Serializable {
 
       private final String actionType;
 
-      public String getActionType() {
-        return actionType;
-      }
-
       private LifecycleAction(String actionType) {
         this.actionType = actionType;
       }
 
-      public static LifecycleAction newLifecycleAction(String actionType) {
-        return new LifecycleAction(actionType);
+      public String getActionType() {
+        return actionType;
       }
 
       @Override
@@ -846,6 +842,16 @@ public class BucketInfo implements Serializable {
       public static SetStorageClassLifecycleAction newSetStorageClassAction(
           StorageClass storageClass) {
         return new SetStorageClassLifecycleAction(storageClass);
+      }
+
+      /**
+       * Creates a new {@code LifecycleAction , with no specific supported action associated with it. This
+       * is only intended as a "backup" for when the library doesn't recognize the type, and should
+       * generally not be used, instead use the supported actions, and upgrade the library if necessary
+       * to get new supported actions.
+       */
+      public static LifecycleAction newLifecycleAction(String actionType) {
+        return new LifecycleAction(actionType);
       }
     }
 
