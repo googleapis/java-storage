@@ -20,10 +20,6 @@ deep-remove-regex:
 - "/proto-google-.*/src"
 - "/gapic-google-.*/src"
 
-deep-preserve-regex:
-- "/google-.*/src/test/java/com/google/cloud/.*/v.*/it/IT.*Test.java"
-- "/gapic-google-cloud-storage-v2/src/main/resources/com/google/storage/v2/gapic_metadata.json"
-
 deep-copy-regex:
 - source: "/google/storage/v2/.*-java/proto-google-.*/src"
   dest: "/owl-bot-staging/v2/proto-google-cloud-storage-v2/src"
@@ -31,3 +27,5 @@ deep-copy-regex:
   dest: "/owl-bot-staging/v2/grpc-google-cloud-storage-v2/src"
 - source: "/google/storage/v2/.*-java/gapic-google-.*/src"
   dest: "/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src"
+- source: "/google/storage/v2/.*-java/gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json"
+  dest: "/owl-bot-staging/v2/gapic-google-cloud-storage-v2/src/main/resources/com/google/storage/v2/gapic_metadata.json"
