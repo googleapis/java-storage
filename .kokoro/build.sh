@@ -71,7 +71,7 @@ integration)
     ;;
 graalvm)
     # Run Unit and Integration Tests with Native Image
-    mvn -ntp -Pnative -Penable-integration-tests test
+    mvn test -Pnative -Penable-integration-tests
     RETURN_CODE=$?
     ;;
 samples)
