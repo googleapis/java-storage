@@ -16,7 +16,11 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Several classes in the High Level Model for storage include package-local constructors and
@@ -37,5 +41,16 @@ public final class PackagePrivateMethodWorkarounds {
   public static Blob blobCopyWithStorage(Blob b, Storage s) {
     BlobInfo.BuilderImpl builder = (BlobInfo.BuilderImpl) BlobInfo.fromPb(b.toPb()).toBuilder();
     return new Blob(s, builder);
+  }
+
+  public static Function<WriteChannel, Optional<StorageObject>> maybeGetStorageObjectFunction() {
+    return (w) -> {
+      if (w instanceof BlobWriteChannel) {
+        BlobWriteChannel blobWriteChannel = (BlobWriteChannel) w;
+        return Optional.of(blobWriteChannel.getStorageObject());
+      } else {
+        return Optional.empty();
+      }
+    };
   }
 }
