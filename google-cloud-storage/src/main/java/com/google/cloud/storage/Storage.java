@@ -3541,8 +3541,9 @@ public interface Storage extends Service<StorageOptions> {
    * Gets the IAM policy for the provided bucket.
    *
    * <p>It's possible for bindings to be empty and instead have permissions inherited through
-   * Project or Organization IAM Policies. To prevent corrupting policies when performing a {@code
-   * Storage.setIamPolicy}, the ETAG value is used to perform optimistic concurrency.
+   * Project or Organization IAM Policies. To prevent corrupting policies when you update an IAM
+   * policy with {@code Storage.setIamPolicy}, the ETAG value is used to perform optimistic
+   * concurrency.
    *
    * <p>Example of getting the IAM policy for a bucket.
    *
@@ -3560,8 +3561,8 @@ public interface Storage extends Service<StorageOptions> {
   /**
    * Updates the IAM policy on the specified bucket.
    *
-   * <p>To prevent corrupting policies when performing a {@code Storage.setIamPolicy}, the ETAG
-   * value is used to perform optimistic concurrency.
+   * <p>To prevent corrupting policies when you update an IAM policy with {@code
+   * Storage.setIamPolicy}, the ETAG value is used to perform optimistic concurrency.
    *
    * <p>Example of updating the IAM policy on a bucket.
    *
