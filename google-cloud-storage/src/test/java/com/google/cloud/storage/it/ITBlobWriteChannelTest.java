@@ -75,10 +75,6 @@ public final class ITBlobWriteChannelTest {
   public static final TestBench testBench =
       TestBench.newBuilder()
           .setContainerName("blob-write-channel-test")
-          // set a different base uri to prevent collision with conformance tests.
-          // It's possible for ITRetryConformanceTest to finish running and start shutting down
-          // when this test starts so the liveness check passes against the shutting down server.
-          .setBaseUri("http://localhost:9100")
           .build();
 
   @Rule public final TestName testName = new TestName();

@@ -239,6 +239,30 @@ public final class TestBench implements TestRule {
               e.getCause());
         } finally {
           process.destroy();
+          // wait for the server to shutdown
+          runWithRetries(() -> {
+                try {
+                  listRetryTests();
+                } catch (SocketException e) {
+                  // desired result
+                  return null;
+                }
+                throw new NotShutdownException();
+              },
+              RetrySettings.newBuilder()
+                  .setTotalTimeout(Duration.ofSeconds(30))
+                  .setInitialRetryDelay(Duration.ofMillis(500))
+                  .setRetryDelayMultiplier(1.5)
+                  .setMaxRetryDelay(Duration.ofSeconds(5))
+                  .build(),
+              new BasicResultRetryAlgorithm<List<?>>() {
+                @Override
+                public boolean shouldRetry(
+                    Throwable previousThrowable, List<?> previousResponse) {
+                  return previousThrowable instanceof NotShutdownException;
+                }
+              },
+              NanoClock.getDefaultClock());
           if (cleanupStrategy == CleanupStrategy.ALWAYS
               || (success && cleanupStrategy == CleanupStrategy.ONLY_ON_SUCCESS)) {
             Files.delete(errPath);
@@ -388,4 +412,6 @@ public final class TestBench implements TestRule {
           containerName);
     }
   }
+
+  private static final class NotShutdownException extends RuntimeException {}
 }
