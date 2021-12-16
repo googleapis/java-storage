@@ -240,7 +240,8 @@ public final class TestBench implements TestRule {
         } finally {
           process.destroy();
           // wait for the server to shutdown
-          runWithRetries(() -> {
+          runWithRetries(
+              () -> {
                 try {
                   listRetryTests();
                 } catch (SocketException e) {
@@ -257,8 +258,7 @@ public final class TestBench implements TestRule {
                   .build(),
               new BasicResultRetryAlgorithm<List<?>>() {
                 @Override
-                public boolean shouldRetry(
-                    Throwable previousThrowable, List<?> previousResponse) {
+                public boolean shouldRetry(Throwable previousThrowable, List<?> previousResponse) {
                   return previousThrowable instanceof NotShutdownException;
                 }
               },

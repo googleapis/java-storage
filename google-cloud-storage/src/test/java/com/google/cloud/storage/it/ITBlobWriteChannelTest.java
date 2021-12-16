@@ -73,9 +73,7 @@ public final class ITBlobWriteChannelTest {
 
   @ClassRule
   public static final TestBench testBench =
-      TestBench.newBuilder()
-          .setContainerName("blob-write-channel-test")
-          .build();
+      TestBench.newBuilder().setContainerName("blob-write-channel-test").build();
 
   @Rule public final TestName testName = new TestName();
 
