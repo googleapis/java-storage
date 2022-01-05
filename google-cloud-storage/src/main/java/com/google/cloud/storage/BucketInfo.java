@@ -812,7 +812,7 @@ public class BucketInfo implements Serializable {
 
       private final String actionType;
 
-      private LifecycleAction(String actionType) {
+      public LifecycleAction(String actionType) {
         this.actionType = actionType;
       }
 
