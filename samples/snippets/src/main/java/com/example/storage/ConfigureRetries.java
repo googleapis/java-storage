@@ -46,7 +46,7 @@ public final class ConfigureRetries {
 
     StorageOptions alwaysRetryStorageOptions =
         StorageOptions.newBuilder()
-            // Customize retry so all requests will be retried even if they are non-idempotent.
+            // Customize retry so all requests are retried even if they are non-idempotent.
             .setStorageRetryStrategy(StorageRetryStrategy.getUniformStorageRetryStrategy())
             // provide the previously configured retrySettings
             .setRetrySettings(retrySettings)
