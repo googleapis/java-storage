@@ -32,28 +32,27 @@ public final class ConfigureRetries {
   }
 
   static void deleteBlob(String bucketName, String blobName) {
-    // Update the retry settings
+    // Customize retry behavior
     RetrySettings retrySettings =
         StorageOptions.getDefaultRetrySettings()
             .toBuilder()
-            // to set the max number of attempts to 10
+            // Set the max number of attempts to 10 (initial attempt plus 9 retries)
             .setMaxAttempts(10)
-            // to set the backoff multiplier to 3.0
+            // Set the backoff multiplier to 3.0
             .setRetryDelayMultiplier(3.0)
-            // to set the max duration of all attempts to 5 minutes
+            // Set the max duration of all attempts to 5 minutes
             .setTotalTimeout(Duration.ofMinutes(5))
             .build();
 
     StorageOptions alwaysRetryStorageOptions =
         StorageOptions.newBuilder()
-            // Configure our options so all requests will be retried even if they are
-            // non-idempotent.
+            // Customize retry so all requests will be retried even if they are non-idempotent.
             .setStorageRetryStrategy(StorageRetryStrategy.getUniformStorageRetryStrategy())
             // provide the previously configured retrySettings
             .setRetrySettings(retrySettings)
             .build();
 
-    // Instantiate a client with our options
+    // Instantiate a client
     Storage storage = alwaysRetryStorageOptions.getService();
 
     // Delete the blob
