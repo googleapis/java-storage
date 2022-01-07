@@ -1,5 +1,18 @@
 # Changelog
 
+### [2.2.4](https://www.github.com/googleapis/java-storage/compare/v2.2.3...v2.2.4) (2022-01-07)
+
+
+### Bug Fixes
+
+* **java:** run Maven in plain console-friendly mode ([#1301](https://www.github.com/googleapis/java-storage/issues/1301)) ([#1186](https://www.github.com/googleapis/java-storage/issues/1186)) ([1e55dba](https://www.github.com/googleapis/java-storage/commit/1e55dba4cd5111472b9bb05db08ba7e47fafe762))
+* Remove all client side validation for OLM, allow nonspecific lif… ([#1160](https://www.github.com/googleapis/java-storage/issues/1160)) ([5a160ee](https://www.github.com/googleapis/java-storage/commit/5a160eee2b80e3d392df9d73dfc30ca9cd665764))
+
+
+### Dependencies
+
+* update kms.version to v0.94.1 ([#1195](https://www.github.com/googleapis/java-storage/issues/1195)) ([cc999b1](https://www.github.com/googleapis/java-storage/commit/cc999b1ebaba051524ce6131052c824232ccb79a))
+
 ### [2.2.3](https://www.github.com/googleapis/java-storage/compare/v2.2.2...v2.2.3) (2022-01-07)
 
 
