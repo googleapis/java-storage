@@ -1,5 +1,26 @@
 # Changelog
 
+### [2.2.3](https://www.github.com/googleapis/java-storage/compare/v2.2.2...v2.2.3) (2022-01-07)
+
+
+### Bug Fixes
+
+* do not cause a failure when encountering no bindings ([#1177](https://www.github.com/googleapis/java-storage/issues/1177)) ([16c2aef](https://www.github.com/googleapis/java-storage/commit/16c2aef4f09eccee59d1028e3bbf01c65b5982d6))
+* **java:** add -ntp flag to native image testing command ([#1169](https://www.github.com/googleapis/java-storage/issues/1169)) ([b8a6395](https://www.github.com/googleapis/java-storage/commit/b8a6395fcaa34423d42a90bd42f71809f89a6c3b))
+* update retry handling to retry idempotent requests that encounter unexpected EOF while parsing json responses ([#1155](https://www.github.com/googleapis/java-storage/issues/1155)) ([8fbe6ef](https://www.github.com/googleapis/java-storage/commit/8fbe6efab969d699e9ba9e5448db7a6ee10c0572))
+
+
+### Documentation
+
+* add new sample storage_configure_retries ([#1152](https://www.github.com/googleapis/java-storage/issues/1152)) ([8634c4b](https://www.github.com/googleapis/java-storage/commit/8634c4b5cb88d2818378558427170ecf6c403df5))
+* update comments ([#1188](https://www.github.com/googleapis/java-storage/issues/1188)) ([d58e67c](https://www.github.com/googleapis/java-storage/commit/d58e67c217f38ca7b1926882ec48bd7b0c351ea7))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.6.0 ([#1191](https://www.github.com/googleapis/java-storage/issues/1191)) ([3b384cf](https://www.github.com/googleapis/java-storage/commit/3b384cf46876610ce33f2842ee8e9fc13e08443c))
+* update dependency org.apache.httpcomponents:httpcore to v4.4.15 ([#1171](https://www.github.com/googleapis/java-storage/issues/1171)) ([57f7a74](https://www.github.com/googleapis/java-storage/commit/57f7a743ee042c52261cd388fb0aec48c84e5d32))
+
 ### [2.2.2](https://www.github.com/googleapis/java-storage/compare/v2.2.1...v2.2.2) (2021-12-06)
 
 
