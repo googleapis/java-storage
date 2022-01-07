@@ -15,6 +15,7 @@
  */
 
 package com.example.storage;
+
 // [START storage_configure_retries]
 
 import com.google.api.gax.retrying.RetrySettings;
