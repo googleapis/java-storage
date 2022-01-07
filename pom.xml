@@ -4,7 +4,7 @@
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-parent</artifactId>
   <packaging>pom</packaging>
-  <version>2.2.2-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.2.4-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
   <name>Storage Parent</name>
   <url>https://github.com/googleapis/java-storage</url>
   <description>
@@ -14,7 +14,7 @@
   <parent>
     <groupId>com.google.cloud</groupId>
     <artifactId>google-cloud-shared-config</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.4</version>
   </parent>
 
   <developers>
@@ -54,7 +54,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <github.global.server>github</github.global.server>
     <site.installationModule>google-cloud-storage-parent</site.installationModule>
-    <google.cloud.shared-dependencies.version>2.5.0</google.cloud.shared-dependencies.version>
+    <google.cloud.shared-dependencies.version>2.6.0</google.cloud.shared-dependencies.version>
   </properties>
 
   <dependencyManagement>
@@ -68,9 +68,14 @@
       </dependency>
 
       <dependency>
+        <groupId>com.google.cloud</groupId>
+        <artifactId>google-cloud-storage</artifactId>
+        <version>2.2.4-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+      </dependency>
+      <dependency>
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-storage</artifactId>
-        <version>v1-rev20211018-1.32.1</version>
+        <version>v1-rev20211201-1.32.1</version>
       </dependency>
       <dependency>
         <groupId>org.easymock</groupId>
@@ -81,7 +86,7 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>4.1.0</version>
+        <version>4.2.0</version>
         <scope>test</scope>
         <exclusions>
           <exclusion>
@@ -100,22 +105,22 @@
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>proto-google-cloud-storage-v2</artifactId>
-        <version>2.2.2-alpha-SNAPSHOT</version><!-- {x-version-update:proto-google-cloud-storage-v2:current} -->
+        <version>2.2.4-alpha-SNAPSHOT</version><!-- {x-version-update:proto-google-cloud-storage-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>grpc-google-cloud-storage-v2</artifactId>
-        <version>2.2.2-alpha-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
+        <version>2.2.4-alpha-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.api.grpc</groupId>
         <artifactId>gapic-google-cloud-storage-v2</artifactId>
-        <version>2.2.2-alpha-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
+        <version>2.2.4-alpha-SNAPSHOT</version><!-- {x-version-update:grpc-google-cloud-storage-v2:current} -->
       </dependency>
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-conformance-tests</artifactId>
-        <version>0.2.4</version>
+        <version>0.2.5</version>
         <scope>test</scope>
         <exclusions>
           <exclusion>
@@ -139,7 +144,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
-        <version>4.4.14</version>
+        <version>4.4.15</version>
         <scope>test</scope>
       </dependency>
 
@@ -177,10 +182,10 @@
   </build>
 
   <modules>
-    <module>proto-google-cloud-storage-v2</module>
-    <module>grpc-google-cloud-storage-v2</module>
-    <module>gapic-google-cloud-storage-v2</module>
     <module>google-cloud-storage</module>
+    <module>grpc-google-cloud-storage-v2</module>
+    <module>proto-google-cloud-storage-v2</module>
+    <module>gapic-google-cloud-storage-v2</module>
   </modules>
 
   <profiles>

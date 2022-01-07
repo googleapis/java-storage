@@ -2,43 +2,8 @@
 <!-- see https://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
     <difference>
-        <differenceType>7012</differenceType>
-        <className>com/google/cloud/storage/Storage</className>
-        <method>*.Blob createFrom(*.BlobInfo, java.nio.file.Path, *.Storage$BlobWriteOption[])</method>
-    </difference>
-    <difference>
-        <differenceType>7012</differenceType>
-        <className>com/google/cloud/storage/Storage</className>
-        <method>*.Blob createFrom(*.BlobInfo, java.io.InputStream, *.Storage$BlobWriteOption[])</method>
-    </difference>
-    <difference>
-        <differenceType>7012</differenceType>
-        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>*.StorageObject writeWithResponse(*.String, byte[], int, long, int, boolean)</method>
-    </difference>
-    <difference>
         <className>com/google/cloud/storage/BucketInfo$LifecycleRule$LifecycleAction</className>
         <method>BucketInfo$LifecycleRule$LifecycleAction()</method>
         <differenceType>7004</differenceType>
-    </difference>
-    <difference>
-        <className>com/google/cloud/storage/BucketInfo$Builder</className>
-        <method>com.google.cloud.storage.BucketInfo$Builder deleteLifecycleRules()</method>
-        <differenceType>7013</differenceType>
-    </difference>
-    <difference>
-        <className>com/google/cloud/storage/BucketInfo$Builder</className>
-        <method>com.google.cloud.storage.BucketInfo$Builder setUpdateTime(java.lang.Long)</method>
-        <differenceType>7013</differenceType>
-    </difference>
-    <difference>
-        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>long getCurrentUploadOffset(java.lang.String)</method>
-        <differenceType>7012</differenceType>
-    </difference>
-    <difference>
-        <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
-        <method>com.google.api.services.storage.model.StorageObject queryCompletedResumableUpload(java.lang.String, long)</method>
-        <differenceType>7012</differenceType>
     </difference>
 </differences>

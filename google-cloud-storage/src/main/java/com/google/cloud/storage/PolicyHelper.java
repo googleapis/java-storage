@@ -34,8 +34,8 @@ class PolicyHelper {
   static Policy convertFromApiPolicy(com.google.api.services.storage.model.Policy apiPolicy) {
     Policy.Builder policyBuilder = Policy.newBuilder();
     List<Bindings> bindings = apiPolicy.getBindings();
+    ImmutableList.Builder<Binding> coreBindings = ImmutableList.builder();
     if (null != bindings && !bindings.isEmpty()) {
-      ImmutableList.Builder<Binding> coreBindings = ImmutableList.builder();
       for (Bindings binding : bindings) {
         Binding.Builder bindingBuilder = Binding.newBuilder();
         bindingBuilder.setRole(binding.getRole());
@@ -49,10 +49,8 @@ class PolicyHelper {
         }
         coreBindings.add(bindingBuilder.build());
       }
-      policyBuilder.setBindings(coreBindings.build());
-    } else {
-      throw new IllegalStateException("Missing required bindings.");
     }
+    policyBuilder.setBindings(coreBindings.build());
     return policyBuilder.setEtag(apiPolicy.getEtag()).setVersion(apiPolicy.getVersion()).build();
   }
 

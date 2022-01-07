@@ -67,6 +67,7 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Cors;
+import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
@@ -116,7 +117,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Key;
@@ -216,6 +216,7 @@ public class ITStorageTest {
       ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
   @Rule public final TestName testName = new TestName();
+  @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
 
   @BeforeClass
   public static void beforeClass() throws IOException {
@@ -3860,13 +3861,13 @@ public class ITStorageTest {
     BlobId blobId = BlobId.of(BUCKET, blobPath);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
-    Random rand = new Random(1234567890);
-    String randString = randString(rand, contentSize);
-    final byte[] randStringBytes = randString.getBytes(StandardCharsets.UTF_8);
+    ByteBuffer contentGen1 = dataGeneration.randByteBuffer(contentSize);
+    ByteBuffer contentGen2 = dataGeneration.randByteBuffer(contentSize);
+    ByteBuffer contentGen2Expected = contentGen2.duplicate();
     Storage storage = StorageOptions.getDefaultInstance().getService();
     WriteChannel ww = storage.writer(blobInfo);
     ww.setChunkSize(chunkSize);
-    ww.write(ByteBuffer.wrap(randStringBytes));
+    ww.write(contentGen1);
     ww.close();
 
     Blob blobGen1 = storage.get(blobId);
@@ -3926,8 +3927,7 @@ public class ITStorageTest {
     try (WriteChannel w = testStorage.writer(blobGen1, BlobWriteOption.generationMatch())) {
       w.setChunkSize(chunkSize);
 
-      ByteBuffer buffer = ByteBuffer.wrap(randStringBytes);
-      w.write(buffer);
+      w.write(contentGen2);
     }
 
     assertTrue("Expected an exception to be thrown for the last chunk", exceptionThrown.get());
@@ -3937,18 +3937,6 @@ public class ITStorageTest {
     assertNotEquals(blobInfo.getGeneration(), blobGen2.getGeneration());
     ByteArrayOutputStream actualData = new ByteArrayOutputStream();
     blobGen2.downloadTo(actualData);
-    assertArrayEquals(randStringBytes, actualData.toByteArray());
-  }
-
-  private static String randString(Random rand, int length) {
-    final StringBuilder sb = new StringBuilder();
-    while (sb.length() < length) {
-      int i = rand.nextInt('z');
-      char c = (char) i;
-      if (Character.isLetter(c) || Character.isDigit(c)) {
-        sb.append(c);
-      }
-    }
-    return sb.toString();
+    assertEquals(contentGen2Expected, ByteBuffer.wrap(actualData.toByteArray()));
   }
 }
