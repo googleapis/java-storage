@@ -314,6 +314,10 @@ public class BucketInfoTest {
     for (DeleteRule delRule : rules) {
       assertEquals(delRule, DeleteRule.fromPb(delRule.toPb()));
     }
+    Rule unsupportedRule =
+        new Rule().setAction(new Rule.Action().setType("This action doesn't exist"));
+    DeleteRule.fromPb(
+        unsupportedRule); // if this doesn't throw an exception, unsupported rules work
   }
 
   @Test
@@ -363,6 +367,17 @@ public class BucketInfoTest {
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
+
+    Rule unsupportedRule =
+        new LifecycleRule(
+                LifecycleAction.newLifecycleAction("This action type doesn't exist"),
+                LifecycleCondition.newBuilder().setAge(10).build())
+            .toPb();
+    unsupportedRule.setAction(
+        unsupportedRule.getAction().setType("This action type also doesn't exist"));
+
+    LifecycleRule.fromPb(
+        unsupportedRule); // If this doesn't throw an exception, unsupported rules are working
   }
 
   @Test
