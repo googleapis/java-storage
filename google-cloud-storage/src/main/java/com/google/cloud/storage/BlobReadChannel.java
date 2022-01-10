@@ -18,8 +18,8 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.RetryHelper.runWithRetries;
 
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
-import com.google.cloud.ExceptionHandler;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
@@ -121,13 +121,13 @@ class BlobReadChannel implements ReadChannel {
       }
       final int toRead = Math.max(byteBuffer.remaining(), chunkSize);
       try {
-        ExceptionHandler exceptionHandler =
+        ResultRetryAlgorithm<?> algorithm =
             retryAlgorithmManager.getForObjectsGet(storageObject, requestOptions);
         Tuple<String, byte[]> result =
             runWithRetries(
                 () -> storageRpc.read(storageObject, requestOptions, position, toRead),
                 serviceOptions.getRetrySettings(),
-                exceptionHandler,
+                algorithm,
                 serviceOptions.getClock());
         String etag = result.x();
         byte[] bytes = result.y();

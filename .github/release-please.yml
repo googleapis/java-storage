@@ -18,3 +18,7 @@ branches:
     handleGHRelease: true
     releaseType: java-yoshi
     branch: java7
+  - bumpMinorPreMajor: true
+    handleGHRelease: true
+    releaseType: java-yoshi
+    branch: 2.1.x

@@ -109,7 +109,7 @@ public interface WriteObjectRequestOrBuilder
    * written.
    * In the first `WriteObjectRequest` of a `WriteObject()` action, it
    * indicates the initial offset for the `Write()` call. The value **must** be
-   * equal to the `committed_size` that a call to `QueryWriteStatus()` would
+   * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
    * return (0 if this is the first write to the object).
    * On subsequent calls, this value **must** be no larger than the sum of the
    * first `write_offset` and the sizes of all `data` chunks sent previously on

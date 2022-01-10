@@ -29,7 +29,21 @@ import javax.annotation.Generated;
 
 // AUTO-GENERATED DOCUMENTATION AND CLASS.
 /**
- * Service Description: Manages Google Cloud Storage resources.
+ * Service Description: ## API Overview and Naming Syntax
+ *
+ * <p>The GCS gRPC API allows applications to read and write data through the abstractions of
+ * buckets and objects. For a description of these abstractions please see
+ * https://cloud.google.com/storage/docs.
+ *
+ * <p>Resources are named as follows: - Projects are referred to as they are defined by the Resource
+ * Manager API, using strings like `projects/123456` or `projects/my-string-id`. - Buckets are named
+ * using string names of the form: `projects/{project}/buckets/{bucket}` For globally unique
+ * buckets, `_` may be substituted for the project. - Objects are uniquely identified by their name
+ * along with the name of the bucket they belong to, as separate strings in this API. For example:
+ *
+ * <p>ReadObjectRequest { bucket: 'projects/_/buckets/my-bucket' object: 'my-object' } Note that
+ * object names can contain `/` characters, which are treated as any other character (no special
+ * directory semantics).
  *
  * <p>This class provides the ability to make remote calls to the backing service through method
  * calls that map to API methods. Sample code to get started:
@@ -190,7 +204,7 @@ public class StorageClient implements BackgroundResource {
    * that method an `WriteObjectSpec.` They should then attach the returned `upload_id` to the first
    * message of each following call to `Create`. If there is an error or the connection is broken
    * during the resumable `Create()`, the client should check the status of the `Create()` by
-   * calling `QueryWriteStatus()` and continue writing from the returned `committed_size`. This may
+   * calling `QueryWriteStatus()` and continue writing from the returned `persisted_size`. This may
    * be less than the amount of data the client previously sent.
    *
    * <p>The service will not view the object as complete until the client has sent a
@@ -294,7 +308,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Determines the `committed_size` for an object that is being written, which can then be used as
+   * Determines the `persisted_size` for an object that is being written, which can then be used as
    * the `write_offset` for the next `Write()` call.
    *
    * <p>If the object does not exist (i.e., the object has been deleted, or the first `Write()` has
@@ -303,7 +317,7 @@ public class StorageClient implements BackgroundResource {
    * <p>The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how
    * much data has been processed for this object. This is useful if the client is buffering data
    * and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()`
-   * calls for a given object name, the sequence of returned `committed_size` values will be
+   * calls for a given object name, the sequence of returned `persisted_size` values will be
    * non-decreasing.
    *
    * <p>Sample code:
@@ -327,7 +341,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Determines the `committed_size` for an object that is being written, which can then be used as
+   * Determines the `persisted_size` for an object that is being written, which can then be used as
    * the `write_offset` for the next `Write()` call.
    *
    * <p>If the object does not exist (i.e., the object has been deleted, or the first `Write()` has
@@ -336,7 +350,7 @@ public class StorageClient implements BackgroundResource {
    * <p>The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how
    * much data has been processed for this object. This is useful if the client is buffering data
    * and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()`
-   * calls for a given object name, the sequence of returned `committed_size` values will be
+   * calls for a given object name, the sequence of returned `persisted_size` values will be
    * non-decreasing.
    *
    * <p>Sample code:
@@ -362,7 +376,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Determines the `committed_size` for an object that is being written, which can then be used as
+   * Determines the `persisted_size` for an object that is being written, which can then be used as
    * the `write_offset` for the next `Write()` call.
    *
    * <p>If the object does not exist (i.e., the object has been deleted, or the first `Write()` has
@@ -371,7 +385,7 @@ public class StorageClient implements BackgroundResource {
    * <p>The client &#42;&#42;may&#42;&#42; call `QueryWriteStatus()` at any time to determine how
    * much data has been processed for this object. This is useful if the client is buffering data
    * and needs to know which data can be safely evicted. For any sequence of `QueryWriteStatus()`
-   * calls for a given object name, the sequence of returned `committed_size` values will be
+   * calls for a given object name, the sequence of returned `persisted_size` values will be
    * non-decreasing.
    *
    * <p>Sample code:

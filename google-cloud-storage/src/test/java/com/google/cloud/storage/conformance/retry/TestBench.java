@@ -30,6 +30,8 @@ import com.google.api.core.NanoClock;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.RetryHelper.RetryHelperException;
+import com.google.cloud.conformance.storage.v1.InstructionList;
+import com.google.cloud.conformance.storage.v1.Method;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -60,7 +62,7 @@ import org.threeten.bp.Duration;
  *
  * <p>This rule expects to be bound as an {@link org.junit.ClassRule @ClassRule} field.
  */
-final class TestBench implements TestRule {
+public final class TestBench implements TestRule {
 
   private static final Logger LOGGER = Logger.getLogger(TestBench.class.getName());
 
@@ -69,6 +71,7 @@ final class TestBench implements TestRule {
   private final String dockerImageName;
   private final String dockerImageTag;
   private final CleanupStrategy cleanupStrategy;
+  private final String containerName;
 
   private final Gson gson;
   private final HttpRequestFactory requestFactory;
@@ -78,12 +81,14 @@ final class TestBench implements TestRule {
       String baseUri,
       String dockerImageName,
       String dockerImageTag,
-      CleanupStrategy cleanupStrategy) {
+      CleanupStrategy cleanupStrategy,
+      String containerName) {
     this.ignorePullError = ignorePullError;
     this.baseUri = baseUri;
     this.dockerImageName = dockerImageName;
     this.dockerImageTag = dockerImageTag;
     this.cleanupStrategy = cleanupStrategy;
+    this.containerName = containerName;
     this.gson = new Gson();
     this.requestFactory =
         new NetHttpTransport.Builder()
@@ -92,15 +97,17 @@ final class TestBench implements TestRule {
                 request -> {
                   request.setCurlLoggingEnabled(false);
                   request.getHeaders().setAccept("application/json");
-                  request.getHeaders().setUserAgent("java-conformance-tests/");
+                  request
+                      .getHeaders()
+                      .setUserAgent(String.format("%s/ test-bench/", this.containerName));
                 });
   }
 
-  String getBaseUri() {
+  public String getBaseUri() {
     return baseUri;
   }
 
-  RetryTestResource createRetryTest(RetryTestResource retryTestResource) throws IOException {
+  public RetryTestResource createRetryTest(RetryTestResource retryTestResource) throws IOException {
     GenericUrl url = new GenericUrl(baseUri + "/retry_test");
     String jsonString = gson.toJson(retryTestResource);
     HttpContent content =
@@ -112,14 +119,14 @@ final class TestBench implements TestRule {
     return result;
   }
 
-  void deleteRetryTest(RetryTestResource retryTestResource) throws IOException {
+  public void deleteRetryTest(RetryTestResource retryTestResource) throws IOException {
     GenericUrl url = new GenericUrl(baseUri + "/retry_test/" + retryTestResource.id);
     HttpRequest req = requestFactory.buildDeleteRequest(url);
     HttpResponse resp = req.execute();
     resp.disconnect();
   }
 
-  RetryTestResource getRetryTest(RetryTestResource retryTestResource) throws IOException {
+  public RetryTestResource getRetryTest(RetryTestResource retryTestResource) throws IOException {
     GenericUrl url = new GenericUrl(baseUri + "/retry_test/" + retryTestResource.id);
     HttpRequest req = requestFactory.buildGetRequest(url);
     HttpResponse resp = req.execute();
@@ -128,7 +135,7 @@ final class TestBench implements TestRule {
     return result;
   }
 
-  List<RetryTestResource> listRetryTests() throws IOException {
+  public List<RetryTestResource> listRetryTests() throws IOException {
     GenericUrl url = new GenericUrl(baseUri + "/retry_tests");
     HttpRequest req = requestFactory.buildGetRequest(url);
     HttpResponse resp = req.execute();
@@ -147,7 +154,8 @@ final class TestBench implements TestRule {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
-        Path tempDirectory = Files.createTempDirectory("retry-conformance-server");
+        String fullContainerName = String.format("storage-testbench_%s", containerName);
+        Path tempDirectory = Files.createTempDirectory(fullContainerName);
         Path outPath = tempDirectory.resolve("stdout");
         Path errPath = tempDirectory.resolve("stderr");
 
@@ -190,7 +198,7 @@ final class TestBench implements TestRule {
                     "--rm",
                     "--publish",
                     port + ":9000",
-                    "--name=retry-conformance-server",
+                    String.format("--name=%s", fullContainerName),
                     dockerImage)
                 .redirectOutput(outFile)
                 .redirectError(errFile)
@@ -231,6 +239,30 @@ final class TestBench implements TestRule {
               e.getCause());
         } finally {
           process.destroy();
+          // wait for the server to shutdown
+          runWithRetries(
+              () -> {
+                try {
+                  listRetryTests();
+                } catch (SocketException e) {
+                  // desired result
+                  return null;
+                }
+                throw new NotShutdownException();
+              },
+              RetrySettings.newBuilder()
+                  .setTotalTimeout(Duration.ofSeconds(30))
+                  .setInitialRetryDelay(Duration.ofMillis(500))
+                  .setRetryDelayMultiplier(1.5)
+                  .setMaxRetryDelay(Duration.ofSeconds(5))
+                  .build(),
+              new BasicResultRetryAlgorithm<List<?>>() {
+                @Override
+                public boolean shouldRetry(Throwable previousThrowable, List<?> previousResponse) {
+                  return previousThrowable instanceof NotShutdownException;
+                }
+              },
+              NanoClock.getDefaultClock());
           if (cleanupStrategy == CleanupStrategy.ALWAYS
               || (success && cleanupStrategy == CleanupStrategy.ONLY_ON_SUCCESS)) {
             Files.delete(errPath);
@@ -261,14 +293,31 @@ final class TestBench implements TestRule {
     }
   }
 
-  static Builder newBuilder() {
+  public static Builder newBuilder() {
     return new Builder();
   }
 
-  static final class RetryTestResource {
+  public static final class RetryTestResource {
     public String id;
     public Boolean completed;
     public JsonObject instructions;
+
+    public RetryTestResource() {}
+
+    public RetryTestResource(JsonObject instructions) {
+      this.instructions = instructions;
+    }
+
+    public static RetryTestResource newRetryTestResource(Method m, InstructionList l) {
+      RetryTestResource resource = new RetryTestResource();
+      resource.instructions = new JsonObject();
+      JsonArray instructions = new JsonArray();
+      for (String s : l.getInstructionsList()) {
+        instructions.add(s);
+      }
+      resource.instructions.add(m.getName(), instructions);
+      return resource;
+    }
 
     @Override
     public String toString() {
@@ -284,36 +333,46 @@ final class TestBench implements TestRule {
     }
   }
 
-  static final class Builder {
+  public static final class Builder {
     private static final String DEFAULT_BASE_URI = "http://localhost:9000";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
-    private static final String DEFAULT_IMAGE_TAG = "v0.8.0";
+    private static final String DEFAULT_IMAGE_TAG = "v0.10.0";
+    private static final String DEFAULT_CONTAINER_NAME = "default";
 
     private boolean ignorePullError;
     private String baseUri;
     private String dockerImageName;
     private String dockerImageTag;
     private CleanupStrategy cleanupStrategy;
+    private String containerName;
 
-    public Builder() {
-      this(false, DEFAULT_BASE_URI, DEFAULT_IMAGE_NAME, DEFAULT_IMAGE_TAG, CleanupStrategy.ALWAYS);
+    private Builder() {
+      this(
+          false,
+          DEFAULT_BASE_URI,
+          DEFAULT_IMAGE_NAME,
+          DEFAULT_IMAGE_TAG,
+          CleanupStrategy.ALWAYS,
+          DEFAULT_CONTAINER_NAME);
     }
 
-    public Builder(
+    private Builder(
         boolean ignorePullError,
         String baseUri,
         String dockerImageName,
         String dockerImageTag,
-        CleanupStrategy cleanupStrategy) {
+        CleanupStrategy cleanupStrategy,
+        String containerName) {
       this.ignorePullError = ignorePullError;
       this.baseUri = baseUri;
       this.dockerImageName = dockerImageName;
       this.dockerImageTag = dockerImageTag;
       this.cleanupStrategy = cleanupStrategy;
+      this.containerName = containerName;
     }
 
-    public Builder setCleanupStraegy(CleanupStrategy cleanupStrategy) {
+    public Builder setCleanupStrategy(CleanupStrategy cleanupStrategy) {
       this.cleanupStrategy = requireNonNull(cleanupStrategy, "cleanupStrategy must be non null");
       return this;
     }
@@ -338,9 +397,21 @@ final class TestBench implements TestRule {
       return this;
     }
 
+    public Builder setContainerName(String containerName) {
+      this.containerName = requireNonNull(containerName, "containerName must be non null");
+      return this;
+    }
+
     public TestBench build() {
       return new TestBench(
-          ignorePullError, baseUri, dockerImageName, dockerImageTag, cleanupStrategy);
+          ignorePullError,
+          baseUri,
+          dockerImageName,
+          dockerImageTag,
+          cleanupStrategy,
+          containerName);
     }
   }
+
+  private static final class NotShutdownException extends RuntimeException {}
 }

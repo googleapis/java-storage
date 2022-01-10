@@ -20,9 +20,9 @@ import static com.google.cloud.RetryHelper.runWithRetries;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.callable;
 
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.BaseWriteChannel;
-import com.google.cloud.ExceptionHandler;
 import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.WriteChannel;
@@ -33,7 +33,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 /** Write channel implementation to upload Google Cloud Storage blobs. */
 class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
 
-  private final ExceptionHandler exceptionHandlerForWrite;
+  private final ResultRetryAlgorithm<?> algorithmForWrite;
   // Detect if flushBuffer() is being retried or not.
   // TODO: I don't think this is thread safe, and there's probably a better way to detect a retry
   // occuring.
@@ -47,9 +47,9 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
       StorageOptions storageOptions,
       BlobInfo blobInfo,
       String uploadId,
-      ExceptionHandler exceptionHandlerForWrite) {
+      ResultRetryAlgorithm<?> algorithmForWrite) {
     super(storageOptions, blobInfo, uploadId);
-    this.exceptionHandlerForWrite = exceptionHandlerForWrite;
+    this.algorithmForWrite = algorithmForWrite;
   }
 
   boolean isRetrying() {
@@ -269,7 +269,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                 }
               }),
           getOptions().getRetrySettings(),
-          exceptionHandlerForWrite,
+          algorithmForWrite,
           getOptions().getClock());
     } catch (RetryHelper.RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
@@ -278,7 +278,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
 
   protected StateImpl.Builder stateBuilder() {
     return StateImpl.builder(getOptions(), getEntity(), getUploadId())
-        .setResultRetryAlgorithm(exceptionHandlerForWrite);
+        .setResultRetryAlgorithm(algorithmForWrite);
   }
 
   static Builder newBuilder() {
@@ -289,7 +289,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
     private StorageOptions storageOptions;
     private BlobInfo blobInfo;
     private Supplier<@NonNull String> uploadIdSupplier;
-    private ExceptionHandler putExceptionHandler;
+    private ResultRetryAlgorithm<?> algorithmForWrite;
 
     public Builder setStorageOptions(StorageOptions storageOptions) {
       this.storageOptions = storageOptions;
@@ -306,8 +306,8 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
       return this;
     }
 
-    public Builder setPutExceptionHandler(ExceptionHandler putExceptionHandler) {
-      this.putExceptionHandler = putExceptionHandler;
+    public Builder setAlgorithmForWrite(ResultRetryAlgorithm<?> algorithmForWrite) {
+      this.algorithmForWrite = algorithmForWrite;
       return this;
     }
 
@@ -317,7 +317,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
           requireNonNull(storageOptions, "storageOptions must be non null"),
           blobInfo,
           requireNonNull(uploadId, "uploadId must be non null"),
-          requireNonNull(putExceptionHandler, "putExceptionHandler must be non null"));
+          requireNonNull(algorithmForWrite, "algorithmForWrite must be non null"));
     }
   }
 
@@ -325,22 +325,22 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
 
     private static final long serialVersionUID = -9028324143780151286L;
 
-    private final ExceptionHandler exceptionHandler;
+    private final ResultRetryAlgorithm<?> algorithmForWrite;
 
     StateImpl(Builder builder) {
       super(builder);
-      this.exceptionHandler = builder.exceptionHandler;
+      this.algorithmForWrite = builder.algorithmForWrite;
     }
 
     static class Builder extends BaseWriteChannel.BaseState.Builder<StorageOptions, BlobInfo> {
-      private ExceptionHandler exceptionHandler;
+      private ResultRetryAlgorithm<?> algorithmForWrite;
 
       private Builder(StorageOptions options, BlobInfo blobInfo, String uploadId) {
         super(options, blobInfo, uploadId);
       }
 
-      public Builder setResultRetryAlgorithm(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
+      public Builder setResultRetryAlgorithm(ResultRetryAlgorithm<?> algorithmForWrite) {
+        this.algorithmForWrite = algorithmForWrite;
         return this;
       }
 
@@ -362,7 +362,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                 .setStorageOptions(serviceOptions)
                 .setBlobInfo(entity)
                 .setUploadIdSupplier(() -> uploadId)
-                .setPutExceptionHandler(exceptionHandler)
+                .setAlgorithmForWrite(algorithmForWrite)
                 .build();
         channel.restore(this);
         return channel;

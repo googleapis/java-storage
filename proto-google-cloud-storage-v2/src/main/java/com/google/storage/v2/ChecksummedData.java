@@ -145,7 +145,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
    * If set, the CRC32C digest of the content field.
    * </pre>
    *
-   * <code>fixed32 crc32c = 2;</code>
+   * <code>optional fixed32 crc32c = 2;</code>
    *
    * @return Whether the crc32c field is set.
    */
@@ -160,7 +160,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
    * If set, the CRC32C digest of the content field.
    * </pre>
    *
-   * <code>fixed32 crc32c = 2;</code>
+   * <code>optional fixed32 crc32c = 2;</code>
    *
    * @return The crc32c.
    */
@@ -574,7 +574,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * If set, the CRC32C digest of the content field.
      * </pre>
      *
-     * <code>fixed32 crc32c = 2;</code>
+     * <code>optional fixed32 crc32c = 2;</code>
      *
      * @return Whether the crc32c field is set.
      */
@@ -589,7 +589,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * If set, the CRC32C digest of the content field.
      * </pre>
      *
-     * <code>fixed32 crc32c = 2;</code>
+     * <code>optional fixed32 crc32c = 2;</code>
      *
      * @return The crc32c.
      */
@@ -604,7 +604,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * If set, the CRC32C digest of the content field.
      * </pre>
      *
-     * <code>fixed32 crc32c = 2;</code>
+     * <code>optional fixed32 crc32c = 2;</code>
      *
      * @param value The crc32c to set.
      * @return This builder for chaining.
@@ -622,7 +622,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * If set, the CRC32C digest of the content field.
      * </pre>
      *
-     * <code>fixed32 crc32c = 2;</code>
+     * <code>optional fixed32 crc32c = 2;</code>
      *
      * @return This builder for chaining.
      */
