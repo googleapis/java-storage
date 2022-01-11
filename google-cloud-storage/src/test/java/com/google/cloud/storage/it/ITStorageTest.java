@@ -69,6 +69,7 @@ import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.HmacKey;
+import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
@@ -2426,8 +2427,11 @@ public class ITStorageTest {
 
   @Test
   public void testHmacKey() {
-    ServiceAccount serviceAccount = ServiceAccount.of(System.getenv("IT_SERVICE_ACCOUNT_EMAIL"));
+    String serviceAccountEmail = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
+    assertNotNull("Unable to determine service account email", serviceAccountEmail);
+    ServiceAccount serviceAccount = ServiceAccount.of(serviceAccountEmail);
     try {
+      cleanUpHmacKeys(serviceAccount);
 
       HmacKey hmacKey = storage.createHmacKey(serviceAccount);
       String secretKey = hmacKey.getSecretKey();
@@ -2500,10 +2504,18 @@ public class ITStorageTest {
 
       assertEquals(2, Iterators.size(metadatas.getValues().iterator()));
     } finally {
-      Page<HmacKey.HmacKeyMetadata> metadatas =
-          storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
-      for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
-        storage.updateHmacKeyState(hmacKeyMetadata, HmacKey.HmacKeyState.INACTIVE);
+      cleanUpHmacKeys(serviceAccount);
+    }
+  }
+
+  private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
+    Page<HmacKey.HmacKeyMetadata> metadatas =
+        storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
+    for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
+      if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
+        hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
+      }
+      if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
         storage.deleteHmacKey(hmacKeyMetadata);
       }
     }
