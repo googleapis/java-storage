@@ -1,5 +1,5 @@
 {
-  "name": "storage",
+  "api_shortname": "storage",
   "name_pretty": "Cloud Storage",
   "product_documentation": "https://cloud.google.com/storage",
   "client_documentation": "https://cloud.google.com/java/docs/reference/google-cloud-storage/latest/history",
