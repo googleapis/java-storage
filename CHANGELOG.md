@@ -1,5 +1,85 @@
 # Changelog
 
+### [2.2.3](https://www.github.com/googleapis/java-storage/compare/v2.2.2...v2.2.3) (2022-01-07)
+
+
+### Bug Fixes
+
+* do not cause a failure when encountering no bindings ([#1177](https://www.github.com/googleapis/java-storage/issues/1177)) ([16c2aef](https://www.github.com/googleapis/java-storage/commit/16c2aef4f09eccee59d1028e3bbf01c65b5982d6))
+* **java:** add -ntp flag to native image testing command ([#1169](https://www.github.com/googleapis/java-storage/issues/1169)) ([b8a6395](https://www.github.com/googleapis/java-storage/commit/b8a6395fcaa34423d42a90bd42f71809f89a6c3b))
+* update retry handling to retry idempotent requests that encounter unexpected EOF while parsing json responses ([#1155](https://www.github.com/googleapis/java-storage/issues/1155)) ([8fbe6ef](https://www.github.com/googleapis/java-storage/commit/8fbe6efab969d699e9ba9e5448db7a6ee10c0572))
+
+
+### Documentation
+
+* add new sample storage_configure_retries ([#1152](https://www.github.com/googleapis/java-storage/issues/1152)) ([8634c4b](https://www.github.com/googleapis/java-storage/commit/8634c4b5cb88d2818378558427170ecf6c403df5))
+* update comments ([#1188](https://www.github.com/googleapis/java-storage/issues/1188)) ([d58e67c](https://www.github.com/googleapis/java-storage/commit/d58e67c217f38ca7b1926882ec48bd7b0c351ea7))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.6.0 ([#1191](https://www.github.com/googleapis/java-storage/issues/1191)) ([3b384cf](https://www.github.com/googleapis/java-storage/commit/3b384cf46876610ce33f2842ee8e9fc13e08443c))
+* update dependency org.apache.httpcomponents:httpcore to v4.4.15 ([#1171](https://www.github.com/googleapis/java-storage/issues/1171)) ([57f7a74](https://www.github.com/googleapis/java-storage/commit/57f7a743ee042c52261cd388fb0aec48c84e5d32))
+
+### [2.2.2](https://www.github.com/googleapis/java-storage/compare/v2.2.1...v2.2.2) (2021-12-06)
+
+
+### Bug Fixes
+
+* update StorageOptions to not overwrite any previously set host ([#1142](https://www.github.com/googleapis/java-storage/issues/1142)) ([05375c0](https://www.github.com/googleapis/java-storage/commit/05375c0b9b6f9fde2e6cefb1af6a695aa3b01732))
+
+
+### Documentation
+
+* Add comments to GCS gRPC API proto spec to describe how naming work ([#1139](https://www.github.com/googleapis/java-storage/issues/1139)) ([417c525](https://www.github.com/googleapis/java-storage/commit/417c5250eb7ad1a7b04a055a39d72e6536a63e18))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20211201-1.32.1 ([#1165](https://www.github.com/googleapis/java-storage/issues/1165)) ([9031836](https://www.github.com/googleapis/java-storage/commit/90318368e69d7677c49e985eb58ff1b61d878ec9))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.5.1 ([#1163](https://www.github.com/googleapis/java-storage/issues/1163)) ([feca2c6](https://www.github.com/googleapis/java-storage/commit/feca2c6342786ef3fb699c459067c015bd374a13))
+* update kms.version to v0.94.0 ([#1164](https://www.github.com/googleapis/java-storage/issues/1164)) ([8653783](https://www.github.com/googleapis/java-storage/commit/86537836a3b96f369e1cad59c692d350047414f7))
+
+### [2.2.1](https://www.github.com/googleapis/java-storage/compare/v2.2.0...v2.2.1) (2021-11-15)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.5.0 ([#1146](https://www.github.com/googleapis/java-storage/issues/1146)) ([a5d13a9](https://www.github.com/googleapis/java-storage/commit/a5d13a97bae50b4ee8a2fcef180ddc26b77e3d16))
+
+## [2.2.0](https://www.github.com/googleapis/java-storage/compare/v2.1.9...v2.2.0) (2021-11-02)
+
+
+### Features
+
+* next release from mainline is 2.2.0 ([#1124](https://www.github.com/googleapis/java-storage/issues/1124)) ([53a755b](https://www.github.com/googleapis/java-storage/commit/53a755b315c0e739e33929fa5db92eb1daf32e8b))
+* update all automatic retry behavior to be idempotency aware ([#1132](https://www.github.com/googleapis/java-storage/issues/1132)) ([470b8cd](https://www.github.com/googleapis/java-storage/commit/470b8cd8a24c1c2b4be1b956d1691dbae8cf87fd))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20211018-1.32.1 ([#1123](https://www.github.com/googleapis/java-storage/issues/1123)) ([edc0e00](https://www.github.com/googleapis/java-storage/commit/edc0e00a9f0d3c48ed7abbd5b01429837298ecfb))
+* update kms.version to v0.93.2 ([#1120](https://www.github.com/googleapis/java-storage/issues/1120)) ([a5c007d](https://www.github.com/googleapis/java-storage/commit/a5c007d306c5d7fc00927be39b6879dfc7a01fcb))
+
+### [2.1.9](https://www.github.com/googleapis/java-storage/compare/v2.1.8...v2.1.9) (2021-10-19)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.4.0 ([#1115](https://www.github.com/googleapis/java-storage/issues/1115)) ([37d892b](https://www.github.com/googleapis/java-storage/commit/37d892b05ae3c7338b6c804cddfcecca80509ea3))
+
+### [2.1.8](https://www.github.com/googleapis/java-storage/compare/v2.1.7...v2.1.8) (2021-10-18)
+
+
+### Bug Fixes
+
+* regenerate google.cloud.storage.v2 protos ([a7e3b94](https://www.github.com/googleapis/java-storage/commit/a7e3b94e4a3e03599b0dbe51fbe574ed4ea1a0d8))
+
+
+### Dependencies
+
+* update kms.version to v0.93.1 ([#1079](https://www.github.com/googleapis/java-storage/issues/1079)) ([1c52b3d](https://www.github.com/googleapis/java-storage/commit/1c52b3db6699c2ad325853e95231e1a908da069f))
+
 ### [2.1.7](https://www.github.com/googleapis/java-storage/compare/v2.1.6...v2.1.7) (2021-10-04)
 
 

@@ -383,7 +383,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * there are no live versions of the object.
    * </pre>
    *
-   * <code>int64 if_generation_match = 6;</code>
+   * <code>optional int64 if_generation_match = 6;</code>
    *
    * @return Whether the ifGenerationMatch field is set.
    */
@@ -400,7 +400,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * there are no live versions of the object.
    * </pre>
    *
-   * <code>int64 if_generation_match = 6;</code>
+   * <code>optional int64 if_generation_match = 6;</code>
    *
    * @return The ifGenerationMatch.
    */
@@ -421,7 +421,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * version of the object.
    * </pre>
    *
-   * <code>int64 if_generation_not_match = 7;</code>
+   * <code>optional int64 if_generation_not_match = 7;</code>
    *
    * @return Whether the ifGenerationNotMatch field is set.
    */
@@ -439,7 +439,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * version of the object.
    * </pre>
    *
-   * <code>int64 if_generation_not_match = 7;</code>
+   * <code>optional int64 if_generation_not_match = 7;</code>
    *
    * @return The ifGenerationNotMatch.
    */
@@ -458,7 +458,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * metageneration matches the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_match = 8;</code>
+   * <code>optional int64 if_metageneration_match = 8;</code>
    *
    * @return Whether the ifMetagenerationMatch field is set.
    */
@@ -474,7 +474,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * metageneration matches the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_match = 8;</code>
+   * <code>optional int64 if_metageneration_match = 8;</code>
    *
    * @return The ifMetagenerationMatch.
    */
@@ -493,7 +493,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * metageneration does not match the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_not_match = 9;</code>
+   * <code>optional int64 if_metageneration_not_match = 9;</code>
    *
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
@@ -509,7 +509,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * metageneration does not match the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_not_match = 9;</code>
+   * <code>optional int64 if_metageneration_not_match = 9;</code>
    *
    * @return The ifMetagenerationNotMatch.
    */
@@ -628,7 +628,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * * may be used to mean "all fields".
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+   * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
    *
    * @return Whether the readMask field is set.
    */
@@ -647,7 +647,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * * may be used to mean "all fields".
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+   * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
    *
    * @return The readMask.
    */
@@ -666,7 +666,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * * may be used to mean "all fields".
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+   * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
    */
   @java.lang.Override
   public com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder() {
@@ -687,10 +687,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (!getBucketBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, bucket_);
     }
-    if (!getObjectBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(object_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, object_);
     }
     if (generation_ != 0L) {
@@ -732,10 +732,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
     if (size != -1) return size;
 
     size = 0;
-    if (!getBucketBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(bucket_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, bucket_);
     }
-    if (!getObjectBytes().isEmpty()) {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(object_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, object_);
     }
     if (generation_ != 0L) {
@@ -1656,7 +1656,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 6;</code>
+     * <code>optional int64 if_generation_match = 6;</code>
      *
      * @return Whether the ifGenerationMatch field is set.
      */
@@ -1673,7 +1673,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 6;</code>
+     * <code>optional int64 if_generation_match = 6;</code>
      *
      * @return The ifGenerationMatch.
      */
@@ -1690,7 +1690,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 6;</code>
+     * <code>optional int64 if_generation_match = 6;</code>
      *
      * @param value The ifGenerationMatch to set.
      * @return This builder for chaining.
@@ -1710,7 +1710,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 6;</code>
+     * <code>optional int64 if_generation_match = 6;</code>
      *
      * @return This builder for chaining.
      */
@@ -1732,7 +1732,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 7;</code>
+     * <code>optional int64 if_generation_not_match = 7;</code>
      *
      * @return Whether the ifGenerationNotMatch field is set.
      */
@@ -1750,7 +1750,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 7;</code>
+     * <code>optional int64 if_generation_not_match = 7;</code>
      *
      * @return The ifGenerationNotMatch.
      */
@@ -1768,7 +1768,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 7;</code>
+     * <code>optional int64 if_generation_not_match = 7;</code>
      *
      * @param value The ifGenerationNotMatch to set.
      * @return This builder for chaining.
@@ -1789,7 +1789,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 7;</code>
+     * <code>optional int64 if_generation_not_match = 7;</code>
      *
      * @return This builder for chaining.
      */
@@ -1809,7 +1809,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 8;</code>
+     * <code>optional int64 if_metageneration_match = 8;</code>
      *
      * @return Whether the ifMetagenerationMatch field is set.
      */
@@ -1825,7 +1825,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 8;</code>
+     * <code>optional int64 if_metageneration_match = 8;</code>
      *
      * @return The ifMetagenerationMatch.
      */
@@ -1841,7 +1841,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 8;</code>
+     * <code>optional int64 if_metageneration_match = 8;</code>
      *
      * @param value The ifMetagenerationMatch to set.
      * @return This builder for chaining.
@@ -1860,7 +1860,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 8;</code>
+     * <code>optional int64 if_metageneration_match = 8;</code>
      *
      * @return This builder for chaining.
      */
@@ -1880,7 +1880,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 9;</code>
+     * <code>optional int64 if_metageneration_not_match = 9;</code>
      *
      * @return Whether the ifMetagenerationNotMatch field is set.
      */
@@ -1896,7 +1896,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 9;</code>
+     * <code>optional int64 if_metageneration_not_match = 9;</code>
      *
      * @return The ifMetagenerationNotMatch.
      */
@@ -1912,7 +1912,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 9;</code>
+     * <code>optional int64 if_metageneration_not_match = 9;</code>
      *
      * @param value The ifMetagenerationNotMatch to set.
      * @return This builder for chaining.
@@ -1931,7 +1931,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 9;</code>
+     * <code>optional int64 if_metageneration_not_match = 9;</code>
      *
      * @return This builder for chaining.
      */
@@ -2335,7 +2335,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      *
      * @return Whether the readMask field is set.
      */
@@ -2353,7 +2353,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      *
      * @return The readMask.
      */
@@ -2375,7 +2375,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      */
     public Builder setReadMask(com.google.protobuf.FieldMask value) {
       if (readMaskBuilder_ == null) {
@@ -2401,7 +2401,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      */
     public Builder setReadMask(com.google.protobuf.FieldMask.Builder builderForValue) {
       if (readMaskBuilder_ == null) {
@@ -2424,7 +2424,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      */
     public Builder mergeReadMask(com.google.protobuf.FieldMask value) {
       if (readMaskBuilder_ == null) {
@@ -2454,7 +2454,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      */
     public Builder clearReadMask() {
       if (readMaskBuilder_ == null) {
@@ -2477,7 +2477,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      */
     public com.google.protobuf.FieldMask.Builder getReadMaskBuilder() {
       bitField0_ |= 0x00000010;
@@ -2495,7 +2495,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      */
     public com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder() {
       if (readMaskBuilder_ != null) {
@@ -2515,7 +2515,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * * may be used to mean "all fields".
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask read_mask = 12;</code>
+     * <code>optional .google.protobuf.FieldMask read_mask = 12;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.FieldMask,

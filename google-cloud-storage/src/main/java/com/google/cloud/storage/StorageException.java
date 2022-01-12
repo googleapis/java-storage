@@ -37,7 +37,7 @@ public final class StorageException extends BaseHttpServiceException {
   private static final String CONNECTION_CLOSED_PREMATURELY = "connectionClosedPrematurely";
 
   // see: https://cloud.google.com/storage/docs/resumable-uploads-xml#practices
-  private static final Set<Error> RETRYABLE_ERRORS =
+  static final Set<Error> RETRYABLE_ERRORS =
       ImmutableSet.of(
           new Error(504, null),
           new Error(503, null),

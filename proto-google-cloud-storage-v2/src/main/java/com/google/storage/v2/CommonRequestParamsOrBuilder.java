@@ -28,7 +28,6 @@ public interface CommonRequestParamsOrBuilder
    *
    * <pre>
    * Required. Required when using buckets with Requestor Pays feature enabled.
-   * Example: `projects/123456`.
    * </pre>
    *
    * <code>
@@ -43,7 +42,6 @@ public interface CommonRequestParamsOrBuilder
    *
    * <pre>
    * Required. Required when using buckets with Requestor Pays feature enabled.
-   * Example: `projects/123456`.
    * </pre>
    *
    * <code>

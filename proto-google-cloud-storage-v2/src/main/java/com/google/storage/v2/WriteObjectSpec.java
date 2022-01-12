@@ -245,7 +245,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * succeed only if there are no live versions of the object.
    * </pre>
    *
-   * <code>int64 if_generation_match = 3;</code>
+   * <code>optional int64 if_generation_match = 3;</code>
    *
    * @return Whether the ifGenerationMatch field is set.
    */
@@ -262,7 +262,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * succeed only if there are no live versions of the object.
    * </pre>
    *
-   * <code>int64 if_generation_match = 3;</code>
+   * <code>optional int64 if_generation_match = 3;</code>
    *
    * @return The ifGenerationMatch.
    */
@@ -283,7 +283,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * there is a live version of the object.
    * </pre>
    *
-   * <code>int64 if_generation_not_match = 4;</code>
+   * <code>optional int64 if_generation_not_match = 4;</code>
    *
    * @return Whether the ifGenerationNotMatch field is set.
    */
@@ -301,7 +301,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * there is a live version of the object.
    * </pre>
    *
-   * <code>int64 if_generation_not_match = 4;</code>
+   * <code>optional int64 if_generation_not_match = 4;</code>
    *
    * @return The ifGenerationNotMatch.
    */
@@ -320,7 +320,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * metageneration matches the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_match = 5;</code>
+   * <code>optional int64 if_metageneration_match = 5;</code>
    *
    * @return Whether the ifMetagenerationMatch field is set.
    */
@@ -336,7 +336,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * metageneration matches the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_match = 5;</code>
+   * <code>optional int64 if_metageneration_match = 5;</code>
    *
    * @return The ifMetagenerationMatch.
    */
@@ -355,7 +355,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * metageneration does not match the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_not_match = 6;</code>
+   * <code>optional int64 if_metageneration_not_match = 6;</code>
    *
    * @return Whether the ifMetagenerationNotMatch field is set.
    */
@@ -371,7 +371,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * metageneration does not match the given value.
    * </pre>
    *
-   * <code>int64 if_metageneration_not_match = 6;</code>
+   * <code>optional int64 if_metageneration_not_match = 6;</code>
    *
    * @return The ifMetagenerationNotMatch.
    */
@@ -1102,7 +1102,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * succeed only if there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 3;</code>
+     * <code>optional int64 if_generation_match = 3;</code>
      *
      * @return Whether the ifGenerationMatch field is set.
      */
@@ -1119,7 +1119,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * succeed only if there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 3;</code>
+     * <code>optional int64 if_generation_match = 3;</code>
      *
      * @return The ifGenerationMatch.
      */
@@ -1136,7 +1136,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * succeed only if there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 3;</code>
+     * <code>optional int64 if_generation_match = 3;</code>
      *
      * @param value The ifGenerationMatch to set.
      * @return This builder for chaining.
@@ -1156,7 +1156,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * succeed only if there are no live versions of the object.
      * </pre>
      *
-     * <code>int64 if_generation_match = 3;</code>
+     * <code>optional int64 if_generation_match = 3;</code>
      *
      * @return This builder for chaining.
      */
@@ -1178,7 +1178,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * there is a live version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 4;</code>
+     * <code>optional int64 if_generation_not_match = 4;</code>
      *
      * @return Whether the ifGenerationNotMatch field is set.
      */
@@ -1196,7 +1196,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * there is a live version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 4;</code>
+     * <code>optional int64 if_generation_not_match = 4;</code>
      *
      * @return The ifGenerationNotMatch.
      */
@@ -1214,7 +1214,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * there is a live version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 4;</code>
+     * <code>optional int64 if_generation_not_match = 4;</code>
      *
      * @param value The ifGenerationNotMatch to set.
      * @return This builder for chaining.
@@ -1235,7 +1235,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * there is a live version of the object.
      * </pre>
      *
-     * <code>int64 if_generation_not_match = 4;</code>
+     * <code>optional int64 if_generation_not_match = 4;</code>
      *
      * @return This builder for chaining.
      */
@@ -1255,7 +1255,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 5;</code>
+     * <code>optional int64 if_metageneration_match = 5;</code>
      *
      * @return Whether the ifMetagenerationMatch field is set.
      */
@@ -1271,7 +1271,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 5;</code>
+     * <code>optional int64 if_metageneration_match = 5;</code>
      *
      * @return The ifMetagenerationMatch.
      */
@@ -1287,7 +1287,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 5;</code>
+     * <code>optional int64 if_metageneration_match = 5;</code>
      *
      * @param value The ifMetagenerationMatch to set.
      * @return This builder for chaining.
@@ -1306,7 +1306,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration matches the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 5;</code>
+     * <code>optional int64 if_metageneration_match = 5;</code>
      *
      * @return This builder for chaining.
      */
@@ -1326,7 +1326,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 6;</code>
+     * <code>optional int64 if_metageneration_not_match = 6;</code>
      *
      * @return Whether the ifMetagenerationNotMatch field is set.
      */
@@ -1342,7 +1342,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 6;</code>
+     * <code>optional int64 if_metageneration_not_match = 6;</code>
      *
      * @return The ifMetagenerationNotMatch.
      */
@@ -1358,7 +1358,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 6;</code>
+     * <code>optional int64 if_metageneration_not_match = 6;</code>
      *
      * @param value The ifMetagenerationNotMatch to set.
      * @return This builder for chaining.
@@ -1377,7 +1377,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * metageneration does not match the given value.
      * </pre>
      *
-     * <code>int64 if_metageneration_not_match = 6;</code>
+     * <code>optional int64 if_metageneration_not_match = 6;</code>
      *
      * @return This builder for chaining.
      */

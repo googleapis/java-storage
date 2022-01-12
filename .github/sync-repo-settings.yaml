@@ -16,6 +16,7 @@ branchProtectionRules:
       - units (11)
       - 'Kokoro - Test: Integration'
       - cla/google
+      - OwlBot Post Processor
   - pattern: 1.113.14-sp
     isAdminEnforced: true
     requiredApprovingReviewCount: 1
@@ -72,6 +73,20 @@ branchProtectionRules:
       - lint
       - clirr
       - units (7)
+      - units (8)
+      - units (11)
+      - 'Kokoro - Test: Integration'
+      - cla/google
+  - pattern: 2.1.x
+    isAdminEnforced: true
+    requiredApprovingReviewCount: 1
+    requiresCodeOwnerReviews: true
+    requiresStrictStatusChecks: false
+    requiredStatusCheckContexts:
+      - dependencies (8)
+      - dependencies (11)
+      - lint
+      - clirr
       - units (8)
       - units (11)
       - 'Kokoro - Test: Integration'

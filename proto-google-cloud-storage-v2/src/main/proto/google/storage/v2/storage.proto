@@ -35,7 +35,27 @@ option (google.api.resource_definition) = {
   pattern: "projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}"
 };
 
-// Manages Google Cloud Storage resources.
+// ## API Overview and Naming Syntax
+//
+// The GCS gRPC API allows applications to read and write data through the
+// abstractions of buckets and objects. For a description of these abstractions
+// please see https://cloud.google.com/storage/docs.
+//
+// Resources are named as follows:
+//   - Projects are referred to as they are defined by the Resource Manager API,
+//     using strings like `projects/123456` or `projects/my-string-id`.
+//   - Buckets are named using string names of the form:
+//     `projects/{project}/buckets/{bucket}`
+//     For globally unique buckets, `_` may be substituted for the project.
+//   - Objects are uniquely identified by their name along with the name of the
+//     bucket they belong to, as separate strings in this API. For example:
+//
+//       ReadObjectRequest {
+//         bucket: 'projects/_/buckets/my-bucket'
+//         object: 'my-object'
+//       }
+//     Note that object names can contain `/` characters, which are treated as
+//     any other character (no special directory semantics).
 service Storage {
   option (google.api.default_host) = "storage.googleapis.com";
   option (google.api.oauth_scopes) =
@@ -66,7 +86,7 @@ service Storage {
   // each following call to `Create`. If there is an error or the connection is
   // broken during the resumable `Create()`, the client should check the status
   // of the `Create()` by calling `QueryWriteStatus()` and continue writing from
-  // the returned `committed_size`. This may be less than the amount of data the
+  // the returned `persisted_size`. This may be less than the amount of data the
   // client previously sent.
   //
   // The service will not view the object as complete until the client has
@@ -84,7 +104,7 @@ service Storage {
   rpc StartResumableWrite(StartResumableWriteRequest) returns (StartResumableWriteResponse) {
   }
 
-  // Determines the `committed_size` for an object that is being written, which
+  // Determines the `persisted_size` for an object that is being written, which
   // can then be used as the `write_offset` for the next `Write()` call.
   //
   // If the object does not exist (i.e., the object has been deleted, or the
@@ -95,7 +115,7 @@ service Storage {
   // much data has been processed for this object. This is useful if the
   // client is buffering data and needs to know which data can be safely
   // evicted. For any sequence of `QueryWriteStatus()` calls for a given
-  // object name, the sequence of returned `committed_size` values will be
+  // object name, the sequence of returned `persisted_size` values will be
   // non-decreasing.
   rpc QueryWriteStatus(QueryWriteStatusRequest) returns (QueryWriteStatusResponse) {
     option (google.api.method_signature) = "upload_id";
@@ -236,7 +256,7 @@ message WriteObjectRequest {
   //
   // In the first `WriteObjectRequest` of a `WriteObject()` action, it
   // indicates the initial offset for the `Write()` call. The value **must** be
-  // equal to the `committed_size` that a call to `QueryWriteStatus()` would
+  // equal to the `persisted_size` that a call to `QueryWriteStatus()` would
   // return (0 if this is the first write to the object).
   //
   // On subsequent calls, this value **must** be no larger than the sum of the
@@ -280,7 +300,7 @@ message WriteObjectResponse {
   oneof write_status {
     // The total number of bytes that have been processed for the given object
     // from all `WriteObject` calls. Only set if the upload has not finalized.
-    int64 committed_size = 1;
+    int64 persisted_size = 1;
 
     // A resource containing the metadata for the uploaded object. Only set if
     // the upload has finalized.
@@ -309,7 +329,7 @@ message QueryWriteStatusResponse {
     // from all `WriteObject` calls. This is the correct value for the
     // 'write_offset' field to use when resuming the `WriteObject` operation.
     // Only set if the upload has not finalized.
-    int64 committed_size = 1;
+    int64 persisted_size = 1;
 
     // A resource containing the metadata for the uploaded object. Only set if
     // the upload has finalized.
@@ -353,7 +373,6 @@ message CommonObjectRequestParams {
 // Parameters that can be passed to any request.
 message CommonRequestParams {
   // Required. Required when using buckets with Requestor Pays feature enabled.
-  // Example: `projects/123456`.
   string user_project = 1 [
     (google.api.field_behavior) = REQUIRED,
     (google.api.resource_reference) = {
@@ -512,15 +531,17 @@ message Bucket {
 
     // Public Access Prevention config values.
     enum PublicAccessPrevention {
-      // Does not prevent access from being granted to public members 'allUsers'
-      // or 'allAuthenticatedUsers'. This setting may be enforced by Org Policy
-      // at the project/folder/organization level.
+      // No specified PublicAccessPrevention.
       PUBLIC_ACCESS_PREVENTION_UNSPECIFIED = 0;
 
       // Prevents access from being granted to public members 'allUsers' and
       // 'allAuthenticatedUsers'. Prevents attempts to grant new access to
       // public members.
       ENFORCED = 1;
+
+      // This setting is inherited from Org Policy. Does not prevent access from
+      // being granted to public members 'allUsers' or 'allAuthenticatedUsers'.
+      INHERITED = 2;
     }
 
     // Bucket restriction options currently enforced on the bucket.
@@ -662,11 +683,6 @@ message Bucket {
   }
 
   // Immutable. The name of the bucket.
-  // Global buckets will be of the format `projects/{project}/buckets/{bucket}`.
-  // Other sorts of buckets in the future are not guaranteed to follow this
-  // pattern.
-  // For globally unique bucket names, a `_` may be substituted for the project
-  // ID.
   string name = 1 [(google.api.field_behavior) = IMMUTABLE];
 
   // Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
@@ -675,8 +691,6 @@ message Bucket {
   string bucket_id = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
 
   // Immutable. The project which owns this bucket.
-  // Format: projects/{project_number}
-  // Example: `projects/123456`.
   string project = 3 [
     (google.api.field_behavior) = IMMUTABLE,
     (google.api.resource_reference) = {
@@ -796,7 +810,10 @@ message Bucket {
   // but won't be able to use zonal quota. The values are case-insensitive.
   // Attempting to update this field after bucket is created will result in an
   // error.
-  repeated string zone_affinity = 24 [(google.api.field_behavior) = IMMUTABLE];
+  repeated string zone_affinity = 24 [
+    deprecated = true,
+    (google.api.field_behavior) = IMMUTABLE
+  ];
 
   // Reserved for future use.
   bool satisfies_pzs = 25;
@@ -876,7 +893,8 @@ message Object {
     string encryption_algorithm = 1;
 
     // SHA256 hash value of the encryption key.
-    string key_sha256 = 2;
+    // In raw bytes format (not base64-encoded).
+    bytes key_sha256_bytes = 3;
   }
 
   // Immutable. The name of this object. Nearly any sequence of unicode characters is
@@ -889,7 +907,6 @@ message Object {
   string name = 1 [(google.api.field_behavior) = IMMUTABLE];
 
   // Immutable. The name of the bucket containing this object.
-  // Example: `projects/_/buckets/foo`.
   string bucket = 2 [
     (google.api.field_behavior) = IMMUTABLE,
     (google.api.resource_reference) = {

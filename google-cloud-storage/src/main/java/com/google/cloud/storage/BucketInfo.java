@@ -549,8 +549,13 @@ public class BucketInfo implements Serializable {
                   StorageClass.valueOf(action.getStorageClass()));
           break;
         default:
-          throw new UnsupportedOperationException(
-              "The specified lifecycle action " + action.getType() + " is not currently supported");
+          log.warning(
+              "The lifecycle action "
+                  + action.getType()
+                  + " is not supported by this version of the library. "
+                  + "Attempting to update with this rule may cause errors. Please "
+                  + "update to the latest version of google-cloud-storage.");
+          lifecycleAction = LifecycleAction.newLifecycleAction("Unknown action");
       }
 
       Rule.Condition condition = rule.getCondition();
@@ -800,13 +805,21 @@ public class BucketInfo implements Serializable {
     }
 
     /**
-     * Base class for the Action to take when a Lifecycle Condition is met. Specific Actions are
+     * Base class for the Action to take when a Lifecycle Condition is met. Supported Actions are
      * expressed as subclasses of this class, accessed by static factory methods.
      */
-    public abstract static class LifecycleAction implements Serializable {
+    public static class LifecycleAction implements Serializable {
       private static final long serialVersionUID = 5801228724709173284L;
 
-      public abstract String getActionType();
+      private final String actionType;
+
+      public LifecycleAction(String actionType) {
+        this.actionType = actionType;
+      }
+
+      public String getActionType() {
+        return actionType;
+      }
 
       @Override
       public String toString() {
@@ -831,17 +844,24 @@ public class BucketInfo implements Serializable {
           StorageClass storageClass) {
         return new SetStorageClassLifecycleAction(storageClass);
       }
+
+      /**
+       * Creates a new {@code LifecycleAction , with no specific supported action associated with it. This
+       * is only intended as a "backup" for when the library doesn't recognize the type, and should
+       * generally not be used, instead use the supported actions, and upgrade the library if necessary
+       * to get new supported actions.
+       */
+      public static LifecycleAction newLifecycleAction(String actionType) {
+        return new LifecycleAction(actionType);
+      }
     }
 
     public static class DeleteLifecycleAction extends LifecycleAction {
       public static final String TYPE = "Delete";
       private static final long serialVersionUID = -2050986302222644873L;
 
-      private DeleteLifecycleAction() {}
-
-      @Override
-      public String getActionType() {
-        return TYPE;
+      private DeleteLifecycleAction() {
+        super(TYPE);
       }
     }
 
@@ -852,12 +872,8 @@ public class BucketInfo implements Serializable {
       private final StorageClass storageClass;
 
       private SetStorageClassLifecycleAction(StorageClass storageClass) {
+        super(TYPE);
         this.storageClass = storageClass;
-      }
-
-      @Override
-      public String getActionType() {
-        return TYPE;
       }
 
       @Override
@@ -1008,7 +1024,11 @@ public class BucketInfo implements Serializable {
 
     @Override
     void populateCondition(Rule.Condition condition) {
-      throw new UnsupportedOperationException();
+      log.warning(
+          "The lifecycle condition "
+              + condition
+              + " is not currently supported. Please update to the latest version of google-cloud-java."
+              + " Also, use LifecycleRule rather than the deprecated DeleteRule.");
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
