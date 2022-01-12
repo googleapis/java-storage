@@ -2,6 +2,11 @@
 <!-- see https://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
     <difference>
+        <className>com/google/cloud/storage/BucketInfo$Builder</className>
+        <method>com.google.cloud.storage.BucketInfo$Builder setRpo(com.google.cloud.storage.Rpo)</method>
+        <differenceType>7013</differenceType>
+    </difference>
+    <difference>
         <className>com/google/cloud/storage/BucketInfo$LifecycleRule$LifecycleAction</className>
         <method>BucketInfo$LifecycleRule$LifecycleAction()</method>
         <differenceType>7004</differenceType>

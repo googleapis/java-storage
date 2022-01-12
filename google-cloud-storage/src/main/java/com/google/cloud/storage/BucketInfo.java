@@ -92,6 +92,7 @@ public class BucketInfo implements Serializable {
   private final List<Acl> acl;
   private final List<Acl> defaultAcl;
   private final String location;
+  private final Rpo rpo;
   private final StorageClass storageClass;
   private final Map<String, String> labels;
   private final String defaultKmsKeyName;
@@ -1206,6 +1207,15 @@ public class BucketInfo implements Serializable {
     public abstract Builder deleteLifecycleRules();
 
     /**
+     * Sets the bucket's Recovery Point Objective (RPO). This can only be set for a dual-region
+     * bucket, and determines the speed at which data will be replicated between regions. See the
+     * {@code Rpo} class for supported values, and <a
+     * href="https://cloud.google.com/storage/docs/turbo-replication">here</a> for additional
+     * details.
+     */
+    public abstract Builder setRpo(Rpo rpo);
+
+    /**
      * Sets the bucket's storage class. This defines how blobs in the bucket are stored and
      * determines the SLA and the cost of storage. A list of supported values is available <a
      * href="https://cloud.google.com/storage/docs/storage-classes">here</a>.
@@ -1306,6 +1316,7 @@ public class BucketInfo implements Serializable {
     private String notFoundPage;
     private List<DeleteRule> deleteRules;
     private List<LifecycleRule> lifecycleRules;
+    private Rpo rpo;
     private StorageClass storageClass;
     private String location;
     private String etag;
@@ -1337,6 +1348,7 @@ public class BucketInfo implements Serializable {
       updateTime = bucketInfo.updateTime;
       metageneration = bucketInfo.metageneration;
       location = bucketInfo.location;
+      rpo = bucketInfo.rpo;
       storageClass = bucketInfo.storageClass;
       cors = bucketInfo.cors;
       acl = bucketInfo.acl;
@@ -1427,6 +1439,12 @@ public class BucketInfo implements Serializable {
     public Builder deleteLifecycleRules() {
       setDeleteRules(null);
       setLifecycleRules(null);
+      return this;
+    }
+
+    @Override
+    public Builder setRpo(Rpo rpo) {
+      this.rpo = rpo;
       return this;
     }
 
@@ -1568,6 +1586,7 @@ public class BucketInfo implements Serializable {
     updateTime = builder.updateTime;
     metageneration = builder.metageneration;
     location = builder.location;
+    rpo = builder.rpo;
     storageClass = builder.storageClass;
     cors = builder.cors;
     acl = builder.acl;
@@ -1727,6 +1746,16 @@ public class BucketInfo implements Serializable {
    */
   public String getLocationType() {
     return locationType;
+  }
+
+  /**
+   * Returns the bucket's recovery point objective (RPO). This defines how quickly data is
+   * replicated between regions in a dual-region bucket. Not defined for single-region buckets.
+   *
+   * @see <a href="https://cloud.google.com/storage/docs/turbo-replication"Turbo Replication"</a>
+   */
+  public Rpo getRpo() {
+    return rpo;
   }
 
   /**
@@ -1899,6 +1928,9 @@ public class BucketInfo implements Serializable {
     if (locationType != null) {
       bucketPb.setLocationType(locationType);
     }
+    if (rpo != null) {
+      bucketPb.setRpo(rpo.toString());
+    }
     if (storageClass != null) {
       bucketPb.setStorageClass(storageClass.toString());
     }
@@ -2061,6 +2093,9 @@ public class BucketInfo implements Serializable {
     }
     if (bucketPb.getLocation() != null) {
       builder.setLocation(bucketPb.getLocation());
+    }
+    if (bucketPb.getRpo() != null) {
+      builder.setRpo(Rpo.valueOf(bucketPb.getRpo()));
     }
     if (bucketPb.getStorageClass() != null) {
       builder.setStorageClass(StorageClass.valueOf(bucketPb.getStorageClass()));

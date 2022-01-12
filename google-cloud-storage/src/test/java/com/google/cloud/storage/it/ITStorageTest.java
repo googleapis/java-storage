@@ -73,6 +73,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
@@ -3950,5 +3951,34 @@ public class ITStorageTest {
     ByteArrayOutputStream actualData = new ByteArrayOutputStream();
     blobGen2.downloadTo(actualData);
     assertEquals(contentGen2Expected, ByteBuffer.wrap(actualData.toByteArray()));
+  }
+
+  @Test
+  public void testRpoConfig() {
+    String rpoBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      Bucket bucket =
+          storage.create(
+              BucketInfo.newBuilder(rpoBucket).setLocation("NAM4").setRpo(Rpo.ASYNC_TURBO).build());
+      assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
+
+      bucket.toBuilder().setRpo(Rpo.DEFAULT).build().update();
+
+      assertEquals("DEFAULT", storage.get(rpoBucket).getRpo().toString());
+    } finally {
+      storage.delete(rpoBucket);
+    }
+  }
+
+  private static String randString(Random rand, int length) {
+    final StringBuilder sb = new StringBuilder();
+    while (sb.length() < length) {
+      int i = rand.nextInt('z');
+      char c = (char) i;
+      if (Character.isLetter(c) || Character.isDigit(c)) {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 }
