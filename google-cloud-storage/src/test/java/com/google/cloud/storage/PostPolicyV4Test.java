@@ -99,33 +99,9 @@ public class PostPolicyV4Test {
   }
 
   @Test
-  public void testPostPolicyV4_ofInvalidField() {
-    Map<String, String> fields = new HashMap<>(ALL_FIELDS);
-    fields.put("$file", "file.txt");
-    try {
-      PostPolicyV4.of("http://google.com", fields);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertEquals("Invalid key: $file", e.getMessage());
-    }
-  }
-
-  @Test
   public void testPostFieldsV4_of() {
     PostPolicyV4.PostFieldsV4 fields = PostPolicyV4.PostFieldsV4.of(ALL_FIELDS);
     assertMapsEquals(ALL_FIELDS, fields.getFieldsMap());
-  }
-
-  @Test
-  public void testPostFieldsV4_ofInvalidField() {
-    Map<String, String> map = new HashMap<>();
-    map.put("$file", "file.txt");
-    try {
-      PostPolicyV4.PostFieldsV4.of(map);
-      fail();
-    } catch (IllegalArgumentException e) {
-      assertEquals("Invalid key: $file", e.getMessage());
-    }
   }
 
   @Test
