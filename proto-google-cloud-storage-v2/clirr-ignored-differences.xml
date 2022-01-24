@@ -16,4 +16,17 @@
     <className>com/google/storage/v2/*OrBuilder</className>
     <method>boolean has*(*)</method>
   </difference>
+
+  <!-- Remove previously accidentally added zone affinity info that is not used by clients -->
+  <difference>
+    <differenceType>6011</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <field>ZONE_AFFINITY_FIELD_NUMBER</field>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *ZoneAffinity*(*)</method>
+  </difference>
+
 </differences>
