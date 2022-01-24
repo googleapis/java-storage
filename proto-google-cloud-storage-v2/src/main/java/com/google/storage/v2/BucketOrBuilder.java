@@ -218,6 +218,41 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
+   * The recovery point objective for cross-region replication of the bucket.
+   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+   * buckets only. If rpo is not specified when the bucket is created, it
+   * defaults to "DEFAULT". For more information, see
+   * https://cloud.google.com/storage/docs/turbo-replication.
+   * </pre>
+   *
+   * <code>string rpo = 27;</code>
+   *
+   * @return The rpo.
+   */
+  java.lang.String getRpo();
+  /**
+   *
+   *
+   * <pre>
+   * The recovery point objective for cross-region replication of the bucket.
+   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+   * buckets only. If rpo is not specified when the bucket is created, it
+   * defaults to "DEFAULT". For more information, see
+   * https://cloud.google.com/storage/docs/turbo-replication.
+   * </pre>
+   *
+   * <code>string rpo = 27;</code>
+   *
+   * @return The bytes for rpo.
+   */
+  com.google.protobuf.ByteString getRpoBytes();
+
+  /**
+   *
+   *
+   * <pre>
    * Access controls on the bucket.
    * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
@@ -925,85 +960,6 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @return A list containing the zoneAffinity.
-   */
-  @java.lang.Deprecated
-  java.util.List<java.lang.String> getZoneAffinityList();
-  /**
-   *
-   *
-   * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @return The count of zoneAffinity.
-   */
-  @java.lang.Deprecated
-  int getZoneAffinityCount();
-  /**
-   *
-   *
-   * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @param index The index of the element to return.
-   * @return The zoneAffinity at the given index.
-   */
-  @java.lang.Deprecated
-  java.lang.String getZoneAffinity(int index);
-  /**
-   *
-   *
-   * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @param index The index of the value to return.
-   * @return The bytes of the zoneAffinity at the given index.
-   */
-  @java.lang.Deprecated
-  com.google.protobuf.ByteString getZoneAffinityBytes(int index);
-
-  /**
-   *
-   *
-   * <pre>
    * Reserved for future use.
    * </pre>
    *
@@ -1012,4 +968,42 @@ public interface BucketOrBuilder
    * @return The satisfiesPzs.
    */
   boolean getSatisfiesPzs();
+
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   *
+   * @return Whether the customPlacementConfig field is set.
+   */
+  boolean hasCustomPlacementConfig();
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   *
+   * @return The customPlacementConfig.
+   */
+  com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig();
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   */
+  com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder getCustomPlacementConfigOrBuilder();
 }

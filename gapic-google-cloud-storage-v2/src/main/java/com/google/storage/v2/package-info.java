@@ -21,8 +21,8 @@
  *
  * <p>Service Description: ## API Overview and Naming Syntax
  *
- * <p>The GCS gRPC API allows applications to read and write data through the abstractions of
- * buckets and objects. For a description of these abstractions please see
+ * <p>The Cloud Storage gRPC API allows applications to read and write data through the abstractions
+ * of buckets and objects. For a description of these abstractions please see
  * https://cloud.google.com/storage/docs.
  *
  * <p>Resources are named as follows: - Projects are referred to as they are defined by the Resource
@@ -39,13 +39,8 @@
  *
  * <pre>{@code
  * try (StorageClient storageClient = StorageClient.create()) {
- *   StartResumableWriteRequest request =
- *       StartResumableWriteRequest.newBuilder()
- *           .setWriteObjectSpec(WriteObjectSpec.newBuilder().build())
- *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
- *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
- *           .build();
- *   StartResumableWriteResponse response = storageClient.startResumableWrite(request);
+ *   BucketName name = BucketName.of("[PROJECT]", "[BUCKET]");
+ *   storageClient.deleteBucket(name);
  * }
  * }</pre>
  */

@@ -44,10 +44,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     location_ = "";
     locationType_ = "";
     storageClass_ = "";
+    rpo_ = "";
     acl_ = java.util.Collections.emptyList();
     defaultObjectAcl_ = java.util.Collections.emptyList();
     cors_ = java.util.Collections.emptyList();
-    zoneAffinity_ = com.google.protobuf.LazyStringArrayList.EMPTY;
   }
 
   @java.lang.Override
@@ -350,19 +350,33 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
               break;
             }
-          case 194:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-              if (!((mutable_bitField0_ & 0x00000010) != 0)) {
-                zoneAffinity_ = new com.google.protobuf.LazyStringArrayList();
-                mutable_bitField0_ |= 0x00000010;
-              }
-              zoneAffinity_.add(s);
-              break;
-            }
           case 200:
             {
               satisfiesPzs_ = input.readBool();
+              break;
+            }
+          case 210:
+            {
+              com.google.storage.v2.Bucket.CustomPlacementConfig.Builder subBuilder = null;
+              if (customPlacementConfig_ != null) {
+                subBuilder = customPlacementConfig_.toBuilder();
+              }
+              customPlacementConfig_ =
+                  input.readMessage(
+                      com.google.storage.v2.Bucket.CustomPlacementConfig.parser(),
+                      extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(customPlacementConfig_);
+                customPlacementConfig_ = subBuilder.buildPartial();
+              }
+
+              break;
+            }
+          case 218:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              rpo_ = s;
               break;
             }
           default:
@@ -387,9 +401,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (((mutable_bitField0_ & 0x00000004) != 0)) {
         cors_ = java.util.Collections.unmodifiableList(cors_);
-      }
-      if (((mutable_bitField0_ & 0x00000010) != 0)) {
-        zoneAffinity_ = zoneAffinity_.getUnmodifiableView();
       }
       this.unknownFields = unknownFields.build();
       makeExtensionsImmutable();
@@ -14377,6 +14388,787 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
   }
 
+  public interface CustomPlacementConfigOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.CustomPlacementConfig)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @return A list containing the dataLocations.
+     */
+    java.util.List<java.lang.String> getDataLocationsList();
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @return The count of dataLocations.
+     */
+    int getDataLocationsCount();
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The dataLocations at the given index.
+     */
+    java.lang.String getDataLocations(int index);
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @param index The index of the value to return.
+     * @return The bytes of the dataLocations at the given index.
+     */
+    com.google.protobuf.ByteString getDataLocationsBytes(int index);
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Configuration for Custom Dual Regions.  It should specify precisely two
+   * eligible regions within the same Multiregion.
+   * </pre>
+   *
+   * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
+   */
+  public static final class CustomPlacementConfig extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.CustomPlacementConfig)
+      CustomPlacementConfigOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use CustomPlacementConfig.newBuilder() to construct.
+    private CustomPlacementConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private CustomPlacementConfig() {
+      dataLocations_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new CustomPlacementConfig();
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
+      return this.unknownFields;
+    }
+
+    private CustomPlacementConfig(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+                  dataLocations_ = new com.google.protobuf.LazyStringArrayList();
+                  mutable_bitField0_ |= 0x00000001;
+                }
+                dataLocations_.add(s);
+                break;
+              }
+            default:
+              {
+                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
+                  done = true;
+                }
+                break;
+              }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) != 0)) {
+          dataLocations_ = dataLocations_.getUnmodifiableView();
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.google.storage.v2.Bucket.CustomPlacementConfig.class,
+              com.google.storage.v2.Bucket.CustomPlacementConfig.Builder.class);
+    }
+
+    public static final int DATA_LOCATIONS_FIELD_NUMBER = 1;
+    private com.google.protobuf.LazyStringList dataLocations_;
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @return A list containing the dataLocations.
+     */
+    public com.google.protobuf.ProtocolStringList getDataLocationsList() {
+      return dataLocations_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @return The count of dataLocations.
+     */
+    public int getDataLocationsCount() {
+      return dataLocations_.size();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @param index The index of the element to return.
+     * @return The dataLocations at the given index.
+     */
+    public java.lang.String getDataLocations(int index) {
+      return dataLocations_.get(index);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * List of locations to use for data placement.
+     * </pre>
+     *
+     * <code>repeated string data_locations = 1;</code>
+     *
+     * @param index The index of the value to return.
+     * @return The bytes of the dataLocations at the given index.
+     */
+    public com.google.protobuf.ByteString getDataLocationsBytes(int index) {
+      return dataLocations_.getByteString(index);
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      for (int i = 0; i < dataLocations_.size(); i++) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, dataLocations_.getRaw(i));
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < dataLocations_.size(); i++) {
+          dataSize += computeStringSizeNoTag(dataLocations_.getRaw(i));
+        }
+        size += dataSize;
+        size += 1 * getDataLocationsList().size();
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.google.storage.v2.Bucket.CustomPlacementConfig)) {
+        return super.equals(obj);
+      }
+      com.google.storage.v2.Bucket.CustomPlacementConfig other =
+          (com.google.storage.v2.Bucket.CustomPlacementConfig) obj;
+
+      if (!getDataLocationsList().equals(other.getDataLocationsList())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (getDataLocationsCount() > 0) {
+        hash = (37 * hash) + DATA_LOCATIONS_FIELD_NUMBER;
+        hash = (53 * hash) + getDataLocationsList().hashCode();
+      }
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.google.storage.v2.Bucket.CustomPlacementConfig prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration for Custom Dual Regions.  It should specify precisely two
+     * eligible regions within the same Multiregion.
+     * </pre>
+     *
+     * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
+     */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.CustomPlacementConfig)
+        com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.CustomPlacementConfig.class,
+                com.google.storage.v2.Bucket.CustomPlacementConfig.Builder.class);
+      }
+
+      // Construct using com.google.storage.v2.Bucket.CustomPlacementConfig.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        dataLocations_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_descriptor;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.CustomPlacementConfig getDefaultInstanceForType() {
+        return com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.CustomPlacementConfig build() {
+        com.google.storage.v2.Bucket.CustomPlacementConfig result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.CustomPlacementConfig buildPartial() {
+        com.google.storage.v2.Bucket.CustomPlacementConfig result =
+            new com.google.storage.v2.Bucket.CustomPlacementConfig(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) != 0)) {
+          dataLocations_ = dataLocations_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.dataLocations_ = dataLocations_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.google.storage.v2.Bucket.CustomPlacementConfig) {
+          return mergeFrom((com.google.storage.v2.Bucket.CustomPlacementConfig) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.google.storage.v2.Bucket.CustomPlacementConfig other) {
+        if (other == com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance())
+          return this;
+        if (!other.dataLocations_.isEmpty()) {
+          if (dataLocations_.isEmpty()) {
+            dataLocations_ = other.dataLocations_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureDataLocationsIsMutable();
+            dataLocations_.addAll(other.dataLocations_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.storage.v2.Bucket.CustomPlacementConfig parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage =
+              (com.google.storage.v2.Bucket.CustomPlacementConfig) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.google.protobuf.LazyStringList dataLocations_ =
+          com.google.protobuf.LazyStringArrayList.EMPTY;
+
+      private void ensureDataLocationsIsMutable() {
+        if (!((bitField0_ & 0x00000001) != 0)) {
+          dataLocations_ = new com.google.protobuf.LazyStringArrayList(dataLocations_);
+          bitField0_ |= 0x00000001;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @return A list containing the dataLocations.
+       */
+      public com.google.protobuf.ProtocolStringList getDataLocationsList() {
+        return dataLocations_.getUnmodifiableView();
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @return The count of dataLocations.
+       */
+      public int getDataLocationsCount() {
+        return dataLocations_.size();
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @param index The index of the element to return.
+       * @return The dataLocations at the given index.
+       */
+      public java.lang.String getDataLocations(int index) {
+        return dataLocations_.get(index);
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @param index The index of the value to return.
+       * @return The bytes of the dataLocations at the given index.
+       */
+      public com.google.protobuf.ByteString getDataLocationsBytes(int index) {
+        return dataLocations_.getByteString(index);
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @param index The index to set the value at.
+       * @param value The dataLocations to set.
+       * @return This builder for chaining.
+       */
+      public Builder setDataLocations(int index, java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDataLocationsIsMutable();
+        dataLocations_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @param value The dataLocations to add.
+       * @return This builder for chaining.
+       */
+      public Builder addDataLocations(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureDataLocationsIsMutable();
+        dataLocations_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @param values The dataLocations to add.
+       * @return This builder for chaining.
+       */
+      public Builder addAllDataLocations(java.lang.Iterable<java.lang.String> values) {
+        ensureDataLocationsIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, dataLocations_);
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearDataLocations() {
+        dataLocations_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * List of locations to use for data placement.
+       * </pre>
+       *
+       * <code>repeated string data_locations = 1;</code>
+       *
+       * @param value The bytes of the dataLocations to add.
+       * @return This builder for chaining.
+       */
+      public Builder addDataLocationsBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+        ensureDataLocationsIsMutable();
+        dataLocations_.add(value);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.CustomPlacementConfig)
+    }
+
+    // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.CustomPlacementConfig)
+    private static final com.google.storage.v2.Bucket.CustomPlacementConfig DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.CustomPlacementConfig();
+    }
+
+    public static com.google.storage.v2.Bucket.CustomPlacementConfig getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<CustomPlacementConfig> PARSER =
+        new com.google.protobuf.AbstractParser<CustomPlacementConfig>() {
+          @java.lang.Override
+          public CustomPlacementConfig parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            return new CustomPlacementConfig(input, extensionRegistry);
+          }
+        };
+
+    public static com.google.protobuf.Parser<CustomPlacementConfig> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<CustomPlacementConfig> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.CustomPlacementConfig getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public static final int NAME_FIELD_NUMBER = 1;
   private volatile java.lang.Object name_;
   /**
@@ -14711,6 +15503,65 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
       storageClass_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int RPO_FIELD_NUMBER = 27;
+  private volatile java.lang.Object rpo_;
+  /**
+   *
+   *
+   * <pre>
+   * The recovery point objective for cross-region replication of the bucket.
+   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+   * buckets only. If rpo is not specified when the bucket is created, it
+   * defaults to "DEFAULT". For more information, see
+   * https://cloud.google.com/storage/docs/turbo-replication.
+   * </pre>
+   *
+   * <code>string rpo = 27;</code>
+   *
+   * @return The rpo.
+   */
+  @java.lang.Override
+  public java.lang.String getRpo() {
+    java.lang.Object ref = rpo_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      rpo_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * The recovery point objective for cross-region replication of the bucket.
+   * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+   * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+   * buckets only. If rpo is not specified when the bucket is created, it
+   * defaults to "DEFAULT". For more information, see
+   * https://cloud.google.com/storage/docs/turbo-replication.
+   * </pre>
+   *
+   * <code>string rpo = 27;</code>
+   *
+   * @return The bytes for rpo.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getRpoBytes() {
+    java.lang.Object ref = rpo_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      rpo_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -15657,95 +16508,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     return getIamConfig();
   }
 
-  public static final int ZONE_AFFINITY_FIELD_NUMBER = 24;
-  private com.google.protobuf.LazyStringList zoneAffinity_;
-  /**
-   *
-   *
-   * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @return A list containing the zoneAffinity.
-   */
-  @java.lang.Deprecated
-  public com.google.protobuf.ProtocolStringList getZoneAffinityList() {
-    return zoneAffinity_;
-  }
-  /**
-   *
-   *
-   * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @return The count of zoneAffinity.
-   */
-  @java.lang.Deprecated
-  public int getZoneAffinityCount() {
-    return zoneAffinity_.size();
-  }
-  /**
-   *
-   *
-   * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @param index The index of the element to return.
-   * @return The zoneAffinity at the given index.
-   */
-  @java.lang.Deprecated
-  public java.lang.String getZoneAffinity(int index) {
-    return zoneAffinity_.get(index);
-  }
-  /**
-   *
-   *
-   * <pre>
-   * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-   * Requests for data from outside the specified affinities are still allowed
-   * but won't be able to use zonal quota. The values are case-insensitive.
-   * Attempting to update this field after bucket is created will result in an
-   * error.
-   * </pre>
-   *
-   * <code>
-   * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-   * </code>
-   *
-   * @param index The index of the value to return.
-   * @return The bytes of the zoneAffinity at the given index.
-   */
-  @java.lang.Deprecated
-  public com.google.protobuf.ByteString getZoneAffinityBytes(int index) {
-    return zoneAffinity_.getByteString(index);
-  }
-
   public static final int SATISFIES_PZS_FIELD_NUMBER = 25;
   private boolean satisfiesPzs_;
   /**
@@ -15762,6 +16524,58 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
   @java.lang.Override
   public boolean getSatisfiesPzs() {
     return satisfiesPzs_;
+  }
+
+  public static final int CUSTOM_PLACEMENT_CONFIG_FIELD_NUMBER = 26;
+  private com.google.storage.v2.Bucket.CustomPlacementConfig customPlacementConfig_;
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   *
+   * @return Whether the customPlacementConfig field is set.
+   */
+  @java.lang.Override
+  public boolean hasCustomPlacementConfig() {
+    return customPlacementConfig_ != null;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   *
+   * @return The customPlacementConfig.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig() {
+    return customPlacementConfig_ == null
+        ? com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance()
+        : customPlacementConfig_;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder
+      getCustomPlacementConfigOrBuilder() {
+    return getCustomPlacementConfig();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -15846,11 +16660,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (iamConfig_ != null) {
       output.writeMessage(23, getIamConfig());
     }
-    for (int i = 0; i < zoneAffinity_.size(); i++) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 24, zoneAffinity_.getRaw(i));
-    }
     if (satisfiesPzs_ != false) {
       output.writeBool(25, satisfiesPzs_);
+    }
+    if (customPlacementConfig_ != null) {
+      output.writeMessage(26, getCustomPlacementConfig());
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rpo_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 27, rpo_);
     }
     unknownFields.writeTo(output);
   }
@@ -15937,16 +16754,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (iamConfig_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(23, getIamConfig());
     }
-    {
-      int dataSize = 0;
-      for (int i = 0; i < zoneAffinity_.size(); i++) {
-        dataSize += computeStringSizeNoTag(zoneAffinity_.getRaw(i));
-      }
-      size += dataSize;
-      size += 2 * getZoneAffinityList().size();
-    }
     if (satisfiesPzs_ != false) {
       size += com.google.protobuf.CodedOutputStream.computeBoolSize(25, satisfiesPzs_);
+    }
+    if (customPlacementConfig_ != null) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(26, getCustomPlacementConfig());
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rpo_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, rpo_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -15970,6 +16786,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (!getLocation().equals(other.getLocation())) return false;
     if (!getLocationType().equals(other.getLocationType())) return false;
     if (!getStorageClass().equals(other.getStorageClass())) return false;
+    if (!getRpo().equals(other.getRpo())) return false;
     if (!getAclList().equals(other.getAclList())) return false;
     if (!getDefaultObjectAclList().equals(other.getDefaultObjectAclList())) return false;
     if (hasLifecycle() != other.hasLifecycle()) return false;
@@ -16019,8 +16836,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (hasIamConfig()) {
       if (!getIamConfig().equals(other.getIamConfig())) return false;
     }
-    if (!getZoneAffinityList().equals(other.getZoneAffinityList())) return false;
     if (getSatisfiesPzs() != other.getSatisfiesPzs()) return false;
+    if (hasCustomPlacementConfig() != other.hasCustomPlacementConfig()) return false;
+    if (hasCustomPlacementConfig()) {
+      if (!getCustomPlacementConfig().equals(other.getCustomPlacementConfig())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -16046,6 +16866,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + getLocationType().hashCode();
     hash = (37 * hash) + STORAGE_CLASS_FIELD_NUMBER;
     hash = (53 * hash) + getStorageClass().hashCode();
+    hash = (37 * hash) + RPO_FIELD_NUMBER;
+    hash = (53 * hash) + getRpo().hashCode();
     if (getAclCount() > 0) {
       hash = (37 * hash) + ACL_FIELD_NUMBER;
       hash = (53 * hash) + getAclList().hashCode();
@@ -16108,12 +16930,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       hash = (37 * hash) + IAM_CONFIG_FIELD_NUMBER;
       hash = (53 * hash) + getIamConfig().hashCode();
     }
-    if (getZoneAffinityCount() > 0) {
-      hash = (37 * hash) + ZONE_AFFINITY_FIELD_NUMBER;
-      hash = (53 * hash) + getZoneAffinityList().hashCode();
-    }
     hash = (37 * hash) + SATISFIES_PZS_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getSatisfiesPzs());
+    if (hasCustomPlacementConfig()) {
+      hash = (37 * hash) + CUSTOM_PLACEMENT_CONFIG_FIELD_NUMBER;
+      hash = (53 * hash) + getCustomPlacementConfig().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -16294,6 +17116,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
       storageClass_ = "";
 
+      rpo_ = "";
+
       if (aclBuilder_ == null) {
         acl_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -16381,10 +17205,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         iamConfig_ = null;
         iamConfigBuilder_ = null;
       }
-      zoneAffinity_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000010);
       satisfiesPzs_ = false;
 
+      if (customPlacementConfigBuilder_ == null) {
+        customPlacementConfig_ = null;
+      } else {
+        customPlacementConfig_ = null;
+        customPlacementConfigBuilder_ = null;
+      }
       return this;
     }
 
@@ -16418,6 +17246,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       result.location_ = location_;
       result.locationType_ = locationType_;
       result.storageClass_ = storageClass_;
+      result.rpo_ = rpo_;
       if (aclBuilder_ == null) {
         if (((bitField0_ & 0x00000001) != 0)) {
           acl_ = java.util.Collections.unmodifiableList(acl_);
@@ -16503,12 +17332,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       } else {
         result.iamConfig_ = iamConfigBuilder_.build();
       }
-      if (((bitField0_ & 0x00000010) != 0)) {
-        zoneAffinity_ = zoneAffinity_.getUnmodifiableView();
-        bitField0_ = (bitField0_ & ~0x00000010);
-      }
-      result.zoneAffinity_ = zoneAffinity_;
       result.satisfiesPzs_ = satisfiesPzs_;
+      if (customPlacementConfigBuilder_ == null) {
+        result.customPlacementConfig_ = customPlacementConfig_;
+      } else {
+        result.customPlacementConfig_ = customPlacementConfigBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -16583,6 +17412,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (!other.getStorageClass().isEmpty()) {
         storageClass_ = other.storageClass_;
+        onChanged();
+      }
+      if (!other.getRpo().isEmpty()) {
+        rpo_ = other.rpo_;
         onChanged();
       }
       if (aclBuilder_ == null) {
@@ -16703,18 +17536,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (other.hasIamConfig()) {
         mergeIamConfig(other.getIamConfig());
       }
-      if (!other.zoneAffinity_.isEmpty()) {
-        if (zoneAffinity_.isEmpty()) {
-          zoneAffinity_ = other.zoneAffinity_;
-          bitField0_ = (bitField0_ & ~0x00000010);
-        } else {
-          ensureZoneAffinityIsMutable();
-          zoneAffinity_.addAll(other.zoneAffinity_);
-        }
-        onChanged();
-      }
       if (other.getSatisfiesPzs() != false) {
         setSatisfiesPzs(other.getSatisfiesPzs());
+      }
+      if (other.hasCustomPlacementConfig()) {
+        mergeCustomPlacementConfig(other.getCustomPlacementConfig());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -17502,6 +18328,137 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       checkByteStringIsUtf8(value);
 
       storageClass_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object rpo_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * The recovery point objective for cross-region replication of the bucket.
+     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+     * buckets only. If rpo is not specified when the bucket is created, it
+     * defaults to "DEFAULT". For more information, see
+     * https://cloud.google.com/storage/docs/turbo-replication.
+     * </pre>
+     *
+     * <code>string rpo = 27;</code>
+     *
+     * @return The rpo.
+     */
+    public java.lang.String getRpo() {
+      java.lang.Object ref = rpo_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        rpo_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The recovery point objective for cross-region replication of the bucket.
+     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+     * buckets only. If rpo is not specified when the bucket is created, it
+     * defaults to "DEFAULT". For more information, see
+     * https://cloud.google.com/storage/docs/turbo-replication.
+     * </pre>
+     *
+     * <code>string rpo = 27;</code>
+     *
+     * @return The bytes for rpo.
+     */
+    public com.google.protobuf.ByteString getRpoBytes() {
+      java.lang.Object ref = rpo_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        rpo_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The recovery point objective for cross-region replication of the bucket.
+     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+     * buckets only. If rpo is not specified when the bucket is created, it
+     * defaults to "DEFAULT". For more information, see
+     * https://cloud.google.com/storage/docs/turbo-replication.
+     * </pre>
+     *
+     * <code>string rpo = 27;</code>
+     *
+     * @param value The rpo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRpo(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      rpo_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The recovery point objective for cross-region replication of the bucket.
+     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+     * buckets only. If rpo is not specified when the bucket is created, it
+     * defaults to "DEFAULT". For more information, see
+     * https://cloud.google.com/storage/docs/turbo-replication.
+     * </pre>
+     *
+     * <code>string rpo = 27;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearRpo() {
+
+      rpo_ = getDefaultInstance().getRpo();
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The recovery point objective for cross-region replication of the bucket.
+     * Applicable only for dual- and multi-region buckets. "DEFAULT" uses default
+     * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
+     * buckets only. If rpo is not specified when the bucket is created, it
+     * defaults to "DEFAULT". For more information, see
+     * https://cloud.google.com/storage/docs/turbo-replication.
+     * </pre>
+     *
+     * <code>string rpo = 27;</code>
+     *
+     * @param value The bytes for rpo to set.
+     * @return This builder for chaining.
+     */
+    public Builder setRpoBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      rpo_ = value;
       onChanged();
       return this;
     }
@@ -21131,237 +22088,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return iamConfigBuilder_;
     }
 
-    private com.google.protobuf.LazyStringList zoneAffinity_ =
-        com.google.protobuf.LazyStringArrayList.EMPTY;
-
-    private void ensureZoneAffinityIsMutable() {
-      if (!((bitField0_ & 0x00000010) != 0)) {
-        zoneAffinity_ = new com.google.protobuf.LazyStringArrayList(zoneAffinity_);
-        bitField0_ |= 0x00000010;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @return A list containing the zoneAffinity.
-     */
-    @java.lang.Deprecated
-    public com.google.protobuf.ProtocolStringList getZoneAffinityList() {
-      return zoneAffinity_.getUnmodifiableView();
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @return The count of zoneAffinity.
-     */
-    @java.lang.Deprecated
-    public int getZoneAffinityCount() {
-      return zoneAffinity_.size();
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @param index The index of the element to return.
-     * @return The zoneAffinity at the given index.
-     */
-    @java.lang.Deprecated
-    public java.lang.String getZoneAffinity(int index) {
-      return zoneAffinity_.get(index);
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @param index The index of the value to return.
-     * @return The bytes of the zoneAffinity at the given index.
-     */
-    @java.lang.Deprecated
-    public com.google.protobuf.ByteString getZoneAffinityBytes(int index) {
-      return zoneAffinity_.getByteString(index);
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @param index The index to set the value at.
-     * @param value The zoneAffinity to set.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated
-    public Builder setZoneAffinity(int index, java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureZoneAffinityIsMutable();
-      zoneAffinity_.set(index, value);
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @param value The zoneAffinity to add.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated
-    public Builder addZoneAffinity(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      ensureZoneAffinityIsMutable();
-      zoneAffinity_.add(value);
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @param values The zoneAffinity to add.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated
-    public Builder addAllZoneAffinity(java.lang.Iterable<java.lang.String> values) {
-      ensureZoneAffinityIsMutable();
-      com.google.protobuf.AbstractMessageLite.Builder.addAll(values, zoneAffinity_);
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated
-    public Builder clearZoneAffinity() {
-      zoneAffinity_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000010);
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Immutable. The zone or zones from which the bucket is intended to use zonal quota.
-     * Requests for data from outside the specified affinities are still allowed
-     * but won't be able to use zonal quota. The values are case-insensitive.
-     * Attempting to update this field after bucket is created will result in an
-     * error.
-     * </pre>
-     *
-     * <code>
-     * repeated string zone_affinity = 24 [deprecated = true, (.google.api.field_behavior) = IMMUTABLE];
-     * </code>
-     *
-     * @param value The bytes of the zoneAffinity to add.
-     * @return This builder for chaining.
-     */
-    @java.lang.Deprecated
-    public Builder addZoneAffinityBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-      ensureZoneAffinityIsMutable();
-      zoneAffinity_.add(value);
-      onChanged();
-      return this;
-    }
-
     private boolean satisfiesPzs_;
     /**
      *
@@ -21412,6 +22138,205 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       satisfiesPzs_ = false;
       onChanged();
       return this;
+    }
+
+    private com.google.storage.v2.Bucket.CustomPlacementConfig customPlacementConfig_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.CustomPlacementConfig,
+            com.google.storage.v2.Bucket.CustomPlacementConfig.Builder,
+            com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder>
+        customPlacementConfigBuilder_;
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     *
+     * @return Whether the customPlacementConfig field is set.
+     */
+    public boolean hasCustomPlacementConfig() {
+      return customPlacementConfigBuilder_ != null || customPlacementConfig_ != null;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     *
+     * @return The customPlacementConfig.
+     */
+    public com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig() {
+      if (customPlacementConfigBuilder_ == null) {
+        return customPlacementConfig_ == null
+            ? com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance()
+            : customPlacementConfig_;
+      } else {
+        return customPlacementConfigBuilder_.getMessage();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     */
+    public Builder setCustomPlacementConfig(
+        com.google.storage.v2.Bucket.CustomPlacementConfig value) {
+      if (customPlacementConfigBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        customPlacementConfig_ = value;
+        onChanged();
+      } else {
+        customPlacementConfigBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     */
+    public Builder setCustomPlacementConfig(
+        com.google.storage.v2.Bucket.CustomPlacementConfig.Builder builderForValue) {
+      if (customPlacementConfigBuilder_ == null) {
+        customPlacementConfig_ = builderForValue.build();
+        onChanged();
+      } else {
+        customPlacementConfigBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     */
+    public Builder mergeCustomPlacementConfig(
+        com.google.storage.v2.Bucket.CustomPlacementConfig value) {
+      if (customPlacementConfigBuilder_ == null) {
+        if (customPlacementConfig_ != null) {
+          customPlacementConfig_ =
+              com.google.storage.v2.Bucket.CustomPlacementConfig.newBuilder(customPlacementConfig_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          customPlacementConfig_ = value;
+        }
+        onChanged();
+      } else {
+        customPlacementConfigBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     */
+    public Builder clearCustomPlacementConfig() {
+      if (customPlacementConfigBuilder_ == null) {
+        customPlacementConfig_ = null;
+        onChanged();
+      } else {
+        customPlacementConfig_ = null;
+        customPlacementConfigBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     */
+    public com.google.storage.v2.Bucket.CustomPlacementConfig.Builder
+        getCustomPlacementConfigBuilder() {
+
+      onChanged();
+      return getCustomPlacementConfigFieldBuilder().getBuilder();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     */
+    public com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder
+        getCustomPlacementConfigOrBuilder() {
+      if (customPlacementConfigBuilder_ != null) {
+        return customPlacementConfigBuilder_.getMessageOrBuilder();
+      } else {
+        return customPlacementConfig_ == null
+            ? com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance()
+            : customPlacementConfig_;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Configuration that, if present, specifies the data placement for a Custom
+     * Dual Region.
+     * </pre>
+     *
+     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.CustomPlacementConfig,
+            com.google.storage.v2.Bucket.CustomPlacementConfig.Builder,
+            com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder>
+        getCustomPlacementConfigFieldBuilder() {
+      if (customPlacementConfigBuilder_ == null) {
+        customPlacementConfigBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.Bucket.CustomPlacementConfig,
+                com.google.storage.v2.Bucket.CustomPlacementConfig.Builder,
+                com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder>(
+                getCustomPlacementConfig(), getParentForChildren(), isClean());
+        customPlacementConfig_ = null;
+      }
+      return customPlacementConfigBuilder_;
     }
 
     @java.lang.Override
