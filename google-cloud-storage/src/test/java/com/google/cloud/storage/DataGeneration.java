@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
+import java.util.UUID;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -26,9 +27,15 @@ import org.junit.runners.model.Statement;
 public final class DataGeneration implements TestRule {
 
   private final Random rand;
+  private final String bucketName;
 
   public DataGeneration(Random rand) {
     this.rand = rand;
+    this.bucketName = String.format("rand-bkt-%s", UUID.randomUUID());
+  }
+
+  public String getBucketName() {
+    return bucketName;
   }
 
   public ByteBuffer randByteBuffer(int limit) {

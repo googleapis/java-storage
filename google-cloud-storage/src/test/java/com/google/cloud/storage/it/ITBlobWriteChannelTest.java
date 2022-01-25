@@ -29,6 +29,7 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGeneration;
@@ -39,7 +40,6 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.conformance.retry.TestBench;
 import com.google.cloud.storage.conformance.retry.TestBench.RetryTestResource;
 import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.reflect.Reflection;
 import java.io.ByteArrayOutputStream;
@@ -68,8 +68,6 @@ public final class ITBlobWriteChannelTest {
         DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
     NOW_STRING = formatter.format(now);
   }
-
-  private static final String BUCKET = RemoteStorageHelper.generateBucketName();
 
   @ClassRule
   public static final TestBench testBench =
@@ -106,8 +104,8 @@ public final class ITBlobWriteChannelTest {
   private void doJsonUnexpectedEOFTest(int contentSize, int cappedByteCount) throws IOException {
     String blobPath = String.format("%s/%s/blob", testName.getMethodName(), NOW_STRING);
 
-    BucketInfo bucketInfo = BucketInfo.of(BUCKET);
-    BlobInfo blobInfo = BlobInfo.newBuilder(bucketInfo, blobPath, 0L).build();
+    BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
+    BlobInfo blobInfoGen0 = BlobInfo.newBuilder(bucketInfo, blobPath, 0L).build();
 
     RetryTestResource retryTestResource =
         RetryTestResource.newRetryTestResource(
@@ -171,7 +169,7 @@ public final class ITBlobWriteChannelTest {
     // create a duplicate to preserve the initial offset and limit for assertion later
     ByteBuffer expected = content.duplicate();
 
-    WriteChannel w = testStorage.writer(blobInfo, BlobWriteOption.generationMatch());
+    WriteChannel w = testStorage.writer(blobInfoGen0, BlobWriteOption.generationMatch());
     w.write(content);
     w.close();
 
@@ -183,11 +181,13 @@ public final class ITBlobWriteChannelTest {
 
     assertTrue(optionalStorageObject.isPresent());
     StorageObject storageObject = optionalStorageObject.get();
-    assertThat(storageObject.getName()).isEqualTo(blobInfo.getName());
+    assertThat(storageObject.getName()).isEqualTo(blobInfoGen0.getName());
 
-    Blob blobGen2 = testStorage.get(blobInfo.getBlobId());
+    // construct a new blob id, without a generation, so we get the latest when we perform a get
+    BlobId blobIdGen1 = BlobId.of(storageObject.getBucket(), storageObject.getName());
+    Blob blobGen2 = testStorage.get(blobIdGen1);
     assertEquals(contentSize, (long) blobGen2.getSize());
-    assertNotEquals(blobInfo.getGeneration(), blobGen2.getGeneration());
+    assertNotEquals(blobInfoGen0.getGeneration(), blobGen2.getGeneration());
     ByteArrayOutputStream actualData = new ByteArrayOutputStream();
     blobGen2.downloadTo(actualData);
     ByteBuffer actual = ByteBuffer.wrap(actualData.toByteArray());

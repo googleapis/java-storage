@@ -337,7 +337,7 @@ public final class TestBench implements TestRule {
     private static final String DEFAULT_BASE_URI = "http://localhost:9000";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
-    private static final String DEFAULT_IMAGE_TAG = "v0.10.0";
+    private static final String DEFAULT_IMAGE_TAG = "v0.11.0";
     private static final String DEFAULT_CONTAINER_NAME = "default";
 
     private boolean ignorePullError;
