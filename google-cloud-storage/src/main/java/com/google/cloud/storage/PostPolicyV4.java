@@ -21,11 +21,9 @@ import com.google.gson.JsonObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -54,7 +52,6 @@ public final class PostPolicyV4 {
     } catch (URISyntaxException e) {
       throw new IllegalArgumentException(e);
     }
-    PostFieldsV4.validateFields(fields);
 
     this.url = url;
     this.fields = Collections.unmodifiableMap(fields);
@@ -93,40 +90,12 @@ public final class PostPolicyV4 {
    */
   public static final class PostFieldsV4 {
     private final Map<String, String> fieldsMap;
-    private static final List<String> VALID_FIELDS =
-        Arrays.asList(
-            "acl",
-            "bucket",
-            "cache-control",
-            "content-disposition",
-            "content-encoding",
-            "content-type",
-            "expires",
-            "file",
-            "key",
-            "policy",
-            "success_action_redirect",
-            "success_action_status",
-            "x-goog-algorithm",
-            "x-goog-credential",
-            "x-goog-date",
-            "x-goog-signature");
-
-    private static void validateFields(Map<String, String> fields) {
-      for (String key : fields.keySet()) {
-        if (!VALID_FIELDS.contains(key.toLowerCase())
-            && !key.startsWith(Builder.CUSTOM_FIELD_PREFIX)) {
-          throw new IllegalArgumentException("Invalid key: " + key);
-        }
-      }
-    }
 
     private PostFieldsV4(Builder builder) {
       this(builder.fieldsMap);
     }
 
     private PostFieldsV4(Map<String, String> fields) {
-      validateFields(fields);
       this.fieldsMap = Collections.unmodifiableMap(fields);
     }
 
