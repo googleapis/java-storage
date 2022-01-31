@@ -5752,8 +5752,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete` and
-         * `SetStorageClass` are supported.
+         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+         * `AbortIncompleteMultipartUpload` are supported.
          * </pre>
          *
          * <code>string type = 1;</code>
@@ -5765,8 +5765,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete` and
-         * `SetStorageClass` are supported.
+         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+         * `AbortIncompleteMultipartUpload` are supported.
          * </pre>
          *
          * <code>string type = 1;</code>
@@ -5910,8 +5910,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete` and
-         * `SetStorageClass` are supported.
+         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+         * `AbortIncompleteMultipartUpload` are supported.
          * </pre>
          *
          * <code>string type = 1;</code>
@@ -5934,8 +5934,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          *
          * <pre>
-         * Type of the action. Currently, only `Delete` and
-         * `SetStorageClass` are supported.
+         * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+         * `AbortIncompleteMultipartUpload` are supported.
          * </pre>
          *
          * <code>string type = 1;</code>
@@ -6352,8 +6352,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete` and
-           * `SetStorageClass` are supported.
+           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+           * `AbortIncompleteMultipartUpload` are supported.
            * </pre>
            *
            * <code>string type = 1;</code>
@@ -6375,8 +6375,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete` and
-           * `SetStorageClass` are supported.
+           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+           * `AbortIncompleteMultipartUpload` are supported.
            * </pre>
            *
            * <code>string type = 1;</code>
@@ -6398,8 +6398,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete` and
-           * `SetStorageClass` are supported.
+           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+           * `AbortIncompleteMultipartUpload` are supported.
            * </pre>
            *
            * <code>string type = 1;</code>
@@ -6420,8 +6420,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete` and
-           * `SetStorageClass` are supported.
+           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+           * `AbortIncompleteMultipartUpload` are supported.
            * </pre>
            *
            * <code>string type = 1;</code>
@@ -6438,8 +6438,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
            *
            *
            * <pre>
-           * Type of the action. Currently, only `Delete` and
-           * `SetStorageClass` are supported.
+           * Type of the action. Currently, only `Delete`, `SetStorageClass`, and
+           * `AbortIncompleteMultipartUpload` are supported.
            * </pre>
            *
            * <code>string type = 1;</code>

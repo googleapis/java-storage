@@ -27,8 +27,117 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
+   * Immutable. The name of the destination object. Nearly any sequence of unicode
+   * characters is valid. See
+   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Example: `test.txt`
+   * The `name` field by itself does not uniquely identify a Cloud Storage
+   * object. A Cloud Storage object is uniquely identified by the tuple of
+   * (bucket, object, generation).
+   * </pre>
+   *
+   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   *
+   * @return The destinationName.
+   */
+  java.lang.String getDestinationName();
+  /**
+   *
+   *
+   * <pre>
+   * Immutable. The name of the destination object. Nearly any sequence of unicode
+   * characters is valid. See
+   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Example: `test.txt`
+   * The `name` field by itself does not uniquely identify a Cloud Storage
+   * object. A Cloud Storage object is uniquely identified by the tuple of
+   * (bucket, object, generation).
+   * </pre>
+   *
+   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   *
+   * @return The bytes for destinationName.
+   */
+  com.google.protobuf.ByteString getDestinationNameBytes();
+
+  /**
+   *
+   *
+   * <pre>
+   * Immutable. The name of the bucket containing The name of the destination object.
+   * </pre>
+   *
+   * <code>
+   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
+   *
+   * @return The destinationBucket.
+   */
+  java.lang.String getDestinationBucket();
+  /**
+   *
+   *
+   * <pre>
+   * Immutable. The name of the bucket containing The name of the destination object.
+   * </pre>
+   *
+   * <code>
+   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
+   *
+   * @return The bytes for destinationBucket.
+   */
+  com.google.protobuf.ByteString getDestinationBucketBytes();
+
+  /**
+   *
+   *
+   * <pre>
+   * Metadata of customer-supplied encryption key for the destination object, if
+   * the object is to be encrypted by such a key.
+   * </pre>
+   *
+   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   *
+   * @return Whether the destinationCustomerEncryption field is set.
+   */
+  boolean hasDestinationCustomerEncryption();
+  /**
+   *
+   *
+   * <pre>
+   * Metadata of customer-supplied encryption key for the destination object, if
+   * the object is to be encrypted by such a key.
+   * </pre>
+   *
+   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   *
+   * @return The destinationCustomerEncryption.
+   */
+  com.google.storage.v2.CustomerEncryption getDestinationCustomerEncryption();
+  /**
+   *
+   *
+   * <pre>
+   * Metadata of customer-supplied encryption key for the destination object, if
+   * the object is to be encrypted by such a key.
+   * </pre>
+   *
+   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   */
+  com.google.storage.v2.CustomerEncryptionOrBuilder getDestinationCustomerEncryptionOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
    * Properties of the destination, post-rewrite object.
-   * Includes bucket name, object name, KMS key.
+   * The `name`, `bucket`, and `customer_encryption` fields must not be
+   * populated (these values are specified in the `destination_name`,
+   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * If `destination` is present it will be used to construct the destination
+   * object's metadata; otherwise the destination object's metadata will be
+   * copied from the source object.
    * </pre>
    *
    * <code>.google.storage.v2.Object destination = 1;</code>
@@ -41,7 +150,12 @@ public interface RewriteObjectRequestOrBuilder
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * Includes bucket name, object name, KMS key.
+   * The `name`, `bucket`, and `customer_encryption` fields must not be
+   * populated (these values are specified in the `destination_name`,
+   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * If `destination` is present it will be used to construct the destination
+   * object's metadata; otherwise the destination object's metadata will be
+   * copied from the source object.
    * </pre>
    *
    * <code>.google.storage.v2.Object destination = 1;</code>
@@ -54,68 +168,17 @@ public interface RewriteObjectRequestOrBuilder
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * Includes bucket name, object name, KMS key.
+   * The `name`, `bucket`, and `customer_encryption` fields must not be
+   * populated (these values are specified in the `destination_name`,
+   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * If `destination` is present it will be used to construct the destination
+   * object's metadata; otherwise the destination object's metadata will be
+   * copied from the source object.
    * </pre>
    *
    * <code>.google.storage.v2.Object destination = 1;</code>
    */
   com.google.storage.v2.ObjectOrBuilder getDestinationOrBuilder();
-
-  /**
-   *
-   *
-   * <pre>
-   * List of fields to be updated in the destination object from `destination`.
-   * If the mask is not present, all fields from the source object will be
-   * copied excepting ACL. If the mask is present but specifies no fields, no
-   * fields will be copied.
-   * Non-ACL metadata not included in the mask will be copied from the source
-   * object.
-   * If not present, all fields from the destination will be set from
-   * `destination`.
-   * </pre>
-   *
-   * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-   *
-   * @return Whether the rewriteMask field is set.
-   */
-  boolean hasRewriteMask();
-  /**
-   *
-   *
-   * <pre>
-   * List of fields to be updated in the destination object from `destination`.
-   * If the mask is not present, all fields from the source object will be
-   * copied excepting ACL. If the mask is present but specifies no fields, no
-   * fields will be copied.
-   * Non-ACL metadata not included in the mask will be copied from the source
-   * object.
-   * If not present, all fields from the destination will be set from
-   * `destination`.
-   * </pre>
-   *
-   * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-   *
-   * @return The rewriteMask.
-   */
-  com.google.protobuf.FieldMask getRewriteMask();
-  /**
-   *
-   *
-   * <pre>
-   * List of fields to be updated in the destination object from `destination`.
-   * If the mask is not present, all fields from the source object will be
-   * copied excepting ACL. If the mask is present but specifies no fields, no
-   * fields will be copied.
-   * Non-ACL metadata not included in the mask will be copied from the source
-   * object.
-   * If not present, all fields from the destination will be set from
-   * `destination`.
-   * </pre>
-   *
-   * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-   */
-  com.google.protobuf.FieldMaskOrBuilder getRewriteMaskOrBuilder();
 
   /**
    *

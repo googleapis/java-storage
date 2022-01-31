@@ -38,6 +38,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   private RewriteObjectRequest() {
+    destinationName_ = "";
+    destinationBucket_ = "";
     sourceBucket_ = "";
     sourceObject_ = "";
     rewriteToken_ = "";
@@ -227,17 +229,32 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
               copySourceEncryptionKeySha256Bytes_ = input.readBytes();
               break;
             }
-          case 186:
+          case 194:
             {
-              com.google.protobuf.FieldMask.Builder subBuilder = null;
-              if (rewriteMask_ != null) {
-                subBuilder = rewriteMask_.toBuilder();
+              java.lang.String s = input.readStringRequireUtf8();
+
+              destinationName_ = s;
+              break;
+            }
+          case 202:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              destinationBucket_ = s;
+              break;
+            }
+          case 210:
+            {
+              com.google.storage.v2.CustomerEncryption.Builder subBuilder = null;
+              if (destinationCustomerEncryption_ != null) {
+                subBuilder = destinationCustomerEncryption_.toBuilder();
               }
-              rewriteMask_ =
-                  input.readMessage(com.google.protobuf.FieldMask.parser(), extensionRegistry);
+              destinationCustomerEncryption_ =
+                  input.readMessage(
+                      com.google.storage.v2.CustomerEncryption.parser(), extensionRegistry);
               if (subBuilder != null) {
-                subBuilder.mergeFrom(rewriteMask_);
-                rewriteMask_ = subBuilder.buildPartial();
+                subBuilder.mergeFrom(destinationCustomerEncryption_);
+                destinationCustomerEncryption_ = subBuilder.buildPartial();
               }
 
               break;
@@ -277,6 +294,172 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   private int bitField0_;
+  public static final int DESTINATION_NAME_FIELD_NUMBER = 24;
+  private volatile java.lang.Object destinationName_;
+  /**
+   *
+   *
+   * <pre>
+   * Immutable. The name of the destination object. Nearly any sequence of unicode
+   * characters is valid. See
+   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Example: `test.txt`
+   * The `name` field by itself does not uniquely identify a Cloud Storage
+   * object. A Cloud Storage object is uniquely identified by the tuple of
+   * (bucket, object, generation).
+   * </pre>
+   *
+   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   *
+   * @return The destinationName.
+   */
+  @java.lang.Override
+  public java.lang.String getDestinationName() {
+    java.lang.Object ref = destinationName_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      destinationName_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Immutable. The name of the destination object. Nearly any sequence of unicode
+   * characters is valid. See
+   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Example: `test.txt`
+   * The `name` field by itself does not uniquely identify a Cloud Storage
+   * object. A Cloud Storage object is uniquely identified by the tuple of
+   * (bucket, object, generation).
+   * </pre>
+   *
+   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   *
+   * @return The bytes for destinationName.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getDestinationNameBytes() {
+    java.lang.Object ref = destinationName_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      destinationName_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int DESTINATION_BUCKET_FIELD_NUMBER = 25;
+  private volatile java.lang.Object destinationBucket_;
+  /**
+   *
+   *
+   * <pre>
+   * Immutable. The name of the bucket containing The name of the destination object.
+   * </pre>
+   *
+   * <code>
+   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
+   *
+   * @return The destinationBucket.
+   */
+  @java.lang.Override
+  public java.lang.String getDestinationBucket() {
+    java.lang.Object ref = destinationBucket_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      destinationBucket_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Immutable. The name of the bucket containing The name of the destination object.
+   * </pre>
+   *
+   * <code>
+   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
+   *
+   * @return The bytes for destinationBucket.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getDestinationBucketBytes() {
+    java.lang.Object ref = destinationBucket_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      destinationBucket_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int DESTINATION_CUSTOMER_ENCRYPTION_FIELD_NUMBER = 26;
+  private com.google.storage.v2.CustomerEncryption destinationCustomerEncryption_;
+  /**
+   *
+   *
+   * <pre>
+   * Metadata of customer-supplied encryption key for the destination object, if
+   * the object is to be encrypted by such a key.
+   * </pre>
+   *
+   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   *
+   * @return Whether the destinationCustomerEncryption field is set.
+   */
+  @java.lang.Override
+  public boolean hasDestinationCustomerEncryption() {
+    return destinationCustomerEncryption_ != null;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Metadata of customer-supplied encryption key for the destination object, if
+   * the object is to be encrypted by such a key.
+   * </pre>
+   *
+   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   *
+   * @return The destinationCustomerEncryption.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.CustomerEncryption getDestinationCustomerEncryption() {
+    return destinationCustomerEncryption_ == null
+        ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
+        : destinationCustomerEncryption_;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Metadata of customer-supplied encryption key for the destination object, if
+   * the object is to be encrypted by such a key.
+   * </pre>
+   *
+   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.CustomerEncryptionOrBuilder
+      getDestinationCustomerEncryptionOrBuilder() {
+    return getDestinationCustomerEncryption();
+  }
+
   public static final int DESTINATION_FIELD_NUMBER = 1;
   private com.google.storage.v2.Object destination_;
   /**
@@ -284,7 +467,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * Includes bucket name, object name, KMS key.
+   * The `name`, `bucket`, and `customer_encryption` fields must not be
+   * populated (these values are specified in the `destination_name`,
+   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * If `destination` is present it will be used to construct the destination
+   * object's metadata; otherwise the destination object's metadata will be
+   * copied from the source object.
    * </pre>
    *
    * <code>.google.storage.v2.Object destination = 1;</code>
@@ -300,7 +488,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * Includes bucket name, object name, KMS key.
+   * The `name`, `bucket`, and `customer_encryption` fields must not be
+   * populated (these values are specified in the `destination_name`,
+   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * If `destination` is present it will be used to construct the destination
+   * object's metadata; otherwise the destination object's metadata will be
+   * copied from the source object.
    * </pre>
    *
    * <code>.google.storage.v2.Object destination = 1;</code>
@@ -316,7 +509,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * Includes bucket name, object name, KMS key.
+   * The `name`, `bucket`, and `customer_encryption` fields must not be
+   * populated (these values are specified in the `destination_name`,
+   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * If `destination` is present it will be used to construct the destination
+   * object's metadata; otherwise the destination object's metadata will be
+   * copied from the source object.
    * </pre>
    *
    * <code>.google.storage.v2.Object destination = 1;</code>
@@ -324,73 +522,6 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   @java.lang.Override
   public com.google.storage.v2.ObjectOrBuilder getDestinationOrBuilder() {
     return getDestination();
-  }
-
-  public static final int REWRITE_MASK_FIELD_NUMBER = 23;
-  private com.google.protobuf.FieldMask rewriteMask_;
-  /**
-   *
-   *
-   * <pre>
-   * List of fields to be updated in the destination object from `destination`.
-   * If the mask is not present, all fields from the source object will be
-   * copied excepting ACL. If the mask is present but specifies no fields, no
-   * fields will be copied.
-   * Non-ACL metadata not included in the mask will be copied from the source
-   * object.
-   * If not present, all fields from the destination will be set from
-   * `destination`.
-   * </pre>
-   *
-   * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-   *
-   * @return Whether the rewriteMask field is set.
-   */
-  @java.lang.Override
-  public boolean hasRewriteMask() {
-    return rewriteMask_ != null;
-  }
-  /**
-   *
-   *
-   * <pre>
-   * List of fields to be updated in the destination object from `destination`.
-   * If the mask is not present, all fields from the source object will be
-   * copied excepting ACL. If the mask is present but specifies no fields, no
-   * fields will be copied.
-   * Non-ACL metadata not included in the mask will be copied from the source
-   * object.
-   * If not present, all fields from the destination will be set from
-   * `destination`.
-   * </pre>
-   *
-   * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-   *
-   * @return The rewriteMask.
-   */
-  @java.lang.Override
-  public com.google.protobuf.FieldMask getRewriteMask() {
-    return rewriteMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : rewriteMask_;
-  }
-  /**
-   *
-   *
-   * <pre>
-   * List of fields to be updated in the destination object from `destination`.
-   * If the mask is not present, all fields from the source object will be
-   * copied excepting ACL. If the mask is present but specifies no fields, no
-   * fields will be copied.
-   * Non-ACL metadata not included in the mask will be copied from the source
-   * object.
-   * If not present, all fields from the destination will be set from
-   * `destination`.
-   * </pre>
-   *
-   * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-   */
-  @java.lang.Override
-  public com.google.protobuf.FieldMaskOrBuilder getRewriteMaskOrBuilder() {
-    return getRewriteMask();
   }
 
   public static final int SOURCE_BUCKET_FIELD_NUMBER = 2;
@@ -1175,8 +1306,14 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     if (!copySourceEncryptionKeySha256Bytes_.isEmpty()) {
       output.writeBytes(22, copySourceEncryptionKeySha256Bytes_);
     }
-    if (rewriteMask_ != null) {
-      output.writeMessage(23, getRewriteMask());
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationName_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 24, destinationName_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationBucket_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 25, destinationBucket_);
+    }
+    if (destinationCustomerEncryption_ != null) {
+      output.writeMessage(26, getDestinationCustomerEncryption());
     }
     unknownFields.writeTo(output);
   }
@@ -1261,8 +1398,16 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
           com.google.protobuf.CodedOutputStream.computeBytesSize(
               22, copySourceEncryptionKeySha256Bytes_);
     }
-    if (rewriteMask_ != null) {
-      size += com.google.protobuf.CodedOutputStream.computeMessageSize(23, getRewriteMask());
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationName_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(24, destinationName_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationBucket_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, destinationBucket_);
+    }
+    if (destinationCustomerEncryption_ != null) {
+      size +=
+          com.google.protobuf.CodedOutputStream.computeMessageSize(
+              26, getDestinationCustomerEncryption());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -1280,13 +1425,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     com.google.storage.v2.RewriteObjectRequest other =
         (com.google.storage.v2.RewriteObjectRequest) obj;
 
+    if (!getDestinationName().equals(other.getDestinationName())) return false;
+    if (!getDestinationBucket().equals(other.getDestinationBucket())) return false;
+    if (hasDestinationCustomerEncryption() != other.hasDestinationCustomerEncryption())
+      return false;
+    if (hasDestinationCustomerEncryption()) {
+      if (!getDestinationCustomerEncryption().equals(other.getDestinationCustomerEncryption()))
+        return false;
+    }
     if (hasDestination() != other.hasDestination()) return false;
     if (hasDestination()) {
       if (!getDestination().equals(other.getDestination())) return false;
-    }
-    if (hasRewriteMask() != other.hasRewriteMask()) return false;
-    if (hasRewriteMask()) {
-      if (!getRewriteMask().equals(other.getRewriteMask())) return false;
     }
     if (!getSourceBucket().equals(other.getSourceBucket())) return false;
     if (!getSourceObject().equals(other.getSourceObject())) return false;
@@ -1354,13 +1503,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + DESTINATION_NAME_FIELD_NUMBER;
+    hash = (53 * hash) + getDestinationName().hashCode();
+    hash = (37 * hash) + DESTINATION_BUCKET_FIELD_NUMBER;
+    hash = (53 * hash) + getDestinationBucket().hashCode();
+    if (hasDestinationCustomerEncryption()) {
+      hash = (37 * hash) + DESTINATION_CUSTOMER_ENCRYPTION_FIELD_NUMBER;
+      hash = (53 * hash) + getDestinationCustomerEncryption().hashCode();
+    }
     if (hasDestination()) {
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
-    }
-    if (hasRewriteMask()) {
-      hash = (37 * hash) + REWRITE_MASK_FIELD_NUMBER;
-      hash = (53 * hash) + getRewriteMask().hashCode();
     }
     hash = (37 * hash) + SOURCE_BUCKET_FIELD_NUMBER;
     hash = (53 * hash) + getSourceBucket().hashCode();
@@ -1566,17 +1719,21 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      destinationName_ = "";
+
+      destinationBucket_ = "";
+
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        destinationCustomerEncryption_ = null;
+      } else {
+        destinationCustomerEncryption_ = null;
+        destinationCustomerEncryptionBuilder_ = null;
+      }
       if (destinationBuilder_ == null) {
         destination_ = null;
       } else {
         destination_ = null;
         destinationBuilder_ = null;
-      }
-      if (rewriteMaskBuilder_ == null) {
-        rewriteMask_ = null;
-      } else {
-        rewriteMask_ = null;
-        rewriteMaskBuilder_ = null;
       }
       sourceBucket_ = "";
 
@@ -1653,15 +1810,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
           new com.google.storage.v2.RewriteObjectRequest(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
+      result.destinationName_ = destinationName_;
+      result.destinationBucket_ = destinationBucket_;
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        result.destinationCustomerEncryption_ = destinationCustomerEncryption_;
+      } else {
+        result.destinationCustomerEncryption_ = destinationCustomerEncryptionBuilder_.build();
+      }
       if (destinationBuilder_ == null) {
         result.destination_ = destination_;
       } else {
         result.destination_ = destinationBuilder_.build();
-      }
-      if (rewriteMaskBuilder_ == null) {
-        result.rewriteMask_ = rewriteMask_;
-      } else {
-        result.rewriteMask_ = rewriteMaskBuilder_.build();
       }
       result.sourceBucket_ = sourceBucket_;
       result.sourceObject_ = sourceObject_;
@@ -1764,11 +1923,19 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
     public Builder mergeFrom(com.google.storage.v2.RewriteObjectRequest other) {
       if (other == com.google.storage.v2.RewriteObjectRequest.getDefaultInstance()) return this;
+      if (!other.getDestinationName().isEmpty()) {
+        destinationName_ = other.destinationName_;
+        onChanged();
+      }
+      if (!other.getDestinationBucket().isEmpty()) {
+        destinationBucket_ = other.destinationBucket_;
+        onChanged();
+      }
+      if (other.hasDestinationCustomerEncryption()) {
+        mergeDestinationCustomerEncryption(other.getDestinationCustomerEncryption());
+      }
       if (other.hasDestination()) {
         mergeDestination(other.getDestination());
-      }
-      if (other.hasRewriteMask()) {
-        mergeRewriteMask(other.getRewriteMask());
       }
       if (!other.getSourceBucket().isEmpty()) {
         sourceBucket_ = other.sourceBucket_;
@@ -1862,6 +2029,458 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
     private int bitField0_;
 
+    private java.lang.Object destinationName_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the destination object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Example: `test.txt`
+     * The `name` field by itself does not uniquely identify a Cloud Storage
+     * object. A Cloud Storage object is uniquely identified by the tuple of
+     * (bucket, object, generation).
+     * </pre>
+     *
+     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     *
+     * @return The destinationName.
+     */
+    public java.lang.String getDestinationName() {
+      java.lang.Object ref = destinationName_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        destinationName_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the destination object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Example: `test.txt`
+     * The `name` field by itself does not uniquely identify a Cloud Storage
+     * object. A Cloud Storage object is uniquely identified by the tuple of
+     * (bucket, object, generation).
+     * </pre>
+     *
+     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     *
+     * @return The bytes for destinationName.
+     */
+    public com.google.protobuf.ByteString getDestinationNameBytes() {
+      java.lang.Object ref = destinationName_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        destinationName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the destination object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Example: `test.txt`
+     * The `name` field by itself does not uniquely identify a Cloud Storage
+     * object. A Cloud Storage object is uniquely identified by the tuple of
+     * (bucket, object, generation).
+     * </pre>
+     *
+     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     *
+     * @param value The destinationName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDestinationName(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      destinationName_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the destination object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Example: `test.txt`
+     * The `name` field by itself does not uniquely identify a Cloud Storage
+     * object. A Cloud Storage object is uniquely identified by the tuple of
+     * (bucket, object, generation).
+     * </pre>
+     *
+     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDestinationName() {
+
+      destinationName_ = getDefaultInstance().getDestinationName();
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the destination object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Example: `test.txt`
+     * The `name` field by itself does not uniquely identify a Cloud Storage
+     * object. A Cloud Storage object is uniquely identified by the tuple of
+     * (bucket, object, generation).
+     * </pre>
+     *
+     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     *
+     * @param value The bytes for destinationName to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDestinationNameBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      destinationName_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object destinationBucket_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the bucket containing The name of the destination object.
+     * </pre>
+     *
+     * <code>
+     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
+     *
+     * @return The destinationBucket.
+     */
+    public java.lang.String getDestinationBucket() {
+      java.lang.Object ref = destinationBucket_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        destinationBucket_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the bucket containing The name of the destination object.
+     * </pre>
+     *
+     * <code>
+     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
+     *
+     * @return The bytes for destinationBucket.
+     */
+    public com.google.protobuf.ByteString getDestinationBucketBytes() {
+      java.lang.Object ref = destinationBucket_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        destinationBucket_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the bucket containing The name of the destination object.
+     * </pre>
+     *
+     * <code>
+     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
+     *
+     * @param value The destinationBucket to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDestinationBucket(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      destinationBucket_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the bucket containing The name of the destination object.
+     * </pre>
+     *
+     * <code>
+     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearDestinationBucket() {
+
+      destinationBucket_ = getDefaultInstance().getDestinationBucket();
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Immutable. The name of the bucket containing The name of the destination object.
+     * </pre>
+     *
+     * <code>
+     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
+     *
+     * @param value The bytes for destinationBucket to set.
+     * @return This builder for chaining.
+     */
+    public Builder setDestinationBucketBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      destinationBucket_ = value;
+      onChanged();
+      return this;
+    }
+
+    private com.google.storage.v2.CustomerEncryption destinationCustomerEncryption_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.CustomerEncryption,
+            com.google.storage.v2.CustomerEncryption.Builder,
+            com.google.storage.v2.CustomerEncryptionOrBuilder>
+        destinationCustomerEncryptionBuilder_;
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     *
+     * @return Whether the destinationCustomerEncryption field is set.
+     */
+    public boolean hasDestinationCustomerEncryption() {
+      return destinationCustomerEncryptionBuilder_ != null
+          || destinationCustomerEncryption_ != null;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     *
+     * @return The destinationCustomerEncryption.
+     */
+    public com.google.storage.v2.CustomerEncryption getDestinationCustomerEncryption() {
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        return destinationCustomerEncryption_ == null
+            ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
+            : destinationCustomerEncryption_;
+      } else {
+        return destinationCustomerEncryptionBuilder_.getMessage();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     */
+    public Builder setDestinationCustomerEncryption(
+        com.google.storage.v2.CustomerEncryption value) {
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        destinationCustomerEncryption_ = value;
+        onChanged();
+      } else {
+        destinationCustomerEncryptionBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     */
+    public Builder setDestinationCustomerEncryption(
+        com.google.storage.v2.CustomerEncryption.Builder builderForValue) {
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        destinationCustomerEncryption_ = builderForValue.build();
+        onChanged();
+      } else {
+        destinationCustomerEncryptionBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     */
+    public Builder mergeDestinationCustomerEncryption(
+        com.google.storage.v2.CustomerEncryption value) {
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        if (destinationCustomerEncryption_ != null) {
+          destinationCustomerEncryption_ =
+              com.google.storage.v2.CustomerEncryption.newBuilder(destinationCustomerEncryption_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          destinationCustomerEncryption_ = value;
+        }
+        onChanged();
+      } else {
+        destinationCustomerEncryptionBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     */
+    public Builder clearDestinationCustomerEncryption() {
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        destinationCustomerEncryption_ = null;
+        onChanged();
+      } else {
+        destinationCustomerEncryption_ = null;
+        destinationCustomerEncryptionBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     */
+    public com.google.storage.v2.CustomerEncryption.Builder
+        getDestinationCustomerEncryptionBuilder() {
+
+      onChanged();
+      return getDestinationCustomerEncryptionFieldBuilder().getBuilder();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     */
+    public com.google.storage.v2.CustomerEncryptionOrBuilder
+        getDestinationCustomerEncryptionOrBuilder() {
+      if (destinationCustomerEncryptionBuilder_ != null) {
+        return destinationCustomerEncryptionBuilder_.getMessageOrBuilder();
+      } else {
+        return destinationCustomerEncryption_ == null
+            ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
+            : destinationCustomerEncryption_;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Metadata of customer-supplied encryption key for the destination object, if
+     * the object is to be encrypted by such a key.
+     * </pre>
+     *
+     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.CustomerEncryption,
+            com.google.storage.v2.CustomerEncryption.Builder,
+            com.google.storage.v2.CustomerEncryptionOrBuilder>
+        getDestinationCustomerEncryptionFieldBuilder() {
+      if (destinationCustomerEncryptionBuilder_ == null) {
+        destinationCustomerEncryptionBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.CustomerEncryption,
+                com.google.storage.v2.CustomerEncryption.Builder,
+                com.google.storage.v2.CustomerEncryptionOrBuilder>(
+                getDestinationCustomerEncryption(), getParentForChildren(), isClean());
+        destinationCustomerEncryption_ = null;
+      }
+      return destinationCustomerEncryptionBuilder_;
+    }
+
     private com.google.storage.v2.Object destination_;
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Object,
@@ -1873,7 +2492,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -1888,7 +2512,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -1909,7 +2538,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -1932,7 +2566,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -1952,7 +2591,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -1977,7 +2621,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -1998,7 +2647,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -2013,7 +2667,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -2032,7 +2691,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * Includes bucket name, object name, KMS key.
+     * The `name`, `bucket`, and `customer_encryption` fields must not be
+     * populated (these values are specified in the `destination_name`,
+     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * If `destination` is present it will be used to construct the destination
+     * object's metadata; otherwise the destination object's metadata will be
+     * copied from the source object.
      * </pre>
      *
      * <code>.google.storage.v2.Object destination = 1;</code>
@@ -2052,254 +2716,6 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         destination_ = null;
       }
       return destinationBuilder_;
-    }
-
-    private com.google.protobuf.FieldMask rewriteMask_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.protobuf.FieldMask,
-            com.google.protobuf.FieldMask.Builder,
-            com.google.protobuf.FieldMaskOrBuilder>
-        rewriteMaskBuilder_;
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     *
-     * @return Whether the rewriteMask field is set.
-     */
-    public boolean hasRewriteMask() {
-      return rewriteMaskBuilder_ != null || rewriteMask_ != null;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     *
-     * @return The rewriteMask.
-     */
-    public com.google.protobuf.FieldMask getRewriteMask() {
-      if (rewriteMaskBuilder_ == null) {
-        return rewriteMask_ == null
-            ? com.google.protobuf.FieldMask.getDefaultInstance()
-            : rewriteMask_;
-      } else {
-        return rewriteMaskBuilder_.getMessage();
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     */
-    public Builder setRewriteMask(com.google.protobuf.FieldMask value) {
-      if (rewriteMaskBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        rewriteMask_ = value;
-        onChanged();
-      } else {
-        rewriteMaskBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     */
-    public Builder setRewriteMask(com.google.protobuf.FieldMask.Builder builderForValue) {
-      if (rewriteMaskBuilder_ == null) {
-        rewriteMask_ = builderForValue.build();
-        onChanged();
-      } else {
-        rewriteMaskBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     */
-    public Builder mergeRewriteMask(com.google.protobuf.FieldMask value) {
-      if (rewriteMaskBuilder_ == null) {
-        if (rewriteMask_ != null) {
-          rewriteMask_ =
-              com.google.protobuf.FieldMask.newBuilder(rewriteMask_)
-                  .mergeFrom(value)
-                  .buildPartial();
-        } else {
-          rewriteMask_ = value;
-        }
-        onChanged();
-      } else {
-        rewriteMaskBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     */
-    public Builder clearRewriteMask() {
-      if (rewriteMaskBuilder_ == null) {
-        rewriteMask_ = null;
-        onChanged();
-      } else {
-        rewriteMask_ = null;
-        rewriteMaskBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     */
-    public com.google.protobuf.FieldMask.Builder getRewriteMaskBuilder() {
-
-      onChanged();
-      return getRewriteMaskFieldBuilder().getBuilder();
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     */
-    public com.google.protobuf.FieldMaskOrBuilder getRewriteMaskOrBuilder() {
-      if (rewriteMaskBuilder_ != null) {
-        return rewriteMaskBuilder_.getMessageOrBuilder();
-      } else {
-        return rewriteMask_ == null
-            ? com.google.protobuf.FieldMask.getDefaultInstance()
-            : rewriteMask_;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of fields to be updated in the destination object from `destination`.
-     * If the mask is not present, all fields from the source object will be
-     * copied excepting ACL. If the mask is present but specifies no fields, no
-     * fields will be copied.
-     * Non-ACL metadata not included in the mask will be copied from the source
-     * object.
-     * If not present, all fields from the destination will be set from
-     * `destination`.
-     * </pre>
-     *
-     * <code>.google.protobuf.FieldMask rewrite_mask = 23;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.protobuf.FieldMask,
-            com.google.protobuf.FieldMask.Builder,
-            com.google.protobuf.FieldMaskOrBuilder>
-        getRewriteMaskFieldBuilder() {
-      if (rewriteMaskBuilder_ == null) {
-        rewriteMaskBuilder_ =
-            new com.google.protobuf.SingleFieldBuilderV3<
-                com.google.protobuf.FieldMask,
-                com.google.protobuf.FieldMask.Builder,
-                com.google.protobuf.FieldMaskOrBuilder>(
-                getRewriteMask(), getParentForChildren(), isClean());
-        rewriteMask_ = null;
-      }
-      return rewriteMaskBuilder_;
     }
 
     private java.lang.Object sourceBucket_ = "";

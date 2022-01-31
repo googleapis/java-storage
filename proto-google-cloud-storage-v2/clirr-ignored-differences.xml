@@ -29,4 +29,30 @@
     <method>* *ZoneAffinity*(*)</method>
   </difference>
 
+
+  <!--
+    Customer Encryption has been pulled up out of Object to a top level message,
+    then the respective request messages include as necessary.
+    -->
+  <!-- Allow new class as a parameter type -->
+  <difference>
+    <differenceType>7005</differenceType>
+    <className>com/google/storage/v2/Object*</className>
+    <method>* *CustomerEncryption*(*)</method>
+    <to>*</to>
+  </difference>
+  <!-- Allow new class as a return type -->
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/Object*</className>
+    <method>* *CustomerEncryption*(*)</method>
+    <to>*</to>
+  </difference>
+  <!-- Allow deletion of old inner class -->
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/storage/v2/Object$CustomerEncryption*</className>
+  </difference>
+
+
 </differences>

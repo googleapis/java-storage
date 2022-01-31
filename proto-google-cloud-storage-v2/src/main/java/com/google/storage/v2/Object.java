@@ -307,13 +307,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
             }
           case 202:
             {
-              com.google.storage.v2.Object.CustomerEncryption.Builder subBuilder = null;
+              com.google.storage.v2.CustomerEncryption.Builder subBuilder = null;
               if (customerEncryption_ != null) {
                 subBuilder = customerEncryption_.toBuilder();
               }
               customerEncryption_ =
                   input.readMessage(
-                      com.google.storage.v2.Object.CustomerEncryption.parser(), extensionRegistry);
+                      com.google.storage.v2.CustomerEncryption.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(customerEncryption_);
                 customerEncryption_ = subBuilder.buildPartial();
@@ -380,770 +380,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
         .internal_static_google_storage_v2_Object_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
             com.google.storage.v2.Object.class, com.google.storage.v2.Object.Builder.class);
-  }
-
-  public interface CustomerEncryptionOrBuilder
-      extends
-      // @@protoc_insertion_point(interface_extends:google.storage.v2.Object.CustomerEncryption)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     *
-     *
-     * <pre>
-     * The encryption algorithm.
-     * </pre>
-     *
-     * <code>string encryption_algorithm = 1;</code>
-     *
-     * @return The encryptionAlgorithm.
-     */
-    java.lang.String getEncryptionAlgorithm();
-    /**
-     *
-     *
-     * <pre>
-     * The encryption algorithm.
-     * </pre>
-     *
-     * <code>string encryption_algorithm = 1;</code>
-     *
-     * @return The bytes for encryptionAlgorithm.
-     */
-    com.google.protobuf.ByteString getEncryptionAlgorithmBytes();
-
-    /**
-     *
-     *
-     * <pre>
-     * SHA256 hash value of the encryption key.
-     * In raw bytes format (not base64-encoded).
-     * </pre>
-     *
-     * <code>bytes key_sha256_bytes = 3;</code>
-     *
-     * @return The keySha256Bytes.
-     */
-    com.google.protobuf.ByteString getKeySha256Bytes();
-  }
-  /**
-   *
-   *
-   * <pre>
-   * Describes the customer-specified mechanism used to store the data at rest.
-   * </pre>
-   *
-   * Protobuf type {@code google.storage.v2.Object.CustomerEncryption}
-   */
-  public static final class CustomerEncryption extends com.google.protobuf.GeneratedMessageV3
-      implements
-      // @@protoc_insertion_point(message_implements:google.storage.v2.Object.CustomerEncryption)
-      CustomerEncryptionOrBuilder {
-    private static final long serialVersionUID = 0L;
-    // Use CustomerEncryption.newBuilder() to construct.
-    private CustomerEncryption(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-
-    private CustomerEncryption() {
-      encryptionAlgorithm_ = "";
-      keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
-    }
-
-    @java.lang.Override
-    @SuppressWarnings({"unused"})
-    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-      return new CustomerEncryption();
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-      return this.unknownFields;
-    }
-
-    private CustomerEncryption(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                encryptionAlgorithm_ = s;
-                break;
-              }
-            case 26:
-              {
-                keySha256Bytes_ = input.readBytes();
-                break;
-              }
-            default:
-              {
-                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-
-    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-      return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_Object_CustomerEncryption_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_Object_CustomerEncryption_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.Object.CustomerEncryption.class,
-              com.google.storage.v2.Object.CustomerEncryption.Builder.class);
-    }
-
-    public static final int ENCRYPTION_ALGORITHM_FIELD_NUMBER = 1;
-    private volatile java.lang.Object encryptionAlgorithm_;
-    /**
-     *
-     *
-     * <pre>
-     * The encryption algorithm.
-     * </pre>
-     *
-     * <code>string encryption_algorithm = 1;</code>
-     *
-     * @return The encryptionAlgorithm.
-     */
-    @java.lang.Override
-    public java.lang.String getEncryptionAlgorithm() {
-      java.lang.Object ref = encryptionAlgorithm_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        encryptionAlgorithm_ = s;
-        return s;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * The encryption algorithm.
-     * </pre>
-     *
-     * <code>string encryption_algorithm = 1;</code>
-     *
-     * @return The bytes for encryptionAlgorithm.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString getEncryptionAlgorithmBytes() {
-      java.lang.Object ref = encryptionAlgorithm_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        encryptionAlgorithm_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-
-    public static final int KEY_SHA256_BYTES_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString keySha256Bytes_;
-    /**
-     *
-     *
-     * <pre>
-     * SHA256 hash value of the encryption key.
-     * In raw bytes format (not base64-encoded).
-     * </pre>
-     *
-     * <code>bytes key_sha256_bytes = 3;</code>
-     *
-     * @return The keySha256Bytes.
-     */
-    @java.lang.Override
-    public com.google.protobuf.ByteString getKeySha256Bytes() {
-      return keySha256Bytes_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-
-    @java.lang.Override
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    @java.lang.Override
-    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(encryptionAlgorithm_)) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, encryptionAlgorithm_);
-      }
-      if (!keySha256Bytes_.isEmpty()) {
-        output.writeBytes(3, keySha256Bytes_);
-      }
-      unknownFields.writeTo(output);
-    }
-
-    @java.lang.Override
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(encryptionAlgorithm_)) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, encryptionAlgorithm_);
-      }
-      if (!keySha256Bytes_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream.computeBytesSize(3, keySha256Bytes_);
-      }
-      size += unknownFields.getSerializedSize();
-      memoizedSize = size;
-      return size;
-    }
-
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-        return true;
-      }
-      if (!(obj instanceof com.google.storage.v2.Object.CustomerEncryption)) {
-        return super.equals(obj);
-      }
-      com.google.storage.v2.Object.CustomerEncryption other =
-          (com.google.storage.v2.Object.CustomerEncryption) obj;
-
-      if (!getEncryptionAlgorithm().equals(other.getEncryptionAlgorithm())) return false;
-      if (!getKeySha256Bytes().equals(other.getKeySha256Bytes())) return false;
-      if (!unknownFields.equals(other.unknownFields)) return false;
-      return true;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ENCRYPTION_ALGORITHM_FIELD_NUMBER;
-      hash = (53 * hash) + getEncryptionAlgorithm().hashCode();
-      hash = (37 * hash) + KEY_SHA256_BYTES_FIELD_NUMBER;
-      hash = (53 * hash) + getKeySha256Bytes().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        java.io.InputStream input) throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
-          PARSER, input, extensionRegistry);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseDelimitedFrom(
-        java.io.InputStream input) throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseDelimitedFrom(
-        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
-          PARSER, input, extensionRegistry);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
-          PARSER, input, extensionRegistry);
-    }
-
-    @java.lang.Override
-    public Builder newBuilderForType() {
-      return newBuilder();
-    }
-
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-
-    public static Builder newBuilder(com.google.storage.v2.Object.CustomerEncryption prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-
-    @java.lang.Override
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Describes the customer-specified mechanism used to store the data at rest.
-     * </pre>
-     *
-     * Protobuf type {@code google.storage.v2.Object.CustomerEncryption}
-     */
-    public static final class Builder
-        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
-        implements
-        // @@protoc_insertion_point(builder_implements:google.storage.v2.Object.CustomerEncryption)
-        com.google.storage.v2.Object.CustomerEncryptionOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
-        return com.google.storage.v2.StorageProto
-            .internal_static_google_storage_v2_Object_CustomerEncryption_descriptor;
-      }
-
-      @java.lang.Override
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return com.google.storage.v2.StorageProto
-            .internal_static_google_storage_v2_Object_CustomerEncryption_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                com.google.storage.v2.Object.CustomerEncryption.class,
-                com.google.storage.v2.Object.CustomerEncryption.Builder.class);
-      }
-
-      // Construct using com.google.storage.v2.Object.CustomerEncryption.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
-      }
-
-      @java.lang.Override
-      public Builder clear() {
-        super.clear();
-        encryptionAlgorithm_ = "";
-
-        keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
-
-        return this;
-      }
-
-      @java.lang.Override
-      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
-        return com.google.storage.v2.StorageProto
-            .internal_static_google_storage_v2_Object_CustomerEncryption_descriptor;
-      }
-
-      @java.lang.Override
-      public com.google.storage.v2.Object.CustomerEncryption getDefaultInstanceForType() {
-        return com.google.storage.v2.Object.CustomerEncryption.getDefaultInstance();
-      }
-
-      @java.lang.Override
-      public com.google.storage.v2.Object.CustomerEncryption build() {
-        com.google.storage.v2.Object.CustomerEncryption result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      @java.lang.Override
-      public com.google.storage.v2.Object.CustomerEncryption buildPartial() {
-        com.google.storage.v2.Object.CustomerEncryption result =
-            new com.google.storage.v2.Object.CustomerEncryption(this);
-        result.encryptionAlgorithm_ = encryptionAlgorithm_;
-        result.keySha256Bytes_ = keySha256Bytes_;
-        onBuilt();
-        return result;
-      }
-
-      @java.lang.Override
-      public Builder clone() {
-        return super.clone();
-      }
-
-      @java.lang.Override
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
-        return super.setField(field, value);
-      }
-
-      @java.lang.Override
-      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return super.clearField(field);
-      }
-
-      @java.lang.Override
-      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return super.clearOneof(oneof);
-      }
-
-      @java.lang.Override
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index,
-          java.lang.Object value) {
-        return super.setRepeatedField(field, index, value);
-      }
-
-      @java.lang.Override
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
-        return super.addRepeatedField(field, value);
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.google.storage.v2.Object.CustomerEncryption) {
-          return mergeFrom((com.google.storage.v2.Object.CustomerEncryption) other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(com.google.storage.v2.Object.CustomerEncryption other) {
-        if (other == com.google.storage.v2.Object.CustomerEncryption.getDefaultInstance())
-          return this;
-        if (!other.getEncryptionAlgorithm().isEmpty()) {
-          encryptionAlgorithm_ = other.encryptionAlgorithm_;
-          onChanged();
-        }
-        if (other.getKeySha256Bytes() != com.google.protobuf.ByteString.EMPTY) {
-          setKeySha256Bytes(other.getKeySha256Bytes());
-        }
-        this.mergeUnknownFields(other.unknownFields);
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      @java.lang.Override
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.google.storage.v2.Object.CustomerEncryption parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage =
-              (com.google.storage.v2.Object.CustomerEncryption) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private java.lang.Object encryptionAlgorithm_ = "";
-      /**
-       *
-       *
-       * <pre>
-       * The encryption algorithm.
-       * </pre>
-       *
-       * <code>string encryption_algorithm = 1;</code>
-       *
-       * @return The encryptionAlgorithm.
-       */
-      public java.lang.String getEncryptionAlgorithm() {
-        java.lang.Object ref = encryptionAlgorithm_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          encryptionAlgorithm_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
-      }
-      /**
-       *
-       *
-       * <pre>
-       * The encryption algorithm.
-       * </pre>
-       *
-       * <code>string encryption_algorithm = 1;</code>
-       *
-       * @return The bytes for encryptionAlgorithm.
-       */
-      public com.google.protobuf.ByteString getEncryptionAlgorithmBytes() {
-        java.lang.Object ref = encryptionAlgorithm_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b =
-              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-          encryptionAlgorithm_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       *
-       *
-       * <pre>
-       * The encryption algorithm.
-       * </pre>
-       *
-       * <code>string encryption_algorithm = 1;</code>
-       *
-       * @param value The encryptionAlgorithm to set.
-       * @return This builder for chaining.
-       */
-      public Builder setEncryptionAlgorithm(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        encryptionAlgorithm_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * The encryption algorithm.
-       * </pre>
-       *
-       * <code>string encryption_algorithm = 1;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearEncryptionAlgorithm() {
-
-        encryptionAlgorithm_ = getDefaultInstance().getEncryptionAlgorithm();
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * The encryption algorithm.
-       * </pre>
-       *
-       * <code>string encryption_algorithm = 1;</code>
-       *
-       * @param value The bytes for encryptionAlgorithm to set.
-       * @return This builder for chaining.
-       */
-      public Builder setEncryptionAlgorithmBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        checkByteStringIsUtf8(value);
-
-        encryptionAlgorithm_ = value;
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.ByteString keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       *
-       *
-       * <pre>
-       * SHA256 hash value of the encryption key.
-       * In raw bytes format (not base64-encoded).
-       * </pre>
-       *
-       * <code>bytes key_sha256_bytes = 3;</code>
-       *
-       * @return The keySha256Bytes.
-       */
-      @java.lang.Override
-      public com.google.protobuf.ByteString getKeySha256Bytes() {
-        return keySha256Bytes_;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * SHA256 hash value of the encryption key.
-       * In raw bytes format (not base64-encoded).
-       * </pre>
-       *
-       * <code>bytes key_sha256_bytes = 3;</code>
-       *
-       * @param value The keySha256Bytes to set.
-       * @return This builder for chaining.
-       */
-      public Builder setKeySha256Bytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-
-        keySha256Bytes_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * SHA256 hash value of the encryption key.
-       * In raw bytes format (not base64-encoded).
-       * </pre>
-       *
-       * <code>bytes key_sha256_bytes = 3;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearKeySha256Bytes() {
-
-        keySha256Bytes_ = getDefaultInstance().getKeySha256Bytes();
-        onChanged();
-        return this;
-      }
-
-      @java.lang.Override
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.setUnknownFields(unknownFields);
-      }
-
-      @java.lang.Override
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return super.mergeUnknownFields(unknownFields);
-      }
-
-      // @@protoc_insertion_point(builder_scope:google.storage.v2.Object.CustomerEncryption)
-    }
-
-    // @@protoc_insertion_point(class_scope:google.storage.v2.Object.CustomerEncryption)
-    private static final com.google.storage.v2.Object.CustomerEncryption DEFAULT_INSTANCE;
-
-    static {
-      DEFAULT_INSTANCE = new com.google.storage.v2.Object.CustomerEncryption();
-    }
-
-    public static com.google.storage.v2.Object.CustomerEncryption getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<CustomerEncryption> PARSER =
-        new com.google.protobuf.AbstractParser<CustomerEncryption>() {
-          @java.lang.Override
-          public CustomerEncryption parsePartialFrom(
-              com.google.protobuf.CodedInputStream input,
-              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-              throws com.google.protobuf.InvalidProtocolBufferException {
-            return new CustomerEncryption(input, extensionRegistry);
-          }
-        };
-
-    public static com.google.protobuf.Parser<CustomerEncryption> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<CustomerEncryption> getParserForType() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.storage.v2.Object.CustomerEncryption getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
   }
 
   private int bitField0_;
@@ -2367,7 +1603,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int CUSTOMER_ENCRYPTION_FIELD_NUMBER = 25;
-  private com.google.storage.v2.Object.CustomerEncryption customerEncryption_;
+  private com.google.storage.v2.CustomerEncryption customerEncryption_;
   /**
    *
    *
@@ -2376,7 +1612,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
    *
    * @return Whether the customerEncryption field is set.
    */
@@ -2392,14 +1628,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
    *
    * @return The customerEncryption.
    */
   @java.lang.Override
-  public com.google.storage.v2.Object.CustomerEncryption getCustomerEncryption() {
+  public com.google.storage.v2.CustomerEncryption getCustomerEncryption() {
     return customerEncryption_ == null
-        ? com.google.storage.v2.Object.CustomerEncryption.getDefaultInstance()
+        ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
         : customerEncryption_;
   }
   /**
@@ -2410,10 +1646,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
    */
   @java.lang.Override
-  public com.google.storage.v2.Object.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder() {
+  public com.google.storage.v2.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder() {
     return getCustomerEncryption();
   }
 
@@ -6907,11 +6143,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       return ownerBuilder_;
     }
 
-    private com.google.storage.v2.Object.CustomerEncryption customerEncryption_;
+    private com.google.storage.v2.CustomerEncryption customerEncryption_;
     private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.Object.CustomerEncryption,
-            com.google.storage.v2.Object.CustomerEncryption.Builder,
-            com.google.storage.v2.Object.CustomerEncryptionOrBuilder>
+            com.google.storage.v2.CustomerEncryption,
+            com.google.storage.v2.CustomerEncryption.Builder,
+            com.google.storage.v2.CustomerEncryptionOrBuilder>
         customerEncryptionBuilder_;
     /**
      *
@@ -6921,7 +6157,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      *
      * @return Whether the customerEncryption field is set.
      */
@@ -6936,14 +6172,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      *
      * @return The customerEncryption.
      */
-    public com.google.storage.v2.Object.CustomerEncryption getCustomerEncryption() {
+    public com.google.storage.v2.CustomerEncryption getCustomerEncryption() {
       if (customerEncryptionBuilder_ == null) {
         return customerEncryption_ == null
-            ? com.google.storage.v2.Object.CustomerEncryption.getDefaultInstance()
+            ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
             : customerEncryption_;
       } else {
         return customerEncryptionBuilder_.getMessage();
@@ -6957,9 +6193,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      */
-    public Builder setCustomerEncryption(com.google.storage.v2.Object.CustomerEncryption value) {
+    public Builder setCustomerEncryption(com.google.storage.v2.CustomerEncryption value) {
       if (customerEncryptionBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
@@ -6980,10 +6216,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      */
     public Builder setCustomerEncryption(
-        com.google.storage.v2.Object.CustomerEncryption.Builder builderForValue) {
+        com.google.storage.v2.CustomerEncryption.Builder builderForValue) {
       if (customerEncryptionBuilder_ == null) {
         customerEncryption_ = builderForValue.build();
         onChanged();
@@ -7001,13 +6237,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      */
-    public Builder mergeCustomerEncryption(com.google.storage.v2.Object.CustomerEncryption value) {
+    public Builder mergeCustomerEncryption(com.google.storage.v2.CustomerEncryption value) {
       if (customerEncryptionBuilder_ == null) {
         if (customerEncryption_ != null) {
           customerEncryption_ =
-              com.google.storage.v2.Object.CustomerEncryption.newBuilder(customerEncryption_)
+              com.google.storage.v2.CustomerEncryption.newBuilder(customerEncryption_)
                   .mergeFrom(value)
                   .buildPartial();
         } else {
@@ -7028,7 +6264,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      */
     public Builder clearCustomerEncryption() {
       if (customerEncryptionBuilder_ == null) {
@@ -7049,9 +6285,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      */
-    public com.google.storage.v2.Object.CustomerEncryption.Builder getCustomerEncryptionBuilder() {
+    public com.google.storage.v2.CustomerEncryption.Builder getCustomerEncryptionBuilder() {
 
       onChanged();
       return getCustomerEncryptionFieldBuilder().getBuilder();
@@ -7064,15 +6300,14 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      */
-    public com.google.storage.v2.Object.CustomerEncryptionOrBuilder
-        getCustomerEncryptionOrBuilder() {
+    public com.google.storage.v2.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder() {
       if (customerEncryptionBuilder_ != null) {
         return customerEncryptionBuilder_.getMessageOrBuilder();
       } else {
         return customerEncryption_ == null
-            ? com.google.storage.v2.Object.CustomerEncryption.getDefaultInstance()
+            ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
             : customerEncryption_;
       }
     }
@@ -7084,19 +6319,19 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such a key.
      * </pre>
      *
-     * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+     * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.Object.CustomerEncryption,
-            com.google.storage.v2.Object.CustomerEncryption.Builder,
-            com.google.storage.v2.Object.CustomerEncryptionOrBuilder>
+            com.google.storage.v2.CustomerEncryption,
+            com.google.storage.v2.CustomerEncryption.Builder,
+            com.google.storage.v2.CustomerEncryptionOrBuilder>
         getCustomerEncryptionFieldBuilder() {
       if (customerEncryptionBuilder_ == null) {
         customerEncryptionBuilder_ =
             new com.google.protobuf.SingleFieldBuilderV3<
-                com.google.storage.v2.Object.CustomerEncryption,
-                com.google.storage.v2.Object.CustomerEncryption.Builder,
-                com.google.storage.v2.Object.CustomerEncryptionOrBuilder>(
+                com.google.storage.v2.CustomerEncryption,
+                com.google.storage.v2.CustomerEncryption.Builder,
+                com.google.storage.v2.CustomerEncryptionOrBuilder>(
                 getCustomerEncryption(), getParentForChildren(), isClean());
         customerEncryption_ = null;
       }

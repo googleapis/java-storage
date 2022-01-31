@@ -856,7 +856,7 @@ public interface ObjectOrBuilder
    * such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
    *
    * @return Whether the customerEncryption field is set.
    */
@@ -869,11 +869,11 @@ public interface ObjectOrBuilder
    * such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
    *
    * @return The customerEncryption.
    */
-  com.google.storage.v2.Object.CustomerEncryption getCustomerEncryption();
+  com.google.storage.v2.CustomerEncryption getCustomerEncryption();
   /**
    *
    *
@@ -882,9 +882,9 @@ public interface ObjectOrBuilder
    * such a key.
    * </pre>
    *
-   * <code>.google.storage.v2.Object.CustomerEncryption customer_encryption = 25;</code>
+   * <code>.google.storage.v2.CustomerEncryption customer_encryption = 25;</code>
    */
-  com.google.storage.v2.Object.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder();
+  com.google.storage.v2.CustomerEncryptionOrBuilder getCustomerEncryptionOrBuilder();
 
   /**
    *

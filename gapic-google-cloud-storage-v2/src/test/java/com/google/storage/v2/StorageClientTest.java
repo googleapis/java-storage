@@ -1328,7 +1328,7 @@ public class StorageClientTest {
             .putAllMetadata(new HashMap<String, String>())
             .setEventBasedHold(true)
             .setOwner(Owner.newBuilder().build())
-            .setCustomerEncryption(Object.CustomerEncryption.newBuilder().build())
+            .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -1504,7 +1504,7 @@ public class StorageClientTest {
             .putAllMetadata(new HashMap<String, String>())
             .setEventBasedHold(true)
             .setOwner(Owner.newBuilder().build())
-            .setCustomerEncryption(Object.CustomerEncryption.newBuilder().build())
+            .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -1572,7 +1572,7 @@ public class StorageClientTest {
             .putAllMetadata(new HashMap<String, String>())
             .setEventBasedHold(true)
             .setOwner(Owner.newBuilder().build())
-            .setCustomerEncryption(Object.CustomerEncryption.newBuilder().build())
+            .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -1716,7 +1716,7 @@ public class StorageClientTest {
             .putAllMetadata(new HashMap<String, String>())
             .setEventBasedHold(true)
             .setOwner(Owner.newBuilder().build())
-            .setCustomerEncryption(Object.CustomerEncryption.newBuilder().build())
+            .setCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setCustomTime(Timestamp.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -1916,8 +1916,10 @@ public class StorageClientTest {
 
     RewriteObjectRequest request =
         RewriteObjectRequest.newBuilder()
+            .setDestinationName("destinationName-1762755655")
+            .setDestinationBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+            .setDestinationCustomerEncryption(CustomerEncryption.newBuilder().build())
             .setDestination(Object.newBuilder().build())
-            .setRewriteMask(FieldMask.newBuilder().build())
             .setSourceBucket("sourceBucket841604581")
             .setSourceObject("sourceObject1196439354")
             .setSourceGeneration(1232209852)
@@ -1946,8 +1948,12 @@ public class StorageClientTest {
     Assert.assertEquals(1, actualRequests.size());
     RewriteObjectRequest actualRequest = ((RewriteObjectRequest) actualRequests.get(0));
 
+    Assert.assertEquals(request.getDestinationName(), actualRequest.getDestinationName());
+    Assert.assertEquals(request.getDestinationBucket(), actualRequest.getDestinationBucket());
+    Assert.assertEquals(
+        request.getDestinationCustomerEncryption(),
+        actualRequest.getDestinationCustomerEncryption());
     Assert.assertEquals(request.getDestination(), actualRequest.getDestination());
-    Assert.assertEquals(request.getRewriteMask(), actualRequest.getRewriteMask());
     Assert.assertEquals(request.getSourceBucket(), actualRequest.getSourceBucket());
     Assert.assertEquals(request.getSourceObject(), actualRequest.getSourceObject());
     Assert.assertEquals(request.getSourceGeneration(), actualRequest.getSourceGeneration());
@@ -1996,8 +2002,10 @@ public class StorageClientTest {
     try {
       RewriteObjectRequest request =
           RewriteObjectRequest.newBuilder()
+              .setDestinationName("destinationName-1762755655")
+              .setDestinationBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+              .setDestinationCustomerEncryption(CustomerEncryption.newBuilder().build())
               .setDestination(Object.newBuilder().build())
-              .setRewriteMask(FieldMask.newBuilder().build())
               .setSourceBucket("sourceBucket841604581")
               .setSourceObject("sourceObject1196439354")
               .setSourceGeneration(1232209852)

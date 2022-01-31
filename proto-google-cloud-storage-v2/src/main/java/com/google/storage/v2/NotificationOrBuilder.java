@@ -29,8 +29,8 @@ public interface NotificationOrBuilder
    * <pre>
    * Required. The resource name of this notification.
    * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification` The
-   * `{project}` portion may be `_` for globally unique buckets.
+   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
+   * The `{project}` portion may be `_` for globally unique buckets.
    * </pre>
    *
    * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -44,8 +44,8 @@ public interface NotificationOrBuilder
    * <pre>
    * Required. The resource name of this notification.
    * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification` The
-   * `{project}` portion may be `_` for globally unique buckets.
+   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
+   * The `{project}` portion may be `_` for globally unique buckets.
    * </pre>
    *
    * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>

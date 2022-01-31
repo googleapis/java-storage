@@ -260,12 +260,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The ID to use for this bucket, which will become the final component of
+   * Required. The ID to use for this bucket, which will become the final component of
    * the bucket's resource name. For example, the value `foo` might result in
    * a bucket with the name `projects/123456/buckets/foo`.
    * </pre>
    *
-   * <code>string bucket_id = 3;</code>
+   * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bucketId.
    */
@@ -285,12 +285,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The ID to use for this bucket, which will become the final component of
+   * Required. The ID to use for this bucket, which will become the final component of
    * the bucket's resource name. For example, the value `foo` might result in
    * a bucket with the name `projects/123456/buckets/foo`.
    * </pre>
    *
-   * <code>string bucket_id = 3;</code>
+   * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bytes for bucketId.
    */
@@ -1095,12 +1095,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID to use for this bucket, which will become the final component of
+     * Required. The ID to use for this bucket, which will become the final component of
      * the bucket's resource name. For example, the value `foo` might result in
      * a bucket with the name `projects/123456/buckets/foo`.
      * </pre>
      *
-     * <code>string bucket_id = 3;</code>
+     * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bucketId.
      */
@@ -1119,12 +1119,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID to use for this bucket, which will become the final component of
+     * Required. The ID to use for this bucket, which will become the final component of
      * the bucket's resource name. For example, the value `foo` might result in
      * a bucket with the name `projects/123456/buckets/foo`.
      * </pre>
      *
-     * <code>string bucket_id = 3;</code>
+     * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bytes for bucketId.
      */
@@ -1143,12 +1143,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID to use for this bucket, which will become the final component of
+     * Required. The ID to use for this bucket, which will become the final component of
      * the bucket's resource name. For example, the value `foo` might result in
      * a bucket with the name `projects/123456/buckets/foo`.
      * </pre>
      *
-     * <code>string bucket_id = 3;</code>
+     * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The bucketId to set.
      * @return This builder for chaining.
@@ -1166,12 +1166,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID to use for this bucket, which will become the final component of
+     * Required. The ID to use for this bucket, which will become the final component of
      * the bucket's resource name. For example, the value `foo` might result in
      * a bucket with the name `projects/123456/buckets/foo`.
      * </pre>
      *
-     * <code>string bucket_id = 3;</code>
+     * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return This builder for chaining.
      */
@@ -1185,12 +1185,12 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The ID to use for this bucket, which will become the final component of
+     * Required. The ID to use for this bucket, which will become the final component of
      * the bucket's resource name. For example, the value `foo` might result in
      * a bucket with the name `projects/123456/buckets/foo`.
      * </pre>
      *
-     * <code>string bucket_id = 3;</code>
+     * <code>string bucket_id = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The bytes for bucketId to set.
      * @return This builder for chaining.

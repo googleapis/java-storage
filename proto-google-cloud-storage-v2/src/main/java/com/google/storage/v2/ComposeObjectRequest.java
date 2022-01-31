@@ -206,11 +206,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The source object's name. All source objects must reside in the same
+     * Required. The source object's name. All source objects must reside in the same
      * bucket.
      * </pre>
      *
-     * <code>string name = 1;</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The name.
      */
@@ -219,11 +219,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The source object's name. All source objects must reside in the same
+     * Required. The source object's name. All source objects must reside in the same
      * bucket.
      * </pre>
      *
-     * <code>string name = 1;</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bytes for name.
      */
@@ -1065,11 +1065,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The source object's name. All source objects must reside in the same
+     * Required. The source object's name. All source objects must reside in the same
      * bucket.
      * </pre>
      *
-     * <code>string name = 1;</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The name.
      */
@@ -1089,11 +1089,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The source object's name. All source objects must reside in the same
+     * Required. The source object's name. All source objects must reside in the same
      * bucket.
      * </pre>
      *
-     * <code>string name = 1;</code>
+     * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bytes for name.
      */
@@ -1558,11 +1558,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The source object's name. All source objects must reside in the same
+       * Required. The source object's name. All source objects must reside in the same
        * bucket.
        * </pre>
        *
-       * <code>string name = 1;</code>
+       * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
        *
        * @return The name.
        */
@@ -1581,11 +1581,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The source object's name. All source objects must reside in the same
+       * Required. The source object's name. All source objects must reside in the same
        * bucket.
        * </pre>
        *
-       * <code>string name = 1;</code>
+       * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
        *
        * @return The bytes for name.
        */
@@ -1604,11 +1604,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The source object's name. All source objects must reside in the same
+       * Required. The source object's name. All source objects must reside in the same
        * bucket.
        * </pre>
        *
-       * <code>string name = 1;</code>
+       * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
        *
        * @param value The name to set.
        * @return This builder for chaining.
@@ -1626,11 +1626,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The source object's name. All source objects must reside in the same
+       * Required. The source object's name. All source objects must reside in the same
        * bucket.
        * </pre>
        *
-       * <code>string name = 1;</code>
+       * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
        *
        * @return This builder for chaining.
        */
@@ -1644,11 +1644,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
        *
        *
        * <pre>
-       * The source object's name. All source objects must reside in the same
+       * Required. The source object's name. All source objects must reside in the same
        * bucket.
        * </pre>
        *
-       * <code>string name = 1;</code>
+       * <code>string name = 1 [(.google.api.field_behavior) = REQUIRED];</code>
        *
        * @param value The bytes for name to set.
        * @return This builder for chaining.
