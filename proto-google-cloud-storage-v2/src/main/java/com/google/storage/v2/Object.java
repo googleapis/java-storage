@@ -1608,7 +1608,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key, if the object is encrypted by
+   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
    * such a key.
    * </pre>
    *
@@ -1624,7 +1624,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key, if the object is encrypted by
+   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
    * such a key.
    * </pre>
    *
@@ -1642,7 +1642,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key, if the object is encrypted by
+   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
    * such a key.
    * </pre>
    *
@@ -6153,7 +6153,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6168,7 +6168,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6189,7 +6189,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6212,7 +6212,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6233,7 +6233,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6260,7 +6260,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6281,7 +6281,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6296,7 +6296,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *
@@ -6315,7 +6315,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key, if the object is encrypted by
+     * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
      * such a key.
      * </pre>
      *

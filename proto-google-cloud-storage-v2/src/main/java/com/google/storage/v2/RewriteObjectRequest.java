@@ -23,6 +23,13 @@ package com.google.storage.v2;
  *
  * <pre>
  * Request message for RewriteObject.
+ * If the source object is encrypted using a Customer-Supplied Encryption Key
+ * the key information must be provided in the copy_source_encryption_algorithm,
+ * copy_source_encryption_key_bytes, and copy_source_encryption_key_sha256_bytes
+ * fields. If the destination object should be encrypted the keying information
+ * should be provided in the encryption_algorithm, encryption_key_bytes, and
+ * encryption_key_sha256_bytes fields of the
+ * common_object_request_params.customer_encryption field.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.RewriteObjectRequest}
@@ -40,6 +47,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   private RewriteObjectRequest() {
     destinationName_ = "";
     destinationBucket_ = "";
+    destinationKmsKey_ = "";
     sourceBucket_ = "";
     sourceObject_ = "";
     rewriteToken_ = "";
@@ -243,20 +251,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
               destinationBucket_ = s;
               break;
             }
-          case 210:
+          case 218:
             {
-              com.google.storage.v2.CustomerEncryption.Builder subBuilder = null;
-              if (destinationCustomerEncryption_ != null) {
-                subBuilder = destinationCustomerEncryption_.toBuilder();
-              }
-              destinationCustomerEncryption_ =
-                  input.readMessage(
-                      com.google.storage.v2.CustomerEncryption.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(destinationCustomerEncryption_);
-                destinationCustomerEncryption_ = subBuilder.buildPartial();
-              }
+              java.lang.String s = input.readStringRequireUtf8();
 
+              destinationKmsKey_ = s;
               break;
             }
           default:
@@ -408,56 +407,61 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
   }
 
-  public static final int DESTINATION_CUSTOMER_ENCRYPTION_FIELD_NUMBER = 26;
-  private com.google.storage.v2.CustomerEncryption destinationCustomerEncryption_;
+  public static final int DESTINATION_KMS_KEY_FIELD_NUMBER = 27;
+  private volatile java.lang.Object destinationKmsKey_;
   /**
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key for the destination object, if
-   * the object is to be encrypted by such a key.
+   * The name of the Cloud KMS key that will be used to encrypt the destination
+   * object. The Cloud KMS key must be located in same location as the object.
+   * If the parameter is not specified, the request uses the destination
+   * bucket's default encryption key, if any, or else the Google-managed
+   * encryption key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
    *
-   * @return Whether the destinationCustomerEncryption field is set.
+   * @return The destinationKmsKey.
    */
   @java.lang.Override
-  public boolean hasDestinationCustomerEncryption() {
-    return destinationCustomerEncryption_ != null;
+  public java.lang.String getDestinationKmsKey() {
+    java.lang.Object ref = destinationKmsKey_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      destinationKmsKey_ = s;
+      return s;
+    }
   }
   /**
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key for the destination object, if
-   * the object is to be encrypted by such a key.
+   * The name of the Cloud KMS key that will be used to encrypt the destination
+   * object. The Cloud KMS key must be located in same location as the object.
+   * If the parameter is not specified, the request uses the destination
+   * bucket's default encryption key, if any, or else the Google-managed
+   * encryption key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
    *
-   * @return The destinationCustomerEncryption.
+   * @return The bytes for destinationKmsKey.
    */
   @java.lang.Override
-  public com.google.storage.v2.CustomerEncryption getDestinationCustomerEncryption() {
-    return destinationCustomerEncryption_ == null
-        ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
-        : destinationCustomerEncryption_;
-  }
-  /**
-   *
-   *
-   * <pre>
-   * Metadata of customer-supplied encryption key for the destination object, if
-   * the object is to be encrypted by such a key.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
-   */
-  @java.lang.Override
-  public com.google.storage.v2.CustomerEncryptionOrBuilder
-      getDestinationCustomerEncryptionOrBuilder() {
-    return getDestinationCustomerEncryption();
+  public com.google.protobuf.ByteString getDestinationKmsKeyBytes() {
+    java.lang.Object ref = destinationKmsKey_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      destinationKmsKey_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   public static final int DESTINATION_FIELD_NUMBER = 1;
@@ -467,9 +471,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * The `name`, `bucket`, and `customer_encryption` fields must not be
-   * populated (these values are specified in the `destination_name`,
-   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * The `name`, `bucket` and `kms_key` fields must not be populated (these
+   * values are specified in the `destination_name`, `destination_bucket`, and
+   * `destination_kms_key` fields).
    * If `destination` is present it will be used to construct the destination
    * object's metadata; otherwise the destination object's metadata will be
    * copied from the source object.
@@ -488,9 +492,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * The `name`, `bucket`, and `customer_encryption` fields must not be
-   * populated (these values are specified in the `destination_name`,
-   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * The `name`, `bucket` and `kms_key` fields must not be populated (these
+   * values are specified in the `destination_name`, `destination_bucket`, and
+   * `destination_kms_key` fields).
    * If `destination` is present it will be used to construct the destination
    * object's metadata; otherwise the destination object's metadata will be
    * copied from the source object.
@@ -509,9 +513,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * The `name`, `bucket`, and `customer_encryption` fields must not be
-   * populated (these values are specified in the `destination_name`,
-   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * The `name`, `bucket` and `kms_key` fields must not be populated (these
+   * values are specified in the `destination_name`, `destination_bucket`, and
+   * `destination_kms_key` fields).
    * If `destination` is present it will be used to construct the destination
    * object's metadata; otherwise the destination object's metadata will be
    * copied from the source object.
@@ -1051,7 +1055,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The algorithm used to encrypt the source object, if any.
+   * The algorithm used to encrypt the source object, if any. Used if the source
+   * object was encrypted with a Customer-Supplied Encryption Key.
    * </pre>
    *
    * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -1074,7 +1079,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The algorithm used to encrypt the source object, if any.
+   * The algorithm used to encrypt the source object, if any. Used if the source
+   * object was encrypted with a Customer-Supplied Encryption Key.
    * </pre>
    *
    * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -1100,8 +1106,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The encryption key used to encrypt the source object, if any.
-   * In raw bytes format (not base64-encoded).
+   * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
+   * the source object, if it was encrypted with a Customer-Supplied Encryption
+   * Key.
    * </pre>
    *
    * <code>bytes copy_source_encryption_key_bytes = 21;</code>
@@ -1119,8 +1126,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * The SHA-256 hash of the key used to encrypt the source object, if any.
-   * In raw bytes format (not base64-encoded).
+   * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
+   * to encrypt the source object, if it was encrypted with a Customer-Supplied
+   * Encryption Key.
    * </pre>
    *
    * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>
@@ -1312,8 +1320,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationBucket_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 25, destinationBucket_);
     }
-    if (destinationCustomerEncryption_ != null) {
-      output.writeMessage(26, getDestinationCustomerEncryption());
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationKmsKey_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 27, destinationKmsKey_);
     }
     unknownFields.writeTo(output);
   }
@@ -1404,10 +1412,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationBucket_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(25, destinationBucket_);
     }
-    if (destinationCustomerEncryption_ != null) {
-      size +=
-          com.google.protobuf.CodedOutputStream.computeMessageSize(
-              26, getDestinationCustomerEncryption());
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationKmsKey_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, destinationKmsKey_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -1427,12 +1433,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
     if (!getDestinationName().equals(other.getDestinationName())) return false;
     if (!getDestinationBucket().equals(other.getDestinationBucket())) return false;
-    if (hasDestinationCustomerEncryption() != other.hasDestinationCustomerEncryption())
-      return false;
-    if (hasDestinationCustomerEncryption()) {
-      if (!getDestinationCustomerEncryption().equals(other.getDestinationCustomerEncryption()))
-        return false;
-    }
+    if (!getDestinationKmsKey().equals(other.getDestinationKmsKey())) return false;
     if (hasDestination() != other.hasDestination()) return false;
     if (hasDestination()) {
       if (!getDestination().equals(other.getDestination())) return false;
@@ -1507,10 +1508,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     hash = (53 * hash) + getDestinationName().hashCode();
     hash = (37 * hash) + DESTINATION_BUCKET_FIELD_NUMBER;
     hash = (53 * hash) + getDestinationBucket().hashCode();
-    if (hasDestinationCustomerEncryption()) {
-      hash = (37 * hash) + DESTINATION_CUSTOMER_ENCRYPTION_FIELD_NUMBER;
-      hash = (53 * hash) + getDestinationCustomerEncryption().hashCode();
-    }
+    hash = (37 * hash) + DESTINATION_KMS_KEY_FIELD_NUMBER;
+    hash = (53 * hash) + getDestinationKmsKey().hashCode();
     if (hasDestination()) {
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
@@ -1679,6 +1678,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Request message for RewriteObject.
+   * If the source object is encrypted using a Customer-Supplied Encryption Key
+   * the key information must be provided in the copy_source_encryption_algorithm,
+   * copy_source_encryption_key_bytes, and copy_source_encryption_key_sha256_bytes
+   * fields. If the destination object should be encrypted the keying information
+   * should be provided in the encryption_algorithm, encryption_key_bytes, and
+   * encryption_key_sha256_bytes fields of the
+   * common_object_request_params.customer_encryption field.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.RewriteObjectRequest}
@@ -1723,12 +1729,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
       destinationBucket_ = "";
 
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        destinationCustomerEncryption_ = null;
-      } else {
-        destinationCustomerEncryption_ = null;
-        destinationCustomerEncryptionBuilder_ = null;
-      }
+      destinationKmsKey_ = "";
+
       if (destinationBuilder_ == null) {
         destination_ = null;
       } else {
@@ -1812,11 +1814,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       int to_bitField0_ = 0;
       result.destinationName_ = destinationName_;
       result.destinationBucket_ = destinationBucket_;
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        result.destinationCustomerEncryption_ = destinationCustomerEncryption_;
-      } else {
-        result.destinationCustomerEncryption_ = destinationCustomerEncryptionBuilder_.build();
-      }
+      result.destinationKmsKey_ = destinationKmsKey_;
       if (destinationBuilder_ == null) {
         result.destination_ = destination_;
       } else {
@@ -1931,8 +1929,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         destinationBucket_ = other.destinationBucket_;
         onChanged();
       }
-      if (other.hasDestinationCustomerEncryption()) {
-        mergeDestinationCustomerEncryption(other.getDestinationCustomerEncryption());
+      if (!other.getDestinationKmsKey().isEmpty()) {
+        destinationKmsKey_ = other.destinationKmsKey_;
+        onChanged();
       }
       if (other.hasDestination()) {
         mergeDestination(other.getDestination());
@@ -2281,204 +2280,130 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return this;
     }
 
-    private com.google.storage.v2.CustomerEncryption destinationCustomerEncryption_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.CustomerEncryption,
-            com.google.storage.v2.CustomerEncryption.Builder,
-            com.google.storage.v2.CustomerEncryptionOrBuilder>
-        destinationCustomerEncryptionBuilder_;
+    private java.lang.Object destinationKmsKey_ = "";
     /**
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
+     * The name of the Cloud KMS key that will be used to encrypt the destination
+     * object. The Cloud KMS key must be located in same location as the object.
+     * If the parameter is not specified, the request uses the destination
+     * bucket's default encryption key, if any, or else the Google-managed
+     * encryption key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
      *
-     * @return Whether the destinationCustomerEncryption field is set.
+     * @return The destinationKmsKey.
      */
-    public boolean hasDestinationCustomerEncryption() {
-      return destinationCustomerEncryptionBuilder_ != null
-          || destinationCustomerEncryption_ != null;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
-     *
-     * @return The destinationCustomerEncryption.
-     */
-    public com.google.storage.v2.CustomerEncryption getDestinationCustomerEncryption() {
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        return destinationCustomerEncryption_ == null
-            ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
-            : destinationCustomerEncryption_;
+    public java.lang.String getDestinationKmsKey() {
+      java.lang.Object ref = destinationKmsKey_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        destinationKmsKey_ = s;
+        return s;
       } else {
-        return destinationCustomerEncryptionBuilder_.getMessage();
+        return (java.lang.String) ref;
       }
     }
     /**
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
+     * The name of the Cloud KMS key that will be used to encrypt the destination
+     * object. The Cloud KMS key must be located in same location as the object.
+     * If the parameter is not specified, the request uses the destination
+     * bucket's default encryption key, if any, or else the Google-managed
+     * encryption key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     *
+     * @return The bytes for destinationKmsKey.
      */
-    public Builder setDestinationCustomerEncryption(
-        com.google.storage.v2.CustomerEncryption value) {
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        destinationCustomerEncryption_ = value;
-        onChanged();
+    public com.google.protobuf.ByteString getDestinationKmsKeyBytes() {
+      java.lang.Object ref = destinationKmsKey_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        destinationKmsKey_ = b;
+        return b;
       } else {
-        destinationCustomerEncryptionBuilder_.setMessage(value);
+        return (com.google.protobuf.ByteString) ref;
       }
-
-      return this;
     }
     /**
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
+     * The name of the Cloud KMS key that will be used to encrypt the destination
+     * object. The Cloud KMS key must be located in same location as the object.
+     * If the parameter is not specified, the request uses the destination
+     * bucket's default encryption key, if any, or else the Google-managed
+     * encryption key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     *
+     * @param value The destinationKmsKey to set.
+     * @return This builder for chaining.
      */
-    public Builder setDestinationCustomerEncryption(
-        com.google.storage.v2.CustomerEncryption.Builder builderForValue) {
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        destinationCustomerEncryption_ = builderForValue.build();
-        onChanged();
-      } else {
-        destinationCustomerEncryptionBuilder_.setMessage(builderForValue.build());
+    public Builder setDestinationKmsKey(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
       }
 
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
-     */
-    public Builder mergeDestinationCustomerEncryption(
-        com.google.storage.v2.CustomerEncryption value) {
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        if (destinationCustomerEncryption_ != null) {
-          destinationCustomerEncryption_ =
-              com.google.storage.v2.CustomerEncryption.newBuilder(destinationCustomerEncryption_)
-                  .mergeFrom(value)
-                  .buildPartial();
-        } else {
-          destinationCustomerEncryption_ = value;
-        }
-        onChanged();
-      } else {
-        destinationCustomerEncryptionBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
-     */
-    public Builder clearDestinationCustomerEncryption() {
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        destinationCustomerEncryption_ = null;
-        onChanged();
-      } else {
-        destinationCustomerEncryption_ = null;
-        destinationCustomerEncryptionBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
-     */
-    public com.google.storage.v2.CustomerEncryption.Builder
-        getDestinationCustomerEncryptionBuilder() {
-
+      destinationKmsKey_ = value;
       onChanged();
-      return getDestinationCustomerEncryptionFieldBuilder().getBuilder();
+      return this;
     }
     /**
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
+     * The name of the Cloud KMS key that will be used to encrypt the destination
+     * object. The Cloud KMS key must be located in same location as the object.
+     * If the parameter is not specified, the request uses the destination
+     * bucket's default encryption key, if any, or else the Google-managed
+     * encryption key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     *
+     * @return This builder for chaining.
      */
-    public com.google.storage.v2.CustomerEncryptionOrBuilder
-        getDestinationCustomerEncryptionOrBuilder() {
-      if (destinationCustomerEncryptionBuilder_ != null) {
-        return destinationCustomerEncryptionBuilder_.getMessageOrBuilder();
-      } else {
-        return destinationCustomerEncryption_ == null
-            ? com.google.storage.v2.CustomerEncryption.getDefaultInstance()
-            : destinationCustomerEncryption_;
-      }
+    public Builder clearDestinationKmsKey() {
+
+      destinationKmsKey_ = getDefaultInstance().getDestinationKmsKey();
+      onChanged();
+      return this;
     }
     /**
      *
      *
      * <pre>
-     * Metadata of customer-supplied encryption key for the destination object, if
-     * the object is to be encrypted by such a key.
+     * The name of the Cloud KMS key that will be used to encrypt the destination
+     * object. The Cloud KMS key must be located in same location as the object.
+     * If the parameter is not specified, the request uses the destination
+     * bucket's default encryption key, if any, or else the Google-managed
+     * encryption key.
      * </pre>
      *
-     * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+     * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
+     *
+     * @param value The bytes for destinationKmsKey to set.
+     * @return This builder for chaining.
      */
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.CustomerEncryption,
-            com.google.storage.v2.CustomerEncryption.Builder,
-            com.google.storage.v2.CustomerEncryptionOrBuilder>
-        getDestinationCustomerEncryptionFieldBuilder() {
-      if (destinationCustomerEncryptionBuilder_ == null) {
-        destinationCustomerEncryptionBuilder_ =
-            new com.google.protobuf.SingleFieldBuilderV3<
-                com.google.storage.v2.CustomerEncryption,
-                com.google.storage.v2.CustomerEncryption.Builder,
-                com.google.storage.v2.CustomerEncryptionOrBuilder>(
-                getDestinationCustomerEncryption(), getParentForChildren(), isClean());
-        destinationCustomerEncryption_ = null;
+    public Builder setDestinationKmsKeyBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
       }
-      return destinationCustomerEncryptionBuilder_;
+      checkByteStringIsUtf8(value);
+
+      destinationKmsKey_ = value;
+      onChanged();
+      return this;
     }
 
     private com.google.storage.v2.Object destination_;
@@ -2492,9 +2417,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2512,9 +2437,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2538,9 +2463,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2566,9 +2491,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2591,9 +2516,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2621,9 +2546,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2647,9 +2572,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2667,9 +2592,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -2691,9 +2616,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Properties of the destination, post-rewrite object.
-     * The `name`, `bucket`, and `customer_encryption` fields must not be
-     * populated (these values are specified in the `destination_name`,
-     * `destination_bucket`, and `destination_customer_encryption` fields).
+     * The `name`, `bucket` and `kms_key` fields must not be populated (these
+     * values are specified in the `destination_name`, `destination_bucket`, and
+     * `destination_kms_key` fields).
      * If `destination` is present it will be used to construct the destination
      * object's metadata; otherwise the destination object's metadata will be
      * copied from the source object.
@@ -3860,7 +3785,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any.
+     * The algorithm used to encrypt the source object, if any. Used if the source
+     * object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
      * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -3882,7 +3808,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any.
+     * The algorithm used to encrypt the source object, if any. Used if the source
+     * object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
      * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -3904,7 +3831,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any.
+     * The algorithm used to encrypt the source object, if any. Used if the source
+     * object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
      * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -3925,7 +3853,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any.
+     * The algorithm used to encrypt the source object, if any. Used if the source
+     * object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
      * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -3942,7 +3871,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The algorithm used to encrypt the source object, if any.
+     * The algorithm used to encrypt the source object, if any. Used if the source
+     * object was encrypted with a Customer-Supplied Encryption Key.
      * </pre>
      *
      * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -3967,8 +3897,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The encryption key used to encrypt the source object, if any.
-     * In raw bytes format (not base64-encoded).
+     * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
+     * the source object, if it was encrypted with a Customer-Supplied Encryption
+     * Key.
      * </pre>
      *
      * <code>bytes copy_source_encryption_key_bytes = 21;</code>
@@ -3983,8 +3914,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The encryption key used to encrypt the source object, if any.
-     * In raw bytes format (not base64-encoded).
+     * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
+     * the source object, if it was encrypted with a Customer-Supplied Encryption
+     * Key.
      * </pre>
      *
      * <code>bytes copy_source_encryption_key_bytes = 21;</code>
@@ -4005,8 +3937,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The encryption key used to encrypt the source object, if any.
-     * In raw bytes format (not base64-encoded).
+     * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
+     * the source object, if it was encrypted with a Customer-Supplied Encryption
+     * Key.
      * </pre>
      *
      * <code>bytes copy_source_encryption_key_bytes = 21;</code>
@@ -4026,8 +3959,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The SHA-256 hash of the key used to encrypt the source object, if any.
-     * In raw bytes format (not base64-encoded).
+     * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
+     * to encrypt the source object, if it was encrypted with a Customer-Supplied
+     * Encryption Key.
      * </pre>
      *
      * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>
@@ -4042,8 +3976,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The SHA-256 hash of the key used to encrypt the source object, if any.
-     * In raw bytes format (not base64-encoded).
+     * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
+     * to encrypt the source object, if it was encrypted with a Customer-Supplied
+     * Encryption Key.
      * </pre>
      *
      * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>
@@ -4064,8 +3999,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * The SHA-256 hash of the key used to encrypt the source object, if any.
-     * In raw bytes format (not base64-encoded).
+     * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
+     * to encrypt the source object, if it was encrypted with a Customer-Supplied
+     * Encryption Key.
      * </pre>
      *
      * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>

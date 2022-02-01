@@ -1918,7 +1918,9 @@ public class StorageClientTest {
         RewriteObjectRequest.newBuilder()
             .setDestinationName("destinationName-1762755655")
             .setDestinationBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-            .setDestinationCustomerEncryption(CustomerEncryption.newBuilder().build())
+            .setDestinationKmsKey(
+                CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
+                    .toString())
             .setDestination(Object.newBuilder().build())
             .setSourceBucket("sourceBucket841604581")
             .setSourceObject("sourceObject1196439354")
@@ -1950,9 +1952,7 @@ public class StorageClientTest {
 
     Assert.assertEquals(request.getDestinationName(), actualRequest.getDestinationName());
     Assert.assertEquals(request.getDestinationBucket(), actualRequest.getDestinationBucket());
-    Assert.assertEquals(
-        request.getDestinationCustomerEncryption(),
-        actualRequest.getDestinationCustomerEncryption());
+    Assert.assertEquals(request.getDestinationKmsKey(), actualRequest.getDestinationKmsKey());
     Assert.assertEquals(request.getDestination(), actualRequest.getDestination());
     Assert.assertEquals(request.getSourceBucket(), actualRequest.getSourceBucket());
     Assert.assertEquals(request.getSourceObject(), actualRequest.getSourceObject());
@@ -2004,7 +2004,9 @@ public class StorageClientTest {
           RewriteObjectRequest.newBuilder()
               .setDestinationName("destinationName-1762755655")
               .setDestinationBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-              .setDestinationCustomerEncryption(CustomerEncryption.newBuilder().build())
+              .setDestinationKmsKey(
+                  CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
+                      .toString())
               .setDestination(Object.newBuilder().build())
               .setSourceBucket("sourceBucket841604581")
               .setSourceObject("sourceObject1196439354")

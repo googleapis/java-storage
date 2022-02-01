@@ -129,7 +129,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
    *
    *
    * <pre>
-   * Encryption algorithm used with Customer-Supplied Encryption Keys feature.
+   * Encryption algorithm used with the Customer-Supplied Encryption Keys
+   * feature.
    * </pre>
    *
    * <code>string encryption_algorithm = 1;</code>
@@ -152,7 +153,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
    *
    *
    * <pre>
-   * Encryption algorithm used with Customer-Supplied Encryption Keys feature.
+   * Encryption algorithm used with the Customer-Supplied Encryption Keys
+   * feature.
    * </pre>
    *
    * <code>string encryption_algorithm = 1;</code>
@@ -178,7 +180,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
    *
    *
    * <pre>
-   * Encryption key used with Customer-Supplied Encryption Keys feature.
+   * Encryption key used with the Customer-Supplied Encryption Keys feature.
    * In raw bytes format (not base64-encoded).
    * </pre>
    *
@@ -197,8 +199,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
    *
    *
    * <pre>
-   * SHA256 hash of encryption key used with Customer-Supplied Encryption Keys
-   * feature.
+   * SHA256 hash of encryption key used with the Customer-Supplied Encryption
+   * Keys feature.
    * </pre>
    *
    * <code>bytes encryption_key_sha256_bytes = 5;</code>
@@ -562,7 +564,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption algorithm used with Customer-Supplied Encryption Keys feature.
+     * Encryption algorithm used with the Customer-Supplied Encryption Keys
+     * feature.
      * </pre>
      *
      * <code>string encryption_algorithm = 1;</code>
@@ -584,7 +587,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption algorithm used with Customer-Supplied Encryption Keys feature.
+     * Encryption algorithm used with the Customer-Supplied Encryption Keys
+     * feature.
      * </pre>
      *
      * <code>string encryption_algorithm = 1;</code>
@@ -606,7 +610,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption algorithm used with Customer-Supplied Encryption Keys feature.
+     * Encryption algorithm used with the Customer-Supplied Encryption Keys
+     * feature.
      * </pre>
      *
      * <code>string encryption_algorithm = 1;</code>
@@ -627,7 +632,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption algorithm used with Customer-Supplied Encryption Keys feature.
+     * Encryption algorithm used with the Customer-Supplied Encryption Keys
+     * feature.
      * </pre>
      *
      * <code>string encryption_algorithm = 1;</code>
@@ -644,7 +650,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption algorithm used with Customer-Supplied Encryption Keys feature.
+     * Encryption algorithm used with the Customer-Supplied Encryption Keys
+     * feature.
      * </pre>
      *
      * <code>string encryption_algorithm = 1;</code>
@@ -669,7 +676,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption key used with Customer-Supplied Encryption Keys feature.
+     * Encryption key used with the Customer-Supplied Encryption Keys feature.
      * In raw bytes format (not base64-encoded).
      * </pre>
      *
@@ -685,7 +692,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption key used with Customer-Supplied Encryption Keys feature.
+     * Encryption key used with the Customer-Supplied Encryption Keys feature.
      * In raw bytes format (not base64-encoded).
      * </pre>
      *
@@ -707,7 +714,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * Encryption key used with Customer-Supplied Encryption Keys feature.
+     * Encryption key used with the Customer-Supplied Encryption Keys feature.
      * In raw bytes format (not base64-encoded).
      * </pre>
      *
@@ -728,8 +735,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * SHA256 hash of encryption key used with Customer-Supplied Encryption Keys
-     * feature.
+     * SHA256 hash of encryption key used with the Customer-Supplied Encryption
+     * Keys feature.
      * </pre>
      *
      * <code>bytes encryption_key_sha256_bytes = 5;</code>
@@ -744,8 +751,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * SHA256 hash of encryption key used with Customer-Supplied Encryption Keys
-     * feature.
+     * SHA256 hash of encryption key used with the Customer-Supplied Encryption
+     * Keys feature.
      * </pre>
      *
      * <code>bytes encryption_key_sha256_bytes = 5;</code>
@@ -766,8 +773,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      *
      *
      * <pre>
-     * SHA256 hash of encryption key used with Customer-Supplied Encryption Keys
-     * feature.
+     * SHA256 hash of encryption key used with the Customer-Supplied Encryption
+     * Keys feature.
      * </pre>
      *
      * <code>bytes encryption_key_sha256_bytes = 5;</code>

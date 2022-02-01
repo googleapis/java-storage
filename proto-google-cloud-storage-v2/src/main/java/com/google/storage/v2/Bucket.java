@@ -2636,8 +2636,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A Cloud KMS key that will be used to encrypt objects inserted into this
-     * bucket, if no encryption method is specified.
+     * The name of the Cloud KMS key that will be used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -2649,8 +2649,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A Cloud KMS key that will be used to encrypt objects inserted into this
-     * bucket, if no encryption method is specified.
+     * The name of the Cloud KMS key that will be used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -2758,8 +2758,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A Cloud KMS key that will be used to encrypt objects inserted into this
-     * bucket, if no encryption method is specified.
+     * The name of the Cloud KMS key that will be used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -2782,8 +2782,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * A Cloud KMS key that will be used to encrypt objects inserted into this
-     * bucket, if no encryption method is specified.
+     * The name of the Cloud KMS key that will be used to encrypt objects
+     * inserted into this bucket, if no encryption method is specified.
      * </pre>
      *
      * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -3127,8 +3127,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A Cloud KMS key that will be used to encrypt objects inserted into this
-       * bucket, if no encryption method is specified.
+       * The name of the Cloud KMS key that will be used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -3150,8 +3150,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A Cloud KMS key that will be used to encrypt objects inserted into this
-       * bucket, if no encryption method is specified.
+       * The name of the Cloud KMS key that will be used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -3173,8 +3173,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A Cloud KMS key that will be used to encrypt objects inserted into this
-       * bucket, if no encryption method is specified.
+       * The name of the Cloud KMS key that will be used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -3195,8 +3195,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A Cloud KMS key that will be used to encrypt objects inserted into this
-       * bucket, if no encryption method is specified.
+       * The name of the Cloud KMS key that will be used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>
@@ -3213,8 +3213,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * A Cloud KMS key that will be used to encrypt objects inserted into this
-       * bucket, if no encryption method is specified.
+       * The name of the Cloud KMS key that will be used to encrypt objects
+       * inserted into this bucket, if no encryption method is specified.
        * </pre>
        *
        * <code>string default_kms_key = 1 [(.google.api.resource_reference) = { ... }</code>

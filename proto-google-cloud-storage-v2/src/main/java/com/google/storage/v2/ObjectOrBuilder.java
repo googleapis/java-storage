@@ -852,7 +852,7 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key, if the object is encrypted by
+   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
    * such a key.
    * </pre>
    *
@@ -865,7 +865,7 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key, if the object is encrypted by
+   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
    * such a key.
    * </pre>
    *
@@ -878,7 +878,7 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key, if the object is encrypted by
+   * Metadata of Customer-Supplied Encryption Key, if the object is encrypted by
    * such a key.
    * </pre>
    *

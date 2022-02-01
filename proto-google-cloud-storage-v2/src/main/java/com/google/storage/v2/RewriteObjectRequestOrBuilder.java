@@ -93,48 +93,43 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key for the destination object, if
-   * the object is to be encrypted by such a key.
+   * The name of the Cloud KMS key that will be used to encrypt the destination
+   * object. The Cloud KMS key must be located in same location as the object.
+   * If the parameter is not specified, the request uses the destination
+   * bucket's default encryption key, if any, or else the Google-managed
+   * encryption key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
    *
-   * @return Whether the destinationCustomerEncryption field is set.
+   * @return The destinationKmsKey.
    */
-  boolean hasDestinationCustomerEncryption();
+  java.lang.String getDestinationKmsKey();
   /**
    *
    *
    * <pre>
-   * Metadata of customer-supplied encryption key for the destination object, if
-   * the object is to be encrypted by such a key.
+   * The name of the Cloud KMS key that will be used to encrypt the destination
+   * object. The Cloud KMS key must be located in same location as the object.
+   * If the parameter is not specified, the request uses the destination
+   * bucket's default encryption key, if any, or else the Google-managed
+   * encryption key.
    * </pre>
    *
-   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
+   * <code>string destination_kms_key = 27 [(.google.api.resource_reference) = { ... }</code>
    *
-   * @return The destinationCustomerEncryption.
+   * @return The bytes for destinationKmsKey.
    */
-  com.google.storage.v2.CustomerEncryption getDestinationCustomerEncryption();
-  /**
-   *
-   *
-   * <pre>
-   * Metadata of customer-supplied encryption key for the destination object, if
-   * the object is to be encrypted by such a key.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CustomerEncryption destination_customer_encryption = 26;</code>
-   */
-  com.google.storage.v2.CustomerEncryptionOrBuilder getDestinationCustomerEncryptionOrBuilder();
+  com.google.protobuf.ByteString getDestinationKmsKeyBytes();
 
   /**
    *
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * The `name`, `bucket`, and `customer_encryption` fields must not be
-   * populated (these values are specified in the `destination_name`,
-   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * The `name`, `bucket` and `kms_key` fields must not be populated (these
+   * values are specified in the `destination_name`, `destination_bucket`, and
+   * `destination_kms_key` fields).
    * If `destination` is present it will be used to construct the destination
    * object's metadata; otherwise the destination object's metadata will be
    * copied from the source object.
@@ -150,9 +145,9 @@ public interface RewriteObjectRequestOrBuilder
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * The `name`, `bucket`, and `customer_encryption` fields must not be
-   * populated (these values are specified in the `destination_name`,
-   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * The `name`, `bucket` and `kms_key` fields must not be populated (these
+   * values are specified in the `destination_name`, `destination_bucket`, and
+   * `destination_kms_key` fields).
    * If `destination` is present it will be used to construct the destination
    * object's metadata; otherwise the destination object's metadata will be
    * copied from the source object.
@@ -168,9 +163,9 @@ public interface RewriteObjectRequestOrBuilder
    *
    * <pre>
    * Properties of the destination, post-rewrite object.
-   * The `name`, `bucket`, and `customer_encryption` fields must not be
-   * populated (these values are specified in the `destination_name`,
-   * `destination_bucket`, and `destination_customer_encryption` fields).
+   * The `name`, `bucket` and `kms_key` fields must not be populated (these
+   * values are specified in the `destination_name`, `destination_bucket`, and
+   * `destination_kms_key` fields).
    * If `destination` is present it will be used to construct the destination
    * object's metadata; otherwise the destination object's metadata will be
    * copied from the source object.
@@ -548,7 +543,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The algorithm used to encrypt the source object, if any.
+   * The algorithm used to encrypt the source object, if any. Used if the source
+   * object was encrypted with a Customer-Supplied Encryption Key.
    * </pre>
    *
    * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -560,7 +556,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The algorithm used to encrypt the source object, if any.
+   * The algorithm used to encrypt the source object, if any. Used if the source
+   * object was encrypted with a Customer-Supplied Encryption Key.
    * </pre>
    *
    * <code>string copy_source_encryption_algorithm = 16;</code>
@@ -573,8 +570,9 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The encryption key used to encrypt the source object, if any.
-   * In raw bytes format (not base64-encoded).
+   * The raw bytes (not base64-encoded) AES-256 encryption key used to encrypt
+   * the source object, if it was encrypted with a Customer-Supplied Encryption
+   * Key.
    * </pre>
    *
    * <code>bytes copy_source_encryption_key_bytes = 21;</code>
@@ -587,8 +585,9 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The SHA-256 hash of the key used to encrypt the source object, if any.
-   * In raw bytes format (not base64-encoded).
+   * The raw bytes (not base64-encoded) SHA256 hash of the encryption key used
+   * to encrypt the source object, if it was encrypted with a Customer-Supplied
+   * Encryption Key.
    * </pre>
    *
    * <code>bytes copy_source_encryption_key_sha256_bytes = 22;</code>

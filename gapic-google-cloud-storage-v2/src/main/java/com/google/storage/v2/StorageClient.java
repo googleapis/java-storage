@@ -2230,7 +2230,9 @@ public class StorageClient implements BackgroundResource {
    *       RewriteObjectRequest.newBuilder()
    *           .setDestinationName("destinationName-1762755655")
    *           .setDestinationBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-   *           .setDestinationCustomerEncryption(CustomerEncryption.newBuilder().build())
+   *           .setDestinationKmsKey(
+   *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
+   *                   .toString())
    *           .setDestination(Object.newBuilder().build())
    *           .setSourceBucket("sourceBucket841604581")
    *           .setSourceObject("sourceObject1196439354")
@@ -2275,7 +2277,9 @@ public class StorageClient implements BackgroundResource {
    *       RewriteObjectRequest.newBuilder()
    *           .setDestinationName("destinationName-1762755655")
    *           .setDestinationBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
-   *           .setDestinationCustomerEncryption(CustomerEncryption.newBuilder().build())
+   *           .setDestinationKmsKey(
+   *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
+   *                   .toString())
    *           .setDestination(Object.newBuilder().build())
    *           .setSourceBucket("sourceBucket841604581")
    *           .setSourceObject("sourceObject1196439354")
