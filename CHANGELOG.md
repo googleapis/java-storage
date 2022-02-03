@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.4.0](https://github.com/googleapis/java-storage/compare/v2.3.0...v2.4.0) (2022-02-03)
+
+
+### Features
+
+* Change RewriteObjectRequest to specify bucket name, object name and KMS key outside of Object resource ([#1218](https://github.com/googleapis/java-storage/issues/1218)) ([8789e4f](https://github.com/googleapis/java-storage/commit/8789e4f73a3c5b36aa93246d172d07adb24027aa))
+* re-generate gapic client to include full GCS gRPC API ([#1189](https://github.com/googleapis/java-storage/issues/1189)) ([3099a22](https://github.com/googleapis/java-storage/commit/3099a2264d8b135f602d8dd06f3e91ac5b0ecdba))
+* Update definition of RewriteObjectRequest to bring to parity with JSON API support ([#1220](https://github.com/googleapis/java-storage/issues/1220)) ([7845c0e](https://github.com/googleapis/java-storage/commit/7845c0e8be5ba150f5e835172e9341ef2efc6054))
+
+
+### Bug Fixes
+
+* Remove post policy v4 client side validation ([#1210](https://github.com/googleapis/java-storage/issues/1210)) ([631741d](https://github.com/googleapis/java-storage/commit/631741df96a6dddd31a38dce099f3d3ff09ca7cf))
+
+
+### Dependencies
+
+* **java:** update actions/github-script action to v5 ([#1339](https://github.com/googleapis/java-storage/issues/1339)) ([#1215](https://github.com/googleapis/java-storage/issues/1215)) ([deb110b](https://github.com/googleapis/java-storage/commit/deb110b0b5ec4a7e6963d1c1ab0e63ca58240ae1))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.7.0 ([#1219](https://github.com/googleapis/java-storage/issues/1219)) ([623e68b](https://github.com/googleapis/java-storage/commit/623e68b8b678df425730b6472cf34d7b78841757))
+
 ## [2.3.0](https://github.com/googleapis/java-storage/compare/v2.2.3...v2.3.0) (2022-01-12)
 
 
