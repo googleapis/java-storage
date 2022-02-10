@@ -31,8 +31,7 @@ public class PrintBucketAcl {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage =
-        StorageOptions.newBuilder().build().getService();
+    Storage storage = StorageOptions.newBuilder().build().getService();
     Bucket bucket = storage.get(bucketName);
     List<Acl> bucketAcls = bucket.getAcl();
 

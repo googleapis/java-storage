@@ -34,15 +34,13 @@ public class PrintBucketAclFilterByUser {
     // The email of the user whose acl is being retrieved.
     // String userEmail = "someuser@domain.com"
 
-    Storage storage =
-        StorageOptions.newBuilder().build().getService();
+    Storage storage = StorageOptions.newBuilder().build().getService();
     Bucket bucket = storage.get(bucketName);
 
     Acl userAcl = bucket.getAcl(new User(userEmail));
     String userRole = userAcl.getRole().name();
     System.out.println("User " + userEmail + " has role " + userRole);
   }
-
 }
 
-//[END storage_print_bucket_acl_for_user]
+// [END storage_print_bucket_acl_for_user]

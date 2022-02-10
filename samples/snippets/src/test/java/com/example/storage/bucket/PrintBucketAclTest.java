@@ -18,8 +18,7 @@ import org.junit.Test;
 
 public class PrintBucketAclTest {
 
-  @Rule
-  public StdOutCaptureRule stdOut = new StdOutCaptureRule();
+  @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
   private static final String USER_EMAIL =
       "google-cloud-java-tests@" + "java-docs-samples-tests.iam.gserviceaccount.com";
 
@@ -45,6 +44,4 @@ public class PrintBucketAclTest {
     PrintBucketAcl.printBucketAcl(bucketName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("READER: USER");
   }
-
-
 }
