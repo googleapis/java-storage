@@ -69,7 +69,8 @@ public interface StorageRpc extends ServiceRpc {
     SHOW_DELETED_KEYS("showDeletedKeys"),
     REQUESTED_POLICY_VERSION("optionsRequestedPolicyVersion"),
     DETECT_CONTENT_TYPE("detectContentType"),
-    RETURN_RAW_INPUT_STREAM("returnRawInputStream");
+    RETURN_RAW_INPUT_STREAM("returnRawInputStream"),
+    INVOCATION_ID("invocationID");
 
     private final String value;
 

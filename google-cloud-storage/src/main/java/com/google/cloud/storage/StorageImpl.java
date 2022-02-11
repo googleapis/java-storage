@@ -88,6 +88,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -1406,6 +1407,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       Iterable<? extends Option> options,
       boolean useAsSource) {
     Map<StorageRpc.Option, Object> temp = Maps.newEnumMap(StorageRpc.Option.class);
+    temp.put(StorageRpc.Option.INVOCATION_ID, UUID.randomUUID().toString());
     for (Option option : options) {
       Object prev = temp.put(option.getRpcOption(), option.getValue());
       checkArgument(prev == null, "Duplicate option %s", option);

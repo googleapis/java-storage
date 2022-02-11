@@ -41,6 +41,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
+import com.google.api.services.storage.StorageRequest;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.Buckets;
@@ -237,6 +238,14 @@ public class HttpStorageRpc implements StorageRpc {
     return new StorageException(exception);
   }
 
+  private static HttpHeaders addInvocationId(HttpHeaders httpHeaders, Map<Option, ?> options) {
+    final String xGoogApiClientKey = "x-goog-api-client";
+    final String gcclInvocationId =
+        " gccl-invocation-id/" + Option.INVOCATION_ID.getString(options);
+    return httpHeaders.set(
+        xGoogApiClientKey, httpHeaders.get(xGoogApiClientKey) + gcclInvocationId);
+  }
+
   private static void setEncryptionHeaders(
       HttpHeaders headers, String headerPrefix, Map<Option, ?> options) {
     String key = Option.CUSTOMER_SUPPLIED_KEY.getString(options);
@@ -264,13 +273,17 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_CREATE_BUCKET);
     Scope scope = tracer.withSpan(span);
     try {
-      return storage
-          .buckets()
-          .insert(this.options.getProjectId(), bucket)
-          .setProjection(DEFAULT_PROJECTION)
-          .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
-          .setPredefinedDefaultObjectAcl(Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
-          .execute();
+      StorageRequest<Bucket> bucketStorageRequest =
+          storage
+              .buckets()
+              .insert(this.options.getProjectId(), bucket)
+              .setProjection(DEFAULT_PROJECTION)
+              .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
+              .setPredefinedDefaultObjectAcl(
+                  Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options));
+      bucketStorageRequest.setRequestHeaders(
+          addInvocationId(bucketStorageRequest.getRequestHeaders(), options));
+      return bucketStorageRequest.execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
