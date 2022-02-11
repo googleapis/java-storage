@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.4.2](https://github.com/googleapis/java-storage/compare/v2.4.1...v2.4.2) (2022-02-11)
+
+
+### Dependencies
+
+* update actions/github-script action to v6 ([#1241](https://github.com/googleapis/java-storage/issues/1241)) ([366d738](https://github.com/googleapis/java-storage/commit/366d7385c4f6ac5c7478ea71cf0f7f1546ad4607))
+
 ### [2.4.1](https://github.com/googleapis/java-storage/compare/v2.4.0...v2.4.1) (2022-02-08)
 
 
