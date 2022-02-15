@@ -2427,7 +2427,6 @@ public class ITStorageTest {
     }
   }
 
-  @Ignore // TODO(#1240): Remove once HMAC Key IT are fixed
   @Test
   public void testHmacKey() {
     String serviceAccountEmail = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
