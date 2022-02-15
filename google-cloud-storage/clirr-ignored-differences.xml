@@ -36,4 +36,9 @@
         <method>com.google.api.services.storage.model.StorageObject queryCompletedResumableUpload(java.lang.String, long)</method>
         <differenceType>7012</differenceType>
     </difference>
+    <difference>
+        <className>com/google/cloud/storage/BucketInfo$LifecycleRule$LifecycleAction</className>
+        <method>BucketInfo$LifecycleRule$LifecycleAction()</method>
+        <differenceType>7004</differenceType>
+    </difference>
 </differences>
