@@ -24,7 +24,9 @@ import javax.annotation.Nullable;
 @InternalApi
 public final class HttpRpcContext {
 
-  private static HttpRpcContext instance;
+  private static final Object GET_INSTANCE_LOCK = new Object();
+
+  private static volatile HttpRpcContext instance;
 
   private final ThreadLocal<UUID> invocationId;
   private final Supplier<UUID> supplier;
@@ -59,7 +61,11 @@ public final class HttpRpcContext {
   @InternalApi
   public static HttpRpcContext getInstance() {
     if (instance == null) {
-      instance = init();
+      synchronized (GET_INSTANCE_LOCK) {
+        if (instance == null) {
+          instance = init();
+        }
+      }
     }
     return instance;
   }
