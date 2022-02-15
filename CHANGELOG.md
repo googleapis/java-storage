@@ -1,5 +1,13 @@
 # Changelog
 
+### [1.113.14-sp.4](https://github.com/googleapis/java-storage/compare/v1.113.14-sp.3...v1.113.14-sp.4) (2022-02-15)
+
+
+### Bug Fixes
+
+* cherry pick [#1160](https://github.com/googleapis/java-storage/issues/1160) ([#1254](https://github.com/googleapis/java-storage/issues/1254)) ([7253ad6](https://github.com/googleapis/java-storage/commit/7253ad6df7cf70834b6d6fa6316321551e401110))
+* cherry pick [#1177](https://github.com/googleapis/java-storage/issues/1177) ([#1255](https://github.com/googleapis/java-storage/issues/1255)) ([5e3c72d](https://github.com/googleapis/java-storage/commit/5e3c72d263bf38c95f7a3bc9795115042adfeb3b))
+
 ### [1.113.14-sp.3](https://www.github.com/googleapis/java-storage/compare/1.113.14-sp.2...v1.113.14-sp.3) (2021-11-11)
 
 
