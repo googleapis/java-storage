@@ -149,7 +149,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -2427,7 +2426,6 @@ public class ITStorageTest {
     }
   }
 
-  @Ignore // TODO(#1240): Remove once HMAC Key IT are fixed
   @Test
   public void testHmacKey() {
     String serviceAccountEmail = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
