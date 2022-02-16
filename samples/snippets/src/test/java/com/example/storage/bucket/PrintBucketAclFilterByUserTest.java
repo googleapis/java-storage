@@ -28,17 +28,17 @@ import org.junit.Test;
 
 public class PrintBucketAclFilterByUserTest extends TestBase {
 
-  public static final String USER_EMAIL = System.getenv("USER_EMAIL");
+  public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
 
   @Test
   public void testPrintBucketAclByUser() {
     // Check for user email before the actual test.
-    assertNotNull("Unable to determine user email", USER_EMAIL);
+    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
 
-    Entity testUser = new User(USER_EMAIL);
+    Entity testUser = new User(IT_SERVICE_ACCOUNT_EMAIL);
     storage.createAcl(bucketName, Acl.of(testUser, Role.READER));
-    PrintBucketAclFilterByUser.printBucketAclFilterByUser(bucketName, USER_EMAIL);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(USER_EMAIL);
+    PrintBucketAclFilterByUser.printBucketAclFilterByUser(bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(Role.READER.name());
   }
 }
