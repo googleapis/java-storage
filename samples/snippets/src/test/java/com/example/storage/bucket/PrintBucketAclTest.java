@@ -17,44 +17,24 @@
 package com.example.storage.bucket;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertNotNull;
 
+import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
-import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
-import com.google.cloud.testing.junit4.StdOutCaptureRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
-public class PrintBucketAclTest {
+public class PrintBucketAclTest extends TestBase {
 
-  @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
-  private static final String USER_EMAIL =
-      "google-cloud-java-tests@" + "java-docs-samples-tests.iam.gserviceaccount.com";
-
-  private String bucketName;
-  private Storage storage;
-
-  @Before
-  public void setUp() {
-    bucketName = RemoteStorageHelper.generateBucketName();
-    storage = StorageOptions.getDefaultInstance().getService();
-    storage.create(BucketInfo.of(bucketName));
-  }
-
-  @After
-  public void tearDown() {
-    storage.delete(bucketName);
-  }
+  public static final String USER_EMAIL = System.getenv("USER_EMAIL");
 
   @Test
   public void testPrintBucketAcls() {
+    // Check for user email before the actual test.
+    assertNotNull("Unable to determine user email", USER_EMAIL);
+
     Entity testUser = new User(USER_EMAIL);
     storage.createAcl(bucketName, Acl.of(testUser, Role.READER));
     PrintBucketAcl.printBucketAcl(bucketName);
