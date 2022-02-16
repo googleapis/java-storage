@@ -16,13 +16,13 @@
 package com.example.storage.buckets;
 
 // [START storage_enable_bucket_lifecycle_management]
+import static com.google.cloud.storage.BucketInfo.LifecycleRule.*;
+
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
-
-import static com.google.cloud.storage.BucketInfo.LifecycleRule.*;
 
 public class EnableLifecycleManagement {
   public static void enableLifecycleManagement(String projectId, String bucketName) {
@@ -38,7 +38,8 @@ public class EnableLifecycleManagement {
     // See the LifecycleRule documentation for additional info on what you can do with lifecycle
     // management rules. This one deletes objects that are over 100 days old.
     // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/BucketInfo.LifecycleRule.html
-    bucket.toBuilder()
+    bucket
+        .toBuilder()
         .setLifecycleRules(
             ImmutableList.of(
                 new LifecycleRule(

@@ -33,7 +33,8 @@ public class SetPublicAccessPreventionEnforced {
     Bucket bucket = storage.get(bucketName);
 
     // Enforces public access prevention for the bucket
-    bucket.toBuilder()
+    bucket
+        .toBuilder()
         .setIamConfiguration(
             BucketInfo.IamConfiguration.newBuilder()
                 .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)

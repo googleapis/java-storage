@@ -23,7 +23,6 @@ import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
-
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;

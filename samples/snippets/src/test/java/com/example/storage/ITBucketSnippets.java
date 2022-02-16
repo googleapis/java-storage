@@ -16,13 +16,13 @@
 
 package com.example.storage;
 
-import com.example.storage.buckets.CreateBucketWithTurboReplication;
-import com.example.storage.buckets.GetBucketRpo;
-import com.example.storage.buckets.SetAsyncTurboRpo;
-import com.example.storage.buckets.SetDefaultRpo;
-import com.example.storage.objects.DownloadRequesterPaysObject;
-import com.google.cloud.Identity;
-import com.google.cloud.ServiceOptions;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import com.example.storage.buckets.AddBucketIamConditionalBinding;
 import com.example.storage.buckets.AddBucketIamMember;
 import com.example.storage.buckets.AddBucketLabel;
@@ -30,6 +30,7 @@ import com.example.storage.buckets.ChangeDefaultStorageClass;
 import com.example.storage.buckets.ConfigureBucketCors;
 import com.example.storage.buckets.CreateBucket;
 import com.example.storage.buckets.CreateBucketWithStorageClassAndLocation;
+import com.example.storage.buckets.CreateBucketWithTurboReplication;
 import com.example.storage.buckets.DeleteBucket;
 import com.example.storage.buckets.DisableBucketVersioning;
 import com.example.storage.buckets.DisableLifecycleManagement;
@@ -38,6 +39,7 @@ import com.example.storage.buckets.EnableBucketVersioning;
 import com.example.storage.buckets.EnableLifecycleManagement;
 import com.example.storage.buckets.EnableRequesterPays;
 import com.example.storage.buckets.GetBucketMetadata;
+import com.example.storage.buckets.GetBucketRpo;
 import com.example.storage.buckets.GetPublicAccessPrevention;
 import com.example.storage.buckets.ListBucketIamMembers;
 import com.example.storage.buckets.ListBuckets;
@@ -47,10 +49,15 @@ import com.example.storage.buckets.RemoveBucketDefaultKMSKey;
 import com.example.storage.buckets.RemoveBucketIamConditionalBinding;
 import com.example.storage.buckets.RemoveBucketIamMember;
 import com.example.storage.buckets.RemoveBucketLabel;
+import com.example.storage.buckets.SetAsyncTurboRpo;
 import com.example.storage.buckets.SetBucketWebsiteInfo;
 import com.example.storage.buckets.SetClientEndpoint;
+import com.example.storage.buckets.SetDefaultRpo;
 import com.example.storage.buckets.SetPublicAccessPreventionEnforced;
 import com.example.storage.buckets.SetPublicAccessPreventionInherited;
+import com.example.storage.objects.DownloadRequesterPaysObject;
+import com.google.cloud.Identity;
+import com.google.cloud.ServiceOptions;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -61,14 +68,6 @@ import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.Timeout;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -77,13 +76,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Timeout;
 
 public class ITBucketSnippets {
 
@@ -175,7 +174,8 @@ public class ITBucketSnippets {
     Bucket bucket =
         storage.get(BUCKET, Storage.BucketGetOption.fields(Storage.BucketField.values()));
     bucket =
-        bucket.toBuilder()
+        bucket
+            .toBuilder()
             .setLabels(ImmutableMap.of("k", "v"))
             .setLifecycleRules(
                 ImmutableList.of(
@@ -245,7 +245,9 @@ public class ITBucketSnippets {
 
   @Test
   public void testDisableLifecycleManagement() {
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setLifecycleRules(
             ImmutableList.of(
                 new BucketInfo.LifecycleRule(
@@ -263,7 +265,9 @@ public class ITBucketSnippets {
     try {
       // By default a bucket PAP state is INHERITED and we are changing the state to validate
       // non-default state.
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
@@ -277,7 +281,9 @@ public class ITBucketSnippets {
       String snippetOutput = snippetOutputCapture.toString();
       System.setOut(standardOut);
       assertTrue(snippetOutput.contains("enforced"));
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -286,7 +292,9 @@ public class ITBucketSnippets {
           .update();
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -303,7 +311,9 @@ public class ITBucketSnippets {
       assertEquals(
           storage.get(BUCKET).getIamConfiguration().getPublicAccessPrevention(),
           BucketInfo.PublicAccessPrevention.ENFORCED);
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -312,7 +322,9 @@ public class ITBucketSnippets {
           .update();
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -325,7 +337,9 @@ public class ITBucketSnippets {
   @Test
   public void testSetPublicAccessPreventionInherited() {
     try {
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
@@ -338,7 +352,9 @@ public class ITBucketSnippets {
           BucketInfo.PublicAccessPrevention.INHERITED);
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
-      storage.get(BUCKET).toBuilder()
+      storage
+          .get(BUCKET)
+          .toBuilder()
           .setIamConfiguration(
               BucketInfo.IamConfiguration.newBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
@@ -395,7 +411,9 @@ public class ITBucketSnippets {
 
   @Test
   public void deleteBucketDefaultKmsKey() {
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setDefaultKmsKeyName(
             "projects/gcloud-devel/locations/global/keyRings/gcs_kms_key_ring/cryptoKeys/key")
         .build()
@@ -446,7 +464,9 @@ public class ITBucketSnippets {
 
   @Test
   public void testRemoveBucketCors() {
-    storage.get(BUCKET).toBuilder()
+    storage
+        .get(BUCKET)
+        .toBuilder()
         .setCors(
             ImmutableList.of(
                 Cors.newBuilder()

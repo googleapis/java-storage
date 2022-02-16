@@ -7,7 +7,6 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.io.ByteStreams;
-
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
