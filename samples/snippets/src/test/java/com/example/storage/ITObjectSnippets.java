@@ -110,17 +110,13 @@ public class ITObjectSnippets {
   @AfterClass
   public static void afterClass() throws ExecutionException, InterruptedException {
     if (storage != null) {
+      for (BlobInfo info : storage.list(BUCKET, BlobListOption.versions(true)).getValues()) {
+        storage.delete(info.getBlobId());
+      }
       boolean wasDeleted = RemoteStorageHelper.forceDelete(storage, BUCKET, 5, TimeUnit.SECONDS);
       if (!wasDeleted && log.isLoggable(Level.WARNING)) {
         log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
       }
-    }
-  }
-
-  @After
-  public void after() {
-    for (BlobInfo info : storage.list(BUCKET, BlobListOption.versions(true)).getValues()) {
-      storage.delete(info.getBlobId());
     }
   }
 
@@ -341,7 +337,7 @@ public class ITObjectSnippets {
 
     assertNull(storage.get(BUCKET, encryptedBlob).getKmsKeyName());
     String kmsKeyName =
-        "projects/gcloud-devel/locations/global/keyRings/gcs_kms_key_ring/cryptoKeys/key";
+        "projects/gcloud-devel/locations/us/keyRings/gcs_kms_key_ring/cryptoKeys_us/key";
     ChangeObjectCSEKtoKMS.changeObjectFromCSEKtoKMS(
         PROJECT_ID, BUCKET, encryptedBlob, newEncryptionKey, kmsKeyName);
     assertTrue(storage.get(BUCKET, encryptedBlob).getKmsKeyName().contains(kmsKeyName));

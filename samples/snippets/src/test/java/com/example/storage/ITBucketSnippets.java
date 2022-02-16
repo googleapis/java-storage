@@ -452,7 +452,6 @@ public class ITBucketSnippets {
 
   @Test
   public void testConfigureBucketCors() {
-    System.out.println(PROJECT_ID);
     ConfigureBucketCors.configureBucketCors(
         PROJECT_ID, BUCKET, "http://example.appspot.com", "Content-Type", 3600);
     Cors cors = storage.get(BUCKET).getCors().get(0);
