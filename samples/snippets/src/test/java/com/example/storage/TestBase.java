@@ -29,8 +29,7 @@ import org.junit.Rule;
 
 public abstract class TestBase {
 
-  @Rule
-  public StdOutCaptureRule stdOut = new StdOutCaptureRule();
+  @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
 
   protected String bucketName;
   protected Storage storage;
@@ -51,5 +50,4 @@ public abstract class TestBase {
   public void tearDown() {
     RemoteStorageHelper.forceDelete(storage, bucketName);
   }
-
 }
