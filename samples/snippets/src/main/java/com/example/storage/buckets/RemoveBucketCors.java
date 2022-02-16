@@ -21,7 +21,6 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-
 import java.util.ArrayList;
 import java.util.List;
 

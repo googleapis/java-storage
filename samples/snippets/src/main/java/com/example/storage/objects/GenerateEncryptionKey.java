@@ -18,7 +18,6 @@ package com.example.storage.objects;
 // [START storage_generate_encryption_key]
 
 import com.google.common.io.BaseEncoding;
-
 import java.security.SecureRandom;
 
 public class GenerateEncryptionKey {

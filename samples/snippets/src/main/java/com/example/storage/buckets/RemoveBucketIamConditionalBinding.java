@@ -7,7 +7,6 @@ import com.google.cloud.Condition;
 import com.google.cloud.Policy;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

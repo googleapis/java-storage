@@ -19,7 +19,6 @@ package com.example.storage.objects;
 
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-
 import java.nio.charset.StandardCharsets;
 
 public class DownloadObjectIntoMemory {

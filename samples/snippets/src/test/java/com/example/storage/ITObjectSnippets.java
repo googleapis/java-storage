@@ -16,6 +16,14 @@
 
 package com.example.storage;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import com.example.storage.objects.ChangeObjectCSEKtoKMS;
 import com.example.storage.objects.ChangeObjectStorageClass;
 import com.example.storage.objects.ComposeObject;
@@ -54,15 +62,6 @@ import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import javax.net.ssl.HttpsURLConnection;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -78,14 +77,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import javax.net.ssl.HttpsURLConnection;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class ITObjectSnippets {
 
@@ -432,13 +431,12 @@ public class ITObjectSnippets {
         "firstObjectsecondObject".getBytes(UTF_8), storage.get(BUCKET, targetObject).getContent());
   }
 
-
   @Test
   public void testStreamUploadDownload() throws Exception {
     StreamObjectUpload.streamObjectUpload(PROJECT_ID, BUCKET, "streamBlob", "hello world");
     File file = File.createTempFile("stream", "test");
     StreamObjectDownload.streamObjectDownload(
-            PROJECT_ID, BUCKET, "streamBlob", file.getAbsolutePath());
+        PROJECT_ID, BUCKET, "streamBlob", file.getAbsolutePath());
     assertArrayEquals(Files.readAllBytes(file.toPath()), "hello world".getBytes());
     file.delete();
   }
