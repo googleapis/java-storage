@@ -72,6 +72,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -115,9 +116,9 @@ public class ITBucketSnippets {
 
   @Test
   public void testAddBucketLabel() {
+    int oldSize = storage.get(BUCKET).getLabels().size();
     AddBucketLabel.addBucketLabel(PROJECT_ID, BUCKET, "key", "value");
-    Bucket remoteBucket = storage.get(BUCKET);
-    assertEquals(1, remoteBucket.getLabels().size());
+    assertEquals(oldSize + 1, storage.get(BUCKET).getLabels().size());
   }
 
   @Test
@@ -233,9 +234,12 @@ public class ITBucketSnippets {
   @Test
   public void testRemoveBucketLabel() {
     storage.get(BUCKET).toBuilder().setLabels(ImmutableMap.of("k", "v")).build().update();
-    assertEquals(1, storage.get(BUCKET).getLabels().size());
+    int oldSize = storage.get(BUCKET).getLabels().size();
     RemoveBucketLabel.removeBucketLabel(PROJECT_ID, BUCKET, "k");
-    assertNull(storage.get(BUCKET).getLabels());
+    Map<String, String> labels = storage.get(BUCKET).getLabels();
+    if (labels != null) {
+      assertEquals(oldSize - 1, labels.size());
+    }
   }
 
   @Test
@@ -416,7 +420,7 @@ public class ITBucketSnippets {
         .get(BUCKET)
         .toBuilder()
         .setDefaultKmsKeyName(
-            "projects/gcloud-devel/locations/global/keyRings/gcs_kms_key_ring/cryptoKeys/key")
+            "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
         .build()
         .update();
     assertNotNull(storage.get(BUCKET).getDefaultKmsKeyName());

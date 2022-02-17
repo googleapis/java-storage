@@ -38,18 +38,16 @@ public class AddBucketLabel {
     // The value of the label to add
     // String labelValue = "label-value-to-add";
 
-    Map<String, String> labelsToAdd = new HashMap<>();
-    labelsToAdd.put(labelKey, labelValue);
+    Map<String, String> newLabels = new HashMap<>();
+    newLabels.put(labelKey, labelValue);
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
     Map<String, String> labels = bucket.getLabels();
-    if (labels == null) {
-      labels = labelsToAdd;
-    } else {
-      labels.putAll(labelsToAdd);
+    if (labels != null) {
+      newLabels.putAll(labels);
     }
-    bucket.toBuilder().setLabels(labels).build().update();
+    bucket.toBuilder().setLabels(newLabels).build().update();
 
     System.out.println(
         "Added label " + labelKey + " with value " + labelValue + " to bucket " + bucketName + ".");
