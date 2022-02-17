@@ -29,7 +29,7 @@ public class DisableRequesterPays {
     // String bucketName = "your-unique-bucket-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
+    Bucket bucket = storage.get(bucketName, Storage.BucketGetOption.userProject(projectId));
     bucket.toBuilder().setRequesterPays(false).build().update();
 
     System.out.println("Requester pays disabled for bucket " + bucketName);
