@@ -40,7 +40,7 @@ public class DownloadRequesterPaysObject {
 
     Storage storage = StorageOptions.getDefaultInstance().getService();
     Blob blob = storage.get(BlobId.of(bucketName, objectName), Storage.BlobGetOption.userProject(projectId));
-    blob.downloadTo(destFilePath);
+    blob.downloadTo(destFilePath, Blob.BlobSourceOption.userProject(projectId));
 
     System.out.println(
         "Object " + objectName + " downloaded to " + destFilePath + " and billed to " + projectId);
