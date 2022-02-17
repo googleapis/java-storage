@@ -39,7 +39,9 @@ public class DownloadRequesterPaysObject {
     // Path destFilePath = Paths.get("/local/path/to/file.txt");
 
     Storage storage = StorageOptions.getDefaultInstance().getService();
-    Blob blob = storage.get(BlobId.of(bucketName, objectName), Storage.BlobGetOption.userProject(projectId));
+    Blob blob =
+        storage.get(
+            BlobId.of(bucketName, objectName), Storage.BlobGetOption.userProject(projectId));
     blob.downloadTo(destFilePath);
 
     System.out.println(
