@@ -336,7 +336,7 @@ public class ITObjectSnippets {
 
     assertNull(storage.get(BUCKET, encryptedBlob).getKmsKeyName());
     String kmsKeyName =
-        "projects/gcloud-devel/locations/us/keyRings/gcs_kms_key_ring_us/cryptoKeys/key";
+        "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
     ChangeObjectCSEKtoKMS.changeObjectFromCSEKtoKMS(
         PROJECT_ID, BUCKET, encryptedBlob, newEncryptionKey, kmsKeyName);
     assertTrue(storage.get(BUCKET, encryptedBlob).getKmsKeyName().contains(kmsKeyName));

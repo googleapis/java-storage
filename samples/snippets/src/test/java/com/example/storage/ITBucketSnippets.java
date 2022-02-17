@@ -489,7 +489,7 @@ public class ITBucketSnippets {
   @Test
   public void testRequesterPays() throws Exception {
     EnableRequesterPays.enableRequesterPays(PROJECT_ID, BUCKET);
-    Bucket bucket = storage.get(BUCKET);
+    Bucket bucket = storage.get(BUCKET, Storage.BucketGetOption.userProject(PROJECT_ID));
     assertTrue(bucket.requesterPays());
     String projectId = ServiceOptions.getDefaultProjectId();
     String blobName = "test-create-empty-blob-requester-pays";
