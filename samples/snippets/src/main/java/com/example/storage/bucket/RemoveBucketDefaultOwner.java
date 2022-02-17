@@ -44,6 +44,5 @@ public class RemoveBucketDefaultOwner {
       System.out.println("User " + userEmail + " was not found");
     }
   }
-
 }
 // [END storage_remove_bucket_default_owner]

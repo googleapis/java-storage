@@ -30,8 +30,7 @@ import org.junit.Rule;
 
 public abstract class TestBase {
 
-  @Rule
-  public StdOutCaptureRule stdOut = new StdOutCaptureRule();
+  @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
 
   protected String bucketName;
   protected Storage storage;

@@ -18,7 +18,6 @@ package com.example.storage.bucket;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;

@@ -20,9 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import com.example.storage.TestBase;
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Entity;
-import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import org.junit.Test;
 
@@ -39,5 +36,4 @@ public class AddBucketDefaultOwnerTest extends TestBase {
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(bucket.getDefaultAcl(new User(IT_SERVICE_ACCOUNT_EMAIL))).isNotNull();
   }
-
 }

@@ -42,6 +42,5 @@ public class AddBucketDefaultOwner {
     bucket.createDefaultAcl(newDefaultOwner);
     System.out.println("Added user " + userEmail + " as an owner on " + bucketName);
   }
-
 }
 // [END storage_add_bucket_default_owner]
