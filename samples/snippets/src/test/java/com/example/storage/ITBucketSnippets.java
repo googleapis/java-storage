@@ -222,10 +222,11 @@ public class ITBucketSnippets {
   @Test
   public void testListBuckets() {
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
+    PrintStream standardOut = System.out;
     System.setOut(new PrintStream(snippetOutputCapture));
     ListBuckets.listBuckets(PROJECT_ID);
     String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(System.out);
+    System.setOut(standardOut);
     assertTrue(snippetOutput.contains(BUCKET));
   }
 
