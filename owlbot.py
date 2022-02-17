@@ -30,8 +30,8 @@ s.remove_staging_dirs()
 java.common_templates(excludes=[
   '.kokoro/nightly/integration.cfg',
   '.kokoro/nightly/java11-integration.cfg',
-  '.kokoro/nightly/samples.cfg'
+  '.kokoro/nightly/samples.cfg',
   '.kokoro/presubmit/integration.cfg',
-  '.kokoro/presubmit/samples.cfg'
+  '.kokoro/presubmit/samples.cfg',
   'CONTRIBUTING.md'
 ])
