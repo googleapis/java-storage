@@ -1,5 +1,13 @@
 # Changelog
 
+### [2.1.10](https://github.com/googleapis/java-storage/compare/v2.1.9...v2.1.10) (2022-02-15)
+
+
+### Bug Fixes
+
+* cherry pick PR[#1160](https://github.com/googleapis/java-storage/issues/1160) ([#1247](https://github.com/googleapis/java-storage/issues/1247)) ([e48c4e5](https://github.com/googleapis/java-storage/commit/e48c4e525abe5aa0f731b6f8012834ef1720e01d))
+* do not cause a failure when encountering no bindings ([#1177](https://github.com/googleapis/java-storage/issues/1177)) ([#1248](https://github.com/googleapis/java-storage/issues/1248)) ([9698550](https://github.com/googleapis/java-storage/commit/96985504c2842966824594db1e5929def99a44b7))
+
 ### [2.1.9](https://www.github.com/googleapis/java-storage/compare/v2.1.8...v2.1.9) (2021-10-19)
 
 
