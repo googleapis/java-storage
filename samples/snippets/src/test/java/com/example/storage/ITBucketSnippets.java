@@ -23,39 +23,54 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.example.storage.buckets.AddBucketIamConditionalBinding;
-import com.example.storage.buckets.AddBucketIamMember;
-import com.example.storage.buckets.AddBucketLabel;
-import com.example.storage.buckets.ChangeDefaultStorageClass;
-import com.example.storage.buckets.ConfigureBucketCors;
-import com.example.storage.buckets.CreateBucket;
-import com.example.storage.buckets.CreateBucketWithStorageClassAndLocation;
-import com.example.storage.buckets.CreateBucketWithTurboReplication;
-import com.example.storage.buckets.DeleteBucket;
-import com.example.storage.buckets.DisableBucketVersioning;
-import com.example.storage.buckets.DisableLifecycleManagement;
-import com.example.storage.buckets.DisableRequesterPays;
-import com.example.storage.buckets.EnableBucketVersioning;
-import com.example.storage.buckets.EnableLifecycleManagement;
-import com.example.storage.buckets.EnableRequesterPays;
-import com.example.storage.buckets.GetBucketMetadata;
-import com.example.storage.buckets.GetBucketRpo;
-import com.example.storage.buckets.GetPublicAccessPrevention;
-import com.example.storage.buckets.ListBucketIamMembers;
-import com.example.storage.buckets.ListBuckets;
-import com.example.storage.buckets.MakeBucketPublic;
-import com.example.storage.buckets.RemoveBucketCors;
-import com.example.storage.buckets.RemoveBucketDefaultKMSKey;
-import com.example.storage.buckets.RemoveBucketIamConditionalBinding;
-import com.example.storage.buckets.RemoveBucketIamMember;
-import com.example.storage.buckets.RemoveBucketLabel;
-import com.example.storage.buckets.SetAsyncTurboRpo;
-import com.example.storage.buckets.SetBucketWebsiteInfo;
-import com.example.storage.buckets.SetClientEndpoint;
-import com.example.storage.buckets.SetDefaultRpo;
-import com.example.storage.buckets.SetPublicAccessPreventionEnforced;
-import com.example.storage.buckets.SetPublicAccessPreventionInherited;
-import com.example.storage.objects.DownloadRequesterPaysObject;
+import com.example.storage.bucket.AddBucketIamConditionalBinding;
+import com.example.storage.bucket.AddBucketIamMember;
+import com.example.storage.bucket.AddBucketLabel;
+import com.example.storage.bucket.ChangeDefaultStorageClass;
+import com.example.storage.bucket.ConfigureBucketCors;
+import com.example.storage.bucket.CreateBucket;
+import com.example.storage.bucket.CreateBucketWithStorageClassAndLocation;
+import com.example.storage.bucket.CreateBucketWithTurboReplication;
+import com.example.storage.bucket.DeleteBucket;
+import com.example.storage.bucket.DisableBucketVersioning;
+import com.example.storage.bucket.DisableDefaultEventBasedHold;
+import com.example.storage.bucket.DisableLifecycleManagement;
+import com.example.storage.bucket.DisableRequesterPays;
+import com.example.storage.bucket.DisableUniformBucketLevelAccess;
+import com.example.storage.bucket.EnableBucketVersioning;
+import com.example.storage.bucket.EnableDefaultEventBasedHold;
+import com.example.storage.bucket.EnableLifecycleManagement;
+import com.example.storage.bucket.EnableRequesterPays;
+import com.example.storage.bucket.EnableUniformBucketLevelAccess;
+import com.example.storage.bucket.GetBucketMetadata;
+import com.example.storage.bucket.GetBucketRpo;
+import com.example.storage.bucket.GetDefaultEventBasedHold;
+import com.example.storage.bucket.GetPublicAccessPrevention;
+import com.example.storage.bucket.GetRetentionPolicy;
+import com.example.storage.bucket.GetUniformBucketLevelAccess;
+import com.example.storage.bucket.ListBucketIamMembers;
+import com.example.storage.bucket.ListBuckets;
+import com.example.storage.bucket.LockRetentionPolicy;
+import com.example.storage.bucket.MakeBucketPublic;
+import com.example.storage.bucket.RemoveBucketCors;
+import com.example.storage.bucket.RemoveBucketDefaultKMSKey;
+import com.example.storage.bucket.RemoveBucketIamConditionalBinding;
+import com.example.storage.bucket.RemoveBucketIamMember;
+import com.example.storage.bucket.RemoveBucketLabel;
+import com.example.storage.bucket.RemoveRetentionPolicy;
+import com.example.storage.bucket.SetAsyncTurboRpo;
+import com.example.storage.bucket.SetBucketDefaultKmsKey;
+import com.example.storage.bucket.SetBucketWebsiteInfo;
+import com.example.storage.bucket.SetClientEndpoint;
+import com.example.storage.bucket.SetDefaultRpo;
+import com.example.storage.bucket.SetPublicAccessPreventionEnforced;
+import com.example.storage.bucket.SetPublicAccessPreventionInherited;
+import com.example.storage.bucket.SetRetentionPolicy;
+import com.example.storage.object.DownloadRequesterPaysObject;
+import com.example.storage.object.ReleaseEventBasedHold;
+import com.example.storage.object.ReleaseTemporaryHold;
+import com.example.storage.object.SetEventBasedHold;
+import com.example.storage.object.SetTemporaryHold;
 import com.google.cloud.Identity;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.storage.Blob;
@@ -90,6 +105,8 @@ public class ITBucketSnippets {
   private static final Logger log = Logger.getLogger(ITBucketSnippets.class.getName());
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
+  private static final String KMS_KEY_NAME = "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+
 
   private static Storage storage;
 
@@ -537,5 +554,92 @@ public class ITBucketSnippets {
     } finally {
       storage.delete(rpoBucket);
     }
+  }
+
+
+  @Test
+  public void testDefaultKMSKey() {
+    SetBucketDefaultKmsKey.setBucketDefaultKmsKey(PROJECT_ID, BUCKET, KMS_KEY_NAME);
+    assertEquals(KMS_KEY_NAME, storage.get(BUCKET).getDefaultKmsKeyName());
+
+    RemoveBucketDefaultKMSKey.removeBucketDefaultKmsKey(PROJECT_ID, BUCKET);
+    assertNull(storage.get(BUCKET).getDefaultKmsKeyName());
+  }
+
+  @Test
+  public void testBucketRetention() {
+    Long retention = 5L;
+    SetRetentionPolicy.setRetentionPolicy(PROJECT_ID, BUCKET, retention);
+    Bucket bucket = storage.get(BUCKET);
+    assertEquals(retention, bucket.getRetentionPeriod());
+    assertNotNull(bucket.getRetentionEffectiveTime());
+
+    PrintStream standardOut = System.out;
+    ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(snippetOutputCapture));
+    GetRetentionPolicy.getRetentionPolicy(PROJECT_ID, BUCKET);
+    String snippetOutput = snippetOutputCapture.toString();
+    assertTrue(snippetOutput.contains("5"));
+
+    EnableDefaultEventBasedHold.enableDefaultEventBasedHold(PROJECT_ID, BUCKET);
+    assertTrue(storage.get(BUCKET).getDefaultEventBasedHold());
+
+    snippetOutputCapture = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(snippetOutputCapture));
+    GetDefaultEventBasedHold.getDefaultEventBasedHold(PROJECT_ID, BUCKET);
+    snippetOutput = snippetOutputCapture.toString();
+    assertTrue(snippetOutput.contains("enabled"));
+    System.setOut(standardOut);
+
+
+    byte[] content = {0xD, 0xE, 0xA, 0xD};
+    String blobName = "test-create-empty-blob-retention-policy";
+    bucket.create(blobName, content);
+    SetEventBasedHold.setEventBasedHold(PROJECT_ID, BUCKET, blobName);
+    assertTrue(storage.get(BUCKET, blobName).getEventBasedHold());
+    ReleaseEventBasedHold.releaseEventBasedHold(PROJECT_ID, BUCKET, blobName);
+    assertFalse(storage.get(BUCKET, blobName).getEventBasedHold());
+    RemoveRetentionPolicy.removeRetentionPolicy(PROJECT_ID, BUCKET);
+    assertNull(storage.get(BUCKET).getRetentionPeriod());
+    DisableDefaultEventBasedHold.disableDefaultEventBasedHold(PROJECT_ID, BUCKET);
+    assertFalse(storage.get(BUCKET).getDefaultEventBasedHold());
+    SetTemporaryHold.setTemporaryHold(PROJECT_ID, BUCKET, blobName);
+    assertTrue(storage.get(BUCKET, blobName).getTemporaryHold());
+    ReleaseTemporaryHold.releaseTemporaryHold(PROJECT_ID, BUCKET, blobName);
+    assertFalse(storage.get(BUCKET, blobName).getTemporaryHold());
+
+  }
+
+  @Test
+  public void testLockRetentionPolicy() {
+    String tempBucket = RemoteStorageHelper.generateBucketName();
+    Bucket bucket = storage.create(BucketInfo.of(tempBucket));
+    assertNotNull(bucket);
+    SetRetentionPolicy.setRetentionPolicy(PROJECT_ID, tempBucket, 5L);
+    assertEquals(5L, (long)storage.get(tempBucket).getRetentionPeriod());
+    LockRetentionPolicy.lockRetentionPolicy(PROJECT_ID, tempBucket);
+    assertTrue(storage.get(tempBucket).retentionPolicyIsLocked());
+  }
+
+  @Test
+  public void testUniformBucketLevelAccess() {
+    String tempBucket = RemoteStorageHelper.generateBucketName();
+    Bucket bucket = storage.create(BucketInfo.of(tempBucket));
+    assertNotNull(bucket);
+    EnableUniformBucketLevelAccess.enableUniformBucketLevelAccess(PROJECT_ID, tempBucket);
+    bucket = storage.get(tempBucket);
+    assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+    assertNotNull(bucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
+
+    PrintStream standardOut = System.out;
+    ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(snippetOutputCapture));
+    GetUniformBucketLevelAccess.getUniformBucketLevelAccess(PROJECT_ID, tempBucket);
+    String snippetOutput = snippetOutputCapture.toString();
+    assertTrue(snippetOutput.contains("enabled"));
+    System.setOut(standardOut);
+
+    DisableUniformBucketLevelAccess.disableUniformBucketLevelAccess(PROJECT_ID, tempBucket);
+    assertFalse(storage.get(tempBucket).getIamConfiguration().isUniformBucketLevelAccessEnabled());
   }
 }

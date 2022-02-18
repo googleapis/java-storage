@@ -24,33 +24,35 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.example.storage.objects.ChangeObjectCSEKtoKMS;
-import com.example.storage.objects.ChangeObjectStorageClass;
-import com.example.storage.objects.ComposeObject;
-import com.example.storage.objects.CopyObject;
-import com.example.storage.objects.CopyOldVersionOfObject;
-import com.example.storage.objects.DeleteObject;
-import com.example.storage.objects.DeleteOldVersionOfObject;
-import com.example.storage.objects.DownloadEncryptedObject;
-import com.example.storage.objects.DownloadObject;
-import com.example.storage.objects.DownloadObjectIntoMemory;
-import com.example.storage.objects.DownloadPublicObject;
-import com.example.storage.objects.GenerateEncryptionKey;
-import com.example.storage.objects.GenerateV4GetObjectSignedUrl;
-import com.example.storage.objects.GenerateV4PutObjectSignedUrl;
-import com.example.storage.objects.GetObjectMetadata;
-import com.example.storage.objects.ListObjects;
-import com.example.storage.objects.ListObjectsWithOldVersions;
-import com.example.storage.objects.ListObjectsWithPrefix;
-import com.example.storage.objects.MakeObjectPublic;
-import com.example.storage.objects.MoveObject;
-import com.example.storage.objects.RotateObjectEncryptionKey;
-import com.example.storage.objects.SetObjectMetadata;
-import com.example.storage.objects.StreamObjectDownload;
-import com.example.storage.objects.StreamObjectUpload;
-import com.example.storage.objects.UploadEncryptedObject;
-import com.example.storage.objects.UploadObject;
-import com.example.storage.objects.UploadObjectFromMemory;
+
+import com.example.storage.object.ChangeObjectCSEKtoKMS;
+import com.example.storage.object.ChangeObjectStorageClass;
+import com.example.storage.object.ComposeObject;
+import com.example.storage.object.CopyObject;
+import com.example.storage.object.CopyOldVersionOfObject;
+import com.example.storage.object.DeleteObject;
+import com.example.storage.object.DeleteOldVersionOfObject;
+import com.example.storage.object.DownloadEncryptedObject;
+import com.example.storage.object.DownloadObject;
+import com.example.storage.object.DownloadObjectIntoMemory;
+import com.example.storage.object.DownloadPublicObject;
+import com.example.storage.object.GenerateEncryptionKey;
+import com.example.storage.object.GenerateV4GetObjectSignedUrl;
+import com.example.storage.object.GenerateV4PutObjectSignedUrl;
+import com.example.storage.object.GetObjectMetadata;
+import com.example.storage.object.ListObjects;
+import com.example.storage.object.ListObjectsWithOldVersions;
+import com.example.storage.object.ListObjectsWithPrefix;
+import com.example.storage.object.MakeObjectPublic;
+import com.example.storage.object.MoveObject;
+import com.example.storage.object.RotateObjectEncryptionKey;
+import com.example.storage.object.SetObjectMetadata;
+import com.example.storage.object.StreamObjectDownload;
+import com.example.storage.object.StreamObjectUpload;
+import com.example.storage.object.UploadEncryptedObject;
+import com.example.storage.object.UploadKMSEncryptedObject;
+import com.example.storage.object.UploadObject;
+import com.example.storage.object.UploadObjectFromMemory;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -93,6 +95,9 @@ public class ITObjectSnippets {
   private static final String STRING_CONTENT = "Hello, World!";
   private static final byte[] CONTENT = STRING_CONTENT.getBytes(UTF_8);
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
+
+
+  private static final String KMS_KEY_NAME = "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
   private static Storage storage;
 
@@ -335,11 +340,9 @@ public class ITObjectSnippets {
     assertArrayEquals(CONTENT, Files.readAllBytes(newDownloadFile.toPath()));
 
     assertNull(storage.get(BUCKET, encryptedBlob).getKmsKeyName());
-    String kmsKeyName =
-        "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
     ChangeObjectCSEKtoKMS.changeObjectFromCSEKtoKMS(
-        PROJECT_ID, BUCKET, encryptedBlob, newEncryptionKey, kmsKeyName);
-    assertTrue(storage.get(BUCKET, encryptedBlob).getKmsKeyName().contains(kmsKeyName));
+        PROJECT_ID, BUCKET, encryptedBlob, newEncryptionKey, KMS_KEY_NAME);
+    assertTrue(storage.get(BUCKET, encryptedBlob).getKmsKeyName().contains(KMS_KEY_NAME));
   }
 
   @Test
@@ -434,5 +437,12 @@ public class ITObjectSnippets {
         PROJECT_ID, BUCKET, "streamBlob", file.getAbsolutePath());
     assertArrayEquals(Files.readAllBytes(file.toPath()), "hello world".getBytes());
     file.delete();
+  }
+
+  @Test
+  public void testUploadKMSEncryptedObject() {
+    String blobName = "kms-encrypted-blob";
+    UploadKMSEncryptedObject.uploadKMSEncryptedObject(PROJECT_ID, BUCKET, blobName, KMS_KEY_NAME);
+    assertNotNull(storage.get(BUCKET, blobName));
   }
 }
