@@ -98,11 +98,12 @@ public class ITHmacSnippets {
   }
 
   @Test
-  public void testGetHmacKey() {
+  public void testGetHmacKey() throws Exception {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
 
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
+    Thread.sleep(5000);
     GetHmacKey.getHmacKey(hmacKey.getMetadata().getAccessId(), PROJECT_ID);
     String snippetOutput = snippetOutputCapture.toString();
     System.setOut(standardOut);
@@ -110,20 +111,22 @@ public class ITHmacSnippets {
   }
 
   @Test
-  public void testActivateHmacKey() {
+  public void testActivateHmacKey() throws Exception {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
     HmacKeyMetadata metadata =
         storage.updateHmacKeyState(hmacKey.getMetadata(), HmacKeyState.INACTIVE);
 
     ActivateHmacKey.activateHmacKey(metadata.getAccessId(), PROJECT_ID);
+    Thread.sleep(5000);
     assertEquals(HmacKeyState.ACTIVE, storage.getHmacKey(metadata.getAccessId()).getState());
   }
 
   @Test
-  public void testDeactivateHmacKey() {
+  public void testDeactivateHmacKey() throws Exception {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
 
     DeactivateHmacKey.deactivateHmacKey(hmacKey.getMetadata().getAccessId(), PROJECT_ID);
+    Thread.sleep(5000);
     assertEquals(
         HmacKeyState.INACTIVE, storage.getHmacKey(hmacKey.getMetadata().getAccessId()).getState());
   }
