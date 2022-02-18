@@ -167,12 +167,13 @@ public class ITObjectSnippets {
 
   @Test
   public void testDownloadObjectIntoMemory() throws IOException {
+    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     DownloadObjectIntoMemory.downloadObjectIntoMemory(PROJECT_ID, BUCKET, BLOB);
     String snippetOutput = snippetOutputCapture.toString();
     assertTrue(snippetOutput.contains("Hello, World!"));
-    System.setOut(System.out);
+    System.setOut(standardOut);
   }
 
   @Test
@@ -236,12 +237,13 @@ public class ITObjectSnippets {
 
   @Test
   public void testListObjects() {
+    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     ListObjects.listObjects(PROJECT_ID, BUCKET);
     String snippetOutput = snippetOutputCapture.toString();
     assertTrue(snippetOutput.contains(BLOB));
-    System.setOut(System.out);
+    System.setOut(standardOut);
   }
 
   @Test
@@ -395,7 +397,6 @@ public class ITObjectSnippets {
     url = snippetOutput.split("\n")[5];
     URL downloadUrl = new URL(url);
     System.setOut(standardOut);
-    System.out.println(snippetOutput);
     connection = (HttpsURLConnection) downloadUrl.openConnection();
     byte[] readBytes = new byte[CONTENT.length];
     try (InputStream responseStream = connection.getInputStream()) {
