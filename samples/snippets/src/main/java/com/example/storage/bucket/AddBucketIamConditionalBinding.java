@@ -56,7 +56,8 @@ public class AddBucketIamConditionalBinding {
     conditionBuilder.setDescription(conditionDescription);
     conditionBuilder.setExpression(conditionExpression);
 
-    // getBindingsList() returns an ImmutableList which we copy over to an ArrayList so it's mutable.
+    // getBindingsList() returns an ImmutableList which we copy over to an ArrayList so it's
+    // mutable.
     List<Binding> bindings = new ArrayList(originalPolicy.getBindingsList());
 
     // Add condition to a binding
