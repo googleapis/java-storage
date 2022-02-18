@@ -23,25 +23,27 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class RemoveRetentionPolicy {
-    public static void removeRetentionPolicy(String projectId, String bucketName)
-            throws StorageException, IllegalArgumentException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void removeRetentionPolicy(String projectId, String bucketName)
+      throws StorageException, IllegalArgumentException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        Bucket bucket = storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.RETENTION_POLICY));
-        if (bucket.retentionPolicyIsLocked() != null && bucket.retentionPolicyIsLocked()) {
-            throw new IllegalArgumentException(
-                    "Unable to remove retention policy as retention policy is locked.");
-        }
-
-        bucket.toBuilder().setRetentionPeriod(null).build().update();
-
-        System.out.println("Retention policy for " + bucketName + " has been removed");
+    Bucket bucket =
+        storage.get(
+            bucketName, Storage.BucketGetOption.fields(Storage.BucketField.RETENTION_POLICY));
+    if (bucket.retentionPolicyIsLocked() != null && bucket.retentionPolicyIsLocked()) {
+      throw new IllegalArgumentException(
+          "Unable to remove retention policy as retention policy is locked.");
     }
+
+    bucket.toBuilder().setRetentionPeriod(null).build().update();
+
+    System.out.println("Retention policy for " + bucketName + " has been removed");
+  }
 }
 // [END storage_remove_retention_policy]

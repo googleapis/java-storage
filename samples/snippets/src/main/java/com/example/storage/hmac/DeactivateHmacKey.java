@@ -21,33 +21,33 @@ import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
-
 import java.util.Date;
 
 public class DeactivateHmacKey {
-    public static void deactivateHmacKey(String accessId, String projectId) throws StorageException {
-        // The access ID of the HMAC key.
-        // String accessId = "GOOG0234230X00";
+  public static void deactivateHmacKey(String accessId, String projectId) throws StorageException {
+    // The access ID of the HMAC key.
+    // String accessId = "GOOG0234230X00";
 
-        // The ID of the project to which the service account belongs.
-        // String projectId = "project-id";
+    // The ID of the project to which the service account belongs.
+    // String projectId = "project-id";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        HmacKey.HmacKeyMetadata metadata =
-                storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
-        HmacKey.HmacKeyMetadata newMetadata = storage.updateHmacKeyState(metadata, HmacKey.HmacKeyState.INACTIVE);
+    HmacKey.HmacKeyMetadata metadata =
+        storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
+    HmacKey.HmacKeyMetadata newMetadata =
+        storage.updateHmacKeyState(metadata, HmacKey.HmacKeyState.INACTIVE);
 
-        System.out.println("The HMAC key is now inactive.");
-        System.out.println("The HMAC key metadata is:");
-        System.out.println("ID: " + newMetadata.getId());
-        System.out.println("Access ID: " + newMetadata.getAccessId());
-        System.out.println("Project ID: " + newMetadata.getProjectId());
-        System.out.println("Service Account Email: " + newMetadata.getServiceAccount().getEmail());
-        System.out.println("State: " + newMetadata.getState().toString());
-        System.out.println("Time Created: " + new Date(newMetadata.getCreateTime()).toString());
-        System.out.println("Time Updated: " + new Date(newMetadata.getUpdateTime()).toString());
-        System.out.println("ETag: " + newMetadata.getEtag());
-    }
+    System.out.println("The HMAC key is now inactive.");
+    System.out.println("The HMAC key metadata is:");
+    System.out.println("ID: " + newMetadata.getId());
+    System.out.println("Access ID: " + newMetadata.getAccessId());
+    System.out.println("Project ID: " + newMetadata.getProjectId());
+    System.out.println("Service Account Email: " + newMetadata.getServiceAccount().getEmail());
+    System.out.println("State: " + newMetadata.getState().toString());
+    System.out.println("Time Created: " + new Date(newMetadata.getCreateTime()).toString());
+    System.out.println("Time Updated: " + new Date(newMetadata.getUpdateTime()).toString());
+    System.out.println("ETag: " + newMetadata.getEtag());
+  }
 }
 // [END storage_deactivate_hmac_key]

@@ -24,23 +24,26 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class SetBucketDefaultKmsKey {
-    public static void setBucketDefaultKmsKey(String projectId, String bucketName, String kmsKeyName) throws StorageException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void setBucketDefaultKmsKey(String projectId, String bucketName, String kmsKeyName)
+      throws StorageException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        // The name of the KMS key to use as a default
-        // String kmsKeyName = "projects/your-project-id/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
+    // The name of the KMS key to use as a default
+    // String kmsKeyName =
+    // "projects/your-project-id/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        BucketInfo bucketInfo =
-                BucketInfo.newBuilder(bucketName).setDefaultKmsKeyName(kmsKeyName).build();
-        Bucket bucket = storage.update(bucketInfo);
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName).setDefaultKmsKeyName(kmsKeyName).build();
+    Bucket bucket = storage.update(bucketInfo);
 
-        System.out.println("KMS Key " + bucket.getDefaultKmsKeyName() + "was set to default for bucket " + bucketName);
-    }
+    System.out.println(
+        "KMS Key " + bucket.getDefaultKmsKeyName() + "was set to default for bucket " + bucketName);
+  }
 }
 // [END storage_set_bucket_default_kms_key]

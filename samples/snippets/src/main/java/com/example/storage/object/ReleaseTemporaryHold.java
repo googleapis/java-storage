@@ -24,22 +24,23 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class ReleaseTemporaryHold {
-    public static void releaseTemporaryHold(String projectId, String bucketName, String objectName) throws StorageException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void releaseTemporaryHold(String projectId, String bucketName, String objectName)
+      throws StorageException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        // The ID of your GCS object
-        // String objectName = "your-object-name";
+    // The ID of your GCS object
+    // String objectName = "your-object-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        BlobId blobId = BlobId.of(bucketName, objectName);
-        storage.update(BlobInfo.newBuilder(blobId).setTemporaryHold(false).build());
+    BlobId blobId = BlobId.of(bucketName, objectName);
+    storage.update(BlobInfo.newBuilder(blobId).setTemporaryHold(false).build());
 
-        System.out.println("Temporary hold was released for " + objectName);
-    }
+    System.out.println("Temporary hold was released for " + objectName);
+  }
 }
 // [END storage_release_temporary_hold]

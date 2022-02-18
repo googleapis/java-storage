@@ -23,22 +23,22 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class DeleteHmacKey {
-    public static void deleteHmacKey(String accessId, String projectId) throws StorageException {
+  public static void deleteHmacKey(String accessId, String projectId) throws StorageException {
 
-        // The access ID of the HMAC key.
-        // String accessId = "GOOG0234230X00";
+    // The access ID of the HMAC key.
+    // String accessId = "GOOG0234230X00";
 
-        // The ID of the project to which the service account belongs.
-        // String projectId = "project-id";
+    // The ID of the project to which the service account belongs.
+    // String projectId = "project-id";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        HmacKey.HmacKeyMetadata metadata =
-                storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
-        storage.deleteHmacKey(metadata);
+    HmacKey.HmacKeyMetadata metadata =
+        storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
+    storage.deleteHmacKey(metadata);
 
-        System.out.println(
-                "The key is deleted, though it will still appear in getHmacKeys() results if called with showDeletedKey.");
-    }
+    System.out.println(
+        "The key is deleted, though it will still appear in getHmacKeys() results if called with showDeletedKey.");
+  }
 }
 // [END storage_delete_hmac_key]

@@ -23,17 +23,18 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class EnableDefaultEventBasedHold {
-    public static void enableDefaultEventBasedHold(String projectId, String bucketName) throws StorageException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void enableDefaultEventBasedHold(String projectId, String bucketName)
+      throws StorageException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        storage.update(BucketInfo.newBuilder(bucketName).setDefaultEventBasedHold(true).build());
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    storage.update(BucketInfo.newBuilder(bucketName).setDefaultEventBasedHold(true).build());
 
-        System.out.println("Default event-based hold was enabled for " + bucketName);
-    }
+    System.out.println("Default event-based hold was enabled for " + bucketName);
+  }
 }
 // [END storage_enable_default_event_based_hold]

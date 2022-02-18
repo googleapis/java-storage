@@ -21,28 +21,30 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
-
 import java.util.Date;
 
 public class GetRetentionPolicy {
-    public static void getRetentionPolicy(String projectId, String bucketName) throws StorageException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void getRetentionPolicy(String projectId, String bucketName)
+      throws StorageException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        Bucket bucket = storage.get(bucketName, Storage.BucketGetOption.fields(Storage.BucketField.RETENTION_POLICY));
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Bucket bucket =
+        storage.get(
+            bucketName, Storage.BucketGetOption.fields(Storage.BucketField.RETENTION_POLICY));
 
-        System.out.println("Retention Policy for " + bucketName);
-        System.out.println("Retention Period: " + bucket.getRetentionPeriod());
-        if (bucket.retentionPolicyIsLocked() != null && bucket.retentionPolicyIsLocked()) {
-            System.out.println("Retention Policy is locked");
-        }
-        if (bucket.getRetentionEffectiveTime() != null) {
-            System.out.println("Effective Time: " + new Date(bucket.getRetentionEffectiveTime()));
-        }
+    System.out.println("Retention Policy for " + bucketName);
+    System.out.println("Retention Period: " + bucket.getRetentionPeriod());
+    if (bucket.retentionPolicyIsLocked() != null && bucket.retentionPolicyIsLocked()) {
+      System.out.println("Retention Policy is locked");
     }
+    if (bucket.getRetentionEffectiveTime() != null) {
+      System.out.println("Effective Time: " + new Date(bucket.getRetentionEffectiveTime()));
+    }
+  }
 }
 // [END storage_get_retention_policy]

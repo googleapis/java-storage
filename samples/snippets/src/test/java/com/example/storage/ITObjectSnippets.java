@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-
 import com.example.storage.object.ChangeObjectCSEKtoKMS;
 import com.example.storage.object.ChangeObjectStorageClass;
 import com.example.storage.object.ComposeObject;
@@ -96,8 +95,8 @@ public class ITObjectSnippets {
   private static final byte[] CONTENT = STRING_CONTENT.getBytes(UTF_8);
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
 
-
-  private static final String KMS_KEY_NAME = "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+  private static final String KMS_KEY_NAME =
+      "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
   private static Storage storage;
 
