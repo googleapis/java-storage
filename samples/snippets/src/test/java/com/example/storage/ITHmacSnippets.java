@@ -53,9 +53,19 @@ public class ITHmacSnippets {
   @BeforeClass
   public static void beforeClass() {
     RemoteStorageHelper helper = RemoteStorageHelper.create();
-    storage = helper.getOptions().toBuilder().setRetrySettings(
-            helper.getOptions().getRetrySettings().toBuilder().setRetryDelayMultiplier(3.0).build()
-    ).build().getService();
+    storage =
+        helper
+            .getOptions()
+            .toBuilder()
+            .setRetrySettings(
+                helper
+                    .getOptions()
+                    .getRetrySettings()
+                    .toBuilder()
+                    .setRetryDelayMultiplier(3.0)
+                    .build())
+            .build()
+            .getService();
   }
 
   @Before
