@@ -618,22 +618,19 @@ public class ITBucketSnippets {
 
   @Test
   public void testUniformBucketLevelAccess() {
-    String tempBucket = RemoteStorageHelper.generateBucketName();
-    Bucket bucket = storage.create(BucketInfo.of(tempBucket));
-    assertNotNull(bucket);
-    EnableUniformBucketLevelAccess.enableUniformBucketLevelAccess(PROJECT_ID, tempBucket);
-    bucket = storage.get(tempBucket);
+    EnableUniformBucketLevelAccess.enableUniformBucketLevelAccess(PROJECT_ID, BUCKET);
+    Bucket bucket = storage.get(BUCKET);
     assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
     assertNotNull(bucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
 
     ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
-    GetUniformBucketLevelAccess.getUniformBucketLevelAccess(PROJECT_ID, tempBucket);
+    GetUniformBucketLevelAccess.getUniformBucketLevelAccess(PROJECT_ID, BUCKET);
     String snippetOutput = snippetOutputCapture.toString();
     assertTrue(snippetOutput.contains("enabled"));
     System.setOut(standardOut);
 
-    DisableUniformBucketLevelAccess.disableUniformBucketLevelAccess(PROJECT_ID, tempBucket);
-    assertFalse(storage.get(tempBucket).getIamConfiguration().isUniformBucketLevelAccessEnabled());
+    DisableUniformBucketLevelAccess.disableUniformBucketLevelAccess(PROJECT_ID, BUCKET);
+    assertFalse(storage.get(BUCKET).getIamConfiguration().isUniformBucketLevelAccessEnabled());
   }
 }
