@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.storage.bucket;
 
 // [START storage_enable_bucket_lifecycle_management]
-import static com.google.cloud.storage.BucketInfo.LifecycleRule.*;
+import static com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
+import static com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;

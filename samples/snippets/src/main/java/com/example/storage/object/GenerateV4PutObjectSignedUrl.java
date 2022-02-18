@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.storage.object;
 
 // [START storage_generate_upload_signed_url_v4]
@@ -39,7 +40,7 @@ public class GenerateV4PutObjectSignedUrl {
    * credentials are authorized to sign a URL. See the documentation for Storage.signUrl for more
    * details.
    */
-  public static void generateV4GPutObjectSignedUrl(
+  public static void generateV4PutObjectSignedUrl(
       String projectId, String bucketName, String objectName) throws StorageException {
     // String projectId = "my-project-id";
     // String bucketName = "my-bucket";

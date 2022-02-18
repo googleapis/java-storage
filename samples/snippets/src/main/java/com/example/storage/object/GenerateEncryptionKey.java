@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.storage.object;
 
 // [START storage_generate_encryption_key]

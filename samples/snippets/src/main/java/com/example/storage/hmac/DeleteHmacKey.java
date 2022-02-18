@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.storage.hmac;
 
 // [START storage_delete_hmac_key]
@@ -38,7 +39,8 @@ public class DeleteHmacKey {
     storage.deleteHmacKey(metadata);
 
     System.out.println(
-        "The key is deleted, though it will still appear in getHmacKeys() results if called with showDeletedKey.");
+        "The key is deleted, though it will still appear in "
+            + "getHmacKeys() results if called with showDeletedKey.");
   }
 }
 // [END storage_delete_hmac_key]

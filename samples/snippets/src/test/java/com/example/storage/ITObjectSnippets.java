@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.example.storage.object.ChangeObjectCSEKtoKMS;
+import com.example.storage.object.ChangeObjectCsekToKms;
 import com.example.storage.object.ChangeObjectStorageClass;
 import com.example.storage.object.ComposeObject;
 import com.example.storage.object.CopyObject;
@@ -49,7 +49,7 @@ import com.example.storage.object.SetObjectMetadata;
 import com.example.storage.object.StreamObjectDownload;
 import com.example.storage.object.StreamObjectUpload;
 import com.example.storage.object.UploadEncryptedObject;
-import com.example.storage.object.UploadKMSEncryptedObject;
+import com.example.storage.object.UploadKmsEncryptedObject;
 import com.example.storage.object.UploadObject;
 import com.example.storage.object.UploadObjectFromMemory;
 import com.google.cloud.storage.Acl;
@@ -98,7 +98,8 @@ public class ITObjectSnippets {
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
   private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
   private static final String KMS_KEY_NAME =
-      "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+      "projects/gcloud-devel/locations/us/keyRings/"
+          + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
   private static Storage storage;
 
@@ -199,7 +200,7 @@ public class ITObjectSnippets {
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(ImmutableMap.of("k", "v")).build();
     Blob remoteBlob = storage.create(blobInfo, CONTENT);
     assertNotNull(remoteBlob);
-    PrintStream systemOut = System.out;
+    final PrintStream systemOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     GetObjectMetadata.getObjectMetadata(PROJECT_ID, BUCKET, blobName);
@@ -248,7 +249,7 @@ public class ITObjectSnippets {
 
   @Test
   public void testListObjectsWithPrefix() {
-    PrintStream systemOutput = System.out;
+    final PrintStream systemOutput = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, "a/1.txt")).build());
@@ -310,7 +311,7 @@ public class ITObjectSnippets {
 
   @Test
   public void testObjectCSEKOperations() throws IOException {
-    PrintStream systemOut = System.out;
+    final PrintStream systemOut = System.out;
 
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
@@ -341,7 +342,7 @@ public class ITObjectSnippets {
     assertArrayEquals(CONTENT, Files.readAllBytes(newDownloadFile.toPath()));
 
     assertNull(storage.get(BUCKET, encryptedBlob).getKmsKeyName());
-    ChangeObjectCSEKtoKMS.changeObjectFromCSEKtoKMS(
+    ChangeObjectCsekToKms.changeObjectFromCsekToKms(
         PROJECT_ID, BUCKET, encryptedBlob, newEncryptionKey, KMS_KEY_NAME);
     assertTrue(storage.get(BUCKET, encryptedBlob).getKmsKeyName().contains(KMS_KEY_NAME));
   }
@@ -350,11 +351,11 @@ public class ITObjectSnippets {
   public void testObjectVersioningOperations() {
     storage.get(BUCKET).toBuilder().setVersioningEnabled(true).build().update();
     String versionedBlob = "versionedblob";
-    Blob originalBlob = storage.create(BlobInfo.newBuilder(BUCKET, versionedBlob).build(), CONTENT);
+    final Blob originalBlob = storage.create(BlobInfo.newBuilder(BUCKET, versionedBlob).build(), CONTENT);
     byte[] content2 = "Hello, World 2".getBytes(UTF_8);
     storage.create(BlobInfo.newBuilder(BUCKET, versionedBlob).build(), content2);
 
-    PrintStream systemOut = System.out;
+    final PrintStream systemOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     ListObjectsWithOldVersions.listObjectsWithOldVersions(PROJECT_ID, BUCKET);
@@ -379,7 +380,7 @@ public class ITObjectSnippets {
     String tempObject = "test-upload-signed-url-object";
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
-    GenerateV4PutObjectSignedUrl.generateV4GPutObjectSignedUrl(PROJECT_ID, BUCKET, tempObject);
+    GenerateV4PutObjectSignedUrl.generateV4PutObjectSignedUrl(PROJECT_ID, BUCKET, tempObject);
     String snippetOutput = snippetOutputCapture.toString();
     String url = snippetOutput.split("\n")[1];
     URL uploadUrl = new URL(url);
@@ -441,7 +442,7 @@ public class ITObjectSnippets {
   @Test
   public void testUploadKMSEncryptedObject() {
     String blobName = "kms-encrypted-blob";
-    UploadKMSEncryptedObject.uploadKMSEncryptedObject(PROJECT_ID, BUCKET, blobName, KMS_KEY_NAME);
+    UploadKmsEncryptedObject.uploadKmsEncryptedObject(PROJECT_ID, BUCKET, blobName, KMS_KEY_NAME);
     assertNotNull(storage.get(BUCKET, blobName));
   }
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.storage.bucket;
 
 // [START storage_bucket_delete_default_kms_key]
@@ -20,7 +21,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class RemoveBucketDefaultKMSKey {
+public class RemoveBucketDefaultKmsKey {
   public static void removeBucketDefaultKmsKey(String projectId, String bucketName) {
     // The ID of your GCP project
     // String projectId = "your-project-id";

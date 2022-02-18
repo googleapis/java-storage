@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.storage.object;
 
 // [START storage_object_csek_to_cmek]
@@ -20,8 +21,8 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class ChangeObjectCSEKtoKMS {
-  public static void changeObjectFromCSEKtoKMS(
+public class ChangeObjectCsekToKms {
+  public static void changeObjectFromCsekToKms(
       String projectId,
       String bucketName,
       String objectName,

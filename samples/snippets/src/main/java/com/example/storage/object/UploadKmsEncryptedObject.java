@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.example.storage.object;
 
 // [START storage_upload_with_kms_key]
@@ -24,8 +25,8 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class UploadKMSEncryptedObject {
-  public static void uploadKMSEncryptedObject(
+public class UploadKmsEncryptedObject {
+  public static void uploadKmsEncryptedObject(
       String projectId, String bucketName, String objectName, String kmsKeyName) {
     // The ID of your GCP project
     // String projectId = "your-project-id";

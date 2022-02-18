@@ -53,7 +53,7 @@ import com.example.storage.bucket.ListBuckets;
 import com.example.storage.bucket.LockRetentionPolicy;
 import com.example.storage.bucket.MakeBucketPublic;
 import com.example.storage.bucket.RemoveBucketCors;
-import com.example.storage.bucket.RemoveBucketDefaultKMSKey;
+import com.example.storage.bucket.RemoveBucketDefaultKmsKey;
 import com.example.storage.bucket.RemoveBucketIamConditionalBinding;
 import com.example.storage.bucket.RemoveBucketIamMember;
 import com.example.storage.bucket.RemoveBucketLabel;
@@ -108,7 +108,8 @@ public class ITBucketSnippets {
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
   private static final String KMS_KEY_NAME =
-      "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+      "projects/gcloud-devel/locations/us/keyRings/"
+          + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
   private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
   private static Storage storage;
@@ -448,11 +449,12 @@ public class ITBucketSnippets {
         .get(BUCKET)
         .toBuilder()
         .setDefaultKmsKeyName(
-            "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
+            "projects/gcloud-devel/locations/us/keyRings/"
+                    + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
         .build()
         .update();
     assertNotNull(storage.get(BUCKET).getDefaultKmsKeyName());
-    RemoveBucketDefaultKMSKey.removeBucketDefaultKmsKey(PROJECT_ID, BUCKET);
+    RemoveBucketDefaultKmsKey.removeBucketDefaultKmsKey(PROJECT_ID, BUCKET);
     assertNull(storage.get(BUCKET).getDefaultKmsKeyName());
   }
 
@@ -570,7 +572,7 @@ public class ITBucketSnippets {
     SetBucketDefaultKmsKey.setBucketDefaultKmsKey(PROJECT_ID, BUCKET, KMS_KEY_NAME);
     assertEquals(KMS_KEY_NAME, storage.get(BUCKET).getDefaultKmsKeyName());
 
-    RemoveBucketDefaultKMSKey.removeBucketDefaultKmsKey(PROJECT_ID, BUCKET);
+    RemoveBucketDefaultKmsKey.removeBucketDefaultKmsKey(PROJECT_ID, BUCKET);
     assertNull(storage.get(BUCKET).getDefaultKmsKeyName());
   }
 

@@ -112,8 +112,8 @@ public class ITStorageSnippets {
     assertTrue(snippetOutput.contains("<input type='file' name='file'/>"));
 
     String[] output = snippetOutput.split("'");
-    HttpClient client = HttpClientBuilder.create().build();
-    HttpPost request = new HttpPost(output[1]);
+    final HttpClient client = HttpClientBuilder.create().build();
+    final HttpPost request = new HttpPost(output[1]);
     MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
     Map<String, String> policy = new HashMap<>();
