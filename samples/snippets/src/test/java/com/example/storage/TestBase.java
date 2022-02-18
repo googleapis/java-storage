@@ -18,6 +18,7 @@ package com.example.storage;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -34,7 +35,7 @@ public abstract class TestBase {
   protected String bucketName;
   protected Storage storage;
   protected String blobName;
-
+  protected Bucket bucket;
   protected Blob blob;
 
   @Before
@@ -42,7 +43,7 @@ public abstract class TestBase {
     blobName = "blob";
     bucketName = RemoteStorageHelper.generateBucketName();
     storage = StorageOptions.getDefaultInstance().getService();
-    storage.create(BucketInfo.of(bucketName));
+    bucket = storage.create(BucketInfo.of(bucketName));
     blob = storage.create(BlobInfo.newBuilder(bucketName, blobName).build());
   }
 
