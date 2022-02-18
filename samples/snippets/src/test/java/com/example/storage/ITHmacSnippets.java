@@ -34,6 +34,8 @@ import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,6 +46,7 @@ public class ITHmacSnippets {
   private static final String HMAC_KEY_TEST_SERVICE_ACCOUNT =
       System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
   private static final String PROJECT_ID = ServiceOptions.getDefaultProjectId();
+  private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
   private static Storage storage;
 
@@ -73,7 +76,6 @@ public class ITHmacSnippets {
 
   @Test
   public void testCreateHmacKey() {
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     CreateHmacKey.createHmacKey(HMAC_KEY_TEST_SERVICE_ACCOUNT, PROJECT_ID);
@@ -87,7 +89,6 @@ public class ITHmacSnippets {
   public void testGetHmacKey() {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
 
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     GetHmacKey.getHmacKey(hmacKey.getMetadata().getAccessId(), PROJECT_ID);
@@ -135,7 +136,6 @@ public class ITHmacSnippets {
         ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT),
         Storage.CreateHmacKeyOption.projectId(PROJECT_ID));
 
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     ListHmacKeys.listHmacKeys(PROJECT_ID);
