@@ -60,13 +60,15 @@ public class ITHmacSnippets {
   }
 
   private static void cleanUpHmacKeys(ServiceAccount serviceAccount) {
-    Page<HmacKeyMetadata> page =
-        storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
-    for (HmacKeyMetadata metadata : page.iterateAll()) {
-      if (metadata.getState() == HmacKeyState.ACTIVE) {
-        storage.updateHmacKeyState(metadata, HmacKeyState.INACTIVE);
+    Page<HmacKey.HmacKeyMetadata> metadatas =
+            storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
+    for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
+      if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
+        hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
       }
-      storage.deleteHmacKey(metadata);
+      if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
+        storage.deleteHmacKey(hmacKeyMetadata);
+      }
     }
   }
 
