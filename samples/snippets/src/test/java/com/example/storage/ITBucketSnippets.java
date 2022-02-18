@@ -450,7 +450,7 @@ public class ITBucketSnippets {
         .toBuilder()
         .setDefaultKmsKeyName(
             "projects/gcloud-devel/locations/us/keyRings/"
-                    + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
+                + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
         .build()
         .update();
     assertNotNull(storage.get(BUCKET).getDefaultKmsKeyName());

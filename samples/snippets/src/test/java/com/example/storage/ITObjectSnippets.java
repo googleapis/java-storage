@@ -351,8 +351,8 @@ public class ITObjectSnippets {
   public void testObjectVersioningOperations() {
     storage.get(BUCKET).toBuilder().setVersioningEnabled(true).build().update();
     String versionedBlob = "versionedblob";
-    final Blob originalBlob = storage
-            .create(BlobInfo.newBuilder(BUCKET, versionedBlob).build(), CONTENT);
+    final Blob originalBlob =
+        storage.create(BlobInfo.newBuilder(BUCKET, versionedBlob).build(), CONTENT);
     byte[] content2 = "Hello, World 2".getBytes(UTF_8);
     storage.create(BlobInfo.newBuilder(BUCKET, versionedBlob).build(), content2);
 
