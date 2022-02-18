@@ -24,28 +24,28 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class SetRetentionPolicy {
-    public static void setRetentionPolicy(String projectId, String bucketName, Long retentionPeriodSeconds)
-            throws StorageException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void setRetentionPolicy(
+      String projectId, String bucketName, Long retentionPeriodSeconds) throws StorageException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        // The retention period for objects in bucket
-        // Long retentionPeriodSeconds = 3600L; // 1 hour in seconds
+    // The retention period for objects in bucket
+    // Long retentionPeriodSeconds = 3600L; // 1 hour in seconds
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        Bucket bucketWithRetentionPolicy =
-                storage.update(
-                        BucketInfo.newBuilder(bucketName).setRetentionPeriod(retentionPeriodSeconds).build());
+    Bucket bucketWithRetentionPolicy =
+        storage.update(
+            BucketInfo.newBuilder(bucketName).setRetentionPeriod(retentionPeriodSeconds).build());
 
-        System.out.println(
-                "Retention period for "
-                        + bucketName
-                        + " is now "
-                        + bucketWithRetentionPolicy.getRetentionPeriod());
-    }
+    System.out.println(
+        "Retention period for "
+            + bucketName
+            + " is now "
+            + bucketWithRetentionPolicy.getRetentionPeriod());
+  }
 }
 // [END storage_set_retention_policy]

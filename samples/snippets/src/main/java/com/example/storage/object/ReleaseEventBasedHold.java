@@ -24,22 +24,23 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class ReleaseEventBasedHold {
-    public static void releaseEventBasedHold(String projectId, String bucketName, String objectName) throws StorageException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void releaseEventBasedHold(String projectId, String bucketName, String objectName)
+      throws StorageException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        // The ID of your GCS object
-        // String objectName = "your-object-name";
+    // The ID of your GCS object
+    // String objectName = "your-object-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        BlobId blobId = BlobId.of(bucketName, objectName);
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    BlobId blobId = BlobId.of(bucketName, objectName);
 
-        storage.update(BlobInfo.newBuilder(blobId).setEventBasedHold(false).build());
+    storage.update(BlobInfo.newBuilder(blobId).setEventBasedHold(false).build());
 
-        System.out.println("Event-based hold was released for " + objectName);
-    }
+    System.out.println("Event-based hold was released for " + objectName);
+  }
 }
 // [END storage_release_event_based_hold]

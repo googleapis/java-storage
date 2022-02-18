@@ -24,18 +24,19 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class ListHmacKeys {
-    public static void listHmacKeys(String projectId) throws StorageException {
-        // The ID of the project to which the service account belongs.
-        // String projectId = "project-id";
+  public static void listHmacKeys(String projectId) throws StorageException {
+    // The ID of the project to which the service account belongs.
+    // String projectId = "project-id";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        Page<HmacKey.HmacKeyMetadata> page = storage.listHmacKeys(Storage.ListHmacKeysOption.projectId(projectId));
+    Page<HmacKey.HmacKeyMetadata> page =
+        storage.listHmacKeys(Storage.ListHmacKeysOption.projectId(projectId));
 
-        for (HmacKey.HmacKeyMetadata metadata : page.iterateAll()) {
-            System.out.println("Service Account Email: " + metadata.getServiceAccount().getEmail());
-            System.out.println("Access ID: " + metadata.getAccessId());
-        }
+    for (HmacKey.HmacKeyMetadata metadata : page.iterateAll()) {
+      System.out.println("Service Account Email: " + metadata.getServiceAccount().getEmail());
+      System.out.println("Access ID: " + metadata.getAccessId());
     }
+  }
 }
 // [END storage_list_hmac_keys]

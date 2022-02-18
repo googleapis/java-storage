@@ -16,6 +16,9 @@
 
 package com.example.storage;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import com.example.storage.hmac.ActivateHmacKey;
 import com.example.storage.hmac.CreateHmacKey;
 import com.example.storage.hmac.DeactivateHmacKey;
@@ -30,16 +33,12 @@ import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class ITHmacSnippets {
   private static final String HMAC_KEY_TEST_SERVICE_ACCOUNT =
@@ -110,7 +109,8 @@ public class ITHmacSnippets {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
 
     DeactivateHmacKey.deactivateHmacKey(hmacKey.getMetadata().getAccessId(), PROJECT_ID);
-    assertEquals(HmacKeyState.INACTIVE, storage.getHmacKey(hmacKey.getMetadata().getAccessId()).getState());
+    assertEquals(
+        HmacKeyState.INACTIVE, storage.getHmacKey(hmacKey.getMetadata().getAccessId()).getState());
   }
 
   @Test
@@ -133,14 +133,12 @@ public class ITHmacSnippets {
         ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT),
         Storage.CreateHmacKeyOption.projectId(PROJECT_ID));
 
-
     PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     ListHmacKeys.listHmacKeys(PROJECT_ID);
     String snippetOutput = snippetOutputCapture.toString();
-    assertEquals(4, snippetOutput.split("\n").length); //2 lines per key
+    assertEquals(4, snippetOutput.split("\n").length); // 2 lines per key
     System.setOut(standardOut);
-
   }
 }

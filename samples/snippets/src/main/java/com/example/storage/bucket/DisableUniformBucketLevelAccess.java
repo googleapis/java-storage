@@ -23,22 +23,23 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
 public class DisableUniformBucketLevelAccess {
-    public static void disableUniformBucketLevelAccess(String projectId, String bucketName) throws StorageException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
+  public static void disableUniformBucketLevelAccess(String projectId, String bucketName)
+      throws StorageException {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
+    // The ID of your GCS bucket
+    // String bucketName = "your-unique-bucket-name";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        BucketInfo.IamConfiguration iamConfiguration =
-                BucketInfo.IamConfiguration.newBuilder()
-                        .setIsUniformBucketLevelAccessEnabled(false)
-                        .build();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    BucketInfo.IamConfiguration iamConfiguration =
+        BucketInfo.IamConfiguration.newBuilder()
+            .setIsUniformBucketLevelAccessEnabled(false)
+            .build();
 
-        storage.update(BucketInfo.newBuilder(bucketName).setIamConfiguration(iamConfiguration).build());
+    storage.update(BucketInfo.newBuilder(bucketName).setIamConfiguration(iamConfiguration).build());
 
-        System.out.println("Uniform bucket-level access was disabled for " + bucketName);
-    }
+    System.out.println("Uniform bucket-level access was disabled for " + bucketName);
+  }
 }
 // [END storage_disable_uniform_bucket_level_access]

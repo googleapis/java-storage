@@ -22,39 +22,38 @@ import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
-
 import java.util.Date;
 
 public class CreateHmacKey {
-    public static void createHmacKey(String serviceAccountEmail, String projectId)
-            throws StorageException {
+  public static void createHmacKey(String serviceAccountEmail, String projectId)
+      throws StorageException {
 
-        // The service account email for which the new HMAC key will be created.
-        // String serviceAccountEmail = "service-account@iam.gserviceaccount.com";
+    // The service account email for which the new HMAC key will be created.
+    // String serviceAccountEmail = "service-account@iam.gserviceaccount.com";
 
-        // The ID of the project to which the service account belongs.
-        // String projectId = "project-id";
+    // The ID of the project to which the service account belongs.
+    // String projectId = "project-id";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        ServiceAccount account = ServiceAccount.of(serviceAccountEmail);
-        HmacKey hmacKey =
-                storage.createHmacKey(account, Storage.CreateHmacKeyOption.projectId(projectId));
+    ServiceAccount account = ServiceAccount.of(serviceAccountEmail);
+    HmacKey hmacKey =
+        storage.createHmacKey(account, Storage.CreateHmacKeyOption.projectId(projectId));
 
-        String secret = hmacKey.getSecretKey();
-        HmacKey.HmacKeyMetadata metadata = hmacKey.getMetadata();
+    String secret = hmacKey.getSecretKey();
+    HmacKey.HmacKeyMetadata metadata = hmacKey.getMetadata();
 
-        System.out.println("The Base64 encoded secret is: " + secret);
-        System.out.println("Do not lose that secret, there is no API to recover it.");
-        System.out.println("The HMAC key metadata is:");
-        System.out.println("ID: " + metadata.getId());
-        System.out.println("Access ID: " + metadata.getAccessId());
-        System.out.println("Project ID: " + metadata.getProjectId());
-        System.out.println("Service Account Email: " + metadata.getServiceAccount().getEmail());
-        System.out.println("State: " + metadata.getState().toString());
-        System.out.println("Time Created: " + new Date(metadata.getCreateTime()).toString());
-        System.out.println("Time Updated: " + new Date(metadata.getUpdateTime()).toString());
-        System.out.println("ETag: " + metadata.getEtag());
-    }
+    System.out.println("The Base64 encoded secret is: " + secret);
+    System.out.println("Do not lose that secret, there is no API to recover it.");
+    System.out.println("The HMAC key metadata is:");
+    System.out.println("ID: " + metadata.getId());
+    System.out.println("Access ID: " + metadata.getAccessId());
+    System.out.println("Project ID: " + metadata.getProjectId());
+    System.out.println("Service Account Email: " + metadata.getServiceAccount().getEmail());
+    System.out.println("State: " + metadata.getState().toString());
+    System.out.println("Time Created: " + new Date(metadata.getCreateTime()).toString());
+    System.out.println("Time Updated: " + new Date(metadata.getUpdateTime()).toString());
+    System.out.println("ETag: " + metadata.getEtag());
+  }
 }
 // [END storage_create_hmac_key]

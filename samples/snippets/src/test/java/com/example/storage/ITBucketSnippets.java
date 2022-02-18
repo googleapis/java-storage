@@ -105,8 +105,8 @@ public class ITBucketSnippets {
   private static final Logger log = Logger.getLogger(ITBucketSnippets.class.getName());
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
-  private static final String KMS_KEY_NAME = "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
-
+  private static final String KMS_KEY_NAME =
+      "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
   private static Storage storage;
 
@@ -556,7 +556,6 @@ public class ITBucketSnippets {
     }
   }
 
-
   @Test
   public void testDefaultKMSKey() {
     SetBucketDefaultKmsKey.setBucketDefaultKmsKey(PROJECT_ID, BUCKET, KMS_KEY_NAME);
@@ -591,7 +590,6 @@ public class ITBucketSnippets {
     assertTrue(snippetOutput.contains("enabled"));
     System.setOut(standardOut);
 
-
     byte[] content = {0xD, 0xE, 0xA, 0xD};
     String blobName = "test-create-empty-blob-retention-policy";
     bucket.create(blobName, content);
@@ -607,7 +605,6 @@ public class ITBucketSnippets {
     assertTrue(storage.get(BUCKET, blobName).getTemporaryHold());
     ReleaseTemporaryHold.releaseTemporaryHold(PROJECT_ID, BUCKET, blobName);
     assertFalse(storage.get(BUCKET, blobName).getTemporaryHold());
-
   }
 
   @Test
@@ -616,7 +613,7 @@ public class ITBucketSnippets {
     Bucket bucket = storage.create(BucketInfo.of(tempBucket));
     assertNotNull(bucket);
     SetRetentionPolicy.setRetentionPolicy(PROJECT_ID, tempBucket, 5L);
-    assertEquals(5L, (long)storage.get(tempBucket).getRetentionPeriod());
+    assertEquals(5L, (long) storage.get(tempBucket).getRetentionPeriod());
     LockRetentionPolicy.lockRetentionPolicy(PROJECT_ID, tempBucket);
     assertTrue(storage.get(tempBucket).retentionPolicyIsLocked());
   }

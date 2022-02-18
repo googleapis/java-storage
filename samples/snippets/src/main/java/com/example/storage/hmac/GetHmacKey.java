@@ -21,31 +21,30 @@ import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
-
 import java.util.Date;
 
 public class GetHmacKey {
-    public static void getHmacKey(String accessId, String projectId) throws StorageException {
-        // The access ID of the HMAC key.
-        // String accessId = "GOOG0234230X00";
+  public static void getHmacKey(String accessId, String projectId) throws StorageException {
+    // The access ID of the HMAC key.
+    // String accessId = "GOOG0234230X00";
 
-        // The ID of the project to which the service account belongs.
-        // String projectId = "project-id";
+    // The ID of the project to which the service account belongs.
+    // String projectId = "project-id";
 
-        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-        HmacKey.HmacKeyMetadata metadata =
-                storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
+    HmacKey.HmacKeyMetadata metadata =
+        storage.getHmacKey(accessId, Storage.GetHmacKeyOption.projectId(projectId));
 
-        System.out.println("The HMAC key metadata is:");
-        System.out.println("ID: " + metadata.getId());
-        System.out.println("Access ID: " + metadata.getAccessId());
-        System.out.println("Project ID: " + metadata.getProjectId());
-        System.out.println("Service Account Email: " + metadata.getServiceAccount().getEmail());
-        System.out.println("State: " + metadata.getState().toString());
-        System.out.println("Time Created: " + new Date(metadata.getCreateTime()).toString());
-        System.out.println("Time Updated: " + new Date(metadata.getUpdateTime()).toString());
-        System.out.println("ETag: " + metadata.getEtag());
-    }
+    System.out.println("The HMAC key metadata is:");
+    System.out.println("ID: " + metadata.getId());
+    System.out.println("Access ID: " + metadata.getAccessId());
+    System.out.println("Project ID: " + metadata.getProjectId());
+    System.out.println("Service Account Email: " + metadata.getServiceAccount().getEmail());
+    System.out.println("State: " + metadata.getState().toString());
+    System.out.println("Time Created: " + new Date(metadata.getCreateTime()).toString());
+    System.out.println("Time Updated: " + new Date(metadata.getUpdateTime()).toString());
+    System.out.println("ETag: " + metadata.getEtag());
+  }
 }
 // [END storage_get_hmac_key]
