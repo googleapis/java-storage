@@ -84,6 +84,8 @@ import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.ByteArrayOutputStream;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -107,6 +109,7 @@ public class ITBucketSnippets {
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
   private static final String KMS_KEY_NAME =
       "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+  private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
   private static Storage storage;
 
@@ -205,7 +208,6 @@ public class ITBucketSnippets {
             .build()
             .update();
 
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     GetBucketMetadata.getBucketMetadata(PROJECT_ID, BUCKET);
@@ -240,7 +242,6 @@ public class ITBucketSnippets {
   @Test
   public void testListBuckets() {
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    PrintStream standardOut = System.out;
     System.setOut(new PrintStream(snippetOutputCapture));
     ListBuckets.listBuckets(PROJECT_ID);
     String snippetOutput = snippetOutputCapture.toString();
@@ -296,7 +297,6 @@ public class ITBucketSnippets {
                   .build())
           .build()
           .update();
-      PrintStream standardOut = System.out;
       final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
       System.setOut(new PrintStream(snippetOutputCapture));
       GetPublicAccessPrevention.getPublicAccessPrevention(PROJECT_ID, BUCKET);
@@ -398,7 +398,6 @@ public class ITBucketSnippets {
     int originalSize = storage.getIamPolicy(BUCKET).getBindingsList().size();
     AddBucketIamMember.addBucketIamMember(PROJECT_ID, BUCKET);
     assertEquals(originalSize + 1, storage.getIamPolicy(BUCKET).getBindingsList().size());
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     ListBucketIamMembers.listBucketIamMembers(PROJECT_ID, BUCKET);
@@ -463,7 +462,6 @@ public class ITBucketSnippets {
 
   @Test
   public void testSetClientEndpoint() {
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     SetClientEndpoint.setClientEndpoint(PROJECT_ID, "https://storage.googleapis.com");
@@ -544,7 +542,6 @@ public class ITBucketSnippets {
       bucket = storage.get(rpoBucket);
       assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
 
-      PrintStream standardOut = System.out;
       final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
       System.setOut(new PrintStream(snippetOutputCapture));
       GetBucketRpo.getBucketRpo(PROJECT_ID, rpoBucket);
@@ -573,7 +570,6 @@ public class ITBucketSnippets {
     assertEquals(retention, bucket.getRetentionPeriod());
     assertNotNull(bucket.getRetentionEffectiveTime());
 
-    PrintStream standardOut = System.out;
     ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     GetRetentionPolicy.getRetentionPolicy(PROJECT_ID, BUCKET);
@@ -628,7 +624,6 @@ public class ITBucketSnippets {
     assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
     assertNotNull(bucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
 
-    PrintStream standardOut = System.out;
     ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     GetUniformBucketLevelAccess.getUniformBucketLevelAccess(PROJECT_ID, tempBucket);

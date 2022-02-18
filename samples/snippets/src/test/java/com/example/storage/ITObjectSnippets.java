@@ -65,6 +65,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -94,7 +96,7 @@ public class ITObjectSnippets {
   private static final String STRING_CONTENT = "Hello, World!";
   private static final byte[] CONTENT = STRING_CONTENT.getBytes(UTF_8);
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
-
+  private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
   private static final String KMS_KEY_NAME =
       "projects/gcloud-devel/locations/us/keyRings/gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
@@ -167,7 +169,6 @@ public class ITObjectSnippets {
 
   @Test
   public void testDownloadObjectIntoMemory() throws IOException {
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     DownloadObjectIntoMemory.downloadObjectIntoMemory(PROJECT_ID, BUCKET, BLOB);
@@ -237,7 +238,6 @@ public class ITObjectSnippets {
 
   @Test
   public void testListObjects() {
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     ListObjects.listObjects(PROJECT_ID, BUCKET);
@@ -377,7 +377,6 @@ public class ITObjectSnippets {
   @Test
   public void testV4SignedURLs() throws IOException {
     String tempObject = "test-upload-signed-url-object";
-    PrintStream standardOut = System.out;
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     GenerateV4PutObjectSignedUrl.generateV4GPutObjectSignedUrl(PROJECT_ID, BUCKET, tempObject);
