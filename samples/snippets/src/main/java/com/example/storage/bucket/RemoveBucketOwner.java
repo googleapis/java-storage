@@ -37,7 +37,7 @@ public class RemoveBucketOwner {
     User ownerToRemove = new User(userEmail);
 
     boolean success = bucket.deleteAcl(ownerToRemove);
-    if(success) {
+    if (success) {
       System.out.println("Removed user " + userEmail + " as an owner on " + bucketName);
     } else {
       System.out.println("User " + userEmail + " was not found");
