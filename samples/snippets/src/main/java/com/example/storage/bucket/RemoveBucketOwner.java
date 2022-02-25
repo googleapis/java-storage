@@ -16,31 +16,33 @@
 
 package com.example.storage.bucket;
 
-// [START storage_add_bucket_default_owner]
+// [START storage_remove_bucket_owner]
 
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
-public class AddBucketDefaultOwner {
+public class RemoveBucketOwner {
 
-  public static void addBucketDefaultOwner(String bucketName, String userEmail) {
-
+  public static void removeBucketOwner(String bucketName, String userEmail) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // Email of the user you wish to add as a default owner
+    // Email of the user you wish to remove as an owner
     // String userEmail = "someuser@domain.com"
 
     Storage storage = StorageOptions.newBuilder().build().getService();
     Bucket bucket = storage.get(bucketName);
-    Acl newDefaultOwner = Acl.of(new User(userEmail), Role.OWNER);
+    User ownerToRemove = new User(userEmail);
 
-    bucket.createDefaultAcl(newDefaultOwner);
-    System.out.println("Added user " + userEmail + " as an owner on " + bucketName);
+    boolean success = bucket.deleteAcl(ownerToRemove);
+    if (success) {
+      System.out.println("Removed user " + userEmail + " as an owner on " + bucketName);
+    } else {
+      System.out.println("User " + userEmail + " was not found");
+    }
   }
 }
-// [END storage_add_bucket_default_owner]
+
+// [END storage_remove_bucket_owner]
