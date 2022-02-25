@@ -33,6 +33,11 @@ public class RemoveFileOwnerTest extends TestBase {
   public void testRemoveFileOwner() {
     // Check for user email before the actual test.
     assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+
+    // Make sure the User has Ownership permissions on the bucket.
+    Acl bucketOwner = Acl.of(new User(IT_SERVICE_ACCOUNT_EMAIL), Role.OWNER);
+    bucket.createAcl(bucketOwner);
+
     // Add User as Owner
     Acl newFileOwner = Acl.of(new User(IT_SERVICE_ACCOUNT_EMAIL), Role.OWNER);
     blob.createAcl(newFileOwner);
