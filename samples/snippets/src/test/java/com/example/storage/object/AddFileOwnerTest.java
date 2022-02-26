@@ -34,10 +34,6 @@ public class AddFileOwnerTest extends TestBase {
     // Check for user email before the actual test.
     assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
 
-    // Make sure the User has Ownership permissions on the bucket.
-    Acl bucketOwner = Acl.of(new User(IT_SERVICE_ACCOUNT_EMAIL), Role.OWNER);
-    bucket.createAcl(bucketOwner);
-
     // Add Ownership to the file.
     AddFileOwner.addFileOwner(bucketName, IT_SERVICE_ACCOUNT_EMAIL, blobName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
