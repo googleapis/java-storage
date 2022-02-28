@@ -45,7 +45,11 @@ public class AddFileOwner {
 
     blob.createAcl(newOwner);
     System.out.println(
-        "Added user " + userEmail + " as an owner on file " + blobName + " in bucket "
+        "Added user "
+            + userEmail
+            + " as an owner on file "
+            + blobName
+            + " in bucket "
             + bucketName);
   }
 }

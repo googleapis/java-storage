@@ -20,8 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 import com.example.storage.TestBase;
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import org.junit.Test;
 

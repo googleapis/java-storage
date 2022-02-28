@@ -44,7 +44,11 @@ public class RemoveFileOwner {
     boolean success = blob.deleteAcl(ownerToRemove);
     if (success) {
       System.out.println(
-          "Removed user " + userEmail + " as an owner on file " + blobName + " in bucket "
+          "Removed user "
+              + userEmail
+              + " as an owner on file "
+              + blobName
+              + " in bucket "
               + bucketName);
     } else {
       System.out.println("User " + userEmail + " was not found");
