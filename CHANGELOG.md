@@ -1,5 +1,12 @@
 # Changelog
 
+### [2.4.4](https://github.com/googleapis/java-storage/compare/v2.4.3...v2.4.4) (2022-02-28)
+
+
+### Dependencies
+
+* update actions/setup-java action to v3 ([#1274](https://github.com/googleapis/java-storage/issues/1274)) ([d29d19a](https://github.com/googleapis/java-storage/commit/d29d19a9936164e0ffe4d2f5fa14739a807369f6))
+
 ### [2.4.3](https://github.com/googleapis/java-storage/compare/v2.4.2...v2.4.3) (2022-02-25)
 
 
