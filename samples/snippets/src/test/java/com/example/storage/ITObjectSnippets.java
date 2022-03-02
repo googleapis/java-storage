@@ -98,8 +98,8 @@ public class ITObjectSnippets {
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
   private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
   private static final String KMS_KEY_NAME =
-      "projects/gcloud-devel/locations/us/keyRings/"
-          + "gcs_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+      "projects/java-docs-samples-testing/locations/us/keyRings/"
+          + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
   private static Storage storage;
 
@@ -425,7 +425,6 @@ public class ITObjectSnippets {
 
     ComposeObject.composeObject(BUCKET, firstObject, secondObject, targetObject, PROJECT_ID);
 
-    System.out.println(new String(storage.get(BUCKET, targetObject).getContent()));
     assertArrayEquals(
         "firstObjectsecondObject".getBytes(UTF_8), storage.get(BUCKET, targetObject).getContent());
   }
@@ -443,6 +442,7 @@ public class ITObjectSnippets {
   @Test
   public void testUploadKMSEncryptedObject() {
     String blobName = "kms-encrypted-blob";
+    System.out.println(PROJECT_ID);
     UploadKmsEncryptedObject.uploadKmsEncryptedObject(PROJECT_ID, BUCKET, blobName, KMS_KEY_NAME);
     assertNotNull(storage.get(BUCKET, blobName));
   }
