@@ -39,7 +39,7 @@ public class NativeImageStorageSampleIT {
 
   @Test
   public void createAndReadStorageResources() {
-    NativeImageStorageSample.main(new String[]{});
+    NativeImageStorageSample.main(new String[] {});
     assertThat(bout.toString()).contains("Created bucket " + NativeImageStorageSample.BUCKET_NAME);
     assertThat(bout.toString()).contains("Created file " + NativeImageStorageSample.FILENAME);
     assertThat(bout.toString()).contains("Successfully wrote to file: Hello World!");

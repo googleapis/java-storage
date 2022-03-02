@@ -28,17 +28,13 @@ import com.google.cloud.storage.StorageOptions;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-/**
- * Sample Storage application compiled with Native Image.
- */
+/** Sample Storage application compiled with Native Image. */
 public class NativeImageStorageSample {
 
   static String BUCKET_NAME = "nativeimage-sample-bucket-" + UUID.randomUUID();
   static String FILENAME = "nativeimage-sample-file-" + UUID.randomUUID();
 
-  /**
-   * Runs the storage sample application.
-   */
+  /** Runs the storage sample application. */
   public static void main(String[] args) {
 
     Storage storageClient = StorageOptions.getDefaultInstance().getService();
@@ -59,27 +55,26 @@ public class NativeImageStorageSample {
     BlobId blobId = BlobId.of(bucketName, fileName);
 
     StorageBatch batch = storageClient.batch();
-    batch.update(BlobInfo.newBuilder(blobId).build())
-        .notify(new Callback<Blob, StorageException>() {
-          @Override
-          public void success(Blob blob) {
-            System.out.println("Batch update succeeded on " + fileName);
-          }
+    batch
+        .update(BlobInfo.newBuilder(blobId).build())
+        .notify(
+            new Callback<Blob, StorageException>() {
+              @Override
+              public void success(Blob blob) {
+                System.out.println("Batch update succeeded on " + fileName);
+              }
 
-          @Override
-          public void error(StorageException e) {
-            System.out.println("Batch update failed with cause: " + e);
-          }
-        });
+              @Override
+              public void error(StorageException e) {
+                System.out.println("Batch update failed with cause: " + e);
+              }
+            });
 
     batch.submit();
   }
 
   private static void createBucket(Storage storageClient, String bucketName) {
-    BucketInfo bucketInfo =
-        BucketInfo.newBuilder(bucketName)
-            .setLocation("us-east1")
-            .build();
+    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName).setLocation("us-east1").build();
     storageClient.create(bucketInfo);
     System.out.println("Created bucket " + bucketName);
   }
