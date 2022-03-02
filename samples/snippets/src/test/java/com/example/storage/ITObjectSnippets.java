@@ -442,7 +442,6 @@ public class ITObjectSnippets {
   @Test
   public void testUploadKMSEncryptedObject() {
     String blobName = "kms-encrypted-blob";
-    System.out.println(PROJECT_ID);
     UploadKmsEncryptedObject.uploadKmsEncryptedObject(PROJECT_ID, BUCKET, blobName, KMS_KEY_NAME);
     assertNotNull(storage.get(BUCKET, blobName));
   }

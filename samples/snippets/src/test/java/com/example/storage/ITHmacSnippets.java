@@ -18,6 +18,7 @@ package com.example.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.example.storage.hmac.ActivateHmacKey;
 import com.example.storage.hmac.CreateHmacKey;
@@ -144,10 +145,10 @@ public class ITHmacSnippets {
   @Test
   public void testListHmacKeys() {
     // Create 2 HMAC keys
-    storage.createHmacKey(
+    HmacKey one = storage.createHmacKey(
         ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT),
         Storage.CreateHmacKeyOption.projectId(PROJECT_ID));
-    storage.createHmacKey(
+    HmacKey two = storage.createHmacKey(
         ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT),
         Storage.CreateHmacKeyOption.projectId(PROJECT_ID));
 
@@ -155,7 +156,8 @@ public class ITHmacSnippets {
     System.setOut(new PrintStream(snippetOutputCapture));
     ListHmacKeys.listHmacKeys(PROJECT_ID);
     String snippetOutput = snippetOutputCapture.toString();
-    assertEquals(4, snippetOutput.split("\n").length); // 2 lines per key
+    assertTrue(snippetOutput.contains(one.getMetadata().getAccessId()));
+    assertTrue(snippetOutput.contains(two.getMetadata().getAccessId()));
     System.setOut(standardOut);
   }
 }
