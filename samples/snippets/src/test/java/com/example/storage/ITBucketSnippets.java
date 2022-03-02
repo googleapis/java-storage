@@ -108,8 +108,8 @@ public class ITBucketSnippets {
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
   private static final String KMS_KEY_NAME =
-          "projects/java-docs-samples-testing/locations/us/keyRings/"
-                  + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+      "projects/java-docs-samples-testing/locations/us/keyRings/"
+          + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
   private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
   private static Storage storage;
