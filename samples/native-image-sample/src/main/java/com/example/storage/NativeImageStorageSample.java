@@ -81,9 +81,7 @@ public class NativeImageStorageSample {
 
   private static void createFile(Storage storageClient, String bucketName, String fileName) {
     BlobInfo blobInfo =
-        BlobInfo.newBuilder(bucketName, fileName)
-            .setContentType("text/plain")
-            .build();
+        BlobInfo.newBuilder(bucketName, fileName).setContentType("text/plain").build();
     storageClient.create(blobInfo, "Hello World!".getBytes(StandardCharsets.UTF_8));
     System.out.println("Created file " + blobInfo.getName());
 
