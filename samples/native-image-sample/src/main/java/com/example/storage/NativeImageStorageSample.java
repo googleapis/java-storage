@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,6 +25,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageBatch;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -88,11 +89,11 @@ public class NativeImageStorageSample {
         BlobInfo.newBuilder(bucketName, fileName)
             .setContentType("text/plain")
             .build();
-    storageClient.create(blobInfo, "Hello World!".getBytes());
+    storageClient.create(blobInfo, "Hello World!".getBytes(StandardCharsets.UTF_8));
     System.out.println("Created file " + blobInfo.getName());
 
     Blob blob = storageClient.get(bucketName, fileName);
-    String content = new String(blob.getContent());
+    String content = new String(blob.getContent(), StandardCharsets.UTF_8);
     System.out.println("Successfully wrote to file: " + content);
   }
 }
