@@ -44,9 +44,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class ITHmacSnippets {
-  private static final String HMAC_KEY_TEST_SERVICE_ACCOUNT =
-      System.getenv("HMAC_KEY_TEST_SERVICE_ACCOUNT");
   private static final String PROJECT_ID = ServiceOptions.getDefaultProjectId();
+  private static final String HMAC_KEY_TEST_SERVICE_ACCOUNT = PROJECT_ID + "@" + PROJECT_ID + ".iam.gserviceaccount.com";
   private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
   private static Storage storage;
