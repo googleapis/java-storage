@@ -94,6 +94,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -145,6 +147,12 @@ public class ITBucketSnippets {
         log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
       }
     }
+  }
+
+  @After
+  public void after() throws Exception {
+    // This avoids 429 errors
+    Thread.sleep(3000);
   }
 
   @Test

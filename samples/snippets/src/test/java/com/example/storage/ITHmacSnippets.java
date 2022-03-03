@@ -88,13 +88,14 @@ public class ITHmacSnippets {
   }
 
   @Test
-  public void testCreateHmacKey() {
+  public void testCreateHmacKey() throws Exception {
     final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
     System.setOut(new PrintStream(snippetOutputCapture));
     CreateHmacKey.createHmacKey(HMAC_KEY_TEST_SERVICE_ACCOUNT, PROJECT_ID);
     String snippetOutput = snippetOutputCapture.toString();
     System.setOut(standardOut);
     String accessId = snippetOutput.split("Access ID: ")[1].split("\n")[0];
+    Thread.sleep(5000);
     assertNotNull(storage.getHmacKey(accessId));
   }
 
