@@ -45,7 +45,7 @@ import org.junit.Test;
 
 public class ITHmacSnippets {
   private static final String HMAC_KEY_TEST_SERVICE_ACCOUNT =
-      System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
+      System.getenv("HMAC_KEY_TEST_SERVICE_ACCOUNT");
   private static final String PROJECT_ID = ServiceOptions.getDefaultProjectId();
   private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
