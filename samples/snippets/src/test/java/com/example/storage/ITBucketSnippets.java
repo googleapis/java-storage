@@ -457,8 +457,8 @@ public class ITBucketSnippets {
         .get(BUCKET)
         .toBuilder()
         .setDefaultKmsKeyName(
-                "projects/java-docs-samples-testing/locations/us/keyRings/"
-                        + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
+            "projects/java-docs-samples-testing/locations/us/keyRings/"
+                + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
         .build()
         .update();
     assertNotNull(storage.get(BUCKET).getDefaultKmsKeyName());
