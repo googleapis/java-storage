@@ -72,6 +72,8 @@ public class ITHmacSnippets {
   @Before
   public void before() {
     cleanUpHmacKeys(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
+
+    // This is just in case any tests failed before they could reset the value
     System.setOut(standardOut);
   }
 

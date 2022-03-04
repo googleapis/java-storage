@@ -129,6 +129,7 @@ public class ITObjectSnippets {
 
   @Before
   public void before() {
+    // This is just in case any tests failed before they could reset the value
     System.setOut(standardOut);
   }
 

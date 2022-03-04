@@ -152,6 +152,8 @@ public class ITBucketSnippets {
   public void after() throws Exception {
     // This avoids 429 errors
     Thread.sleep(3000);
+
+    // This is just in case any tests failed before they could reset the value
     System.setOut(standardOut);
   }
 
