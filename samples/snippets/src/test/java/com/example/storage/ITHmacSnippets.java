@@ -147,11 +147,11 @@ public class ITHmacSnippets {
   @Test
   public void testListHmacKeys() {
     // Create 2 HMAC keys
-    HmacKey one =
+    final HmacKey one =
         storage.createHmacKey(
             ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT),
             Storage.CreateHmacKeyOption.projectId(PROJECT_ID));
-    HmacKey two =
+    final HmacKey two =
         storage.createHmacKey(
             ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT),
             Storage.CreateHmacKeyOption.projectId(PROJECT_ID));
