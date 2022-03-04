@@ -24,17 +24,16 @@ import org.junit.Test;
 
 public class NativeImageStorageSampleIT {
 
-  @Rule
-  public StdOutCaptureRule stdOut = new StdOutCaptureRule();
+  @Rule public StdOutCaptureRule stdOut = new StdOutCaptureRule();
 
   @Test
   public void createAndReadStorageResources() {
-    NativeImageStorageSample.main(new String[]{});
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
-        "Created bucket " + NativeImageStorageSample.BUCKET_NAME);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
-        "Created file " + NativeImageStorageSample.FILENAME);
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
-        "Successfully wrote to file: Hello World!");
+    NativeImageStorageSample.main(new String[] {});
+    assertThat(stdOut.getCapturedOutputAsUtf8String())
+        .contains("Created bucket " + NativeImageStorageSample.BUCKET_NAME);
+    assertThat(stdOut.getCapturedOutputAsUtf8String())
+        .contains("Created file " + NativeImageStorageSample.FILENAME);
+    assertThat(stdOut.getCapturedOutputAsUtf8String())
+        .contains("Successfully wrote to file: Hello World!");
   }
 }
