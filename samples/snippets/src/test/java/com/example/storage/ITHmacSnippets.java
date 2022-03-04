@@ -71,6 +71,7 @@ public class ITHmacSnippets {
   @Before
   public void before() {
     cleanUpHmacKeys(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
+    System.setOut(standardOut);
   }
 
   private static void cleanUpHmacKeys(ServiceAccount serviceAccount) {

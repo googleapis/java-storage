@@ -83,6 +83,7 @@ import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -124,6 +125,11 @@ public class ITObjectSnippets {
         log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
       }
     }
+  }
+
+  @Before
+  public void before() {
+    System.setOut(standardOut);
   }
 
   @Test
