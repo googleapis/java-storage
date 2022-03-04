@@ -1,5 +1,18 @@
 # Changelog
 
+### [2.4.5](https://github.com/googleapis/java-storage/compare/v2.4.4...v2.4.5) (2022-03-04)
+
+
+### Documentation
+
+* Adding Samples for Adding/Removing File Owners ([#1273](https://github.com/googleapis/java-storage/issues/1273)) ([6fad19c](https://github.com/googleapis/java-storage/commit/6fad19c184d108f30c85f62426d254a9f0ff715d))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.8.0 ([#1284](https://github.com/googleapis/java-storage/issues/1284)) ([0f71ae4](https://github.com/googleapis/java-storage/commit/0f71ae41fbabf6a3f38674a2f68fb55bd9809595))
+* update kms.version to v0.95.1 ([#1287](https://github.com/googleapis/java-storage/issues/1287)) ([8334d3c](https://github.com/googleapis/java-storage/commit/8334d3cb1f527b00ee8f19583dcf112f4f1b08ac))
+
 ### [2.4.4](https://github.com/googleapis/java-storage/compare/v2.4.3...v2.4.4) (2022-02-28)
 
 
