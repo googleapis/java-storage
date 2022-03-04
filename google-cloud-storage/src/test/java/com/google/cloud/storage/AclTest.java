@@ -29,6 +29,7 @@ import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
+import com.google.cloud.storage.Conversions.Codec;
 import org.junit.Test;
 
 public class AclTest {
@@ -38,6 +39,12 @@ public class AclTest {
   private static final String ETAG = "etag";
   private static final String ID = "id";
   private static final Acl ACL = Acl.newBuilder(ENTITY, ROLE).setEtag(ETAG).setId(ID).build();
+  private static final Codec<Entity, String> E = Conversions.apiary().entity();
+  private static final Codec<Acl, ObjectAccessControl> O_ACL = Conversions.apiary().objectAcl();
+  private static final Codec<Acl, BucketAccessControl> B_ACL = Conversions.apiary().bucketAcl();
+
+  static {
+  }
 
   @Test
   public void testBuilder() {
@@ -65,8 +72,8 @@ public class AclTest {
 
   @Test
   public void testToAndFromPb() {
-    assertEquals(ACL, Acl.fromPb(ACL.toBucketPb()));
-    assertEquals(ACL, Acl.fromPb(ACL.toObjectPb()));
+    assertEquals(ACL, B_ACL.decode(B_ACL.encode(ACL)));
+    assertEquals(ACL, O_ACL.decode(O_ACL.encode(ACL)));
   }
 
   @Test
@@ -74,8 +81,8 @@ public class AclTest {
     Domain acl = new Domain("d1");
     assertEquals("d1", acl.getDomain());
     assertEquals(Type.DOMAIN, acl.getType());
-    String pb = acl.toPb();
-    assertEquals(acl, Entity.fromPb(pb));
+    String pb = E.encode(acl);
+    assertEquals(acl, E.decode(pb));
   }
 
   @Test
@@ -83,8 +90,8 @@ public class AclTest {
     Group acl = new Group("g1");
     assertEquals("g1", acl.getEmail());
     assertEquals(Type.GROUP, acl.getType());
-    String pb = acl.toPb();
-    assertEquals(acl, Entity.fromPb(pb));
+    String pb = E.encode(acl);
+    assertEquals(acl, E.decode(pb));
   }
 
   @Test
@@ -92,8 +99,8 @@ public class AclTest {
     User acl = new User("u1");
     assertEquals("u1", acl.getEmail());
     assertEquals(Type.USER, acl.getType());
-    String pb = acl.toPb();
-    assertEquals(acl, Entity.fromPb(pb));
+    String pb = E.encode(acl);
+    assertEquals(acl, E.decode(pb));
   }
 
   @Test
@@ -102,8 +109,8 @@ public class AclTest {
     assertEquals(ProjectRole.VIEWERS, acl.getProjectRole());
     assertEquals("p1", acl.getProjectId());
     assertEquals(Type.PROJECT, acl.getType());
-    String pb = acl.toPb();
-    assertEquals(acl, Entity.fromPb(pb));
+    String pb = E.encode(acl);
+    assertEquals(acl, E.decode(pb));
   }
 
   @Test
@@ -111,8 +118,8 @@ public class AclTest {
     Entity acl = new RawEntity("bla");
     assertEquals("bla", acl.getValue());
     assertEquals(Type.UNKNOWN, acl.getType());
-    String pb = acl.toPb();
-    assertEquals(acl, Entity.fromPb(pb));
+    String pb = E.encode(acl);
+    assertEquals(acl, E.decode(pb));
   }
 
   @Test
@@ -120,9 +127,9 @@ public class AclTest {
     Acl acl = Acl.of(User.ofAllUsers(), Role.READER);
     assertEquals(User.ofAllUsers(), acl.getEntity());
     assertEquals(Role.READER, acl.getRole());
-    ObjectAccessControl objectPb = acl.toObjectPb();
-    assertEquals(acl, Acl.fromPb(objectPb));
-    BucketAccessControl bucketPb = acl.toBucketPb();
-    assertEquals(acl, Acl.fromPb(bucketPb));
+    ObjectAccessControl objectPb = O_ACL.encode(acl);
+    assertEquals(acl, O_ACL.decode(objectPb));
+    BucketAccessControl bucketPb = B_ACL.encode(acl);
+    assertEquals(acl, B_ACL.decode(bucketPb));
   }
 }

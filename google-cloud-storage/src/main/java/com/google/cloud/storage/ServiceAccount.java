@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Objects;
@@ -28,24 +27,6 @@ import java.util.Objects;
  *     Cloud Storage</a>
  */
 public final class ServiceAccount implements Serializable {
-
-  static final Function<com.google.api.services.storage.model.ServiceAccount, ServiceAccount>
-      FROM_PB_FUNCTION =
-          new Function<com.google.api.services.storage.model.ServiceAccount, ServiceAccount>() {
-            @Override
-            public ServiceAccount apply(com.google.api.services.storage.model.ServiceAccount pb) {
-              return ServiceAccount.fromPb(pb);
-            }
-          };
-  static final Function<ServiceAccount, com.google.api.services.storage.model.ServiceAccount>
-      TO_PB_FUNCTION =
-          new Function<ServiceAccount, com.google.api.services.storage.model.ServiceAccount>() {
-            @Override
-            public com.google.api.services.storage.model.ServiceAccount apply(
-                ServiceAccount metadata) {
-              return metadata.toPb();
-            }
-          };
 
   private static final long serialVersionUID = 4199610694227857331L;
 
@@ -72,23 +53,19 @@ public final class ServiceAccount implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    return obj == this
-        || obj instanceof ServiceAccount && Objects.equals(toPb(), ((ServiceAccount) obj).toPb());
-  }
-
-  com.google.api.services.storage.model.ServiceAccount toPb() {
-    com.google.api.services.storage.model.ServiceAccount serviceAccountPb =
-        new com.google.api.services.storage.model.ServiceAccount();
-    serviceAccountPb.setEmailAddress(email);
-    return serviceAccountPb;
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof ServiceAccount)) {
+      return false;
+    }
+    return Objects.equals(
+        Conversions.apiary().serviceAccount().encode(this),
+        Conversions.apiary().serviceAccount().encode((ServiceAccount) obj));
   }
 
   /** Returns a {@code ServiceAccount} object for the provided email. */
   public static ServiceAccount of(String email) {
     return new ServiceAccount(email);
-  }
-
-  static ServiceAccount fromPb(com.google.api.services.storage.model.ServiceAccount accountPb) {
-    return new ServiceAccount(accountPb.getEmailAddress());
   }
 }

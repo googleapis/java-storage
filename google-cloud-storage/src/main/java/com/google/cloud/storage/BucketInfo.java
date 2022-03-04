@@ -18,24 +18,14 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.transform;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
 import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
-import com.google.api.services.storage.model.Bucket;
-import com.google.api.services.storage.model.Bucket.Encryption;
-import com.google.api.services.storage.model.Bucket.Lifecycle;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
-import com.google.api.services.storage.model.Bucket.Owner;
-import com.google.api.services.storage.model.Bucket.Versioning;
-import com.google.api.services.storage.model.Bucket.Website;
-import com.google.api.services.storage.model.BucketAccessControl;
-import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -43,12 +33,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -59,20 +46,6 @@ import java.util.logging.Logger;
  */
 public class BucketInfo implements Serializable {
 
-  static final Function<com.google.api.services.storage.model.Bucket, BucketInfo> FROM_PB_FUNCTION =
-      new Function<com.google.api.services.storage.model.Bucket, BucketInfo>() {
-        @Override
-        public BucketInfo apply(com.google.api.services.storage.model.Bucket pb) {
-          return BucketInfo.fromPb(pb);
-        }
-      };
-  static final Function<BucketInfo, com.google.api.services.storage.model.Bucket> TO_PB_FUNCTION =
-      new Function<BucketInfo, com.google.api.services.storage.model.Bucket>() {
-        @Override
-        public com.google.api.services.storage.model.Bucket apply(BucketInfo bucketInfo) {
-          return bucketInfo.toPb();
-        }
-      };
   private static final long serialVersionUID = -4712013629621638459L;
   private final String generatedId;
   private final String name;
@@ -83,7 +56,14 @@ public class BucketInfo implements Serializable {
   private final String indexPage;
   private final String notFoundPage;
   private final List<DeleteRule> deleteRules;
-  private final List<LifecycleRule> lifecycleRules;
+  /**
+   * The getter for this property never returns null, however null awareness is critical for
+   * encoding to properly determine how to process rules conversion.
+   *
+   * @see ApiaryConversions#bucketInfo() encoder
+   */
+  final List<LifecycleRule> lifecycleRules;
+
   private final String etag;
   private final Long createTime;
   private final Long updateTime;
@@ -104,7 +84,12 @@ public class BucketInfo implements Serializable {
   private final String locationType;
   private final Logging logging;
 
-  private static final Logger log = Logger.getLogger(BucketInfo.class.getName());
+  /**
+   * non-private for backward compatibility on message class. log messages are now emitted from
+   *
+   * @see ApiaryConversions#lifecycleRule()
+   */
+  static final Logger log = Logger.getLogger(BucketInfo.class.getName());
 
   /**
    * Public Access Prevention enum with expected values.
@@ -174,7 +159,9 @@ public class BucketInfo implements Serializable {
         return false;
       }
       IamConfiguration other = (IamConfiguration) o;
-      return Objects.equals(toPb(), other.toPb());
+      return Objects.equals(
+          Conversions.apiary().iamConfiguration().encode(this),
+          Conversions.apiary().iamConfiguration().encode(other));
     }
 
     @Override
@@ -226,42 +213,6 @@ public class BucketInfo implements Serializable {
     /** Returns the Public Access Prevention. * */
     public PublicAccessPrevention getPublicAccessPrevention() {
       return publicAccessPrevention;
-    }
-
-    Bucket.IamConfiguration toPb() {
-      Bucket.IamConfiguration iamConfiguration = new Bucket.IamConfiguration();
-
-      Bucket.IamConfiguration.UniformBucketLevelAccess uniformBucketLevelAccess =
-          new Bucket.IamConfiguration.UniformBucketLevelAccess();
-      uniformBucketLevelAccess.setEnabled(isUniformBucketLevelAccessEnabled);
-      uniformBucketLevelAccess.setLockedTime(
-          uniformBucketLevelAccessLockedTime == null
-              ? null
-              : new DateTime(uniformBucketLevelAccessLockedTime));
-
-      iamConfiguration.setUniformBucketLevelAccess(uniformBucketLevelAccess);
-      iamConfiguration.setPublicAccessPrevention(
-          publicAccessPrevention == null ? null : publicAccessPrevention.getValue());
-
-      return iamConfiguration;
-    }
-
-    static IamConfiguration fromPb(Bucket.IamConfiguration iamConfiguration) {
-      Bucket.IamConfiguration.UniformBucketLevelAccess uniformBucketLevelAccess =
-          iamConfiguration.getUniformBucketLevelAccess();
-      DateTime lockedTime = uniformBucketLevelAccess.getLockedTime();
-      String publicAccessPrevention = iamConfiguration.getPublicAccessPrevention();
-
-      PublicAccessPrevention publicAccessPreventionValue = null;
-      if (publicAccessPrevention != null) {
-        publicAccessPreventionValue = PublicAccessPrevention.parse(publicAccessPrevention);
-      }
-
-      return newBuilder()
-          .setIsUniformBucketLevelAccessEnabled(uniformBucketLevelAccess.getEnabled())
-          .setUniformBucketLevelAccessLockedTime(lockedTime == null ? null : lockedTime.getValue())
-          .setPublicAccessPrevention(publicAccessPreventionValue)
-          .build();
     }
 
     /** Builder for {@code IamConfiguration} */
@@ -345,7 +296,9 @@ public class BucketInfo implements Serializable {
         return false;
       }
       Logging other = (Logging) o;
-      return Objects.equals(toPb(), other.toPb());
+      return Objects.equals(
+          Conversions.apiary().logging().encode(this),
+          Conversions.apiary().logging().encode(other));
     }
 
     @Override
@@ -370,25 +323,6 @@ public class BucketInfo implements Serializable {
 
     public String getLogObjectPrefix() {
       return logObjectPrefix;
-    }
-
-    Bucket.Logging toPb() {
-      Bucket.Logging logging;
-      if (logBucket != null || logObjectPrefix != null) {
-        logging = new Bucket.Logging();
-        logging.setLogBucket(logBucket);
-        logging.setLogObjectPrefix(logObjectPrefix);
-      } else {
-        logging = Data.nullOf(Bucket.Logging.class);
-      }
-      return logging;
-    }
-
-    static Logging fromPb(Bucket.Logging logging) {
-      return newBuilder()
-          .setLogBucket(logging.getLogBucket())
-          .setLogObjectPrefix(logging.getLogObjectPrefix())
-          .build();
     }
 
     private Logging(Builder builder) {
@@ -488,100 +422,17 @@ public class BucketInfo implements Serializable {
         return false;
       }
       final LifecycleRule other = (LifecycleRule) obj;
-      return Objects.equals(toPb(), other.toPb());
+      return Objects.equals(
+          Conversions.apiary().lifecycleRule().encode(this),
+          Conversions.apiary().lifecycleRule().encode(other));
     }
 
-    Rule toPb() {
-      Rule rule = new Rule();
-
-      Rule.Action action = new Rule.Action().setType(lifecycleAction.getActionType());
-      if (lifecycleAction.getActionType().equals(SetStorageClassLifecycleAction.TYPE)) {
-        action.setStorageClass(
-            ((SetStorageClassLifecycleAction) lifecycleAction).getStorageClass().toString());
-      }
-
-      rule.setAction(action);
-
-      Rule.Condition condition =
-          new Rule.Condition()
-              .setAge(lifecycleCondition.getAge())
-              .setCreatedBefore(
-                  lifecycleCondition.getCreatedBefore() == null
-                      ? null
-                      : new DateTime(true, lifecycleCondition.getCreatedBefore().getValue(), 0))
-              .setIsLive(lifecycleCondition.getIsLive())
-              .setNumNewerVersions(lifecycleCondition.getNumberOfNewerVersions())
-              .setMatchesStorageClass(
-                  lifecycleCondition.getMatchesStorageClass() == null
-                      ? null
-                      : transform(
-                          lifecycleCondition.getMatchesStorageClass(),
-                          Functions.toStringFunction()))
-              .setDaysSinceNoncurrentTime(lifecycleCondition.getDaysSinceNoncurrentTime())
-              .setNoncurrentTimeBefore(
-                  lifecycleCondition.getNoncurrentTimeBefore() == null
-                      ? null
-                      : new DateTime(
-                          true, lifecycleCondition.getNoncurrentTimeBefore().getValue(), 0))
-              .setCustomTimeBefore(
-                  lifecycleCondition.getCustomTimeBefore() == null
-                      ? null
-                      : new DateTime(true, lifecycleCondition.getCustomTimeBefore().getValue(), 0))
-              .setDaysSinceCustomTime(lifecycleCondition.getDaysSinceCustomTime());
-
-      rule.setCondition(condition);
-
-      return rule;
+    LifecycleAction getLifecycleAction() {
+      return lifecycleAction;
     }
 
-    static LifecycleRule fromPb(Rule rule) {
-      LifecycleAction lifecycleAction;
-
-      Rule.Action action = rule.getAction();
-
-      switch (action.getType()) {
-        case DeleteLifecycleAction.TYPE:
-          lifecycleAction = LifecycleAction.newDeleteAction();
-          break;
-        case SetStorageClassLifecycleAction.TYPE:
-          lifecycleAction =
-              LifecycleAction.newSetStorageClassAction(
-                  StorageClass.valueOf(action.getStorageClass()));
-          break;
-        default:
-          log.warning(
-              "The lifecycle action "
-                  + action.getType()
-                  + " is not supported by this version of the library. "
-                  + "Attempting to update with this rule may cause errors. Please "
-                  + "update to the latest version of google-cloud-storage.");
-          lifecycleAction = LifecycleAction.newLifecycleAction("Unknown action");
-      }
-
-      Rule.Condition condition = rule.getCondition();
-
-      LifecycleCondition.Builder conditionBuilder =
-          LifecycleCondition.newBuilder()
-              .setAge(condition.getAge())
-              .setCreatedBefore(condition.getCreatedBefore())
-              .setIsLive(condition.getIsLive())
-              .setNumberOfNewerVersions(condition.getNumNewerVersions())
-              .setMatchesStorageClass(
-                  condition.getMatchesStorageClass() == null
-                      ? null
-                      : transform(
-                          condition.getMatchesStorageClass(),
-                          new Function<String, StorageClass>() {
-                            public StorageClass apply(String storageClass) {
-                              return StorageClass.valueOf(storageClass);
-                            }
-                          }))
-              .setDaysSinceNoncurrentTime(condition.getDaysSinceNoncurrentTime())
-              .setNoncurrentTimeBefore(condition.getNoncurrentTimeBefore())
-              .setCustomTimeBefore(condition.getCustomTimeBefore())
-              .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
-
-      return new LifecycleRule(lifecycleAction, conditionBuilder.build());
+    LifecycleCondition getLifecycleCondition() {
+      return lifecycleCondition;
     }
 
     /**
@@ -902,7 +753,7 @@ public class BucketInfo implements Serializable {
   public abstract static class DeleteRule implements Serializable {
 
     private static final long serialVersionUID = 3137971668395933033L;
-    private static final String SUPPORTED_ACTION = "Delete";
+    static final String SUPPORTED_ACTION = "Delete";
     private final Type type;
 
     public enum Type {
@@ -935,42 +786,12 @@ public class BucketInfo implements Serializable {
         return false;
       }
       final DeleteRule other = (DeleteRule) obj;
-      return Objects.equals(toPb(), other.toPb());
-    }
-
-    Rule toPb() {
-      Rule rule = new Rule();
-      rule.setAction(new Rule.Action().setType(SUPPORTED_ACTION));
-      Rule.Condition condition = new Rule.Condition();
-      populateCondition(condition);
-      rule.setCondition(condition);
-      return rule;
+      return Objects.equals(
+          Conversions.apiary().deleteRule().encode(this),
+          Conversions.apiary().deleteRule().encode(other));
     }
 
     abstract void populateCondition(Rule.Condition condition);
-
-    static DeleteRule fromPb(Rule rule) {
-      if (rule.getAction() != null && SUPPORTED_ACTION.endsWith(rule.getAction().getType())) {
-        Rule.Condition condition = rule.getCondition();
-        Integer age = condition.getAge();
-        if (age != null) {
-          return new AgeDeleteRule(age);
-        }
-        DateTime dateTime = condition.getCreatedBefore();
-        if (dateTime != null) {
-          return new CreatedBeforeDeleteRule(dateTime.getValue());
-        }
-        Integer numNewerVersions = condition.getNumNewerVersions();
-        if (numNewerVersions != null) {
-          return new NumNewerVersionsDeleteRule(numNewerVersions);
-        }
-        Boolean isLive = condition.getIsLive();
-        if (isLive != null) {
-          return new IsLiveDeleteRule(isLive);
-        }
-      }
-      return new RawDeleteRule(rule);
-    }
   }
 
   /**
@@ -1041,8 +862,7 @@ public class BucketInfo implements Serializable {
       rule = new JacksonFactory().fromString(in.readUTF(), Rule.class);
     }
 
-    @Override
-    Rule toPb() {
+    Rule getRule() {
       return rule;
     }
   }
@@ -1894,12 +1714,19 @@ public class BucketInfo implements Serializable {
     return Objects.hash(name);
   }
 
+  // TODO: This equals and hashCode are broken. They don't validate the same properties!!!
   @Override
-  public boolean equals(Object obj) {
-    return obj == this
-        || obj != null
-            && obj.getClass().equals(BucketInfo.class)
-            && Objects.equals(toPb(), ((BucketInfo) obj).toPb());
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o.getClass().equals(BucketInfo.class))) {
+      return false;
+    }
+    BucketInfo that = (BucketInfo) o;
+    return Objects.equals(
+        Conversions.apiary().bucketInfo().encode(this),
+        Conversions.apiary().bucketInfo().encode(that));
   }
 
   @Override
@@ -1907,157 +1734,12 @@ public class BucketInfo implements Serializable {
     return MoreObjects.toStringHelper(this).add("name", name).toString();
   }
 
-  com.google.api.services.storage.model.Bucket toPb() {
-    com.google.api.services.storage.model.Bucket bucketPb =
-        new com.google.api.services.storage.model.Bucket();
-    bucketPb.setId(generatedId);
-    bucketPb.setName(name);
-    bucketPb.setEtag(etag);
-    if (createTime != null) {
-      bucketPb.setTimeCreated(new DateTime(createTime));
-    }
-    if (updateTime != null) {
-      bucketPb.setUpdated(new DateTime(updateTime));
-    }
-    if (metageneration != null) {
-      bucketPb.setMetageneration(metageneration);
-    }
-    if (location != null) {
-      bucketPb.setLocation(location);
-    }
-    if (locationType != null) {
-      bucketPb.setLocationType(locationType);
-    }
-    if (rpo != null) {
-      bucketPb.setRpo(rpo.toString());
-    }
-    if (storageClass != null) {
-      bucketPb.setStorageClass(storageClass.toString());
-    }
-    if (cors != null) {
-      bucketPb.setCors(transform(cors, Cors.TO_PB_FUNCTION));
-    }
-    if (acl != null) {
-      bucketPb.setAcl(
-          transform(
-              acl,
-              new Function<Acl, BucketAccessControl>() {
-                @Override
-                public BucketAccessControl apply(Acl acl) {
-                  return acl.toBucketPb();
-                }
-              }));
-    }
-    if (defaultAcl != null) {
-      bucketPb.setDefaultObjectAcl(
-          transform(
-              defaultAcl,
-              new Function<Acl, ObjectAccessControl>() {
-                @Override
-                public ObjectAccessControl apply(Acl acl) {
-                  return acl.toObjectPb();
-                }
-              }));
-    }
-    if (owner != null) {
-      bucketPb.setOwner(new Owner().setEntity(owner.toPb()));
-    }
-    bucketPb.setSelfLink(selfLink);
-    if (versioningEnabled != null) {
-      bucketPb.setVersioning(new Versioning().setEnabled(versioningEnabled));
-    }
-    if (requesterPays != null) {
-      Bucket.Billing billing = new Bucket.Billing();
-      billing.setRequesterPays(requesterPays);
-      bucketPb.setBilling(billing);
-    }
-    if (indexPage != null || notFoundPage != null) {
-      Website website = new Website();
-      website.setMainPageSuffix(indexPage);
-      website.setNotFoundPage(notFoundPage);
-      bucketPb.setWebsite(website);
-    }
-
-    if (deleteRules != null || lifecycleRules != null) {
-      Lifecycle lifecycle = new Lifecycle();
-
-      // Here we determine if we need to "clear" any defined Lifecycle rules by explicitly setting
-      // the Rule list of lifecycle to the empty list.
-      // In order for us to clear the rules, one of the three following must be true:
-      //   1. deleteRules is null while lifecycleRules is non-null and empty
-      //   2. lifecycleRules is null while deleteRules is non-null and empty
-      //   3. lifecycleRules is non-null and empty while deleteRules is non-null and empty
-      // If none of the above three is true, we will interpret as the Lifecycle rules being
-      // updated to the defined set of DeleteRule and LifecycleRule.
-      if ((deleteRules == null && lifecycleRules.isEmpty())
-          || (lifecycleRules == null && deleteRules.isEmpty())
-          || (deleteRules != null && deleteRules.isEmpty() && lifecycleRules.isEmpty())) {
-        lifecycle.setRule(Collections.<Rule>emptyList());
-      } else {
-        Set<Rule> rules = new HashSet<>();
-        if (deleteRules != null) {
-          rules.addAll(
-              transform(
-                  deleteRules,
-                  new Function<DeleteRule, Rule>() {
-                    @Override
-                    public Rule apply(DeleteRule deleteRule) {
-                      return deleteRule.toPb();
-                    }
-                  }));
-        }
-        if (lifecycleRules != null) {
-          rules.addAll(
-              transform(
-                  lifecycleRules,
-                  new Function<LifecycleRule, Rule>() {
-                    @Override
-                    public Rule apply(LifecycleRule lifecycleRule) {
-                      return lifecycleRule.toPb();
-                    }
-                  }));
-        }
-
-        if (!rules.isEmpty()) {
-          lifecycle.setRule(ImmutableList.copyOf(rules));
-        }
-      }
-
-      bucketPb.setLifecycle(lifecycle);
-    }
-
-    if (labels != null) {
-      bucketPb.setLabels(labels);
-    }
-    if (defaultKmsKeyName != null) {
-      bucketPb.setEncryption(new Encryption().setDefaultKmsKeyName(defaultKmsKeyName));
-    }
-    if (defaultEventBasedHold != null) {
-      bucketPb.setDefaultEventBasedHold(defaultEventBasedHold);
-    }
-    if (retentionPeriod != null) {
-      if (Data.isNull(retentionPeriod)) {
-        bucketPb.setRetentionPolicy(
-            Data.<Bucket.RetentionPolicy>nullOf(Bucket.RetentionPolicy.class));
-      } else {
-        Bucket.RetentionPolicy retentionPolicy = new Bucket.RetentionPolicy();
-        retentionPolicy.setRetentionPeriod(retentionPeriod);
-        if (retentionEffectiveTime != null) {
-          retentionPolicy.setEffectiveTime(new DateTime(retentionEffectiveTime));
-        }
-        if (retentionPolicyIsLocked != null) {
-          retentionPolicy.setIsLocked(retentionPolicyIsLocked);
-        }
-        bucketPb.setRetentionPolicy(retentionPolicy);
-      }
-    }
-    if (iamConfiguration != null) {
-      bucketPb.setIamConfiguration(iamConfiguration.toPb());
-    }
-    if (logging != null) {
-      bucketPb.setLogging(logging.toPb());
-    }
-    return bucketPb;
+  /**
+   * Attach this instance to an instance of {@link Storage} thereby allowing RPCs to be performed
+   * using the methods from the resulting {@link Bucket}
+   */
+  Bucket asBucket(Storage storage) {
+    return new Bucket(storage, new BucketInfo.BuilderImpl(this));
   }
 
   /** Creates a {@code BucketInfo} object for the provided bucket name. */
@@ -2068,135 +1750,5 @@ public class BucketInfo implements Serializable {
   /** Returns a {@code BucketInfo} builder where the bucket's name is set to the provided name. */
   public static Builder newBuilder(String name) {
     return new BuilderImpl(name);
-  }
-
-  static BucketInfo fromPb(com.google.api.services.storage.model.Bucket bucketPb) {
-    Builder builder = new BuilderImpl(bucketPb.getName());
-    if (bucketPb.getId() != null) {
-      builder.setGeneratedId(bucketPb.getId());
-    }
-
-    if (bucketPb.getEtag() != null) {
-      builder.setEtag(bucketPb.getEtag());
-    }
-    if (bucketPb.getMetageneration() != null) {
-      builder.setMetageneration(bucketPb.getMetageneration());
-    }
-    if (bucketPb.getSelfLink() != null) {
-      builder.setSelfLink(bucketPb.getSelfLink());
-    }
-    if (bucketPb.getTimeCreated() != null) {
-      builder.setCreateTime(bucketPb.getTimeCreated().getValue());
-    }
-    if (bucketPb.getUpdated() != null) {
-      builder.setUpdateTime(bucketPb.getUpdated().getValue());
-    }
-    if (bucketPb.getLocation() != null) {
-      builder.setLocation(bucketPb.getLocation());
-    }
-    if (bucketPb.getRpo() != null) {
-      builder.setRpo(Rpo.valueOf(bucketPb.getRpo()));
-    }
-    if (bucketPb.getStorageClass() != null) {
-      builder.setStorageClass(StorageClass.valueOf(bucketPb.getStorageClass()));
-    }
-    if (bucketPb.getCors() != null) {
-      builder.setCors(transform(bucketPb.getCors(), Cors.FROM_PB_FUNCTION));
-    }
-    if (bucketPb.getAcl() != null) {
-      builder.setAcl(
-          transform(
-              bucketPb.getAcl(),
-              new Function<BucketAccessControl, Acl>() {
-                @Override
-                public Acl apply(BucketAccessControl bucketAccessControl) {
-                  return Acl.fromPb(bucketAccessControl);
-                }
-              }));
-    }
-    if (bucketPb.getDefaultObjectAcl() != null) {
-      builder.setDefaultAcl(
-          transform(
-              bucketPb.getDefaultObjectAcl(),
-              new Function<ObjectAccessControl, Acl>() {
-                @Override
-                public Acl apply(ObjectAccessControl objectAccessControl) {
-                  return Acl.fromPb(objectAccessControl);
-                }
-              }));
-    }
-    if (bucketPb.getOwner() != null) {
-      builder.setOwner(Entity.fromPb(bucketPb.getOwner().getEntity()));
-    }
-    if (bucketPb.getVersioning() != null) {
-      builder.setVersioningEnabled(bucketPb.getVersioning().getEnabled());
-    }
-    Website website = bucketPb.getWebsite();
-    if (website != null) {
-      builder.setIndexPage(website.getMainPageSuffix());
-      builder.setNotFoundPage(website.getNotFoundPage());
-    }
-    if (bucketPb.getLifecycle() != null && bucketPb.getLifecycle().getRule() != null) {
-      builder.setLifecycleRules(
-          transform(
-              bucketPb.getLifecycle().getRule(),
-              new Function<Rule, LifecycleRule>() {
-                @Override
-                public LifecycleRule apply(Rule rule) {
-                  return LifecycleRule.fromPb(rule);
-                }
-              }));
-      builder.setDeleteRules(
-          transform(
-              bucketPb.getLifecycle().getRule(),
-              new Function<Rule, DeleteRule>() {
-                @Override
-                public DeleteRule apply(Rule rule) {
-                  return DeleteRule.fromPb(rule);
-                }
-              }));
-    }
-    if (bucketPb.getLabels() != null) {
-      builder.setLabels(bucketPb.getLabels());
-    }
-    Bucket.Billing billing = bucketPb.getBilling();
-    if (billing != null) {
-      builder.setRequesterPays(billing.getRequesterPays());
-    }
-    Encryption encryption = bucketPb.getEncryption();
-    if (encryption != null
-        && encryption.getDefaultKmsKeyName() != null
-        && !encryption.getDefaultKmsKeyName().isEmpty()) {
-      builder.setDefaultKmsKeyName(encryption.getDefaultKmsKeyName());
-    }
-    if (bucketPb.getDefaultEventBasedHold() != null) {
-      builder.setDefaultEventBasedHold(bucketPb.getDefaultEventBasedHold());
-    }
-    Bucket.RetentionPolicy retentionPolicy = bucketPb.getRetentionPolicy();
-    if (retentionPolicy != null) {
-      if (retentionPolicy.getEffectiveTime() != null) {
-        builder.setRetentionEffectiveTime(retentionPolicy.getEffectiveTime().getValue());
-      }
-      if (retentionPolicy.getIsLocked() != null) {
-        builder.setRetentionPolicyIsLocked(retentionPolicy.getIsLocked());
-      }
-      if (retentionPolicy.getRetentionPeriod() != null) {
-        builder.setRetentionPeriod(retentionPolicy.getRetentionPeriod());
-      }
-    }
-    Bucket.IamConfiguration iamConfiguration = bucketPb.getIamConfiguration();
-
-    if (bucketPb.getLocationType() != null) {
-      builder.setLocationType(bucketPb.getLocationType());
-    }
-
-    if (iamConfiguration != null) {
-      builder.setIamConfiguration(IamConfiguration.fromPb(iamConfiguration));
-    }
-    Bucket.Logging logging = bucketPb.getLogging();
-    if (logging != null) {
-      builder.setLogging(Logging.fromPb(logging));
-    }
-    return builder.build();
   }
 }

@@ -31,7 +31,11 @@ public class ServiceAccountTest {
 
   @Test
   public void testToAndFromPb() {
-    compareServiceAccount(SERVICE_ACCOUNT, ServiceAccount.fromPb(SERVICE_ACCOUNT.toPb()));
+    compareServiceAccount(
+        SERVICE_ACCOUNT,
+        Conversions.apiary()
+            .serviceAccount()
+            .decode(Conversions.apiary().serviceAccount().encode(SERVICE_ACCOUNT)));
   }
 
   public void compareServiceAccount(ServiceAccount expected, ServiceAccount value) {

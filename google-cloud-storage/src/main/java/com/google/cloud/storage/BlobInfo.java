@@ -20,20 +20,12 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.client.util.Data;
-import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
-import com.google.api.services.storage.model.ObjectAccessControl;
-import com.google.api.services.storage.model.StorageObject;
-import com.google.api.services.storage.model.StorageObject.Owner;
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.AbstractMap;
 import java.util.Collections;
@@ -65,13 +57,6 @@ import java.util.Set;
  */
 public class BlobInfo implements Serializable {
 
-  static final Function<BlobInfo, StorageObject> INFO_TO_PB_FUNCTION =
-      new Function<BlobInfo, StorageObject>() {
-        @Override
-        public StorageObject apply(BlobInfo blobInfo) {
-          return blobInfo.toPb();
-        }
-      };
   private static final long serialVersionUID = -5625857076205028976L;
   private final BlobId blobId;
   private final String generatedId;
@@ -85,7 +70,14 @@ public class BlobInfo implements Serializable {
   private final String crc32c;
   private final Long customTime;
   private final String mediaLink;
-  private final Map<String, String> metadata;
+  /**
+   * The getter for this property never returns null, however null awareness is critical for
+   * encoding
+   *
+   * @see ApiaryConversions#blobInfo() encoder
+   */
+  final Map<String, String> metadata;
+
   private final Long metageneration;
   private final Long deleteTime;
   private final Long updateTime;
@@ -153,22 +145,16 @@ public class BlobInfo implements Serializable {
     }
 
     @Override
-    public final boolean equals(Object obj) {
-      return obj == this
-          || obj != null
-              && obj.getClass().equals(CustomerEncryption.class)
-              && Objects.equals(toPb(), ((CustomerEncryption) obj).toPb());
-    }
-
-    StorageObject.CustomerEncryption toPb() {
-      return new StorageObject.CustomerEncryption()
-          .setEncryptionAlgorithm(encryptionAlgorithm)
-          .setKeySha256(keySha256);
-    }
-
-    static CustomerEncryption fromPb(StorageObject.CustomerEncryption customerEncryptionPb) {
-      return new CustomerEncryption(
-          customerEncryptionPb.getEncryptionAlgorithm(), customerEncryptionPb.getKeySha256());
+    public final boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof CustomerEncryption)) {
+        return false;
+      }
+      CustomerEncryption that = (CustomerEncryption) o;
+      return Objects.equals(encryptionAlgorithm, that.encryptionAlgorithm)
+          && Objects.equals(keySha256, that.keySha256);
     }
   }
 
@@ -440,25 +426,25 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setContentType(String contentType) {
-      this.contentType = firstNonNull(contentType, Data.<String>nullOf(String.class));
+      this.contentType = firstNonNull(contentType, Data.nullOf(String.class));
       return this;
     }
 
     @Override
     public Builder setContentDisposition(String contentDisposition) {
-      this.contentDisposition = firstNonNull(contentDisposition, Data.<String>nullOf(String.class));
+      this.contentDisposition = firstNonNull(contentDisposition, Data.nullOf(String.class));
       return this;
     }
 
     @Override
     public Builder setContentLanguage(String contentLanguage) {
-      this.contentLanguage = firstNonNull(contentLanguage, Data.<String>nullOf(String.class));
+      this.contentLanguage = firstNonNull(contentLanguage, Data.nullOf(String.class));
       return this;
     }
 
     @Override
     public Builder setContentEncoding(String contentEncoding) {
-      this.contentEncoding = firstNonNull(contentEncoding, Data.<String>nullOf(String.class));
+      this.contentEncoding = firstNonNull(contentEncoding, Data.nullOf(String.class));
       return this;
     }
 
@@ -470,7 +456,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setCacheControl(String cacheControl) {
-      this.cacheControl = firstNonNull(cacheControl, Data.<String>nullOf(String.class));
+      this.cacheControl = firstNonNull(cacheControl, Data.nullOf(String.class));
       return this;
     }
 
@@ -506,7 +492,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setMd5(String md5) {
-      this.md5 = firstNonNull(md5, Data.<String>nullOf(String.class));
+      this.md5 = firstNonNull(md5, Data.nullOf(String.class));
       return this;
     }
 
@@ -536,7 +522,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setCrc32c(String crc32c) {
-      this.crc32c = firstNonNull(crc32c, Data.<String>nullOf(String.class));
+      this.crc32c = firstNonNull(crc32c, Data.nullOf(String.class));
       return this;
     }
 
@@ -990,7 +976,7 @@ public class BlobInfo implements Serializable {
    */
   @BetaApi
   public Boolean getEventBasedHold() {
-    return Data.<Boolean>isNull(eventBasedHold) ? null : eventBasedHold;
+    return Data.isNull(eventBasedHold) ? null : eventBasedHold;
   }
 
   /**
@@ -1017,7 +1003,7 @@ public class BlobInfo implements Serializable {
    */
   @BetaApi
   public Boolean getTemporaryHold() {
-    return Data.<Boolean>isNull(temporaryHold) ? null : temporaryHold;
+    return Data.isNull(temporaryHold) ? null : temporaryHold;
   }
 
   /**
@@ -1026,7 +1012,7 @@ public class BlobInfo implements Serializable {
    */
   @BetaApi
   public Long getRetentionExpirationTime() {
-    return Data.<Long>isNull(retentionExpirationTime) ? null : retentionExpirationTime;
+    return Data.isNull(retentionExpirationTime) ? null : retentionExpirationTime;
   }
 
   /** Returns a builder for the current blob. */
@@ -1056,79 +1042,19 @@ public class BlobInfo implements Serializable {
     return obj == this
         || obj != null
             && obj.getClass().equals(BlobInfo.class)
-            && Objects.equals(toPb(), ((BlobInfo) obj).toPb());
+            && Objects.equals(
+                Conversions.apiary().blobInfo().encode(this),
+                Conversions.apiary()
+                    .blobInfo()
+                    .encode(((BlobInfo) obj))); // TODO: remove this excessive allocation
   }
 
-  StorageObject toPb() {
-    StorageObject storageObject = blobId.toPb();
-    if (acl != null) {
-      storageObject.setAcl(
-          Lists.transform(
-              acl,
-              new Function<Acl, ObjectAccessControl>() {
-                @Override
-                public ObjectAccessControl apply(Acl acl) {
-                  return acl.toObjectPb();
-                }
-              }));
-    }
-    if (deleteTime != null) {
-      storageObject.setTimeDeleted(new DateTime(deleteTime));
-    }
-    if (updateTime != null) {
-      storageObject.setUpdated(new DateTime(updateTime));
-    }
-    if (createTime != null) {
-      storageObject.setTimeCreated(new DateTime(createTime));
-    }
-    if (customTime != null) {
-      storageObject.setCustomTime(new DateTime(customTime));
-    }
-    if (size != null) {
-      storageObject.setSize(BigInteger.valueOf(size));
-    }
-    if (owner != null) {
-      storageObject.setOwner(new Owner().setEntity(owner.toPb()));
-    }
-    if (storageClass != null) {
-      storageObject.setStorageClass(storageClass.toString());
-    }
-    if (timeStorageClassUpdated != null) {
-      storageObject.setTimeStorageClassUpdated(new DateTime(timeStorageClassUpdated));
-    }
-
-    Map<String, String> pbMetadata = metadata;
-    if (metadata != null && !Data.isNull(metadata)) {
-      pbMetadata = Maps.newHashMapWithExpectedSize(metadata.size());
-      for (Map.Entry<String, String> entry : metadata.entrySet()) {
-        pbMetadata.put(
-            entry.getKey(), firstNonNull(entry.getValue(), Data.<String>nullOf(String.class)));
-      }
-    }
-    if (customerEncryption != null) {
-      storageObject.setCustomerEncryption(customerEncryption.toPb());
-    }
-    if (retentionExpirationTime != null) {
-      storageObject.setRetentionExpirationTime(new DateTime(retentionExpirationTime));
-    }
-    storageObject.setKmsKeyName(kmsKeyName);
-    storageObject.setEventBasedHold(eventBasedHold);
-    storageObject.setTemporaryHold(temporaryHold);
-    storageObject.setMetadata(pbMetadata);
-    storageObject.setCacheControl(cacheControl);
-    storageObject.setContentEncoding(contentEncoding);
-    storageObject.setCrc32c(crc32c);
-    storageObject.setContentType(contentType);
-    storageObject.setMd5Hash(md5);
-    storageObject.setMediaLink(mediaLink);
-    storageObject.setMetageneration(metageneration);
-    storageObject.setContentDisposition(contentDisposition);
-    storageObject.setComponentCount(componentCount);
-    storageObject.setContentLanguage(contentLanguage);
-    storageObject.setEtag(etag);
-    storageObject.setId(generatedId);
-    storageObject.setSelfLink(selfLink);
-    return storageObject;
+  /**
+   * Attach this instance to an instance of {@link Storage} thereby allowing RPCs to be performed
+   * using the methods from the resulting {@link Blob}
+   */
+  Blob asBlob(Storage storage) {
+    return new Blob(storage, new BuilderImpl(this));
   }
 
   /** Returns a {@code BlobInfo} builder where blob identity is set using the provided values. */
@@ -1154,106 +1080,5 @@ public class BlobInfo implements Serializable {
   /** Returns a {@code BlobInfo} builder where blob identity is set using the provided value. */
   public static Builder newBuilder(BlobId blobId) {
     return new BuilderImpl(blobId);
-  }
-
-  static BlobInfo fromPb(StorageObject storageObject) {
-    Builder builder = newBuilder(BlobId.fromPb(storageObject));
-    if (storageObject.getCacheControl() != null) {
-      builder.setCacheControl(storageObject.getCacheControl());
-    }
-    if (storageObject.getContentEncoding() != null) {
-      builder.setContentEncoding(storageObject.getContentEncoding());
-    }
-    if (storageObject.getCrc32c() != null) {
-      builder.setCrc32c(storageObject.getCrc32c());
-    }
-    if (storageObject.getContentType() != null) {
-      builder.setContentType(storageObject.getContentType());
-    }
-    if (storageObject.getMd5Hash() != null) {
-      builder.setMd5(storageObject.getMd5Hash());
-    }
-    if (storageObject.getMediaLink() != null) {
-      builder.setMediaLink(storageObject.getMediaLink());
-    }
-    if (storageObject.getMetageneration() != null) {
-      builder.setMetageneration(storageObject.getMetageneration());
-    }
-    if (storageObject.getContentDisposition() != null) {
-      builder.setContentDisposition(storageObject.getContentDisposition());
-    }
-    if (storageObject.getComponentCount() != null) {
-      builder.setComponentCount(storageObject.getComponentCount());
-    }
-    if (storageObject.getContentLanguage() != null) {
-      builder.setContentLanguage(storageObject.getContentLanguage());
-    }
-    if (storageObject.getEtag() != null) {
-      builder.setEtag(storageObject.getEtag());
-    }
-    if (storageObject.getId() != null) {
-      builder.setGeneratedId(storageObject.getId());
-    }
-    if (storageObject.getSelfLink() != null) {
-      builder.setSelfLink(storageObject.getSelfLink());
-    }
-    if (storageObject.getMetadata() != null) {
-      builder.setMetadata(storageObject.getMetadata());
-    }
-    if (storageObject.getTimeDeleted() != null) {
-      builder.setDeleteTime(storageObject.getTimeDeleted().getValue());
-    }
-    if (storageObject.getUpdated() != null) {
-      builder.setUpdateTime(storageObject.getUpdated().getValue());
-    }
-    if (storageObject.getTimeCreated() != null) {
-      builder.setCreateTime(storageObject.getTimeCreated().getValue());
-    }
-    if (storageObject.getCustomTime() != null) {
-      builder.setCustomTime(storageObject.getCustomTime().getValue());
-    }
-    if (storageObject.getSize() != null) {
-      builder.setSize(storageObject.getSize().longValue());
-    }
-    if (storageObject.getOwner() != null) {
-      builder.setOwner(Acl.Entity.fromPb(storageObject.getOwner().getEntity()));
-    }
-    if (storageObject.getAcl() != null) {
-      builder.setAcl(
-          Lists.transform(
-              storageObject.getAcl(),
-              new Function<ObjectAccessControl, Acl>() {
-                @Override
-                public Acl apply(ObjectAccessControl objectAccessControl) {
-                  return Acl.fromPb(objectAccessControl);
-                }
-              }));
-    }
-    if (storageObject.containsKey("isDirectory")) {
-      builder.setIsDirectory(Boolean.TRUE);
-    }
-    if (storageObject.getCustomerEncryption() != null) {
-      builder.setCustomerEncryption(
-          CustomerEncryption.fromPb(storageObject.getCustomerEncryption()));
-    }
-    if (storageObject.getStorageClass() != null) {
-      builder.setStorageClass(StorageClass.valueOf(storageObject.getStorageClass()));
-    }
-    if (storageObject.getTimeStorageClassUpdated() != null) {
-      builder.setTimeStorageClassUpdated(storageObject.getTimeStorageClassUpdated().getValue());
-    }
-    if (storageObject.getKmsKeyName() != null) {
-      builder.setKmsKeyName(storageObject.getKmsKeyName());
-    }
-    if (storageObject.getEventBasedHold() != null) {
-      builder.setEventBasedHold(storageObject.getEventBasedHold());
-    }
-    if (storageObject.getTemporaryHold() != null) {
-      builder.setTemporaryHold(storageObject.getTemporaryHold());
-    }
-    if (storageObject.getRetentionExpirationTime() != null) {
-      builder.setRetentionExpirationTime(storageObject.getRetentionExpirationTime().getValue());
-    }
-    return builder.build();
   }
 }

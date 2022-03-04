@@ -53,18 +53,40 @@ public class CopyWriterTest {
   private static final Map<StorageRpc.Option, ?> EMPTY_OPTIONS = ImmutableMap.of();
   private static final RewriteRequest REQUEST_WITH_OBJECT =
       new StorageRpc.RewriteRequest(
-          BLOB_ID.toPb(), EMPTY_OPTIONS, true, BLOB_INFO.toPb(), EMPTY_OPTIONS, null);
+          Conversions.apiary().blobId().encode(BLOB_ID),
+          EMPTY_OPTIONS,
+          true,
+          Conversions.apiary().blobInfo().encode(BLOB_INFO),
+          EMPTY_OPTIONS,
+          null);
   private static final RewriteRequest REQUEST_WITHOUT_OBJECT =
       new StorageRpc.RewriteRequest(
-          BLOB_ID.toPb(), EMPTY_OPTIONS, false, BLOB_INFO.toPb(), EMPTY_OPTIONS, null);
+          Conversions.apiary().blobId().encode(BLOB_ID),
+          EMPTY_OPTIONS,
+          false,
+          Conversions.apiary().blobInfo().encode(BLOB_INFO),
+          EMPTY_OPTIONS,
+          null);
   private static final RewriteResponse RESPONSE_WITH_OBJECT =
       new RewriteResponse(REQUEST_WITH_OBJECT, null, 42L, false, "token", 21L);
   private static final RewriteResponse RESPONSE_WITHOUT_OBJECT =
       new RewriteResponse(REQUEST_WITHOUT_OBJECT, null, 42L, false, "token", 21L);
   private static final RewriteResponse RESPONSE_WITH_OBJECT_DONE =
-      new RewriteResponse(REQUEST_WITH_OBJECT, RESULT_INFO.toPb(), 42L, true, "token", 42L);
+      new RewriteResponse(
+          REQUEST_WITH_OBJECT,
+          Conversions.apiary().blobInfo().encode(RESULT_INFO),
+          42L,
+          true,
+          "token",
+          42L);
   private static final RewriteResponse RESPONSE_WITHOUT_OBJECT_DONE =
-      new RewriteResponse(REQUEST_WITHOUT_OBJECT, RESULT_INFO.toPb(), 42L, true, "token", 42L);
+      new RewriteResponse(
+          REQUEST_WITHOUT_OBJECT,
+          Conversions.apiary().blobInfo().encode(RESULT_INFO),
+          42L,
+          true,
+          "token",
+          42L);
 
   private StorageOptions options;
   private StorageRpcFactory rpcFactoryMock;
