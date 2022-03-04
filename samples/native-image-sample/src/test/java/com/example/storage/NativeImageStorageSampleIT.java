@@ -18,30 +18,23 @@ package com.example.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.cloud.ServiceOptions;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.UUID;
-import org.junit.Before;
+import com.google.cloud.testing.junit4.StdOutCaptureRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class NativeImageStorageSampleIT {
 
-  private static final String NATIVE_TEST_SECRET_ID = "native-test-secret" + UUID.randomUUID();
-  private static String PROJECT_ID = ServiceOptions.getDefaultProjectId();
-  private ByteArrayOutputStream bout;
-
-  @Before
-  public void setUp() {
-    bout = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(bout));
-  }
+  @Rule
+  public StdOutCaptureRule stdOut = new StdOutCaptureRule();
 
   @Test
   public void createAndReadStorageResources() {
-    NativeImageStorageSample.main(new String[] {});
-    assertThat(bout.toString()).contains("Created bucket " + NativeImageStorageSample.BUCKET_NAME);
-    assertThat(bout.toString()).contains("Created file " + NativeImageStorageSample.FILENAME);
-    assertThat(bout.toString()).contains("Successfully wrote to file: Hello World!");
+    NativeImageStorageSample.main(new String[]{});
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
+        "Created bucket " + NativeImageStorageSample.BUCKET_NAME);
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
+        "Created file " + NativeImageStorageSample.FILENAME);
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
+        "Successfully wrote to file: Hello World!");
   }
 }
