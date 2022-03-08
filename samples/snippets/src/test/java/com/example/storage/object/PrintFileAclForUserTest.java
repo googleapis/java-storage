@@ -41,4 +41,16 @@ public class PrintFileAclForUserTest extends TestBase {
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(Role.READER.name());
   }
+
+  @Test
+  public void testUserNotFound() {
+    // Check for user email before the actual test.
+    assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
+
+    // Delete Acl just in case to make sure the User ACL is not present
+    blob.deleteAcl(new User(IT_SERVICE_ACCOUNT_EMAIL));
+    PrintFileAclForUser.printFileAclForUser(bucketName, blobName, IT_SERVICE_ACCOUNT_EMAIL);
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
+    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("not found");
+  }
 }

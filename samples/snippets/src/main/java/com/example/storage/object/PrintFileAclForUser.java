@@ -41,9 +41,12 @@ public class PrintFileAclForUser {
     Storage storage = StorageOptions.newBuilder().build().getService();
     Blob blob = storage.get(BlobId.of(bucketName, blobName));
     Acl blobAcl = blob.getAcl(new User(userEmail));
-    String userRole = blobAcl.getRole().name();
-
-    System.out.println("User " + userEmail + " has role " + userRole);
+    if(blobAcl != null) {
+      String userRole = blobAcl.getRole().name();
+      System.out.println("User " + userEmail + " has role " + userRole);
+    } else {
+      System.out.println("User " + userEmail + " not found");
+    }
   }
 }
 // [END storage_print_file_acl_for_user]

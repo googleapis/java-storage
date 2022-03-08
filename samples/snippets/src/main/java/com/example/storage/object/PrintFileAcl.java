@@ -49,7 +49,7 @@ public class PrintFileAcl {
       // See https://cloud.google.com/storage/docs/access-control/lists#scopes
       String entityType = acl.getEntity().getType().name();
 
-      System.out.printf("%s: %s \n", role, entityType);
+      System.out.printf("%s: %s %n", role, entityType);
     }
   }
 
