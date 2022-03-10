@@ -1,5 +1,39 @@
 # Changelog
 
+### [2.4.5](https://github.com/googleapis/java-storage/compare/v2.4.4...v2.4.5) (2022-03-04)
+
+
+### Documentation
+
+* Adding Samples for Adding/Removing File Owners ([#1273](https://github.com/googleapis/java-storage/issues/1273)) ([6fad19c](https://github.com/googleapis/java-storage/commit/6fad19c184d108f30c85f62426d254a9f0ff715d))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.8.0 ([#1284](https://github.com/googleapis/java-storage/issues/1284)) ([0f71ae4](https://github.com/googleapis/java-storage/commit/0f71ae41fbabf6a3f38674a2f68fb55bd9809595))
+* update kms.version to v0.95.1 ([#1287](https://github.com/googleapis/java-storage/issues/1287)) ([8334d3c](https://github.com/googleapis/java-storage/commit/8334d3cb1f527b00ee8f19583dcf112f4f1b08ac))
+
+### [2.4.4](https://github.com/googleapis/java-storage/compare/v2.4.3...v2.4.4) (2022-02-28)
+
+
+### Dependencies
+
+* update actions/setup-java action to v3 ([#1274](https://github.com/googleapis/java-storage/issues/1274)) ([d29d19a](https://github.com/googleapis/java-storage/commit/d29d19a9936164e0ffe4d2f5fa14739a807369f6))
+
+### [2.4.3](https://github.com/googleapis/java-storage/compare/v2.4.2...v2.4.3) (2022-02-25)
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220210-1.32.1 ([#1269](https://github.com/googleapis/java-storage/issues/1269)) ([b3933be](https://github.com/googleapis/java-storage/commit/b3933be393bcb8850e39635d28211159a3d0a091))
+
+
+### Documentation
+
+* Adding Samples for Add/Remove Bucket Default Owner ([#1260](https://github.com/googleapis/java-storage/issues/1260)) ([7223626](https://github.com/googleapis/java-storage/commit/7223626481930bf4442a04ccf49536f7f9e5fd32))
+* Adding Samples for Add/Remove Bucket Owner ([#1272](https://github.com/googleapis/java-storage/issues/1272)) ([9d25fa9](https://github.com/googleapis/java-storage/commit/9d25fa986ec6116eeb16ac5773b46e7fdbe10647))
+* Adding Samples for Printing Bucket ACLs and Printing Bucket ACL for a specific user. ([#1236](https://github.com/googleapis/java-storage/issues/1236)) ([d82333b](https://github.com/googleapis/java-storage/commit/d82333b01eadd9afd0c9d58455f86bc6457c99e3))
+
 ### [2.4.2](https://github.com/googleapis/java-storage/compare/v2.4.1...v2.4.2) (2022-02-11)
 
 
