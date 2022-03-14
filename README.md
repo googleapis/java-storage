@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>24.3.0</version>
+      <version>24.4.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -41,7 +41,7 @@ If you are using Maven without BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.4.4</version>
+  <version>2.4.5</version>
 </dependency>
 
 ```
@@ -56,13 +56,13 @@ implementation 'com.google.cloud:google-cloud-storage'
 If you are using Gradle without BOM, add this to your dependencies
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage:2.4.4'
+implementation 'com.google.cloud:google-cloud-storage:2.4.5'
 ```
 
 If you are using SBT, add this to your dependencies
 
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.4.4"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.4.5"
 ```
 
 ## Authentication
@@ -227,6 +227,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 
 | Sample                      | Source Code                       | Try it |
 | --------------------------- | --------------------------------- | ------ |
+| Native Image Storage Sample | [source code](https://github.com/googleapis/java-storage/blob/main/samples/native-image-sample/src/main/java/com/example/storage/NativeImageStorageSample.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/native-image-sample/src/main/java/com/example/storage/NativeImageStorageSample.java) |
 | Configure Retries | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/ConfigureRetries.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/ConfigureRetries.java) |
 | Generate Signed Post Policy V4 | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/GenerateSignedPostPolicyV4.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/GenerateSignedPostPolicyV4.java) |
 | Get Service Account | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/GetServiceAccount.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/GetServiceAccount.java) |
@@ -311,6 +312,8 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Move Object | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/MoveObject.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/MoveObject.java) |
 | Release Event Based Hold | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/ReleaseEventBasedHold.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/ReleaseEventBasedHold.java) |
 | Release Temporary Hold | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/ReleaseTemporaryHold.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/ReleaseTemporaryHold.java) |
+| Print File Acl | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/PrintFileAcl.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/PrintFileAcl.java) |
+| Print File Acl For User | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/PrintFileAclForUser.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/PrintFileAclForUser.java) |
 | Remove File Owner | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/RemoveFileOwner.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/RemoveFileOwner.java) |
 | Rotate Object Encryption Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/RotateObjectEncryptionKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/RotateObjectEncryptionKey.java) |
 | Set Event Based Hold | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/object/SetEventBasedHold.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/object/SetEventBasedHold.java) |
