@@ -28,7 +28,8 @@ import com.google.cloud.storage.StorageOptions;
 
 public class AddFileOwner {
 
-  public static void addFileOwner(String projectId, String bucketName, String userEmail, String blobName) {
+  public static void addFileOwner(
+      String projectId, String bucketName, String userEmail, String blobName) {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 

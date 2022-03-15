@@ -32,7 +32,8 @@ public class AddBucketOwnerTest extends TestBase {
     // Check for user email before the actual test.
     assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
 
-    AddBucketOwner.addBucketOwner(System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+    AddBucketOwner.addBucketOwner(
+        System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(bucket.getAcl(new User(IT_SERVICE_ACCOUNT_EMAIL))).isNotNull();
   }

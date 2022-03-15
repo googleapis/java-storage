@@ -39,7 +39,8 @@ public class RemoveFileOwnerTest extends TestBase {
     blob.createAcl(newFileOwner);
 
     // Remove User as owner
-    RemoveFileOwner.removeFileOwner(System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL, blobName);
+    RemoveFileOwner.removeFileOwner(
+        System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL, blobName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Removed user");
     assertThat(blob.getAcl(new User(IT_SERVICE_ACCOUNT_EMAIL))).isNull();
@@ -51,7 +52,8 @@ public class RemoveFileOwnerTest extends TestBase {
     assertNotNull("Unable to determine user email", IT_SERVICE_ACCOUNT_EMAIL);
 
     // Remove User without Owner Permissions
-    RemoveFileOwner.removeFileOwner(System.getenv("GOOGLE_CLOUD_PROJECT"),bucketName, IT_SERVICE_ACCOUNT_EMAIL, blobName);
+    RemoveFileOwner.removeFileOwner(
+        System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL, blobName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("was not found");
   }

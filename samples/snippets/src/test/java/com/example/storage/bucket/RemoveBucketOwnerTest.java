@@ -38,7 +38,8 @@ public class RemoveBucketOwnerTest extends TestBase {
     bucket.createAcl(newOwner);
 
     // Remove User as owner
-    RemoveBucketOwner.removeBucketOwner(System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+    RemoveBucketOwner.removeBucketOwner(
+        System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Removed user");
     assertThat(bucket.getAcl(new User(IT_SERVICE_ACCOUNT_EMAIL))).isNull();
@@ -47,7 +48,8 @@ public class RemoveBucketOwnerTest extends TestBase {
   @Test
   public void testUserNotFound() {
     // Remove User without Owner Permissions
-    RemoveBucketOwner.removeBucketOwner(System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL);
+    RemoveBucketOwner.removeBucketOwner(
+        System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName, IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(IT_SERVICE_ACCOUNT_EMAIL);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("was not found");
   }
