@@ -29,10 +29,10 @@ public class AddBucketDefaultOwner {
 
   public static void addBucketDefaultOwner(String bucketName, String userEmail) {
 
-    // The ID to give your GCS bucket
+    // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // Email of the user you wish to add as a default owner
+    // The email of the user you wish to add as a default owner
     // String userEmail = "someuser@domain.com"
 
     Storage storage = StorageOptions.newBuilder().build().getService();

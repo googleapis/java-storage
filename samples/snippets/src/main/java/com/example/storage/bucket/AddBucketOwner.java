@@ -27,14 +27,17 @@ import com.google.cloud.storage.StorageOptions;
 
 public class AddBucketOwner {
 
-  public static void addBucketOwner(String bucketName, String userEmail) {
-    // The ID to give your GCS bucket
+  public static void addBucketOwner(String projectId, String bucketName, String userEmail) {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
+
+    // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
     // Email of the user you wish to add as an owner
     // String userEmail = "someuser@domain.com"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
     Acl newOwner = Acl.of(new User(userEmail), Role.OWNER);
 

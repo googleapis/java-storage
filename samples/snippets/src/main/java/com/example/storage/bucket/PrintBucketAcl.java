@@ -26,12 +26,11 @@ import java.util.List;
 
 public class PrintBucketAcl {
 
-  public static void printBucketAcl(String bucketName) {
-
-    // The ID to give your GCS bucket
+  public static void printBucketAcl(String projectId, String bucketName) {
+    // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
     List<Acl> bucketAcls = bucket.getAcl();
 
