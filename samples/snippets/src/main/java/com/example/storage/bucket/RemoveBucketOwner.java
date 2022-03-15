@@ -25,14 +25,18 @@ import com.google.cloud.storage.StorageOptions;
 
 public class RemoveBucketOwner {
 
-  public static void removeBucketOwner(String bucketName, String userEmail) {
-    // The ID to give your GCS bucket
+  public static void removeBucketOwner(String projectId, String bucketName, String userEmail) {
+
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
+
+    // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
     // Email of the user you wish to remove as an owner
     // String userEmail = "someuser@domain.com"
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
     User ownerToRemove = new User(userEmail);
 

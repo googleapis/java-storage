@@ -37,7 +37,7 @@ public class PrintBucketAclTest extends TestBase {
 
     Entity testUser = new User(IT_SERVICE_ACCOUNT_EMAIL);
     storage.createAcl(bucketName, Acl.of(testUser, Role.READER));
-    PrintBucketAcl.printBucketAcl(bucketName);
+    PrintBucketAcl.printBucketAcl(System.getenv("GOOGLE_CLOUD_PROJECT"), bucketName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("READER: USER");
   }
 }

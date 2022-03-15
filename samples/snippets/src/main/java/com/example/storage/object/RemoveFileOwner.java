@@ -26,9 +26,12 @@ import com.google.cloud.storage.StorageOptions;
 
 public class RemoveFileOwner {
 
-  public static void removeFileOwner(String bucketName, String userEmail, String blobName) {
+  public static void removeFileOwner(
+      String projectId, String bucketName, String userEmail, String blobName) {
+    // The ID of your GCP project
+    // String projectId = "your-project-id";
 
-    // The ID to give your GCS bucket
+    // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
     // Email of the user you wish to remove as a file owner
@@ -37,7 +40,7 @@ public class RemoveFileOwner {
     // The name of the blob/file that you wish to modify permissions on
     // String blobName = "your-blob-name";
 
-    Storage storage = StorageOptions.newBuilder().build().getService();
+    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Blob blob = storage.get(BlobId.of(bucketName, blobName));
     User ownerToRemove = new User(userEmail);
 
