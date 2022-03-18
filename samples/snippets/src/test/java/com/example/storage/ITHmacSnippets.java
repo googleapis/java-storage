@@ -33,6 +33,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageRetryStrategy;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.FileDescriptor;
@@ -42,6 +43,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.threeten.bp.Duration;
 
 public class ITHmacSnippets {
   private static final String PROJECT_ID = ServiceOptions.getDefaultProjectId();
@@ -63,8 +65,11 @@ public class ITHmacSnippets {
                     .getOptions()
                     .getRetrySettings()
                     .toBuilder()
-                    .setRetryDelayMultiplier(3.0)
+                    .setMaxAttempts(10)
+                    .setTotalTimeout(Duration.ofMinutes(5))
+                    .setRetryDelayMultiplier(10.0)
                     .build())
+            .setStorageRetryStrategy(StorageRetryStrategy.getUniformStorageRetryStrategy())
             .build()
             .getService();
   }
