@@ -123,8 +123,8 @@ class BlobReadChannel implements ReadChannel {
       if (endOfStream) {
         return -1;
       }
-      final int toRead = Math.toIntExact(
-          Math.min(limit - position, Math.max(byteBuffer.remaining(), chunkSize)));
+      final int toRead =
+          Math.toIntExact(Math.min(limit - position, Math.max(byteBuffer.remaining(), chunkSize)));
       try {
         ResultRetryAlgorithm<?> algorithm =
             retryAlgorithmManager.getForObjectsGet(storageObject, requestOptions);
@@ -273,7 +273,15 @@ class BlobReadChannel implements ReadChannel {
     @Override
     public int hashCode() {
       return Objects.hash(
-          serviceOptions, blob, requestOptions, lastEtag, position, isOpen, endOfStream, chunkSize, limit);
+          serviceOptions,
+          blob,
+          requestOptions,
+          lastEtag,
+          position,
+          isOpen,
+          endOfStream,
+          chunkSize,
+          limit);
     }
 
     @Override
