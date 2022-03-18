@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.RetryHelper.runWithRetries;
 import static com.google.cloud.storage.PolicyHelper.convertToApiPolicy;
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.DELIMITER;
@@ -44,6 +45,7 @@ import com.google.cloud.PageImpl;
 import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
@@ -1435,7 +1437,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
           ? ImmutableList.<Notification>of()
           : Lists.transform(
               answer,
-              new Function<com.google.api.services.storage.model.Notification, Notification>() {
+              new com.google.common.base.Function<com.google.api.services.storage.model.Notification, Notification>() {
                 @Override
                 public Notification apply(
                     com.google.api.services.storage.model.Notification notificationPb) {
