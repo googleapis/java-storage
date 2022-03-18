@@ -123,8 +123,8 @@ class BlobReadChannel implements ReadChannel {
       if (endOfStream) {
         return -1;
       }
-      final int toRead =
-          Math.min(Math.toIntExact(limit - position), Math.max(byteBuffer.remaining(), chunkSize));
+      final int toRead = Math.toIntExact(
+          Math.min(limit - position, Math.max(byteBuffer.remaining(), chunkSize)));
       try {
         ResultRetryAlgorithm<?> algorithm =
             retryAlgorithmManager.getForObjectsGet(storageObject, requestOptions);
