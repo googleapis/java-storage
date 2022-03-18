@@ -1437,7 +1437,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
           ? ImmutableList.<Notification>of()
           : Lists.transform(
               answer,
-              new com.google.common.base.Function<com.google.api.services.storage.model.Notification, Notification>() {
+              new com.google.common.base.Function<
+                  com.google.api.services.storage.model.Notification, Notification>() {
                 @Override
                 public Notification apply(
                     com.google.api.services.storage.model.Notification notificationPb) {
