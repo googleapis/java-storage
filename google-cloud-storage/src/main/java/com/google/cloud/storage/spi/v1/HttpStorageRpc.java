@@ -1677,9 +1677,7 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_SERVICE_ACCOUNT);
     Scope scope = tracer.withSpan(span);
     try {
-      Storage.Projects.ServiceAccount.Get get = storage.projects().serviceAccount().get(projectId);
-      ServiceAccount execute = get.execute();
-      return execute;
+      return storage.projects().serviceAccount().get(projectId).execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       throw translate(ex);
