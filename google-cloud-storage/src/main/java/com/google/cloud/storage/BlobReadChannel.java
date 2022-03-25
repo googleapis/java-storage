@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.RetryHelper.runWithRetries;
 
+import com.google.api.client.util.Preconditions;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
@@ -52,6 +53,7 @@ class BlobReadChannel implements ReadChannel {
   private final StorageObject storageObject;
   private int bufferPos;
   private byte[] buffer;
+  private long limit;
 
   BlobReadChannel(
       StorageOptions serviceOptions, BlobId blob, Map<StorageRpc.Option, ?> requestOptions) {
@@ -62,6 +64,7 @@ class BlobReadChannel implements ReadChannel {
     isOpen = true;
     storageRpc = serviceOptions.getStorageRpcV1();
     storageObject = blob.toPb();
+    this.limit = Long.MAX_VALUE;
   }
 
   @Override
@@ -71,7 +74,8 @@ class BlobReadChannel implements ReadChannel {
             .setPosition(position)
             .setIsOpen(isOpen)
             .setEndOfStream(endOfStream)
-            .setChunkSize(chunkSize);
+            .setChunkSize(chunkSize)
+            .setLimit(limit);
     if (buffer != null) {
       builder.setPosition(position + bufferPos);
       builder.setEndOfStream(false);
@@ -119,7 +123,8 @@ class BlobReadChannel implements ReadChannel {
       if (endOfStream) {
         return -1;
       }
-      final int toRead = Math.max(byteBuffer.remaining(), chunkSize);
+      final int toRead =
+          Math.toIntExact(Math.min(limit - position, Math.max(byteBuffer.remaining(), chunkSize)));
       try {
         ResultRetryAlgorithm<?> algorithm =
             retryAlgorithmManager.getForObjectsGet(storageObject, requestOptions);
@@ -158,6 +163,18 @@ class BlobReadChannel implements ReadChannel {
     return toWrite;
   }
 
+  @Override
+  public ReadChannel limit(long limit) {
+    Preconditions.checkArgument(limit >= 0, "Limit must be >= 0");
+    this.limit = limit;
+    return this;
+  }
+
+  @Override
+  public long limit() {
+    return limit;
+  }
+
   static class StateImpl implements RestorableState<ReadChannel>, Serializable {
 
     private static final long serialVersionUID = 3889420316004453706L;
@@ -170,6 +187,7 @@ class BlobReadChannel implements ReadChannel {
     private final boolean isOpen;
     private final boolean endOfStream;
     private final int chunkSize;
+    private final long limit;
 
     StateImpl(Builder builder) {
       this.serviceOptions = builder.serviceOptions;
@@ -180,6 +198,7 @@ class BlobReadChannel implements ReadChannel {
       this.isOpen = builder.isOpen;
       this.endOfStream = builder.endOfStream;
       this.chunkSize = builder.chunkSize;
+      this.limit = builder.limit;
     }
 
     static class Builder {
@@ -191,6 +210,7 @@ class BlobReadChannel implements ReadChannel {
       private boolean isOpen;
       private boolean endOfStream;
       private int chunkSize;
+      private long limit;
 
       private Builder(StorageOptions options, BlobId blob, Map<StorageRpc.Option, ?> reqOptions) {
         this.serviceOptions = options;
@@ -223,6 +243,11 @@ class BlobReadChannel implements ReadChannel {
         return this;
       }
 
+      Builder setLimit(long limit) {
+        this.limit = limit;
+        return this;
+      }
+
       RestorableState<ReadChannel> build() {
         return new StateImpl(this);
       }
@@ -241,13 +266,22 @@ class BlobReadChannel implements ReadChannel {
       channel.isOpen = isOpen;
       channel.endOfStream = endOfStream;
       channel.chunkSize = chunkSize;
+      channel.limit = limit;
       return channel;
     }
 
     @Override
     public int hashCode() {
       return Objects.hash(
-          serviceOptions, blob, requestOptions, lastEtag, position, isOpen, endOfStream, chunkSize);
+          serviceOptions,
+          blob,
+          requestOptions,
+          lastEtag,
+          position,
+          isOpen,
+          endOfStream,
+          chunkSize,
+          limit);
     }
 
     @Override
@@ -266,7 +300,8 @@ class BlobReadChannel implements ReadChannel {
           && this.position == other.position
           && this.isOpen == other.isOpen
           && this.endOfStream == other.endOfStream
-          && this.chunkSize == other.chunkSize;
+          && this.chunkSize == other.chunkSize
+          && this.limit == other.limit;
     }
 
     @Override
@@ -276,6 +311,7 @@ class BlobReadChannel implements ReadChannel {
           .add("position", position)
           .add("isOpen", isOpen)
           .add("endOfStream", endOfStream)
+          .add("limit", limit)
           .toString();
     }
   }

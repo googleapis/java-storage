@@ -223,13 +223,19 @@ public class BlobReadChannelTest {
   public void testStateEquals() {
     replay(storageRpcMock);
     reader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
+    int limit = 342;
+    reader.limit(limit);
     @SuppressWarnings("resource") // avoid closing when you don't want partial writes to GCS
     ReadChannel secondReader = new BlobReadChannel(options, BLOB_ID, EMPTY_RPC_OPTIONS);
+    secondReader.limit(limit);
     RestorableState<ReadChannel> state = reader.capture();
     RestorableState<ReadChannel> secondState = secondReader.capture();
     assertEquals(state, secondState);
     assertEquals(state.hashCode(), secondState.hashCode());
     assertEquals(state.toString(), secondState.toString());
+
+    ReadChannel restore = secondState.restore();
+    assertEquals(limit, restore.limit());
   }
 
   private static byte[] randomByteArray(int size) {
