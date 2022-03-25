@@ -31,7 +31,7 @@ public final class HttpRpcContext {
   private final ThreadLocal<UUID> invocationId;
   private final Supplier<UUID> supplier;
 
-  private HttpRpcContext(Supplier<UUID> randomUUID) {
+  HttpRpcContext(Supplier<UUID> randomUUID) {
     this.invocationId = new InheritableThreadLocal<>();
     this.supplier = randomUUID;
   }
