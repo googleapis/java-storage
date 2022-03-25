@@ -41,6 +41,7 @@ import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
+import com.google.cloud.ServiceOptions;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.http.HttpTransportOptions;
@@ -54,6 +55,7 @@ import com.google.cloud.kms.v1.KeyManagementServiceGrpc;
 import com.google.cloud.kms.v1.KeyManagementServiceGrpc.KeyManagementServiceBlockingStub;
 import com.google.cloud.kms.v1.KeyRingName;
 import com.google.cloud.kms.v1.LocationName;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
@@ -71,6 +73,8 @@ import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
+import com.google.cloud.storage.Notification;
+import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.Rpo;
@@ -99,6 +103,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.reflect.AbstractInvocationHandler;
 import com.google.common.reflect.Reflection;
 import com.google.iam.v1.Binding;
+import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.IAMPolicyGrpc;
 import com.google.iam.v1.SetIamPolicyRequest;
 import io.grpc.ManagedChannel;
@@ -132,6 +137,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -162,6 +168,7 @@ public class ITStorageTest {
 
   private static RemoteStorageHelper remoteStorageHelper;
   private static Storage storage;
+  private static TopicAdminClient topicAdminClient;
   private static String kmsKeyOneResourcePath;
   private static String kmsKeyTwoResourcePath;
   private static Metadata requestParamsHeader = new Metadata();
@@ -219,6 +226,13 @@ public class ITStorageTest {
 
   @Rule public final TestName testName = new TestName();
   @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
+  private static final String PROJECT = ServiceOptions.getDefaultProjectId();
+  private static final String ID = UUID.randomUUID().toString().substring(0, 8);
+  private static final String TOPIC =
+      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID).trim();
+  private static final Notification.PayloadFormat PAYLOAD_FORMAT =
+      Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
+  private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
 
   @BeforeClass
   public static void beforeClass() throws IOException {
@@ -239,6 +253,9 @@ public class ITStorageTest {
 
     // Prepare KMS KeyRing for CMEK tests
     prepareKmsKeys();
+
+    // Configure topic admin client for notification.
+    topicAdminClient = configureTopicAdminClient();
   }
 
   private static void unsetRequesterPays() {
@@ -260,6 +277,12 @@ public class ITStorageTest {
   @AfterClass
   public static void afterClass() throws ExecutionException, InterruptedException {
     if (storage != null) {
+
+      /* Delete the Pub/Sub topic */
+      if (topicAdminClient != null) {
+        topicAdminClient.deleteTopic(TOPIC);
+        topicAdminClient.close();
+      }
       // In beforeClass, we make buckets auto-delete blobs older than a day old.
       // Here, delete all buckets older than 2 days. They should already be empty and easy.
       long cleanTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(2);
@@ -413,6 +436,23 @@ public class ITStorageTest {
       }
     }
     return kmsKeyResourcePath;
+  }
+
+  private static TopicAdminClient configureTopicAdminClient() throws IOException {
+    TopicAdminClient topicAdminClient = TopicAdminClient.create();
+    topicAdminClient.createTopic(TOPIC);
+    GetIamPolicyRequest getIamPolicyRequest =
+        GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
+    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
+    Binding binding =
+        Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
+    SetIamPolicyRequest setIamPolicyRequest =
+        SetIamPolicyRequest.newBuilder()
+            .setResource(TOPIC)
+            .setPolicy(policy.toBuilder().addBindings(binding).build())
+            .build();
+    topicAdminClient.setIamPolicy(setIamPolicyRequest);
+    return topicAdminClient;
   }
 
   @Test(timeout = 5000)
@@ -3783,6 +3823,53 @@ public class ITStorageTest {
       assertThat(updatedBucket.getUpdateTime()).isNotNull();
       assertThat(updatedBucket.getCreateTime()).isEqualTo(bucket.getCreateTime());
       assertThat(updatedBucket.getUpdateTime()).isGreaterThan(bucket.getCreateTime());
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+    }
+  }
+
+  @Test
+  public void testNotification() throws InterruptedException, ExecutionException {
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
+    NotificationInfo notificationInfo =
+        NotificationInfo.newBuilder(TOPIC)
+            .setCustomAttributes(CUSTOM_ATTRIBUTES)
+            .setPayloadFormat(PAYLOAD_FORMAT)
+            .build();
+    try {
+      assertThat(storage.listNotifications(bucketName)).isEmpty();
+      Notification notification = storage.createNotification(bucketName, notificationInfo);
+      assertThat(notification.getNotificationId()).isNotNull();
+      assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
+      assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
+      assertThat(notification.getTopic().contains(TOPIC)).isTrue();
+
+      // Gets the notification with the specified id.
+      Notification actualNotification =
+          storage.getNotification(bucketName, notification.getNotificationId());
+      assertThat(actualNotification.getNotificationId())
+          .isEqualTo(notification.getNotificationId());
+      assertThat(actualNotification.getTopic().trim()).isEqualTo(notification.getTopic().trim());
+      assertThat(actualNotification.getEtag()).isEqualTo(notification.getEtag());
+      assertThat(actualNotification.getEventTypes()).isEqualTo(notification.getEventTypes());
+      assertThat(actualNotification.getPayloadFormat()).isEqualTo(notification.getPayloadFormat());
+      assertThat(actualNotification.getSelfLink()).isEqualTo(notification.getSelfLink());
+      assertThat(actualNotification.getCustomAttributes())
+          .isEqualTo(notification.getCustomAttributes());
+
+      // Retrieves the list of notifications associated with the bucket.
+      List<Notification> notifications = storage.listNotifications(bucketName);
+      assertThat(notifications.size()).isEqualTo(1);
+      assertThat(notifications.get(0).getNotificationId())
+          .isEqualTo(actualNotification.getNotificationId());
+
+      // Deletes the notification with the specified id.
+      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId())).isTrue();
+      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId()))
+          .isFalse();
+      assertThat(storage.getNotification(bucketName, notification.getNotificationId())).isNull();
+      assertThat(storage.listNotifications(bucketName)).isEmpty();
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
