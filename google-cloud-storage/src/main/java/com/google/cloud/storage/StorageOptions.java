@@ -38,6 +38,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   private static final String GCS_SCOPE = "https://www.googleapis.com/auth/devstorage.full_control";
   private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
+  private static final boolean DEFAULT_INCLUDE_INVOCATION_ID = true;
   private final RetryAlgorithmManager retryAlgorithmManager;
   private final boolean includeInvocationId;
 
@@ -64,7 +65,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   public static class Builder extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
 
     private StorageRetryStrategy storageRetryStrategy;
-    private boolean storageIncludeInvocationId;
+    private boolean storageIncludeInvocationId = DEFAULT_INCLUDE_INVOCATION_ID;
 
     private Builder() {}
 
@@ -117,10 +118,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
         new RetryAlgorithmManager(
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
-    this.includeInvocationId =
-        serviceDefaults.getStorageIncludeInvocationId() != builder.storageIncludeInvocationId
-            ? builder.storageIncludeInvocationId
-            : serviceDefaults.getStorageIncludeInvocationId();
+    this.includeInvocationId = builder.storageIncludeInvocationId;
   }
 
   private static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {
@@ -145,7 +143,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     }
 
     public boolean getStorageIncludeInvocationId() {
-      return true;
+      return DEFAULT_INCLUDE_INVOCATION_ID;
     }
   }
 

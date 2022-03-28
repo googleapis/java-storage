@@ -80,7 +80,6 @@ public class HttpRpcContextTest {
         transport.getAddHeaderCalls().stream()
             .filter(t -> "x-goog-api-client".equals(t.x()) && t.y().contains("gccl-invocation-id/"))
             .findFirst();
-
     assertTrue(anyXGoogApiClientWithGcclInvocationId.isPresent());
     assertThat(transport.getBuildRequestCalls()).hasSize(1);
   }
