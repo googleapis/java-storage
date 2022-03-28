@@ -402,6 +402,7 @@ public class StorageImplTest {
             .setClock(TIME_SOURCE)
             .setServiceRpcFactory(rpcFactoryMock)
             .setRetrySettings(ServiceOptions.getNoRetrySettings())
+            .setStorageInvocationIDEnabled(false)
             .build();
   }
 
@@ -422,6 +423,13 @@ public class StorageImplTest {
     expectedBucket1 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO1));
     expectedBucket2 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO2));
     expectedBucket3 = new Bucket(storage, new BucketInfo.BuilderImpl(BUCKET_INFO3));
+  }
+
+  @Test
+  public void testInvocationIDDisabledBucket() {
+    EasyMock.replay(storageRpcMock);
+    initializeService();
+    assertFalse(storage.getOptions().getInvocationIDEnabled());
   }
 
   @Test

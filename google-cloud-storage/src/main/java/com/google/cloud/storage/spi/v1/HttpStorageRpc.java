@@ -118,7 +118,9 @@ public class HttpStorageRpc implements StorageRpc {
     // Open Census initialization
     censusHttpModule = new CensusHttpModule(tracer, true);
     initializer = censusHttpModule.getHttpRequestInitializer(initializer);
-    initializer = new InvocationIdInitializer(initializer);
+    if (options.getInvocationIDEnabled()) {
+      initializer = new InvocationIdInitializer(initializer);
+    }
     batchRequestInitializer = censusHttpModule.getHttpRequestInitializer(null);
     storage =
         new Storage.Builder(transport, new JacksonFactory(), initializer)

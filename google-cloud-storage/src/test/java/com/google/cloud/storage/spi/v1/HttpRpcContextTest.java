@@ -86,6 +86,37 @@ public class HttpRpcContextTest {
   }
 
   @Test
+  public void testInvocationIdIsNotPassedThroughWhenDisabled() {
+    MockLowLevelHttpResponse response =
+        new MockLowLevelHttpResponse()
+            .setContentType("application/json")
+            .setContent(
+                "{\n"
+                    + "  \"kind\": \"storage#serviceAccount\",\n"
+                    + "  \"email_address\": \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
+                    + "}\n")
+            .setStatusCode(200);
+    AuditingHttpTransport transport = new AuditingHttpTransport(response);
+    TransportOptions transportOptions =
+        HttpTransportOptions.newBuilder().setHttpTransportFactory(() -> transport).build();
+    Storage service =
+        StorageOptions.getDefaultInstance()
+            .toBuilder()
+            .setTransportOptions(transportOptions)
+            .setStorageInvocationIDEnabled(false)
+            .build()
+            .getService();
+    service.getServiceAccount("test-project");
+    Optional<Tuple<String, String>> anyXGoogApiClientWithGcclInvocationId =
+        transport.getAddHeaderCalls().stream()
+            .filter(t -> "x-goog-api-client".equals(t.x()) && t.y().contains("gccl-invocation-id/"))
+            .findFirst();
+
+    assertFalse(anyXGoogApiClientWithGcclInvocationId.isPresent());
+    assertThat(transport.getBuildRequestCalls()).hasSize(1);
+  }
+
+  @Test
   public void testInvocationIdNotInSignedURL_v2() throws IOException {
     URL signedUrlV2 =
         new URL(
