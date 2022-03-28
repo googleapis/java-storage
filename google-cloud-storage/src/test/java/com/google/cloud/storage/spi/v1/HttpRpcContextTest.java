@@ -150,8 +150,7 @@ public class HttpRpcContextTest {
     WriteChannel writerV2 = service.writer(signedUrlV2);
     writerV2.write(ByteBuffer.wrap("hello".getBytes(StandardCharsets.UTF_8)));
     URL signedUrlV4 =
-            new URL(
-                    "http://www.test.com/test-bucket/test1.txt?X-Goog-Signature=MJUBXAZ7");
+        new URL("http://www.test.com/test-bucket/test1.txt?X-Goog-Signature=MJUBXAZ7");
     WriteChannel writerV4 = service.writer(signedUrlV2);
     writerV4.write(ByteBuffer.wrap("hello".getBytes(StandardCharsets.UTF_8)));
   }
