@@ -19,9 +19,9 @@ package com.example.storage.bucket;
 // [START storage_print_pubsub_bucket_notification]
 
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.Notification;
 import java.util.List;
 
 
@@ -35,7 +35,8 @@ public class PrintPubSubNotification {
 
     Storage storage = StorageOptions.newBuilder().build().getService();
     Notification notification = storage.getNotification(bucketName, notificationId);
-    System.out.println("Found notification " + notification.getTopic() + " for bucket "+ bucketName);
+    System.out.println(
+        "Found notification " + notification.getTopic() + " for bucket " + bucketName);
   }
 }
 // [END storage_print_pubsub_bucket_notification]

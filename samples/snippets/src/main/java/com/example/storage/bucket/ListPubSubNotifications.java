@@ -19,9 +19,9 @@ package com.example.storage.bucket;
 // [START storage_list_bucket_notifications]
 
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.Notification;
 import java.util.List;
 
 
@@ -32,8 +32,9 @@ public class ListPubSubNotifications {
     // String bucketName = "your-unique-bucket-name";
     Storage storage = StorageOptions.newBuilder().build().getService();
     List<Notification> notificationList = storage.listNotifications(bucketName);
-    for(Notification notification : notificationList) {
-      System.out.println("Found notification " + notification.getTopic() + " for bucket "+ bucketName);
+    for (Notification notification : notificationList) {
+      System.out.println(
+          "Found notification " + notification.getTopic() + " for bucket " + bucketName);
     }
   }
 }

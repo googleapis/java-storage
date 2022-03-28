@@ -32,7 +32,7 @@ public class DeleteBucketPubSubNotification {
     // String notificationId = "your-unique-notification-id"
     Storage storage = StorageOptions.newBuilder().build().getService();
     boolean success = storage.deleteNotification(bucketName, notificationId);
-    if(success) {
+    if (success) {
       System.out.println("Successfully deleted notification");
     } else {
       System.out.println("Failed to find notification");

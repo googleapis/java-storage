@@ -19,15 +19,16 @@ package com.example.storage.bucket;
 // [START storage_create_bucket_notifications]
 
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 
 
 public class CreateBucketPubSubNotification {
 
-  public static void createBucketPubSubNotification(String bucketName, NotificationInfo notificationInfo) {
+  public static void createBucketPubSubNotification(String bucketName,
+      NotificationInfo notificationInfo) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
     // The NotificationInfo for the notification you would like to create

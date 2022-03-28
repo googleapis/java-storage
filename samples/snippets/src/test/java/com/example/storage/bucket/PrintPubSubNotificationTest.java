@@ -19,8 +19,8 @@ package com.example.storage.bucket;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.example.storage.TestBase;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
 import com.google.common.collect.ImmutableMap;
@@ -34,6 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class PrintPubSubNotificationTest extends TestBase {
+
   private static final Notification.PayloadFormat PAYLOAD_FORMAT =
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
@@ -43,7 +44,7 @@ public class PrintPubSubNotificationTest extends TestBase {
 
   @BeforeClass
   public static void configureTopicAdminClient() throws IOException {
-    if(PROJECT != null) {
+    if (PROJECT != null) {
       topicAdminClient = TopicAdminClient.create();
       topicAdminClient.createTopic(TOPIC);
       GetIamPolicyRequest getIamPolicyRequest =

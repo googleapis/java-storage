@@ -19,8 +19,8 @@ package com.example.storage.bucket;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.example.storage.TestBase;
+import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
 import com.google.common.collect.ImmutableMap;
