@@ -63,7 +63,7 @@ public class HttpRpcContextTest {
             .setContent(
                 "{\n"
                     + "  \"kind\": \"storage#serviceAccount\",\n"
-                    + "  \"email_address\": \"service-787021104993@gs-project-accounts.iam.gserviceaccount.com\"\n"
+                    + "  \"email_address\": \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
                     + "}\n")
             .setStatusCode(200);
     AuditingHttpTransport transport = new AuditingHttpTransport(response);
@@ -76,7 +76,6 @@ public class HttpRpcContextTest {
             .build()
             .getService();
     service.getServiceAccount("test-project");
-
     Optional<Tuple<String, String>> anyXGoogApiClientWithGcclInvocationId =
         transport.getAddHeaderCalls().stream()
             .filter(t -> "x-goog-api-client".equals(t.x()) && t.y().contains("gccl-invocation-id/"))
@@ -97,7 +96,7 @@ public class HttpRpcContextTest {
   @Test
   public void testInvocationIdNotInSignedURL_v4() throws IOException {
     URL signedUrlV4 =
-        new URL("http://www.test.com/test-bucket/test1.txt?X-Goog-Signature=MJUBXAZ7");
+        new URL("http://www.test.com/test-bucket/test1.txt?X-Goog-Algorithm=&X-Goog-Credential=&X-Goog-Date=&X-Goog-Expires=&X-Goog-SignedHeaders=&X-Goog-Signature=MJUBXAZ7");
     doTestInvocationIdNotInSignedURL(signedUrlV4);
   }
 
@@ -117,14 +116,12 @@ public class HttpRpcContextTest {
             .setTransportOptions(transportOptions)
             .build()
             .getService();
-    WriteChannel writerV2 = service.writer(signedUrl);
-    writerV2.write(ByteBuffer.wrap("hello".getBytes(StandardCharsets.UTF_8)));
-
+    WriteChannel writer = service.writer(signedUrl);
+    writer.write(ByteBuffer.wrap("hello".getBytes(StandardCharsets.UTF_8)));
     Optional<Tuple<String, String>> anyXGoogApiClientWithGcclInvocationId =
         transport.getAddHeaderCalls().stream()
             .filter(t -> "x-goog-api-client".equals(t.x()) && t.y().contains("gccl-invocation-id/"))
             .findFirst();
-
     assertFalse(anyXGoogApiClientWithGcclInvocationId.isPresent());
     assertThat(transport.getBuildRequestCalls()).hasSize(1);
   }
