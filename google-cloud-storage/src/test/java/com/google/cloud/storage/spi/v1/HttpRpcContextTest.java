@@ -96,7 +96,8 @@ public class HttpRpcContextTest {
   @Test
   public void testInvocationIdNotInSignedURL_v4() throws IOException {
     URL signedUrlV4 =
-        new URL("http://www.test.com/test-bucket/test1.txt?X-Goog-Algorithm=&X-Goog-Credential=&X-Goog-Date=&X-Goog-Expires=&X-Goog-SignedHeaders=&X-Goog-Signature=MJUBXAZ7");
+        new URL(
+            "http://www.test.com/test-bucket/test1.txt?X-Goog-Algorithm=&X-Goog-Credential=&X-Goog-Date=&X-Goog-Expires=&X-Goog-SignedHeaders=&X-Goog-Signature=MJUBXAZ7");
     doTestInvocationIdNotInSignedURL(signedUrlV4);
   }
 
