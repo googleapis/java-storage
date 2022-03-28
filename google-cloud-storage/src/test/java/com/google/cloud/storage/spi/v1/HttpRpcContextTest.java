@@ -103,7 +103,7 @@ public class HttpRpcContextTest {
         StorageOptions.getDefaultInstance()
             .toBuilder()
             .setTransportOptions(transportOptions)
-            .setStorageInvocationIDEnabled(false)
+            .setStorageIncludeInvocationId(false)
             .build()
             .getService();
     service.getServiceAccount("test-project");

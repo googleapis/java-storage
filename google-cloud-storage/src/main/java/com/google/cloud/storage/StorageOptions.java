@@ -39,7 +39,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
   private final RetryAlgorithmManager retryAlgorithmManager;
-  private final Boolean invocationIDEnabled;
+  private final boolean includeInvocationId;
 
   public static class DefaultStorageFactory implements StorageFactory {
 
@@ -64,7 +64,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   public static class Builder extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
 
     private StorageRetryStrategy storageRetryStrategy;
-    private Boolean storageInvocationIDEnabled;
+    private boolean storageIncludeInvocationId;
 
     private Builder() {}
 
@@ -97,12 +97,11 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     /**
      * Override default enablement of invocation id added to x-goog-api-client header.
      *
-     * @param storageInvocationIDEnabled a non-null Boolean to change enablement of invocation id
+     * @param storageIncludeInvocationId a boolean to change enablement of invocation id
      * @return the builder
      */
-    public Builder setStorageInvocationIDEnabled(Boolean storageInvocationIDEnabled) {
-      this.storageInvocationIDEnabled =
-          requireNonNull(storageInvocationIDEnabled, "storageInvocationIDEnabled must be non null");
+    public Builder setStorageIncludeInvocationId(boolean storageIncludeInvocationId) {
+      this.storageIncludeInvocationId = storageIncludeInvocationId;
       return this;
     }
 
@@ -118,9 +117,10 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
         new RetryAlgorithmManager(
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
-    this.invocationIDEnabled =
-        MoreObjects.firstNonNull(
-            builder.storageInvocationIDEnabled, serviceDefaults.getStorageInvocationIDEnabled());
+    this.includeInvocationId =
+        serviceDefaults.getStorageIncludeInvocationId() != builder.storageIncludeInvocationId
+            ? builder.storageIncludeInvocationId
+            : serviceDefaults.getStorageIncludeInvocationId();
   }
 
   private static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {
@@ -144,8 +144,8 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
-    public Boolean getStorageInvocationIDEnabled() {
-      return Boolean.TRUE;
+    public boolean getStorageIncludeInvocationId() {
+      return true;
     }
   }
 
@@ -174,8 +174,8 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   }
 
   /** Returns if Invocation ID is enabled and transmitted through x-goog-api-client header. */
-  public boolean getInvocationIDEnabled() {
-    return invocationIDEnabled.booleanValue();
+  public boolean getIncludeInvocationId() {
+    return includeInvocationId;
   }
 
   /** Returns a default {@code StorageOptions} instance. */
