@@ -17,6 +17,7 @@
 package com.google.cloud.storage.spi.v1;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.api.client.http.HttpTransport;
@@ -25,10 +26,15 @@ import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.google.auth.http.HttpTransportFactory;
 import com.google.cloud.TransportOptions;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.function.Supplier;
 import org.junit.Test;
@@ -93,5 +99,60 @@ public class HttpRpcContextTest {
             .build()
             .getService();
     service.getServiceAccount("test-project");
+  }
+
+  @Test
+  public void testInvocationIdNotInSignedURLs() throws IOException {
+    HttpTransportFactory mockTransportFactory =
+        new HttpTransportFactory() {
+          @Override
+          public HttpTransport create() {
+            return new HttpTransport() {
+              @Override
+              public LowLevelHttpRequest buildRequest(String method, String url)
+                  throws IOException {
+                assertTrue(url.contains("Signature="));
+                return new LowLevelHttpRequest() {
+                  @Override
+                  public void addHeader(String headerName, String headerValue) throws IOException {
+                    if (headerName.equals("x-goog-api-client")) {
+                      assertFalse(
+                          headerValue.contains(
+                              "gccl-invocation-id/"
+                                  + HttpRpcContext.getInstance().getInvocationId()));
+                    }
+                  }
+
+                  @Override
+                  public LowLevelHttpResponse execute() {
+                    return new MockLowLevelHttpResponse()
+                        .setContentType("text/plain")
+                        .setHeaderNames(ImmutableList.of("Location"))
+                        .setHeaderValues(ImmutableList.of("http://test"))
+                        .setStatusCode(201);
+                  }
+                };
+              }
+            };
+          }
+        };
+    TransportOptions transportOptions =
+        HttpTransportOptions.newBuilder().setHttpTransportFactory(mockTransportFactory).build();
+    Storage service =
+        StorageOptions.getDefaultInstance()
+            .toBuilder()
+            .setTransportOptions(transportOptions)
+            .build()
+            .getService();
+    URL signedUrlV2 =
+        new URL(
+            "http://www.test.com/test-bucket/test1.txt?GoogleAccessId=testClient-test@test.com&Expires=1553839761&Signature=MJUBXAZ7");
+    WriteChannel writerV2 = service.writer(signedUrlV2);
+    writerV2.write(ByteBuffer.wrap("hello".getBytes(StandardCharsets.UTF_8)));
+    URL signedUrlV4 =
+            new URL(
+                    "http://www.test.com/test-bucket/test1.txt?X-Goog-Signature=MJUBXAZ7");
+    WriteChannel writerV4 = service.writer(signedUrlV2);
+    writerV4.write(ByteBuffer.wrap("hello".getBytes(StandardCharsets.UTF_8)));
   }
 }

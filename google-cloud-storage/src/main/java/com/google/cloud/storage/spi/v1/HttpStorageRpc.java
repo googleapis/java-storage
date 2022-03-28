@@ -158,7 +158,9 @@ public class HttpStorageRpc implements StorageRpc {
         this.interceptor.intercept(request);
       }
       UUID invocationId = HttpRpcContext.getInstance().getInvocationId();
-      if (invocationId != null) {
+      final String signatureKey = "Signature="; // For V2 and V4 signedURLs
+      final String builtURL = request.getUrl().build();
+      if (invocationId != null && !builtURL.contains(signatureKey)) {
         HttpHeaders headers = request.getHeaders();
         String existing = (String) headers.get("x-goog-api-client");
         String invocationEntry = "gccl-invocation-id/" + invocationId;
