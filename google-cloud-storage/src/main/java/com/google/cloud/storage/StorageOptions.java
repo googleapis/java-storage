@@ -65,12 +65,13 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   public static class Builder extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
 
     private StorageRetryStrategy storageRetryStrategy;
-    private boolean includeInvocationId = DEFAULT_INCLUDE_INVOCATION_ID;
+    private boolean includeInvocationId;
 
     private Builder() {}
 
     private Builder(StorageOptions options) {
       super(options);
+      this.includeInvocationId = options.includeInvocationId;
     }
 
     @Override
@@ -203,6 +204,8 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   }
 
   public static Builder newBuilder() {
-    return new Builder().setHost(DEFAULT_HOST);
+    return new Builder()
+        .setHost(DEFAULT_HOST)
+        .setIncludeInvocationId(DEFAULT_INCLUDE_INVOCATION_ID);
   }
 }
