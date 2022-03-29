@@ -98,11 +98,11 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     /**
      * Override default enablement of invocation id added to x-goog-api-client header.
      *
-     * @param storageIncludeInvocationId a boolean to change enablement of invocation id
+     * @param includeInvocationId a boolean to change enablement of invocation id
      * @return the builder
      */
     public Builder setIncludeInvocationId(boolean includeInvocationId) {
-      this.storageIncludeInvocationId = storageIncludeInvocationId;
+      this.includeInvocationId = includeInvocationId;
       return this;
     }
 
@@ -118,7 +118,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
         new RetryAlgorithmManager(
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
-    this.includeInvocationId = builder.storageIncludeInvocationId;
+    this.includeInvocationId = builder.includeInvocationId;
   }
 
   private static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {

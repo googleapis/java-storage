@@ -72,13 +72,13 @@ public class StorageOptionsTest {
   public void testDefaultInvocationId() {
     StorageOptions opts1 = StorageOptions.getDefaultInstance();
 
-    assertTrue(opts1.getIncludeInvocationId());
+    assertTrue(opts1.isIncludeInvocationId());
   }
 
   @Test
   public void testDisableInvocationId() {
-    StorageOptions opts1 = StorageOptions.newBuilder().setStorageIncludeInvocationId(false).build();
+    StorageOptions opts1 = StorageOptions.newBuilder().setIncludeInvocationId(false).build();
 
-    assertFalse(opts1.getIncludeInvocationId());
+    assertFalse(opts1.isIncludeInvocationId());
   }
 }
