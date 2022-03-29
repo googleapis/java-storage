@@ -33,7 +33,6 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
-
 import com.google.cloud.testing.junit4.MultipleAttemptsRule;
 import org.junit.Assert;
 import org.junit.Before;
@@ -50,8 +49,7 @@ public class ITHmacSnippets extends TestBase {
     cleanUpHmacKeys(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
   }
 
-  @Rule
-  public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
 
   private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
     Page<HmacKey.HmacKeyMetadata> metadatas =
@@ -68,7 +66,7 @@ public class ITHmacSnippets extends TestBase {
 
   @Test
   public void testCreateHmacKey() throws Exception {
-;
+    ;
     CreateHmacKey.createHmacKey(HMAC_KEY_TEST_SERVICE_ACCOUNT, PROJECT_ID);
     String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     String accessId = snippetOutput.split("Access ID: ")[1].split("\n")[0];
