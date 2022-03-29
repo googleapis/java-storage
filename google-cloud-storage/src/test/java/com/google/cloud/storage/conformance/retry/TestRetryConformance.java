@@ -111,13 +111,21 @@ final class TestRetryConformance {
             .map(s -> s.replace("return-", ""))
             .collect(Collectors.joining("_"));
     this.bucketName =
-        String.format("%s_s%03d-%s-m%03d_bkt1", BASE_ID, scenarioId, instructionsString, mappingId);
+        String.format(
+            "%s_s%03d-%s-m%03d_bkt1",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
     this.bucketName2 =
-        String.format("%s_s%03d-%s-m%03d_bkt2", BASE_ID, scenarioId, instructionsString, mappingId);
+        String.format(
+            "%s_s%03d-%s-m%03d_bkt2",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
     this.userProject =
-        String.format("%s_s%03d-%s-m%03d_prj1", BASE_ID, scenarioId, instructionsString, mappingId);
+        String.format(
+            "%s_s%03d-%s-m%03d_prj1",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
     this.objectName =
-        String.format("%s_s%03d-%s-m%03d_obj1", BASE_ID, scenarioId, instructionsString, mappingId);
+        String.format(
+            "%s_s%03d-%s-m%03d_obj1",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
   }
 
   public String getProjectId() {
