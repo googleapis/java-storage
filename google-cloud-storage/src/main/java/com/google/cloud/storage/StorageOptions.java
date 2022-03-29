@@ -65,7 +65,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   public static class Builder extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
 
     private StorageRetryStrategy storageRetryStrategy;
-    private boolean storageIncludeInvocationId = DEFAULT_INCLUDE_INVOCATION_ID;
+    private boolean includeInvocationId = DEFAULT_INCLUDE_INVOCATION_ID;
 
     private Builder() {}
 
@@ -101,7 +101,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
      * @param storageIncludeInvocationId a boolean to change enablement of invocation id
      * @return the builder
      */
-    public Builder setStorageIncludeInvocationId(boolean storageIncludeInvocationId) {
+    public Builder setIncludeInvocationId(boolean includeInvocationId) {
       this.storageIncludeInvocationId = storageIncludeInvocationId;
       return this;
     }
@@ -142,7 +142,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
-    public boolean getStorageIncludeInvocationId() {
+    public boolean isIncludeInvocationId() {
       return DEFAULT_INCLUDE_INVOCATION_ID;
     }
   }
@@ -172,7 +172,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   }
 
   /** Returns if Invocation ID is enabled and transmitted through x-goog-api-client header. */
-  public boolean getIncludeInvocationId() {
+  public boolean isIncludeInvocationId() {
     return includeInvocationId;
   }
 
