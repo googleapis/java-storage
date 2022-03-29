@@ -1,5 +1,37 @@
 # Changelog
 
+### [2.5.1](https://github.com/googleapis/java-storage/compare/v2.5.0...v2.5.1) (2022-03-28)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-pubsub to v1.116.2 ([#1310](https://github.com/googleapis/java-storage/issues/1310)) ([fb64493](https://github.com/googleapis/java-storage/commit/fb644932d4350b4e33481abda8cc8f498f9da85e))
+
+## [2.5.0](https://github.com/googleapis/java-storage/compare/v2.4.5...v2.5.0) (2022-03-25)
+
+
+### Features
+
+* allow limiting ReadChannel ([#1180](https://github.com/googleapis/java-storage/issues/1180)) ([2898ee8](https://github.com/googleapis/java-storage/commit/2898ee88545a93916d55c969fd0838e4fc703912))
+* expose the methods of Notifications ([#399](https://github.com/googleapis/java-storage/issues/399)) ([0bd17b1](https://github.com/googleapis/java-storage/commit/0bd17b1f70e47081941a44f018e3098b37ba2c47))
+
+
+### Documentation
+
+* Adding Samples for printing all Acls for a file and for a specific user ([#1288](https://github.com/googleapis/java-storage/issues/1288)) ([32fe388](https://github.com/googleapis/java-storage/commit/32fe388c8733cb237fc2a5b4676e36df76ef0dff))
+* Copy all storage samples from java-docs-samples ([#1258](https://github.com/googleapis/java-storage/issues/1258)) ([48b99be](https://github.com/googleapis/java-storage/commit/48b99beb692f529bea7e3de7ea5a36606876d96a))
+* **sample:** Add Native Image sample for Storage ([#1283](https://github.com/googleapis/java-storage/issues/1283)) ([375874d](https://github.com/googleapis/java-storage/commit/375874d38fc46bfec2df4c58e7d661c4f1f6c486))
+
+
+### Dependencies
+
+* allow snapshot to update properly ([#1311](https://github.com/googleapis/java-storage/issues/1311)) ([a5d32f2](https://github.com/googleapis/java-storage/commit/a5d32f2945247f76a21b030300a6e037084231b5))
+* update dependency com.google.cloud:native-image-support to v0.12.10 ([#1295](https://github.com/googleapis/java-storage/issues/1295)) ([3b3ecce](https://github.com/googleapis/java-storage/commit/3b3ecce262a3c7c95fbf0ddf3a5830a116022053))
+* update dependency org.graalvm.buildtools:junit-platform-native to v0.9.10 ([#1296](https://github.com/googleapis/java-storage/issues/1296)) ([6f1b142](https://github.com/googleapis/java-storage/commit/6f1b1423d1de6aef9aedbf6b89ce42bbc72196e9))
+* update dependency org.graalvm.buildtools:junit-platform-native to v0.9.11 ([#1306](https://github.com/googleapis/java-storage/issues/1306)) ([1527ba0](https://github.com/googleapis/java-storage/commit/1527ba0abad38acd55542ce92214d5c66a9c62ee))
+* update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.10 ([#1297](https://github.com/googleapis/java-storage/issues/1297)) ([3f64f11](https://github.com/googleapis/java-storage/commit/3f64f117be7b7150a7a89c5240f09350d1add578))
+* update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.11 ([#1307](https://github.com/googleapis/java-storage/issues/1307)) ([e45ae07](https://github.com/googleapis/java-storage/commit/e45ae0783bd9e0bea7e8accee1437dee4e974333))
+
 ### [2.4.5](https://github.com/googleapis/java-storage/compare/v2.4.4...v2.4.5) (2022-03-04)
 
 

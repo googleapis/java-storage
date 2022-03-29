@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.RetryHelper.runWithRetries;
 import static com.google.cloud.storage.PolicyHelper.convertToApiPolicy;
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.cloud.storage.spi.v1.StorageRpc.Option.DELIMITER;
@@ -44,6 +45,7 @@ import com.google.cloud.PageImpl;
 import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
+import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
@@ -1372,6 +1374,98 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private <T, U> U run(ResultRetryAlgorithm<?> algorithm, Callable<T> c, Function<T, U> f) {
     return Retrying.run(getOptions(), algorithm, c, f);
+  }
+
+  @Override
+  public Notification createNotification(
+      final String bucket, final NotificationInfo notificationInfo) {
+    final com.google.api.services.storage.model.Notification notificationPb =
+        notificationInfo.toPb();
+    try {
+      return Notification.fromPb(
+          this,
+          runWithRetries(
+              new Callable<com.google.api.services.storage.model.Notification>() {
+                @Override
+                public com.google.api.services.storage.model.Notification call() {
+                  return storageRpc.createNotification(bucket, notificationPb);
+                }
+              },
+              getOptions().getRetrySettings(),
+              EXCEPTION_HANDLER,
+              getOptions().getClock()));
+    } catch (RetryHelperException e) {
+      throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
+  public Notification getNotification(final String bucket, final String notificationId) {
+    try {
+      com.google.api.services.storage.model.Notification answer =
+          runWithRetries(
+              new Callable<com.google.api.services.storage.model.Notification>() {
+                @Override
+                public com.google.api.services.storage.model.Notification call() {
+                  return storageRpc.getNotification(bucket, notificationId);
+                }
+              },
+              getOptions().getRetrySettings(),
+              EXCEPTION_HANDLER,
+              getOptions().getClock());
+      return answer == null ? null : Notification.fromPb(this, answer);
+    } catch (RetryHelperException e) {
+      throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
+  public List<Notification> listNotifications(final String bucket) {
+    try {
+      List<com.google.api.services.storage.model.Notification> answer =
+          runWithRetries(
+              new Callable<List<com.google.api.services.storage.model.Notification>>() {
+                @Override
+                public List<com.google.api.services.storage.model.Notification> call() {
+                  return storageRpc.listNotifications(bucket);
+                }
+              },
+              getOptions().getRetrySettings(),
+              EXCEPTION_HANDLER,
+              getOptions().getClock());
+      return answer == null
+          ? ImmutableList.<Notification>of()
+          : Lists.transform(
+              answer,
+              new com.google.common.base.Function<
+                  com.google.api.services.storage.model.Notification, Notification>() {
+                @Override
+                public Notification apply(
+                    com.google.api.services.storage.model.Notification notificationPb) {
+                  return Notification.fromPb(getOptions().getService(), notificationPb);
+                }
+              });
+    } catch (RetryHelperException e) {
+      throw StorageException.translateAndThrow(e);
+    }
+  }
+
+  @Override
+  public boolean deleteNotification(final String bucket, final String notificationId) {
+    try {
+      return runWithRetries(
+          new Callable<Boolean>() {
+            @Override
+            public Boolean call() {
+              return storageRpc.deleteNotification(bucket, notificationId);
+            }
+          },
+          getOptions().getRetrySettings(),
+          EXCEPTION_HANDLER,
+          getOptions().getClock());
+    } catch (RetryHelperException e) {
+      throw StorageException.translateAndThrow(e);
+    }
   }
 
   private static <T> void addToOptionMap(

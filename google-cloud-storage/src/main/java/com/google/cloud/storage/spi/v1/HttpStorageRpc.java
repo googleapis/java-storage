@@ -1603,6 +1603,25 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   @Override
+  public Notification getNotification(String bucket, String notification) {
+    Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_GET_NOTIFICATION);
+    Scope scope = tracer.withSpan(span);
+    try {
+      return storage.notifications().get(bucket, notification).execute();
+    } catch (IOException ex) {
+      span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
+      StorageException serviceException = translate(ex);
+      if (serviceException.getCode() == HTTP_NOT_FOUND) {
+        return null;
+      }
+      throw serviceException;
+    } finally {
+      scope.close();
+      span.end();
+    }
+  }
+
+  @Override
   public Bucket lockRetentionPolicy(Bucket bucket, Map<Option, ?> options) {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_LOCK_RETENTION_POLICY);
     Scope scope = tracer.withSpan(span);
