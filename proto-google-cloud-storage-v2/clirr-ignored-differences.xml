@@ -55,4 +55,110 @@
   </difference>
 
 
+  <!--
+  replace enum with string representation for predefined ACLs and public_access_prevention
+   -->
+  <difference>
+    <differenceType>6011</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <field>CUSTOM_PLACEMENT_CONFIG_FIELD_NUMBER</field>
+  </difference>
+  <!-- allow removal of old methods -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *CustomPlacementConfig*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *DestinationPredefinedAclValue*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *PredefinedAclValue*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *PredefinedDefaultObjectAclValue*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *PublicAccessPrevention*(*)</method>
+  </difference>
+  <!-- Allow new parameter type -->
+  <difference>
+    <differenceType>7005</differenceType>
+    <className>com/google/storage/v2/Bucket$IamConfig$Builder</className>
+    <method>com.google.storage.v2.Bucket$IamConfig$Builder setPublicAccessPrevention(com.google.storage.v2.Bucket$IamConfig$PublicAccessPrevention)</method>
+    <to>com.google.storage.v2.Bucket$IamConfig$Builder setPublicAccessPrevention(java.lang.String)</to>
+  </difference>
+<!--  <difference>
+    <differenceType>7005</differenceType>
+    <className>com/google/storage/v2/*$Builder</className>
+    <method>com.google.storage.v2.*$Builder setDestinationPredefinedAcl(com.google.storage.v2.PredefinedObjectAcl)</method>
+    <to>com.google.storage.v2.*$Builder setDestinationPredefinedAcl(java.lang.String)</to>
+  </difference>-->
+<!--
+  <difference>
+    <differenceType>7005</differenceType>
+    <className>com/google/storage/v2/*$Builder</className>
+    <method>com.google.storage.v2.*$Builder setPredefinedDefaultObjectAcl(com.google.storage.v2.PredefinedObjectAcl)</method>
+    <to>com.google.storage.v2.*$Builder setPredefinedDefaultObjectAcl(com.google.storage.v2.PredefinedObjectAcl)</to>
+  </difference>
+-->
+  <!-- for some weird reason I don't understand, having more than one 7005 rule here breaks them working together-->
+  <difference>
+    <differenceType>7005</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *(*)</method>
+    <to>* *(*)</to>
+  </difference>
+
+  <!-- Allow new return type -->
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *DestinationPredefinedAcl*(*)</method>
+    <to>*</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *PredefinedAcl*(*)</method>
+    <to>*</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *PredefinedDefaultObjectAcl*(*)</method>
+    <to>*</to>
+  </difference>
+  <difference>
+    <differenceType>7006</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *PublicAccessPrevention*(*)</method>
+    <to>*</to>
+  </difference>
+  <!-- Allow deletion of old inner class -->
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/storage/v2/Bucket$CustomPlacementConfig*</className>
+  </difference>
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/storage/v2/Bucket$IamConfig$PublicAccessPrevention*</className>
+  </difference>
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/storage/v2/PredefinedBucketAcl</className>
+  </difference>
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/storage/v2/PredefinedObjectAcl</className>
+  </difference>
+
 </differences>

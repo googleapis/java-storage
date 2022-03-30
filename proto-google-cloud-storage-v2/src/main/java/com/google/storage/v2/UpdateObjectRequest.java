@@ -38,7 +38,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   private UpdateObjectRequest() {
-    predefinedAcl_ = 0;
+    predefinedAcl_ = "";
   }
 
   @java.lang.Override
@@ -109,13 +109,6 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
               ifMetagenerationNotMatch_ = input.readInt64();
               break;
             }
-          case 48:
-            {
-              int rawValue = input.readEnum();
-
-              predefinedAcl_ = rawValue;
-              break;
-            }
           case 58:
             {
               com.google.protobuf.FieldMask.Builder subBuilder = null;
@@ -161,6 +154,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
                 commonRequestParams_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+          case 82:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              predefinedAcl_ = s;
               break;
             }
           default:
@@ -402,40 +402,57 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     return ifMetagenerationNotMatch_;
   }
 
-  public static final int PREDEFINED_ACL_FIELD_NUMBER = 6;
-  private int predefinedAcl_;
+  public static final int PREDEFINED_ACL_FIELD_NUMBER = 10;
+  private volatile java.lang.Object predefinedAcl_;
   /**
    *
    *
    * <pre>
    * Apply a predefined set of access controls to this object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 6;</code>
+   * <code>string predefined_acl = 10;</code>
    *
-   * @return The enum numeric value on the wire for predefinedAcl.
+   * @return The predefinedAcl.
    */
   @java.lang.Override
-  public int getPredefinedAclValue() {
-    return predefinedAcl_;
+  public java.lang.String getPredefinedAcl() {
+    java.lang.Object ref = predefinedAcl_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      predefinedAcl_ = s;
+      return s;
+    }
   }
   /**
    *
    *
    * <pre>
    * Apply a predefined set of access controls to this object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 6;</code>
+   * <code>string predefined_acl = 10;</code>
    *
-   * @return The predefinedAcl.
+   * @return The bytes for predefinedAcl.
    */
   @java.lang.Override
-  public com.google.storage.v2.PredefinedObjectAcl getPredefinedAcl() {
-    @SuppressWarnings("deprecation")
-    com.google.storage.v2.PredefinedObjectAcl result =
-        com.google.storage.v2.PredefinedObjectAcl.valueOf(predefinedAcl_);
-    return result == null ? com.google.storage.v2.PredefinedObjectAcl.UNRECOGNIZED : result;
+  public com.google.protobuf.ByteString getPredefinedAclBytes() {
+    java.lang.Object ref = predefinedAcl_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      predefinedAcl_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   public static final int UPDATE_MASK_FIELD_NUMBER = 7;
@@ -631,11 +648,6 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     if (((bitField0_ & 0x00000008) != 0)) {
       output.writeInt64(5, ifMetagenerationNotMatch_);
     }
-    if (predefinedAcl_
-        != com.google.storage.v2.PredefinedObjectAcl.PREDEFINED_OBJECT_ACL_UNSPECIFIED
-            .getNumber()) {
-      output.writeEnum(6, predefinedAcl_);
-    }
     if (updateMask_ != null) {
       output.writeMessage(7, getUpdateMask());
     }
@@ -644,6 +656,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     }
     if (commonRequestParams_ != null) {
       output.writeMessage(9, getCommonRequestParams());
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedAcl_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 10, predefinedAcl_);
     }
     unknownFields.writeTo(output);
   }
@@ -669,11 +684,6 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     if (((bitField0_ & 0x00000008) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, ifMetagenerationNotMatch_);
     }
-    if (predefinedAcl_
-        != com.google.storage.v2.PredefinedObjectAcl.PREDEFINED_OBJECT_ACL_UNSPECIFIED
-            .getNumber()) {
-      size += com.google.protobuf.CodedOutputStream.computeEnumSize(6, predefinedAcl_);
-    }
     if (updateMask_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(7, getUpdateMask());
     }
@@ -684,6 +694,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     }
     if (commonRequestParams_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(9, getCommonRequestParams());
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedAcl_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(10, predefinedAcl_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -721,7 +734,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     if (hasIfMetagenerationNotMatch()) {
       if (getIfMetagenerationNotMatch() != other.getIfMetagenerationNotMatch()) return false;
     }
-    if (predefinedAcl_ != other.predefinedAcl_) return false;
+    if (!getPredefinedAcl().equals(other.getPredefinedAcl())) return false;
     if (hasUpdateMask() != other.hasUpdateMask()) return false;
     if (hasUpdateMask()) {
       if (!getUpdateMask().equals(other.getUpdateMask())) return false;
@@ -767,7 +780,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfMetagenerationNotMatch());
     }
     hash = (37 * hash) + PREDEFINED_ACL_FIELD_NUMBER;
-    hash = (53 * hash) + predefinedAcl_;
+    hash = (53 * hash) + getPredefinedAcl().hashCode();
     if (hasUpdateMask()) {
       hash = (37 * hash) + UPDATE_MASK_FIELD_NUMBER;
       hash = (53 * hash) + getUpdateMask().hashCode();
@@ -939,7 +952,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
-      predefinedAcl_ = 0;
+      predefinedAcl_ = "";
 
       if (updateMaskBuilder_ == null) {
         updateMask_ = null;
@@ -1090,8 +1103,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       if (other.hasIfMetagenerationNotMatch()) {
         setIfMetagenerationNotMatch(other.getIfMetagenerationNotMatch());
       }
-      if (other.predefinedAcl_ != 0) {
-        setPredefinedAclValue(other.getPredefinedAclValue());
+      if (!other.getPredefinedAcl().isEmpty()) {
+        predefinedAcl_ = other.predefinedAcl_;
+        onChanged();
       }
       if (other.hasUpdateMask()) {
         mergeUpdateMask(other.getUpdateMask());
@@ -1644,35 +1658,73 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       return this;
     }
 
-    private int predefinedAcl_ = 0;
+    private java.lang.Object predefinedAcl_ = "";
     /**
      *
      *
      * <pre>
      * Apply a predefined set of access controls to this object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 6;</code>
+     * <code>string predefined_acl = 10;</code>
      *
-     * @return The enum numeric value on the wire for predefinedAcl.
+     * @return The predefinedAcl.
      */
-    @java.lang.Override
-    public int getPredefinedAclValue() {
-      return predefinedAcl_;
+    public java.lang.String getPredefinedAcl() {
+      java.lang.Object ref = predefinedAcl_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        predefinedAcl_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
     }
     /**
      *
      *
      * <pre>
      * Apply a predefined set of access controls to this object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 6;</code>
+     * <code>string predefined_acl = 10;</code>
      *
-     * @param value The enum numeric value on the wire for predefinedAcl to set.
+     * @return The bytes for predefinedAcl.
+     */
+    public com.google.protobuf.ByteString getPredefinedAclBytes() {
+      java.lang.Object ref = predefinedAcl_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        predefinedAcl_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Apply a predefined set of access controls to this object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * </pre>
+     *
+     * <code>string predefined_acl = 10;</code>
+     *
+     * @param value The predefinedAcl to set.
      * @return This builder for chaining.
      */
-    public Builder setPredefinedAclValue(int value) {
+    public Builder setPredefinedAcl(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
 
       predefinedAcl_ = value;
       onChanged();
@@ -1683,37 +1735,17 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Apply a predefined set of access controls to this object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 6;</code>
+     * <code>string predefined_acl = 10;</code>
      *
-     * @return The predefinedAcl.
-     */
-    @java.lang.Override
-    public com.google.storage.v2.PredefinedObjectAcl getPredefinedAcl() {
-      @SuppressWarnings("deprecation")
-      com.google.storage.v2.PredefinedObjectAcl result =
-          com.google.storage.v2.PredefinedObjectAcl.valueOf(predefinedAcl_);
-      return result == null ? com.google.storage.v2.PredefinedObjectAcl.UNRECOGNIZED : result;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Apply a predefined set of access controls to this object.
-     * </pre>
-     *
-     * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 6;</code>
-     *
-     * @param value The predefinedAcl to set.
      * @return This builder for chaining.
      */
-    public Builder setPredefinedAcl(com.google.storage.v2.PredefinedObjectAcl value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder clearPredefinedAcl() {
 
-      predefinedAcl_ = value.getNumber();
+      predefinedAcl_ = getDefaultInstance().getPredefinedAcl();
       onChanged();
       return this;
     }
@@ -1722,15 +1754,22 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Apply a predefined set of access controls to this object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 6;</code>
+     * <code>string predefined_acl = 10;</code>
      *
+     * @param value The bytes for predefinedAcl to set.
      * @return This builder for chaining.
      */
-    public Builder clearPredefinedAcl() {
+    public Builder setPredefinedAclBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
 
-      predefinedAcl_ = 0;
+      predefinedAcl_ = value;
       onChanged();
       return this;
     }
