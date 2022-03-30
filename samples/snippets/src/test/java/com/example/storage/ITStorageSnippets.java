@@ -22,10 +22,9 @@ import static org.junit.Assert.assertTrue;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
-import java.io.ByteArrayOutputStream;
+import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +50,8 @@ public class ITStorageSnippets {
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static Storage storage;
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
+
+  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
 
   @Rule public ExpectedException thrown = ExpectedException.none();
 
@@ -81,12 +82,8 @@ public class ITStorageSnippets {
 
   @Test
   public void testGetServiceAccount() {
-    PrintStream systemOut = System.out;
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GetServiceAccount.getServiceAccount(PROJECT_ID);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(systemOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
 
     assertTrue(snippetOutput.contains("service"));
     assertTrue(snippetOutput.contains("@gs-project-accounts.iam.gserviceaccount.com"));
@@ -94,12 +91,8 @@ public class ITStorageSnippets {
 
   @Test
   public void testGenerateSignedPostPolicyV4() throws Exception {
-    PrintStream systemOut = System.out;
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GenerateSignedPostPolicyV4.generateSignedPostPolicyV4(PROJECT_ID, BUCKET, "my-object");
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(systemOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(
         snippetOutput.contains("<form action='https://storage.googleapis.com/" + BUCKET + "/'"));
     assertTrue(snippetOutput.contains("<input name='key' value='my-object'"));
