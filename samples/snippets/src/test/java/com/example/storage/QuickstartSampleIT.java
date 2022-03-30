@@ -34,8 +34,7 @@ import org.junit.runners.JUnit4;
 @SuppressWarnings("checkstyle:abbreviationaswordinname")
 public class QuickstartSampleIT {
 
-  @Rule
-  public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
+  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
 
   private String bucketName;
 
