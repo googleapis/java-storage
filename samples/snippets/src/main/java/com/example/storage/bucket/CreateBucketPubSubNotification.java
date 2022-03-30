@@ -17,7 +17,6 @@
 package com.example.storage.bucket;
 
 // [START storage_create_bucket_notifications]
-
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.NotificationInfo.EventType;
