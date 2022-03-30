@@ -83,8 +83,15 @@ public class CreateBucketPubSubNotificationTest extends TestBase {
     assertNotNull("Unable to determine project", PROJECT);
     assertNotNull("Topic Admin Client did not start up", topicAdminClient);
 
-    com.example.storage.bucket.CreateBucketPubSubNotification.createBucketPubSubNotification(bucketName, TOPIC,
-        CUSTOM_ATTRIBUTES, EVENT_TYPES, OBJECT_NAME_PREFIX, PAYLOAD_FORMAT, SELF_LINK, ETAG);
+    com.example.storage.bucket.CreateBucketPubSubNotification.createBucketPubSubNotification(
+        bucketName,
+        TOPIC,
+        CUSTOM_ATTRIBUTES,
+        EVENT_TYPES,
+        OBJECT_NAME_PREFIX,
+        PAYLOAD_FORMAT,
+        SELF_LINK,
+        ETAG);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(TOPIC);
   }
 

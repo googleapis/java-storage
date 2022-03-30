@@ -81,7 +81,8 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
     assertNotNull("Topic Admin Client did not start up", topicAdminClient);
 
     Notification notification = storage.createNotification(bucketName, notificationInfo);
-    com.example.storage.bucket.DeleteBucketPubSubNotification.deleteBucketPubSubNotification(bucketName,
+    com.example.storage.bucket.DeleteBucketPubSubNotification.deleteBucketPubSubNotification(
+        bucketName,
         notification.getNotificationId());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
         "Successfully deleted notification");
@@ -96,7 +97,8 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
     // Do a delete first.
     storage.deleteNotification(bucketName, notification.getNotificationId());
     // Now try to delete again.
-    com.example.storage.bucket.DeleteBucketPubSubNotification.deleteBucketPubSubNotification(bucketName,
+    com.example.storage.bucket.DeleteBucketPubSubNotification.deleteBucketPubSubNotification(
+        bucketName,
         notification.getNotificationId());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Failed to find notification");
   }
