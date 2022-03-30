@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.6.0](https://github.com/googleapis/java-storage/compare/v2.5.1...v2.6.0) (2022-03-30)
+
+
+### Features
+
+* replace enum with string representation for predefined ACLs and public_access_prevention ([#1323](https://github.com/googleapis/java-storage/issues/1323)) ([4dd1a88](https://github.com/googleapis/java-storage/commit/4dd1a8800317343bb0cd575864683e580f9ccd29))
+
+
+### Bug Fixes
+
+* **java:** add configurations for Storage tests ([#1305](https://github.com/googleapis/java-storage/issues/1305)) ([2bacf92](https://github.com/googleapis/java-storage/commit/2bacf92799e8a0fbdc1b5cfcfc6ef8d806a53fa3))
+* update boundary checking of BlobReadChannel when limit() is used ([#1324](https://github.com/googleapis/java-storage/issues/1324)) ([f21f624](https://github.com/googleapis/java-storage/commit/f21f624f1645b5ada350c04c774f9f113e76e971))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.9.0 ([#1321](https://github.com/googleapis/java-storage/issues/1321)) ([f48d8dd](https://github.com/googleapis/java-storage/commit/f48d8dd09e918ba4a54fccaebf65feaba4f6e206))
+
+
+### Documentation
+
+* adjust retry settings for hmac samples ([#1303](https://github.com/googleapis/java-storage/issues/1303)) ([d0c5361](https://github.com/googleapis/java-storage/commit/d0c5361e9e4996f8a99754381e5a28a843e6de2a))
+
 ### [2.5.1](https://github.com/googleapis/java-storage/compare/v2.5.0...v2.5.1) (2022-03-28)
 
 
