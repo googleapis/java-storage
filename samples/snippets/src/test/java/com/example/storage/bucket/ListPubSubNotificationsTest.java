@@ -39,7 +39,7 @@ public class ListPubSubNotificationsTest extends TestBase {
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final String PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
-  private static final String TOPIC = String.format("projects/%s/topics/new-topic", PROJECT);
+  private static final String TOPIC = String.format("projects/%s/topics/new-topic-list", PROJECT);
   private static TopicAdminClient topicAdminClient;
 
   @BeforeClass
