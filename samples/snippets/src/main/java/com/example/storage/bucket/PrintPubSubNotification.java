@@ -29,6 +29,7 @@ public class PrintPubSubNotification {
   public static void printPubSubNotification(String bucketName, String notificationId) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
+    
     // The Pub/Sub topic you would like to find
     // String notificationId = "your-unique-notification-id"
 

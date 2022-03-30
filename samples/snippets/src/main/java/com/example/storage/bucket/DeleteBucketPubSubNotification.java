@@ -27,7 +27,8 @@ public class DeleteBucketPubSubNotification {
   public static void deleteBucketPubSubNotification(String bucketName, String notificationId) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
-    // The NotificationId for the notification you would like to delete\
+
+    // The NotificationId for the notification you would like to delete
     // String notificationId = "your-unique-notification-id"
 
     Storage storage = StorageOptions.newBuilder().build().getService();
