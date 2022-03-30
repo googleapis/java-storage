@@ -1,0 +1,22 @@
+[
+  {
+    "name":"org.apache.commons.logging.LogFactory",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "allDeclaredConstructors": true
+  },
+  {
+    "name":"org.apache.commons.logging.impl.Jdk14Logger",
+    "methods":[{"name":"<init>","parameterTypes":["java.lang.String"] }]}
+,
+  {
+    "name":"org.apache.commons.logging.impl.LogFactoryImpl",
+    "allDeclaredFields":true,
+    "allDeclaredMethods":true,
+    "methods":[{"name":"<init>","parameterTypes":[] }]}
+,
+{
+  "name":"com.google.cloud.storage.conformance.retry.TestBench$RetryTestResource",
+  "allDeclaredFields":true,
+  "methods":[{"name":"<init>","parameterTypes":[] }]}
+]
