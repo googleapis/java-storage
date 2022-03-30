@@ -17,7 +17,6 @@
 package com.example.storage.bucket;
 
 // [START storage_print_pubsub_bucket_notification]
-
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.Storage;

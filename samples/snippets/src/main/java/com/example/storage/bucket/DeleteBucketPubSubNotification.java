@@ -17,7 +17,6 @@
 package com.example.storage.bucket;
 
 // [START storage_delete_bucket_notification]
-
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -30,6 +29,7 @@ public class DeleteBucketPubSubNotification {
     // String bucketName = "your-unique-bucket-name";
     // The NotificationId for the notification you would like to delete\
     // String notificationId = "your-unique-notification-id"
+
     Storage storage = StorageOptions.newBuilder().build().getService();
     boolean success = storage.deleteNotification(bucketName, notificationId);
     if (success) {

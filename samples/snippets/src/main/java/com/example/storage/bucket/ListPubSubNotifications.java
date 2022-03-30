@@ -17,7 +17,6 @@
 package com.example.storage.bucket;
 
 // [START storage_list_bucket_notifications]
-
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.Storage;
@@ -30,6 +29,7 @@ public class ListPubSubNotifications {
   public static void listPubSubNotifications(String bucketName) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
+
     Storage storage = StorageOptions.newBuilder().build().getService();
     List<Notification> notificationList = storage.listNotifications(bucketName);
     for (Notification notification : notificationList) {

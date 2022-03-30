@@ -18,22 +18,49 @@ package com.example.storage.bucket;
 
 // [START storage_create_bucket_notifications]
 
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
+import com.google.cloud.storage.NotificationInfo.EventType;
+import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import java.util.Map;
 
 
 public class CreateBucketPubSubNotification {
 
   public static void createBucketPubSubNotification(String bucketName,
-      NotificationInfo notificationInfo) {
+      String topicName,
+      Map<String, String> customAttributes,
+      EventType[] eventTypes,
+      String objectNamePrefix,
+      PayloadFormat payloadFormat,
+      String selfLink,
+      String etag) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
-    // The NotificationInfo for the notification you would like to create
-    // See: https://cloud.google.com/java/docs/reference/google-cloud-notification/latest/com.google.cloud.notification.NotificationInfo
+    // The name of the topic you would like to create a notification for
+    // String topicName = "projects/{your-project}/topics/{your-topic}";
+    // Any custom attributes
+    // Map<String, String> customAttributes = Map.of("label", "value");
+    // The object name prefix for which this notification configuration applies
+    // String objectNamePrefix = "blob-";
+    // Desired content of the Payload
+    // PayloadFormat payloadFormat = PayloadFormat.JSON_API_V1.JSON_API_V1;
+    // The canonical URI of this topic as a string
+    // String selfLink = "//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}";
+    // HTTP 1.1 Entity tag for this subscription notification
+    // String etag = "etag-value";
+
     Storage storage = StorageOptions.newBuilder().build().getService();
+    NotificationInfo notificationInfo = NotificationInfo.newBuilder(topicName)
+        .setEtag(etag)
+        .setCustomAttributes(customAttributes)
+        .setSelfLink(selfLink)
+        .setEventTypes(eventTypes)
+        .setObjectNamePrefix(objectNamePrefix)
+        .setPayloadFormat(payloadFormat)
+        .build();
     Notification notification = storage.createNotification(bucketName, notificationInfo);
     System.out.println("Successfully created notification for topic " + notification.getTopic());
   }
