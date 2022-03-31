@@ -33,9 +33,7 @@ public class CreateBucketPubSubNotification {
       Map<String, String> customAttributes,
       EventType[] eventTypes,
       String objectNamePrefix,
-      PayloadFormat payloadFormat,
-      String selfLink,
-      String etag) {
+      PayloadFormat payloadFormat) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
@@ -51,17 +49,9 @@ public class CreateBucketPubSubNotification {
     // Desired content of the Payload
     // PayloadFormat payloadFormat = PayloadFormat.JSON_API_V1.JSON_API_V1;
 
-    // The canonical URI of this topic as a string
-    // String selfLink = "//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}";
-
-    // HTTP 1.1 Entity tag for this subscription notification
-    // String etag = "etag-value";
-
     Storage storage = StorageOptions.newBuilder().build().getService();
     NotificationInfo notificationInfo = NotificationInfo.newBuilder(topicName)
-        .setEtag(etag)
         .setCustomAttributes(customAttributes)
-        .setSelfLink(selfLink)
         .setEventTypes(eventTypes)
         .setObjectNamePrefix(objectNamePrefix)
         .setPayloadFormat(payloadFormat)

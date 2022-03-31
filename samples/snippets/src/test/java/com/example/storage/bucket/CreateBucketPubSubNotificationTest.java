@@ -41,8 +41,6 @@ public class CreateBucketPubSubNotificationTest extends TestBase {
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final String PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
   private static final String TOPIC = String.format("projects/%s/topics/new-topic-create", PROJECT);
-  private static final String ETAG = "0xFF00";
-  private static final String SELF_LINK = "http://storage/b/n";
   private static final String OBJECT_NAME_PREFIX = "index.html";
   private static final EventType[] EVENT_TYPES = {
       EventType.OBJECT_FINALIZE, EventType.OBJECT_METADATA_UPDATE
@@ -89,9 +87,7 @@ public class CreateBucketPubSubNotificationTest extends TestBase {
         CUSTOM_ATTRIBUTES,
         EVENT_TYPES,
         OBJECT_NAME_PREFIX,
-        PAYLOAD_FORMAT,
-        SELF_LINK,
-        ETAG);
+        PAYLOAD_FORMAT);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(TOPIC);
   }
 
