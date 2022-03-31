@@ -23,7 +23,6 @@ import com.example.storage.TestBase;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo.EventType;
-import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.common.collect.ImmutableMap;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.GetIamPolicyRequest;
@@ -43,7 +42,7 @@ public class CreateBucketPubSubNotificationTest extends TestBase {
   private static final String TOPIC = String.format("projects/%s/topics/new-topic-create", PROJECT);
   private static final String OBJECT_NAME_PREFIX = "index.html";
   private static final EventType[] EVENT_TYPES = {
-      EventType.OBJECT_FINALIZE, EventType.OBJECT_METADATA_UPDATE
+    EventType.OBJECT_FINALIZE, EventType.OBJECT_METADATA_UPDATE
   };
   private static TopicAdminClient topicAdminClient;
 
@@ -82,13 +81,7 @@ public class CreateBucketPubSubNotificationTest extends TestBase {
     assertNotNull("Topic Admin Client did not start up", topicAdminClient);
 
     com.example.storage.bucket.CreateBucketPubSubNotification.createBucketPubSubNotification(
-        bucketName,
-        TOPIC,
-        CUSTOM_ATTRIBUTES,
-        EVENT_TYPES,
-        OBJECT_NAME_PREFIX,
-        PAYLOAD_FORMAT);
+        bucketName, TOPIC, CUSTOM_ATTRIBUTES, EVENT_TYPES, OBJECT_NAME_PREFIX, PAYLOAD_FORMAT);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(TOPIC);
   }
-
 }

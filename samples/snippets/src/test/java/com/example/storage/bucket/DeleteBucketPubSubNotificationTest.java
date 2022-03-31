@@ -41,10 +41,11 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
   private static final String PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
   private static final String TOPIC = String.format("projects/%s/topics/new-topic-delete", PROJECT);
   private static TopicAdminClient topicAdminClient;
-  private static final NotificationInfo notificationInfo = NotificationInfo.newBuilder(TOPIC)
-      .setCustomAttributes(CUSTOM_ATTRIBUTES)
-      .setPayloadFormat(PAYLOAD_FORMAT)
-      .build();
+  private static final NotificationInfo notificationInfo =
+      NotificationInfo.newBuilder(TOPIC)
+          .setCustomAttributes(CUSTOM_ATTRIBUTES)
+          .setPayloadFormat(PAYLOAD_FORMAT)
+          .build();
 
   @BeforeClass
   public static void configureTopicAdminClient() throws IOException {
@@ -82,10 +83,9 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
 
     Notification notification = storage.createNotification(bucketName, notificationInfo);
     com.example.storage.bucket.DeleteBucketPubSubNotification.deleteBucketPubSubNotification(
-        bucketName,
-        notification.getNotificationId());
-    assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(
-        "Successfully deleted notification");
+        bucketName, notification.getNotificationId());
+    assertThat(stdOut.getCapturedOutputAsUtf8String())
+        .contains("Successfully deleted notification");
   }
 
   @Test
@@ -98,9 +98,7 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
     storage.deleteNotification(bucketName, notification.getNotificationId());
     // Now try to delete again.
     com.example.storage.bucket.DeleteBucketPubSubNotification.deleteBucketPubSubNotification(
-        bucketName,
-        notification.getNotificationId());
+        bucketName, notification.getNotificationId());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Failed to find notification");
   }
-
 }

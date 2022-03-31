@@ -85,5 +85,4 @@ public class ListPubSubNotificationsTest extends TestBase {
     ListPubSubNotifications.listPubSubNotifications(bucketName);
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(TOPIC);
   }
-
 }

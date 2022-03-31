@@ -25,10 +25,10 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import java.util.Map;
 
-
 public class CreateBucketPubSubNotification {
 
-  public static void createBucketPubSubNotification(String bucketName,
+  public static void createBucketPubSubNotification(
+      String bucketName,
       String topicName,
       Map<String, String> customAttributes,
       EventType[] eventTypes,
@@ -50,12 +50,13 @@ public class CreateBucketPubSubNotification {
     // PayloadFormat payloadFormat = PayloadFormat.JSON_API_V1.JSON_API_V1;
 
     Storage storage = StorageOptions.newBuilder().build().getService();
-    NotificationInfo notificationInfo = NotificationInfo.newBuilder(topicName)
-        .setCustomAttributes(customAttributes)
-        .setEventTypes(eventTypes)
-        .setObjectNamePrefix(objectNamePrefix)
-        .setPayloadFormat(payloadFormat)
-        .build();
+    NotificationInfo notificationInfo =
+        NotificationInfo.newBuilder(topicName)
+            .setCustomAttributes(customAttributes)
+            .setEventTypes(eventTypes)
+            .setObjectNamePrefix(objectNamePrefix)
+            .setPayloadFormat(payloadFormat)
+            .build();
     Notification notification = storage.createNotification(bucketName, notificationInfo);
     System.out.println("Successfully created notification for topic " + notification.getTopic());
   }

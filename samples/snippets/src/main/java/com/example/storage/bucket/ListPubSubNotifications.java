@@ -17,12 +17,10 @@
 package com.example.storage.bucket;
 
 // [START storage_list_bucket_notifications]
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import java.util.List;
-
 
 public class ListPubSubNotifications {
 

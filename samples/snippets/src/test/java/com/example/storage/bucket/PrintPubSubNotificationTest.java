@@ -85,5 +85,4 @@ public class PrintPubSubNotificationTest extends TestBase {
     PrintPubSubNotification.printPubSubNotification(bucketName, notification.getNotificationId());
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains(TOPIC);
   }
-
 }

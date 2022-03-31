@@ -17,10 +17,8 @@
 package com.example.storage.bucket;
 
 // [START storage_delete_bucket_notification]
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-
 
 public class DeleteBucketPubSubNotification {
 

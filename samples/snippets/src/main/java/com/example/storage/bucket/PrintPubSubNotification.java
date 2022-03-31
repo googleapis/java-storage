@@ -17,19 +17,16 @@
 package com.example.storage.bucket;
 
 // [START storage_print_pubsub_bucket_notification]
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.util.List;
-
 
 public class PrintPubSubNotification {
 
   public static void printPubSubNotification(String bucketName, String notificationId) {
     // The ID to give your GCS bucket
     // String bucketName = "your-unique-bucket-name";
-    
+
     // The Pub/Sub topic you would like to find
     // String notificationId = "your-unique-notification-id"
 
