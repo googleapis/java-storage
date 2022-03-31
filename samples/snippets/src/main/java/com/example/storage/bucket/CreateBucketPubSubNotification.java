@@ -58,7 +58,8 @@ public class CreateBucketPubSubNotification {
             .setPayloadFormat(payloadFormat)
             .build();
     Notification notification = storage.createNotification(bucketName, notificationInfo);
-    System.out.println("Successfully created notification for topic " + notification.getTopic());
+    String topic = notification.getTopic();
+    System.out.println("Successfully created notification for topic " + topic);
   }
 }
 // [END storage_create_bucket_notifications]
