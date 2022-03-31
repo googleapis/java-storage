@@ -53,7 +53,7 @@ import java.util.Set;
  */
 public class Bucket extends BucketInfo {
 
-  private static final long serialVersionUID = 8574601739542252586L;
+  private static final long serialVersionUID = -5916736761953534767L;
 
   private final StorageOptions options;
   private transient Storage storage;

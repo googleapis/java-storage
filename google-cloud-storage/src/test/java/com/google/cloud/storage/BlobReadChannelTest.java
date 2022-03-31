@@ -53,7 +53,7 @@ public class BlobReadChannelTest {
   private static final int CUSTOM_CHUNK_SIZE = 2 * 1024 * 1024;
   private static final Random RANDOM = new Random();
 
-  private StorageOptions options;
+  private HttpStorageOptions options;
   private StorageRpcFactory rpcFactoryMock;
   private StorageRpc storageRpcMock;
   private BlobReadChannel reader;
@@ -65,7 +65,7 @@ public class BlobReadChannelTest {
     expect(rpcFactoryMock.create(anyObject(StorageOptions.class))).andReturn(storageRpcMock);
     replay(rpcFactoryMock);
     options =
-        StorageOptions.newBuilder()
+        HttpStorageOptions.newBuilder()
             .setProjectId("projectId")
             .setServiceRpcFactory(rpcFactoryMock)
             .build();

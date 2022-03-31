@@ -44,7 +44,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   private StorageObject storageObject;
 
   BlobWriteChannel(
-      StorageOptions storageOptions,
+      HttpStorageOptions storageOptions,
       BlobInfo blobInfo,
       String uploadId,
       ResultRetryAlgorithm<?> algorithmForWrite) {
@@ -58,6 +58,11 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
 
   StorageObject getStorageObject() {
     return storageObject;
+  }
+
+  @Override
+  protected HttpStorageOptions getOptions() {
+    return (HttpStorageOptions) super.getOptions();
   }
 
   private StorageObject transmitChunk(
@@ -286,12 +291,12 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   }
 
   static final class Builder {
-    private StorageOptions storageOptions;
+    private HttpStorageOptions storageOptions;
     private BlobInfo blobInfo;
     private Supplier<@NonNull String> uploadIdSupplier;
     private ResultRetryAlgorithm<?> algorithmForWrite;
 
-    public Builder setStorageOptions(StorageOptions storageOptions) {
+    public Builder setStorageOptions(HttpStorageOptions storageOptions) {
       this.storageOptions = storageOptions;
       return this;
     }
@@ -359,7 +364,9 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
       try {
         BlobWriteChannel channel =
             BlobWriteChannel.newBuilder()
-                .setStorageOptions(serviceOptions)
+                // should be okay, as the value always comes from an instance we gate to have
+                // HttpStorageOptions
+                .setStorageOptions((HttpStorageOptions) serviceOptions)
                 .setBlobInfo(entity)
                 .setUploadIdSupplier(() -> uploadId)
                 .setAlgorithmForWrite(algorithmForWrite)

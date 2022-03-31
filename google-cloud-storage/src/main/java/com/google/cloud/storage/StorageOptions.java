@@ -16,140 +16,66 @@
 
 package com.google.cloud.storage;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceDefaults;
 import com.google.cloud.ServiceOptions;
-import com.google.cloud.ServiceRpc;
-import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
+import com.google.cloud.storage.HttpStorageOptions.HttpStorageDefaults;
+import com.google.cloud.storage.HttpStorageOptions.HttpStorageFactory;
+import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
 import com.google.cloud.storage.spi.StorageRpcFactory;
-import com.google.cloud.storage.spi.v1.HttpStorageRpc;
-import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 
-public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
+public abstract class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
-  private static final long serialVersionUID = -2907268477247502947L;
-  private static final String API_SHORT_NAME = "Storage";
-  private static final String GCS_SCOPE = "https://www.googleapis.com/auth/devstorage.full_control";
-  private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
-  private static final String DEFAULT_HOST = "https://storage.googleapis.com";
-  private static final boolean DEFAULT_INCLUDE_INVOCATION_ID = true;
-  private final RetryAlgorithmManager retryAlgorithmManager;
-  private final boolean includeInvocationId;
+  private static final long serialVersionUID = 7784772908840175401L;
 
-  public static class DefaultStorageFactory implements StorageFactory {
-
-    private static final StorageFactory INSTANCE = new DefaultStorageFactory();
-
-    @Override
-    public Storage create(StorageOptions options) {
-      return new StorageImpl(options);
+  /** @deprecated Use {@link HttpStorageFactory} */
+  @Deprecated
+  public static class DefaultStorageFactory extends HttpStorageFactory {
+    /** @deprecated Use {@link HttpStorageDefaults#getDefaultServiceFactory()} */
+    @Deprecated
+    public DefaultStorageFactory() {
+      super();
     }
   }
 
-  public static class DefaultStorageRpcFactory implements StorageRpcFactory {
+  /** @deprecated Use {@link HttpStorageRpcFactory} */
+  @Deprecated
+  public static class DefaultStorageRpcFactory extends HttpStorageRpcFactory {
 
-    private static final StorageRpcFactory INSTANCE = new DefaultStorageRpcFactory();
-
-    @Override
-    public ServiceRpc create(StorageOptions options) {
-      return new HttpStorageRpc(options);
+    /** @deprecated Use {@link HttpStorageDefaults#getDefaultRpcFactory()} */
+    @Deprecated
+    public DefaultStorageRpcFactory() {
+      super();
     }
   }
 
-  public static class Builder extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
+  public abstract static class Builder
+      extends ServiceOptions.Builder<Storage, StorageOptions, Builder> {
 
-    private StorageRetryStrategy storageRetryStrategy;
-    private boolean includeInvocationId;
+    Builder() {}
 
-    private Builder() {}
-
-    private Builder(StorageOptions options) {
+    Builder(StorageOptions options) {
       super(options);
-      this.includeInvocationId = options.includeInvocationId;
     }
+
+    public abstract Builder setStorageRetryStrategy(StorageRetryStrategy storageRetryStrategy);
 
     @Override
-    public Builder setTransportOptions(TransportOptions transportOptions) {
-      if (!(transportOptions instanceof HttpTransportOptions)) {
-        throw new IllegalArgumentException(
-            "Only http transport is allowed for " + API_SHORT_NAME + ".");
-      }
-      return super.setTransportOptions(transportOptions);
-    }
-
-    /**
-     * Override the default retry handling behavior with an alternate strategy.
-     *
-     * @param storageRetryStrategy a non-null storageRetryStrategy to use
-     * @return the builder
-     * @see StorageRetryStrategy#getDefaultStorageRetryStrategy()
-     */
-    public Builder setStorageRetryStrategy(StorageRetryStrategy storageRetryStrategy) {
-      this.storageRetryStrategy =
-          requireNonNull(storageRetryStrategy, "storageRetryStrategy must be non null");
-      return this;
-    }
-
-    /**
-     * Override default enablement of invocation id added to x-goog-api-client header.
-     *
-     * @param includeInvocationId a boolean to change enablement of invocation id
-     * @return the builder
-     */
-    Builder setIncludeInvocationId(boolean includeInvocationId) {
-      this.includeInvocationId = includeInvocationId;
-      return this;
-    }
-
-    @Override
-    public StorageOptions build() {
-      return new StorageOptions(this, new StorageDefaults());
-    }
+    public abstract StorageOptions build();
   }
 
-  private StorageOptions(Builder builder, StorageDefaults serviceDefaults) {
+  StorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(StorageFactory.class, StorageRpcFactory.class, builder, serviceDefaults);
-    this.retryAlgorithmManager =
-        new RetryAlgorithmManager(
-            MoreObjects.firstNonNull(
-                builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
-    this.includeInvocationId = builder.includeInvocationId;
   }
 
-  private static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {
+  abstract static class StorageDefaults implements ServiceDefaults<Storage, StorageOptions> {}
 
-    @Override
-    public StorageFactory getDefaultServiceFactory() {
-      return DefaultStorageFactory.INSTANCE;
-    }
-
-    @Override
-    public StorageRpcFactory getDefaultRpcFactory() {
-      return DefaultStorageRpcFactory.INSTANCE;
-    }
-
-    @Override
-    public TransportOptions getDefaultTransportOptions() {
-      return getDefaultHttpTransportOptions();
-    }
-
-    public StorageRetryStrategy getStorageRetryStrategy() {
-      return StorageRetryStrategy.getDefaultStorageRetryStrategy();
-    }
-
-    boolean isIncludeInvocationId() {
-      return DEFAULT_INCLUDE_INVOCATION_ID;
-    }
-  }
-
+  /** @deprecated Use {@link HttpStorageDefaults#getDefaultTransportOptions()} */
+  @Deprecated
+  @SuppressWarnings("DeprecatedIsStillUsed")
   public static HttpTransportOptions getDefaultHttpTransportOptions() {
-    return HttpTransportOptions.newBuilder().build();
+    return HttpStorageOptions.defaults().getDefaultTransportOptions();
   }
 
   // Project ID is only required for creating buckets, so we don't require it for creating the
@@ -159,53 +85,29 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
     return false;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
-  protected Set<String> getScopes() {
-    return SCOPES;
-  }
+  public abstract StorageOptions.Builder toBuilder();
 
-  protected StorageRpc getStorageRpcV1() {
-    return (StorageRpc) getRpc();
-  }
+  @Override
+  public abstract int hashCode();
 
-  RetryAlgorithmManager getRetryAlgorithmManager() {
-    return retryAlgorithmManager;
-  }
+  @Override
+  public abstract boolean equals(Object obj);
 
-  /** Returns if Invocation ID is enabled and transmitted through x-goog-api-client header. */
-  boolean isIncludeInvocationId() {
-    return includeInvocationId;
-  }
+  abstract RetryAlgorithmManager getRetryAlgorithmManager();
 
   /** Returns a default {@code StorageOptions} instance. */
   public static StorageOptions getDefaultInstance() {
-    return newBuilder().build();
+    return HttpStorageOptions.newBuilder().build();
   }
 
   /** Returns a unauthenticated {@code StorageOptions} instance. */
   public static StorageOptions getUnauthenticatedInstance() {
-    return newBuilder().setCredentials(NoCredentials.getInstance()).build();
+    return HttpStorageOptions.newBuilder().setCredentials(NoCredentials.getInstance()).build();
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public Builder toBuilder() {
-    return new Builder(this);
-  }
-
-  @Override
-  public int hashCode() {
-    return baseHashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof StorageOptions && baseEquals((StorageOptions) obj);
-  }
-
-  public static Builder newBuilder() {
-    return new Builder()
-        .setHost(DEFAULT_HOST)
-        .setIncludeInvocationId(DEFAULT_INCLUDE_INVOCATION_ID);
+  public static StorageOptions.Builder newBuilder() {
+    return HttpStorageOptions.newBuilder();
   }
 }

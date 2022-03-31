@@ -88,7 +88,7 @@ public class CopyWriterTest {
           "token",
           42L);
 
-  private StorageOptions options;
+  private HttpStorageOptions options;
   private StorageRpcFactory rpcFactoryMock;
   private StorageRpc storageRpcMock;
   private CopyWriter copyWriter;
@@ -101,7 +101,7 @@ public class CopyWriterTest {
     expect(rpcFactoryMock.create(anyObject(StorageOptions.class))).andReturn(storageRpcMock);
     replay(rpcFactoryMock);
     options =
-        StorageOptions.newBuilder()
+        HttpStorageOptions.newBuilder()
             .setProjectId("projectid")
             .setServiceRpcFactory(rpcFactoryMock)
             .setRetrySettings(ServiceOptions.getNoRetrySettings())

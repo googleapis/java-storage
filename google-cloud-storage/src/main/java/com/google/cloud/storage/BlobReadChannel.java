@@ -39,7 +39,7 @@ class BlobReadChannel implements ReadChannel {
 
   private static final int DEFAULT_CHUNK_SIZE = 2 * 1024 * 1024;
 
-  private final StorageOptions serviceOptions;
+  private final HttpStorageOptions serviceOptions;
   private final BlobId blob;
   private final Map<StorageRpc.Option, ?> requestOptions;
   private final RetryAlgorithmManager retryAlgorithmManager;
@@ -56,7 +56,7 @@ class BlobReadChannel implements ReadChannel {
   private long limit;
 
   BlobReadChannel(
-      StorageOptions serviceOptions, BlobId blob, Map<StorageRpc.Option, ?> requestOptions) {
+      HttpStorageOptions serviceOptions, BlobId blob, Map<StorageRpc.Option, ?> requestOptions) {
     this.serviceOptions = serviceOptions;
     this.blob = blob;
     this.requestOptions = requestOptions;
@@ -183,7 +183,7 @@ class BlobReadChannel implements ReadChannel {
 
     private static final long serialVersionUID = 3889420316004453706L;
 
-    private final StorageOptions serviceOptions;
+    private final HttpStorageOptions serviceOptions;
     private final BlobId blob;
     private final Map<StorageRpc.Option, ?> requestOptions;
     private final String lastEtag;
@@ -206,7 +206,7 @@ class BlobReadChannel implements ReadChannel {
     }
 
     static class Builder {
-      private final StorageOptions serviceOptions;
+      private final HttpStorageOptions serviceOptions;
       private final BlobId blob;
       private final Map<StorageRpc.Option, ?> requestOptions;
       private String lastEtag;
@@ -216,7 +216,8 @@ class BlobReadChannel implements ReadChannel {
       private int chunkSize;
       private long limit;
 
-      private Builder(StorageOptions options, BlobId blob, Map<StorageRpc.Option, ?> reqOptions) {
+      private Builder(
+          HttpStorageOptions options, BlobId blob, Map<StorageRpc.Option, ?> reqOptions) {
         this.serviceOptions = options;
         this.blob = blob;
         this.requestOptions = reqOptions;
@@ -258,7 +259,7 @@ class BlobReadChannel implements ReadChannel {
     }
 
     static Builder builder(
-        StorageOptions options, BlobId blob, Map<StorageRpc.Option, ?> reqOptions) {
+        HttpStorageOptions options, BlobId blob, Map<StorageRpc.Option, ?> reqOptions) {
       return new Builder(options, blob, reqOptions);
     }
 

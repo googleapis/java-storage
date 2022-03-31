@@ -79,7 +79,7 @@ public class BlobWriteChannelTest {
       "http://www.test.com/test-bucket/test1.txt?GoogleAccessId=testClient-test@test.com&Expires=1553839761&Signature=MJUBXAZ7";
   private static final StorageException socketClosedException =
       new StorageException(new SocketException("Socket closed"));
-  private StorageOptions options;
+  private HttpStorageOptions options;
   private StorageRpcFactory rpcFactoryMock;
   private StorageRpc storageRpcMock;
   private BlobWriteChannel writer;
@@ -92,7 +92,7 @@ public class BlobWriteChannelTest {
     expect(rpcFactoryMock.create(anyObject(StorageOptions.class))).andReturn(storageRpcMock);
     replay(rpcFactoryMock);
     options =
-        StorageOptions.newBuilder()
+        HttpStorageOptions.newBuilder()
             .setProjectId("projectid")
             .setServiceRpcFactory(rpcFactoryMock)
             .setCredentials(NoCredentials.getInstance())

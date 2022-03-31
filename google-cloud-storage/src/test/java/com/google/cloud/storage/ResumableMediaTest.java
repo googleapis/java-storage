@@ -41,7 +41,7 @@ public final class ResumableMediaTest {
   public void startUploadForSignedUrl_expectStorageException_whenUrlInvalid() throws Exception {
     try {
       ResumableMedia.startUploadForSignedUrl(
-              StorageOptions.newBuilder().build(),
+              HttpStorageOptions.newBuilder().build(),
               new URL(SIGNED_URL_INVALID),
               createResultExceptionHandler)
           .get();
@@ -54,7 +54,8 @@ public final class ResumableMediaTest {
   @Test
   public void startUploadForSignedUrl_whenUrlValid() throws Exception {
     StorageRpc rpc = mock(StorageRpc.class);
-    StorageOptions options = StorageOptions.newBuilder().setServiceRpcFactory(opts -> rpc).build();
+    HttpStorageOptions options =
+        HttpStorageOptions.newBuilder().setServiceRpcFactory(opts -> rpc).build();
 
     URL url = new URL(SIGNED_URL_VALID);
     when(rpc.open(url.toString())).thenReturn("upload-id");
