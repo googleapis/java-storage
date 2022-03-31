@@ -99,7 +99,8 @@ public class SerializationTest extends BaseSerializationTest {
 
   @Override
   protected Restorable<?>[] restorableObjects() {
-    StorageOptions options = StorageOptions.newBuilder().setProjectId("p2").build();
+    // TODO: Think about this some more
+    HttpStorageOptions options = HttpStorageOptions.newBuilder().setProjectId("p2").build();
     ResultRetryAlgorithm<?> algorithm =
         options.getRetryAlgorithmManager().getForResumableUploadSessionWrite(EMPTY_RPC_OPTIONS);
     ReadChannel reader = new BlobReadChannel(options, BlobId.of("b", "n"), EMPTY_RPC_OPTIONS);

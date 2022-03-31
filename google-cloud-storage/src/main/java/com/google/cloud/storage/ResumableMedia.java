@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 final class ResumableMedia {
 
   static Supplier<String> startUploadForBlobInfo(
-      final StorageOptions storageOptions,
+      final HttpStorageOptions storageOptions,
       final BlobInfo blob,
       final Map<StorageRpc.Option, ?> optionsMap,
       ResultRetryAlgorithm<?> algorithm) {
@@ -42,7 +42,9 @@ final class ResumableMedia {
   }
 
   static Supplier<String> startUploadForSignedUrl(
-      final StorageOptions storageOptions, final URL signedURL, ResultRetryAlgorithm<?> algorithm) {
+      final HttpStorageOptions storageOptions,
+      final URL signedURL,
+      ResultRetryAlgorithm<?> algorithm) {
     if (!isValidSignedURL(signedURL.getQuery())) {
       throw new StorageException(2, "invalid signedURL");
     }

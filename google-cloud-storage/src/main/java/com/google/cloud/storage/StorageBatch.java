@@ -58,7 +58,7 @@ public class StorageBatch {
   private final StorageRpc storageRpc;
   private final StorageOptions options;
 
-  StorageBatch(StorageOptions options) {
+  StorageBatch(HttpStorageOptions options) {
     this.options = options;
     this.storageRpc = options.getStorageRpcV1();
     this.batch = storageRpc.createBatch();

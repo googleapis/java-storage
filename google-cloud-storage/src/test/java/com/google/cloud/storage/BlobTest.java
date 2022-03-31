@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.createStrictMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -38,12 +39,16 @@ import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob.BlobSourceOption;
+import com.google.cloud.storage.BlobInfo.BuilderImpl;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.CopyRequest;
+import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
+import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 import java.security.Key;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +58,7 @@ import org.easymock.Capture;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class BlobTest {
 
@@ -158,9 +164,9 @@ public class BlobTest {
   private Blob blob;
   private Blob expectedBlob;
   private Storage serviceMockReturnsOptions = createMock(Storage.class);
-  private StorageOptions mockOptions = createMock(StorageOptions.class);
+  private HttpStorageOptions mockOptions = createMock(HttpStorageOptions.class);
   private final RetryAlgorithmManager retryAlgorithmManager =
-      StorageOptions.getDefaultInstance().getRetryAlgorithmManager();
+      HttpStorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   @Before
   public void setUp() {
@@ -601,5 +607,31 @@ public class BlobTest {
     assertNull(blob.getUpdateTime());
     assertNull(blob.getCustomTime());
     assertTrue(blob.isDirectory());
+  }
+
+  private StorageRpc prepareForDownload() {
+    StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
+    expect(storage.getOptions()).andReturn(mockOptions).anyTimes();
+    replay(storage);
+    expect(mockOptions.getStorageRpcV1()).andReturn(mockStorageRpc);
+    expect(mockOptions.getRetrySettings()).andReturn(RETRY_SETTINGS);
+    expect(mockOptions.getClock()).andReturn(API_CLOCK);
+    expect(mockOptions.getRetryAlgorithmManager()).andReturn(retryAlgorithmManager).anyTimes();
+    replay(mockOptions);
+    blob = new Blob(storage, new BlobInfo.BuilderImpl(BLOB_INFO));
+    return mockStorageRpc;
+  }
+
+  @Test
+  public void testDownloadTo() throws Exception {
+    replay(storage);
+    File file = File.createTempFile("blob", ".tmp");
+    Path path = file.toPath();
+
+    Storage s = Mockito.mock(Storage.class);
+    Blob blob = new Blob(s, new BuilderImpl(BlobInfo.newBuilder("buck", "obj").build()));
+
+    Mockito.doNothing().when(s).downloadTo(blob.getBlobId(), path);
+    blob.downloadTo(path);
   }
 }

@@ -55,9 +55,9 @@ public class StorageBatchTest {
   };
   private static final GoogleJsonError GOOGLE_JSON_ERROR = new GoogleJsonError();
   private final RetryAlgorithmManager retryAlgorithmManager =
-      StorageOptions.getDefaultInstance().getRetryAlgorithmManager();
+      HttpStorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
-  private StorageOptions optionsMock;
+  private HttpStorageOptions optionsMock;
   private StorageRpc storageRpcMock;
   private RpcBatch batchMock;
   private StorageBatch storageBatch;
@@ -65,7 +65,7 @@ public class StorageBatchTest {
 
   @Before
   public void setUp() {
-    optionsMock = EasyMock.createMock(StorageOptions.class);
+    optionsMock = EasyMock.createMock(HttpStorageOptions.class);
     storageRpcMock = EasyMock.createMock(StorageRpc.class);
     batchMock = EasyMock.createMock(RpcBatch.class);
     EasyMock.expect(optionsMock.getStorageRpcV1()).andReturn(storageRpcMock);

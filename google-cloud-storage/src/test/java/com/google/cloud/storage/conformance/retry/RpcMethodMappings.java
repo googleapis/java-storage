@@ -77,6 +77,7 @@ import com.google.common.io.ByteStreams;
 import com.google.errorprone.annotations.Immutable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -1315,6 +1316,40 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(state -> state.with(state.getBucket().get(c.getObjectName()))))
+                .build());
+        a.add(
+            RpcMethodMapping.newBuilder(244, objects.get)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.peek(
+                            state ->
+                                withTempFile(
+                                    c.getMethod().getName(),
+                                    ".txt",
+                                    (tmpOutFile) -> {
+                                      ctx.getStorage().downloadTo(state.getBlobId(), tmpOutFile);
+                                      byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
+                                    })))
+                .build());
+        a.add(
+            RpcMethodMapping.newBuilder(245, objects.get)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.peek(
+                            state ->
+                                withTempFile(
+                                    c.getMethod().getName(),
+                                    ".txt",
+                                    (tmpOutFile) -> {
+                                      FileOutputStream fos =
+                                          new FileOutputStream(tmpOutFile.toFile());
+                                      ctx.getStorage().downloadTo(state.getBlobId(), fos);
+                                      byte[] downloadedBytes = Files.readAllBytes(tmpOutFile);
+                                      assertThat(downloadedBytes)
+                                          .isEqualTo(c.getHelloWorldUtf8Bytes());
+                                    })))
                 .build());
       }
 

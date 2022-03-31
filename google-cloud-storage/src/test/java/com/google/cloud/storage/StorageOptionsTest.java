@@ -17,18 +17,10 @@
 package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.google.cloud.TransportOptions;
-import com.google.cloud.Tuple;
-import com.google.cloud.http.HttpTransportOptions;
-import com.google.cloud.storage.spi.v1.AuditingHttpTransport;
-import java.util.Optional;
 import org.easymock.EasyMock;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class StorageOptionsTest {
@@ -72,55 +64,5 @@ public class StorageOptionsTest {
     StorageOptions opts1 = StorageOptions.getDefaultInstance();
 
     assertThat(opts1.getHost()).isEqualTo("https://storage.googleapis.com");
-  }
-
-  @Test
-  public void testDefaultInvocationId() {
-    StorageOptions opts1 = StorageOptions.getDefaultInstance();
-
-    assertTrue(opts1.isIncludeInvocationId());
-  }
-
-  @Test
-  public void testDisableInvocationId() {
-    StorageOptions opts1 = StorageOptions.newBuilder().setIncludeInvocationId(false).build();
-
-    assertFalse(opts1.isIncludeInvocationId());
-  }
-
-  /**
-   * Disabled until {@link StorageOptions#isIncludeInvocationId()} and {@link
-   * StorageOptions.Builder#setIncludeInvocationId(boolean)} are public.
-   */
-  @Test
-  @Ignore
-  public void testInvocationIdIsNotPassedThroughWhenDisabled() {
-    MockLowLevelHttpResponse response =
-        new MockLowLevelHttpResponse()
-            .setContentType("application/json")
-            .setContent(
-                "{\n"
-                    + "  \"kind\": \"storage#serviceAccount\",\n"
-                    + "  \"email_address\": \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
-                    + "}\n")
-            .setStatusCode(200);
-    AuditingHttpTransport transport = new AuditingHttpTransport(response);
-    TransportOptions transportOptions =
-        HttpTransportOptions.newBuilder().setHttpTransportFactory(() -> transport).build();
-    Storage service =
-        StorageOptions.getDefaultInstance()
-            .toBuilder()
-            .setTransportOptions(transportOptions)
-            .setIncludeInvocationId(false)
-            .build()
-            .getService();
-    service.getServiceAccount("test-project");
-    Optional<Tuple<String, String>> anyXGoogApiClientWithGcclInvocationId =
-        transport.getAddHeaderCalls().stream()
-            .filter(t -> "x-goog-api-client".equals(t.x()) && t.y().contains("gccl-invocation-id/"))
-            .findFirst();
-
-    assertFalse(anyXGoogApiClientWithGcclInvocationId.isPresent());
-    assertThat(transport.getBuildRequestCalls()).hasSize(1);
   }
 }

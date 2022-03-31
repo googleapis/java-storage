@@ -137,11 +137,11 @@ public class BucketTest {
   private static final Key KEY =
       new SecretKeySpec(BaseEncoding.base64().decode(BASE64_KEY), "AES256");
   private final RetryAlgorithmManager retryAlgorithmManager =
-      StorageOptions.getDefaultInstance().getRetryAlgorithmManager();
+      HttpStorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   private Storage storage;
   private Storage serviceMockReturnsOptions = createMock(Storage.class);
-  private StorageOptions mockOptions = createMock(StorageOptions.class);
+  private HttpStorageOptions mockOptions = createMock(HttpStorageOptions.class);
   private Bucket bucket;
   private Bucket expectedBucket;
   private List<Blob> blobResults;

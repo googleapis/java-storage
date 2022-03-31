@@ -43,11 +43,11 @@ import java.util.function.Function;
  */
 public class CopyWriter implements Restorable<CopyWriter> {
 
-  private final StorageOptions serviceOptions;
+  private final HttpStorageOptions serviceOptions;
   private final StorageRpc storageRpc;
   private RewriteResponse rewriteResponse;
 
-  CopyWriter(StorageOptions serviceOptions, RewriteResponse rewriteResponse) {
+  CopyWriter(HttpStorageOptions serviceOptions, RewriteResponse rewriteResponse) {
     this.serviceOptions = serviceOptions;
     this.rewriteResponse = rewriteResponse;
     this.storageRpc = serviceOptions.getStorageRpcV1();
@@ -133,7 +133,7 @@ public class CopyWriter implements Restorable<CopyWriter> {
 
     private static final long serialVersionUID = 1693964441435822700L;
 
-    private final StorageOptions serviceOptions;
+    private final HttpStorageOptions serviceOptions;
     private final BlobId source;
     private final Map<StorageRpc.Option, ?> sourceOptions;
     private final boolean overrideInfo;
@@ -163,7 +163,7 @@ public class CopyWriter implements Restorable<CopyWriter> {
 
     static class Builder {
 
-      private final StorageOptions serviceOptions;
+      private final HttpStorageOptions serviceOptions;
       private final BlobId source;
       private final Map<StorageRpc.Option, ?> sourceOptions;
       private final boolean overrideInfo;
@@ -177,7 +177,7 @@ public class CopyWriter implements Restorable<CopyWriter> {
       private Long megabytesCopiedPerChunk;
 
       private Builder(
-          StorageOptions options,
+          HttpStorageOptions options,
           BlobId source,
           Map<StorageRpc.Option, ?> sourceOptions,
           boolean overrideInfo,
@@ -227,7 +227,7 @@ public class CopyWriter implements Restorable<CopyWriter> {
     }
 
     static Builder newBuilder(
-        StorageOptions options,
+        HttpStorageOptions options,
         BlobId source,
         Map<StorageRpc.Option, ?> sourceOptions,
         boolean overrideInfo,

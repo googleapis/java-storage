@@ -67,10 +67,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Blob extends BlobInfo {
 
-  private static final long serialVersionUID = -6806832496717441434L;
+  private static final long serialVersionUID = -6242932432991389329L;
 
   private final StorageOptions options;
-  private final RetryAlgorithmManager retryAlgorithmManager;
   private transient Storage storage;
 
   /** Class for specifying blob source options when {@code Blob} methods are used. */
@@ -223,9 +222,10 @@ public class Blob extends BlobInfo {
    * @param path destination
    * @param options blob read options
    * @throws StorageException upon failure
+   * @see Storage#downloadTo(BlobId, Path, Storage.BlobSourceOption...)
    */
   public void downloadTo(Path path, BlobSourceOption... options) {
-    storage.downloadTo(getBlobId(), path, BlobSourceOption.toSourceOptions(this, options));
+    storage.downloadTo(this.getBlobId(), path, toSourceOptions(this, options));
   }
 
   /**
@@ -233,9 +233,11 @@ public class Blob extends BlobInfo {
    *
    * @param outputStream
    * @param options
+   * @throws StorageException upon failure
+   * @see Storage#downloadTo(BlobId, OutputStream, Storage.BlobSourceOption...)
    */
   public void downloadTo(OutputStream outputStream, BlobSourceOption... options) {
-    storage.downloadTo(getBlobId(), outputStream, BlobSourceOption.toSourceOptions(this, options));
+    storage.downloadTo(this.getBlobId(), outputStream, toSourceOptions(this, options));
   }
 
   /**
@@ -464,7 +466,6 @@ public class Blob extends BlobInfo {
     super(infoBuilder);
     this.storage = checkNotNull(storage);
     this.options = storage.getOptions();
-    this.retryAlgorithmManager = storage.getOptions().getRetryAlgorithmManager();
   }
 
   /**

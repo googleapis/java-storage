@@ -116,7 +116,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private final RetryAlgorithmManager retryAlgorithmManager;
   private final StorageRpc storageRpc;
 
-  StorageImpl(StorageOptions options) {
+  StorageImpl(HttpStorageOptions options) {
     super(options);
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.storageRpc = options.getStorageRpcV1();
@@ -314,10 +314,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
     private static final long serialVersionUID = 5850406828803613729L;
     private final Map<StorageRpc.Option, ?> requestOptions;
-    private final StorageOptions serviceOptions;
+    private final HttpStorageOptions serviceOptions;
 
     BucketPageFetcher(
-        StorageOptions serviceOptions, String cursor, Map<StorageRpc.Option, ?> optionMap) {
+        HttpStorageOptions serviceOptions, String cursor, Map<StorageRpc.Option, ?> optionMap) {
       this.requestOptions =
           PageImpl.nextRequestOptions(StorageRpc.Option.PAGE_TOKEN, cursor, optionMap);
       this.serviceOptions = serviceOptions;
@@ -333,12 +333,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
     private static final long serialVersionUID = 81807334445874098L;
     private final Map<StorageRpc.Option, ?> requestOptions;
-    private final StorageOptions serviceOptions;
+    private final HttpStorageOptions serviceOptions;
     private final String bucket;
 
     BlobPageFetcher(
         String bucket,
-        StorageOptions serviceOptions,
+        HttpStorageOptions serviceOptions,
         String cursor,
         Map<StorageRpc.Option, ?> optionMap) {
       this.requestOptions =
@@ -356,12 +356,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static class HmacKeyMetadataPageFetcher implements NextPageFetcher<HmacKeyMetadata> {
 
     private static final long serialVersionUID = 308012320541700881L;
-    private final StorageOptions serviceOptions;
+    private final HttpStorageOptions serviceOptions;
     private final RetryAlgorithmManager retryAlgorithmManager;
     private final Map<StorageRpc.Option, ?> options;
 
     HmacKeyMetadataPageFetcher(
-        StorageOptions serviceOptions,
+        HttpStorageOptions serviceOptions,
         RetryAlgorithmManager retryAlgorithmManager,
         Map<StorageRpc.Option, ?> options) {
       this.serviceOptions = serviceOptions;
@@ -386,7 +386,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   private static Page<Bucket> listBuckets(
-      final StorageOptions serviceOptions, final Map<StorageRpc.Option, ?> optionsMap) {
+      final HttpStorageOptions serviceOptions, final Map<StorageRpc.Option, ?> optionsMap) {
     ResultRetryAlgorithm<?> algorithm =
         serviceOptions.getRetryAlgorithmManager().getForBucketsList(optionsMap);
     return Retrying.run(
@@ -412,7 +412,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static Page<Blob> listBlobs(
       final String bucket,
-      final StorageOptions serviceOptions,
+      final HttpStorageOptions serviceOptions,
       final Map<StorageRpc.Option, ?> optionsMap) {
     ResultRetryAlgorithm<?> algorithm =
         serviceOptions.getRetryAlgorithmManager().getForObjectsList(bucket, optionsMap);
@@ -604,8 +604,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     final StorageObject pb = codecs.blobId().encode(blob);
     final Map<StorageRpc.Option, ?> requestOptions = optionMap(blob, options);
     ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, requestOptions);
-    Retrying.run(
-        getOptions(),
+    run(
         algorithm,
         callable(
             () -> {
@@ -1381,7 +1380,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   private static Page<HmacKeyMetadata> listHmacKeys(
-      final StorageOptions serviceOptions,
+      final HttpStorageOptions serviceOptions,
       final RetryAlgorithmManager retryAlgorithmManager,
       final Map<StorageRpc.Option, ?> options) {
     ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForHmacKeyList(options);
@@ -1565,6 +1564,11 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }
+  }
+
+  @Override
+  public HttpStorageOptions getOptions() {
+    return (HttpStorageOptions) super.getOptions();
   }
 
   private static <T> void addToOptionMap(

@@ -24,6 +24,7 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.StorageException;
@@ -192,7 +193,8 @@ public class RemoteStorageHelper {
   public static RemoteStorageHelper create(String projectId, InputStream keyStream)
       throws StorageHelperException {
     try {
-      HttpTransportOptions transportOptions = StorageOptions.getDefaultHttpTransportOptions();
+      HttpTransportOptions transportOptions =
+          HttpStorageOptions.defaults().getDefaultTransportOptions();
       transportOptions =
           transportOptions.toBuilder().setConnectTimeout(60000).setReadTimeout(60000).build();
       StorageOptions storageOptions =
@@ -216,7 +218,8 @@ public class RemoteStorageHelper {
    * credentials.
    */
   public static RemoteStorageHelper create() throws StorageHelperException {
-    HttpTransportOptions transportOptions = StorageOptions.getDefaultHttpTransportOptions();
+    HttpTransportOptions transportOptions =
+        HttpStorageOptions.defaults().getDefaultTransportOptions();
     transportOptions =
         transportOptions.toBuilder().setConnectTimeout(60000).setReadTimeout(60000).build();
     StorageOptions storageOptions =

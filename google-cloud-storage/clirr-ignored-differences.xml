@@ -11,9 +11,39 @@
     <differenceType>7012</differenceType>
     <method>* downloadTo(com.google.cloud.storage.BlobId, java.nio.file.Path, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
   </difference>
+
   <difference>
     <differenceType>7002</differenceType>
     <className>com/google/cloud/storage/HmacKey$HmacKeyMetadata</className>
     <method>* toPb()</method>
   </difference>
+
+  <!--
+  Allow StorageOptions and StorageOptions$Builder to now be abstract. This
+  shows as a binary breaking change, however both classes had private
+  constructors, so no one was able to extend them previously.
+  -->
+  <difference>
+    <differenceType>3005</differenceType>
+    <className>com/google/cloud/storage/StorageOptions</className>
+  </difference>
+  <difference>
+    <differenceType>3005</differenceType>
+    <className>com/google/cloud/storage/StorageOptions$Builder</className>
+  </difference>
+
+  <!--
+  The following methods have been moved to HttpStorageOptions as they are only applicable there
+  -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/StorageOptions</className>
+    <method>* getStorageRpcV1()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/StorageOptions$Builder</className>
+    <method>* setTransportOptions(*)</method>
+  </difference>
+
 </differences>

@@ -46,19 +46,14 @@ import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
-import com.google.cloud.storage.BucketInfo.AgeDeleteRule;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
-import com.google.cloud.storage.BucketInfo.CreatedBeforeDeleteRule;
-import com.google.cloud.storage.BucketInfo.DeleteRule;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
-import com.google.cloud.storage.BucketInfo.IsLiveDeleteRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.DeleteLifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.BucketInfo.Logging;
-import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.cloud.storage.Conversions.Codec;
@@ -103,7 +98,7 @@ final class ApiaryConversions {
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
 
   @SuppressWarnings("deprecation")
-  private final Codec<DeleteRule, Rule> deleteRuleCodec =
+  private final Codec<BucketInfo.DeleteRule, Rule> deleteRuleCodec =
       Codec.of(this::deleteRuleEncode, this::deleteRuleDecode);
 
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
@@ -162,7 +157,7 @@ final class ApiaryConversions {
   }
 
   @SuppressWarnings("deprecation")
-  Codec<DeleteRule, Rule> deleteRule() {
+  Codec<BucketInfo.DeleteRule, Rule> deleteRule() {
     return deleteRuleCodec;
   }
 
@@ -324,7 +319,7 @@ final class ApiaryConversions {
     }
 
     @SuppressWarnings("deprecation")
-    List<? extends DeleteRule> deleteRules = from.getDeleteRules();
+    List<? extends BucketInfo.DeleteRule> deleteRules = from.getDeleteRules();
     // Do not use, #getLifecycleRules, it can not return null, which is important to our logic here
     List<? extends LifecycleRule> lifecycleRules = from.lifecycleRules;
     if (deleteRules != null || lifecycleRules != null) {
@@ -434,13 +429,13 @@ final class ApiaryConversions {
   }
 
   @SuppressWarnings("deprecation")
-  private Rule deleteRuleEncode(DeleteRule from) {
+  private Rule deleteRuleEncode(BucketInfo.DeleteRule from) {
     if (from instanceof RawDeleteRule) {
       RawDeleteRule rule = (RawDeleteRule) from;
       return rule.getRule();
     }
     Rule to = new Rule();
-    to.setAction(new Rule.Action().setType(DeleteRule.SUPPORTED_ACTION));
+    to.setAction(new Rule.Action().setType(BucketInfo.DeleteRule.SUPPORTED_ACTION));
     Rule.Condition condition = new Rule.Condition();
     from.populateCondition(condition);
     to.setCondition(condition);
@@ -448,25 +443,25 @@ final class ApiaryConversions {
   }
 
   @SuppressWarnings("deprecation")
-  private DeleteRule deleteRuleDecode(Rule from) { // TODO: Name/type cleanup
+  private BucketInfo.DeleteRule deleteRuleDecode(Rule from) {
     if (from.getAction() != null
-        && DeleteRule.SUPPORTED_ACTION.endsWith(from.getAction().getType())) {
+        && BucketInfo.DeleteRule.SUPPORTED_ACTION.endsWith(from.getAction().getType())) {
       Rule.Condition condition = from.getCondition();
       Integer age = condition.getAge();
       if (age != null) {
-        return new AgeDeleteRule(age);
+        return new BucketInfo.AgeDeleteRule(age);
       }
       DateTime dateTime = condition.getCreatedBefore();
       if (dateTime != null) {
-        return new CreatedBeforeDeleteRule(dateTime.getValue());
+        return new BucketInfo.CreatedBeforeDeleteRule(dateTime.getValue());
       }
       Integer numNewerVersions = condition.getNumNewerVersions();
       if (numNewerVersions != null) {
-        return new NumNewerVersionsDeleteRule(numNewerVersions);
+        return new BucketInfo.NumNewerVersionsDeleteRule(numNewerVersions);
       }
       Boolean isLive = condition.getIsLive();
       if (isLive != null) {
-        return new IsLiveDeleteRule(isLive);
+        return new BucketInfo.IsLiveDeleteRule(isLive);
       }
     }
     return new RawDeleteRule(from);
