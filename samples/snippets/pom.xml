@@ -69,5 +69,11 @@
       <version>4.5.13</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-pubsub</artifactId>
+      <version>1.106.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
