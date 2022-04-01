@@ -18,6 +18,7 @@ package com.google.cloud.storage.spi.v1;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 
 import com.google.api.client.googleapis.batch.BatchRequest;
@@ -26,6 +27,7 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpExecuteInterceptor;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
@@ -86,6 +88,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
+import javax.annotation.Nullable;
 
 public class HttpStorageRpc implements StorageRpc {
   public static final String DEFAULT_PROJECTION = "full";
@@ -114,12 +118,63 @@ public class HttpStorageRpc implements StorageRpc {
     // Open Census initialization
     censusHttpModule = new CensusHttpModule(tracer, true);
     initializer = censusHttpModule.getHttpRequestInitializer(initializer);
+    if (options.isIncludeInvocationId()) {
+      initializer = new InvocationIdInitializer(initializer);
+    }
     batchRequestInitializer = censusHttpModule.getHttpRequestInitializer(null);
     storage =
         new Storage.Builder(transport, new JacksonFactory(), initializer)
             .setRootUrl(options.getHost())
             .setApplicationName(options.getApplicationName())
             .build();
+  }
+
+  private static final class InvocationIdInitializer implements HttpRequestInitializer {
+    @Nullable HttpRequestInitializer initializer;
+
+    private InvocationIdInitializer(@Nullable HttpRequestInitializer initializer) {
+      this.initializer = initializer;
+    }
+
+    @Override
+    public void initialize(HttpRequest request) throws IOException {
+      checkNotNull(request);
+      if (this.initializer != null) {
+        this.initializer.initialize(request);
+      }
+      request.setInterceptor(new InvocationIdInterceptor(request.getInterceptor()));
+    }
+  }
+
+  private static final class InvocationIdInterceptor implements HttpExecuteInterceptor {
+    @Nullable HttpExecuteInterceptor interceptor;
+
+    private InvocationIdInterceptor(@Nullable HttpExecuteInterceptor interceptor) {
+      this.interceptor = interceptor;
+    }
+
+    @Override
+    public void intercept(HttpRequest request) throws IOException {
+      checkNotNull(request);
+      if (this.interceptor != null) {
+        this.interceptor.intercept(request);
+      }
+      UUID invocationId = HttpRpcContext.getInstance().getInvocationId();
+      final String signatureKey = "Signature="; // For V2 and V4 signedURLs
+      final String builtURL = request.getUrl().build();
+      if (invocationId != null && !builtURL.contains(signatureKey)) {
+        HttpHeaders headers = request.getHeaders();
+        String existing = (String) headers.get("x-goog-api-client");
+        String invocationEntry = "gccl-invocation-id/" + invocationId;
+        final String newValue;
+        if (existing != null && !existing.isEmpty()) {
+          newValue = existing + " " + invocationEntry;
+        } else {
+          newValue = invocationEntry;
+        }
+        headers.set("x-goog-api-client", newValue);
+      }
+    }
   }
 
   private class DefaultRpcBatch implements RpcBatch {

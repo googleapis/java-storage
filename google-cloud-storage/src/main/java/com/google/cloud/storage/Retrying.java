@@ -22,6 +22,7 @@ import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.RetryHelper.RetryHelperException;
+import com.google.cloud.storage.spi.v1.HttpRpcContext;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
@@ -47,11 +48,15 @@ final class Retrying {
    */
   static <T, U> U run(
       StorageOptions options, ResultRetryAlgorithm<?> algorithm, Callable<T> c, Function<T, U> f) {
+    HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
     try {
+      httpRpcContext.newInvocationId();
       T result = runWithRetries(c, options.getRetrySettings(), algorithm, options.getClock());
       return result == null ? null : f.apply(result);
     } catch (RetryHelperException e) {
       throw StorageException.coalesce(e);
+    } finally {
+      httpRpcContext.clearInvocationId();
     }
   }
 }
