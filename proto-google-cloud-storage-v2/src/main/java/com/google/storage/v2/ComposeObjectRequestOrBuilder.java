@@ -119,25 +119,29 @@ public interface ComposeObjectRequestOrBuilder
    *
    * <pre>
    * Apply a predefined set of access controls to the destination object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 3;</code>
+   * <code>string destination_predefined_acl = 9;</code>
    *
-   * @return The enum numeric value on the wire for destinationPredefinedAcl.
+   * @return The destinationPredefinedAcl.
    */
-  int getDestinationPredefinedAclValue();
+  java.lang.String getDestinationPredefinedAcl();
   /**
    *
    *
    * <pre>
    * Apply a predefined set of access controls to the destination object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 3;</code>
+   * <code>string destination_predefined_acl = 9;</code>
    *
-   * @return The destinationPredefinedAcl.
+   * @return The bytes for destinationPredefinedAcl.
    */
-  com.google.storage.v2.PredefinedObjectAcl getDestinationPredefinedAcl();
+  com.google.protobuf.ByteString getDestinationPredefinedAclBytes();
 
   /**
    *

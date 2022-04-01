@@ -51,7 +51,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     sourceBucket_ = "";
     sourceObject_ = "";
     rewriteToken_ = "";
-    destinationPredefinedAcl_ = 0;
+    destinationPredefinedAcl_ = "";
     copySourceEncryptionAlgorithm_ = "";
     copySourceEncryptionKeyBytes_ = com.google.protobuf.ByteString.EMPTY;
     copySourceEncryptionKeySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
@@ -126,13 +126,6 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
               java.lang.String s = input.readStringRequireUtf8();
 
               rewriteToken_ = s;
-              break;
-            }
-          case 48:
-            {
-              int rawValue = input.readEnum();
-
-              destinationPredefinedAcl_ = rawValue;
               break;
             }
           case 56:
@@ -256,6 +249,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
               java.lang.String s = input.readStringRequireUtf8();
 
               destinationKmsKey_ = s;
+              break;
+            }
+          case 226:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              destinationPredefinedAcl_ = s;
               break;
             }
           default:
@@ -702,40 +702,57 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
   }
 
-  public static final int DESTINATION_PREDEFINED_ACL_FIELD_NUMBER = 6;
-  private int destinationPredefinedAcl_;
+  public static final int DESTINATION_PREDEFINED_ACL_FIELD_NUMBER = 28;
+  private volatile java.lang.Object destinationPredefinedAcl_;
   /**
    *
    *
    * <pre>
    * Apply a predefined set of access controls to the destination object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 6;</code>
+   * <code>string destination_predefined_acl = 28;</code>
    *
-   * @return The enum numeric value on the wire for destinationPredefinedAcl.
+   * @return The destinationPredefinedAcl.
    */
   @java.lang.Override
-  public int getDestinationPredefinedAclValue() {
-    return destinationPredefinedAcl_;
+  public java.lang.String getDestinationPredefinedAcl() {
+    java.lang.Object ref = destinationPredefinedAcl_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      destinationPredefinedAcl_ = s;
+      return s;
+    }
   }
   /**
    *
    *
    * <pre>
    * Apply a predefined set of access controls to the destination object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 6;</code>
+   * <code>string destination_predefined_acl = 28;</code>
    *
-   * @return The destinationPredefinedAcl.
+   * @return The bytes for destinationPredefinedAcl.
    */
   @java.lang.Override
-  public com.google.storage.v2.PredefinedObjectAcl getDestinationPredefinedAcl() {
-    @SuppressWarnings("deprecation")
-    com.google.storage.v2.PredefinedObjectAcl result =
-        com.google.storage.v2.PredefinedObjectAcl.valueOf(destinationPredefinedAcl_);
-    return result == null ? com.google.storage.v2.PredefinedObjectAcl.UNRECOGNIZED : result;
+  public com.google.protobuf.ByteString getDestinationPredefinedAclBytes() {
+    java.lang.Object ref = destinationPredefinedAcl_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      destinationPredefinedAcl_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
   }
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 7;
@@ -1266,11 +1283,6 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rewriteToken_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 5, rewriteToken_);
     }
-    if (destinationPredefinedAcl_
-        != com.google.storage.v2.PredefinedObjectAcl.PREDEFINED_OBJECT_ACL_UNSPECIFIED
-            .getNumber()) {
-      output.writeEnum(6, destinationPredefinedAcl_);
-    }
     if (((bitField0_ & 0x00000001) != 0)) {
       output.writeInt64(7, ifGenerationMatch_);
     }
@@ -1323,6 +1335,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationKmsKey_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 27, destinationKmsKey_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationPredefinedAcl_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 28, destinationPredefinedAcl_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -1346,11 +1361,6 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rewriteToken_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(5, rewriteToken_);
-    }
-    if (destinationPredefinedAcl_
-        != com.google.storage.v2.PredefinedObjectAcl.PREDEFINED_OBJECT_ACL_UNSPECIFIED
-            .getNumber()) {
-      size += com.google.protobuf.CodedOutputStream.computeEnumSize(6, destinationPredefinedAcl_);
     }
     if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, ifGenerationMatch_);
@@ -1415,6 +1425,10 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationKmsKey_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, destinationKmsKey_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationPredefinedAcl_)) {
+      size +=
+          com.google.protobuf.GeneratedMessageV3.computeStringSize(28, destinationPredefinedAcl_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1442,7 +1456,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     if (!getSourceObject().equals(other.getSourceObject())) return false;
     if (getSourceGeneration() != other.getSourceGeneration()) return false;
     if (!getRewriteToken().equals(other.getRewriteToken())) return false;
-    if (destinationPredefinedAcl_ != other.destinationPredefinedAcl_) return false;
+    if (!getDestinationPredefinedAcl().equals(other.getDestinationPredefinedAcl())) return false;
     if (hasIfGenerationMatch() != other.hasIfGenerationMatch()) return false;
     if (hasIfGenerationMatch()) {
       if (getIfGenerationMatch() != other.getIfGenerationMatch()) return false;
@@ -1523,7 +1537,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     hash = (37 * hash) + REWRITE_TOKEN_FIELD_NUMBER;
     hash = (53 * hash) + getRewriteToken().hashCode();
     hash = (37 * hash) + DESTINATION_PREDEFINED_ACL_FIELD_NUMBER;
-    hash = (53 * hash) + destinationPredefinedAcl_;
+    hash = (53 * hash) + getDestinationPredefinedAcl().hashCode();
     if (hasIfGenerationMatch()) {
       hash = (37 * hash) + IF_GENERATION_MATCH_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfGenerationMatch());
@@ -1745,7 +1759,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
       rewriteToken_ = "";
 
-      destinationPredefinedAcl_ = 0;
+      destinationPredefinedAcl_ = "";
 
       ifGenerationMatch_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
@@ -1951,8 +1965,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         rewriteToken_ = other.rewriteToken_;
         onChanged();
       }
-      if (other.destinationPredefinedAcl_ != 0) {
-        setDestinationPredefinedAclValue(other.getDestinationPredefinedAclValue());
+      if (!other.getDestinationPredefinedAcl().isEmpty()) {
+        destinationPredefinedAcl_ = other.destinationPredefinedAcl_;
+        onChanged();
       }
       if (other.hasIfGenerationMatch()) {
         setIfGenerationMatch(other.getIfGenerationMatch());
@@ -3036,35 +3051,73 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       return this;
     }
 
-    private int destinationPredefinedAcl_ = 0;
+    private java.lang.Object destinationPredefinedAcl_ = "";
     /**
      *
      *
      * <pre>
      * Apply a predefined set of access controls to the destination object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 6;</code>
+     * <code>string destination_predefined_acl = 28;</code>
      *
-     * @return The enum numeric value on the wire for destinationPredefinedAcl.
+     * @return The destinationPredefinedAcl.
      */
-    @java.lang.Override
-    public int getDestinationPredefinedAclValue() {
-      return destinationPredefinedAcl_;
+    public java.lang.String getDestinationPredefinedAcl() {
+      java.lang.Object ref = destinationPredefinedAcl_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        destinationPredefinedAcl_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
     }
     /**
      *
      *
      * <pre>
      * Apply a predefined set of access controls to the destination object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 6;</code>
+     * <code>string destination_predefined_acl = 28;</code>
      *
-     * @param value The enum numeric value on the wire for destinationPredefinedAcl to set.
+     * @return The bytes for destinationPredefinedAcl.
+     */
+    public com.google.protobuf.ByteString getDestinationPredefinedAclBytes() {
+      java.lang.Object ref = destinationPredefinedAcl_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        destinationPredefinedAcl_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Apply a predefined set of access controls to the destination object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
+     * </pre>
+     *
+     * <code>string destination_predefined_acl = 28;</code>
+     *
+     * @param value The destinationPredefinedAcl to set.
      * @return This builder for chaining.
      */
-    public Builder setDestinationPredefinedAclValue(int value) {
+    public Builder setDestinationPredefinedAcl(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
 
       destinationPredefinedAcl_ = value;
       onChanged();
@@ -3075,37 +3128,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Apply a predefined set of access controls to the destination object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 6;</code>
+     * <code>string destination_predefined_acl = 28;</code>
      *
-     * @return The destinationPredefinedAcl.
-     */
-    @java.lang.Override
-    public com.google.storage.v2.PredefinedObjectAcl getDestinationPredefinedAcl() {
-      @SuppressWarnings("deprecation")
-      com.google.storage.v2.PredefinedObjectAcl result =
-          com.google.storage.v2.PredefinedObjectAcl.valueOf(destinationPredefinedAcl_);
-      return result == null ? com.google.storage.v2.PredefinedObjectAcl.UNRECOGNIZED : result;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Apply a predefined set of access controls to the destination object.
-     * </pre>
-     *
-     * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 6;</code>
-     *
-     * @param value The destinationPredefinedAcl to set.
      * @return This builder for chaining.
      */
-    public Builder setDestinationPredefinedAcl(com.google.storage.v2.PredefinedObjectAcl value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder clearDestinationPredefinedAcl() {
 
-      destinationPredefinedAcl_ = value.getNumber();
+      destinationPredefinedAcl_ = getDefaultInstance().getDestinationPredefinedAcl();
       onChanged();
       return this;
     }
@@ -3114,15 +3147,22 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Apply a predefined set of access controls to the destination object.
+     * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+     * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
      * </pre>
      *
-     * <code>.google.storage.v2.PredefinedObjectAcl destination_predefined_acl = 6;</code>
+     * <code>string destination_predefined_acl = 28;</code>
      *
+     * @param value The bytes for destinationPredefinedAcl to set.
      * @return This builder for chaining.
      */
-    public Builder clearDestinationPredefinedAcl() {
+    public Builder setDestinationPredefinedAclBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
 
-      destinationPredefinedAcl_ = 0;
+      destinationPredefinedAcl_ = value;
       onChanged();
       return this;
     }

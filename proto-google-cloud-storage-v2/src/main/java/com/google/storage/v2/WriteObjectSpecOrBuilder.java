@@ -63,25 +63,29 @@ public interface WriteObjectSpecOrBuilder
    *
    * <pre>
    * Apply a predefined set of access controls to this object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 2;</code>
+   * <code>string predefined_acl = 7;</code>
    *
-   * @return The enum numeric value on the wire for predefinedAcl.
+   * @return The predefinedAcl.
    */
-  int getPredefinedAclValue();
+  java.lang.String getPredefinedAcl();
   /**
    *
    *
    * <pre>
    * Apply a predefined set of access controls to this object.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl predefined_acl = 2;</code>
+   * <code>string predefined_acl = 7;</code>
    *
-   * @return The predefinedAcl.
+   * @return The bytes for predefinedAcl.
    */
-  com.google.storage.v2.PredefinedObjectAcl getPredefinedAcl();
+  com.google.protobuf.ByteString getPredefinedAclBytes();
 
   /**
    *

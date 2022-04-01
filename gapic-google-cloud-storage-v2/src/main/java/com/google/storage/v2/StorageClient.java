@@ -436,8 +436,8 @@ public class StorageClient implements BackgroundResource {
    *           .setParent(ProjectName.of("[PROJECT]").toString())
    *           .setBucket(Bucket.newBuilder().build())
    *           .setBucketId("bucketId-1603305307")
-   *           .setPredefinedAcl(PredefinedBucketAcl.forNumber(0))
-   *           .setPredefinedDefaultObjectAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setPredefinedAcl("predefinedAcl1207041188")
+   *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
    *           .build();
    *   Bucket response = storageClient.createBucket(request);
    * }
@@ -463,8 +463,8 @@ public class StorageClient implements BackgroundResource {
    *           .setParent(ProjectName.of("[PROJECT]").toString())
    *           .setBucket(Bucket.newBuilder().build())
    *           .setBucketId("bucketId-1603305307")
-   *           .setPredefinedAcl(PredefinedBucketAcl.forNumber(0))
-   *           .setPredefinedDefaultObjectAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setPredefinedAcl("predefinedAcl1207041188")
+   *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
    *           .build();
    *   ApiFuture<Bucket> future = storageClient.createBucketCallable().futureCall(request);
    *   // Do something.
@@ -1089,8 +1089,8 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(Bucket.newBuilder().build())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setPredefinedAcl(PredefinedBucketAcl.forNumber(0))
-   *           .setPredefinedDefaultObjectAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setPredefinedAcl("predefinedAcl1207041188")
+   *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
@@ -1118,8 +1118,8 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(Bucket.newBuilder().build())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setPredefinedAcl(PredefinedBucketAcl.forNumber(0))
-   *           .setPredefinedDefaultObjectAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setPredefinedAcl("predefinedAcl1207041188")
+   *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
@@ -1576,7 +1576,7 @@ public class StorageClient implements BackgroundResource {
    *       ComposeObjectRequest.newBuilder()
    *           .setDestination(Object.newBuilder().build())
    *           .addAllSourceObjects(new ArrayList<ComposeObjectRequest.SourceObject>())
-   *           .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfMetagenerationMatch(1043427781)
    *           .setKmsKey(
@@ -1608,7 +1608,7 @@ public class StorageClient implements BackgroundResource {
    *       ComposeObjectRequest.newBuilder()
    *           .setDestination(Object.newBuilder().build())
    *           .addAllSourceObjects(new ArrayList<ComposeObjectRequest.SourceObject>())
-   *           .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfMetagenerationMatch(1043427781)
    *           .setKmsKey(
@@ -1949,7 +1949,7 @@ public class StorageClient implements BackgroundResource {
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
    *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
@@ -1980,7 +1980,7 @@ public class StorageClient implements BackgroundResource {
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
    *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
@@ -2238,7 +2238,7 @@ public class StorageClient implements BackgroundResource {
    *           .setSourceObject("sourceObject1196439354")
    *           .setSourceGeneration(1232209852)
    *           .setRewriteToken("rewriteToken80654285")
-   *           .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
@@ -2285,7 +2285,7 @@ public class StorageClient implements BackgroundResource {
    *           .setSourceObject("sourceObject1196439354")
    *           .setSourceGeneration(1232209852)
    *           .setRewriteToken("rewriteToken80654285")
-   *           .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+   *           .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)

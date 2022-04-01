@@ -81,12 +81,9 @@ import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.io.ByteArrayOutputStream;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -111,9 +108,10 @@ public class ITBucketSnippets {
   private static final String KMS_KEY_NAME =
       "projects/java-docs-samples-testing/locations/us/keyRings/"
           + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
-  private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
 
   private static Storage storage;
+
+  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
 
   @Rule public ExpectedException thrown = ExpectedException.none();
 
@@ -152,9 +150,6 @@ public class ITBucketSnippets {
   public void after() throws Exception {
     // This avoids 429 errors
     Thread.sleep(3000);
-
-    // This is just in case any tests failed before they could reset the value
-    System.setOut(standardOut);
   }
 
   @Test
@@ -231,12 +226,8 @@ public class ITBucketSnippets {
             .build()
             .update();
 
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GetBucketMetadata.getBucketMetadata(PROJECT_ID, BUCKET);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(standardOut);
-    System.out.println(snippetOutput);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains(("BucketName: " + bucket.getName())));
     assertTrue(
         snippetOutput.contains(("DefaultEventBasedHold: " + bucket.getDefaultEventBasedHold())));
@@ -264,11 +255,8 @@ public class ITBucketSnippets {
 
   @Test
   public void testListBuckets() {
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     ListBuckets.listBuckets(PROJECT_ID);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(standardOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains(BUCKET));
   }
 
@@ -320,11 +308,8 @@ public class ITBucketSnippets {
                   .build())
           .build()
           .update();
-      final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(snippetOutputCapture));
       GetPublicAccessPrevention.getPublicAccessPrevention(PROJECT_ID, BUCKET);
-      String snippetOutput = snippetOutputCapture.toString();
-      System.setOut(standardOut);
+      String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
       assertTrue(snippetOutput.contains("enforced"));
       storage
           .get(BUCKET)
@@ -421,11 +406,8 @@ public class ITBucketSnippets {
     int originalSize = storage.getIamPolicy(BUCKET).getBindingsList().size();
     AddBucketIamMember.addBucketIamMember(PROJECT_ID, BUCKET);
     assertEquals(originalSize + 1, storage.getIamPolicy(BUCKET).getBindingsList().size());
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     ListBucketIamMembers.listBucketIamMembers(PROJECT_ID, BUCKET);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(standardOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("example@google.com"));
     RemoveBucketIamMember.removeBucketIamMember(PROJECT_ID, BUCKET);
     assertEquals(originalSize, storage.getIamPolicy(BUCKET).getBindingsList().size());
@@ -486,11 +468,8 @@ public class ITBucketSnippets {
 
   @Test
   public void testSetClientEndpoint() {
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     SetClientEndpoint.setClientEndpoint(PROJECT_ID, "https://storage.googleapis.com");
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(standardOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("https://storage.googleapis.com"));
   }
 
@@ -566,11 +545,8 @@ public class ITBucketSnippets {
       bucket = storage.get(rpoBucket);
       assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
 
-      final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(snippetOutputCapture));
       GetBucketRpo.getBucketRpo(PROJECT_ID, rpoBucket);
-      String snippetOutput = snippetOutputCapture.toString();
-      System.setOut(standardOut);
+      String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
       assertTrue(snippetOutput.contains("ASYNC_TURBO"));
     } finally {
       storage.delete(rpoBucket);
@@ -594,21 +570,16 @@ public class ITBucketSnippets {
     assertEquals(retention, bucket.getRetentionPeriod());
     assertNotNull(bucket.getRetentionEffectiveTime());
 
-    ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GetRetentionPolicy.getRetentionPolicy(PROJECT_ID, BUCKET);
-    String snippetOutput = snippetOutputCapture.toString();
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("5"));
 
     EnableDefaultEventBasedHold.enableDefaultEventBasedHold(PROJECT_ID, BUCKET);
     assertTrue(storage.get(BUCKET).getDefaultEventBasedHold());
 
-    snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GetDefaultEventBasedHold.getDefaultEventBasedHold(PROJECT_ID, BUCKET);
-    snippetOutput = snippetOutputCapture.toString();
+    snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("enabled"));
-    System.setOut(standardOut);
 
     byte[] content = {0xD, 0xE, 0xA, 0xD};
     String blobName = "test-create-empty-blob-retention-policy";
@@ -645,12 +616,9 @@ public class ITBucketSnippets {
     assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
     assertNotNull(bucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
 
-    ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GetUniformBucketLevelAccess.getUniformBucketLevelAccess(PROJECT_ID, BUCKET);
-    String snippetOutput = snippetOutputCapture.toString();
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("enabled"));
-    System.setOut(standardOut);
 
     DisableUniformBucketLevelAccess.disableUniformBucketLevelAccess(PROJECT_ID, BUCKET);
     assertFalse(storage.get(BUCKET).getIamConfiguration().isUniformBucketLevelAccessEnabled());

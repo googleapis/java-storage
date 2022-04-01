@@ -561,15 +561,15 @@ public interface StorageRpc extends ServiceRpc {
       String bucket, List<String> permissions, Map<Option, ?> options);
 
   /**
-   * Deletes the notification with the specified name on the specified object.
+   * Deletes the notification with the specified id on the bucket.
    *
-   * @return {@code true} if the notification was deleted, {@code false} if it was not found
+   * @return {@code true} if the notification has been deleted, {@code false} if not found
    * @throws StorageException upon failure
    */
-  boolean deleteNotification(String bucket, String notification);
+  boolean deleteNotification(String bucket, String id);
 
   /**
-   * List the notifications for the provided bucket.
+   * Retrieves the list of notifications associated with the bucket.
    *
    * @return a list of {@link Notification} objects that exist on the bucket.
    * @throws StorageException upon failure
@@ -577,12 +577,20 @@ public interface StorageRpc extends ServiceRpc {
   List<Notification> listNotifications(String bucket);
 
   /**
-   * Creates a notification with the specified entity on the specified bucket.
+   * Creates the notification for a given bucket.
    *
-   * @return the notification that was created.
+   * @return the created notification.
    * @throws StorageException upon failure
    */
   Notification createNotification(String bucket, Notification notification);
+
+  /**
+   * Gets the notification with the specified id.
+   *
+   * @return the {@code Notification} object with the given id or {@code null} if not found
+   * @throws StorageException upon failure
+   */
+  Notification getNotification(String bucket, String id);
 
   /**
    * Lock retention policy for the provided bucket.

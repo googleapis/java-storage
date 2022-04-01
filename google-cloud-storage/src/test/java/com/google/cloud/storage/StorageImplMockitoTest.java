@@ -60,6 +60,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Before;
@@ -364,6 +365,37 @@ public class StorageImplMockitoTest {
           .put('_', "_")
           .put('.', ".")
           .put('~', "~")
+          .build();
+
+  // Notification
+  private static final String ETAG = "0xFF00";
+  private static final String GENERATED_ID = "B/N:1";
+  private static final String SELF_LINK = "http://storage/b/n";
+  private static final Notification.EventType[] EVENT_TYPES = {
+    Notification.EventType.OBJECT_FINALIZE, Notification.EventType.OBJECT_METADATA_UPDATE
+  };
+  private static final String OBJECT_NAME_PREFIX = "index.html";
+  private static final Notification.PayloadFormat PAYLOAD_FORMAT =
+      Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
+  private static final String TOPIC = "projects/myProject/topics/topic1";
+  private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
+  private static final NotificationInfo NOTIFICATION_INFO_01 =
+      NotificationInfo.newBuilder(TOPIC)
+          .setEtag(ETAG)
+          .setCustomAttributes(CUSTOM_ATTRIBUTES)
+          .setSelfLink(SELF_LINK)
+          .setEventTypes(EVENT_TYPES)
+          .setObjectNamePrefix(OBJECT_NAME_PREFIX)
+          .setPayloadFormat(PAYLOAD_FORMAT)
+          .build();
+  private static final NotificationInfo NOTIFICATION_INFO_02 =
+      NotificationInfo.newBuilder(TOPIC)
+          .setEtag(ETAG)
+          .setCustomAttributes(CUSTOM_ATTRIBUTES)
+          .setSelfLink(SELF_LINK)
+          .setEventTypes(EVENT_TYPES)
+          .setObjectNamePrefix(OBJECT_NAME_PREFIX)
+          .setPayloadFormat(PAYLOAD_FORMAT)
           .build();
 
   private static final String ACCOUNT = "account";
@@ -1642,5 +1674,56 @@ public class StorageImplMockitoTest {
     } catch (StorageException e) {
       assertSame(STORAGE_FAILURE, e.getCause());
     }
+  }
+
+  @Test
+  public void testCreateNotification() {
+    doReturn(NOTIFICATION_INFO_01.toPb())
+        .when(storageRpcMock)
+        .createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01.toPb());
+    initializeService();
+    Notification notification = storage.createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01);
+    verifyBucketNotification(notification);
+  }
+
+  @Test
+  public void testGetNotification() {
+    doReturn(NOTIFICATION_INFO_01.toPb())
+        .when(storageRpcMock)
+        .getNotification(BUCKET_NAME1, GENERATED_ID);
+    initializeService();
+    Notification notification = storage.getNotification(BUCKET_NAME1, GENERATED_ID);
+    verifyBucketNotification(notification);
+  }
+
+  @Test
+  public void testListNotification() {
+    doReturn(Arrays.asList(NOTIFICATION_INFO_01.toPb(), NOTIFICATION_INFO_02.toPb()))
+        .when(storageRpcMock)
+        .listNotifications(BUCKET_NAME1);
+    initializeService();
+    List<Notification> notifications = storage.listNotifications(BUCKET_NAME1);
+    assertEquals(2, notifications.size());
+    verifyBucketNotification(notifications.get(0));
+    verifyBucketNotification(notifications.get(1));
+  }
+
+  @Test
+  public void testDeleteNotification() {
+    doReturn(true).when(storageRpcMock).deleteNotification(BUCKET_NAME1, GENERATED_ID);
+    initializeService();
+    Boolean isDeleted = storage.deleteNotification(BUCKET_NAME1, GENERATED_ID);
+    assertEquals(isDeleted, Boolean.TRUE);
+  }
+
+  private void verifyBucketNotification(Notification value) {
+    assertNull(value.getNotificationId());
+    assertEquals(CUSTOM_ATTRIBUTES, value.getCustomAttributes());
+    assertEquals(ETAG, value.getEtag());
+    assertEquals(SELF_LINK, value.getSelfLink());
+    assertEquals(OBJECT_NAME_PREFIX, value.getObjectNamePrefix());
+    assertEquals(PAYLOAD_FORMAT.name(), value.getPayloadFormat().name());
+    assertEquals(TOPIC, value.getTopic());
+    assertEquals(Arrays.asList(EVENT_TYPES), value.getEventTypes());
   }
 }

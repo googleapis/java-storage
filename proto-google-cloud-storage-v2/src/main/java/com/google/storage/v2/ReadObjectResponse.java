@@ -22,7 +22,7 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Response message for GetObject.
+ * Response message for ReadObject.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.ReadObjectResponse}
@@ -587,7 +587,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Response message for GetObject.
+   * Response message for ReadObject.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.ReadObjectResponse}
