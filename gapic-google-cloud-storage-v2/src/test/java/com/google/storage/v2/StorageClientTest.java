@@ -197,7 +197,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
-            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
+            .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -260,7 +260,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
-            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
+            .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -323,7 +323,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
-            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
+            .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -392,7 +392,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
-            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
+            .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -549,7 +549,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
-            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
+            .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -613,7 +613,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
-            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
+            .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -927,7 +927,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
-            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
+            .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -1337,7 +1337,7 @@ public class StorageClientTest {
         ComposeObjectRequest.newBuilder()
             .setDestination(Object.newBuilder().build())
             .addAllSourceObjects(new ArrayList<ComposeObjectRequest.SourceObject>())
-            .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+            .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
             .setIfGenerationMatch(-1086241088)
             .setIfMetagenerationMatch(1043427781)
             .setKmsKey(
@@ -1381,7 +1381,7 @@ public class StorageClientTest {
           ComposeObjectRequest.newBuilder()
               .setDestination(Object.newBuilder().build())
               .addAllSourceObjects(new ArrayList<ComposeObjectRequest.SourceObject>())
-              .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+              .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
               .setIfGenerationMatch(-1086241088)
               .setIfMetagenerationMatch(1043427781)
               .setKmsKey(
@@ -1926,7 +1926,7 @@ public class StorageClientTest {
             .setSourceObject("sourceObject1196439354")
             .setSourceGeneration(1232209852)
             .setRewriteToken("rewriteToken80654285")
-            .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+            .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
             .setIfGenerationMatch(-1086241088)
             .setIfGenerationNotMatch(1475720404)
             .setIfMetagenerationMatch(1043427781)
@@ -2012,7 +2012,7 @@ public class StorageClientTest {
               .setSourceObject("sourceObject1196439354")
               .setSourceGeneration(1232209852)
               .setRewriteToken("rewriteToken80654285")
-              .setDestinationPredefinedAcl(PredefinedObjectAcl.forNumber(0))
+              .setDestinationPredefinedAcl("destinationPredefinedAcl1111125814")
               .setIfGenerationMatch(-1086241088)
               .setIfGenerationNotMatch(1475720404)
               .setIfMetagenerationMatch(1043427781)

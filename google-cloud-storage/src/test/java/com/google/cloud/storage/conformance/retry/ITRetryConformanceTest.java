@@ -149,7 +149,13 @@ public class ITRetryConformanceTest {
             .setMappings(new RpcMethodMappings())
             .setProjectId("conformance-tests")
             .setHost(TEST_BENCH.getBaseUri().replaceAll("https?://", ""))
-            .setTestAllowFilter(RetryTestCaseResolver.includeAll())
+            .setTestAllowFilter(
+                RetryTestCaseResolver.includeAll()
+                    .and(
+                        (m, trc) ->
+                            trc.getScenarioId()
+                                < 7) // Temporarily exclude resumable media scenarios
+                )
             .build();
 
     List<RetryTestCase> retryTestCases = resolver.getRetryTestCases();

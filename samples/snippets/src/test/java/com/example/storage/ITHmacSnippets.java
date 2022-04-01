@@ -33,51 +33,25 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
-import java.io.ByteArrayOutputStream;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
+import com.google.cloud.testing.junit4.MultipleAttemptsRule;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
-public class ITHmacSnippets {
+public class ITHmacSnippets extends TestBase {
   private static final String PROJECT_ID = ServiceOptions.getDefaultProjectId();
   private static final String HMAC_KEY_TEST_SERVICE_ACCOUNT =
       PROJECT_ID + "@" + PROJECT_ID + ".iam.gserviceaccount.com";
-  private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
-
-  private static Storage storage;
-
-  @BeforeClass
-  public static void beforeClass() {
-    RemoteStorageHelper helper = RemoteStorageHelper.create();
-    storage =
-        helper
-            .getOptions()
-            .toBuilder()
-            .setRetrySettings(
-                helper
-                    .getOptions()
-                    .getRetrySettings()
-                    .toBuilder()
-                    .setRetryDelayMultiplier(3.0)
-                    .build())
-            .build()
-            .getService();
-  }
 
   @Before
   public void before() {
     cleanUpHmacKeys(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
-
-    // This is just in case any tests failed before they could reset the value
-    System.setOut(standardOut);
   }
 
-  private static void cleanUpHmacKeys(ServiceAccount serviceAccount) {
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
+
+  private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
     Page<HmacKey.HmacKeyMetadata> metadatas =
         storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
     for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
@@ -92,11 +66,9 @@ public class ITHmacSnippets {
 
   @Test
   public void testCreateHmacKey() throws Exception {
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
+    ;
     CreateHmacKey.createHmacKey(HMAC_KEY_TEST_SERVICE_ACCOUNT, PROJECT_ID);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(standardOut);
+    String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     String accessId = snippetOutput.split("Access ID: ")[1].split("\n")[0];
     Thread.sleep(5000);
     assertNotNull(storage.getHmacKey(accessId));
@@ -105,13 +77,9 @@ public class ITHmacSnippets {
   @Test
   public void testGetHmacKey() throws Exception {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
-
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     Thread.sleep(5000);
     GetHmacKey.getHmacKey(hmacKey.getMetadata().getAccessId(), PROJECT_ID);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(standardOut);
+    String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     Assert.assertTrue(snippetOutput.contains(HMAC_KEY_TEST_SERVICE_ACCOUNT));
   }
 
@@ -129,9 +97,8 @@ public class ITHmacSnippets {
   @Test
   public void testDeactivateHmacKey() throws Exception {
     HmacKey hmacKey = storage.createHmacKey(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
-
-    DeactivateHmacKey.deactivateHmacKey(hmacKey.getMetadata().getAccessId(), PROJECT_ID);
     Thread.sleep(5000);
+    DeactivateHmacKey.deactivateHmacKey(hmacKey.getMetadata().getAccessId(), PROJECT_ID);
     assertEquals(
         HmacKeyState.INACTIVE, storage.getHmacKey(hmacKey.getMetadata().getAccessId()).getState());
   }
@@ -158,12 +125,9 @@ public class ITHmacSnippets {
             ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT),
             Storage.CreateHmacKeyOption.projectId(PROJECT_ID));
 
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     ListHmacKeys.listHmacKeys(PROJECT_ID);
-    String snippetOutput = snippetOutputCapture.toString();
+    String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains(one.getMetadata().getAccessId()));
     assertTrue(snippetOutput.contains(two.getMetadata().getAccessId()));
-    System.setOut(standardOut);
   }
 }

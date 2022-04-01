@@ -20,11 +20,11 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import java.util.UUID;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -33,9 +33,10 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 @SuppressWarnings("checkstyle:abbreviationaswordinname")
 public class QuickstartSampleIT {
+
+  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
+
   private String bucketName;
-  private ByteArrayOutputStream bout;
-  private PrintStream out;
 
   private static final void deleteBucket(String bucketName) {
     Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -45,22 +46,17 @@ public class QuickstartSampleIT {
   @Before
   public void setUp() {
     bucketName = "my-new-bucket-" + UUID.randomUUID().toString();
-
-    bout = new ByteArrayOutputStream();
-    out = new PrintStream(bout);
-    System.setOut(out);
   }
 
   @After
   public void tearDown() {
-    System.setOut(null);
     deleteBucket(bucketName);
   }
 
   @Test
   public void testQuickstart() throws Exception {
     QuickstartSample.main(bucketName);
-    String got = bout.toString();
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
 }

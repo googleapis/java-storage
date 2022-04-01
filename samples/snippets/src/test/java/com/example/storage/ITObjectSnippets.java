@@ -61,16 +61,13 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Date;
@@ -83,7 +80,6 @@ import java.util.logging.Logger;
 import javax.net.ssl.HttpsURLConnection;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -97,12 +93,13 @@ public class ITObjectSnippets {
   private static final String STRING_CONTENT = "Hello, World!";
   private static final byte[] CONTENT = STRING_CONTENT.getBytes(UTF_8);
   private static final String PROJECT_ID = System.getenv("GOOGLE_CLOUD_PROJECT");
-  private final PrintStream standardOut = new PrintStream(new FileOutputStream(FileDescriptor.out));
   private static final String KMS_KEY_NAME =
       "projects/java-docs-samples-testing/locations/us/keyRings/"
           + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
 
   private static Storage storage;
+
+  @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
 
   @Rule public ExpectedException thrown = ExpectedException.none();
 
@@ -125,12 +122,6 @@ public class ITObjectSnippets {
         log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
       }
     }
-  }
-
-  @Before
-  public void before() {
-    // This is just in case any tests failed before they could reset the value
-    System.setOut(standardOut);
   }
 
   @Test
@@ -177,12 +168,8 @@ public class ITObjectSnippets {
 
   @Test
   public void testDownloadObjectIntoMemory() throws IOException {
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     DownloadObjectIntoMemory.downloadObjectIntoMemory(PROJECT_ID, BUCKET, BLOB);
-    String snippetOutput = snippetOutputCapture.toString();
-    assertTrue(snippetOutput.contains("Hello, World!"));
-    System.setOut(standardOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
   }
 
   @Test
@@ -207,12 +194,8 @@ public class ITObjectSnippets {
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMetadata(ImmutableMap.of("k", "v")).build();
     Blob remoteBlob = storage.create(blobInfo, CONTENT);
     assertNotNull(remoteBlob);
-    final PrintStream systemOut = System.out;
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GetObjectMetadata.getObjectMetadata(PROJECT_ID, BUCKET, blobName);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(systemOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("Bucket: " + remoteBlob.getBucket()));
     assertTrue(snippetOutput.contains("Bucket: " + remoteBlob.getBucket()));
     assertTrue(snippetOutput.contains("CacheControl: " + remoteBlob.getCacheControl()));
@@ -246,28 +229,21 @@ public class ITObjectSnippets {
 
   @Test
   public void testListObjects() {
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     ListObjects.listObjects(PROJECT_ID, BUCKET);
-    String snippetOutput = snippetOutputCapture.toString();
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains(BLOB));
-    System.setOut(standardOut);
   }
 
   @Test
   public void testListObjectsWithPrefix() {
-    final PrintStream systemOutput = System.out;
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, "a/1.txt")).build());
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, "a/b/2.txt")).build());
     storage.create(BlobInfo.newBuilder(BlobId.of(BUCKET, "a/b/3.txt")).build());
     ListObjectsWithPrefix.listObjectsWithPrefix(PROJECT_ID, BUCKET, "a/");
-    String snippetOutput = snippetOutputCapture.toString();
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertTrue(snippetOutput.contains("a/1.txt"));
     assertTrue(snippetOutput.contains("a/b/"));
     assertFalse(snippetOutput.contains("a/b/2.txt"));
-    System.setOut(systemOutput);
   }
 
   @Test
@@ -318,13 +294,8 @@ public class ITObjectSnippets {
 
   @Test
   public void testObjectCSEKOperations() throws IOException {
-    final PrintStream systemOut = System.out;
-
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GenerateEncryptionKey.generateEncryptionKey();
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(systemOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     String encryptionKey = snippetOutput.split(": ")[1].trim();
 
     File tempFile = File.createTempFile("file", ".txt");
@@ -363,12 +334,8 @@ public class ITObjectSnippets {
     byte[] content2 = "Hello, World 2".getBytes(UTF_8);
     storage.create(BlobInfo.newBuilder(BUCKET, versionedBlob).build(), content2);
 
-    final PrintStream systemOut = System.out;
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     ListObjectsWithOldVersions.listObjectsWithOldVersions(PROJECT_ID, BUCKET);
-    String snippetOutput = snippetOutputCapture.toString();
-    System.setOut(systemOut);
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
 
     snippetOutput = snippetOutput.replaceFirst(versionedBlob, "");
     assertTrue(snippetOutput.contains(versionedBlob));
@@ -386,10 +353,8 @@ public class ITObjectSnippets {
   @Test
   public void testV4SignedURLs() throws IOException {
     String tempObject = "test-upload-signed-url-object";
-    final ByteArrayOutputStream snippetOutputCapture = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(snippetOutputCapture));
     GenerateV4PutObjectSignedUrl.generateV4PutObjectSignedUrl(PROJECT_ID, BUCKET, tempObject);
-    String snippetOutput = snippetOutputCapture.toString();
+    String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     String url = snippetOutput.split("\n")[1];
     URL uploadUrl = new URL(url);
     HttpsURLConnection connection = (HttpsURLConnection) uploadUrl.openConnection();
@@ -401,10 +366,9 @@ public class ITObjectSnippets {
       assertEquals(connection.getResponseCode(), 200);
     }
     GenerateV4GetObjectSignedUrl.generateV4GetObjectSignedUrl(PROJECT_ID, BUCKET, tempObject);
-    snippetOutput = snippetOutputCapture.toString();
+    snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     url = snippetOutput.split("\n")[5];
     URL downloadUrl = new URL(url);
-    System.setOut(standardOut);
     connection = (HttpsURLConnection) downloadUrl.openConnection();
     byte[] readBytes = new byte[CONTENT.length];
     try (InputStream responseStream = connection.getInputStream()) {

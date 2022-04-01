@@ -355,28 +355,27 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               satisfiesPzs_ = input.readBool();
               break;
             }
-          case 210:
-            {
-              com.google.storage.v2.Bucket.CustomPlacementConfig.Builder subBuilder = null;
-              if (customPlacementConfig_ != null) {
-                subBuilder = customPlacementConfig_.toBuilder();
-              }
-              customPlacementConfig_ =
-                  input.readMessage(
-                      com.google.storage.v2.Bucket.CustomPlacementConfig.parser(),
-                      extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(customPlacementConfig_);
-                customPlacementConfig_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
           case 218:
             {
               java.lang.String s = input.readStringRequireUtf8();
 
               rpo_ = s;
+              break;
+            }
+          case 226:
+            {
+              com.google.storage.v2.Bucket.Autoclass.Builder subBuilder = null;
+              if (autoclass_ != null) {
+                subBuilder = autoclass_.toBuilder();
+              }
+              autoclass_ =
+                  input.readMessage(
+                      com.google.storage.v2.Bucket.Autoclass.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(autoclass_);
+                autoclass_ = subBuilder.buildPartial();
+              }
+
               break;
             }
           default:
@@ -3336,30 +3335,28 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention.
+     * Whether IAM will enforce public access prevention. Valid values are
+     * "enforced" or "inherited".
      * </pre>
      *
-     * <code>
-     * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-     * </code>
+     * <code>string public_access_prevention = 3;</code>
      *
-     * @return The enum numeric value on the wire for publicAccessPrevention.
+     * @return The publicAccessPrevention.
      */
-    int getPublicAccessPreventionValue();
+    java.lang.String getPublicAccessPrevention();
     /**
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention.
+     * Whether IAM will enforce public access prevention. Valid values are
+     * "enforced" or "inherited".
      * </pre>
      *
-     * <code>
-     * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-     * </code>
+     * <code>string public_access_prevention = 3;</code>
      *
-     * @return The publicAccessPrevention.
+     * @return The bytes for publicAccessPrevention.
      */
-    com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention getPublicAccessPrevention();
+    com.google.protobuf.ByteString getPublicAccessPreventionBytes();
   }
   /**
    *
@@ -3381,7 +3378,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
 
     private IamConfig() {
-      publicAccessPrevention_ = 0;
+      publicAccessPrevention_ = "";
     }
 
     @java.lang.Override
@@ -3431,11 +3428,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
                 break;
               }
-            case 16:
+            case 26:
               {
-                int rawValue = input.readEnum();
+                java.lang.String s = input.readStringRequireUtf8();
 
-                publicAccessPrevention_ = rawValue;
+                publicAccessPrevention_ = s;
                 break;
               }
             default:
@@ -3470,172 +3467,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           .ensureFieldAccessorsInitialized(
               com.google.storage.v2.Bucket.IamConfig.class,
               com.google.storage.v2.Bucket.IamConfig.Builder.class);
-    }
-
-    /**
-     *
-     *
-     * <pre>
-     * Public Access Prevention config values.
-     * </pre>
-     *
-     * Protobuf enum {@code google.storage.v2.Bucket.IamConfig.PublicAccessPrevention}
-     */
-    public enum PublicAccessPrevention implements com.google.protobuf.ProtocolMessageEnum {
-      /**
-       *
-       *
-       * <pre>
-       * No specified PublicAccessPrevention.
-       * </pre>
-       *
-       * <code>PUBLIC_ACCESS_PREVENTION_UNSPECIFIED = 0;</code>
-       */
-      PUBLIC_ACCESS_PREVENTION_UNSPECIFIED(0),
-      /**
-       *
-       *
-       * <pre>
-       * Prevents access from being granted to public members 'allUsers' and
-       * 'allAuthenticatedUsers'. Prevents attempts to grant new access to
-       * public members.
-       * </pre>
-       *
-       * <code>ENFORCED = 1;</code>
-       */
-      ENFORCED(1),
-      /**
-       *
-       *
-       * <pre>
-       * This setting is inherited from Org Policy. Does not prevent access from
-       * being granted to public members 'allUsers' or 'allAuthenticatedUsers'.
-       * </pre>
-       *
-       * <code>INHERITED = 2;</code>
-       */
-      INHERITED(2),
-      UNRECOGNIZED(-1),
-      ;
-
-      /**
-       *
-       *
-       * <pre>
-       * No specified PublicAccessPrevention.
-       * </pre>
-       *
-       * <code>PUBLIC_ACCESS_PREVENTION_UNSPECIFIED = 0;</code>
-       */
-      public static final int PUBLIC_ACCESS_PREVENTION_UNSPECIFIED_VALUE = 0;
-      /**
-       *
-       *
-       * <pre>
-       * Prevents access from being granted to public members 'allUsers' and
-       * 'allAuthenticatedUsers'. Prevents attempts to grant new access to
-       * public members.
-       * </pre>
-       *
-       * <code>ENFORCED = 1;</code>
-       */
-      public static final int ENFORCED_VALUE = 1;
-      /**
-       *
-       *
-       * <pre>
-       * This setting is inherited from Org Policy. Does not prevent access from
-       * being granted to public members 'allUsers' or 'allAuthenticatedUsers'.
-       * </pre>
-       *
-       * <code>INHERITED = 2;</code>
-       */
-      public static final int INHERITED_VALUE = 2;
-
-      public final int getNumber() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalArgumentException(
-              "Can't get the number of an unknown enum value.");
-        }
-        return value;
-      }
-
-      /**
-       * @param value The numeric wire value of the corresponding enum entry.
-       * @return The enum associated with the given numeric wire value.
-       * @deprecated Use {@link #forNumber(int)} instead.
-       */
-      @java.lang.Deprecated
-      public static PublicAccessPrevention valueOf(int value) {
-        return forNumber(value);
-      }
-
-      /**
-       * @param value The numeric wire value of the corresponding enum entry.
-       * @return The enum associated with the given numeric wire value.
-       */
-      public static PublicAccessPrevention forNumber(int value) {
-        switch (value) {
-          case 0:
-            return PUBLIC_ACCESS_PREVENTION_UNSPECIFIED;
-          case 1:
-            return ENFORCED;
-          case 2:
-            return INHERITED;
-          default:
-            return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<PublicAccessPrevention>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-
-      private static final com.google.protobuf.Internal.EnumLiteMap<PublicAccessPrevention>
-          internalValueMap =
-              new com.google.protobuf.Internal.EnumLiteMap<PublicAccessPrevention>() {
-                public PublicAccessPrevention findValueByNumber(int number) {
-                  return PublicAccessPrevention.forNumber(number);
-                }
-              };
-
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor getValueDescriptor() {
-        if (this == UNRECOGNIZED) {
-          throw new java.lang.IllegalStateException(
-              "Can't get the descriptor of an unrecognized enum value.");
-        }
-        return getDescriptor().getValues().get(ordinal());
-      }
-
-      public final com.google.protobuf.Descriptors.EnumDescriptor getDescriptorForType() {
-        return getDescriptor();
-      }
-
-      public static final com.google.protobuf.Descriptors.EnumDescriptor getDescriptor() {
-        return com.google.storage.v2.Bucket.IamConfig.getDescriptor().getEnumTypes().get(0);
-      }
-
-      private static final PublicAccessPrevention[] VALUES = values();
-
-      public static PublicAccessPrevention valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException("EnumValueDescriptor is not for this type.");
-        }
-        if (desc.getIndex() == -1) {
-          return UNRECOGNIZED;
-        }
-        return VALUES[desc.getIndex()];
-      }
-
-      private final int value;
-
-      private PublicAccessPrevention(int value) {
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:google.storage.v2.Bucket.IamConfig.PublicAccessPrevention)
     }
 
     public interface UniformBucketLevelAccessOrBuilder
@@ -4616,48 +4447,55 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return getUniformBucketLevelAccess();
     }
 
-    public static final int PUBLIC_ACCESS_PREVENTION_FIELD_NUMBER = 2;
-    private int publicAccessPrevention_;
+    public static final int PUBLIC_ACCESS_PREVENTION_FIELD_NUMBER = 3;
+    private volatile java.lang.Object publicAccessPrevention_;
     /**
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention.
+     * Whether IAM will enforce public access prevention. Valid values are
+     * "enforced" or "inherited".
      * </pre>
      *
-     * <code>
-     * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-     * </code>
+     * <code>string public_access_prevention = 3;</code>
      *
-     * @return The enum numeric value on the wire for publicAccessPrevention.
+     * @return The publicAccessPrevention.
      */
     @java.lang.Override
-    public int getPublicAccessPreventionValue() {
-      return publicAccessPrevention_;
+    public java.lang.String getPublicAccessPrevention() {
+      java.lang.Object ref = publicAccessPrevention_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        publicAccessPrevention_ = s;
+        return s;
+      }
     }
     /**
      *
      *
      * <pre>
-     * Whether IAM will enforce public access prevention.
+     * Whether IAM will enforce public access prevention. Valid values are
+     * "enforced" or "inherited".
      * </pre>
      *
-     * <code>
-     * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-     * </code>
+     * <code>string public_access_prevention = 3;</code>
      *
-     * @return The publicAccessPrevention.
+     * @return The bytes for publicAccessPrevention.
      */
     @java.lang.Override
-    public com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention
-        getPublicAccessPrevention() {
-      @SuppressWarnings("deprecation")
-      com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention result =
-          com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention.valueOf(
-              publicAccessPrevention_);
-      return result == null
-          ? com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention.UNRECOGNIZED
-          : result;
+    public com.google.protobuf.ByteString getPublicAccessPreventionBytes() {
+      java.lang.Object ref = publicAccessPrevention_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        publicAccessPrevention_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
     }
 
     private byte memoizedIsInitialized = -1;
@@ -4677,11 +4515,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (uniformBucketLevelAccess_ != null) {
         output.writeMessage(1, getUniformBucketLevelAccess());
       }
-      if (publicAccessPrevention_
-          != com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention
-              .PUBLIC_ACCESS_PREVENTION_UNSPECIFIED
-              .getNumber()) {
-        output.writeEnum(2, publicAccessPrevention_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicAccessPrevention_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, publicAccessPrevention_);
       }
       unknownFields.writeTo(output);
     }
@@ -4697,11 +4532,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             com.google.protobuf.CodedOutputStream.computeMessageSize(
                 1, getUniformBucketLevelAccess());
       }
-      if (publicAccessPrevention_
-          != com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention
-              .PUBLIC_ACCESS_PREVENTION_UNSPECIFIED
-              .getNumber()) {
-        size += com.google.protobuf.CodedOutputStream.computeEnumSize(2, publicAccessPrevention_);
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(publicAccessPrevention_)) {
+        size +=
+            com.google.protobuf.GeneratedMessageV3.computeStringSize(3, publicAccessPrevention_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -4723,7 +4556,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (!getUniformBucketLevelAccess().equals(other.getUniformBucketLevelAccess()))
           return false;
       }
-      if (publicAccessPrevention_ != other.publicAccessPrevention_) return false;
+      if (!getPublicAccessPrevention().equals(other.getPublicAccessPrevention())) return false;
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -4740,7 +4573,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         hash = (53 * hash) + getUniformBucketLevelAccess().hashCode();
       }
       hash = (37 * hash) + PUBLIC_ACCESS_PREVENTION_FIELD_NUMBER;
-      hash = (53 * hash) + publicAccessPrevention_;
+      hash = (53 * hash) + getPublicAccessPrevention().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4894,7 +4727,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           uniformBucketLevelAccess_ = null;
           uniformBucketLevelAccessBuilder_ = null;
         }
-        publicAccessPrevention_ = 0;
+        publicAccessPrevention_ = "";
 
         return this;
       }
@@ -4983,8 +4816,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (other.hasUniformBucketLevelAccess()) {
           mergeUniformBucketLevelAccess(other.getUniformBucketLevelAccess());
         }
-        if (other.publicAccessPrevention_ != 0) {
-          setPublicAccessPreventionValue(other.getPublicAccessPreventionValue());
+        if (!other.getPublicAccessPrevention().isEmpty()) {
+          publicAccessPrevention_ = other.publicAccessPrevention_;
+          onChanged();
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -5226,39 +5060,70 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return uniformBucketLevelAccessBuilder_;
       }
 
-      private int publicAccessPrevention_ = 0;
+      private java.lang.Object publicAccessPrevention_ = "";
       /**
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention.
+       * Whether IAM will enforce public access prevention. Valid values are
+       * "enforced" or "inherited".
        * </pre>
        *
-       * <code>
-       * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-       * </code>
+       * <code>string public_access_prevention = 3;</code>
        *
-       * @return The enum numeric value on the wire for publicAccessPrevention.
+       * @return The publicAccessPrevention.
        */
-      @java.lang.Override
-      public int getPublicAccessPreventionValue() {
-        return publicAccessPrevention_;
+      public java.lang.String getPublicAccessPrevention() {
+        java.lang.Object ref = publicAccessPrevention_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          publicAccessPrevention_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
       }
       /**
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention.
+       * Whether IAM will enforce public access prevention. Valid values are
+       * "enforced" or "inherited".
        * </pre>
        *
-       * <code>
-       * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-       * </code>
+       * <code>string public_access_prevention = 3;</code>
        *
-       * @param value The enum numeric value on the wire for publicAccessPrevention to set.
+       * @return The bytes for publicAccessPrevention.
+       */
+      public com.google.protobuf.ByteString getPublicAccessPreventionBytes() {
+        java.lang.Object ref = publicAccessPrevention_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          publicAccessPrevention_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Whether IAM will enforce public access prevention. Valid values are
+       * "enforced" or "inherited".
+       * </pre>
+       *
+       * <code>string public_access_prevention = 3;</code>
+       *
+       * @param value The publicAccessPrevention to set.
        * @return This builder for chaining.
        */
-      public Builder setPublicAccessPreventionValue(int value) {
+      public Builder setPublicAccessPrevention(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
 
         publicAccessPrevention_ = value;
         onChanged();
@@ -5268,47 +5133,17 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention.
+       * Whether IAM will enforce public access prevention. Valid values are
+       * "enforced" or "inherited".
        * </pre>
        *
-       * <code>
-       * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-       * </code>
+       * <code>string public_access_prevention = 3;</code>
        *
-       * @return The publicAccessPrevention.
-       */
-      @java.lang.Override
-      public com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention
-          getPublicAccessPrevention() {
-        @SuppressWarnings("deprecation")
-        com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention result =
-            com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention.valueOf(
-                publicAccessPrevention_);
-        return result == null
-            ? com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention.UNRECOGNIZED
-            : result;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * Whether IAM will enforce public access prevention.
-       * </pre>
-       *
-       * <code>
-       * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-       * </code>
-       *
-       * @param value The publicAccessPrevention to set.
        * @return This builder for chaining.
        */
-      public Builder setPublicAccessPrevention(
-          com.google.storage.v2.Bucket.IamConfig.PublicAccessPrevention value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
+      public Builder clearPublicAccessPrevention() {
 
-        publicAccessPrevention_ = value.getNumber();
+        publicAccessPrevention_ = getDefaultInstance().getPublicAccessPrevention();
         onChanged();
         return this;
       }
@@ -5316,18 +5151,22 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Whether IAM will enforce public access prevention.
+       * Whether IAM will enforce public access prevention. Valid values are
+       * "enforced" or "inherited".
        * </pre>
        *
-       * <code>
-       * .google.storage.v2.Bucket.IamConfig.PublicAccessPrevention public_access_prevention = 2;
-       * </code>
+       * <code>string public_access_prevention = 3;</code>
        *
+       * @param value The bytes for publicAccessPrevention to set.
        * @return This builder for chaining.
        */
-      public Builder clearPublicAccessPrevention() {
+      public Builder setPublicAccessPreventionBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
 
-        publicAccessPrevention_ = 0;
+        publicAccessPrevention_ = value;
         onChanged();
         return this;
       }
@@ -6956,6 +6795,116 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          * <code>.google.type.Date noncurrent_time_before = 10;</code>
          */
         com.google.type.DateOrBuilder getNoncurrentTimeBeforeOrBuilder();
+
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @return A list containing the matchesPrefix.
+         */
+        java.util.List<java.lang.String> getMatchesPrefixList();
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @return The count of matchesPrefix.
+         */
+        int getMatchesPrefixCount();
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @param index The index of the element to return.
+         * @return The matchesPrefix at the given index.
+         */
+        java.lang.String getMatchesPrefix(int index);
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @param index The index of the value to return.
+         * @return The bytes of the matchesPrefix at the given index.
+         */
+        com.google.protobuf.ByteString getMatchesPrefixBytes(int index);
+
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @return A list containing the matchesSuffix.
+         */
+        java.util.List<java.lang.String> getMatchesSuffixList();
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @return The count of matchesSuffix.
+         */
+        int getMatchesSuffixCount();
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @param index The index of the element to return.
+         * @return The matchesSuffix at the given index.
+         */
+        java.lang.String getMatchesSuffix(int index);
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @param index The index of the value to return.
+         * @return The bytes of the matchesSuffix at the given index.
+         */
+        com.google.protobuf.ByteString getMatchesSuffixBytes(int index);
       }
       /**
        *
@@ -6978,6 +6927,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         private Condition() {
           matchesStorageClass_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          matchesPrefix_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          matchesSuffix_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         }
 
         @java.lang.Override
@@ -7095,6 +7046,26 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
                     break;
                   }
+                case 90:
+                  {
+                    java.lang.String s = input.readStringRequireUtf8();
+                    if (!((mutable_bitField0_ & 0x00000040) != 0)) {
+                      matchesPrefix_ = new com.google.protobuf.LazyStringArrayList();
+                      mutable_bitField0_ |= 0x00000040;
+                    }
+                    matchesPrefix_.add(s);
+                    break;
+                  }
+                case 98:
+                  {
+                    java.lang.String s = input.readStringRequireUtf8();
+                    if (!((mutable_bitField0_ & 0x00000080) != 0)) {
+                      matchesSuffix_ = new com.google.protobuf.LazyStringArrayList();
+                      mutable_bitField0_ |= 0x00000080;
+                    }
+                    matchesSuffix_.add(s);
+                    break;
+                  }
                 default:
                   {
                     if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -7112,6 +7083,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           } finally {
             if (((mutable_bitField0_ & 0x00000008) != 0)) {
               matchesStorageClass_ = matchesStorageClass_.getUnmodifiableView();
+            }
+            if (((mutable_bitField0_ & 0x00000040) != 0)) {
+              matchesPrefix_ = matchesPrefix_.getUnmodifiableView();
+            }
+            if (((mutable_bitField0_ & 0x00000080) != 0)) {
+              matchesSuffix_ = matchesSuffix_.getUnmodifiableView();
             }
             this.unknownFields = unknownFields.build();
             makeExtensionsImmutable();
@@ -7554,6 +7531,136 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           return getNoncurrentTimeBefore();
         }
 
+        public static final int MATCHES_PREFIX_FIELD_NUMBER = 11;
+        private com.google.protobuf.LazyStringList matchesPrefix_;
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @return A list containing the matchesPrefix.
+         */
+        public com.google.protobuf.ProtocolStringList getMatchesPrefixList() {
+          return matchesPrefix_;
+        }
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @return The count of matchesPrefix.
+         */
+        public int getMatchesPrefixCount() {
+          return matchesPrefix_.size();
+        }
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @param index The index of the element to return.
+         * @return The matchesPrefix at the given index.
+         */
+        public java.lang.String getMatchesPrefix(int index) {
+          return matchesPrefix_.get(index);
+        }
+        /**
+         *
+         *
+         * <pre>
+         * List of object name prefixes. If any prefix exactly matches the
+         * beginning of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_prefix = 11;</code>
+         *
+         * @param index The index of the value to return.
+         * @return The bytes of the matchesPrefix at the given index.
+         */
+        public com.google.protobuf.ByteString getMatchesPrefixBytes(int index) {
+          return matchesPrefix_.getByteString(index);
+        }
+
+        public static final int MATCHES_SUFFIX_FIELD_NUMBER = 12;
+        private com.google.protobuf.LazyStringList matchesSuffix_;
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @return A list containing the matchesSuffix.
+         */
+        public com.google.protobuf.ProtocolStringList getMatchesSuffixList() {
+          return matchesSuffix_;
+        }
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @return The count of matchesSuffix.
+         */
+        public int getMatchesSuffixCount() {
+          return matchesSuffix_.size();
+        }
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @param index The index of the element to return.
+         * @return The matchesSuffix at the given index.
+         */
+        public java.lang.String getMatchesSuffix(int index) {
+          return matchesSuffix_.get(index);
+        }
+        /**
+         *
+         *
+         * <pre>
+         * List of object name suffixes. If any suffix exactly matches the
+         * end of the object name, the condition evaluates to true.
+         * </pre>
+         *
+         * <code>repeated string matches_suffix = 12;</code>
+         *
+         * @param index The index of the value to return.
+         * @return The bytes of the matchesSuffix at the given index.
+         */
+        public com.google.protobuf.ByteString getMatchesSuffixBytes(int index) {
+          return matchesSuffix_.getByteString(index);
+        }
+
         private byte memoizedIsInitialized = -1;
 
         @java.lang.Override
@@ -7596,6 +7703,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           }
           if (noncurrentTimeBefore_ != null) {
             output.writeMessage(10, getNoncurrentTimeBefore());
+          }
+          for (int i = 0; i < matchesPrefix_.size(); i++) {
+            com.google.protobuf.GeneratedMessageV3.writeString(
+                output, 11, matchesPrefix_.getRaw(i));
+          }
+          for (int i = 0; i < matchesSuffix_.size(); i++) {
+            com.google.protobuf.GeneratedMessageV3.writeString(
+                output, 12, matchesSuffix_.getRaw(i));
           }
           unknownFields.writeTo(output);
         }
@@ -7641,6 +7756,22 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             size +=
                 com.google.protobuf.CodedOutputStream.computeMessageSize(
                     10, getNoncurrentTimeBefore());
+          }
+          {
+            int dataSize = 0;
+            for (int i = 0; i < matchesPrefix_.size(); i++) {
+              dataSize += computeStringSizeNoTag(matchesPrefix_.getRaw(i));
+            }
+            size += dataSize;
+            size += 1 * getMatchesPrefixList().size();
+          }
+          {
+            int dataSize = 0;
+            for (int i = 0; i < matchesSuffix_.size(); i++) {
+              dataSize += computeStringSizeNoTag(matchesSuffix_.getRaw(i));
+            }
+            size += dataSize;
+            size += 1 * getMatchesSuffixList().size();
           }
           size += unknownFields.getSerializedSize();
           memoizedSize = size;
@@ -7692,6 +7823,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           if (hasNoncurrentTimeBefore()) {
             if (!getNoncurrentTimeBefore().equals(other.getNoncurrentTimeBefore())) return false;
           }
+          if (!getMatchesPrefixList().equals(other.getMatchesPrefixList())) return false;
+          if (!getMatchesSuffixList().equals(other.getMatchesSuffixList())) return false;
           if (!unknownFields.equals(other.unknownFields)) return false;
           return true;
         }
@@ -7738,6 +7871,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           if (hasNoncurrentTimeBefore()) {
             hash = (37 * hash) + NONCURRENT_TIME_BEFORE_FIELD_NUMBER;
             hash = (53 * hash) + getNoncurrentTimeBefore().hashCode();
+          }
+          if (getMatchesPrefixCount() > 0) {
+            hash = (37 * hash) + MATCHES_PREFIX_FIELD_NUMBER;
+            hash = (53 * hash) + getMatchesPrefixList().hashCode();
+          }
+          if (getMatchesSuffixCount() > 0) {
+            hash = (37 * hash) + MATCHES_SUFFIX_FIELD_NUMBER;
+            hash = (53 * hash) + getMatchesSuffixList().hashCode();
           }
           hash = (29 * hash) + unknownFields.hashCode();
           memoizedHashCode = hash;
@@ -7918,6 +8059,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               noncurrentTimeBefore_ = null;
               noncurrentTimeBeforeBuilder_ = null;
             }
+            matchesPrefix_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+            bitField0_ = (bitField0_ & ~0x00000040);
+            matchesSuffix_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+            bitField0_ = (bitField0_ & ~0x00000080);
             return this;
           }
 
@@ -7987,6 +8132,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             } else {
               result.noncurrentTimeBefore_ = noncurrentTimeBeforeBuilder_.build();
             }
+            if (((bitField0_ & 0x00000040) != 0)) {
+              matchesPrefix_ = matchesPrefix_.getUnmodifiableView();
+              bitField0_ = (bitField0_ & ~0x00000040);
+            }
+            result.matchesPrefix_ = matchesPrefix_;
+            if (((bitField0_ & 0x00000080) != 0)) {
+              matchesSuffix_ = matchesSuffix_.getUnmodifiableView();
+              bitField0_ = (bitField0_ & ~0x00000080);
+            }
+            result.matchesSuffix_ = matchesSuffix_;
             result.bitField0_ = to_bitField0_;
             onBuilt();
             return result;
@@ -8073,6 +8228,26 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             }
             if (other.hasNoncurrentTimeBefore()) {
               mergeNoncurrentTimeBefore(other.getNoncurrentTimeBefore());
+            }
+            if (!other.matchesPrefix_.isEmpty()) {
+              if (matchesPrefix_.isEmpty()) {
+                matchesPrefix_ = other.matchesPrefix_;
+                bitField0_ = (bitField0_ & ~0x00000040);
+              } else {
+                ensureMatchesPrefixIsMutable();
+                matchesPrefix_.addAll(other.matchesPrefix_);
+              }
+              onChanged();
+            }
+            if (!other.matchesSuffix_.isEmpty()) {
+              if (matchesSuffix_.isEmpty()) {
+                matchesSuffix_ = other.matchesSuffix_;
+                bitField0_ = (bitField0_ & ~0x00000080);
+              } else {
+                ensureMatchesSuffixIsMutable();
+                matchesSuffix_.addAll(other.matchesSuffix_);
+              }
+              onChanged();
             }
             this.mergeUnknownFields(other.unknownFields);
             onChanged();
@@ -9264,6 +9439,360 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               noncurrentTimeBefore_ = null;
             }
             return noncurrentTimeBeforeBuilder_;
+          }
+
+          private com.google.protobuf.LazyStringList matchesPrefix_ =
+              com.google.protobuf.LazyStringArrayList.EMPTY;
+
+          private void ensureMatchesPrefixIsMutable() {
+            if (!((bitField0_ & 0x00000040) != 0)) {
+              matchesPrefix_ = new com.google.protobuf.LazyStringArrayList(matchesPrefix_);
+              bitField0_ |= 0x00000040;
+            }
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @return A list containing the matchesPrefix.
+           */
+          public com.google.protobuf.ProtocolStringList getMatchesPrefixList() {
+            return matchesPrefix_.getUnmodifiableView();
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @return The count of matchesPrefix.
+           */
+          public int getMatchesPrefixCount() {
+            return matchesPrefix_.size();
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @param index The index of the element to return.
+           * @return The matchesPrefix at the given index.
+           */
+          public java.lang.String getMatchesPrefix(int index) {
+            return matchesPrefix_.get(index);
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @param index The index of the value to return.
+           * @return The bytes of the matchesPrefix at the given index.
+           */
+          public com.google.protobuf.ByteString getMatchesPrefixBytes(int index) {
+            return matchesPrefix_.getByteString(index);
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @param index The index to set the value at.
+           * @param value The matchesPrefix to set.
+           * @return This builder for chaining.
+           */
+          public Builder setMatchesPrefix(int index, java.lang.String value) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureMatchesPrefixIsMutable();
+            matchesPrefix_.set(index, value);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @param value The matchesPrefix to add.
+           * @return This builder for chaining.
+           */
+          public Builder addMatchesPrefix(java.lang.String value) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureMatchesPrefixIsMutable();
+            matchesPrefix_.add(value);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @param values The matchesPrefix to add.
+           * @return This builder for chaining.
+           */
+          public Builder addAllMatchesPrefix(java.lang.Iterable<java.lang.String> values) {
+            ensureMatchesPrefixIsMutable();
+            com.google.protobuf.AbstractMessageLite.Builder.addAll(values, matchesPrefix_);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @return This builder for chaining.
+           */
+          public Builder clearMatchesPrefix() {
+            matchesPrefix_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+            bitField0_ = (bitField0_ & ~0x00000040);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name prefixes. If any prefix exactly matches the
+           * beginning of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_prefix = 11;</code>
+           *
+           * @param value The bytes of the matchesPrefix to add.
+           * @return This builder for chaining.
+           */
+          public Builder addMatchesPrefixBytes(com.google.protobuf.ByteString value) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            checkByteStringIsUtf8(value);
+            ensureMatchesPrefixIsMutable();
+            matchesPrefix_.add(value);
+            onChanged();
+            return this;
+          }
+
+          private com.google.protobuf.LazyStringList matchesSuffix_ =
+              com.google.protobuf.LazyStringArrayList.EMPTY;
+
+          private void ensureMatchesSuffixIsMutable() {
+            if (!((bitField0_ & 0x00000080) != 0)) {
+              matchesSuffix_ = new com.google.protobuf.LazyStringArrayList(matchesSuffix_);
+              bitField0_ |= 0x00000080;
+            }
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @return A list containing the matchesSuffix.
+           */
+          public com.google.protobuf.ProtocolStringList getMatchesSuffixList() {
+            return matchesSuffix_.getUnmodifiableView();
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @return The count of matchesSuffix.
+           */
+          public int getMatchesSuffixCount() {
+            return matchesSuffix_.size();
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @param index The index of the element to return.
+           * @return The matchesSuffix at the given index.
+           */
+          public java.lang.String getMatchesSuffix(int index) {
+            return matchesSuffix_.get(index);
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @param index The index of the value to return.
+           * @return The bytes of the matchesSuffix at the given index.
+           */
+          public com.google.protobuf.ByteString getMatchesSuffixBytes(int index) {
+            return matchesSuffix_.getByteString(index);
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @param index The index to set the value at.
+           * @param value The matchesSuffix to set.
+           * @return This builder for chaining.
+           */
+          public Builder setMatchesSuffix(int index, java.lang.String value) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureMatchesSuffixIsMutable();
+            matchesSuffix_.set(index, value);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @param value The matchesSuffix to add.
+           * @return This builder for chaining.
+           */
+          public Builder addMatchesSuffix(java.lang.String value) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            ensureMatchesSuffixIsMutable();
+            matchesSuffix_.add(value);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @param values The matchesSuffix to add.
+           * @return This builder for chaining.
+           */
+          public Builder addAllMatchesSuffix(java.lang.Iterable<java.lang.String> values) {
+            ensureMatchesSuffixIsMutable();
+            com.google.protobuf.AbstractMessageLite.Builder.addAll(values, matchesSuffix_);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @return This builder for chaining.
+           */
+          public Builder clearMatchesSuffix() {
+            matchesSuffix_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+            bitField0_ = (bitField0_ & ~0x00000080);
+            onChanged();
+            return this;
+          }
+          /**
+           *
+           *
+           * <pre>
+           * List of object name suffixes. If any suffix exactly matches the
+           * end of the object name, the condition evaluates to true.
+           * </pre>
+           *
+           * <code>repeated string matches_suffix = 12;</code>
+           *
+           * @param value The bytes of the matchesSuffix to add.
+           * @return This builder for chaining.
+           */
+          public Builder addMatchesSuffixBytes(com.google.protobuf.ByteString value) {
+            if (value == null) {
+              throw new NullPointerException();
+            }
+            checkByteStringIsUtf8(value);
+            ensureMatchesSuffixIsMutable();
+            matchesSuffix_.add(value);
+            onChanged();
+            return this;
           }
 
           @java.lang.Override
@@ -14388,90 +14917,99 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
   }
 
-  public interface CustomPlacementConfigOrBuilder
+  public interface AutoclassOrBuilder
       extends
-      // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.CustomPlacementConfig)
+      // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.Autoclass)
       com.google.protobuf.MessageOrBuilder {
 
     /**
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Enables Autoclass.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>bool enabled = 1;</code>
      *
-     * @return A list containing the dataLocations.
+     * @return The enabled.
      */
-    java.util.List<java.lang.String> getDataLocationsList();
+    boolean getEnabled();
+
     /**
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Output only. Latest instant at which the `enabled` field was set to true after being
+     * disabled/unconfigured or set to false after being enabled. If Autoclass
+     * is enabled when the bucket is created, the toggle_time is set to the
+     * bucket creation time.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      *
-     * @return The count of dataLocations.
+     * @return Whether the toggleTime field is set.
      */
-    int getDataLocationsCount();
+    boolean hasToggleTime();
     /**
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Output only. Latest instant at which the `enabled` field was set to true after being
+     * disabled/unconfigured or set to false after being enabled. If Autoclass
+     * is enabled when the bucket is created, the toggle_time is set to the
+     * bucket creation time.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      *
-     * @param index The index of the element to return.
-     * @return The dataLocations at the given index.
+     * @return The toggleTime.
      */
-    java.lang.String getDataLocations(int index);
+    com.google.protobuf.Timestamp getToggleTime();
     /**
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Output only. Latest instant at which the `enabled` field was set to true after being
+     * disabled/unconfigured or set to false after being enabled. If Autoclass
+     * is enabled when the bucket is created, the toggle_time is set to the
+     * bucket creation time.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
-     *
-     * @param index The index of the value to return.
-     * @return The bytes of the dataLocations at the given index.
+     * <code>
+     * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
-    com.google.protobuf.ByteString getDataLocationsBytes(int index);
+    com.google.protobuf.TimestampOrBuilder getToggleTimeOrBuilder();
   }
   /**
    *
    *
    * <pre>
-   * Configuration for Custom Dual Regions.  It should specify precisely two
-   * eligible regions within the same Multiregion.
+   * Configuration for a bucket's Autoclass feature.
    * </pre>
    *
-   * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
+   * Protobuf type {@code google.storage.v2.Bucket.Autoclass}
    */
-  public static final class CustomPlacementConfig extends com.google.protobuf.GeneratedMessageV3
+  public static final class Autoclass extends com.google.protobuf.GeneratedMessageV3
       implements
-      // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.CustomPlacementConfig)
-      CustomPlacementConfigOrBuilder {
+      // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.Autoclass)
+      AutoclassOrBuilder {
     private static final long serialVersionUID = 0L;
-    // Use CustomPlacementConfig.newBuilder() to construct.
-    private CustomPlacementConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use Autoclass.newBuilder() to construct.
+    private Autoclass(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
 
-    private CustomPlacementConfig() {
-      dataLocations_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-    }
+    private Autoclass() {}
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-      return new CustomPlacementConfig();
+      return new Autoclass();
     }
 
     @java.lang.Override
@@ -14479,7 +15017,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return this.unknownFields;
     }
 
-    private CustomPlacementConfig(
+    private Autoclass(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -14487,7 +15025,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
-      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -14498,14 +15035,24 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
             case 0:
               done = true;
               break;
-            case 10:
+            case 8:
               {
-                java.lang.String s = input.readStringRequireUtf8();
-                if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                  dataLocations_ = new com.google.protobuf.LazyStringArrayList();
-                  mutable_bitField0_ |= 0x00000001;
+                enabled_ = input.readBool();
+                break;
+              }
+            case 18:
+              {
+                com.google.protobuf.Timestamp.Builder subBuilder = null;
+                if (toggleTime_ != null) {
+                  subBuilder = toggleTime_.toBuilder();
                 }
-                dataLocations_.add(s);
+                toggleTime_ =
+                    input.readMessage(com.google.protobuf.Timestamp.parser(), extensionRegistry);
+                if (subBuilder != null) {
+                  subBuilder.mergeFrom(toggleTime_);
+                  toggleTime_ = subBuilder.buildPartial();
+                }
+
                 break;
               }
             default:
@@ -14522,9 +15069,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       } catch (java.io.IOException e) {
         throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          dataLocations_ = dataLocations_.getUnmodifiableView();
-        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -14532,78 +15076,96 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_descriptor;
+          .internal_static_google_storage_v2_Bucket_Autoclass_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_fieldAccessorTable
+          .internal_static_google_storage_v2_Bucket_Autoclass_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.Bucket.CustomPlacementConfig.class,
-              com.google.storage.v2.Bucket.CustomPlacementConfig.Builder.class);
+              com.google.storage.v2.Bucket.Autoclass.class,
+              com.google.storage.v2.Bucket.Autoclass.Builder.class);
     }
 
-    public static final int DATA_LOCATIONS_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList dataLocations_;
+    public static final int ENABLED_FIELD_NUMBER = 1;
+    private boolean enabled_;
     /**
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Enables Autoclass.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>bool enabled = 1;</code>
      *
-     * @return A list containing the dataLocations.
+     * @return The enabled.
      */
-    public com.google.protobuf.ProtocolStringList getDataLocationsList() {
-      return dataLocations_;
+    @java.lang.Override
+    public boolean getEnabled() {
+      return enabled_;
+    }
+
+    public static final int TOGGLE_TIME_FIELD_NUMBER = 2;
+    private com.google.protobuf.Timestamp toggleTime_;
+    /**
+     *
+     *
+     * <pre>
+     * Output only. Latest instant at which the `enabled` field was set to true after being
+     * disabled/unconfigured or set to false after being enabled. If Autoclass
+     * is enabled when the bucket is created, the toggle_time is set to the
+     * bucket creation time.
+     * </pre>
+     *
+     * <code>
+     * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     *
+     * @return Whether the toggleTime field is set.
+     */
+    @java.lang.Override
+    public boolean hasToggleTime() {
+      return toggleTime_ != null;
     }
     /**
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Output only. Latest instant at which the `enabled` field was set to true after being
+     * disabled/unconfigured or set to false after being enabled. If Autoclass
+     * is enabled when the bucket is created, the toggle_time is set to the
+     * bucket creation time.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
+     * <code>
+     * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      *
-     * @return The count of dataLocations.
+     * @return The toggleTime.
      */
-    public int getDataLocationsCount() {
-      return dataLocations_.size();
+    @java.lang.Override
+    public com.google.protobuf.Timestamp getToggleTime() {
+      return toggleTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : toggleTime_;
     }
     /**
      *
      *
      * <pre>
-     * List of locations to use for data placement.
+     * Output only. Latest instant at which the `enabled` field was set to true after being
+     * disabled/unconfigured or set to false after being enabled. If Autoclass
+     * is enabled when the bucket is created, the toggle_time is set to the
+     * bucket creation time.
      * </pre>
      *
-     * <code>repeated string data_locations = 1;</code>
-     *
-     * @param index The index of the element to return.
-     * @return The dataLocations at the given index.
+     * <code>
+     * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
-    public java.lang.String getDataLocations(int index) {
-      return dataLocations_.get(index);
-    }
-    /**
-     *
-     *
-     * <pre>
-     * List of locations to use for data placement.
-     * </pre>
-     *
-     * <code>repeated string data_locations = 1;</code>
-     *
-     * @param index The index of the value to return.
-     * @return The bytes of the dataLocations at the given index.
-     */
-    public com.google.protobuf.ByteString getDataLocationsBytes(int index) {
-      return dataLocations_.getByteString(index);
+    @java.lang.Override
+    public com.google.protobuf.TimestampOrBuilder getToggleTimeOrBuilder() {
+      return getToggleTime();
     }
 
     private byte memoizedIsInitialized = -1;
@@ -14620,8 +15182,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-      for (int i = 0; i < dataLocations_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, dataLocations_.getRaw(i));
+      if (enabled_ != false) {
+        output.writeBool(1, enabled_);
+      }
+      if (toggleTime_ != null) {
+        output.writeMessage(2, getToggleTime());
       }
       unknownFields.writeTo(output);
     }
@@ -14632,13 +15197,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (size != -1) return size;
 
       size = 0;
-      {
-        int dataSize = 0;
-        for (int i = 0; i < dataLocations_.size(); i++) {
-          dataSize += computeStringSizeNoTag(dataLocations_.getRaw(i));
-        }
-        size += dataSize;
-        size += 1 * getDataLocationsList().size();
+      if (enabled_ != false) {
+        size += com.google.protobuf.CodedOutputStream.computeBoolSize(1, enabled_);
+      }
+      if (toggleTime_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getToggleTime());
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -14650,13 +15213,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (obj == this) {
         return true;
       }
-      if (!(obj instanceof com.google.storage.v2.Bucket.CustomPlacementConfig)) {
+      if (!(obj instanceof com.google.storage.v2.Bucket.Autoclass)) {
         return super.equals(obj);
       }
-      com.google.storage.v2.Bucket.CustomPlacementConfig other =
-          (com.google.storage.v2.Bucket.CustomPlacementConfig) obj;
+      com.google.storage.v2.Bucket.Autoclass other = (com.google.storage.v2.Bucket.Autoclass) obj;
 
-      if (!getDataLocationsList().equals(other.getDataLocationsList())) return false;
+      if (getEnabled() != other.getEnabled()) return false;
+      if (hasToggleTime() != other.hasToggleTime()) return false;
+      if (hasToggleTime()) {
+        if (!getToggleTime().equals(other.getToggleTime())) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -14668,80 +15234,82 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      if (getDataLocationsCount() > 0) {
-        hash = (37 * hash) + DATA_LOCATIONS_FIELD_NUMBER;
-        hash = (53 * hash) + getDataLocationsList().hashCode();
+      hash = (37 * hash) + ENABLED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getEnabled());
+      if (hasToggleTime()) {
+        hash = (37 * hash) + TOGGLE_TIME_FIELD_NUMBER;
+        hash = (53 * hash) + getToggleTime().hashCode();
       }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
-        java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(
         java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(byte[] data)
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(
         byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
-        java.io.InputStream input) throws java.io.IOException {
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(
         java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
           PARSER, input, extensionRegistry);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseDelimitedFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseDelimitedFrom(
         java.io.InputStream input) throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseDelimitedFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseDelimitedFrom(
         java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
           PARSER, input, extensionRegistry);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(
         com.google.protobuf.CodedInputStream input) throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig parseFrom(
+    public static com.google.storage.v2.Bucket.Autoclass parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -14758,7 +15326,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return DEFAULT_INSTANCE.toBuilder();
     }
 
-    public static Builder newBuilder(com.google.storage.v2.Bucket.CustomPlacementConfig prototype) {
+    public static Builder newBuilder(com.google.storage.v2.Bucket.Autoclass prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
 
@@ -14777,33 +15345,32 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration for Custom Dual Regions.  It should specify precisely two
-     * eligible regions within the same Multiregion.
+     * Configuration for a bucket's Autoclass feature.
      * </pre>
      *
-     * Protobuf type {@code google.storage.v2.Bucket.CustomPlacementConfig}
+     * Protobuf type {@code google.storage.v2.Bucket.Autoclass}
      */
     public static final class Builder
         extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
         implements
-        // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.CustomPlacementConfig)
-        com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder {
+        // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.Autoclass)
+        com.google.storage.v2.Bucket.AutoclassOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
         return com.google.storage.v2.StorageProto
-            .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_descriptor;
+            .internal_static_google_storage_v2_Bucket_Autoclass_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return com.google.storage.v2.StorageProto
-            .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_fieldAccessorTable
+            .internal_static_google_storage_v2_Bucket_Autoclass_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                com.google.storage.v2.Bucket.CustomPlacementConfig.class,
-                com.google.storage.v2.Bucket.CustomPlacementConfig.Builder.class);
+                com.google.storage.v2.Bucket.Autoclass.class,
+                com.google.storage.v2.Bucket.Autoclass.Builder.class);
       }
 
-      // Construct using com.google.storage.v2.Bucket.CustomPlacementConfig.newBuilder()
+      // Construct using com.google.storage.v2.Bucket.Autoclass.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -14820,25 +15387,31 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       @java.lang.Override
       public Builder clear() {
         super.clear();
-        dataLocations_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        enabled_ = false;
+
+        if (toggleTimeBuilder_ == null) {
+          toggleTime_ = null;
+        } else {
+          toggleTime_ = null;
+          toggleTimeBuilder_ = null;
+        }
         return this;
       }
 
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
         return com.google.storage.v2.StorageProto
-            .internal_static_google_storage_v2_Bucket_CustomPlacementConfig_descriptor;
+            .internal_static_google_storage_v2_Bucket_Autoclass_descriptor;
       }
 
       @java.lang.Override
-      public com.google.storage.v2.Bucket.CustomPlacementConfig getDefaultInstanceForType() {
-        return com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance();
+      public com.google.storage.v2.Bucket.Autoclass getDefaultInstanceForType() {
+        return com.google.storage.v2.Bucket.Autoclass.getDefaultInstance();
       }
 
       @java.lang.Override
-      public com.google.storage.v2.Bucket.CustomPlacementConfig build() {
-        com.google.storage.v2.Bucket.CustomPlacementConfig result = buildPartial();
+      public com.google.storage.v2.Bucket.Autoclass build() {
+        com.google.storage.v2.Bucket.Autoclass result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -14846,15 +15419,15 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       @java.lang.Override
-      public com.google.storage.v2.Bucket.CustomPlacementConfig buildPartial() {
-        com.google.storage.v2.Bucket.CustomPlacementConfig result =
-            new com.google.storage.v2.Bucket.CustomPlacementConfig(this);
-        int from_bitField0_ = bitField0_;
-        if (((bitField0_ & 0x00000001) != 0)) {
-          dataLocations_ = dataLocations_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
+      public com.google.storage.v2.Bucket.Autoclass buildPartial() {
+        com.google.storage.v2.Bucket.Autoclass result =
+            new com.google.storage.v2.Bucket.Autoclass(this);
+        result.enabled_ = enabled_;
+        if (toggleTimeBuilder_ == null) {
+          result.toggleTime_ = toggleTime_;
+        } else {
+          result.toggleTime_ = toggleTimeBuilder_.build();
         }
-        result.dataLocations_ = dataLocations_;
         onBuilt();
         return result;
       }
@@ -14896,26 +15469,21 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.google.storage.v2.Bucket.CustomPlacementConfig) {
-          return mergeFrom((com.google.storage.v2.Bucket.CustomPlacementConfig) other);
+        if (other instanceof com.google.storage.v2.Bucket.Autoclass) {
+          return mergeFrom((com.google.storage.v2.Bucket.Autoclass) other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.google.storage.v2.Bucket.CustomPlacementConfig other) {
-        if (other == com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance())
-          return this;
-        if (!other.dataLocations_.isEmpty()) {
-          if (dataLocations_.isEmpty()) {
-            dataLocations_ = other.dataLocations_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureDataLocationsIsMutable();
-            dataLocations_.addAll(other.dataLocations_);
-          }
-          onChanged();
+      public Builder mergeFrom(com.google.storage.v2.Bucket.Autoclass other) {
+        if (other == com.google.storage.v2.Bucket.Autoclass.getDefaultInstance()) return this;
+        if (other.getEnabled() != false) {
+          setEnabled(other.getEnabled());
+        }
+        if (other.hasToggleTime()) {
+          mergeToggleTime(other.getToggleTime());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -14932,12 +15500,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.google.storage.v2.Bucket.CustomPlacementConfig parsedMessage = null;
+        com.google.storage.v2.Bucket.Autoclass parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage =
-              (com.google.storage.v2.Bucket.CustomPlacementConfig) e.getUnfinishedMessage();
+          parsedMessage = (com.google.storage.v2.Bucket.Autoclass) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -14947,174 +15514,286 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return this;
       }
 
-      private int bitField0_;
+      private boolean enabled_;
+      /**
+       *
+       *
+       * <pre>
+       * Enables Autoclass.
+       * </pre>
+       *
+       * <code>bool enabled = 1;</code>
+       *
+       * @return The enabled.
+       */
+      @java.lang.Override
+      public boolean getEnabled() {
+        return enabled_;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Enables Autoclass.
+       * </pre>
+       *
+       * <code>bool enabled = 1;</code>
+       *
+       * @param value The enabled to set.
+       * @return This builder for chaining.
+       */
+      public Builder setEnabled(boolean value) {
 
-      private com.google.protobuf.LazyStringList dataLocations_ =
-          com.google.protobuf.LazyStringArrayList.EMPTY;
+        enabled_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Enables Autoclass.
+       * </pre>
+       *
+       * <code>bool enabled = 1;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearEnabled() {
 
-      private void ensureDataLocationsIsMutable() {
-        if (!((bitField0_ & 0x00000001) != 0)) {
-          dataLocations_ = new com.google.protobuf.LazyStringArrayList(dataLocations_);
-          bitField0_ |= 0x00000001;
+        enabled_ = false;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.Timestamp toggleTime_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          toggleTimeBuilder_;
+      /**
+       *
+       *
+       * <pre>
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       *
+       * @return Whether the toggleTime field is set.
+       */
+      public boolean hasToggleTime() {
+        return toggleTimeBuilder_ != null || toggleTime_ != null;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       *
+       * @return The toggleTime.
+       */
+      public com.google.protobuf.Timestamp getToggleTime() {
+        if (toggleTimeBuilder_ == null) {
+          return toggleTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : toggleTime_;
+        } else {
+          return toggleTimeBuilder_.getMessage();
         }
       }
       /**
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @return A list containing the dataLocations.
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
        */
-      public com.google.protobuf.ProtocolStringList getDataLocationsList() {
-        return dataLocations_.getUnmodifiableView();
-      }
-      /**
-       *
-       *
-       * <pre>
-       * List of locations to use for data placement.
-       * </pre>
-       *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @return The count of dataLocations.
-       */
-      public int getDataLocationsCount() {
-        return dataLocations_.size();
-      }
-      /**
-       *
-       *
-       * <pre>
-       * List of locations to use for data placement.
-       * </pre>
-       *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @param index The index of the element to return.
-       * @return The dataLocations at the given index.
-       */
-      public java.lang.String getDataLocations(int index) {
-        return dataLocations_.get(index);
-      }
-      /**
-       *
-       *
-       * <pre>
-       * List of locations to use for data placement.
-       * </pre>
-       *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @param index The index of the value to return.
-       * @return The bytes of the dataLocations at the given index.
-       */
-      public com.google.protobuf.ByteString getDataLocationsBytes(int index) {
-        return dataLocations_.getByteString(index);
-      }
-      /**
-       *
-       *
-       * <pre>
-       * List of locations to use for data placement.
-       * </pre>
-       *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @param index The index to set the value at.
-       * @param value The dataLocations to set.
-       * @return This builder for chaining.
-       */
-      public Builder setDataLocations(int index, java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
+      public Builder setToggleTime(com.google.protobuf.Timestamp value) {
+        if (toggleTimeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          toggleTime_ = value;
+          onChanged();
+        } else {
+          toggleTimeBuilder_.setMessage(value);
         }
-        ensureDataLocationsIsMutable();
-        dataLocations_.set(index, value);
-        onChanged();
+
         return this;
       }
       /**
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @param value The dataLocations to add.
-       * @return This builder for chaining.
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
        */
-      public Builder addDataLocations(java.lang.String value) {
-        if (value == null) {
-          throw new NullPointerException();
+      public Builder setToggleTime(com.google.protobuf.Timestamp.Builder builderForValue) {
+        if (toggleTimeBuilder_ == null) {
+          toggleTime_ = builderForValue.build();
+          onChanged();
+        } else {
+          toggleTimeBuilder_.setMessage(builderForValue.build());
         }
-        ensureDataLocationsIsMutable();
-        dataLocations_.add(value);
-        onChanged();
+
         return this;
       }
       /**
        *
        *
        * <pre>
-       * List of locations to use for data placement.
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
        * </pre>
        *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @param values The dataLocations to add.
-       * @return This builder for chaining.
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
        */
-      public Builder addAllDataLocations(java.lang.Iterable<java.lang.String> values) {
-        ensureDataLocationsIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(values, dataLocations_);
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * List of locations to use for data placement.
-       * </pre>
-       *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearDataLocations() {
-        dataLocations_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * List of locations to use for data placement.
-       * </pre>
-       *
-       * <code>repeated string data_locations = 1;</code>
-       *
-       * @param value The bytes of the dataLocations to add.
-       * @return This builder for chaining.
-       */
-      public Builder addDataLocationsBytes(com.google.protobuf.ByteString value) {
-        if (value == null) {
-          throw new NullPointerException();
+      public Builder mergeToggleTime(com.google.protobuf.Timestamp value) {
+        if (toggleTimeBuilder_ == null) {
+          if (toggleTime_ != null) {
+            toggleTime_ =
+                com.google.protobuf.Timestamp.newBuilder(toggleTime_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            toggleTime_ = value;
+          }
+          onChanged();
+        } else {
+          toggleTimeBuilder_.mergeFrom(value);
         }
-        checkByteStringIsUtf8(value);
-        ensureDataLocationsIsMutable();
-        dataLocations_.add(value);
-        onChanged();
+
         return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public Builder clearToggleTime() {
+        if (toggleTimeBuilder_ == null) {
+          toggleTime_ = null;
+          onChanged();
+        } else {
+          toggleTime_ = null;
+          toggleTimeBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public com.google.protobuf.Timestamp.Builder getToggleTimeBuilder() {
+
+        onChanged();
+        return getToggleTimeFieldBuilder().getBuilder();
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public com.google.protobuf.TimestampOrBuilder getToggleTimeOrBuilder() {
+        if (toggleTimeBuilder_ != null) {
+          return toggleTimeBuilder_.getMessageOrBuilder();
+        } else {
+          return toggleTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : toggleTime_;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Output only. Latest instant at which the `enabled` field was set to true after being
+       * disabled/unconfigured or set to false after being enabled. If Autoclass
+       * is enabled when the bucket is created, the toggle_time is set to the
+       * bucket creation time.
+       * </pre>
+       *
+       * <code>
+       * .google.protobuf.Timestamp toggle_time = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          getToggleTimeFieldBuilder() {
+        if (toggleTimeBuilder_ == null) {
+          toggleTimeBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.protobuf.Timestamp,
+                  com.google.protobuf.Timestamp.Builder,
+                  com.google.protobuf.TimestampOrBuilder>(
+                  getToggleTime(), getParentForChildren(), isClean());
+          toggleTime_ = null;
+        }
+        return toggleTimeBuilder_;
       }
 
       @java.lang.Override
@@ -15129,42 +15808,42 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return super.mergeUnknownFields(unknownFields);
       }
 
-      // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.CustomPlacementConfig)
+      // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.Autoclass)
     }
 
-    // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.CustomPlacementConfig)
-    private static final com.google.storage.v2.Bucket.CustomPlacementConfig DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.Autoclass)
+    private static final com.google.storage.v2.Bucket.Autoclass DEFAULT_INSTANCE;
 
     static {
-      DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.CustomPlacementConfig();
+      DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.Autoclass();
     }
 
-    public static com.google.storage.v2.Bucket.CustomPlacementConfig getDefaultInstance() {
+    public static com.google.storage.v2.Bucket.Autoclass getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<CustomPlacementConfig> PARSER =
-        new com.google.protobuf.AbstractParser<CustomPlacementConfig>() {
+    private static final com.google.protobuf.Parser<Autoclass> PARSER =
+        new com.google.protobuf.AbstractParser<Autoclass>() {
           @java.lang.Override
-          public CustomPlacementConfig parsePartialFrom(
+          public Autoclass parsePartialFrom(
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws com.google.protobuf.InvalidProtocolBufferException {
-            return new CustomPlacementConfig(input, extensionRegistry);
+            return new Autoclass(input, extensionRegistry);
           }
         };
 
-    public static com.google.protobuf.Parser<CustomPlacementConfig> parser() {
+    public static com.google.protobuf.Parser<Autoclass> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<CustomPlacementConfig> getParserForType() {
+    public com.google.protobuf.Parser<Autoclass> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.storage.v2.Bucket.CustomPlacementConfig getDefaultInstanceForType() {
+    public com.google.storage.v2.Bucket.Autoclass getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
   }
@@ -16526,56 +17205,55 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     return satisfiesPzs_;
   }
 
-  public static final int CUSTOM_PLACEMENT_CONFIG_FIELD_NUMBER = 26;
-  private com.google.storage.v2.Bucket.CustomPlacementConfig customPlacementConfig_;
+  public static final int AUTOCLASS_FIELD_NUMBER = 28;
+  private com.google.storage.v2.Bucket.Autoclass autoclass_;
   /**
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * The bucket's Autoclass configuration. If there is no configuration, the
+   * Autoclass feature will be disabled and have no effect on the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
    *
-   * @return Whether the customPlacementConfig field is set.
+   * @return Whether the autoclass field is set.
    */
   @java.lang.Override
-  public boolean hasCustomPlacementConfig() {
-    return customPlacementConfig_ != null;
+  public boolean hasAutoclass() {
+    return autoclass_ != null;
   }
   /**
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * The bucket's Autoclass configuration. If there is no configuration, the
+   * Autoclass feature will be disabled and have no effect on the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
    *
-   * @return The customPlacementConfig.
+   * @return The autoclass.
    */
   @java.lang.Override
-  public com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig() {
-    return customPlacementConfig_ == null
-        ? com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance()
-        : customPlacementConfig_;
+  public com.google.storage.v2.Bucket.Autoclass getAutoclass() {
+    return autoclass_ == null
+        ? com.google.storage.v2.Bucket.Autoclass.getDefaultInstance()
+        : autoclass_;
   }
   /**
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * The bucket's Autoclass configuration. If there is no configuration, the
+   * Autoclass feature will be disabled and have no effect on the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
    */
   @java.lang.Override
-  public com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder
-      getCustomPlacementConfigOrBuilder() {
-    return getCustomPlacementConfig();
+  public com.google.storage.v2.Bucket.AutoclassOrBuilder getAutoclassOrBuilder() {
+    return getAutoclass();
   }
 
   private byte memoizedIsInitialized = -1;
@@ -16663,11 +17341,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (satisfiesPzs_ != false) {
       output.writeBool(25, satisfiesPzs_);
     }
-    if (customPlacementConfig_ != null) {
-      output.writeMessage(26, getCustomPlacementConfig());
-    }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rpo_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 27, rpo_);
+    }
+    if (autoclass_ != null) {
+      output.writeMessage(28, getAutoclass());
     }
     unknownFields.writeTo(output);
   }
@@ -16757,12 +17435,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (satisfiesPzs_ != false) {
       size += com.google.protobuf.CodedOutputStream.computeBoolSize(25, satisfiesPzs_);
     }
-    if (customPlacementConfig_ != null) {
-      size +=
-          com.google.protobuf.CodedOutputStream.computeMessageSize(26, getCustomPlacementConfig());
-    }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(rpo_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, rpo_);
+    }
+    if (autoclass_ != null) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(28, getAutoclass());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -16837,9 +17514,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (!getIamConfig().equals(other.getIamConfig())) return false;
     }
     if (getSatisfiesPzs() != other.getSatisfiesPzs()) return false;
-    if (hasCustomPlacementConfig() != other.hasCustomPlacementConfig()) return false;
-    if (hasCustomPlacementConfig()) {
-      if (!getCustomPlacementConfig().equals(other.getCustomPlacementConfig())) return false;
+    if (hasAutoclass() != other.hasAutoclass()) return false;
+    if (hasAutoclass()) {
+      if (!getAutoclass().equals(other.getAutoclass())) return false;
     }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
@@ -16932,9 +17609,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
     hash = (37 * hash) + SATISFIES_PZS_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getSatisfiesPzs());
-    if (hasCustomPlacementConfig()) {
-      hash = (37 * hash) + CUSTOM_PLACEMENT_CONFIG_FIELD_NUMBER;
-      hash = (53 * hash) + getCustomPlacementConfig().hashCode();
+    if (hasAutoclass()) {
+      hash = (37 * hash) + AUTOCLASS_FIELD_NUMBER;
+      hash = (53 * hash) + getAutoclass().hashCode();
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -17207,11 +17884,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       satisfiesPzs_ = false;
 
-      if (customPlacementConfigBuilder_ == null) {
-        customPlacementConfig_ = null;
+      if (autoclassBuilder_ == null) {
+        autoclass_ = null;
       } else {
-        customPlacementConfig_ = null;
-        customPlacementConfigBuilder_ = null;
+        autoclass_ = null;
+        autoclassBuilder_ = null;
       }
       return this;
     }
@@ -17333,10 +18010,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         result.iamConfig_ = iamConfigBuilder_.build();
       }
       result.satisfiesPzs_ = satisfiesPzs_;
-      if (customPlacementConfigBuilder_ == null) {
-        result.customPlacementConfig_ = customPlacementConfig_;
+      if (autoclassBuilder_ == null) {
+        result.autoclass_ = autoclass_;
       } else {
-        result.customPlacementConfig_ = customPlacementConfigBuilder_.build();
+        result.autoclass_ = autoclassBuilder_.build();
       }
       onBuilt();
       return result;
@@ -17539,8 +18216,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (other.getSatisfiesPzs() != false) {
         setSatisfiesPzs(other.getSatisfiesPzs());
       }
-      if (other.hasCustomPlacementConfig()) {
-        mergeCustomPlacementConfig(other.getCustomPlacementConfig());
+      if (other.hasAutoclass()) {
+        mergeAutoclass(other.getAutoclass());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -22140,68 +22817,67 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return this;
     }
 
-    private com.google.storage.v2.Bucket.CustomPlacementConfig customPlacementConfig_;
+    private com.google.storage.v2.Bucket.Autoclass autoclass_;
     private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.Bucket.CustomPlacementConfig,
-            com.google.storage.v2.Bucket.CustomPlacementConfig.Builder,
-            com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder>
-        customPlacementConfigBuilder_;
+            com.google.storage.v2.Bucket.Autoclass,
+            com.google.storage.v2.Bucket.Autoclass.Builder,
+            com.google.storage.v2.Bucket.AutoclassOrBuilder>
+        autoclassBuilder_;
     /**
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      *
-     * @return Whether the customPlacementConfig field is set.
+     * @return Whether the autoclass field is set.
      */
-    public boolean hasCustomPlacementConfig() {
-      return customPlacementConfigBuilder_ != null || customPlacementConfig_ != null;
+    public boolean hasAutoclass() {
+      return autoclassBuilder_ != null || autoclass_ != null;
     }
     /**
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      *
-     * @return The customPlacementConfig.
+     * @return The autoclass.
      */
-    public com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig() {
-      if (customPlacementConfigBuilder_ == null) {
-        return customPlacementConfig_ == null
-            ? com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance()
-            : customPlacementConfig_;
+    public com.google.storage.v2.Bucket.Autoclass getAutoclass() {
+      if (autoclassBuilder_ == null) {
+        return autoclass_ == null
+            ? com.google.storage.v2.Bucket.Autoclass.getDefaultInstance()
+            : autoclass_;
       } else {
-        return customPlacementConfigBuilder_.getMessage();
+        return autoclassBuilder_.getMessage();
       }
     }
     /**
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      */
-    public Builder setCustomPlacementConfig(
-        com.google.storage.v2.Bucket.CustomPlacementConfig value) {
-      if (customPlacementConfigBuilder_ == null) {
+    public Builder setAutoclass(com.google.storage.v2.Bucket.Autoclass value) {
+      if (autoclassBuilder_ == null) {
         if (value == null) {
           throw new NullPointerException();
         }
-        customPlacementConfig_ = value;
+        autoclass_ = value;
         onChanged();
       } else {
-        customPlacementConfigBuilder_.setMessage(value);
+        autoclassBuilder_.setMessage(value);
       }
 
       return this;
@@ -22210,19 +22886,18 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      */
-    public Builder setCustomPlacementConfig(
-        com.google.storage.v2.Bucket.CustomPlacementConfig.Builder builderForValue) {
-      if (customPlacementConfigBuilder_ == null) {
-        customPlacementConfig_ = builderForValue.build();
+    public Builder setAutoclass(com.google.storage.v2.Bucket.Autoclass.Builder builderForValue) {
+      if (autoclassBuilder_ == null) {
+        autoclass_ = builderForValue.build();
         onChanged();
       } else {
-        customPlacementConfigBuilder_.setMessage(builderForValue.build());
+        autoclassBuilder_.setMessage(builderForValue.build());
       }
 
       return this;
@@ -22231,26 +22906,25 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      */
-    public Builder mergeCustomPlacementConfig(
-        com.google.storage.v2.Bucket.CustomPlacementConfig value) {
-      if (customPlacementConfigBuilder_ == null) {
-        if (customPlacementConfig_ != null) {
-          customPlacementConfig_ =
-              com.google.storage.v2.Bucket.CustomPlacementConfig.newBuilder(customPlacementConfig_)
+    public Builder mergeAutoclass(com.google.storage.v2.Bucket.Autoclass value) {
+      if (autoclassBuilder_ == null) {
+        if (autoclass_ != null) {
+          autoclass_ =
+              com.google.storage.v2.Bucket.Autoclass.newBuilder(autoclass_)
                   .mergeFrom(value)
                   .buildPartial();
         } else {
-          customPlacementConfig_ = value;
+          autoclass_ = value;
         }
         onChanged();
       } else {
-        customPlacementConfigBuilder_.mergeFrom(value);
+        autoclassBuilder_.mergeFrom(value);
       }
 
       return this;
@@ -22259,19 +22933,19 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      */
-    public Builder clearCustomPlacementConfig() {
-      if (customPlacementConfigBuilder_ == null) {
-        customPlacementConfig_ = null;
+    public Builder clearAutoclass() {
+      if (autoclassBuilder_ == null) {
+        autoclass_ = null;
         onChanged();
       } else {
-        customPlacementConfig_ = null;
-        customPlacementConfigBuilder_ = null;
+        autoclass_ = null;
+        autoclassBuilder_ = null;
       }
 
       return this;
@@ -22280,63 +22954,61 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      */
-    public com.google.storage.v2.Bucket.CustomPlacementConfig.Builder
-        getCustomPlacementConfigBuilder() {
+    public com.google.storage.v2.Bucket.Autoclass.Builder getAutoclassBuilder() {
 
       onChanged();
-      return getCustomPlacementConfigFieldBuilder().getBuilder();
+      return getAutoclassFieldBuilder().getBuilder();
     }
     /**
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      */
-    public com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder
-        getCustomPlacementConfigOrBuilder() {
-      if (customPlacementConfigBuilder_ != null) {
-        return customPlacementConfigBuilder_.getMessageOrBuilder();
+    public com.google.storage.v2.Bucket.AutoclassOrBuilder getAutoclassOrBuilder() {
+      if (autoclassBuilder_ != null) {
+        return autoclassBuilder_.getMessageOrBuilder();
       } else {
-        return customPlacementConfig_ == null
-            ? com.google.storage.v2.Bucket.CustomPlacementConfig.getDefaultInstance()
-            : customPlacementConfig_;
+        return autoclass_ == null
+            ? com.google.storage.v2.Bucket.Autoclass.getDefaultInstance()
+            : autoclass_;
       }
     }
     /**
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * The bucket's Autoclass configuration. If there is no configuration, the
+     * Autoclass feature will be disabled and have no effect on the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+     * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.Bucket.CustomPlacementConfig,
-            com.google.storage.v2.Bucket.CustomPlacementConfig.Builder,
-            com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder>
-        getCustomPlacementConfigFieldBuilder() {
-      if (customPlacementConfigBuilder_ == null) {
-        customPlacementConfigBuilder_ =
+            com.google.storage.v2.Bucket.Autoclass,
+            com.google.storage.v2.Bucket.Autoclass.Builder,
+            com.google.storage.v2.Bucket.AutoclassOrBuilder>
+        getAutoclassFieldBuilder() {
+      if (autoclassBuilder_ == null) {
+        autoclassBuilder_ =
             new com.google.protobuf.SingleFieldBuilderV3<
-                com.google.storage.v2.Bucket.CustomPlacementConfig,
-                com.google.storage.v2.Bucket.CustomPlacementConfig.Builder,
-                com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder>(
-                getCustomPlacementConfig(), getParentForChildren(), isClean());
-        customPlacementConfig_ = null;
+                com.google.storage.v2.Bucket.Autoclass,
+                com.google.storage.v2.Bucket.Autoclass.Builder,
+                com.google.storage.v2.Bucket.AutoclassOrBuilder>(
+                getAutoclass(), getParentForChildren(), isClean());
+        autoclass_ = null;
       }
-      return customPlacementConfigBuilder_;
+      return autoclassBuilder_;
     }
 
     @java.lang.Override

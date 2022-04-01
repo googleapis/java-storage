@@ -973,37 +973,37 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * The bucket's Autoclass configuration. If there is no configuration, the
+   * Autoclass feature will be disabled and have no effect on the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
    *
-   * @return Whether the customPlacementConfig field is set.
+   * @return Whether the autoclass field is set.
    */
-  boolean hasCustomPlacementConfig();
+  boolean hasAutoclass();
   /**
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * The bucket's Autoclass configuration. If there is no configuration, the
+   * Autoclass feature will be disabled and have no effect on the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
    *
-   * @return The customPlacementConfig.
+   * @return The autoclass.
    */
-  com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig();
+  com.google.storage.v2.Bucket.Autoclass getAutoclass();
   /**
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * The bucket's Autoclass configuration. If there is no configuration, the
+   * Autoclass feature will be disabled and have no effect on the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
    */
-  com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder getCustomPlacementConfigOrBuilder();
+  com.google.storage.v2.Bucket.AutoclassOrBuilder getAutoclassOrBuilder();
 }
