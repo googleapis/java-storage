@@ -127,48 +127,56 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Apply a predefined set of access controls to this bucket.
+   * Valid values are "authenticatedRead", "private", "projectPrivate",
+   * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedBucketAcl predefined_acl = 4;</code>
+   * <code>string predefined_acl = 6;</code>
    *
-   * @return The enum numeric value on the wire for predefinedAcl.
+   * @return The predefinedAcl.
    */
-  int getPredefinedAclValue();
+  java.lang.String getPredefinedAcl();
   /**
    *
    *
    * <pre>
    * Apply a predefined set of access controls to this bucket.
+   * Valid values are "authenticatedRead", "private", "projectPrivate",
+   * "publicRead", or "publicReadWrite".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedBucketAcl predefined_acl = 4;</code>
+   * <code>string predefined_acl = 6;</code>
    *
-   * @return The predefinedAcl.
+   * @return The bytes for predefinedAcl.
    */
-  com.google.storage.v2.PredefinedBucketAcl getPredefinedAcl();
+  com.google.protobuf.ByteString getPredefinedAclBytes();
 
   /**
    *
    *
    * <pre>
    * Apply a predefined set of default object access controls to this bucket.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl predefined_default_object_acl = 5;</code>
+   * <code>string predefined_default_object_acl = 7;</code>
    *
-   * @return The enum numeric value on the wire for predefinedDefaultObjectAcl.
+   * @return The predefinedDefaultObjectAcl.
    */
-  int getPredefinedDefaultObjectAclValue();
+  java.lang.String getPredefinedDefaultObjectAcl();
   /**
    *
    *
    * <pre>
    * Apply a predefined set of default object access controls to this bucket.
+   * Valid values are "authenticatedRead", "bucketOwnerFullControl",
+   * "bucketOwnerRead", "private", "projectPrivate", or "publicRead".
    * </pre>
    *
-   * <code>.google.storage.v2.PredefinedObjectAcl predefined_default_object_acl = 5;</code>
+   * <code>string predefined_default_object_acl = 7;</code>
    *
-   * @return The predefinedDefaultObjectAcl.
+   * @return The bytes for predefinedDefaultObjectAcl.
    */
-  com.google.storage.v2.PredefinedObjectAcl getPredefinedDefaultObjectAcl();
+  com.google.protobuf.ByteString getPredefinedDefaultObjectAclBytes();
 }
