@@ -3564,8 +3564,8 @@ public class ITStorageTest {
   public void testBucketLocationDualRegion() {
     String bucketName = RemoteStorageHelper.generateBucketName();
     String dualRegionLocation = "US-EAST1+US-WEST1";
-    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName)
-        .setLocation(dualRegionLocation).build());
+    Bucket bucket =
+        storage.create(BucketInfo.newBuilder(bucketName).setLocation(dualRegionLocation).build());
     assertEquals(bucket.getLocation(), dualRegionLocation);
     assertEquals(bucket.getLocationType(), "dual-region");
   }
