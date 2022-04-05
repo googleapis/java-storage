@@ -1224,7 +1224,7 @@ public class BucketInfo implements Serializable {
 
     /**
      * Sets the bucket's location. Data for blobs in the bucket resides in physical storage within
-     * this region. A list of supported values is available <a
+     * this region or regions. A list of supported values is available <a
      * href="https://cloud.google.com/storage/docs/bucket-locations">here</a>.
      */
     public abstract Builder setLocation(String location);
@@ -1731,7 +1731,7 @@ public class BucketInfo implements Serializable {
 
   /**
    * Returns the bucket's location. Data for blobs in the bucket resides in physical storage within
-   * this region.
+   * this region or regions.
    *
    * @see <a href="https://cloud.google.com/storage/docs/bucket-locations">Bucket Locations</a>
    */
