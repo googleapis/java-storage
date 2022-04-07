@@ -846,6 +846,15 @@ public class BucketInfo implements Serializable {
       }
 
       /**
+       * Create a new {@code AbortIncompleteMultipartUploadAction}. An incomplete multipart upload
+       * will be aborted when the multipart upload meets the specified condition. Age is the
+       * only condition supported for this action.
+       */
+      public static LifecycleAction newAbortIncompleteMultipartUploadAction() {
+        return new AbortIncompleteMultipartUploadAction();
+      }
+
+      /**
        * Creates a new {@code LifecycleAction , with no specific supported action associated with it. This
        * is only intended as a "backup" for when the library doesn't recognize the type, and should
        * generally not be used, instead use the supported actions, and upgrade the library if necessary
@@ -887,6 +896,12 @@ public class BucketInfo implements Serializable {
       public StorageClass getStorageClass() {
         return storageClass;
       }
+    }
+
+    public static class AbortIncompleteMultipartUploadAction extends LifecycleAction {
+      public static final String TYPE = "AbortIncompleteMultipartUpload";
+
+      private AbortIncompleteMultipartUploadAction() { super(TYPE); }
     }
   }
 
