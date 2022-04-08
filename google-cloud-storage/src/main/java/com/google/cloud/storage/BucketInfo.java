@@ -548,6 +548,9 @@ public class BucketInfo implements Serializable {
               LifecycleAction.newSetStorageClassAction(
                   StorageClass.valueOf(action.getStorageClass()));
           break;
+        case AbortIncompleteMPUploadAction.TYPE:
+          lifecycleAction = LifecycleAction.newAbortIncompleteMPUploadAction();
+          break;
         default:
           log.warning(
               "The lifecycle action "
@@ -846,12 +849,12 @@ public class BucketInfo implements Serializable {
       }
 
       /**
-       * Create a new {@code AbortIncompleteMultipartUploadAction}. An incomplete multipart upload
+       * Create a new {@code AbortIncompleteMPUploadAction}. An incomplete multipart upload
        * will be aborted when the multipart upload meets the specified condition. Age is the
        * only condition supported for this action.
        */
-      public static LifecycleAction newAbortIncompleteMultipartUploadAction() {
-        return new AbortIncompleteMultipartUploadAction();
+      public static LifecycleAction newAbortIncompleteMPUploadAction() {
+        return new AbortIncompleteMPUploadAction();
       }
 
       /**
@@ -898,10 +901,10 @@ public class BucketInfo implements Serializable {
       }
     }
 
-    public static class AbortIncompleteMultipartUploadAction extends LifecycleAction {
+    public static class AbortIncompleteMPUploadAction extends LifecycleAction {
       public static final String TYPE = "AbortIncompleteMultipartUpload";
 
-      private AbortIncompleteMultipartUploadAction() { super(TYPE); }
+      private AbortIncompleteMPUploadAction() { super(TYPE); }
     }
   }
 

@@ -65,7 +65,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMultipartUploadAction;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUploadAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
@@ -557,7 +557,7 @@ public class ITStorageTest {
             .setLifecycleRules(
                 ImmutableList.of(
                     new LifecycleRule(
-                        LifecycleAction.newAbortIncompleteMultipartUploadAction(),
+                        LifecycleAction.newAbortIncompleteMPUploadAction(),
                         LifecycleCondition.newBuilder().setAge(1).build())))
             .build());
     Bucket remoteBucket =
@@ -565,7 +565,7 @@ public class ITStorageTest {
     LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
     try {
       assertEquals(
-          lifecycleRule.getAction().getActionType(), AbortIncompleteMultipartUploadAction.TYPE);
+          AbortIncompleteMPUploadAction.TYPE, lifecycleRule.getAction().getActionType());
       assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
     } finally {
       storage.delete(lifecycleTestBucketName);
