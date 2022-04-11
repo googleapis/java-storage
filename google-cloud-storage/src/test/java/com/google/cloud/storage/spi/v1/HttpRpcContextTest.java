@@ -20,9 +20,6 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.LowLevelHttpRequest;
-import com.google.api.client.http.LowLevelHttpResponse;
 import com.google.api.client.testing.http.MockLowLevelHttpResponse;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.Tuple;
@@ -35,9 +32,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Test;
@@ -85,37 +79,6 @@ public class HttpRpcContextTest {
   }
 
   @Test
-  public void testInvocationIdIsNotPassedThroughWhenDisabled() {
-    MockLowLevelHttpResponse response =
-        new MockLowLevelHttpResponse()
-            .setContentType("application/json")
-            .setContent(
-                "{\n"
-                    + "  \"kind\": \"storage#serviceAccount\",\n"
-                    + "  \"email_address\": \"service-234234@gs-project-accounts.iam.gserviceaccount.com\"\n"
-                    + "}\n")
-            .setStatusCode(200);
-    AuditingHttpTransport transport = new AuditingHttpTransport(response);
-    TransportOptions transportOptions =
-        HttpTransportOptions.newBuilder().setHttpTransportFactory(() -> transport).build();
-    Storage service =
-        StorageOptions.getDefaultInstance()
-            .toBuilder()
-            .setTransportOptions(transportOptions)
-            .setIncludeInvocationId(false)
-            .build()
-            .getService();
-    service.getServiceAccount("test-project");
-    Optional<Tuple<String, String>> anyXGoogApiClientWithGcclInvocationId =
-        transport.getAddHeaderCalls().stream()
-            .filter(t -> "x-goog-api-client".equals(t.x()) && t.y().contains("gccl-invocation-id/"))
-            .findFirst();
-
-    assertFalse(anyXGoogApiClientWithGcclInvocationId.isPresent());
-    assertThat(transport.getBuildRequestCalls()).hasSize(1);
-  }
-
-  @Test
   public void testInvocationIdNotInSignedURL_v2() throws IOException {
     URL signedUrlV2 =
         new URL(
@@ -155,41 +118,5 @@ public class HttpRpcContextTest {
             .findFirst();
     assertFalse(anyXGoogApiClientWithGcclInvocationId.isPresent());
     assertThat(transport.getBuildRequestCalls()).hasSize(1);
-  }
-
-  private static final class AuditingHttpTransport extends HttpTransport {
-    private final LowLevelHttpResponse response;
-    private final List<Tuple<String, String>> buildRequestCalls;
-    private final List<Tuple<String, String>> addHeaderCalls;
-
-    private AuditingHttpTransport(LowLevelHttpResponse response) {
-      this.response = response;
-      this.buildRequestCalls = Collections.synchronizedList(new ArrayList<>());
-      this.addHeaderCalls = Collections.synchronizedList(new ArrayList<>());
-    }
-
-    public List<Tuple<String, String>> getBuildRequestCalls() {
-      return ImmutableList.copyOf(buildRequestCalls);
-    }
-
-    public List<Tuple<String, String>> getAddHeaderCalls() {
-      return ImmutableList.copyOf(addHeaderCalls);
-    }
-
-    @Override
-    protected LowLevelHttpRequest buildRequest(String method, String url) {
-      buildRequestCalls.add(Tuple.of(method, url));
-      return new LowLevelHttpRequest() {
-        @Override
-        public void addHeader(String name, String value) {
-          addHeaderCalls.add(Tuple.of(name, value));
-        }
-
-        @Override
-        public LowLevelHttpResponse execute() {
-          return response;
-        }
-      };
-    }
   }
 }
