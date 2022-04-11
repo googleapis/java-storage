@@ -102,7 +102,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
      * @param includeInvocationId a boolean to change enablement of invocation id
      * @return the builder
      */
-    public Builder setIncludeInvocationId(boolean includeInvocationId) {
+    Builder setIncludeInvocationId(boolean includeInvocationId) {
       this.includeInvocationId = includeInvocationId;
       return this;
     }
