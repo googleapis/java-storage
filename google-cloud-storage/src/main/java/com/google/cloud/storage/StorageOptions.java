@@ -143,7 +143,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
 
-    public boolean isIncludeInvocationId() {
+    boolean isIncludeInvocationId() {
       return DEFAULT_INCLUDE_INVOCATION_ID;
     }
   }
@@ -173,7 +173,7 @@ public class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
   }
 
   /** Returns if Invocation ID is enabled and transmitted through x-goog-api-client header. */
-  public boolean isIncludeInvocationId() {
+  boolean isIncludeInvocationId() {
     return includeInvocationId;
   }
 

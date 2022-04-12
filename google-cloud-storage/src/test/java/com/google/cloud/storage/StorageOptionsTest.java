@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.spi.v1.HttpRpcContextTest.*;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -29,6 +28,7 @@ import com.google.cloud.storage.spi.v1.AuditingHttpTransport;
 import java.util.Optional;
 import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class StorageOptionsTest {
@@ -88,7 +88,12 @@ public class StorageOptionsTest {
     assertFalse(opts1.isIncludeInvocationId());
   }
 
+  /**
+   * Disabled until {@link StorageOptions#isIncludeInvocationId()} and {@link
+   * StorageOptions.Builder#setIncludeInvocationId(boolean)} are public.
+   */
   @Test
+  @Ignore
   public void testInvocationIdIsNotPassedThroughWhenDisabled() {
     MockLowLevelHttpResponse response =
         new MockLowLevelHttpResponse()
