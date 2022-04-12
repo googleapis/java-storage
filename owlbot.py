@@ -33,5 +33,6 @@ java.common_templates(excludes=[
   '.kokoro/nightly/samples.cfg',
   '.kokoro/presubmit/integration.cfg',
   '.kokoro/presubmit/samples.cfg',
+  '.kokoro/presubmit/graalvm-native.cfg',
   'CONTRIBUTING.md'
 ])
