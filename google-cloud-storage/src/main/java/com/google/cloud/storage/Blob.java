@@ -245,20 +245,7 @@ public class Blob extends BlobInfo {
    * @param options
    */
   public void downloadTo(OutputStream outputStream, BlobSourceOption... options) {
-    final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
-    final StorageRpc storageRpc = this.options.getStorageRpcV1();
-    StorageObject pb = getBlobId().toPb();
-    final Map<StorageRpc.Option, ?> requestOptions = StorageImpl.optionMap(getBlobId(), options);
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, requestOptions);
-    Retrying.run(
-        this.options,
-        algorithm,
-        callable(
-            () -> {
-              storageRpc.read(
-                  pb, requestOptions, countingOutputStream.getCount(), countingOutputStream);
-            }),
-        Function.identity());
+    storage.downloadTo(getBlobId(), outputStream, options);
   }
 
   /**

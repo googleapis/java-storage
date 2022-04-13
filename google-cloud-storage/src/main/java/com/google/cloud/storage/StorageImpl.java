@@ -32,6 +32,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.concurrent.Executors.callable;
 
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
@@ -49,6 +50,7 @@ import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.Blob.BlobSourceOption;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -67,10 +69,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
+import com.google.common.io.CountingOutputStream;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -541,6 +545,32 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   public ReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Map<StorageRpc.Option, ?> optionsMap = optionMap(blob, options);
     return new BlobReadChannel(getOptions(), blob, optionsMap);
+  }
+
+  @Override
+  public void downloadTo(BlobId blob, Path path, Blob.BlobSourceOption... options) {
+    try (OutputStream outputStream = Files.newOutputStream(path)) {
+      downloadTo(blob,outputStream, options);
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
+  }
+
+  @Override
+  public void downloadTo(BlobId blob, OutputStream outputStream, Blob.BlobSourceOption... options) {
+    final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
+    final StorageObject pb = blob.toPb();
+    final Map<StorageRpc.Option, ?> requestOptions = optionMap(blob, options);
+    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, requestOptions);
+    Retrying.run(
+        getOptions(),
+        algorithm,
+        callable(
+            () -> {
+              storageRpc.read(
+                  pb, requestOptions, countingOutputStream.getCount(), countingOutputStream);
+            }),
+        Function.identity());
   }
 
   @Override
