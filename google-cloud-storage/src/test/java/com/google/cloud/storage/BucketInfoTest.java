@@ -39,8 +39,11 @@ import com.google.cloud.storage.BucketInfo.DeleteRule.Type;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.IsLiveDeleteRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.DeleteLifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
@@ -331,6 +334,8 @@ public class BucketInfoTest {
     assertEquals(
         LifecycleRule.DeleteLifecycleAction.TYPE, deleteLifecycleRule.getAction().getType());
     assertEquals(10, deleteLifecycleRule.getCondition().getAge().intValue());
+    assertTrue(LifecycleRule.fromPb(deleteLifecycleRule).getAction()
+        instanceof DeleteLifecycleAction);
 
     Rule setStorageClassLifecycleRule =
         new LifecycleRule(
@@ -346,6 +351,8 @@ public class BucketInfoTest {
         setStorageClassLifecycleRule.getAction().getStorageClass());
     assertTrue(setStorageClassLifecycleRule.getCondition().getIsLive());
     assertEquals(10, setStorageClassLifecycleRule.getCondition().getNumNewerVersions().intValue());
+    assertTrue(LifecycleRule.fromPb(setStorageClassLifecycleRule).getAction()
+        instanceof SetStorageClassLifecycleAction);
 
     Rule lifecycleRule =
         new LifecycleRule(
@@ -367,6 +374,19 @@ public class BucketInfoTest {
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
+    assertTrue(LifecycleRule.fromPb(lifecycleRule).getAction()
+        instanceof SetStorageClassLifecycleAction);
+
+    Rule abortMpuLifecycleRule =
+        new LifecycleRule(LifecycleAction.newAbortIncompleteMPUploadAction(),
+            LifecycleCondition.newBuilder()
+                .setAge(10)
+                .build())
+            .toPb();
+    assertEquals(AbortIncompleteMPUAction.TYPE, abortMpuLifecycleRule.getAction().getType());
+    assertEquals(10, abortMpuLifecycleRule.getCondition().getAge().intValue());
+    assertTrue(LifecycleRule.fromPb(abortMpuLifecycleRule).getAction()
+        instanceof AbortIncompleteMPUAction);
 
     Rule unsupportedRule =
         new LifecycleRule(
