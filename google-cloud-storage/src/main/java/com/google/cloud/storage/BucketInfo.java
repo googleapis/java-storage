@@ -849,10 +849,9 @@ public class BucketInfo implements Serializable {
       }
 
       /**
-       * Create a new {@code AbortIncompleteMPUAction}. An incomplete multipart upload
-       * will be aborted when the multipart upload meets the specified condition. Age is the
-       * only condition supported for this action.
-       * See: https://cloud.google.com/storage/docs/lifecycle##abort-mpu
+       * Create a new {@code AbortIncompleteMPUAction}. An incomplete multipart upload will be
+       * aborted when the multipart upload meets the specified condition. Age is the only condition
+       * supported for this action. See: https://cloud.google.com/storage/docs/lifecycle##abort-mpu
        */
       public static LifecycleAction newAbortIncompleteMPUploadAction() {
         return new AbortIncompleteMPUAction();
@@ -906,7 +905,9 @@ public class BucketInfo implements Serializable {
       public static final String TYPE = "AbortIncompleteMultipartUpload";
       private static final long serialVersionUID = -1072182310389348060L;
 
-      private AbortIncompleteMPUAction() { super(TYPE); }
+      private AbortIncompleteMPUAction() {
+        super(TYPE);
+      }
     }
   }
 

@@ -564,8 +564,7 @@ public class ITStorageTest {
         storage.get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
     LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
     try {
-      assertEquals(
-          AbortIncompleteMPUAction.TYPE, lifecycleRule.getAction().getActionType());
+      assertEquals(AbortIncompleteMPUAction.TYPE, lifecycleRule.getAction().getActionType());
       assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
     } finally {
       storage.delete(lifecycleTestBucketName);
