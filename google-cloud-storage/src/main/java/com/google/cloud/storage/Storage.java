@@ -2676,6 +2676,7 @@ public interface Storage extends Service<StorageOptions> {
 
   /**
    * Downloads the given blob to the given path using specified blob read options.
+   *
    * @param blob
    * @param path
    * @param options
@@ -2683,7 +2684,8 @@ public interface Storage extends Service<StorageOptions> {
   void downloadTo(BlobId blob, Path path, Blob.BlobSourceOption... options);
 
   /**
-   *  Downloads the given blob to the given output stream using specified blob read options.
+   * Downloads the given blob to the given output stream using specified blob read options.
+   *
    * @param blob
    * @param outputStream
    * @param options

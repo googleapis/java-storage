@@ -550,7 +550,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   @Override
   public void downloadTo(BlobId blob, Path path, Blob.BlobSourceOption... options) {
     try (OutputStream outputStream = Files.newOutputStream(path)) {
-      downloadTo(blob,outputStream, options);
+      downloadTo(blob, outputStream, options);
     } catch (IOException e) {
       throw new StorageException(e);
     }

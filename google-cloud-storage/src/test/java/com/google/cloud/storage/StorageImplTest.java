@@ -20,7 +20,6 @@ import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.cloud.storage.testing.ApiPolicyMatcher.eqApiPolicy;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.getCurrentArguments;
@@ -2280,11 +2279,11 @@ public class StorageImplTest {
     storage = options.toBuilder().build().getService();
     final byte[] expected = {1, 2};
     EasyMock.expect(
-        storageRpcMock.read(
-            anyObject(StorageObject.class),
-            anyObject(Map.class),
-            eq(0l),
-            anyObject(OutputStream.class)))
+            storageRpcMock.read(
+                anyObject(StorageObject.class),
+                anyObject(Map.class),
+                eq(0l),
+                anyObject(OutputStream.class)))
         .andAnswer(
             new IAnswer<Long>() {
               @Override
@@ -2303,17 +2302,19 @@ public class StorageImplTest {
   @Test
   public void testDownloadToWithRetries() throws Exception {
     BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
-    storage = options.toBuilder()
-        .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(2).build())
-        .build()
-        .getService();
+    storage =
+        options
+            .toBuilder()
+            .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(2).build())
+            .build()
+            .getService();
     final byte[] expected = {1, 2};
     expect(
-        storageRpcMock.read(
-            anyObject(StorageObject.class),
-            anyObject(Map.class),
-            eq(0l),
-            anyObject(OutputStream.class)))
+            storageRpcMock.read(
+                anyObject(StorageObject.class),
+                anyObject(Map.class),
+                eq(0l),
+                anyObject(OutputStream.class)))
         .andAnswer(
             new IAnswer<Long>() {
               @Override
@@ -2323,11 +2324,11 @@ public class StorageImplTest {
               }
             });
     expect(
-        storageRpcMock.read(
-            anyObject(StorageObject.class),
-            anyObject(Map.class),
-            eq(1l),
-            anyObject(OutputStream.class)))
+            storageRpcMock.read(
+                anyObject(StorageObject.class),
+                anyObject(Map.class),
+                eq(1l),
+                anyObject(OutputStream.class)))
         .andAnswer(
             new IAnswer<Long>() {
               @Override
@@ -2349,11 +2350,11 @@ public class StorageImplTest {
     storage = options.toBuilder().build().getService();
     Exception exception = new IllegalStateException("test");
     expect(
-        storageRpcMock.read(
-            anyObject(StorageObject.class),
-            anyObject(Map.class),
-            eq(0l),
-            anyObject(OutputStream.class)))
+            storageRpcMock.read(
+                anyObject(StorageObject.class),
+                anyObject(Map.class),
+                eq(0l),
+                anyObject(OutputStream.class)))
         .andThrow(exception);
     replay(storageRpcMock);
     File file = File.createTempFile("blob", ".tmp");
