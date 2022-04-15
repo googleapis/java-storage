@@ -4,11 +4,11 @@
   <difference>
     <className>com/google/cloud/storage/Storage*</className>
     <differenceType>7012</differenceType>
-    <method>* downloadTo(com.google.cloud.storage.BlobId, java.io.OutputStream, com.google.cloud.storage.Blob$BlobSourceOption[])</method>
+    <method>* downloadTo(com.google.cloud.storage.BlobId, java.io.OutputStream, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
   </difference>
   <difference>
     <className>com/google/cloud/storage/Storage*</className>
     <differenceType>7012</differenceType>
-    <method>* downloadTo(com.google.cloud.storage.BlobId, java.nio.file.Path, com.google.cloud.storage.Blob$BlobSourceOption[])</method>
+    <method>* downloadTo(com.google.cloud.storage.BlobId, java.nio.file.Path, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
   </difference>
 </differences>

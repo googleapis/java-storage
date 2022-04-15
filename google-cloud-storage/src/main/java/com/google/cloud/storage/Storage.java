@@ -2677,20 +2677,41 @@ public interface Storage extends Service<StorageOptions> {
   /**
    * Downloads the given blob to the given path using specified blob read options.
    *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * Path destination = Paths.get("my-blob-destination.txt");
+   * downloadTo(blobId, destination);
+   * // do stuff with destination
+   * }</pre>
+   *
    * @param blob
    * @param path
    * @param options
+   * @throws StorageException upon failure
    */
-  void downloadTo(BlobId blob, Path path, Blob.BlobSourceOption... options);
+  void downloadTo(BlobId blob, Path path, BlobSourceOption... options);
 
   /**
    * Downloads the given blob to the given output stream using specified blob read options.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * Path destination = Paths.get("my-blob-destination.txt");
+   * try (OutputStream outputStream = Files.newOutputStream(path)) {
+   *  downloadTo(blob, outputStream);
+   *  // do stuff with destination
+   * }
+   * }</pre>
    *
    * @param blob
    * @param outputStream
    * @param options
    */
-  void downloadTo(BlobId blob, OutputStream outputStream, Blob.BlobSourceOption... options);
+  void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options);
 
   /**
    * Creates a blob and returns a channel for writing its content. By default any MD5 and CRC32C

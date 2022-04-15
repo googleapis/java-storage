@@ -548,7 +548,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public void downloadTo(BlobId blob, Path path, Blob.BlobSourceOption... options) {
+  public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
     try (OutputStream outputStream = Files.newOutputStream(path)) {
       downloadTo(blob, outputStream, options);
     } catch (IOException e) {
@@ -557,7 +557,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public void downloadTo(BlobId blob, OutputStream outputStream, Blob.BlobSourceOption... options) {
+  public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
     final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
     final StorageObject pb = blob.toPb();
     final Map<StorageRpc.Option, ?> requestOptions = optionMap(blob, options);

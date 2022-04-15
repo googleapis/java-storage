@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Key;
 import java.util.Arrays;
@@ -227,11 +226,7 @@ public class Blob extends BlobInfo {
    * @throws StorageException upon failure
    */
   public void downloadTo(Path path, BlobSourceOption... options) {
-    try (OutputStream outputStream = Files.newOutputStream(path)) {
-      downloadTo(outputStream, options);
-    } catch (IOException e) {
-      throw new StorageException(e);
-    }
+    storage.downloadTo(getBlobId(), path, BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**
@@ -241,7 +236,7 @@ public class Blob extends BlobInfo {
    * @param options
    */
   public void downloadTo(OutputStream outputStream, BlobSourceOption... options) {
-    storage.downloadTo(getBlobId(), outputStream, options);
+    storage.downloadTo(getBlobId(), outputStream, BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**

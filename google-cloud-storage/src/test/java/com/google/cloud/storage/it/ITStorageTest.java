@@ -885,14 +885,14 @@ public class ITStorageTest {
     Path rawInputGzippedFile = File.createTempFile("rawinputgzippedfile", ".txt").toPath();
 
     storage.downloadTo(
-        blobId, rawInputGzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(true));
+        blobId, rawInputGzippedFile, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
 
     assertArrayEquals(
         Files.readAllBytes(gzippedFile.toPath()), Files.readAllBytes(rawInputGzippedFile));
 
     Path unzippedFile = File.createTempFile("unzippedfile", ".txt").toPath();
     storage.downloadTo(
-        blobId, unzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(false));
+        blobId, unzippedFile, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
 
     assertArrayEquals("hello world".getBytes(), Files.readAllBytes(unzippedFile));
   }
