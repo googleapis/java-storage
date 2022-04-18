@@ -1,5 +1,31 @@
 # Changelog
 
+### [2.6.1](https://github.com/googleapis/java-storage/compare/v2.6.0...v2.6.1) (2022-04-15)
+
+
+### Bug Fixes
+
+* add gccl-invocation-id interceptor ([#1309](https://github.com/googleapis/java-storage/issues/1309)) ([335c267](https://github.com/googleapis/java-storage/commit/335c2679b70f0bcd4db895d9cb4cbe97175e8070))
+* **java:** add service account email to Native Image testing kokoro job ([#1348](https://github.com/googleapis/java-storage/issues/1348)) ([9f76fcc](https://github.com/googleapis/java-storage/commit/9f76fccfddcc0d3a671ec4281dab303da07b9959))
+
+
+### Documentation
+
+* Adding PubSub Notification Samples ([#1317](https://github.com/googleapis/java-storage/issues/1317)) ([fa9920d](https://github.com/googleapis/java-storage/commit/fa9920d9097cfe6863c3e733a091c9b867d603ef))
+* Adding Samples for Creating Dual Region Buckets ([#1341](https://github.com/googleapis/java-storage/issues/1341)) ([9396061](https://github.com/googleapis/java-storage/commit/9396061ac71f98efd6784c34da3bbea04f48873d))
+* Update CreateBucketPubSubNotification to have line without horizontal scrolling ([#1335](https://github.com/googleapis/java-storage/issues/1335)) ([09b7842](https://github.com/googleapis/java-storage/commit/09b78424f7090c7c0469709a357a06143668e31b))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220401-1.32.1 ([#1337](https://github.com/googleapis/java-storage/issues/1337)) ([a5050e2](https://github.com/googleapis/java-storage/commit/a5050e230a620ba727a93c0a93f0bf82a011ce99))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.116.3 ([#1327](https://github.com/googleapis/java-storage/issues/1327)) ([9d8c520](https://github.com/googleapis/java-storage/commit/9d8c520acca7f56f5af46348bc1db71bda1f93aa))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.10.0 ([#1352](https://github.com/googleapis/java-storage/issues/1352)) ([ab46f98](https://github.com/googleapis/java-storage/commit/ab46f985768c1539babf4c14a7e030083776ce0e))
+* update dependency com.google.cloud:native-image-support to v0.12.11 ([#1319](https://github.com/googleapis/java-storage/issues/1319)) ([c338c54](https://github.com/googleapis/java-storage/commit/c338c54210940dbe3b97aa0e7b13904e72ede91d))
+* update dependency com.google.cloud:native-image-support to v0.13.1 ([#1353](https://github.com/googleapis/java-storage/issues/1353)) ([0f76d27](https://github.com/googleapis/java-storage/commit/0f76d2773bc159b1c8a9eeddb54ae8406da86e7a))
+* update kms.version to v0.95.2 ([#1331](https://github.com/googleapis/java-storage/issues/1331)) ([2ca4883](https://github.com/googleapis/java-storage/commit/2ca488362ce2cb2b620ed6dc846d76b095d44a31))
+* update kms.version to v0.95.3 ([#1346](https://github.com/googleapis/java-storage/issues/1346)) ([a4f9503](https://github.com/googleapis/java-storage/commit/a4f95038e56ac36badf68edd072705621fec1dbe))
+
 ## [2.6.0](https://github.com/googleapis/java-storage/compare/v2.5.1...v2.6.0) (2022-03-30)
 
 
