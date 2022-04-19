@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- see https://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
+  <difference>
+    <className>com/google/cloud/storage/Storage*</className>
+    <differenceType>7012</differenceType>
+    <method>* downloadTo(com.google.cloud.storage.BlobId, java.io.OutputStream, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
+  </difference>
+  <difference>
+    <className>com/google/cloud/storage/Storage*</className>
+    <differenceType>7012</differenceType>
+    <method>* downloadTo(com.google.cloud.storage.BlobId, java.nio.file.Path, com.google.cloud.storage.Storage$BlobSourceOption[])</method>
+  </difference>
 </differences>

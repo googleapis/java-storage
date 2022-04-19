@@ -31,6 +31,7 @@ import com.google.cloud.Service;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.Blob.BlobSourceOption;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
@@ -41,6 +42,7 @@ import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.file.Path;
@@ -2671,6 +2673,45 @@ public interface Storage extends Service<StorageOptions> {
    * @throws StorageException upon failure
    */
   ReadChannel reader(BlobId blob, BlobSourceOption... options);
+
+  /**
+   * Downloads the given blob to the given path using specified blob read options.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * Path destination = Paths.get("my-blob-destination.txt");
+   * downloadTo(blobId, destination);
+   * // do stuff with destination
+   * }</pre>
+   *
+   * @param blob
+   * @param path
+   * @param options
+   * @throws StorageException upon failure
+   */
+  void downloadTo(BlobId blob, Path path, BlobSourceOption... options);
+
+  /**
+   * Downloads the given blob to the given output stream using specified blob read options.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * Path destination = Paths.get("my-blob-destination.txt");
+   * try (OutputStream outputStream = Files.newOutputStream(path)) {
+   *  downloadTo(blob, outputStream);
+   *  // do stuff with destination
+   * }
+   * }</pre>
+   *
+   * @param blob
+   * @param outputStream
+   * @param options
+   */
+  void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options);
 
   /**
    * Creates a blob and returns a channel for writing its content. By default any MD5 and CRC32C

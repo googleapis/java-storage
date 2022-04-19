@@ -19,9 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Blob.BlobSourceOption.toGetOptions;
 import static com.google.cloud.storage.Blob.BlobSourceOption.toSourceOptions;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.concurrent.Executors.callable;
 
-import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
@@ -34,12 +32,10 @@ import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.io.BaseEncoding;
-import com.google.common.io.CountingOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Key;
 import java.util.Arrays;
@@ -47,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 /**
  * An object in Google Cloud Storage. A {@code Blob} object includes the {@code BlobId} instance,
@@ -231,11 +226,7 @@ public class Blob extends BlobInfo {
    * @throws StorageException upon failure
    */
   public void downloadTo(Path path, BlobSourceOption... options) {
-    try (OutputStream outputStream = Files.newOutputStream(path)) {
-      downloadTo(outputStream, options);
-    } catch (IOException e) {
-      throw new StorageException(e);
-    }
+    storage.downloadTo(getBlobId(), path, BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**
@@ -245,20 +236,7 @@ public class Blob extends BlobInfo {
    * @param options
    */
   public void downloadTo(OutputStream outputStream, BlobSourceOption... options) {
-    final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
-    final StorageRpc storageRpc = this.options.getStorageRpcV1();
-    StorageObject pb = getBlobId().toPb();
-    final Map<StorageRpc.Option, ?> requestOptions = StorageImpl.optionMap(getBlobId(), options);
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, requestOptions);
-    Retrying.run(
-        this.options,
-        algorithm,
-        callable(
-            () -> {
-              storageRpc.read(
-                  pb, requestOptions, countingOutputStream.getCount(), countingOutputStream);
-            }),
-        Function.identity());
+    storage.downloadTo(getBlobId(), outputStream, BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**

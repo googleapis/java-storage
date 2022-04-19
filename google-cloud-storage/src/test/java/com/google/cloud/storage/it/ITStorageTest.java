@@ -883,17 +883,16 @@ public class ITStorageTest {
     storage.createFrom(blobInfo, gzippedFile.toPath());
 
     Path rawInputGzippedFile = File.createTempFile("rawinputgzippedfile", ".txt").toPath();
-    Blob blob = storage.get(blobId);
 
-    blob.downloadTo(rawInputGzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(true));
+    storage.downloadTo(
+        blobId, rawInputGzippedFile, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
 
     assertArrayEquals(
         Files.readAllBytes(gzippedFile.toPath()), Files.readAllBytes(rawInputGzippedFile));
 
     Path unzippedFile = File.createTempFile("unzippedfile", ".txt").toPath();
-    storage
-        .get(blobId)
-        .downloadTo(unzippedFile, Blob.BlobSourceOption.shouldReturnRawInputStream(false));
+    storage.downloadTo(
+        blobId, unzippedFile, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
 
     assertArrayEquals("hello world".getBytes(), Files.readAllBytes(unzippedFile));
   }
@@ -3686,7 +3685,7 @@ public class ITStorageTest {
     assertEquals(BLOB_BYTE_CONTENT.length, (long) blob.getSize());
 
     Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
-    storage.get(blobId).downloadTo(tempFileTo);
+    storage.downloadTo(blobId, tempFileTo);
     byte[] readBytes = Files.readAllBytes(tempFileTo);
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
