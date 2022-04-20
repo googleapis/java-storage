@@ -41,8 +41,8 @@ public class DeleteBucketPubSubNotificationTest extends TestBase {
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final String PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
   private static final String ID = UUID.randomUUID().toString().substring(0, 8);
-  private static final String TOPIC = String.format("projects/%s/topics/new-topic-delete-%s",
-      PROJECT, ID);
+  private static final String TOPIC =
+      String.format("projects/%s/topics/new-topic-delete-%s", PROJECT, ID);
   private static TopicAdminClient topicAdminClient;
   private static final NotificationInfo notificationInfo =
       NotificationInfo.newBuilder(TOPIC)
