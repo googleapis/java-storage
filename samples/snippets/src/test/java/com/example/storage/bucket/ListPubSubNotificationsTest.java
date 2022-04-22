@@ -29,6 +29,7 @@ import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,7 +40,9 @@ public class ListPubSubNotificationsTest extends TestBase {
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final String PROJECT = System.getenv("GOOGLE_CLOUD_PROJECT");
-  private static final String TOPIC = String.format("projects/%s/topics/new-topic-list", PROJECT);
+  private static final String ID = UUID.randomUUID().toString().substring(0, 8);
+  private static final String TOPIC =
+      String.format("projects/%s/topics/new-topic-list-%s", PROJECT, ID);
   private static TopicAdminClient topicAdminClient;
 
   @BeforeClass
