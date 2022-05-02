@@ -70,8 +70,8 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
             break;
           case 8:
             {
-              writeStatusCase_ = 1;
               writeStatus_ = input.readInt64();
+              writeStatusCase_ = 1;
               break;
             }
           case 18:
@@ -100,6 +100,8 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
       throw e.setUnfinishedMessage(this);
+    } catch (com.google.protobuf.UninitializedMessageException e) {
+      throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
     } catch (java.io.IOException e) {
       throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
     } finally {
@@ -831,8 +833,9 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       } else {
         if (writeStatusCase_ == 2) {
           resourceBuilder_.mergeFrom(value);
+        } else {
+          resourceBuilder_.setMessage(value);
         }
-        resourceBuilder_.setMessage(value);
       }
       writeStatusCase_ = 2;
       return this;

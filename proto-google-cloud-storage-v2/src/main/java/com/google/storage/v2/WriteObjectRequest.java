@@ -176,6 +176,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
     } catch (com.google.protobuf.InvalidProtocolBufferException e) {
       throw e.setUnfinishedMessage(this);
+    } catch (com.google.protobuf.UninitializedMessageException e) {
+      throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
     } catch (java.io.IOException e) {
       throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
     } finally {
@@ -1489,8 +1491,9 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       } else {
         if (firstMessageCase_ == 2) {
           writeObjectSpecBuilder_.mergeFrom(value);
+        } else {
+          writeObjectSpecBuilder_.setMessage(value);
         }
-        writeObjectSpecBuilder_.setMessage(value);
       }
       firstMessageCase_ = 2;
       return this;
@@ -1785,8 +1788,9 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       } else {
         if (dataCase_ == 4) {
           checksummedDataBuilder_.mergeFrom(value);
+        } else {
+          checksummedDataBuilder_.setMessage(value);
         }
-        checksummedDataBuilder_.setMessage(value);
       }
       dataCase_ = 4;
       return this;

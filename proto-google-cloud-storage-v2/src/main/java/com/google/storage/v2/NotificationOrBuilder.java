@@ -190,8 +190,12 @@ public interface NotificationOrBuilder
    * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
    * </code>
    */
+
+  /* nullable */
   java.lang.String getCustomAttributesOrDefault(
-      java.lang.String key, java.lang.String defaultValue);
+      java.lang.String key,
+      /* nullable */
+      java.lang.String defaultValue);
   /**
    *
    *
