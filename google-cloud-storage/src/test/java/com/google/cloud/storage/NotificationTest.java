@@ -108,7 +108,11 @@ public class NotificationTest {
     expect(storage.getOptions()).andReturn(mockOptions).times(1);
     replay(storage);
     compareBucketNotification(
-        NOTIFICATION_INFO, Notification.fromPb(storage, NOTIFICATION_INFO.toPb()));
+        NOTIFICATION_INFO,
+        Conversions.apiary()
+            .notificationInfo()
+            .decode(Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO))
+            .asNotification(storage));
   }
 
   private void compareBucketNotification(NotificationInfo expected, NotificationInfo actual) {

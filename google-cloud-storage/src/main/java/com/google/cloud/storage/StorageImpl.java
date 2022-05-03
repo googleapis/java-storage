@@ -1474,20 +1474,22 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   public Notification createNotification(
       final String bucket, final NotificationInfo notificationInfo) {
     final com.google.api.services.storage.model.Notification notificationPb =
-        notificationInfo.toPb();
+        codecs.notificationInfo().encode(notificationInfo);
     try {
-      return Notification.fromPb(
-          this,
-          runWithRetries(
-              new Callable<com.google.api.services.storage.model.Notification>() {
-                @Override
-                public com.google.api.services.storage.model.Notification call() {
-                  return storageRpc.createNotification(bucket, notificationPb);
-                }
-              },
-              getOptions().getRetrySettings(),
-              EXCEPTION_HANDLER,
-              getOptions().getClock()));
+      return codecs
+          .notificationInfo()
+          .decode(
+              runWithRetries(
+                  new Callable<com.google.api.services.storage.model.Notification>() {
+                    @Override
+                    public com.google.api.services.storage.model.Notification call() {
+                      return storageRpc.createNotification(bucket, notificationPb);
+                    }
+                  },
+                  getOptions().getRetrySettings(),
+                  EXCEPTION_HANDLER,
+                  getOptions().getClock()))
+          .asNotification(this);
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }
@@ -1507,7 +1509,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
               getOptions().getRetrySettings(),
               EXCEPTION_HANDLER,
               getOptions().getClock());
-      return answer == null ? null : Notification.fromPb(this, answer);
+      return answer == null ? null : codecs.notificationInfo().decode(answer).asNotification(this);
     } catch (RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }
@@ -1536,7 +1538,10 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                 @Override
                 public Notification apply(
                     com.google.api.services.storage.model.Notification notificationPb) {
-                  return Notification.fromPb(getOptions().getService(), notificationPb);
+                  return codecs
+                      .notificationInfo()
+                      .decode(notificationPb)
+                      .asNotification(getOptions().getService());
                 }
               });
     } catch (RetryHelperException e) {

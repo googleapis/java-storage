@@ -1739,9 +1739,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testCreateNotification() {
-    doReturn(NOTIFICATION_INFO_01.toPb())
+    doReturn(Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01))
         .when(storageRpcMock)
-        .createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01.toPb());
+        .createNotification(
+            BUCKET_NAME1, Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01));
     initializeService();
     Notification notification = storage.createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01);
     verifyBucketNotification(notification);
@@ -1749,7 +1750,7 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetNotification() {
-    doReturn(NOTIFICATION_INFO_01.toPb())
+    doReturn(Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01))
         .when(storageRpcMock)
         .getNotification(BUCKET_NAME1, GENERATED_ID);
     initializeService();
@@ -1759,7 +1760,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testListNotification() {
-    doReturn(Arrays.asList(NOTIFICATION_INFO_01.toPb(), NOTIFICATION_INFO_02.toPb()))
+    doReturn(
+            Arrays.asList(
+                Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01),
+                Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_02)))
         .when(storageRpcMock)
         .listNotifications(BUCKET_NAME1);
     initializeService();

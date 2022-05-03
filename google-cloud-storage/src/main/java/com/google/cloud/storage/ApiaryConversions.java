@@ -65,9 +65,12 @@ import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.Cors.Origin;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
+import com.google.cloud.storage.NotificationInfo.EventType;
+import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -112,6 +115,9 @@ final class ApiaryConversions {
       Codec.of(this::blobIdEncode, this::blobIdDecode);
   private final Codec<BlobInfo, StorageObject> blobInfoCodec =
       Codec.of(this::blobInfoEncode, this::blobInfoDecode);
+
+  private final Codec<NotificationInfo, com.google.api.services.storage.model.Notification>
+      notificationInfoCodec = Codec.of(this::notificationEncode, this::notificationDecode);
 
   private ApiaryConversions() {}
 
@@ -174,6 +180,10 @@ final class ApiaryConversions {
 
   Codec<BlobInfo, StorageObject> blobInfo() {
     return blobInfoCodec;
+  }
+
+  Codec<NotificationInfo, com.google.api.services.storage.model.Notification> notificationInfo() {
+    return notificationInfoCodec;
   }
 
   private StorageObject blobInfoEncode(BlobInfo from) {
@@ -738,6 +748,57 @@ final class ApiaryConversions {
         .setRole(from.getRole().name())
         .setId(from.getId())
         .setEtag(from.getEtag());
+  }
+
+  private com.google.api.services.storage.model.Notification notificationEncode(
+      NotificationInfo from) {
+    com.google.api.services.storage.model.Notification to =
+        new com.google.api.services.storage.model.Notification();
+
+    to.setEtag(from.getEtag());
+    to.setSelfLink(from.getSelfLink());
+    to.setTopic(from.getTopic());
+    ifNonNull(from.getNotificationId(), to::setId);
+    ifNonNull(from.getCustomAttributes(), to::setCustomAttributes);
+    ifNonNull(from.getObjectNamePrefix(), to::setObjectNamePrefix);
+
+    List<EventType> eventTypes = from.getEventTypes();
+    if (eventTypes != null && eventTypes.size() > 0) {
+      List<String> eventTypesPb = new ArrayList<>();
+      for (EventType eventType : eventTypes) {
+        eventTypesPb.add(eventType.toString());
+      }
+      to.setEventTypes(eventTypesPb);
+    }
+
+    PayloadFormat payloadFormat = from.getPayloadFormat();
+    if (payloadFormat != null) {
+      to.setPayloadFormat(payloadFormat.toString());
+    } else {
+      to.setPayloadFormat(PayloadFormat.NONE.toString());
+    }
+    return to;
+  }
+
+  private NotificationInfo notificationDecode(
+      com.google.api.services.storage.model.Notification from) {
+    NotificationInfo.Builder builder = new NotificationInfo.BuilderImpl(from.getTopic());
+    ifNonNull(from.getId(), builder::setNotificationId);
+    ifNonNull(from.getEtag(), builder::setEtag);
+    ifNonNull(from.getCustomAttributes(), builder::setCustomAttributes);
+    ifNonNull(from.getSelfLink(), builder::setSelfLink);
+    ifNonNull(from.getObjectNamePrefix(), builder::setObjectNamePrefix);
+    ifNonNull(from.getPayloadFormat(), PayloadFormat::valueOf, builder::setPayloadFormat);
+
+    if (from.getEventTypes() != null) {
+      List<String> eventTypesPb = from.getEventTypes();
+      EventType[] eventTypes = new EventType[eventTypesPb.size()];
+      for (int index = 0; index < eventTypesPb.size(); index++) {
+        eventTypes[index] = EventType.valueOf(eventTypesPb.get(index));
+      }
+      builder.setEventTypes(eventTypes);
+    }
+    return builder.build();
   }
 
   private DateTime truncateToDateWithNoTzDrift(DateTime dt) {
