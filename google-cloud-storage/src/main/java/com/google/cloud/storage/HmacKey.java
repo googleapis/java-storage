@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import com.google.api.client.util.DateTime;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -77,33 +76,16 @@ public class HmacKey implements Serializable {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if (obj == null || getClass() != obj.getClass()) {
+    if (!(o instanceof HmacKey)) {
       return false;
     }
-    final HmacKeyMetadata other = (HmacKeyMetadata) obj;
-    return Objects.equals(this.secretKey, secretKey) && Objects.equals(this.metadata, metadata);
-  }
-
-  com.google.api.services.storage.model.HmacKey toPb() {
-    com.google.api.services.storage.model.HmacKey hmacKey =
-        new com.google.api.services.storage.model.HmacKey();
-    hmacKey.setSecret(this.secretKey);
-
-    if (metadata != null) {
-      hmacKey.setMetadata(metadata.toPb());
-    }
-
-    return hmacKey;
-  }
-
-  static HmacKey fromPb(com.google.api.services.storage.model.HmacKey hmacKey) {
-    return HmacKey.newBuilder(hmacKey.getSecret())
-        .setMetadata(HmacKeyMetadata.fromPb(hmacKey.getMetadata()))
-        .build();
+    HmacKey hmacKey = (HmacKey) o;
+    return Objects.equals(secretKey, hmacKey.secretKey)
+        && Objects.equals(metadata, hmacKey.metadata);
   }
 
   public enum HmacKeyState {
@@ -180,34 +162,6 @@ public class HmacKey implements Serializable {
           && Objects.equals(this.state, other.state)
           && Objects.equals(this.createTime, other.createTime)
           && Objects.equals(this.updateTime, other.updateTime);
-    }
-
-    public com.google.api.services.storage.model.HmacKeyMetadata toPb() {
-      com.google.api.services.storage.model.HmacKeyMetadata metadata =
-          new com.google.api.services.storage.model.HmacKeyMetadata();
-      metadata.setAccessId(this.accessId);
-      metadata.setEtag(this.etag);
-      metadata.setId(this.id);
-      metadata.setProjectId(this.projectId);
-      metadata.setServiceAccountEmail(
-          this.serviceAccount == null ? null : this.serviceAccount.getEmail());
-      metadata.setState(this.state == null ? null : this.state.toString());
-      metadata.setTimeCreated(this.createTime == null ? null : new DateTime(this.createTime));
-      metadata.setUpdated(this.updateTime == null ? null : new DateTime(this.updateTime));
-
-      return metadata;
-    }
-
-    static HmacKeyMetadata fromPb(com.google.api.services.storage.model.HmacKeyMetadata metadata) {
-      return newBuilder(ServiceAccount.of(metadata.getServiceAccountEmail()))
-          .setAccessId(metadata.getAccessId())
-          .setCreateTime(metadata.getTimeCreated().getValue())
-          .setEtag(metadata.getEtag())
-          .setId(metadata.getId())
-          .setProjectId(metadata.getProjectId())
-          .setState(HmacKeyState.valueOf(metadata.getState()))
-          .setUpdateTime(metadata.getUpdated().getValue())
-          .build();
     }
 
     /**

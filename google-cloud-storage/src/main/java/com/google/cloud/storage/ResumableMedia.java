@@ -34,7 +34,10 @@ final class ResumableMedia {
         Retrying.run(
             storageOptions,
             algorithm,
-            () -> storageOptions.getStorageRpcV1().open(blob.toPb(), optionsMap),
+            () ->
+                storageOptions
+                    .getStorageRpcV1()
+                    .open(Conversions.apiary().blobInfo().encode(blob), optionsMap),
             Function.identity());
   }
 

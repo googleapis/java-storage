@@ -19,11 +19,8 @@ package com.google.cloud.storage;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.core.ApiFunction;
-import com.google.api.services.storage.model.BucketAccessControl;
-import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.cloud.StringEnumType;
 import com.google.cloud.StringEnumValue;
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Objects;
@@ -37,20 +34,6 @@ import java.util.Objects;
 public final class Acl implements Serializable {
 
   private static final long serialVersionUID = 7516713233557576082L;
-  static final Function<ObjectAccessControl, Acl> FROM_OBJECT_PB_FUNCTION =
-      new Function<ObjectAccessControl, Acl>() {
-        @Override
-        public Acl apply(ObjectAccessControl aclPb) {
-          return Acl.fromPb(aclPb);
-        }
-      };
-  static final Function<BucketAccessControl, Acl> FROM_BUCKET_PB_FUNCTION =
-      new Function<BucketAccessControl, Acl>() {
-        @Override
-        public Acl apply(BucketAccessControl aclPb) {
-          return Acl.fromPb(aclPb);
-        }
-      };
 
   private final Entity entity;
   private final Role role;
@@ -64,15 +47,9 @@ public final class Acl implements Serializable {
       super(constant);
     }
 
-    private static final ApiFunction<String, Role> CONSTRUCTOR =
-        new ApiFunction<String, Role>() {
-          @Override
-          public Role apply(String constant) {
-            return new Role(constant);
-          }
-        };
+    private static final ApiFunction<String, Role> CONSTRUCTOR = Role::new;
 
-    private static final StringEnumType<Role> type = new StringEnumType(Role.class, CONSTRUCTOR);
+    private static final StringEnumType<Role> type = new StringEnumType<>(Role.class, CONSTRUCTOR);
 
     public static final Role OWNER = type.createAndRegister("OWNER");
     public static final Role READER = type.createAndRegister("READER");
@@ -195,36 +172,7 @@ public final class Acl implements Serializable {
 
     @Override
     public String toString() {
-      return toPb();
-    }
-
-    String toPb() {
-      return type.name().toLowerCase() + "-" + getValue();
-    }
-
-    static Entity fromPb(String entity) {
-      if (entity.startsWith("user-")) {
-        return new User(entity.substring(5));
-      }
-      if (entity.equals(User.ALL_USERS)) {
-        return User.ofAllUsers();
-      }
-      if (entity.equals(User.ALL_AUTHENTICATED_USERS)) {
-        return User.ofAllAuthenticatedUsers();
-      }
-      if (entity.startsWith("group-")) {
-        return new Group(entity.substring(6));
-      }
-      if (entity.startsWith("domain-")) {
-        return new Domain(entity.substring(7));
-      }
-      if (entity.startsWith("project-")) {
-        int idx = entity.indexOf('-', 8);
-        String team = entity.substring(8, idx);
-        String projectId = entity.substring(idx + 1);
-        return new Project(Project.ProjectRole.valueOf(team.toUpperCase()), projectId);
-      }
-      return new RawEntity(entity);
+      return Conversions.apiary().entity().encode(this);
     }
   }
 
@@ -272,8 +220,8 @@ public final class Acl implements Serializable {
   public static final class User extends Entity {
 
     private static final long serialVersionUID = 3076518036392737008L;
-    private static final String ALL_USERS = "allUsers";
-    private static final String ALL_AUTHENTICATED_USERS = "allAuthenticatedUsers";
+    static final String ALL_USERS = "allUsers";
+    static final String ALL_AUTHENTICATED_USERS = "allAuthenticatedUsers";
 
     /**
      * Creates a user entity.
@@ -287,19 +235,6 @@ public final class Acl implements Serializable {
     /** Returns the user email. */
     public String getEmail() {
       return getValue();
-    }
-
-    @Override
-    String toPb() {
-      switch (getValue()) {
-        case ALL_AUTHENTICATED_USERS:
-          return ALL_AUTHENTICATED_USERS;
-        case ALL_USERS:
-          return ALL_USERS;
-        default:
-          break;
-      }
-      return super.toPb();
     }
 
     public static User ofAllUsers() {
@@ -326,16 +261,10 @@ public final class Acl implements Serializable {
         super(constant);
       }
 
-      private static final ApiFunction<String, ProjectRole> CONSTRUCTOR =
-          new ApiFunction<String, ProjectRole>() {
-            @Override
-            public ProjectRole apply(String constant) {
-              return new ProjectRole(constant);
-            }
-          };
+      private static final ApiFunction<String, ProjectRole> CONSTRUCTOR = ProjectRole::new;
 
       private static final StringEnumType<ProjectRole> type =
-          new StringEnumType(ProjectRole.class, CONSTRUCTOR);
+          new StringEnumType<>(ProjectRole.class, CONSTRUCTOR);
 
       public static final ProjectRole OWNERS = type.createAndRegister("OWNERS");
       public static final ProjectRole EDITORS = type.createAndRegister("EDITORS");
@@ -389,11 +318,6 @@ public final class Acl implements Serializable {
 
     RawEntity(String entity) {
       super(Type.UNKNOWN, entity);
-    }
-
-    @Override
-    String toPb() {
-      return getValue();
     }
   }
 
@@ -481,41 +405,5 @@ public final class Acl implements Serializable {
         && Objects.equals(this.role, other.role)
         && Objects.equals(this.etag, other.etag)
         && Objects.equals(this.id, other.id);
-  }
-
-  BucketAccessControl toBucketPb() {
-    BucketAccessControl bucketPb = new BucketAccessControl();
-    bucketPb.setEntity(getEntity().toString());
-    bucketPb.setRole(getRole().toString());
-    bucketPb.setId(getId());
-    bucketPb.setEtag(getEtag());
-    return bucketPb;
-  }
-
-  ObjectAccessControl toObjectPb() {
-    ObjectAccessControl objectPb = new ObjectAccessControl();
-    objectPb.setEntity(getEntity().toPb());
-    objectPb.setRole(getRole().name());
-    objectPb.setId(getId());
-    objectPb.setEtag(getEtag());
-    return objectPb;
-  }
-
-  static Acl fromPb(ObjectAccessControl objectAccessControl) {
-    Role role = Role.valueOf(objectAccessControl.getRole());
-    Entity entity = Entity.fromPb(objectAccessControl.getEntity());
-    return newBuilder(entity, role)
-        .setEtag(objectAccessControl.getEtag())
-        .setId(objectAccessControl.getId())
-        .build();
-  }
-
-  static Acl fromPb(BucketAccessControl bucketAccessControl) {
-    Role role = Role.valueOf(bucketAccessControl.getRole());
-    Entity entity = Entity.fromPb(bucketAccessControl.getEntity());
-    return newBuilder(entity, role)
-        .setEtag(bucketAccessControl.getEtag())
-        .setId(bucketAccessControl.getId())
-        .build();
   }
 }

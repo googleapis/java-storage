@@ -100,7 +100,7 @@ public class StorageBatch {
     StorageBatchResult<Boolean> result = new StorageBatchResult<>();
     RpcBatch.Callback<Void> callback = createDeleteCallback(result);
     Map<StorageRpc.Option, ?> optionMap = StorageImpl.optionMap(blob, options);
-    batch.addDelete(blob.toPb(), callback, optionMap);
+    batch.addDelete(Conversions.apiary().blobId().encode(blob), callback, optionMap);
     return result;
   }
 
@@ -114,7 +114,7 @@ public class StorageBatch {
     StorageBatchResult<Blob> result = new StorageBatchResult<>();
     RpcBatch.Callback<StorageObject> callback = createUpdateCallback(this.options, result);
     Map<StorageRpc.Option, ?> optionMap = StorageImpl.optionMap(blobInfo, options);
-    batch.addPatch(blobInfo.toPb(), callback, optionMap);
+    batch.addPatch(Conversions.apiary().blobInfo().encode(blobInfo), callback, optionMap);
     return result;
   }
 
@@ -140,7 +140,7 @@ public class StorageBatch {
     StorageBatchResult<Blob> result = new StorageBatchResult<>();
     RpcBatch.Callback<StorageObject> callback = createGetCallback(this.options, result);
     Map<StorageRpc.Option, ?> optionMap = StorageImpl.optionMap(blob, options);
-    batch.addGet(blob.toPb(), callback, optionMap);
+    batch.addGet(Conversions.apiary().blobId().encode(blob), callback, optionMap);
     return result;
   }
 
@@ -173,8 +173,8 @@ public class StorageBatch {
     return new RpcBatch.Callback<StorageObject>() {
       @Override
       public void onSuccess(StorageObject response) {
-        result.success(
-            response == null ? null : Blob.fromPb(serviceOptions.getService(), response));
+        BlobInfo info = Conversions.apiary().blobInfo().decode(response);
+        result.success(response == null ? null : info.asBlob(serviceOptions.getService()));
       }
 
       @Override
@@ -194,8 +194,8 @@ public class StorageBatch {
     return new RpcBatch.Callback<StorageObject>() {
       @Override
       public void onSuccess(StorageObject response) {
-        result.success(
-            response == null ? null : Blob.fromPb(serviceOptions.getService(), response));
+        BlobInfo info = Conversions.apiary().blobInfo().decode(response);
+        result.success(response == null ? null : info.asBlob(serviceOptions.getService()));
       }
 
       @Override
