@@ -219,6 +219,21 @@
               hamcrest-core is used for test mocks
               -->
             <usedDependencies>io.grpc:grpc-netty-shaded</usedDependencies>
+            <ignoredDependencies>
+              <!--
+              We depend on `net.jqwik:jqwik` which itself has no classes, but depends on each of the other jars.
+              In order to not churn on which of the sub apis we happen to be using at this time, we're flagging
+              each of them as ignored for dependency checking.
+
+              This is safe for our downstream customers, as these are only ever used in test scope, and ultimately
+              stripped from the pom on release.
+              -->
+              <dependency>net.jqwik:jqwik</dependency>
+              <dependency>net.jqwik:jqwik-api</dependency>
+              <dependency>net.jqwik:jqwik-engine</dependency>
+              <dependency>net.jqwik:jqwik-time</dependency>
+              <dependency>net.jqwik:jqwik-web</dependency>
+            </ignoredDependencies>
           </configuration>
         </plugin>
       </plugins>
