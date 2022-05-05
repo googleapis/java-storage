@@ -46,6 +46,4 @@ public class JqwikTest {
   public static void report(TypeUsage t, Arbitrary<?> objectArbitrary) {
     System.out.printf("%-25s = %s%n", t, objectArbitrary.edgeCases());
   }
-
-
 }
