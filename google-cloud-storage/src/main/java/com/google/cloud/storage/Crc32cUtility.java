@@ -23,7 +23,7 @@ class Crc32cUtility {
      Implementation borrowed taken from: https://github.com/google/crc32c/blob/main/src/crc32c_portable.cc#L16-L59
   */
 
-  private static final int kByteExtensionTable[] =
+  private static final int[] kByteExtensionTable =
       new int[] {
         0x00000000,
         0xf26b8303,
