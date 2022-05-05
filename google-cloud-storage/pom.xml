@@ -17,6 +17,7 @@
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
     <kms.version>0.95.4</kms.version>
+    <junit-platform.version>5.8.2</junit-platform.version>
   </properties>
   <dependencies>
     <dependency>
@@ -197,6 +198,13 @@
       <artifactId>error_prone_annotations</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>net.jqwik</groupId>
+      <artifactId>jqwik</artifactId>
+      <version>1.6.5</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -211,6 +219,21 @@
               hamcrest-core is used for test mocks
               -->
             <usedDependencies>io.grpc:grpc-netty-shaded</usedDependencies>
+            <ignoredDependencies>
+              <!--
+              We depend on `net.jqwik:jqwik` which itself has no classes, but depends on each of the other jars.
+              In order to not churn on which of the sub apis we happen to be using at this time, we're flagging
+              each of them as ignored for dependency checking.
+
+              This is safe for our downstream customers, as these are only ever used in test scope, and ultimately
+              stripped from the pom on release.
+              -->
+              <dependency>net.jqwik:jqwik</dependency>
+              <dependency>net.jqwik:jqwik-api</dependency>
+              <dependency>net.jqwik:jqwik-engine</dependency>
+              <dependency>net.jqwik:jqwik-time</dependency>
+              <dependency>net.jqwik:jqwik-web</dependency>
+            </ignoredDependencies>
           </configuration>
         </plugin>
       </plugins>
@@ -220,6 +243,48 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>flatten-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
+        <configuration>
+          <!-- Excludes integration tests and smoke tests when unit tests are run -->
+          <excludes>
+            <exclude>**/*SmokeTest.java</exclude>
+            <exclude>**/IT*.java</exclude>
+          </excludes>
+          <reportNameSuffix>sponge_log</reportNameSuffix>
+        </configuration>
+        <dependencies>
+          <!-- org.apache.maven.surefire:surefire-junit47 is also included from parent config -->
+          <!-- add junit-platform to support jqwik tests for mvn test -->
+          <dependency>
+            <groupId>org.apache.maven.surefire</groupId>
+            <artifactId>surefire-junit-platform</artifactId>
+            <version>${surefire.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>idea-jqwik</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+          <version>${junit-platform.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter-engine</artifactId>
+          <version>${junit-platform.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>
