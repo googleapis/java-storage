@@ -1233,7 +1233,10 @@ public class Bucket extends BucketInfo {
       return false;
     }
     Bucket other = (Bucket) obj;
-    return Objects.equals(toPb(), other.toPb()) && Objects.equals(options, other.options);
+    return Objects.equals(
+            Conversions.apiary().bucketInfo().encode(this),
+            Conversions.apiary().bucketInfo().encode(other))
+        && Objects.equals(options, other.options);
   }
 
   @Override
@@ -1244,9 +1247,5 @@ public class Bucket extends BucketInfo {
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     this.storage = options.getService();
-  }
-
-  static Bucket fromPb(Storage storage, com.google.api.services.storage.model.Bucket bucketPb) {
-    return new Bucket(storage, new BucketInfo.BuilderImpl(BucketInfo.fromPb(bucketPb)));
   }
 }

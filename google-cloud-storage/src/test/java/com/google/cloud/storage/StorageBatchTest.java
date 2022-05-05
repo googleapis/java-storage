@@ -94,7 +94,7 @@ public class StorageBatchTest {
     EasyMock.reset(batchMock);
     Capture<RpcBatch.Callback<Void>> callback = Capture.newInstance();
     batchMock.addDelete(
-        EasyMock.eq(BLOB_INFO.toPb()),
+        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
     EasyMock.replay(batchMock);
@@ -124,7 +124,7 @@ public class StorageBatchTest {
     Capture<RpcBatch.Callback<Void>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addDelete(
-        EasyMock.eq(BLOB_INFO.toPb()),
+        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.capture(capturedOptions));
     EasyMock.replay(batchMock);
@@ -144,7 +144,7 @@ public class StorageBatchTest {
     EasyMock.reset(batchMock);
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     batchMock.addPatch(
-        EasyMock.eq(BLOB_INFO.toPb()),
+        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
     EasyMock.replay(batchMock);
@@ -178,7 +178,7 @@ public class StorageBatchTest {
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addPatch(
-        EasyMock.eq(BLOB_INFO_COMPLETE.toPb()),
+        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_COMPLETE)),
         EasyMock.capture(callback),
         EasyMock.capture(capturedOptions));
     EasyMock.replay(batchMock, storage, optionsMock);
@@ -189,7 +189,7 @@ public class StorageBatchTest {
     assertEquals(42L, capturedOptions.getValue().get(BLOB_TARGET_OPTIONS[0].getRpcOption()));
     assertEquals(42L, capturedOptions.getValue().get(BLOB_TARGET_OPTIONS[1].getRpcOption()));
     RpcBatch.Callback<StorageObject> capturedCallback = callback.getValue();
-    capturedCallback.onSuccess(BLOB_INFO.toPb());
+    capturedCallback.onSuccess(Conversions.apiary().blobInfo().encode(BLOB_INFO));
     assertEquals(new Blob(storage, new Blob.BuilderImpl(BLOB_INFO)), batchResult.get());
   }
 
@@ -198,7 +198,7 @@ public class StorageBatchTest {
     EasyMock.reset(batchMock);
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     batchMock.addGet(
-        EasyMock.eq(BLOB_INFO.toPb()),
+        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.eq(ImmutableMap.<StorageRpc.Option, Object>of()));
     EasyMock.replay(batchMock);
@@ -232,7 +232,7 @@ public class StorageBatchTest {
     Capture<RpcBatch.Callback<StorageObject>> callback = Capture.newInstance();
     Capture<Map<StorageRpc.Option, Object>> capturedOptions = Capture.newInstance();
     batchMock.addGet(
-        EasyMock.eq(BLOB_INFO.toPb()),
+        EasyMock.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO)),
         EasyMock.capture(callback),
         EasyMock.capture(capturedOptions));
     EasyMock.replay(storage, batchMock, optionsMock);
@@ -243,7 +243,7 @@ public class StorageBatchTest {
       assertEquals(option.getValue(), capturedOptions.getValue().get(option.getRpcOption()));
     }
     RpcBatch.Callback<StorageObject> capturedCallback = callback.getValue();
-    capturedCallback.onSuccess(BLOB_INFO.toPb());
+    capturedCallback.onSuccess(Conversions.apiary().blobInfo().encode(BLOB_INFO));
     assertEquals(new Blob(storage, new Blob.BuilderImpl(BLOB_INFO)), batchResult.get());
   }
 }

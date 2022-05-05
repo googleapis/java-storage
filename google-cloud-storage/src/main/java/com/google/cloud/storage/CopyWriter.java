@@ -71,7 +71,8 @@ public class CopyWriter implements Restorable<CopyWriter> {
     while (!isDone()) {
       copyChunk();
     }
-    return Blob.fromPb(serviceOptions.getService(), rewriteResponse.result);
+    BlobInfo info = Conversions.apiary().blobInfo().decode(rewriteResponse.result);
+    return info.asBlob(serviceOptions.getService());
   }
 
   /** Returns the size of the blob being copied. */
@@ -111,12 +112,15 @@ public class CopyWriter implements Restorable<CopyWriter> {
   public RestorableState<CopyWriter> capture() {
     return StateImpl.newBuilder(
             serviceOptions,
-            BlobId.fromPb(rewriteResponse.rewriteRequest.source),
+            Conversions.apiary().blobId().decode(rewriteResponse.rewriteRequest.source),
             rewriteResponse.rewriteRequest.sourceOptions,
             rewriteResponse.rewriteRequest.overrideInfo,
-            BlobInfo.fromPb(rewriteResponse.rewriteRequest.target),
+            Conversions.apiary().blobInfo().decode(rewriteResponse.rewriteRequest.target),
             rewriteResponse.rewriteRequest.targetOptions)
-        .setResult(rewriteResponse.result != null ? BlobInfo.fromPb(rewriteResponse.result) : null)
+        .setResult(
+            rewriteResponse.result != null
+                ? Conversions.apiary().blobInfo().decode(rewriteResponse.result)
+                : null)
         .setBlobSize(getBlobSize())
         .setIsDone(isDone())
         .setMegabytesCopiedPerChunk(rewriteResponse.rewriteRequest.megabytesRewrittenPerCall)
@@ -236,16 +240,16 @@ public class CopyWriter implements Restorable<CopyWriter> {
     public CopyWriter restore() {
       RewriteRequest rewriteRequest =
           new RewriteRequest(
-              source.toPb(),
+              Conversions.apiary().blobId().encode(source),
               sourceOptions,
               overrideInfo,
-              target.toPb(),
+              Conversions.apiary().blobInfo().encode(target),
               targetOptions,
               megabytesCopiedPerChunk);
       RewriteResponse rewriteResponse =
           new RewriteResponse(
               rewriteRequest,
-              result != null ? result.toPb() : null,
+              result != null ? Conversions.apiary().blobInfo().encode(result) : null,
               blobSize,
               isDone,
               rewriteToken,

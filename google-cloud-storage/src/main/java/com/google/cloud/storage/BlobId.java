@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.services.storage.model.StorageObject;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Objects;
@@ -90,14 +89,6 @@ public final class BlobId implements Serializable {
         && Objects.equals(generation, other.generation);
   }
 
-  StorageObject toPb() {
-    StorageObject storageObject = new StorageObject();
-    storageObject.setBucket(bucket);
-    storageObject.setName(name);
-    storageObject.setGeneration(generation);
-    return storageObject;
-  }
-
   /**
    * Creates a blob identifier. Generation is set to {@code null}.
    *
@@ -135,10 +126,5 @@ public final class BlobId implements Serializable {
     String blobName = gsUtilUri.substring(blobNameStartIndex + 1);
 
     return BlobId.of(bucketName, blobName);
-  }
-
-  static BlobId fromPb(StorageObject storageObject) {
-    return BlobId.of(
-        storageObject.getBucket(), storageObject.getName(), storageObject.getGeneration());
   }
 }
