@@ -31,7 +31,7 @@ class Crc32cUtility {
    * @param crc2ObjectSize byte length of object which generated crc2
    * @return
    * @see <a target="_blank" rel="noopener noreferrer"
-   *     href="https://github.com/google/crc32c/blob/main/src/crc32c_portable.cc#L252-L257">https://github.com/google/crc32c/blob/main/src/crc32c_portable.cc#L252-L257</a>
+   *     href="https://github.com/google/crc32c/blob/21fc8ef30415a635e7351ffa0e5d5367943d4a94/src/crc32c_portable.cc#L252-L257">https://github.com/google/crc32c/blob/21fc8ef30415a635e7351ffa0e5d5367943d4a94/src/crc32c_portable.cc#L252-L257</a>
    */
   public static int crc32cCombineGoogle(int crc1, int crc2, long crc2ObjectSize) {
     int l = crc1;
