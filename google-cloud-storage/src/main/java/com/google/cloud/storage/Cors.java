@@ -17,12 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Lists.newArrayList;
 
-import com.google.api.services.storage.model.Bucket;
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.net.URI;
@@ -39,22 +34,6 @@ import java.util.Objects;
 public final class Cors implements Serializable {
 
   private static final long serialVersionUID = -8637770919343335655L;
-
-  static final Function<Bucket.Cors, Cors> FROM_PB_FUNCTION =
-      new Function<Bucket.Cors, Cors>() {
-        @Override
-        public Cors apply(Bucket.Cors pb) {
-          return Cors.fromPb(pb);
-        }
-      };
-
-  static final Function<Cors, Bucket.Cors> TO_PB_FUNCTION =
-      new Function<Cors, Bucket.Cors>() {
-        @Override
-        public Bucket.Cors apply(Cors cors) {
-          return cors.toPb();
-        }
-      };
 
   private final Integer maxAgeSeconds;
   private final ImmutableList<HttpMethod> methods;
@@ -221,46 +200,5 @@ public final class Cors implements Serializable {
   /** Returns a CORS configuration builder. */
   public static Builder newBuilder() {
     return new Builder();
-  }
-
-  Bucket.Cors toPb() {
-    Bucket.Cors pb = new Bucket.Cors();
-    pb.setMaxAgeSeconds(maxAgeSeconds);
-    pb.setResponseHeader(responseHeaders);
-    if (methods != null) {
-      pb.setMethod(newArrayList(transform(methods, Functions.toStringFunction())));
-    }
-    if (origins != null) {
-      pb.setOrigin(newArrayList(transform(origins, Functions.toStringFunction())));
-    }
-    return pb;
-  }
-
-  static Cors fromPb(Bucket.Cors cors) {
-    Builder builder = newBuilder().setMaxAgeSeconds(cors.getMaxAgeSeconds());
-    if (cors.getMethod() != null) {
-      builder.setMethods(
-          transform(
-              cors.getMethod(),
-              new Function<String, HttpMethod>() {
-                @Override
-                public HttpMethod apply(String name) {
-                  return HttpMethod.valueOf(name.toUpperCase());
-                }
-              }));
-    }
-    if (cors.getOrigin() != null) {
-      builder.setOrigins(
-          transform(
-              cors.getOrigin(),
-              new Function<String, Origin>() {
-                @Override
-                public Origin apply(String value) {
-                  return Origin.of(value);
-                }
-              }));
-    }
-    builder.setResponseHeaders(cors.getResponseHeader());
-    return builder.build();
   }
 }

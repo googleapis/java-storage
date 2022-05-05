@@ -20,7 +20,6 @@ import static com.google.cloud.storage.Blob.BlobSourceOption.toGetOptions;
 import static com.google.cloud.storage.Blob.BlobSourceOption.toSourceOptions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.services.storage.model.StorageObject;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
 import com.google.cloud.ReadChannel;
@@ -915,7 +914,10 @@ public class Blob extends BlobInfo {
       return false;
     }
     Blob other = (Blob) obj;
-    return Objects.equals(toPb(), other.toPb()) && Objects.equals(options, other.options);
+    return Objects.equals(
+            Conversions.apiary().blobInfo().encode(this),
+            Conversions.apiary().blobInfo().encode(other))
+        && Objects.equals(options, other.options);
   }
 
   @Override
@@ -926,10 +928,5 @@ public class Blob extends BlobInfo {
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
     this.storage = options.getService();
-  }
-
-  static Blob fromPb(Storage storage, StorageObject storageObject) {
-    BlobInfo info = BlobInfo.fromPb(storageObject);
-    return new Blob(storage, new BlobInfo.BuilderImpl(info));
   }
 }

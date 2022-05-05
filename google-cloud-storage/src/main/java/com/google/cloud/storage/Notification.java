@@ -122,18 +122,14 @@ public class Notification extends NotificationInfo {
       return false;
     }
     Notification notification = (Notification) o;
-    return Objects.equals(toPb(), notification.toPb())
+    return Objects.equals(
+            Conversions.apiary().notificationInfo().encode(this),
+            Conversions.apiary().notificationInfo().encode(notification))
         && Objects.equals(options, notification.options);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), options, storage);
-  }
-
-  static Notification fromPb(
-      Storage storage, com.google.api.services.storage.model.Notification notificationPb) {
-    return new Notification(
-        storage, new NotificationInfo.BuilderImpl(NotificationInfo.fromPb(notificationPb)));
   }
 }
