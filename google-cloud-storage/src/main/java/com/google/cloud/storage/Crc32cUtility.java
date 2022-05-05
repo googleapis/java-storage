@@ -42,7 +42,8 @@ class Crc32cUtility {
     return l ^ crc2;
   }
 
-  // Ported from: https://github.com/google/crc32c/blob/21fc8ef30415a635e7351ffa0e5d5367943d4a94/src/crc32c_portable.cc#L16-L59
+  // Ported from:
+  // https://github.com/google/crc32c/blob/21fc8ef30415a635e7351ffa0e5d5367943d4a94/src/crc32c_portable.cc#L16-L59
   private static final int[] kByteExtensionTable =
       new int[] {
         0x00000000,
