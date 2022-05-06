@@ -35,8 +35,8 @@ final class Retrying {
    *
    * @param <T> The result type of {@code c}
    * @param <U> The result type of any mapping that takes place via {@code f}
-   * @param options The {@link StorageOptions} which {@link RetrySettings} and {@link ApiClock} will
-   *     be resolved from.
+   * @param options The {@link HttpStorageOptions} which {@link RetrySettings} and {@link ApiClock}
+   *     will be resolved from.
    * @param algorithm The {@link ResultRetryAlgorithm} to use when determining if a retry is
    *     possible
    * @param c The {@link Callable} which will be passed to runWithRetries producing some {@code T},
@@ -47,7 +47,10 @@ final class Retrying {
    * @throws StorageException if {@code c} fails due to any retry exhaustion
    */
   static <T, U> U run(
-      StorageOptions options, ResultRetryAlgorithm<?> algorithm, Callable<T> c, Function<T, U> f) {
+      HttpStorageOptions options,
+      ResultRetryAlgorithm<?> algorithm,
+      Callable<T> c,
+      Function<T, U> f) {
     HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
     try {
       httpRpcContext.newInvocationId();
@@ -57,6 +60,37 @@ final class Retrying {
       throw StorageException.coalesce(e);
     } finally {
       httpRpcContext.clearInvocationId();
+    }
+  }
+
+  /**
+   * A convenience wrapper around {@link com.google.cloud.RetryHelper#runWithRetries(Callable,
+   * RetrySettings, ResultRetryAlgorithm, ApiClock)} that gives us centralized error translation and
+   * reduces some duplication in how we resolved the {@link RetrySettings} and {@link ApiClock}.
+   *
+   * @param <T> The result type of {@code c}
+   * @param <U> The result type of any mapping that takes place via {@code f}
+   * @param options The {@link HttpStorageOptions} which {@link RetrySettings} and {@link ApiClock}
+   *     will be resolved from.
+   * @param algorithm The {@link ResultRetryAlgorithm} to use when determining if a retry is
+   *     possible
+   * @param c The {@link Callable} which will be passed to runWithRetries producing some {@code T},
+   *     can optionally return null
+   * @param f A post process mapping {@link Function} which can be used to transform the result from
+   *     {@code c} if it is successful and non-null
+   * @return A {@code U} (possibly null) after applying {@code f} to the result of {@code c}
+   * @throws StorageException if {@code c} fails due to any retry exhaustion
+   */
+  static <T, U> U run(
+      GrpcStorageOptions options,
+      ResultRetryAlgorithm<?> algorithm,
+      Callable<T> c,
+      Function<T, U> f) {
+    try {
+      T result = runWithRetries(c, options.getRetrySettings(), algorithm, options.getClock());
+      return result == null ? null : f.apply(result);
+    } catch (RetryHelperException e) {
+      throw StorageException.coalesce(e);
     }
   }
 }

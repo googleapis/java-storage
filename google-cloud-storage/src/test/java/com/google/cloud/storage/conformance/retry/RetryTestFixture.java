@@ -120,7 +120,7 @@ final class RetryTestFixture implements TestRule {
 
   private Storage newStorage(boolean forTest) {
     StorageOptions.Builder builder =
-        StorageOptions.newBuilder()
+        StorageOptions.http()
             .setHost(testBench.getBaseUri())
             .setCredentials(NoCredentials.getInstance())
             .setProjectId(testRetryConformance.getProjectId());

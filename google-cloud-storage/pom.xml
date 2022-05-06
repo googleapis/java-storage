@@ -53,8 +53,16 @@
       <artifactId>google-cloud-core-http</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-core-grpc</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.google.api</groupId>
       <artifactId>gax</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api</groupId>
+      <artifactId>gax-grpc</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.auth</groupId>
@@ -88,6 +96,15 @@
       <groupId>org.threeten</groupId>
       <artifactId>threetenbp</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.api.grpc</groupId>
+      <artifactId>proto-google-cloud-storage-v2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api.grpc</groupId>
+      <artifactId>gapic-google-cloud-storage-v2</artifactId>
+    </dependency>
+
     <!-- Access to exception for retry handling -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -107,7 +124,6 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-api</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
@@ -117,12 +133,10 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-auth</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-stub</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.api.grpc</groupId>
@@ -139,7 +153,6 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>grpc-google-iam-v1</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>

@@ -24,6 +24,10 @@ final class Conversions {
     return ApiaryConversions.INSTANCE;
   }
 
+  static GrpcConversions grpc() {
+    return GrpcConversions.INSTANCE;
+  }
+
   @FunctionalInterface
   interface Encoder<From, To> {
     To encode(From f);

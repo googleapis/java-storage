@@ -198,7 +198,7 @@ public class RemoteStorageHelper {
       transportOptions =
           transportOptions.toBuilder().setConnectTimeout(60000).setReadTimeout(60000).build();
       StorageOptions storageOptions =
-          StorageOptions.newBuilder()
+          StorageOptions.http()
               .setCredentials(GoogleCredentials.fromStream(keyStream))
               .setProjectId(projectId)
               .setRetrySettings(retrySettings())
@@ -223,7 +223,7 @@ public class RemoteStorageHelper {
     transportOptions =
         transportOptions.toBuilder().setConnectTimeout(60000).setReadTimeout(60000).build();
     StorageOptions storageOptions =
-        StorageOptions.newBuilder()
+        StorageOptions.http()
             .setRetrySettings(retrySettings())
             .setTransportOptions(transportOptions)
             .build();

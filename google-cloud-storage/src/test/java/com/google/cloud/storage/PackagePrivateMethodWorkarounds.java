@@ -63,4 +63,8 @@ public final class PackagePrivateMethodWorkarounds {
       }
     };
   }
+
+  public static <T> T todo() {
+    return Utils.todo();
+  }
 }

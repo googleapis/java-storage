@@ -91,6 +91,7 @@ public final class StorageException extends BaseHttpServiceException {
    * created with an unknown status code.
    */
   static BaseServiceException coalesce(Throwable t) {
+    // TODO: handle com.google.cloud.grpc.BaseGrpcServiceException et. al.
     if (t instanceof BaseServiceException) {
       return (BaseServiceException) t;
     }

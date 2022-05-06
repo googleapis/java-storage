@@ -28,7 +28,7 @@ public class StorageOptionsTest {
   @Test
   public void testInvalidTransport() {
     try {
-      StorageOptions.newBuilder()
+      StorageOptions.http()
           .setTransportOptions(EasyMock.<TransportOptions>createMock(TransportOptions.class));
       Assert.fail();
     } catch (IllegalArgumentException ex) {
@@ -38,7 +38,7 @@ public class StorageOptionsTest {
 
   @Test
   public void testConfigureHostShouldBeKeptOnToBuilder() {
-    StorageOptions opts1 = StorageOptions.newBuilder().setHost("custom-host").build();
+    StorageOptions opts1 = StorageOptions.http().setHost("custom-host").build();
     StorageOptions opts2 = opts1.toBuilder().build();
 
     assertThat(opts2.getHost()).isEqualTo("custom-host");
@@ -46,7 +46,7 @@ public class StorageOptionsTest {
 
   @Test
   public void testToBuilderShouldSpecifyDefaultIfNotOtherwiseSet() {
-    StorageOptions opts1 = StorageOptions.newBuilder().build();
+    StorageOptions opts1 = StorageOptions.http().build();
     StorageOptions opts2 = opts1.toBuilder().build();
 
     assertThat(opts2.getHost()).isEqualTo("https://storage.googleapis.com");
@@ -54,7 +54,7 @@ public class StorageOptionsTest {
 
   @Test
   public void testNewBuilderSpecifiesCorrectHost() {
-    StorageOptions opts1 = StorageOptions.newBuilder().build();
+    StorageOptions opts1 = StorageOptions.http().build();
 
     assertThat(opts1.getHost()).isEqualTo("https://storage.googleapis.com");
   }

@@ -117,7 +117,7 @@ public final class ITBlobWriteChannelTest {
     RetryTestResource retryTest = testBench.createRetryTest(retryTestResource);
 
     StorageOptions baseOptions =
-        StorageOptions.newBuilder()
+        StorageOptions.http()
             .setCredentials(NoCredentials.getInstance())
             .setHost(testBench.getBaseUri())
             .setProjectId("project-id")

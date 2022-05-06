@@ -60,7 +60,7 @@ public final class ITBlobReadChannelTest {
 
   @Before
   public void setUp() throws Exception {
-    storage = StorageOptions.newBuilder().build().getService();
+    storage = StorageOptions.http().build().getService();
 
     bucketName = RemoteStorageHelper.generateBucketName();
     storage.create(BucketInfo.of(bucketName));
