@@ -73,7 +73,6 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
 
   /** @deprecated Use {@link HttpStorageDefaults#getDefaultTransportOptions()} */
   @Deprecated
-  @SuppressWarnings("DeprecatedIsStillUsed")
   public static HttpTransportOptions getDefaultHttpTransportOptions() {
     return HttpStorageOptions.defaults().getDefaultTransportOptions();
   }
@@ -108,6 +107,14 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   }
 
   public static StorageOptions.Builder newBuilder() {
+    return http();
+  }
+
+  public static HttpStorageOptions.Builder http() {
     return HttpStorageOptions.newBuilder();
+  }
+
+  public static GrpcStorageOptions.Builder grpc() {
+    return GrpcStorageOptions.newBuilder();
   }
 }

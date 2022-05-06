@@ -2053,7 +2053,7 @@ public class ITStorageTest {
             .setHttpTransportFactory(new CustomHttpTransportFactory())
             .build();
     Storage storageWithPool =
-        StorageOptions.newBuilder().setTransportOptions(transportOptions).build().getService();
+        StorageOptions.http().setTransportOptions(transportOptions).build().getService();
     String blobName = "test-custom-pool-management";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
     byte[] stringBytes;
@@ -3999,7 +3999,7 @@ public class ITStorageTest {
     final AtomicBoolean exceptionThrown = new AtomicBoolean(false);
 
     Storage testStorage =
-        StorageOptions.newBuilder()
+        StorageOptions.http()
             .setServiceRpcFactory(
                 new StorageRpcFactory() {
                   /**

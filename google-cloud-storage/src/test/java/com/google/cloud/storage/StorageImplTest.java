@@ -408,7 +408,7 @@ public class StorageImplTest {
         .andReturn(storageRpcMock);
     EasyMock.replay(rpcFactoryMock);
     options =
-        StorageOptions.newBuilder()
+        StorageOptions.http()
             .setProjectId("projectId")
             .setClock(TIME_SOURCE)
             .setServiceRpcFactory(rpcFactoryMock)

@@ -81,4 +81,12 @@ final class Utils {
   static <T1, T2> Function<T1, T2> lift(Function<T1, T2> f) {
     return f;
   }
+
+  static final <T> T todo() {
+    throw new IllegalStateException("Not yet implemented");
+  }
+
+  static final <T1, T2> T2 todo(T1 t1) {
+    throw new IllegalStateException("Not yet implemented");
+  }
 }

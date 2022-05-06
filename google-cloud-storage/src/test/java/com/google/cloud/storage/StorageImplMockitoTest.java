@@ -444,7 +444,7 @@ public class StorageImplMockitoTest {
     storageRpcMock = mock(StorageRpc.class, UNEXPECTED_CALL_ANSWER);
     doReturn(storageRpcMock).when(rpcFactoryMock).create(Mockito.any(StorageOptions.class));
     options =
-        StorageOptions.newBuilder()
+        StorageOptions.http()
             .setProjectId("projectId")
             .setClock(TIME_SOURCE)
             .setServiceRpcFactory(rpcFactoryMock)
