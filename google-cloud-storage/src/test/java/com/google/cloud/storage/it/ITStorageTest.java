@@ -234,6 +234,8 @@ public class ITStorageTest {
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
 
+  private static ManagedChannel kmsChannel;
+
   @BeforeClass
   public static void beforeClass() throws IOException {
     remoteStorageHelper = RemoteStorageHelper.create();
@@ -276,13 +278,27 @@ public class ITStorageTest {
 
   @AfterClass
   public static void afterClass() throws ExecutionException, InterruptedException {
-    if (storage != null) {
+    if (kmsChannel != null) {
+      try {
+        kmsChannel.shutdownNow();
+      } catch (Exception e) {
+        log.log(Level.WARNING, "Error while trying to shutdown kms channel", e);
+      }
+      kmsChannel = null;
+    }
 
-      /* Delete the Pub/Sub topic */
-      if (topicAdminClient != null) {
+    /* Delete the Pub/Sub topic */
+    if (topicAdminClient != null) {
+      try {
         topicAdminClient.deleteTopic(TOPIC);
         topicAdminClient.close();
+      } catch (Exception e) {
+        log.log(Level.WARNING, "Error while trying to delete topic and shutdown topic client", e);
       }
+      topicAdminClient = null;
+    }
+
+    if (storage != null) {
       // In beforeClass, we make buckets auto-delete blobs older than a day old.
       // Here, delete all buckets older than 2 days. They should already be empty and easy.
       long cleanTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(2);
@@ -312,8 +328,7 @@ public class ITStorageTest {
     // https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys
     String projectId = remoteStorageHelper.getOptions().getProjectId();
     GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
-    ManagedChannel kmsChannel =
-        ManagedChannelBuilder.forTarget("cloudkms.googleapis.com:443").build();
+    kmsChannel = ManagedChannelBuilder.forTarget("cloudkms.googleapis.com:443").build();
     KeyManagementServiceBlockingStub kmsStub =
         KeyManagementServiceGrpc.newBlockingStub(kmsChannel)
             .withCallCredentials(MoreCallCredentials.from(credentials));
