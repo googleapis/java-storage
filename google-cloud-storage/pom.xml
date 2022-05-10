@@ -138,6 +138,16 @@
       <groupId>io.grpc</groupId>
       <artifactId>grpc-stub</artifactId>
     </dependency>
+    <!--
+    We're not using this directly, however there appears to be some resolution
+    issues when we don't list this dependency. Specifically, the check to ensure the flattened
+    contains all dependencies fails because it has this subtree included.
+    -->
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-xds</artifactId>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>grpc-google-cloud-kms-v1</artifactId>
@@ -231,7 +241,7 @@
               grpc-netty-shaded is needed for integration tests
               hamcrest-core is used for test mocks
               -->
-            <usedDependencies>io.grpc:grpc-netty-shaded</usedDependencies>
+            <usedDependencies>io.grpc:grpc-netty-shaded,io.grpc:grpc-xds</usedDependencies>
             <ignoredDependencies>
               <!--
               We depend on `net.jqwik:jqwik` which itself has no classes, but depends on each of the other jars.
