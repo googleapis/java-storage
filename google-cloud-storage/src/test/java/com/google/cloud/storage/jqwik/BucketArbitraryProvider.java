@@ -35,11 +35,9 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
 
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-
     Arbitrary<String> bucketID = Arbitraries.strings().all().ofMinLength(0).ofLength(1024);
     Arbitrary<String> location = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
     Arbitrary<String> locationType = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-
     Arbitrary<Bucket> as =
         Combinators.combine(
                 Combinators.combine(
@@ -80,7 +78,6 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         .setEncryption(t2.get6())
                         .setRetentionPolicy(t2.get7())
                         .build());
-
     return Collections.singleton(as);
   }
 }

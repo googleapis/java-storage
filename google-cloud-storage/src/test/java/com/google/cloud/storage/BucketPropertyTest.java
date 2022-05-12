@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
@@ -33,8 +34,8 @@ final class BucketPropertyTest {
     assertThat(decoded.getStorageClass().toString()).isEqualTo(b.getStorageClass());
     assertThat(decoded.getLocation()).isEqualTo(b.getLocation());
     assertThat(decoded.getLocationType()).isEqualTo(b.getLocationType());
-    assertThat(decoded.getCreateTime()).isEqualTo(b.getCreateTime().getSeconds());
-    assertThat(decoded.getUpdateTime()).isEqualTo(b.getUpdateTime().getSeconds());
+    assertThat(decoded.getCreateTime()).isEqualTo(Timestamps.toMillis(b.getCreateTime()));
+    assertThat(decoded.getUpdateTime()).isEqualTo(Timestamps.toMillis(b.getUpdateTime()));
     assertThat(decoded.versioningEnabled()).isEqualTo(b.getVersioning().getEnabled());
     assertThat(decoded.getRpo().toString()).isEqualTo(b.getRpo());
     assertThat(decoded.requesterPays()).isEqualTo(b.getBilling().getRequesterPays());

@@ -17,6 +17,7 @@
 package com.google.cloud.storage.jqwik;
 
 import com.google.protobuf.Timestamp;
+import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Encryption;
@@ -33,10 +34,7 @@ public final class StorageArbitraries {
   private StorageArbitraries() {}
 
   public static Arbitrary<Timestamp> timestamp() {
-    return Combinators.combine(
-            Arbitraries.longs().between(100000L, 100000000L),
-            Arbitraries.integers().greaterOrEqual(0))
-        .as((s, n) -> Timestamp.newBuilder().setSeconds(s).setNanos(n).build());
+    return Arbitraries.longs().between(0, 100000000L).map(s -> Timestamps.fromMillis(s));
   }
 
   public static Arbitrary<Boolean> bool() {
