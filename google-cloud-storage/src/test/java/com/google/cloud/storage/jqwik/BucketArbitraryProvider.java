@@ -37,79 +37,50 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 
     Arbitrary<String> bucketID = Arbitraries.strings().all().ofMinLength(0).ofLength(1024);
-    Arbitrary<String> bucketName = Arbitraries.strings().all().ofMinLength(0).ofLength(1024);
-    Arbitrary<String> storageClass = Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
     Arbitrary<String> location = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
     Arbitrary<String> locationType = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-    Arbitrary<Long> metageneration = Arbitraries.longs().between(0, 100000L);
-    Arbitrary<Boolean> versioning = Arbitraries.defaultFor(TypeUsage.of(Boolean.class));
-    Arbitrary<Long> createTime = Arbitraries.longs().between(100000L, 100000000L);
-    Arbitrary<Tuple.Tuple8> baseMetadata =
+
+    Arbitrary<Bucket> as =
         Combinators.combine(
-                bucketID,
-                bucketName,
-                storageClass,
-                location,
-                locationType,
-                metageneration,
-                versioning,
-                createTime)
-            .as(Tuple::of);
+                Combinators.combine(
+                        bucketID,
+                        StorageArbitraries.bucketName(),
+                        StorageArbitraries.buckets().storageClass(),
+                        location,
+                        locationType,
+                        StorageArbitraries.metageneration(),
+                        StorageArbitraries.buckets().versioning(),
+                        StorageArbitraries.timestamp())
+                    .as(Tuple::of),
+                Combinators.combine(
+                        StorageArbitraries.timestamp(),
+                        StorageArbitraries.buckets().website(),
+                        StorageArbitraries.bool(),
+                        StorageArbitraries.buckets().rpo(),
+                        StorageArbitraries.buckets().billing(),
+                        StorageArbitraries.buckets().encryption(),
+                        StorageArbitraries.buckets().retentionPolicy())
+                    .as(Tuple::of))
+            .as(
+                (t1, t2) ->
+                    Bucket.newBuilder()
+                        .setBucketId(t1.get1())
+                        .setName(t1.get2().get())
+                        .setStorageClass(t1.get3())
+                        .setLocation(t1.get4())
+                        .setLocationType(t1.get5())
+                        .setMetageneration(t1.get6())
+                        .setVersioning(t1.get7())
+                        .setCreateTime(t1.get8())
+                        .setUpdateTime(t2.get1())
+                        .setWebsite(t2.get2())
+                        .setDefaultEventBasedHold(t2.get3())
+                        .setRpo(t2.get4())
+                        .setBilling(t2.get5())
+                        .setEncryption(t2.get6())
+                        .setRetentionPolicy(t2.get7())
+                        .build());
 
-    Arbitrary<Long> updateTime = Arbitraries.longs().between(100000L, 100000000L);
-    Arbitrary<String> indexPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-    Arbitrary<String> notFoundPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-    Arbitrary<Boolean> defaultEventBasedHold = Arbitraries.defaultFor(TypeUsage.of(Boolean.class));
-    Arbitrary<String> rpo = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-    Arbitrary<Boolean> requesterPays = Arbitraries.defaultFor(TypeUsage.of(Boolean.class));
-    Arbitrary<String> defaultEncryptionKmsKey = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-    Arbitrary<Tuple.Tuple7> extendedMetadata =
-        Combinators.combine(
-                updateTime, indexPage, notFoundPage, defaultEventBasedHold, rpo, requesterPays, defaultEncryptionKmsKey)
-            .as(Tuple::of);
-
-    //    Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
-    //    ifNonNull(retentionPolicy, Bucket.RetentionPolicy::getIsLocked,
-    // to::setRetentionPolicyIsLocked);
-    //    ifNonNull(retentionPolicy, Bucket.RetentionPolicy::getRetentionPeriod,
-    // to::setRetentionPeriod);
-    //    if(from.hasRetentionPolicy() && retentionPolicy.hasEffectiveTime()) {
-    //      to.setRetentionEffectiveTime(retentionPolicy.getEffectiveTime().getSeconds());
-    //    }
-    //    ifNonNull(from.getLabels(), to::setLabels);
-
-    return Collections.singleton(
-        Combinators.combine(baseMetadata, extendedMetadata).as(this::buildBucket));
-  }
-
-  private Bucket buildBucket(Tuple.Tuple8 baseMetadata, Tuple.Tuple7 extendedMetadata) {
-    return Bucket.getDefaultInstance()
-        .newBuilder()
-        .setBucketId((String) baseMetadata.get1())
-        .setName((String) baseMetadata.get2())
-        .setStorageClass((String) baseMetadata.get3())
-        .setLocation((String) baseMetadata.get4())
-        .setLocationType((String) baseMetadata.get5())
-        .setMetageneration((Long) baseMetadata.get6())
-        .setVersioning(Bucket.Versioning.newBuilder().setEnabled((Boolean) baseMetadata.get7()))
-        .setCreateTime(
-            com.google.protobuf.Timestamp.newBuilder()
-                .setSeconds((long) baseMetadata.get8())
-                .build())
-        .setUpdateTime(
-            com.google.protobuf.Timestamp.newBuilder()
-                .setSeconds((long) extendedMetadata.get1())
-                .build())
-        .setWebsite(
-            Bucket.Website.newBuilder()
-                .setMainPageSuffix((String) extendedMetadata.get2())
-                .setNotFoundPage((String) extendedMetadata.get3())
-                .build())
-        .setDefaultEventBasedHold((Boolean) extendedMetadata.get4())
-        .setRpo((String) extendedMetadata.get5())
-        .setBilling(
-            Bucket.Billing.newBuilder().setRequesterPays((Boolean) extendedMetadata.get6()).build())
-        .setEncryption(Bucket.Encryption.newBuilder().setDefaultKmsKey((String) extendedMetadata.get7()).build())
-        .build();
+    return Collections.singleton(as);
   }
 }

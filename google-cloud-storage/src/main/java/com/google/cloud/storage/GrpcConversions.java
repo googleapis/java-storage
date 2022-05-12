@@ -22,6 +22,7 @@ import static com.google.cloud.storage.Utils.todo;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
+import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Object;
 
 final class GrpcConversions {
@@ -123,7 +124,7 @@ final class GrpcConversions {
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
-    ifNonNull(from.getBilling(), b -> to.setRequesterPays(b.getRequesterPays()));
+    ifNonNull(from.getBilling(), Billing::getRequesterPays, to::setRequesterPays);
     ifNonNull(from.getCreateTime(), Timestamp::getSeconds, to::setCreateTime);
     ifNonNull(from.getUpdateTime(), Timestamp::getSeconds, to::setUpdateTime);
     ifNonNull(from.getEncryption(), Bucket.Encryption::getDefaultKmsKey, to::setDefaultKmsKeyName);
