@@ -16,9 +16,12 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.protobuf.Timestamp;
+import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Object;
 
 final class GrpcConversions {
@@ -35,7 +38,8 @@ final class GrpcConversions {
   private final Codec<?, ?> iamConfigurationCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> lifecycleRuleCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> deleteRuleCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<?, ?> bucketInfoCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<BucketInfo, Bucket> bucketInfoCodec =
+      Codec.of(Utils::todo, this::bucketInfoDecode);
   private final Codec<?, ?> customerEncryptionCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<BlobId, Object> blobIdCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> blobInfoCodec = Codec.of(Utils::todo, Utils::todo);
@@ -87,8 +91,8 @@ final class GrpcConversions {
     return todo();
   }
 
-  Codec<?, ?> bucketInfo() {
-    return todo();
+  Codec<BucketInfo, Bucket> bucketInfo() {
+    return bucketInfoCodec;
   }
 
   Codec<?, ?> customerEncryption() {
@@ -105,5 +109,41 @@ final class GrpcConversions {
 
   Codec<?, ?> notificationInfo() {
     return todo();
+  }
+
+  private BucketInfo bucketInfoDecode(Bucket from) {
+    BucketInfo.Builder to = BucketInfo.newBuilder(from.getName());
+    Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
+    ifNonNull(retentionPolicy, Bucket.RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
+    ifNonNull(retentionPolicy, Bucket.RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
+    if (from.hasRetentionPolicy() && retentionPolicy.hasEffectiveTime()) {
+      to.setRetentionEffectiveTime(retentionPolicy.getEffectiveTime().getSeconds());
+    }
+    ifNonNull(from.getBucketId(), to::setGeneratedId);
+    ifNonNull(from.getLocation(), to::setLocation);
+    ifNonNull(from.getLocationType(), to::setLocationType);
+    ifNonNull(from.getMetageneration(), to::setMetageneration);
+    ifNonNull(from.getBilling(), b -> to.setRequesterPays(b.getRequesterPays()));
+    ifNonNull(from.getCreateTime(), Timestamp::getSeconds, to::setCreateTime);
+    ifNonNull(from.getUpdateTime(), Timestamp::getSeconds, to::setUpdateTime);
+    ifNonNull(from.getEncryption(), Bucket.Encryption::getDefaultKmsKey, to::setDefaultKmsKeyName);
+    ifNonNull(from.getWebsite(), Bucket.Website::getMainPageSuffix, to::setIndexPage);
+    ifNonNull(from.getWebsite(), Bucket.Website::getNotFoundPage, to::setNotFoundPage);
+    ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);
+    ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
+    ifNonNull(from.getVersioning(), Bucket.Versioning::getEnabled, to::setVersioningEnabled);
+    ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
+    ifNonNull(from.getLabels(), to::setLabels);
+    ifNonNull(from.getBilling(), Bucket.Billing::getRequesterPays, to::setRequesterPays);
+    // TODO(frankyn): Add logging decoder
+    // TODO(frankyn): Add entity decoder
+    // TODO(frankyn): Add lifeycle decoder
+    // TODO(frankyn): Add deleteRules decoder
+    // TODO(frankyn): Add SelfLink when the field is available
+    // TODO(frankyn): Add decoder for iamConfig
+    // TODO(frankyn): Add Etag when support is avialable
+    // TODO(frankyn): Add Cors decoder support
+    // TODO(frnakyn): Add DefaultObjectAcl decoder support
+    return to.build();
   }
 }

@@ -1628,7 +1628,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return ImmutableMap.copyOf(temp);
   }
 
-  private static Map<StorageRpc.Option, ?> optionMap(Option... options) {
+  static Map<StorageRpc.Option, ?> optionMap(Option... options) {
     return optionMap(null, null, Arrays.asList(options));
   }
 
