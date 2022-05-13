@@ -37,6 +37,8 @@ public class JqwikTest {
     report(of(List.class).asNullable());
     report(of(Map.class));
     report(of(Map.class).asNullable());
+    report(of(Boolean.class));
+    report(of(Boolean.class).asNullable());
   }
 
   public static void report(TypeUsage t) {

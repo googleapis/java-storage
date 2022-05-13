@@ -16,9 +16,11 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.api.gax.paging.Page;
+import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
@@ -28,6 +30,8 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.stub.GrpcStorageStub;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +39,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
@@ -103,7 +108,20 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    return todo();
+    UnaryCallable<GetBucketRequest, com.google.storage.v2.Bucket> bucketCallable =
+        grpcStorageStub.getBucketCallable();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GetBucketRequest.Builder bucketRequestBuilder = GetBucketRequest.newBuilder().setName(bucket);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        bucketRequestBuilder::setIfMetagenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        bucketRequestBuilder::setIfMetagenerationNotMatch);
+    // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
+    // projection=full
+    com.google.storage.v2.Bucket protoBucket = bucketCallable.call(bucketRequestBuilder.build());
+    return Conversions.grpc().bucketInfo().decode(protoBucket).asBucket(this);
   }
 
   @Override

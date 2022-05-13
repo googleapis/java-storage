@@ -17,6 +17,8 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.InternalApi;
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -80,6 +82,15 @@ final class Utils {
   @InternalApi
   static <T1, T2> Function<T1, T2> lift(Function<T1, T2> f) {
     return f;
+  }
+
+  /**
+   * Several properties are translating lists of one type to another. This convenience method allows
+   * specifying a mapping function and composing as part of an {@code #isNonNull} definition.
+   */
+  @InternalApi
+  static <T1, T2> Function<List<T1>, ImmutableList<T2>> toImmutableListOf(Function<T1, T2> f) {
+    return l -> l.stream().map(f).collect(ImmutableList.toImmutableList());
   }
 
   static final <T> T todo() {
