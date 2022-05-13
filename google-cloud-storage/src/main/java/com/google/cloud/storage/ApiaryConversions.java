@@ -71,7 +71,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 @InternalApi
 final class ApiaryConversions {
@@ -183,7 +182,7 @@ final class ApiaryConversions {
 
   private StorageObject blobInfoEncode(BlobInfo from) {
     StorageObject to = blobIdEncode(from.getBlobId());
-    ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), to::setAcl);
+    ifNonNull(from.getAcl(), Utils.toImmutableListOf(objectAcl()::encode), to::setAcl);
     ifNonNull(from.getDeleteTime(), DateTime::new, to::setTimeDeleted);
     ifNonNull(from.getUpdateTime(), DateTime::new, to::setUpdated);
     ifNonNull(from.getCreateTime(), DateTime::new, to::setTimeCreated);
@@ -248,7 +247,7 @@ final class ApiaryConversions {
     ifNonNull(from.getCustomTime(), DateTime::getValue, to::setCustomTime);
     ifNonNull(from.getSize(), BigInteger::longValue, to::setSize);
     ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
-    ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::decode), to::setAcl);
+    ifNonNull(from.getAcl(), Utils.toImmutableListOf(objectAcl()::decode), to::setAcl);
     if (from.containsKey("isDirectory")) {
       to.setIsDirectory(Boolean.TRUE);
     }
@@ -289,11 +288,13 @@ final class ApiaryConversions {
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket to = new Bucket();
-    ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::encode), to::setAcl);
-    ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::setCors);
+    ifNonNull(from.getAcl(), Utils.toImmutableListOf(bucketAcl()::encode), to::setAcl);
+    ifNonNull(from.getCors(), Utils.toImmutableListOf(cors()::encode), to::setCors);
     ifNonNull(from.getCreateTime(), DateTime::new, to::setTimeCreated);
     ifNonNull(
-        from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::setDefaultObjectAcl);
+        from.getDefaultAcl(),
+        Utils.toImmutableListOf(objectAcl()::encode),
+        to::setDefaultObjectAcl);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
@@ -378,10 +379,12 @@ final class ApiaryConversions {
   @SuppressWarnings("deprecation")
   private BucketInfo bucketInfoDecode(com.google.api.services.storage.model.Bucket from) {
     BucketInfo.Builder to = new BuilderImpl(from.getName());
-    ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::decode), to::setAcl);
-    ifNonNull(from.getCors(), toImmutableListOf(cors()::decode), to::setCors);
+    ifNonNull(from.getAcl(), Utils.toImmutableListOf(bucketAcl()::decode), to::setAcl);
+    ifNonNull(from.getCors(), Utils.toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(
-        from.getDefaultObjectAcl(), toImmutableListOf(objectAcl()::decode), to::setDefaultAcl);
+        from.getDefaultObjectAcl(),
+        Utils.toImmutableListOf(objectAcl()::decode),
+        to::setDefaultAcl);
     ifNonNull(from.getEtag(), to::setEtag);
     ifNonNull(from.getId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -399,12 +402,12 @@ final class ApiaryConversions {
     ifNonNull(from.getWebsite(), Website::getNotFoundPage, to::setNotFoundPage);
     ifNonNull(
         from.getLifecycle(),
-        lift(Lifecycle::getRule).andThen(toImmutableListOf(lifecycleRule()::decode)),
+        lift(Lifecycle::getRule).andThen(Utils.toImmutableListOf(lifecycleRule()::decode)),
         to::setLifecycleRules);
     // preserve mapping to deprecated property
     ifNonNull(
         from.getLifecycle(),
-        lift(Lifecycle::getRule).andThen(toImmutableListOf(deleteRule()::decode)),
+        lift(Lifecycle::getRule).andThen(Utils.toImmutableListOf(deleteRule()::decode)),
         to::setDeleteRules);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::setLabels);
@@ -521,7 +524,7 @@ final class ApiaryConversions {
         from.getCustomTimeBefore(), this::truncateToDateWithNoTzDrift, to::setCustomTimeBefore);
     ifNonNull(
         from.getMatchesStorageClass(),
-        toImmutableListOf(Object::toString),
+        Utils.toImmutableListOf(Object::toString),
         to::setMatchesStorageClass);
     return to;
   }
@@ -572,7 +575,7 @@ final class ApiaryConversions {
             .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
     ifNonNull(
         condition.getMatchesStorageClass(),
-        toImmutableListOf(StorageClass::valueOf),
+        Utils.toImmutableListOf(StorageClass::valueOf),
         conditionBuilder::setMatchesStorageClass);
 
     return new LifecycleRule(lifecycleAction, conditionBuilder.build());
@@ -601,8 +604,8 @@ final class ApiaryConversions {
     Bucket.Cors to = new Bucket.Cors();
     to.setMaxAgeSeconds(from.getMaxAgeSeconds());
     to.setResponseHeader(from.getResponseHeaders());
-    ifNonNull(from.getMethods(), toImmutableListOf(Object::toString), to::setMethod);
-    ifNonNull(from.getOrigins(), toImmutableListOf(Object::toString), to::setOrigin);
+    ifNonNull(from.getMethods(), Utils.toImmutableListOf(Object::toString), to::setMethod);
+    ifNonNull(from.getOrigins(), Utils.toImmutableListOf(Object::toString), to::setOrigin);
     return to;
   }
 
@@ -616,7 +619,7 @@ final class ApiaryConversions {
                 .map(HttpMethod::valueOf)
                 .collect(ImmutableList.toImmutableList()),
         to::setMethods);
-    ifNonNull(from.getOrigin(), toImmutableListOf(Origin::of), to::setOrigins);
+    ifNonNull(from.getOrigin(), Utils.toImmutableListOf(Origin::of), to::setOrigins);
     to.setResponseHeaders(from.getResponseHeader());
     return to.build();
   }
@@ -798,14 +801,5 @@ final class ApiaryConversions {
 
   private DateTime truncateToDateWithNoTzDrift(DateTime dt) {
     return new DateTime(true, dt.getValue(), 0);
-  }
-
-  /**
-   * Several properties are translating lists of one type to another. This convenience method allows
-   * specifying a mapping function and composing as part of an {@code #isNonNull} definition.
-   */
-  private static <T1, T2> Function<List<T1>, ImmutableList<T2>> toImmutableListOf(
-      Function<T1, T2> f) {
-    return l -> l.stream().map(f).collect(ImmutableList.toImmutableList());
   }
 }
