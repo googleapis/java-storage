@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 final class Conversions {
 
   private Conversions() {}
@@ -41,6 +43,27 @@ final class Conversions {
   interface Codec<A, B> extends Encoder<A, B>, Decoder<B, A> {
     static <X, Y> Codec<X, Y> of(Encoder<X, Y> e, Decoder<Y, X> d) {
       return new SimpleCodec<>(e, d);
+    }
+
+    /**
+     * Create a new Codec which guards calling each method with a null check.
+     *
+     * <p>If the values provided to either {@link #decode(Object)} or {@link #encode(Object)} is
+     * null, null will be returned.
+     */
+    default Codec<@Nullable A, @Nullable B> nullable() {
+      Codec<A, B> self = this;
+      return new Codec<A, B>() {
+        @Override
+        public A decode(B f) {
+          return f == null ? null : self.decode(f);
+        }
+
+        @Override
+        public B encode(A f) {
+          return f == null ? null : self.encode(f);
+        }
+      };
     }
   }
 
