@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
+import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.common.base.MoreObjects.firstNonNull;
 
 import com.google.api.client.util.Data;
@@ -62,15 +63,22 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.NotificationInfo.EventType;
 import com.google.cloud.storage.NotificationInfo.PayloadFormat;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import java.math.BigInteger;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @InternalApi
 final class ApiaryConversions {
@@ -112,6 +120,29 @@ final class ApiaryConversions {
 
   private final Codec<NotificationInfo, com.google.api.services.storage.model.Notification>
       notificationInfoCodec = Codec.of(this::notificationEncode, this::notificationDecode);
+
+  @VisibleForTesting
+  final Codec<DateTime, OffsetDateTime> dateTimeCodec =
+      Codec.of(
+          dt -> {
+            long milli = dt.getValue();
+            int timeZoneShiftMinutes = dt.getTimeZoneShift();
+
+            Duration timeZoneShift = Duration.of(timeZoneShiftMinutes, ChronoUnit.MINUTES);
+
+            int hours = Math.toIntExact(timeZoneShift.toHours());
+            int minutes =
+                Math.toIntExact(
+                    timeZoneShift.minusHours(timeZoneShift.toHours()).getSeconds() / 60);
+            ZoneOffset offset = ZoneOffset.ofHoursMinutes(hours, minutes);
+
+            return Instant.ofEpochMilli(milli).atOffset(offset);
+          },
+          odt -> {
+            ZoneOffset offset = odt.getOffset();
+            int i = Math.toIntExact(TimeUnit.SECONDS.toMinutes(offset.getTotalSeconds()));
+            return new DateTime(odt.toInstant().toEpochMilli(), i);
+          });
 
   private ApiaryConversions() {}
 
@@ -182,21 +213,27 @@ final class ApiaryConversions {
 
   private StorageObject blobInfoEncode(BlobInfo from) {
     StorageObject to = blobIdEncode(from.getBlobId());
-    ifNonNull(from.getAcl(), Utils.toImmutableListOf(objectAcl()::encode), to::setAcl);
-    ifNonNull(from.getDeleteTime(), DateTime::new, to::setTimeDeleted);
-    ifNonNull(from.getUpdateTime(), DateTime::new, to::setUpdated);
-    ifNonNull(from.getCreateTime(), DateTime::new, to::setTimeCreated);
-    ifNonNull(from.getCustomTime(), DateTime::new, to::setCustomTime);
+    ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), to::setAcl);
+    ifNonNull(from.getDeleteTimeOffsetDateTime(), dateTimeCodec::decode, to::setTimeDeleted);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::decode, to::setUpdated);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::decode, to::setTimeCreated);
+    ifNonNull(from.getCustomTimeOffsetDateTime(), dateTimeCodec::decode, to::setCustomTime);
     ifNonNull(from.getSize(), BigInteger::valueOf, to::setSize);
     ifNonNull(
         from.getOwner(),
         lift(this::entityEncode).andThen(o -> new Owner().setEntity(o)),
         to::setOwner);
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
-    ifNonNull(from.getTimeStorageClassUpdated(), DateTime::new, to::setTimeStorageClassUpdated);
+    ifNonNull(
+        from.getTimeStorageClassUpdatedOffsetDateTime(),
+        dateTimeCodec::decode,
+        to::setTimeStorageClassUpdated);
     ifNonNull(
         from.getCustomerEncryption(), this::customerEncryptionEncode, to::setCustomerEncryption);
-    ifNonNull(from.getRetentionExpirationTime(), DateTime::new, to::setRetentionExpirationTime);
+    ifNonNull(
+        from.getRetentionExpirationTimeOffsetDateTime(),
+        dateTimeCodec::decode,
+        to::setRetentionExpirationTime);
     to.setKmsKeyName(from.getKmsKeyName());
     to.setEventBasedHold(from.getEventBasedHold());
     to.setTemporaryHold(from.getTemporaryHold());
@@ -241,13 +278,13 @@ final class ApiaryConversions {
     ifNonNull(from.getId(), to::setGeneratedId);
     ifNonNull(from.getSelfLink(), to::setSelfLink);
     ifNonNull(from.getMetadata(), to::setMetadata);
-    ifNonNull(from.getTimeDeleted(), DateTime::getValue, to::setDeleteTime);
-    ifNonNull(from.getUpdated(), DateTime::getValue, to::setUpdateTime);
-    ifNonNull(from.getTimeCreated(), DateTime::getValue, to::setCreateTime);
-    ifNonNull(from.getCustomTime(), DateTime::getValue, to::setCustomTime);
+    ifNonNull(from.getTimeDeleted(), dateTimeCodec::encode, to::setDeleteTime);
+    ifNonNull(from.getUpdated(), dateTimeCodec::encode, to::setUpdateTime);
+    ifNonNull(from.getTimeCreated(), dateTimeCodec::encode, to::setCreateTime);
+    ifNonNull(from.getCustomTime(), dateTimeCodec::encode, to::setCustomTime);
     ifNonNull(from.getSize(), BigInteger::longValue, to::setSize);
     ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
-    ifNonNull(from.getAcl(), Utils.toImmutableListOf(objectAcl()::decode), to::setAcl);
+    ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::decode), to::setAcl);
     if (from.containsKey("isDirectory")) {
       to.setIsDirectory(Boolean.TRUE);
     }
@@ -255,12 +292,12 @@ final class ApiaryConversions {
         from.getCustomerEncryption(), this::customerEncryptionDecode, to::setCustomerEncryption);
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
     ifNonNull(
-        from.getTimeStorageClassUpdated(), DateTime::getValue, to::setTimeStorageClassUpdated);
+        from.getTimeStorageClassUpdated(), dateTimeCodec::encode, to::setTimeStorageClassUpdated);
     ifNonNull(from.getKmsKeyName(), to::setKmsKeyName);
     ifNonNull(from.getEventBasedHold(), to::setEventBasedHold);
     ifNonNull(from.getTemporaryHold(), to::setTemporaryHold);
     ifNonNull(
-        from.getRetentionExpirationTime(), DateTime::getValue, to::setRetentionExpirationTime);
+        from.getRetentionExpirationTime(), dateTimeCodec::encode, to::setRetentionExpirationTime);
     return to.build();
   }
 
@@ -288,13 +325,11 @@ final class ApiaryConversions {
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket to = new Bucket();
-    ifNonNull(from.getAcl(), Utils.toImmutableListOf(bucketAcl()::encode), to::setAcl);
-    ifNonNull(from.getCors(), Utils.toImmutableListOf(cors()::encode), to::setCors);
-    ifNonNull(from.getCreateTime(), DateTime::new, to::setTimeCreated);
+    ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::encode), to::setAcl);
+    ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::setCors);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::decode, to::setTimeCreated);
     ifNonNull(
-        from.getDefaultAcl(),
-        Utils.toImmutableListOf(objectAcl()::encode),
-        to::setDefaultObjectAcl);
+        from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::setDefaultObjectAcl);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
@@ -304,7 +339,7 @@ final class ApiaryConversions {
         to::setOwner);
     ifNonNull(from.getRpo(), Rpo::toString, to::setRpo);
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
-    ifNonNull(from.getUpdateTime(), DateTime::new, to::setUpdated);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::decode, to::setUpdated);
     ifNonNull(from.versioningEnabled(), b -> new Versioning().setEnabled(b), to::setVersioning);
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
@@ -362,12 +397,11 @@ final class ApiaryConversions {
       } else {
         Bucket.RetentionPolicy retentionPolicy = new Bucket.RetentionPolicy();
         retentionPolicy.setRetentionPeriod(from.getRetentionPeriod());
-        if (from.getRetentionEffectiveTime() != null) {
-          retentionPolicy.setEffectiveTime(new DateTime(from.getRetentionEffectiveTime()));
-        }
-        if (from.retentionPolicyIsLocked() != null) {
-          retentionPolicy.setIsLocked(from.retentionPolicyIsLocked());
-        }
+        ifNonNull(
+            from.getRetentionEffectiveTimeOffsetDateTime(),
+            dateTimeCodec::decode,
+            retentionPolicy::setEffectiveTime);
+        ifNonNull(from.retentionPolicyIsLocked(), retentionPolicy::setIsLocked);
         to.setRetentionPolicy(retentionPolicy);
       }
     }
@@ -379,12 +413,10 @@ final class ApiaryConversions {
   @SuppressWarnings("deprecation")
   private BucketInfo bucketInfoDecode(com.google.api.services.storage.model.Bucket from) {
     BucketInfo.Builder to = new BuilderImpl(from.getName());
-    ifNonNull(from.getAcl(), Utils.toImmutableListOf(bucketAcl()::decode), to::setAcl);
-    ifNonNull(from.getCors(), Utils.toImmutableListOf(cors()::decode), to::setCors);
+    ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::decode), to::setAcl);
+    ifNonNull(from.getCors(), toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(
-        from.getDefaultObjectAcl(),
-        Utils.toImmutableListOf(objectAcl()::decode),
-        to::setDefaultAcl);
+        from.getDefaultObjectAcl(), toImmutableListOf(objectAcl()::decode), to::setDefaultAcl);
     ifNonNull(from.getEtag(), to::setEtag);
     ifNonNull(from.getId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -395,19 +427,19 @@ final class ApiaryConversions {
     ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);
     ifNonNull(from.getSelfLink(), to::setSelfLink);
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
-    ifNonNull(from.getTimeCreated(), DateTime::getValue, to::setCreateTime);
-    ifNonNull(from.getUpdated(), DateTime::getValue, to::setUpdateTime);
+    ifNonNull(from.getTimeCreated(), dateTimeCodec::encode, to::setCreateTime);
+    ifNonNull(from.getUpdated(), dateTimeCodec::encode, to::setUpdateTime);
     ifNonNull(from.getVersioning(), Versioning::getEnabled, to::setVersioningEnabled);
     ifNonNull(from.getWebsite(), Website::getMainPageSuffix, to::setIndexPage);
     ifNonNull(from.getWebsite(), Website::getNotFoundPage, to::setNotFoundPage);
     ifNonNull(
         from.getLifecycle(),
-        lift(Lifecycle::getRule).andThen(Utils.toImmutableListOf(lifecycleRule()::decode)),
+        lift(Lifecycle::getRule).andThen(toImmutableListOf(lifecycleRule()::decode)),
         to::setLifecycleRules);
     // preserve mapping to deprecated property
     ifNonNull(
         from.getLifecycle(),
-        lift(Lifecycle::getRule).andThen(Utils.toImmutableListOf(deleteRule()::decode)),
+        lift(Lifecycle::getRule).andThen(toImmutableListOf(deleteRule()::decode)),
         to::setDeleteRules);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::setLabels);
@@ -421,7 +453,7 @@ final class ApiaryConversions {
 
     RetentionPolicy retentionPolicy = from.getRetentionPolicy();
     if (retentionPolicy != null && retentionPolicy.getEffectiveTime() != null) {
-      to.setRetentionEffectiveTime(retentionPolicy.getEffectiveTime().getValue());
+      to.setRetentionEffectiveTime(dateTimeCodec.encode(retentionPolicy.getEffectiveTime()));
     }
     ifNonNull(retentionPolicy, RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
     ifNonNull(retentionPolicy, RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
@@ -485,7 +517,8 @@ final class ApiaryConversions {
 
     IamConfiguration.Builder to =
         IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(ubla.getEnabled());
-    ifNonNull(ubla.getLockedTime(), DateTime::getValue, to::setUniformBucketLevelAccessLockedTime);
+    ifNonNull(
+        ubla.getLockedTime(), dateTimeCodec::encode, to::setUniformBucketLevelAccessLockedTime);
     ifNonNull(
         from.getPublicAccessPrevention(),
         PublicAccessPrevention::parse,
@@ -496,7 +529,10 @@ final class ApiaryConversions {
   private UniformBucketLevelAccess ublaEncode(IamConfiguration from) {
     UniformBucketLevelAccess to = new UniformBucketLevelAccess();
     to.setEnabled(from.isUniformBucketLevelAccessEnabled());
-    ifNonNull(from.getUniformBucketLevelAccessLockedTime(), DateTime::new, to::setLockedTime);
+    ifNonNull(
+        from.getUniformBucketLevelAccessLockedTimeOffsetDateTime(),
+        dateTimeCodec::decode,
+        to::setLockedTime);
     return to;
   }
 
@@ -524,7 +560,7 @@ final class ApiaryConversions {
         from.getCustomTimeBefore(), this::truncateToDateWithNoTzDrift, to::setCustomTimeBefore);
     ifNonNull(
         from.getMatchesStorageClass(),
-        Utils.toImmutableListOf(Object::toString),
+        toImmutableListOf(Object::toString),
         to::setMatchesStorageClass);
     return to;
   }
@@ -575,7 +611,7 @@ final class ApiaryConversions {
             .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
     ifNonNull(
         condition.getMatchesStorageClass(),
-        Utils.toImmutableListOf(StorageClass::valueOf),
+        toImmutableListOf(StorageClass::valueOf),
         conditionBuilder::setMatchesStorageClass);
 
     return new LifecycleRule(lifecycleAction, conditionBuilder.build());
@@ -604,8 +640,8 @@ final class ApiaryConversions {
     Bucket.Cors to = new Bucket.Cors();
     to.setMaxAgeSeconds(from.getMaxAgeSeconds());
     to.setResponseHeader(from.getResponseHeaders());
-    ifNonNull(from.getMethods(), Utils.toImmutableListOf(Object::toString), to::setMethod);
-    ifNonNull(from.getOrigins(), Utils.toImmutableListOf(Object::toString), to::setOrigin);
+    ifNonNull(from.getMethods(), toImmutableListOf(Object::toString), to::setMethod);
+    ifNonNull(from.getOrigins(), toImmutableListOf(Object::toString), to::setOrigin);
     return to;
   }
 
@@ -619,7 +655,7 @@ final class ApiaryConversions {
                 .map(HttpMethod::valueOf)
                 .collect(ImmutableList.toImmutableList()),
         to::setMethods);
-    ifNonNull(from.getOrigin(), Utils.toImmutableListOf(Origin::of), to::setOrigins);
+    ifNonNull(from.getOrigin(), toImmutableListOf(Origin::of), to::setOrigins);
     to.setResponseHeaders(from.getResponseHeader());
     return to.build();
   }

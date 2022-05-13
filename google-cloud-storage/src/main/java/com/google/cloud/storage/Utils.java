@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.google.api.core.InternalApi;
 import com.google.common.collect.ImmutableList;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,6 +32,9 @@ import javax.annotation.Nullable;
  */
 @InternalApi
 final class Utils {
+
+  static final DateTimeFormatter RFC_3339_DATE_TIME_FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
   private Utils() {}
 
