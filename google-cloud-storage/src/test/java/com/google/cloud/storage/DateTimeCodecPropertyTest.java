@@ -34,7 +34,7 @@ import net.jqwik.time.api.DateTimes;
 
 final class DateTimeCodecPropertyTest {
 
-  private static final Codec<DateTime, OffsetDateTime> codec =
+  private static final Codec<OffsetDateTime, DateTime> codec =
       ApiaryConversions.INSTANCE.dateTimeCodec;
 
   @Example
@@ -55,8 +55,8 @@ final class DateTimeCodecPropertyTest {
   @Property(tries = 10000)
   void codecShouldRoundTrip(@ForAll("rfc3339") String rfc3339String) {
     DateTime actual = new DateTime(rfc3339String);
-    OffsetDateTime odt = codec.encode(actual);
-    DateTime dt = codec.decode(odt);
+    OffsetDateTime odt = codec.decode(actual);
+    DateTime dt = codec.encode(odt);
 
     assertThat(dt.toStringRfc3339()).isEqualTo(rfc3339String);
   }

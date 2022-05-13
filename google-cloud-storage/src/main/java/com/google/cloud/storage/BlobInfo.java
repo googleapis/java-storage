@@ -263,7 +263,7 @@ public class BlobInfo implements Serializable {
      * BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).setCustomTime(customTime).build();
      * }</pre>
      *
-     * @deprecated {@link #setCustomTime(OffsetDateTime)}
+     * @deprecated Use {@link #setCustomTimeOffsetDateTime(OffsetDateTime)}
      */
     @Deprecated
     public Builder setCustomTime(Long customTime) {
@@ -286,7 +286,7 @@ public class BlobInfo implements Serializable {
      * BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).setCustomTime(customTime).build();
      * }</pre>
      */
-    public Builder setCustomTime(OffsetDateTime customTime) {
+    public Builder setCustomTimeOffsetDateTime(OffsetDateTime customTime) {
       // provide an implementation for source and binary compatibility which we override ourselves
       return setCustomTime(millisOffsetDateTimeCodec.decode(customTime));
     }
@@ -311,7 +311,7 @@ public class BlobInfo implements Serializable {
      * Sets the modification time of an object's storage class. Once set it can't be unset directly,
      * the only way is to rewrite the object with the desired storage class.
      *
-     * @deprecated {@link #setTimeStorageClassUpdated(OffsetDateTime)}
+     * @deprecated Use {@link #setTimeStorageClassUpdatedOffsetDateTime(OffsetDateTime)}
      */
     @Deprecated
     public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
@@ -320,7 +320,8 @@ public class BlobInfo implements Serializable {
               + " or use com.google.cloud.storage.Blob.");
     }
 
-    public Builder setTimeStorageClassUpdated(OffsetDateTime timeStorageClassUpdated) {
+    public Builder setTimeStorageClassUpdatedOffsetDateTime(
+        OffsetDateTime timeStorageClassUpdated) {
       // provide an implementation for source and binary compatibility which we override ourselves
       return setTimeStorageClassUpdated(millisOffsetDateTimeCodec.decode(timeStorageClassUpdated));
     }
@@ -330,29 +331,29 @@ public class BlobInfo implements Serializable {
 
     abstract Builder setMetageneration(Long metageneration);
 
-    /** @deprecated {@link #setDeleteTime(OffsetDateTime)} */
+    /** @deprecated Use {@link #setDeleteTimeOffsetDateTime(OffsetDateTime)} */
     @Deprecated
     abstract Builder setDeleteTime(Long deleteTime);
 
-    Builder setDeleteTime(OffsetDateTime deleteTime) {
+    Builder setDeleteTimeOffsetDateTime(OffsetDateTime deleteTime) {
       // provide an implementation for source and binary compatibility which we override ourselves
       return setDeleteTime(millisOffsetDateTimeCodec.decode(deleteTime));
     }
 
-    /** @deprecated {@link #setUpdateTime(OffsetDateTime)} */
+    /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
     @Deprecated
     abstract Builder setUpdateTime(Long updateTime);
 
-    Builder setUpdateTime(OffsetDateTime updateTime) {
+    Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
       // provide an implementation for source and binary compatibility which we override ourselves
       return setUpdateTime(millisOffsetDateTimeCodec.decode(updateTime));
     }
 
-    /** @deprecated {@link #setCreateTime(OffsetDateTime)} */
+    /** @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
     @Deprecated
     abstract Builder setCreateTime(Long createTime);
 
-    Builder setCreateTime(OffsetDateTime createTime) {
+    Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
       // provide an implementation for source and binary compatibility which we override ourselves
       return setCreateTime(millisOffsetDateTimeCodec.decode(createTime));
     }
@@ -388,13 +389,13 @@ public class BlobInfo implements Serializable {
     @BetaApi
     public abstract Builder setTemporaryHold(Boolean temporaryHold);
 
-    /** @deprecated {@link #setRetentionExpirationTime(OffsetDateTime)} */
+    /** @deprecated {@link #setRetentionExpirationTimeOffsetDateTime(OffsetDateTime)} */
     @BetaApi
     @Deprecated
     abstract Builder setRetentionExpirationTime(Long retentionExpirationTime);
 
     @BetaApi
-    Builder setRetentionExpirationTime(OffsetDateTime retentionExpirationTime) {
+    Builder setRetentionExpirationTimeOffsetDateTime(OffsetDateTime retentionExpirationTime) {
       // provide an implementation for source and binary compatibility which we override ourselves
       return setRetentionExpirationTime(millisOffsetDateTimeCodec.decode(retentionExpirationTime));
     }
@@ -587,13 +588,15 @@ public class BlobInfo implements Serializable {
       return this;
     }
 
+    /** @deprecated {@link #setCustomTimeOffsetDateTime(OffsetDateTime)} */
     @Override
+    @Deprecated
     public Builder setCustomTime(Long customTime) {
-      return setCustomTime(millisOffsetDateTimeCodec.encode(customTime));
+      return setCustomTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(customTime));
     }
 
     @Override
-    public Builder setCustomTime(OffsetDateTime customTime) {
+    public Builder setCustomTimeOffsetDateTime(OffsetDateTime customTime) {
       this.customTime = customTime;
       return this;
     }
@@ -645,13 +648,17 @@ public class BlobInfo implements Serializable {
       return this;
     }
 
+    /** @deprecated Use {@link #setTimeStorageClassUpdatedOffsetDateTime(OffsetDateTime)} */
+    @Deprecated
     @Override
     public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
-      return setTimeStorageClassUpdated(millisOffsetDateTimeCodec.encode(timeStorageClassUpdated));
+      return setTimeStorageClassUpdatedOffsetDateTime(
+          millisOffsetDateTimeCodec.encode(timeStorageClassUpdated));
     }
 
     @Override
-    public Builder setTimeStorageClassUpdated(OffsetDateTime timeStorageClassUpdated) {
+    public Builder setTimeStorageClassUpdatedOffsetDateTime(
+        OffsetDateTime timeStorageClassUpdated) {
       this.timeStorageClassUpdated = timeStorageClassUpdated;
       return this;
     }
@@ -662,35 +669,40 @@ public class BlobInfo implements Serializable {
       return this;
     }
 
+    /** @deprecated Use {@link #setDeleteTimeOffsetDateTime(OffsetDateTime)} */
+    @Deprecated
     @Override
     Builder setDeleteTime(Long deleteTime) {
-      return setDeleteTime(millisOffsetDateTimeCodec.encode(deleteTime));
+      return setDeleteTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(deleteTime));
     }
 
     @Override
-    Builder setDeleteTime(OffsetDateTime deleteTime) {
+    Builder setDeleteTimeOffsetDateTime(OffsetDateTime deleteTime) {
       this.deleteTime = deleteTime;
       return this;
     }
 
+    /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
     @Override
     Builder setUpdateTime(Long updateTime) {
-      return setUpdateTime(millisOffsetDateTimeCodec.encode(updateTime));
+      return setUpdateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(updateTime));
     }
 
     @Override
-    Builder setUpdateTime(OffsetDateTime updateTime) {
+    Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
       this.updateTime = updateTime;
       return this;
     }
 
+    /** @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
+    @Deprecated
     @Override
     Builder setCreateTime(Long createTime) {
-      return setCreateTime(millisOffsetDateTimeCodec.encode(createTime));
+      return setCreateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(createTime));
     }
 
     @Override
-    Builder setCreateTime(OffsetDateTime createTime) {
+    Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
       this.createTime = createTime;
       return this;
     }
@@ -725,13 +737,16 @@ public class BlobInfo implements Serializable {
       return this;
     }
 
+    /** @deprecated {@link #setRetentionExpirationTimeOffsetDateTime(OffsetDateTime)} */
     @Override
+    @Deprecated
     Builder setRetentionExpirationTime(Long retentionExpirationTime) {
-      return setRetentionExpirationTime(millisOffsetDateTimeCodec.encode(retentionExpirationTime));
+      return setRetentionExpirationTimeOffsetDateTime(
+          millisOffsetDateTimeCodec.encode(retentionExpirationTime));
     }
 
     @Override
-    Builder setRetentionExpirationTime(OffsetDateTime retentionExpirationTime) {
+    Builder setRetentionExpirationTimeOffsetDateTime(OffsetDateTime retentionExpirationTime) {
       this.retentionExpirationTime = retentionExpirationTime;
       return this;
     }
@@ -980,7 +995,7 @@ public class BlobInfo implements Serializable {
    * Returns the deletion time of the blob expressed as the number of milliseconds since the Unix
    * epoch.
    *
-   * @deprecated {@link #getDeleteTimeOffsetDateTime()}
+   * @deprecated Use {@link #getDeleteTimeOffsetDateTime()}
    */
   @Deprecated
   public Long getDeleteTime() {
@@ -996,7 +1011,7 @@ public class BlobInfo implements Serializable {
    * Returns the last modification time of the blob's metadata expressed as the number of
    * milliseconds since the Unix epoch.
    *
-   * @deprecated {@link #getUpdateTimeOffsetDateTime()}
+   * @deprecated Use {@link #getUpdateTimeOffsetDateTime()}
    */
   @Deprecated
   public Long getUpdateTime() {
@@ -1012,7 +1027,7 @@ public class BlobInfo implements Serializable {
    * Returns the creation time of the blob expressed as the number of milliseconds since the Unix
    * epoch.
    *
-   * @deprecated {@link #getCreateTimeOffsetDateTime()}
+   * @deprecated Use {@link #getCreateTimeOffsetDateTime()}
    */
   @Deprecated
   public Long getCreateTime() {
@@ -1027,7 +1042,7 @@ public class BlobInfo implements Serializable {
   /**
    * Returns the custom time specified by the user for an object.
    *
-   * @deprecated {@link #getCustomTimeOffsetDateTime()}
+   * @deprecated Use {@link #getCustomTimeOffsetDateTime()}
    */
   @Deprecated
   public Long getCustomTime() {
@@ -1068,7 +1083,7 @@ public class BlobInfo implements Serializable {
    * Returns the time that the object's storage class was last changed or the time of the object
    * creation.
    *
-   * @deprecated {@link #getTimeStorageClassUpdatedOffsetDateTime()}
+   * @deprecated Use {@link #getTimeStorageClassUpdatedOffsetDateTime()}
    */
   @Deprecated
   public Long getTimeStorageClassUpdated() {
@@ -1146,7 +1161,7 @@ public class BlobInfo implements Serializable {
    * Returns the retention expiration time of the blob as {@code Long}, if a retention period is
    * defined. If retention period is not defined this value returns {@code null}
    *
-   * @deprecated {@link #getRetentionExpirationTimeOffsetDateTime()}
+   * @deprecated Use {@link #getRetentionExpirationTimeOffsetDateTime()}
    */
   @BetaApi
   @Deprecated
