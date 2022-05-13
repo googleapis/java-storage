@@ -24,6 +24,7 @@ import com.google.storage.v2.Bucket.Encryption;
 import com.google.storage.v2.Bucket.RetentionPolicy;
 import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
+import java.util.Map;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
@@ -43,6 +44,14 @@ public final class StorageArbitraries {
 
   public static Arbitrary<Long> metageneration() {
     return Arbitraries.longs().greaterOrEqual(0);
+  }
+
+  public static Arbitrary<String> locationType() {
+    return Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
+  }
+
+  public static Arbitrary<String> location() {
+    return Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
   }
 
   /**
@@ -81,6 +90,10 @@ public final class StorageArbitraries {
 
     private Buckets() {}
 
+    public Arbitrary<String> bucketID() {
+      return Arbitraries.strings().all().ofMinLength(0).ofLength(1024);
+    }
+
     public Arbitrary<Website> website() {
       Arbitrary<String> indexPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
       Arbitrary<String> notFoundPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
@@ -103,12 +116,14 @@ public final class StorageArbitraries {
     public Arbitrary<Bucket.RetentionPolicy> retentionPolicy() {
       return Combinators.combine(bool(), Arbitraries.longs().greaterOrEqual(0), timestamp())
           .as(
-              (locked, period, effectiveTime) ->
-                  RetentionPolicy.newBuilder()
-                      .setIsLocked(locked)
-                      .setRetentionPeriod(period)
-                      .setEffectiveTime(effectiveTime)
-                      .build());
+              (locked, period, effectiveTime) -> {
+                RetentionPolicy.Builder builder =
+                    RetentionPolicy.newBuilder().setIsLocked(locked).setRetentionPeriod(period);
+                if (locked) {
+                  builder.setEffectiveTime(effectiveTime);
+                }
+                return builder.build();
+              });
     }
 
     public Arbitrary<Bucket.Versioning> versioning() {
@@ -123,6 +138,12 @@ public final class StorageArbitraries {
     public Arbitrary<String> rpo() {
       // TODO: return each of the real values and edge cases (including invalid values)
       return Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
+    }
+
+    public Arbitrary<Map<String, String>> labels() {
+      return Arbitraries.maps(
+          Arbitraries.strings().ofMinLength(1).ofLength(1024),
+          Arbitraries.strings().ofMinLength(1).ofLength(1024));
     }
   }
 

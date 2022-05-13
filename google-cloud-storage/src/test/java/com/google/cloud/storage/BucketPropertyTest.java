@@ -40,9 +40,8 @@ final class BucketPropertyTest {
     assertThat(decoded.getRpo().toString()).isEqualTo(b.getRpo());
     assertThat(decoded.requesterPays()).isEqualTo(b.getBilling().getRequesterPays());
     assertThat(decoded.getDefaultKmsKeyName()).isEqualTo(b.getEncryption().getDefaultKmsKey());
-    if (b.getWebsite() != null) {
-      assertThat(decoded.getIndexPage()).isEqualTo(b.getWebsite().getMainPageSuffix());
-      assertThat(decoded.getNotFoundPage()).isEqualTo(b.getWebsite().getNotFoundPage());
-    }
+    assertThat(decoded.getLabels()).isEqualTo(b.getLabels());
+    assertThat(decoded.getIndexPage()).isEqualTo(b.getWebsite().getMainPageSuffix());
+    assertThat(decoded.getNotFoundPage()).isEqualTo(b.getWebsite().getNotFoundPage());
   }
 }
