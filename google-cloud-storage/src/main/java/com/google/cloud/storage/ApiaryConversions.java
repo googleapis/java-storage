@@ -329,9 +329,7 @@ final class ApiaryConversions {
     ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::setCors);
     ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::decode, to::setTimeCreated);
     ifNonNull(
-        from.getDefaultAcl(),
-        toImmutableListOf(objectAcl()::encode),
-        to::setDefaultObjectAcl);
+        from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::setDefaultObjectAcl);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
@@ -418,9 +416,7 @@ final class ApiaryConversions {
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::decode), to::setAcl);
     ifNonNull(from.getCors(), toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(
-        from.getDefaultObjectAcl(),
-        toImmutableListOf(objectAcl()::decode),
-        to::setDefaultAcl);
+        from.getDefaultObjectAcl(), toImmutableListOf(objectAcl()::decode), to::setDefaultAcl);
     ifNonNull(from.getEtag(), to::setEtag);
     ifNonNull(from.getId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
