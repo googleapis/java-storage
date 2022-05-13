@@ -19,11 +19,16 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
 
+import com.google.api.client.util.DateTime;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
+import com.google.protobuf.Timestamp;
+import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
+
+import java.util.concurrent.TimeUnit;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
@@ -31,7 +36,7 @@ final class GrpcConversions {
   private final Codec<?, ?> entityCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> objectAclCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> bucketAclCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<?, ?> hmacKeyMetadataCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec = Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
   private final Codec<?, ?> hmacKeyCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> serviceAccountCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> corsCodec = Codec.of(Utils::todo, Utils::todo);
@@ -60,8 +65,8 @@ final class GrpcConversions {
     return todo();
   }
 
-  Codec<?, ?> hmacKeyMetadata() {
-    return todo();
+  Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadata() {
+    return hmacKeyMetadataCodec;
   }
 
   Codec<?, ?> hmacKey() {
@@ -146,5 +151,32 @@ final class GrpcConversions {
     // TODO(frankyn): Add Cors decoder support
     // TODO(frnakyn): Add DefaultObjectAcl decoder support
     return to.build();
+  }
+  private HmacKeyMetadata hmacKeyMetadataEncode(HmacKey.HmacKeyMetadata from) {
+    HmacKeyMetadata.Builder to = HmacKeyMetadata.newBuilder();
+    to.setAccessId(from.getAccessId());
+    //TODO etag
+    to.setId(from.getId());
+    to.setProject(from.getProjectId());
+    ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
+    ifNonNull(from.getState(), java.lang.Object::toString, to::setState);
+    if(from.getCreateTime() != null) {
+      to.setCreateTime(Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
+    }
+    if(from.getUpdateTime() != null) {
+      to.setUpdateTime(Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
+    }
+    return to.build();
+  }
+
+  private HmacKey.HmacKeyMetadata hmacKeyMetadataDecode(HmacKeyMetadata from) {
+    return HmacKey.HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
+            .setAccessId(from.getAccessId())
+            .setCreateTime(TimeUnit.SECONDS.toMillis(from.getCreateTime().getSeconds()))
+            .setId(from.getId())
+            .setProjectId(from.getProject())
+            .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
+            .setUpdateTime(TimeUnit.SECONDS.toMillis(from.getUpdateTime().getSeconds()))
+            .build();
   }
 }
