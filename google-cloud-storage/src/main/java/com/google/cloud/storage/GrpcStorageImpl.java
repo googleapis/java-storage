@@ -32,6 +32,7 @@ import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.storage.v2.GetBucketRequest;
+import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.stub.GrpcStorageStub;
 import java.io.IOException;
 import java.io.InputStream;
@@ -460,7 +461,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public ServiceAccount getServiceAccount(String projectId) {
-    return todo();
+    GetServiceAccountRequest req =
+        GetServiceAccountRequest.newBuilder().setProject(projectId).build();
+    com.google.storage.v2.ServiceAccount resp =
+        grpcStorageStub.getServiceAccountCallable().call(req);
+    return codecs.serviceAccount().decode(resp);
   }
 
   @Override
