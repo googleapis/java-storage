@@ -701,10 +701,10 @@ public class BucketInfo implements Serializable {
       }
 
       public List<String> getMatchesPrefix() {
-        return  matchesPrefix;
+        return matchesPrefix;
       }
 
-      public List<String> getMatchesSuffix()  {
+      public List<String> getMatchesSuffix() {
         return matchesSuffix;
       }
 
@@ -820,22 +820,20 @@ public class BucketInfo implements Serializable {
         }
 
         /**
-         * Sets the list of prefixes.
-         * If any prefix matches the beginning of the object’s name,
-         * this portion of the condition is satisfied for that object.
+         * Sets the list of prefixes. If any prefix matches the beginning of the object’s name, this
+         * portion of the condition is satisfied for that object.
          */
         public Builder setMatchesPrefix(List<String> matchesPrefix) {
-          this.matchesPrefix = matchesPrefix;
+          this.matchesPrefix = matchesPrefix != null ? ImmutableList.copyOf(matchesPrefix) : null;
           return this;
         }
 
         /**
-         * Sets the list of suffixes.
-         * If any suffix matches the end of the object’s name,
-         * this portion of the condition is satisfied for that object.
+         * Sets the list of suffixes. If any suffix matches the end of the object’s name, this
+         * portion of the condition is satisfied for that object.
          */
         public Builder setMatchesSuffix(List<String> matchesSuffix) {
-          this.matchesSuffix = matchesSuffix;
+          this.matchesSuffix = matchesSuffix != null ? ImmutableList.copyOf(matchesSuffix) : null;
           return this;
         }
 

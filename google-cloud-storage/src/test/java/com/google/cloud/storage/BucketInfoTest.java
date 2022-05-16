@@ -369,7 +369,7 @@ public class BucketInfoTest {
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
-    assertEquals("prefix-",lifecycleRule.getCondition().getMatchesPrefix().get(0));
+    assertEquals("prefix-", lifecycleRule.getCondition().getMatchesPrefix().get(0));
     assertEquals("-suffix", lifecycleRule.getCondition().getMatchesSuffix().get(0));
 
     Rule unsupportedRule =
