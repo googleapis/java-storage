@@ -16,31 +16,12 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.JqwikTest.report;
-import static com.google.common.truth.Truth.assertThat;
-import static net.jqwik.api.providers.TypeUsage.of;
-
 import com.google.cloud.storage.Conversions.Codec;
-import net.jqwik.api.Example;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
 
-final class ServiceAccountPropertyTest {
-
-  @Example
-  void edgeCases() {
-    report(of(com.google.storage.v2.ServiceAccount.class));
-  }
-
-  @Property
-  void codecCanRoundTrip(@ForAll com.google.storage.v2.ServiceAccount sa) {
-    Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> codec =
-        Conversions.grpc().serviceAccount();
-    ServiceAccount decode = codec.decode(sa);
-
-    assertThat(decode.getEmail()).isEqualTo(sa.getEmailAddress());
-
-    com.google.storage.v2.ServiceAccount encode = codec.encode(decode);
-    assertThat(encode).isEqualTo(sa);
+final class ServiceAccountPropertyTest
+    extends BaseConvertablePropertyTest<ServiceAccount, com.google.storage.v2.ServiceAccount> {
+  @Override
+  Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> codec() {
+    return Conversions.grpc().serviceAccount();
   }
 }
