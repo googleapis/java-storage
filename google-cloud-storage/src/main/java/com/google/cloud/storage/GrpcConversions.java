@@ -38,7 +38,8 @@ final class GrpcConversions {
   private final Codec<?, ?> bucketAclCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec = Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
   private final Codec<?, ?> hmacKeyCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<?, ?> serviceAccountCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccountCodec =
+      Codec.of(this::serviceAccountEncode, this::serviceAccountDecode);
   private final Codec<?, ?> corsCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> loggingCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> iamConfigurationCodec = Codec.of(Utils::todo, Utils::todo);
@@ -73,8 +74,8 @@ final class GrpcConversions {
     return todo();
   }
 
-  Codec<?, ?> serviceAccount() {
-    return todo();
+  Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccount() {
+    return serviceAccountCodec;
   }
 
   Codec<?, ?> cors() {
@@ -152,6 +153,7 @@ final class GrpcConversions {
     // TODO(frnakyn): Add DefaultObjectAcl decoder support
     return to.build();
   }
+  
   private HmacKeyMetadata hmacKeyMetadataEncode(HmacKey.HmacKeyMetadata from) {
     HmacKeyMetadata.Builder to = HmacKeyMetadata.newBuilder();
     to.setAccessId(from.getAccessId());
@@ -178,5 +180,14 @@ final class GrpcConversions {
             .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
             .setUpdateTime(TimeUnit.SECONDS.toMillis(from.getUpdateTime().getSeconds()))
             .build();
+
+  private com.google.storage.v2.ServiceAccount serviceAccountEncode(ServiceAccount from) {
+    return com.google.storage.v2.ServiceAccount.newBuilder()
+        .setEmailAddress(from.getEmail())
+        .build();
+  }
+
+  private ServiceAccount serviceAccountDecode(com.google.storage.v2.ServiceAccount from) {
+    return ServiceAccount.of(from.getEmailAddress());
   }
 }
