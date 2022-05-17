@@ -76,17 +76,16 @@ public final class StorageArbitraries {
   public static Arbitrary<ProjectID> projectID() {
     return Combinators.combine(
             // must start with a letter
-            Arbitraries.chars().alpha(),
-            // can only contain numbers, letters, and hyphens, and must be 6-30 chars
-            Arbitraries.strings().alpha().numeric().withChars('-').ofMinLength(4).ofMaxLength(28),
+            Arbitraries.chars().range('a', 'z'),
+            // can only contain numbers, lowercase letters, and hyphens, and must be 6-30 chars
+            Arbitraries.strings().withCharRange('a', 'z').numeric().withChars('-').ofMinLength(4).ofMaxLength(28),
             // must not end with a hyphen
-            Arbitraries.chars().alpha().numeric())
+            Arbitraries.chars().range('a', 'z').numeric())
             .as(
                     (first, mid, last) -> {
                     final StringBuilder sb = new StringBuilder();
                     sb.append(first).append(mid).append(last);
-                    // can only contain lowercase letters
-                    return new ProjectID(sb.toString().toLowerCase());
+                    return new ProjectID(sb.toString());
                     }
             );
   }

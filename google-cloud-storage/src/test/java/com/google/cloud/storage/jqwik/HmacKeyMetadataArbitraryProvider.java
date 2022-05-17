@@ -5,7 +5,6 @@ import com.google.storage.v2.HmacKeyMetadata;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
-import net.jqwik.api.constraints.UpperChars;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.web.api.Web;
@@ -22,7 +21,7 @@ public class HmacKeyMetadataArbitraryProvider implements ArbitraryProvider {
     @Override
     public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 
-        @UpperChars Arbitrary<String> accessID = Arbitraries.strings().alpha().numeric().ofLength(61);
+        Arbitrary<String> accessID = Arbitraries.strings().withCharRange('a', 'z').numeric().ofLength(61);
 
         Arbitrary<HmacKeyMetadata> as =
                 Combinators.combine(
