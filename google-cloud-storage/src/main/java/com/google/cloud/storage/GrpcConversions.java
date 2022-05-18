@@ -20,13 +20,12 @@ import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
-import com.google.protobuf.Timestamp;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
-
 import java.util.concurrent.TimeUnit;
 
 final class GrpcConversions {
@@ -35,7 +34,8 @@ final class GrpcConversions {
   private final Codec<?, ?> entityCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> objectAclCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> bucketAclCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec = Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
+  private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec =
+      Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
   private final Codec<?, ?> hmacKeyCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccountCodec =
       Codec.of(this::serviceAccountEncode, this::serviceAccountDecode);
@@ -156,29 +156,31 @@ final class GrpcConversions {
   private HmacKeyMetadata hmacKeyMetadataEncode(HmacKey.HmacKeyMetadata from) {
     HmacKeyMetadata.Builder to = HmacKeyMetadata.newBuilder();
     to.setAccessId(from.getAccessId());
-    //TODO etag
+    // TODO etag
     to.setId(from.getId());
     to.setProject(from.getProjectId());
     ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
     ifNonNull(from.getState(), java.lang.Object::toString, to::setState);
-    if(from.getCreateTime() != null) {
-      to.setCreateTime(Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
+    if (from.getCreateTime() != null) {
+      to.setCreateTime(
+          Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
     }
-    if(from.getUpdateTime() != null) {
-      to.setUpdateTime(Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
+    if (from.getUpdateTime() != null) {
+      to.setUpdateTime(
+          Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
     }
     return to.build();
   }
 
   private HmacKey.HmacKeyMetadata hmacKeyMetadataDecode(HmacKeyMetadata from) {
     return HmacKey.HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
-            .setAccessId(from.getAccessId())
-            .setCreateTime(TimeUnit.SECONDS.toMillis(from.getCreateTime().getSeconds()))
-            .setId(from.getId())
-            .setProjectId(from.getProject())
-            .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
-            .setUpdateTime(TimeUnit.SECONDS.toMillis(from.getUpdateTime().getSeconds()))
-            .build();
+        .setAccessId(from.getAccessId())
+        .setCreateTime(TimeUnit.SECONDS.toMillis(from.getCreateTime().getSeconds()))
+        .setId(from.getId())
+        .setProjectId(from.getProject())
+        .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
+        .setUpdateTime(TimeUnit.SECONDS.toMillis(from.getUpdateTime().getSeconds()))
+        .build();
   }
 
   private com.google.storage.v2.ServiceAccount serviceAccountEncode(ServiceAccount from) {

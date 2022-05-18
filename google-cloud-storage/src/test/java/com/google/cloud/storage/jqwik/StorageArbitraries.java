@@ -27,7 +27,6 @@ import com.google.storage.v2.Bucket.Website;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
-import net.jqwik.api.constraints.LowerChars;
 import net.jqwik.api.providers.TypeUsage;
 
 public final class StorageArbitraries {
@@ -78,16 +77,20 @@ public final class StorageArbitraries {
             // must start with a letter
             Arbitraries.chars().range('a', 'z'),
             // can only contain numbers, lowercase letters, and hyphens, and must be 6-30 chars
-            Arbitraries.strings().withCharRange('a', 'z').numeric().withChars('-').ofMinLength(4).ofMaxLength(28),
+            Arbitraries.strings()
+                .withCharRange('a', 'z')
+                .numeric()
+                .withChars('-')
+                .ofMinLength(4)
+                .ofMaxLength(28),
             // must not end with a hyphen
             Arbitraries.chars().range('a', 'z').numeric())
-            .as(
-                    (first, mid, last) -> {
-                    final StringBuilder sb = new StringBuilder();
-                    sb.append(first).append(mid).append(last);
-                    return new ProjectID(sb.toString());
-                    }
-            );
+        .as(
+            (first, mid, last) -> {
+              final StringBuilder sb = new StringBuilder();
+              sb.append(first).append(mid).append(last);
+              return new ProjectID(sb.toString());
+            });
   }
 
   public static Buckets buckets() {
