@@ -19,7 +19,6 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
 
-import com.google.api.client.util.DateTime;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
@@ -153,7 +152,7 @@ final class GrpcConversions {
     // TODO(frnakyn): Add DefaultObjectAcl decoder support
     return to.build();
   }
-  
+
   private HmacKeyMetadata hmacKeyMetadataEncode(HmacKey.HmacKeyMetadata from) {
     HmacKeyMetadata.Builder to = HmacKeyMetadata.newBuilder();
     to.setAccessId(from.getAccessId());
@@ -180,6 +179,7 @@ final class GrpcConversions {
             .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
             .setUpdateTime(TimeUnit.SECONDS.toMillis(from.getUpdateTime().getSeconds()))
             .build();
+  }
 
   private com.google.storage.v2.ServiceAccount serviceAccountEncode(ServiceAccount from) {
     return com.google.storage.v2.ServiceAccount.newBuilder()
