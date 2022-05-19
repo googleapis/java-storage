@@ -31,6 +31,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.stub.GrpcStorageStub;
@@ -434,7 +435,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public void deleteHmacKey(HmacKeyMetadata hmacKeyMetadata, DeleteHmacKeyOption... options) {
-    todo();
+    DeleteHmacKeyRequest req =
+        DeleteHmacKeyRequest.newBuilder()
+            .setAccessId(hmacKeyMetadata.getAccessId())
+            .setProject(hmacKeyMetadata.getProjectId())
+            .build();
+    // TODO retries
+    grpcStorageStub.deleteHmacKeyCallable().call(req);
   }
 
   @Override
