@@ -72,6 +72,27 @@ public final class StorageArbitraries {
             });
   }
 
+  public static Arbitrary<ProjectID> projectID() {
+    return Combinators.combine(
+            // must start with a letter
+            Arbitraries.chars().range('a', 'z'),
+            // can only contain numbers, lowercase letters, and hyphens, and must be 6-30 chars
+            Arbitraries.strings()
+                .withCharRange('a', 'z')
+                .numeric()
+                .withChars('-')
+                .ofMinLength(4)
+                .ofMaxLength(28),
+            // must not end with a hyphen
+            Arbitraries.chars().range('a', 'z').numeric())
+        .as(
+            (first, mid, last) -> {
+              final StringBuilder sb = new StringBuilder();
+              sb.append(first).append(mid).append(last);
+              return new ProjectID(sb.toString());
+            });
+  }
+
   public static Buckets buckets() {
     return Buckets.INSTANCE;
   }
@@ -130,6 +151,18 @@ public final class StorageArbitraries {
     private final String value;
 
     private BucketName(String value) {
+      this.value = value;
+    }
+
+    public String get() {
+      return value;
+    }
+  }
+
+  public static final class ProjectID {
+    private final String value;
+
+    private ProjectID(String value) {
       this.value = value;
     }
 
