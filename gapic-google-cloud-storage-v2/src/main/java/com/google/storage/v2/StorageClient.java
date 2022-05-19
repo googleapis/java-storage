@@ -235,7 +235,6 @@ public class StorageClient implements BackgroundResource {
    *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   storageClient.deleteBucket(request);
    * }
@@ -263,7 +262,6 @@ public class StorageClient implements BackgroundResource {
    *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Empty> future = storageClient.deleteBucketCallable().futureCall(request);
    *   // Do something.
@@ -337,7 +335,6 @@ public class StorageClient implements BackgroundResource {
    *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .build();
    *   Bucket response = storageClient.getBucket(request);
@@ -366,7 +363,6 @@ public class StorageClient implements BackgroundResource {
    *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .build();
    *   ApiFuture<Bucket> future = storageClient.getBucketCallable().futureCall(request);
@@ -398,7 +394,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Required. Properties of the new bucket being inserted. The project and name of
-   *     the bucket are specified in this request, not in the bucket resource.
+   *     the bucket are specified in the parent and bucket_id fields, respectively. Populating those
+   *     fields in `bucket` will result in an error.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -433,7 +430,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Required. Properties of the new bucket being inserted. The project and name of
-   *     the bucket are specified in this request, not in the bucket resource.
+   *     the bucket are specified in the parent and bucket_id fields, respectively. Populating those
+   *     fields in `bucket` will result in an error.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -576,7 +574,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setPrefix("prefix-980110702")
    *           .setReadMask(FieldMask.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   for (Bucket element : storageClient.listBuckets(request).iterateAll()) {
    *     // doThingsWith(element);
@@ -608,7 +605,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setPrefix("prefix-980110702")
    *           .setReadMask(FieldMask.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Bucket> future = storageClient.listBucketsPagedCallable().futureCall(request);
    *   // Do something.
@@ -640,7 +636,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setPrefix("prefix-980110702")
    *           .setReadMask(FieldMask.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   while (true) {
    *     ListBucketsResponse response = storageClient.listBucketsCallable().call(request);
@@ -725,7 +720,6 @@ public class StorageClient implements BackgroundResource {
    *       LockBucketRetentionPolicyRequest.newBuilder()
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setIfMetagenerationMatch(1043427781)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   Bucket response = storageClient.lockBucketRetentionPolicy(request);
    * }
@@ -752,7 +746,6 @@ public class StorageClient implements BackgroundResource {
    *       LockBucketRetentionPolicyRequest.newBuilder()
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setIfMetagenerationMatch(1043427781)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Bucket> future =
    *       storageClient.lockBucketRetentionPolicyCallable().futureCall(request);
@@ -1170,7 +1163,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
    *           .setUpdateMask(FieldMask.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   Bucket response = storageClient.updateBucket(request);
    * }
@@ -1201,7 +1193,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setPredefinedDefaultObjectAcl("predefinedDefaultObjectAcl2109168048")
    *           .setUpdateMask(FieldMask.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Bucket> future = storageClient.updateBucketCallable().futureCall(request);
    *   // Do something.
@@ -1699,7 +1690,6 @@ public class StorageClient implements BackgroundResource {
    *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
    *                   .toString())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   Object response = storageClient.composeObject(request);
    * }
@@ -1733,7 +1723,6 @@ public class StorageClient implements BackgroundResource {
    *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
    *                   .toString())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Object> future = storageClient.composeObjectCallable().futureCall(request);
    *   // Do something.
@@ -1828,7 +1817,6 @@ public class StorageClient implements BackgroundResource {
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   storageClient.deleteObject(request);
    * }
@@ -1863,7 +1851,6 @@ public class StorageClient implements BackgroundResource {
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Empty> future = storageClient.deleteObjectCallable().futureCall(request);
    *   // Do something.
@@ -1954,7 +1941,6 @@ public class StorageClient implements BackgroundResource {
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .build();
    *   Object response = storageClient.getObject(request);
@@ -1988,7 +1974,6 @@ public class StorageClient implements BackgroundResource {
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .build();
    *   ApiFuture<Object> future = storageClient.getObjectCallable().futureCall(request);
@@ -2023,7 +2008,6 @@ public class StorageClient implements BackgroundResource {
    *           .setIfMetagenerationMatch(1043427781)
    *           .setIfMetagenerationNotMatch(1025430873)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .build();
    *   ServerStream<ReadObjectResponse> stream = storageClient.readObjectCallable().call(request);
@@ -2092,7 +2076,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   Object response = storageClient.updateObject(request);
    * }
@@ -2125,7 +2108,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPredefinedAcl("predefinedAcl1207041188")
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Object> future = storageClient.updateObjectCallable().futureCall(request);
    *   // Do something.
@@ -2191,7 +2173,6 @@ public class StorageClient implements BackgroundResource {
    *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
    *           .setFinishWrite(true)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   requestObserver.onNext(request);
    * }
@@ -2277,7 +2258,6 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   for (Object element : storageClient.listObjects(request).iterateAll()) {
    *     // doThingsWith(element);
@@ -2314,7 +2294,6 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Object> future = storageClient.listObjectsPagedCallable().futureCall(request);
    *   // Do something.
@@ -2351,7 +2330,6 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   while (true) {
    *     ListObjectsResponse response = storageClient.listObjectsCallable().call(request);
@@ -2408,7 +2386,6 @@ public class StorageClient implements BackgroundResource {
    *           .setCopySourceEncryptionKeyBytes(ByteString.EMPTY)
    *           .setCopySourceEncryptionKeySha256Bytes(ByteString.EMPTY)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   RewriteResponse response = storageClient.rewriteObject(request);
    * }
@@ -2457,7 +2434,6 @@ public class StorageClient implements BackgroundResource {
    *           .setCopySourceEncryptionKeyBytes(ByteString.EMPTY)
    *           .setCopySourceEncryptionKeySha256Bytes(ByteString.EMPTY)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<RewriteResponse> future = storageClient.rewriteObjectCallable().futureCall(request);
    *   // Do something.
@@ -2484,7 +2460,6 @@ public class StorageClient implements BackgroundResource {
    *       StartResumableWriteRequest.newBuilder()
    *           .setWriteObjectSpec(WriteObjectSpec.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   StartResumableWriteResponse response = storageClient.startResumableWrite(request);
    * }
@@ -2512,7 +2487,6 @@ public class StorageClient implements BackgroundResource {
    *       StartResumableWriteRequest.newBuilder()
    *           .setWriteObjectSpec(WriteObjectSpec.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<StartResumableWriteResponse> future =
    *       storageClient.startResumableWriteCallable().futureCall(request);
@@ -2585,7 +2559,6 @@ public class StorageClient implements BackgroundResource {
    *       QueryWriteStatusRequest.newBuilder()
    *           .setUploadId("uploadId1563990780")
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   QueryWriteStatusResponse response = storageClient.queryWriteStatus(request);
    * }
@@ -2622,7 +2595,6 @@ public class StorageClient implements BackgroundResource {
    *       QueryWriteStatusRequest.newBuilder()
    *           .setUploadId("uploadId1563990780")
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<QueryWriteStatusResponse> future =
    *       storageClient.queryWriteStatusCallable().futureCall(request);
@@ -2699,7 +2671,6 @@ public class StorageClient implements BackgroundResource {
    *   GetServiceAccountRequest request =
    *       GetServiceAccountRequest.newBuilder()
    *           .setProject(ProjectName.of("[PROJECT]").toString())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ServiceAccount response = storageClient.getServiceAccount(request);
    * }
@@ -2725,7 +2696,6 @@ public class StorageClient implements BackgroundResource {
    *   GetServiceAccountRequest request =
    *       GetServiceAccountRequest.newBuilder()
    *           .setProject(ProjectName.of("[PROJECT]").toString())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<ServiceAccount> future =
    *       storageClient.getServiceAccountCallable().futureCall(request);
@@ -2811,7 +2781,6 @@ public class StorageClient implements BackgroundResource {
    *       CreateHmacKeyRequest.newBuilder()
    *           .setProject(ProjectName.of("[PROJECT]").toString())
    *           .setServiceAccountEmail("serviceAccountEmail1825953988")
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   CreateHmacKeyResponse response = storageClient.createHmacKey(request);
    * }
@@ -2838,7 +2807,6 @@ public class StorageClient implements BackgroundResource {
    *       CreateHmacKeyRequest.newBuilder()
    *           .setProject(ProjectName.of("[PROJECT]").toString())
    *           .setServiceAccountEmail("serviceAccountEmail1825953988")
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<CreateHmacKeyResponse> future =
    *       storageClient.createHmacKeyCallable().futureCall(request);
@@ -2920,7 +2888,6 @@ public class StorageClient implements BackgroundResource {
    *       DeleteHmacKeyRequest.newBuilder()
    *           .setAccessId("accessId-2146437729")
    *           .setProject(ProjectName.of("[PROJECT]").toString())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   storageClient.deleteHmacKey(request);
    * }
@@ -2947,7 +2914,6 @@ public class StorageClient implements BackgroundResource {
    *       DeleteHmacKeyRequest.newBuilder()
    *           .setAccessId("accessId-2146437729")
    *           .setProject(ProjectName.of("[PROJECT]").toString())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<Empty> future = storageClient.deleteHmacKeyCallable().futureCall(request);
    *   // Do something.
@@ -3028,7 +2994,6 @@ public class StorageClient implements BackgroundResource {
    *       GetHmacKeyRequest.newBuilder()
    *           .setAccessId("accessId-2146437729")
    *           .setProject(ProjectName.of("[PROJECT]").toString())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   HmacKeyMetadata response = storageClient.getHmacKey(request);
    * }
@@ -3055,7 +3020,6 @@ public class StorageClient implements BackgroundResource {
    *       GetHmacKeyRequest.newBuilder()
    *           .setAccessId("accessId-2146437729")
    *           .setProject(ProjectName.of("[PROJECT]").toString())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<HmacKeyMetadata> future = storageClient.getHmacKeyCallable().futureCall(request);
    *   // Do something.
@@ -3137,7 +3101,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setServiceAccountEmail("serviceAccountEmail1825953988")
    *           .setShowDeletedKeys(true)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   for (HmacKeyMetadata element : storageClient.listHmacKeys(request).iterateAll()) {
    *     // doThingsWith(element);
@@ -3169,7 +3132,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setServiceAccountEmail("serviceAccountEmail1825953988")
    *           .setShowDeletedKeys(true)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   ApiFuture<HmacKeyMetadata> future =
    *       storageClient.listHmacKeysPagedCallable().futureCall(request);
@@ -3202,7 +3164,6 @@ public class StorageClient implements BackgroundResource {
    *           .setPageToken("pageToken873572522")
    *           .setServiceAccountEmail("serviceAccountEmail1825953988")
    *           .setShowDeletedKeys(true)
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .build();
    *   while (true) {
    *     ListHmacKeysResponse response = storageClient.listHmacKeysCallable().call(request);
@@ -3264,7 +3225,6 @@ public class StorageClient implements BackgroundResource {
    *   UpdateHmacKeyRequest request =
    *       UpdateHmacKeyRequest.newBuilder()
    *           .setHmacKey(HmacKeyMetadata.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .build();
    *   HmacKeyMetadata response = storageClient.updateHmacKey(request);
@@ -3291,7 +3251,6 @@ public class StorageClient implements BackgroundResource {
    *   UpdateHmacKeyRequest request =
    *       UpdateHmacKeyRequest.newBuilder()
    *           .setHmacKey(HmacKeyMetadata.newBuilder().build())
-   *           .setCommonRequestParams(CommonRequestParams.newBuilder().build())
    *           .setUpdateMask(FieldMask.newBuilder().build())
    *           .build();
    *   ApiFuture<HmacKeyMetadata> future = storageClient.updateHmacKeyCallable().futureCall(request);

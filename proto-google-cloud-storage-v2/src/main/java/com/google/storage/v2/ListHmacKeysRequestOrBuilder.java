@@ -127,45 +127,4 @@ public interface ListHmacKeysRequestOrBuilder
    * @return The showDeletedKeys.
    */
   boolean getShowDeletedKeys();
-
-  /**
-   *
-   *
-   * <pre>
-   * Optional. A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>
-   * .google.storage.v2.CommonRequestParams common_request_params = 6 [(.google.api.field_behavior) = OPTIONAL];
-   * </code>
-   *
-   * @return Whether the commonRequestParams field is set.
-   */
-  boolean hasCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * Optional. A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>
-   * .google.storage.v2.CommonRequestParams common_request_params = 6 [(.google.api.field_behavior) = OPTIONAL];
-   * </code>
-   *
-   * @return The commonRequestParams.
-   */
-  com.google.storage.v2.CommonRequestParams getCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * Optional. A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>
-   * .google.storage.v2.CommonRequestParams common_request_params = 6 [(.google.api.field_behavior) = OPTIONAL];
-   * </code>
-   */
-  com.google.storage.v2.CommonRequestParamsOrBuilder getCommonRequestParamsOrBuilder();
 }

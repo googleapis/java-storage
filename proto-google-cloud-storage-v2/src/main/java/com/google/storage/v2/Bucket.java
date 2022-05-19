@@ -3502,8 +3502,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from
-       * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
        * Mutable until the specified deadline is reached, but not afterward.
        * </pre>
        *
@@ -3517,8 +3516,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from
-       * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
        * Mutable until the specified deadline is reached, but not afterward.
        * </pre>
        *
@@ -3532,8 +3530,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from
-       * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
        * Mutable until the specified deadline is reached, but not afterward.
        * </pre>
        *
@@ -3675,8 +3672,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from
-       * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
        * Mutable until the specified deadline is reached, but not afterward.
        * </pre>
        *
@@ -3693,8 +3689,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from
-       * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
        * Mutable until the specified deadline is reached, but not afterward.
        * </pre>
        *
@@ -3711,8 +3706,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from
-       * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
        * Mutable until the specified deadline is reached, but not afterward.
        * </pre>
        *
@@ -4146,8 +4140,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4163,8 +4156,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4186,8 +4178,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4211,8 +4202,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4233,8 +4223,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4262,8 +4251,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4285,8 +4273,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4302,8 +4289,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -4323,8 +4309,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from
-         * true to false in [RFC 3339](https://tools.ietf.org/html/rfc3339).
+         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
          * Mutable until the specified deadline is reached, but not afterward.
          * </pre>
          *
@@ -12471,8 +12456,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Server-determined value that indicates the time from which policy was
-     * enforced and effective. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * enforced and effective.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -12485,8 +12469,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Server-determined value that indicates the time from which policy was
-     * enforced and effective. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * enforced and effective.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -12499,8 +12482,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Server-determined value that indicates the time from which policy was
-     * enforced and effective. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * enforced and effective.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -12654,8 +12636,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Server-determined value that indicates the time from which policy was
-     * enforced and effective. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * enforced and effective.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -12671,8 +12652,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Server-determined value that indicates the time from which policy was
-     * enforced and effective. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * enforced and effective.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -12690,8 +12670,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Server-determined value that indicates the time from which policy was
-     * enforced and effective. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * enforced and effective.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13113,8 +13092,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13129,8 +13107,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13151,8 +13128,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13175,8 +13151,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13196,8 +13171,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13224,8 +13198,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13246,8 +13219,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13262,8 +13234,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -13282,8 +13253,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * Server-determined value that indicates the time from which policy was
-       * enforced and effective. This value is in
-       * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+       * enforced and effective.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp effective_time = 1;</code>
@@ -16496,8 +16466,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The creation time of the bucket in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * Output only. The creation time of the bucket.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -16515,8 +16484,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The creation time of the bucket in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * Output only. The creation time of the bucket.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -16534,8 +16502,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The creation time of the bucket in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * Output only. The creation time of the bucket.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -20158,8 +20125,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20177,8 +20143,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20202,8 +20167,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20229,8 +20193,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20253,8 +20216,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20282,8 +20244,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20307,8 +20268,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20326,8 +20286,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -20349,8 +20308,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The creation time of the bucket in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * Output only. The creation time of the bucket.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>

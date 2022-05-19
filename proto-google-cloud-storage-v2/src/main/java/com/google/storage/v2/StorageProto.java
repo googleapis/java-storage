@@ -184,10 +184,6 @@ public final class StorageProto {
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_google_storage_v2_CommonObjectRequestParams_fieldAccessorTable;
   static final com.google.protobuf.Descriptors.Descriptor
-      internal_static_google_storage_v2_CommonRequestParams_descriptor;
-  static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_google_storage_v2_CommonRequestParams_fieldAccessorTable;
-  static final com.google.protobuf.Descriptors.Descriptor
       internal_static_google_storage_v2_ServiceConstants_descriptor;
   static final com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_google_storage_v2_ServiceConstants_fieldAccessorTable;
@@ -331,123 +327,107 @@ public final class StorageProto {
           + "icy.proto\032\032google/iam/v1/policy.proto\032\033g"
           + "oogle/protobuf/empty.proto\032 google/proto"
           + "buf/field_mask.proto\032\037google/protobuf/ti"
-          + "mestamp.proto\032\026google/type/date.proto\"\235\002"
+          + "mestamp.proto\032\026google/type/date.proto\"\326\001"
           + "\n\023DeleteBucketRequest\0223\n\004name\030\001 \001(\tB%\340A\002"
           + "\372A\037\n\035storage.googleapis.com/Bucket\022$\n\027if"
           + "_metageneration_match\030\002 \001(\003H\000\210\001\001\022(\n\033if_m"
-          + "etageneration_not_match\030\003 \001(\003H\001\210\001\001\022E\n\025co"
-          + "mmon_request_params\030\005 \001(\0132&.google.stora"
-          + "ge.v2.CommonRequestParamsB\032\n\030_if_metagen"
+          + "etageneration_not_match\030\003 \001(\003H\001\210\001\001B\032\n\030_i"
+          + "f_metageneration_matchB\036\n\034_if_metagenera"
+          + "tion_not_match\"\225\002\n\020GetBucketRequest\0223\n\004n"
+          + "ame\030\001 \001(\tB%\340A\002\372A\037\n\035storage.googleapis.co"
+          + "m/Bucket\022$\n\027if_metageneration_match\030\002 \001("
+          + "\003H\000\210\001\001\022(\n\033if_metageneration_not_match\030\003 "
+          + "\001(\003H\001\210\001\001\0222\n\tread_mask\030\005 \001(\0132\032.google.pro"
+          + "tobuf.FieldMaskH\002\210\001\001B\032\n\030_if_metagenerati"
+          + "on_matchB\036\n\034_if_metageneration_not_match"
+          + "B\014\n\n_read_mask\"\341\001\n\023CreateBucketRequest\022C"
+          + "\n\006parent\030\001 \001(\tB3\340A\002\372A-\n+cloudresourceman"
+          + "ager.googleapis.com/Project\022.\n\006bucket\030\002 "
+          + "\001(\0132\031.google.storage.v2.BucketB\003\340A\002\022\026\n\tb"
+          + "ucket_id\030\003 \001(\tB\003\340A\002\022\026\n\016predefined_acl\030\006 "
+          + "\001(\t\022%\n\035predefined_default_object_acl\030\007 \001"
+          + "(\t\"\322\001\n\022ListBucketsRequest\022C\n\006parent\030\001 \001("
+          + "\tB3\340A\002\372A-\n+cloudresourcemanager.googleap"
+          + "is.com/Project\022\021\n\tpage_size\030\002 \001(\005\022\022\n\npag"
+          + "e_token\030\003 \001(\t\022\016\n\006prefix\030\004 \001(\t\0222\n\tread_ma"
+          + "sk\030\005 \001(\0132\032.google.protobuf.FieldMaskH\000\210\001"
+          + "\001B\014\n\n_read_mask\"Z\n\023ListBucketsResponse\022*"
+          + "\n\007buckets\030\001 \003(\0132\031.google.storage.v2.Buck"
+          + "et\022\027\n\017next_page_token\030\002 \001(\t\"z\n LockBucke"
+          + "tRetentionPolicyRequest\0225\n\006bucket\030\001 \001(\tB"
+          + "%\340A\002\372A\037\n\035storage.googleapis.com/Bucket\022\037"
+          + "\n\027if_metageneration_match\030\002 \001(\003\"\274\002\n\023Upda"
+          + "teBucketRequest\022)\n\006bucket\030\001 \001(\0132\031.google"
+          + ".storage.v2.Bucket\022$\n\027if_metageneration_"
+          + "match\030\002 \001(\003H\000\210\001\001\022(\n\033if_metageneration_no"
+          + "t_match\030\003 \001(\003H\001\210\001\001\022\026\n\016predefined_acl\030\010 \001"
+          + "(\t\022%\n\035predefined_default_object_acl\030\t \001("
+          + "\t\022/\n\013update_mask\030\006 \001(\0132\032.google.protobuf"
+          + ".FieldMaskB\032\n\030_if_metageneration_matchB\036"
+          + "\n\034_if_metageneration_not_match\"V\n\031Delete"
+          + "NotificationRequest\0229\n\004name\030\001 \001(\tB+\340A\002\372A"
+          + "%\n#storage.googleapis.com/Notification\"M"
+          + "\n\026GetNotificationRequest\0223\n\004name\030\001 \001(\tB%"
+          + "\340A\002\372A\037\n\035storage.googleapis.com/Bucket\"\216\001"
+          + "\n\031CreateNotificationRequest\0225\n\006parent\030\001 "
+          + "\001(\tB%\340A\002\372A\037\022\035storage.googleapis.com/Buck"
+          + "et\022:\n\014notification\030\002 \001(\0132\037.google.storag"
+          + "e.v2.NotificationB\003\340A\002\"x\n\030ListNotificati"
+          + "onsRequest\0225\n\006parent\030\001 \001(\tB%\340A\002\372A\037\022\035stor"
+          + "age.googleapis.com/Bucket\022\021\n\tpage_size\030\002"
+          + " \001(\005\022\022\n\npage_token\030\003 \001(\t\"l\n\031ListNotifica"
+          + "tionsResponse\0226\n\rnotifications\030\001 \003(\0132\037.g"
+          + "oogle.storage.v2.Notification\022\027\n\017next_pa"
+          + "ge_token\030\002 \001(\t\"\267\005\n\024ComposeObjectRequest\022"
+          + "3\n\013destination\030\001 \001(\0132\031.google.storage.v2"
+          + ".ObjectB\003\340A\002\022L\n\016source_objects\030\002 \003(\01324.g"
+          + "oogle.storage.v2.ComposeObjectRequest.So"
+          + "urceObject\022\"\n\032destination_predefined_acl"
+          + "\030\t \001(\t\022 \n\023if_generation_match\030\004 \001(\003H\000\210\001\001"
+          + "\022$\n\027if_metageneration_match\030\005 \001(\003H\001\210\001\001\0227"
+          + "\n\007kms_key\030\006 \001(\tB&\372A#\n!cloudkms.googleapi"
+          + "s.com/CryptoKey\022R\n\034common_object_request"
+          + "_params\030\007 \001(\0132,.google.storage.v2.Common"
+          + "ObjectRequestParams\032\356\001\n\014SourceObject\022\021\n\004"
+          + "name\030\001 \001(\tB\003\340A\002\022\022\n\ngeneration\030\002 \001(\003\022f\n\024o"
+          + "bject_preconditions\030\003 \001(\0132H.google.stora"
+          + "ge.v2.ComposeObjectRequest.SourceObject."
+          + "ObjectPreconditions\032O\n\023ObjectPreconditio"
+          + "ns\022 \n\023if_generation_match\030\001 \001(\003H\000\210\001\001B\026\n\024"
+          + "_if_generation_matchB\026\n\024_if_generation_m"
+          + "atchB\032\n\030_if_metageneration_match\"\302\003\n\023Del"
+          + "eteObjectRequest\022\023\n\006bucket\030\001 \001(\tB\003\340A\002\022\023\n"
+          + "\006object\030\002 \001(\tB\003\340A\002\022\021\n\tupload_id\030\003 \001(\t\022\022\n"
+          + "\ngeneration\030\004 \001(\003\022 \n\023if_generation_match"
+          + "\030\005 \001(\003H\000\210\001\001\022$\n\027if_generation_not_match\030\006"
+          + " \001(\003H\001\210\001\001\022$\n\027if_metageneration_match\030\007 \001"
+          + "(\003H\002\210\001\001\022(\n\033if_metageneration_not_match\030\010"
+          + " \001(\003H\003\210\001\001\022R\n\034common_object_request_param"
+          + "s\030\n \001(\0132,.google.storage.v2.CommonObject"
+          + "RequestParamsB\026\n\024_if_generation_matchB\032\n"
+          + "\030_if_generation_not_matchB\032\n\030_if_metagen"
           + "eration_matchB\036\n\034_if_metageneration_not_"
-          + "match\"\334\002\n\020GetBucketRequest\0223\n\004name\030\001 \001(\t"
-          + "B%\340A\002\372A\037\n\035storage.googleapis.com/Bucket\022"
-          + "$\n\027if_metageneration_match\030\002 \001(\003H\000\210\001\001\022(\n"
-          + "\033if_metageneration_not_match\030\003 \001(\003H\001\210\001\001\022"
-          + "E\n\025common_request_params\030\004 \001(\0132&.google."
-          + "storage.v2.CommonRequestParams\0222\n\tread_m"
-          + "ask\030\005 \001(\0132\032.google.protobuf.FieldMaskH\002\210"
-          + "\001\001B\032\n\030_if_metageneration_matchB\036\n\034_if_me"
-          + "tageneration_not_matchB\014\n\n_read_mask\"\341\001\n"
-          + "\023CreateBucketRequest\022C\n\006parent\030\001 \001(\tB3\340A"
-          + "\002\372A-\n+cloudresourcemanager.googleapis.co"
-          + "m/Project\022.\n\006bucket\030\002 \001(\0132\031.google.stora"
-          + "ge.v2.BucketB\003\340A\002\022\026\n\tbucket_id\030\003 \001(\tB\003\340A"
-          + "\002\022\026\n\016predefined_acl\030\006 \001(\t\022%\n\035predefined_"
-          + "default_object_acl\030\007 \001(\t\"\231\002\n\022ListBuckets"
-          + "Request\022C\n\006parent\030\001 \001(\tB3\340A\002\372A-\n+cloudre"
-          + "sourcemanager.googleapis.com/Project\022\021\n\t"
-          + "page_size\030\002 \001(\005\022\022\n\npage_token\030\003 \001(\t\022\016\n\006p"
-          + "refix\030\004 \001(\t\0222\n\tread_mask\030\005 \001(\0132\032.google."
-          + "protobuf.FieldMaskH\000\210\001\001\022E\n\025common_reques"
-          + "t_params\030\006 \001(\0132&.google.storage.v2.Commo"
-          + "nRequestParamsB\014\n\n_read_mask\"Z\n\023ListBuck"
-          + "etsResponse\022*\n\007buckets\030\001 \003(\0132\031.google.st"
-          + "orage.v2.Bucket\022\027\n\017next_page_token\030\002 \001(\t"
-          + "\"\301\001\n LockBucketRetentionPolicyRequest\0225\n"
-          + "\006bucket\030\001 \001(\tB%\340A\002\372A\037\n\035storage.googleapi"
-          + "s.com/Bucket\022\037\n\027if_metageneration_match\030"
-          + "\002 \001(\003\022E\n\025common_request_params\030\003 \001(\0132&.g"
-          + "oogle.storage.v2.CommonRequestParams\"\203\003\n"
-          + "\023UpdateBucketRequest\022)\n\006bucket\030\001 \001(\0132\031.g"
-          + "oogle.storage.v2.Bucket\022$\n\027if_metagenera"
-          + "tion_match\030\002 \001(\003H\000\210\001\001\022(\n\033if_metagenerati"
-          + "on_not_match\030\003 \001(\003H\001\210\001\001\022\026\n\016predefined_ac"
-          + "l\030\010 \001(\t\022%\n\035predefined_default_object_acl"
-          + "\030\t \001(\t\022/\n\013update_mask\030\006 \001(\0132\032.google.pro"
-          + "tobuf.FieldMask\022E\n\025common_request_params"
-          + "\030\007 \001(\0132&.google.storage.v2.CommonRequest"
-          + "ParamsB\032\n\030_if_metageneration_matchB\036\n\034_i"
-          + "f_metageneration_not_match\"V\n\031DeleteNoti"
-          + "ficationRequest\0229\n\004name\030\001 \001(\tB+\340A\002\372A%\n#s"
-          + "torage.googleapis.com/Notification\"M\n\026Ge"
-          + "tNotificationRequest\0223\n\004name\030\001 \001(\tB%\340A\002\372"
-          + "A\037\n\035storage.googleapis.com/Bucket\"\216\001\n\031Cr"
-          + "eateNotificationRequest\0225\n\006parent\030\001 \001(\tB"
-          + "%\340A\002\372A\037\022\035storage.googleapis.com/Bucket\022:"
-          + "\n\014notification\030\002 \001(\0132\037.google.storage.v2"
-          + ".NotificationB\003\340A\002\"x\n\030ListNotificationsR"
-          + "equest\0225\n\006parent\030\001 \001(\tB%\340A\002\372A\037\022\035storage."
-          + "googleapis.com/Bucket\022\021\n\tpage_size\030\002 \001(\005"
-          + "\022\022\n\npage_token\030\003 \001(\t\"l\n\031ListNotification"
-          + "sResponse\0226\n\rnotifications\030\001 \003(\0132\037.googl"
-          + "e.storage.v2.Notification\022\027\n\017next_page_t"
-          + "oken\030\002 \001(\t\"\376\005\n\024ComposeObjectRequest\0223\n\013d"
-          + "estination\030\001 \001(\0132\031.google.storage.v2.Obj"
-          + "ectB\003\340A\002\022L\n\016source_objects\030\002 \003(\01324.googl"
-          + "e.storage.v2.ComposeObjectRequest.Source"
-          + "Object\022\"\n\032destination_predefined_acl\030\t \001"
-          + "(\t\022 \n\023if_generation_match\030\004 \001(\003H\000\210\001\001\022$\n\027"
-          + "if_metageneration_match\030\005 \001(\003H\001\210\001\001\0227\n\007km"
-          + "s_key\030\006 \001(\tB&\372A#\n!cloudkms.googleapis.co"
-          + "m/CryptoKey\022R\n\034common_object_request_par"
-          + "ams\030\007 \001(\0132,.google.storage.v2.CommonObje"
-          + "ctRequestParams\022E\n\025common_request_params"
-          + "\030\010 \001(\0132&.google.storage.v2.CommonRequest"
-          + "Params\032\356\001\n\014SourceObject\022\021\n\004name\030\001 \001(\tB\003\340"
-          + "A\002\022\022\n\ngeneration\030\002 \001(\003\022f\n\024object_precond"
-          + "itions\030\003 \001(\0132H.google.storage.v2.Compose"
-          + "ObjectRequest.SourceObject.ObjectPrecond"
-          + "itions\032O\n\023ObjectPreconditions\022 \n\023if_gene"
-          + "ration_match\030\001 \001(\003H\000\210\001\001B\026\n\024_if_generatio"
-          + "n_matchB\026\n\024_if_generation_matchB\032\n\030_if_m"
-          + "etageneration_match\"\211\004\n\023DeleteObjectRequ"
-          + "est\022\023\n\006bucket\030\001 \001(\tB\003\340A\002\022\023\n\006object\030\002 \001(\t"
-          + "B\003\340A\002\022\021\n\tupload_id\030\003 \001(\t\022\022\n\ngeneration\030\004"
-          + " \001(\003\022 \n\023if_generation_match\030\005 \001(\003H\000\210\001\001\022$"
-          + "\n\027if_generation_not_match\030\006 \001(\003H\001\210\001\001\022$\n\027"
-          + "if_metageneration_match\030\007 \001(\003H\002\210\001\001\022(\n\033if"
-          + "_metageneration_not_match\030\010 \001(\003H\003\210\001\001\022R\n\034"
-          + "common_object_request_params\030\n \001(\0132,.goo"
-          + "gle.storage.v2.CommonObjectRequestParams"
-          + "\022E\n\025common_request_params\030\013 \001(\0132&.google"
-          + ".storage.v2.CommonRequestParamsB\026\n\024_if_g"
-          + "eneration_matchB\032\n\030_if_generation_not_ma"
-          + "tchB\032\n\030_if_metageneration_matchB\036\n\034_if_m"
-          + "etageneration_not_match\"\325\004\n\021ReadObjectRe"
-          + "quest\022\016\n\006bucket\030\001 \001(\t\022\016\n\006object\030\002 \001(\t\022\022\n"
-          + "\ngeneration\030\003 \001(\003\022\023\n\013read_offset\030\004 \001(\003\022\022"
-          + "\n\nread_limit\030\005 \001(\003\022 \n\023if_generation_matc"
-          + "h\030\006 \001(\003H\000\210\001\001\022$\n\027if_generation_not_match\030"
-          + "\007 \001(\003H\001\210\001\001\022$\n\027if_metageneration_match\030\010 "
-          + "\001(\003H\002\210\001\001\022(\n\033if_metageneration_not_match\030"
-          + "\t \001(\003H\003\210\001\001\022R\n\034common_object_request_para"
-          + "ms\030\n \001(\0132,.google.storage.v2.CommonObjec"
-          + "tRequestParams\022E\n\025common_request_params\030"
-          + "\013 \001(\0132&.google.storage.v2.CommonRequestP"
-          + "arams\0222\n\tread_mask\030\014 \001(\0132\032.google.protob"
-          + "uf.FieldMaskH\004\210\001\001B\026\n\024_if_generation_matc"
-          + "hB\032\n\030_if_generation_not_matchB\032\n\030_if_met"
-          + "ageneration_matchB\036\n\034_if_metageneration_"
-          + "not_matchB\014\n\n_read_mask\"\265\004\n\020GetObjectReq"
-          + "uest\022\023\n\006bucket\030\001 \001(\tB\003\340A\002\022\023\n\006object\030\002 \001("
-          + "\tB\003\340A\002\022\022\n\ngeneration\030\003 \001(\003\022 \n\023if_generat"
-          + "ion_match\030\004 \001(\003H\000\210\001\001\022$\n\027if_generation_no"
-          + "t_match\030\005 \001(\003H\001\210\001\001\022$\n\027if_metageneration_"
-          + "match\030\006 \001(\003H\002\210\001\001\022(\n\033if_metageneration_no"
-          + "t_match\030\007 \001(\003H\003\210\001\001\022R\n\034common_object_requ"
-          + "est_params\030\010 \001(\0132,.google.storage.v2.Com"
-          + "monObjectRequestParams\022E\n\025common_request"
-          + "_params\030\t \001(\0132&.google.storage.v2.Common"
+          + "match\"\216\004\n\021ReadObjectRequest\022\016\n\006bucket\030\001 "
+          + "\001(\t\022\016\n\006object\030\002 \001(\t\022\022\n\ngeneration\030\003 \001(\003\022"
+          + "\023\n\013read_offset\030\004 \001(\003\022\022\n\nread_limit\030\005 \001(\003"
+          + "\022 \n\023if_generation_match\030\006 \001(\003H\000\210\001\001\022$\n\027if"
+          + "_generation_not_match\030\007 \001(\003H\001\210\001\001\022$\n\027if_m"
+          + "etageneration_match\030\010 \001(\003H\002\210\001\001\022(\n\033if_met"
+          + "ageneration_not_match\030\t \001(\003H\003\210\001\001\022R\n\034comm"
+          + "on_object_request_params\030\n \001(\0132,.google."
+          + "storage.v2.CommonObjectRequestParams\0222\n\t"
+          + "read_mask\030\014 \001(\0132\032.google.protobuf.FieldM"
+          + "askH\004\210\001\001B\026\n\024_if_generation_matchB\032\n\030_if_"
+          + "generation_not_matchB\032\n\030_if_metagenerati"
+          + "on_matchB\036\n\034_if_metageneration_not_match"
+          + "B\014\n\n_read_mask\"\356\003\n\020GetObjectRequest\022\023\n\006b"
+          + "ucket\030\001 \001(\tB\003\340A\002\022\023\n\006object\030\002 \001(\tB\003\340A\002\022\022\n"
+          + "\ngeneration\030\003 \001(\003\022 \n\023if_generation_match"
+          + "\030\004 \001(\003H\000\210\001\001\022$\n\027if_generation_not_match\030\005"
+          + " \001(\003H\001\210\001\001\022$\n\027if_metageneration_match\030\006 \001"
+          + "(\003H\002\210\001\001\022(\n\033if_metageneration_not_match\030\007"
+          + " \001(\003H\003\210\001\001\022R\n\034common_object_request_param"
+          + "s\030\010 \001(\0132,.google.storage.v2.CommonObject"
           + "RequestParams\0222\n\tread_mask\030\n \001(\0132\032.googl"
           + "e.protobuf.FieldMaskH\004\210\001\001B\026\n\024_if_generat"
           + "ion_matchB\032\n\030_if_generation_not_matchB\032\n"
@@ -467,7 +447,7 @@ public final class StorageProto {
           + "\n\033if_metageneration_not_match\030\006 \001(\003H\003\210\001\001"
           + "B\026\n\024_if_generation_matchB\032\n\030_if_generati"
           + "on_not_matchB\032\n\030_if_metageneration_match"
-          + "B\036\n\034_if_metageneration_not_match\"\315\003\n\022Wri"
+          + "B\036\n\034_if_metageneration_not_match\"\206\003\n\022Wri"
           + "teObjectRequest\022\023\n\tupload_id\030\001 \001(\tH\000\022?\n\021"
           + "write_object_spec\030\002 \001(\0132\".google.storage"
           + ".v2.WriteObjectSpecH\000\022\031\n\014write_offset\030\003 "
@@ -477,379 +457,355 @@ public final class StorageProto {
           + "bjectChecksums\022\024\n\014finish_write\030\007 \001(\010\022R\n\034"
           + "common_object_request_params\030\010 \001(\0132,.goo"
           + "gle.storage.v2.CommonObjectRequestParams"
-          + "\022E\n\025common_request_params\030\t \001(\0132&.google"
-          + ".storage.v2.CommonRequestParamsB\017\n\rfirst"
-          + "_messageB\006\n\004data\"n\n\023WriteObjectResponse\022"
-          + "\030\n\016persisted_size\030\001 \001(\003H\000\022-\n\010resource\030\002 "
-          + "\001(\0132\031.google.storage.v2.ObjectH\000B\016\n\014writ"
-          + "e_status\"\214\003\n\022ListObjectsRequest\0225\n\006paren"
-          + "t\030\001 \001(\tB%\340A\002\372A\037\022\035storage.googleapis.com/"
-          + "Bucket\022\021\n\tpage_size\030\002 \001(\005\022\022\n\npage_token\030"
-          + "\003 \001(\t\022\021\n\tdelimiter\030\004 \001(\t\022\"\n\032include_trai"
-          + "ling_delimiter\030\005 \001(\010\022\016\n\006prefix\030\006 \001(\t\022\020\n\010"
-          + "versions\030\007 \001(\010\0222\n\tread_mask\030\010 \001(\0132\032.goog"
-          + "le.protobuf.FieldMaskH\000\210\001\001\022\033\n\023lexicograp"
-          + "hic_start\030\n \001(\t\022\031\n\021lexicographic_end\030\013 \001"
-          + "(\t\022E\n\025common_request_params\030\t \001(\0132&.goog"
-          + "le.storage.v2.CommonRequestParamsB\014\n\n_re"
-          + "ad_mask\"\314\001\n\027QueryWriteStatusRequest\022\026\n\tu"
-          + "pload_id\030\001 \001(\tB\003\340A\002\022R\n\034common_object_req"
-          + "uest_params\030\002 \001(\0132,.google.storage.v2.Co"
-          + "mmonObjectRequestParams\022E\n\025common_reques"
-          + "t_params\030\003 \001(\0132&.google.storage.v2.Commo"
-          + "nRequestParams\"s\n\030QueryWriteStatusRespon"
-          + "se\022\030\n\016persisted_size\030\001 \001(\003H\000\022-\n\010resource"
-          + "\030\002 \001(\0132\031.google.storage.v2.ObjectH\000B\016\n\014w"
-          + "rite_status\"\211\n\n\024RewriteObjectRequest\022\035\n\020"
-          + "destination_name\030\030 \001(\tB\003\340A\005\022A\n\022destinati"
-          + "on_bucket\030\031 \001(\tB%\340A\005\372A\037\n\035storage.googlea"
-          + "pis.com/Bucket\022C\n\023destination_kms_key\030\033 "
-          + "\001(\tB&\372A#\n!cloudkms.googleapis.com/Crypto"
-          + "Key\022.\n\013destination\030\001 \001(\0132\031.google.storag"
-          + "e.v2.Object\022\032\n\rsource_bucket\030\002 \001(\tB\003\340A\002\022"
-          + "\032\n\rsource_object\030\003 \001(\tB\003\340A\002\022\031\n\021source_ge"
-          + "neration\030\004 \001(\003\022\025\n\rrewrite_token\030\005 \001(\t\022\"\n"
-          + "\032destination_predefined_acl\030\034 \001(\t\022 \n\023if_"
-          + "generation_match\030\007 \001(\003H\000\210\001\001\022$\n\027if_genera"
-          + "tion_not_match\030\010 \001(\003H\001\210\001\001\022$\n\027if_metagene"
-          + "ration_match\030\t \001(\003H\002\210\001\001\022(\n\033if_metagenera"
-          + "tion_not_match\030\n \001(\003H\003\210\001\001\022\'\n\032if_source_g"
-          + "eneration_match\030\013 \001(\003H\004\210\001\001\022+\n\036if_source_"
-          + "generation_not_match\030\014 \001(\003H\005\210\001\001\022+\n\036if_so"
-          + "urce_metageneration_match\030\r \001(\003H\006\210\001\001\022/\n\""
-          + "if_source_metageneration_not_match\030\016 \001(\003"
-          + "H\007\210\001\001\022$\n\034max_bytes_rewritten_per_call\030\017 "
-          + "\001(\003\022(\n copy_source_encryption_algorithm\030"
-          + "\020 \001(\t\022(\n copy_source_encryption_key_byte"
-          + "s\030\025 \001(\014\022/\n\'copy_source_encryption_key_sh"
-          + "a256_bytes\030\026 \001(\014\022R\n\034common_object_reques"
-          + "t_params\030\023 \001(\0132,.google.storage.v2.Commo"
-          + "nObjectRequestParams\022E\n\025common_request_p"
-          + "arams\030\024 \001(\0132&.google.storage.v2.CommonRe"
-          + "questParamsB\026\n\024_if_generation_matchB\032\n\030_"
-          + "if_generation_not_matchB\032\n\030_if_metagener"
-          + "ation_matchB\036\n\034_if_metageneration_not_ma"
-          + "tchB\035\n\033_if_source_generation_matchB!\n\037_i"
-          + "f_source_generation_not_matchB!\n\037_if_sou"
-          + "rce_metageneration_matchB%\n#_if_source_m"
-          + "etageneration_not_match\"\227\001\n\017RewriteRespo"
-          + "nse\022\035\n\025total_bytes_rewritten\030\001 \001(\003\022\023\n\013ob"
-          + "ject_size\030\002 \001(\003\022\014\n\004done\030\003 \001(\010\022\025\n\rrewrite"
-          + "_token\030\004 \001(\t\022+\n\010resource\030\005 \001(\0132\031.google."
-          + "storage.v2.Object\"\366\001\n\032StartResumableWrit"
-          + "eRequest\022=\n\021write_object_spec\030\001 \001(\0132\".go"
-          + "ogle.storage.v2.WriteObjectSpec\022R\n\034commo"
-          + "n_object_request_params\030\003 \001(\0132,.google.s"
-          + "torage.v2.CommonObjectRequestParams\022E\n\025c"
-          + "ommon_request_params\030\004 \001(\0132&.google.stor"
-          + "age.v2.CommonRequestParams\"0\n\033StartResum"
-          + "ableWriteResponse\022\021\n\tupload_id\030\001 \001(\t\"\254\004\n"
-          + "\023UpdateObjectRequest\022)\n\006object\030\001 \001(\0132\031.g"
-          + "oogle.storage.v2.Object\022 \n\023if_generation"
-          + "_match\030\002 \001(\003H\000\210\001\001\022$\n\027if_generation_not_m"
-          + "atch\030\003 \001(\003H\001\210\001\001\022$\n\027if_metageneration_mat"
-          + "ch\030\004 \001(\003H\002\210\001\001\022(\n\033if_metageneration_not_m"
-          + "atch\030\005 \001(\003H\003\210\001\001\022\026\n\016predefined_acl\030\n \001(\t\022"
-          + "/\n\013update_mask\030\007 \001(\0132\032.google.protobuf.F"
-          + "ieldMask\022R\n\034common_object_request_params"
-          + "\030\010 \001(\0132,.google.storage.v2.CommonObjectR"
-          + "equestParams\022E\n\025common_request_params\030\t "
-          + "\001(\0132&.google.storage.v2.CommonRequestPar"
-          + "amsB\026\n\024_if_generation_matchB\032\n\030_if_gener"
-          + "ation_not_matchB\032\n\030_if_metageneration_ma"
-          + "tchB\036\n\034_if_metageneration_not_match\"\247\001\n\030"
-          + "GetServiceAccountRequest\022D\n\007project\030\001 \001("
-          + "\tB3\340A\002\372A-\n+cloudresourcemanager.googleap"
-          + "is.com/Project\022E\n\025common_request_params\030"
-          + "\002 \001(\0132&.google.storage.v2.CommonRequestP"
-          + "arams\"\307\001\n\024CreateHmacKeyRequest\022D\n\007projec"
-          + "t\030\001 \001(\tB3\340A\002\372A-\n+cloudresourcemanager.go"
-          + "ogleapis.com/Project\022\"\n\025service_account_"
-          + "email\030\002 \001(\tB\003\340A\002\022E\n\025common_request_param"
-          + "s\030\003 \001(\0132&.google.storage.v2.CommonReques"
-          + "tParams\"g\n\025CreateHmacKeyResponse\0224\n\010meta"
-          + "data\030\001 \001(\0132\".google.storage.v2.HmacKeyMe"
-          + "tadata\022\030\n\020secret_key_bytes\030\003 \001(\014\"\273\001\n\024Del"
-          + "eteHmacKeyRequest\022\026\n\taccess_id\030\001 \001(\tB\003\340A"
-          + "\002\022D\n\007project\030\002 \001(\tB3\340A\002\372A-\n+cloudresourc"
-          + "emanager.googleapis.com/Project\022E\n\025commo"
-          + "n_request_params\030\003 \001(\0132&.google.storage."
-          + "v2.CommonRequestParams\"\270\001\n\021GetHmacKeyReq"
-          + "uest\022\026\n\taccess_id\030\001 \001(\tB\003\340A\002\022D\n\007project\030"
-          + "\002 \001(\tB3\340A\002\372A-\n+cloudresourcemanager.goog"
-          + "leapis.com/Project\022E\n\025common_request_par"
-          + "ams\030\003 \001(\0132&.google.storage.v2.CommonRequ"
-          + "estParams\"\234\002\n\023ListHmacKeysRequest\022D\n\007pro"
-          + "ject\030\001 \001(\tB3\340A\002\372A-\n+cloudresourcemanager"
-          + ".googleapis.com/Project\022\026\n\tpage_size\030\002 \001"
-          + "(\005B\003\340A\001\022\027\n\npage_token\030\003 \001(\tB\003\340A\001\022\"\n\025serv"
-          + "ice_account_email\030\004 \001(\tB\003\340A\001\022\036\n\021show_del"
-          + "eted_keys\030\005 \001(\010B\003\340A\001\022J\n\025common_request_p"
-          + "arams\030\006 \001(\0132&.google.storage.v2.CommonRe"
-          + "questParamsB\003\340A\001\"f\n\024ListHmacKeysResponse"
-          + "\0225\n\thmac_keys\030\001 \003(\0132\".google.storage.v2."
-          + "HmacKeyMetadata\022\027\n\017next_page_token\030\002 \001(\t"
-          + "\"\311\001\n\024UpdateHmacKeyRequest\0229\n\010hmac_key\030\001 "
-          + "\001(\0132\".google.storage.v2.HmacKeyMetadataB"
-          + "\003\340A\002\022E\n\025common_request_params\030\002 \001(\0132&.go"
-          + "ogle.storage.v2.CommonRequestParams\022/\n\013u"
-          + "pdate_mask\030\003 \001(\0132\032.google.protobuf.Field"
-          + "Mask\"|\n\031CommonObjectRequestParams\022\034\n\024enc"
-          + "ryption_algorithm\030\001 \001(\t\022\034\n\024encryption_ke"
-          + "y_bytes\030\004 \001(\014\022#\n\033encryption_key_sha256_b"
-          + "ytes\030\005 \001(\014\"`\n\023CommonRequestParams\022I\n\014use"
-          + "r_project\030\001 \001(\tB3\340A\002\372A-\n+cloudresourcema"
-          + "nager.googleapis.com/Project\"\312\005\n\020Service"
-          + "Constants\"\265\005\n\006Values\022\026\n\022VALUES_UNSPECIFI"
-          + "ED\020\000\022\033\n\024MAX_READ_CHUNK_BYTES\020\200\200\200\001\022\034\n\025MAX"
-          + "_WRITE_CHUNK_BYTES\020\200\200\200\001\022\031\n\022MAX_OBJECT_SI"
-          + "ZE_MB\020\200\200\300\002\022)\n$MAX_CUSTOM_METADATA_FIELD_"
-          + "NAME_BYTES\020\200\010\022*\n%MAX_CUSTOM_METADATA_FIE"
-          + "LD_VALUE_BYTES\020\200 \022)\n$MAX_CUSTOM_METADATA"
-          + "_TOTAL_SIZE_BYTES\020\200@\022*\n$MAX_BUCKET_METAD"
-          + "ATA_TOTAL_SIZE_BYTES\020\200\240\001\022\'\n#MAX_NOTIFICA"
-          + "TION_CONFIGS_PER_BUCKET\020d\022\"\n\036MAX_LIFECYC"
-          + "LE_RULES_PER_BUCKET\020d\022&\n\"MAX_NOTIFICATIO"
-          + "N_CUSTOM_ATTRIBUTES\020\005\0221\n,MAX_NOTIFICATIO"
-          + "N_CUSTOM_ATTRIBUTE_KEY_LENGTH\020\200\002\0223\n.MAX_"
-          + "NOTIFICATION_CUSTOM_ATTRIBUTE_VALUE_LENG"
-          + "TH\020\200\010\022\034\n\030MAX_LABELS_ENTRIES_COUNT\020@\022\037\n\033M"
-          + "AX_LABELS_KEY_VALUE_LENGTH\020?\022\037\n\032MAX_LABE"
-          + "LS_KEY_VALUE_BYTES\020\200\001\022.\n)MAX_OBJECT_IDS_"
-          + "PER_DELETE_OBJECTS_REQUEST\020\350\007\022\036\n\032SPLIT_T"
-          + "OKEN_MAX_VALID_DAYS\020\016\032\002\020\001\"\243\026\n\006Bucket\022\021\n\004"
-          + "name\030\001 \001(\tB\003\340A\005\022\026\n\tbucket_id\030\002 \001(\tB\003\340A\003\022"
-          + "D\n\007project\030\003 \001(\tB3\340A\005\372A-\n+cloudresourcem"
-          + "anager.googleapis.com/Project\022\033\n\016metagen"
-          + "eration\030\004 \001(\003B\003\340A\003\022\025\n\010location\030\005 \001(\tB\003\340A"
-          + "\005\022\032\n\rlocation_type\030\006 \001(\tB\003\340A\003\022\025\n\rstorage"
-          + "_class\030\007 \001(\t\022\013\n\003rpo\030\033 \001(\t\0223\n\003acl\030\010 \003(\0132&"
-          + ".google.storage.v2.BucketAccessControl\022B"
-          + "\n\022default_object_acl\030\t \003(\0132&.google.stor"
-          + "age.v2.ObjectAccessControl\0226\n\tlifecycle\030"
-          + "\n \001(\0132#.google.storage.v2.Bucket.Lifecyc"
-          + "le\0224\n\013create_time\030\013 \001(\0132\032.google.protobu"
-          + "f.TimestampB\003\340A\003\022,\n\004cors\030\014 \003(\0132\036.google."
-          + "storage.v2.Bucket.Cors\0224\n\013update_time\030\r "
-          + "\001(\0132\032.google.protobuf.TimestampB\003\340A\003\022 \n\030"
-          + "default_event_based_hold\030\016 \001(\010\0225\n\006labels"
-          + "\030\017 \003(\0132%.google.storage.v2.Bucket.Labels"
-          + "Entry\0222\n\007website\030\020 \001(\0132!.google.storage."
-          + "v2.Bucket.Website\0228\n\nversioning\030\021 \001(\0132$."
-          + "google.storage.v2.Bucket.Versioning\0222\n\007l"
-          + "ogging\030\022 \001(\0132!.google.storage.v2.Bucket."
-          + "Logging\022,\n\005owner\030\023 \001(\0132\030.google.storage."
-          + "v2.OwnerB\003\340A\003\0228\n\nencryption\030\024 \001(\0132$.goog"
-          + "le.storage.v2.Bucket.Encryption\0222\n\007billi"
-          + "ng\030\025 \001(\0132!.google.storage.v2.Bucket.Bill"
-          + "ing\022C\n\020retention_policy\030\026 \001(\0132).google.s"
-          + "torage.v2.Bucket.RetentionPolicy\0227\n\niam_"
-          + "config\030\027 \001(\0132#.google.storage.v2.Bucket."
-          + "IamConfig\022\025\n\rsatisfies_pzs\030\031 \001(\010\0226\n\tauto"
-          + "class\030\034 \001(\0132#.google.storage.v2.Bucket.A"
-          + "utoclass\032!\n\007Billing\022\026\n\016requester_pays\030\001 "
-          + "\001(\010\032X\n\004Cors\022\016\n\006origin\030\001 \003(\t\022\016\n\006method\030\002 "
-          + "\003(\t\022\027\n\017response_header\030\003 \003(\t\022\027\n\017max_age_"
-          + "seconds\030\004 \001(\005\032M\n\nEncryption\022?\n\017default_k"
-          + "ms_key\030\001 \001(\tB&\372A#\n!cloudkms.googleapis.c"
-          + "om/CryptoKey\032\354\001\n\tIamConfig\022a\n\033uniform_bu"
-          + "cket_level_access\030\001 \001(\0132<.google.storage"
-          + ".v2.Bucket.IamConfig.UniformBucketLevelA"
-          + "ccess\022 \n\030public_access_prevention\030\003 \001(\t\032"
-          + "Z\n\030UniformBucketLevelAccess\022\017\n\007enabled\030\001"
-          + " \001(\010\022-\n\tlock_time\030\002 \001(\0132\032.google.protobu"
-          + "f.Timestamp\032\363\005\n\tLifecycle\0226\n\004rule\030\001 \003(\0132"
-          + "(.google.storage.v2.Bucket.Lifecycle.Rul"
-          + "e\032\255\005\n\004Rule\022?\n\006action\030\001 \001(\0132/.google.stor"
-          + "age.v2.Bucket.Lifecycle.Rule.Action\022E\n\tc"
-          + "ondition\030\002 \001(\01322.google.storage.v2.Bucke"
-          + "t.Lifecycle.Rule.Condition\032-\n\006Action\022\014\n\004"
-          + "type\030\001 \001(\t\022\025\n\rstorage_class\030\002 \001(\t\032\355\003\n\tCo"
-          + "ndition\022\025\n\010age_days\030\001 \001(\005H\000\210\001\001\022)\n\016create"
-          + "d_before\030\002 \001(\0132\021.google.type.Date\022\024\n\007is_"
-          + "live\030\003 \001(\010H\001\210\001\001\022\037\n\022num_newer_versions\030\004 "
-          + "\001(\005H\002\210\001\001\022\035\n\025matches_storage_class\030\005 \003(\t\022"
-          + "#\n\026days_since_custom_time\030\007 \001(\005H\003\210\001\001\022-\n\022"
-          + "custom_time_before\030\010 \001(\0132\021.google.type.D"
-          + "ate\022\'\n\032days_since_noncurrent_time\030\t \001(\005H"
-          + "\004\210\001\001\0221\n\026noncurrent_time_before\030\n \001(\0132\021.g"
-          + "oogle.type.Date\022\026\n\016matches_prefix\030\013 \003(\t\022"
-          + "\026\n\016matches_suffix\030\014 \003(\tB\013\n\t_age_daysB\n\n\010"
-          + "_is_liveB\025\n\023_num_newer_versionsB\031\n\027_days"
-          + "_since_custom_timeB\035\n\033_days_since_noncur"
-          + "rent_time\0328\n\007Logging\022\022\n\nlog_bucket\030\001 \001(\t"
-          + "\022\031\n\021log_object_prefix\030\002 \001(\t\032r\n\017Retention"
-          + "Policy\0222\n\016effective_time\030\001 \001(\0132\032.google."
-          + "protobuf.Timestamp\022\021\n\tis_locked\030\002 \001(\010\022\030\n"
-          + "\020retention_period\030\003 \001(\003\032\035\n\nVersioning\022\017\n"
-          + "\007enabled\030\001 \001(\010\032;\n\007Website\022\030\n\020main_page_s"
-          + "uffix\030\001 \001(\t\022\026\n\016not_found_page\030\002 \001(\t\032R\n\tA"
-          + "utoclass\022\017\n\007enabled\030\001 \001(\010\0224\n\013toggle_time"
-          + "\030\002 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\032"
-          + "-\n\013LabelsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001"
-          + "(\t:\0028\001:G\352AD\n\035storage.googleapis.com/Buck"
-          + "et\022#projects/{project}/buckets/{bucket}\""
-          + "\247\001\n\023BucketAccessControl\022\014\n\004role\030\001 \001(\t\022\n\n"
-          + "\002id\030\002 \001(\t\022\016\n\006entity\030\003 \001(\t\022\021\n\tentity_id\030\004"
-          + " \001(\t\022\r\n\005email\030\005 \001(\t\022\016\n\006domain\030\006 \001(\t\0224\n\014p"
-          + "roject_team\030\007 \001(\0132\036.google.storage.v2.Pr"
-          + "ojectTeam\"B\n\017ChecksummedData\022\017\n\007content\030"
-          + "\001 \001(\014\022\023\n\006crc32c\030\002 \001(\007H\000\210\001\001B\t\n\007_crc32c\"C\n"
-          + "\017ObjectChecksums\022\023\n\006crc32c\030\001 \001(\007H\000\210\001\001\022\020\n"
-          + "\010md5_hash\030\002 \001(\014B\t\n\007_crc32c\"\203\002\n\017HmacKeyMe"
-          + "tadata\022\n\n\002id\030\001 \001(\t\022\021\n\taccess_id\030\002 \001(\t\022A\n"
-          + "\007project\030\003 \001(\tB0\372A-\n+cloudresourcemanage"
-          + "r.googleapis.com/Project\022\035\n\025service_acco"
-          + "unt_email\030\004 \001(\t\022\r\n\005state\030\005 \001(\t\022/\n\013create"
-          + "_time\030\006 \001(\0132\032.google.protobuf.Timestamp\022"
-          + "/\n\013update_time\030\007 \001(\0132\032.google.protobuf.T"
-          + "imestamp\"\217\003\n\014Notification\022\021\n\004name\030\001 \001(\tB"
-          + "\003\340A\002\022\022\n\005topic\030\002 \001(\tB\003\340A\002\022\030\n\013event_types\030"
-          + "\003 \003(\tB\003\340A\001\022U\n\021custom_attributes\030\004 \003(\01325."
-          + "google.storage.v2.Notification.CustomAtt"
-          + "ributesEntryB\003\340A\001\022\037\n\022object_name_prefix\030"
-          + "\005 \001(\tB\003\340A\001\022\033\n\016payload_format\030\006 \001(\tB\003\340A\002\032"
-          + "7\n\025CustomAttributesEntry\022\013\n\003key\030\001 \001(\t\022\r\n"
-          + "\005value\030\002 \001(\t:\0028\001:p\352Am\n#storage.googleapi"
-          + "s.com/Notification\022Fprojects/{project}/b"
-          + "uckets/{bucket}/notificationConfigs/{not"
-          + "ification}\"L\n\022CustomerEncryption\022\034\n\024encr"
-          + "yption_algorithm\030\001 \001(\t\022\030\n\020key_sha256_byt"
-          + "es\030\003 \001(\014\"\364\010\n\006Object\022\021\n\004name\030\001 \001(\tB\003\340A\005\0225"
-          + "\n\006bucket\030\002 \001(\tB%\340A\005\372A\037\n\035storage.googleap"
-          + "is.com/Bucket\022\027\n\ngeneration\030\003 \001(\003B\003\340A\005\022\033"
-          + "\n\016metageneration\030\004 \001(\003B\003\340A\003\022\025\n\rstorage_c"
-          + "lass\030\005 \001(\t\022\021\n\004size\030\006 \001(\003B\003\340A\003\022\030\n\020content"
-          + "_encoding\030\007 \001(\t\022\033\n\023content_disposition\030\010"
-          + " \001(\t\022\025\n\rcache_control\030\t \001(\t\0223\n\003acl\030\n \003(\013"
-          + "2&.google.storage.v2.ObjectAccessControl"
-          + "\022\030\n\020content_language\030\013 \001(\t\0224\n\013delete_tim",
-      "e\030\014 \001(\0132\032.google.protobuf.TimestampB\003\340A\003"
-          + "\022\024\n\014content_type\030\r \001(\t\0224\n\013create_time\030\016 "
-          + "\001(\0132\032.google.protobuf.TimestampB\003\340A\003\022\034\n\017"
-          + "component_count\030\017 \001(\005B\003\340A\003\022:\n\tchecksums\030"
-          + "\020 \001(\0132\".google.storage.v2.ObjectChecksum"
-          + "sB\003\340A\003\0224\n\013update_time\030\021 \001(\0132\032.google.pro"
-          + "tobuf.TimestampB\003\340A\003\0227\n\007kms_key\030\022 \001(\tB&\372"
-          + "A#\n!cloudkms.googleapis.com/CryptoKey\022B\n"
-          + "\031update_storage_class_time\030\023 \001(\0132\032.googl"
-          + "e.protobuf.TimestampB\003\340A\003\022\026\n\016temporary_h"
-          + "old\030\024 \001(\010\0229\n\025retention_expire_time\030\025 \001(\013"
-          + "2\032.google.protobuf.Timestamp\0229\n\010metadata"
-          + "\030\026 \003(\0132\'.google.storage.v2.Object.Metada"
-          + "taEntry\022\035\n\020event_based_hold\030\027 \001(\010H\000\210\001\001\022,"
-          + "\n\005owner\030\030 \001(\0132\030.google.storage.v2.OwnerB"
-          + "\003\340A\003\022B\n\023customer_encryption\030\031 \001(\0132%.goog"
-          + "le.storage.v2.CustomerEncryption\022/\n\013cust"
-          + "om_time\030\032 \001(\0132\032.google.protobuf.Timestam"
-          + "p\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value"
-          + "\030\002 \001(\t:\0028\001B\023\n\021_event_based_hold\"\247\001\n\023Obje"
-          + "ctAccessControl\022\014\n\004role\030\001 \001(\t\022\n\n\002id\030\002 \001("
-          + "\t\022\016\n\006entity\030\003 \001(\t\022\021\n\tentity_id\030\004 \001(\t\022\r\n\005"
-          + "email\030\005 \001(\t\022\016\n\006domain\030\006 \001(\t\0224\n\014project_t"
-          + "eam\030\007 \001(\0132\036.google.storage.v2.ProjectTea"
-          + "m\"l\n\023ListObjectsResponse\022*\n\007objects\030\001 \003("
-          + "\0132\031.google.storage.v2.Object\022\020\n\010prefixes"
-          + "\030\002 \003(\t\022\027\n\017next_page_token\030\003 \001(\t\"3\n\013Proje"
-          + "ctTeam\022\026\n\016project_number\030\001 \001(\t\022\014\n\004team\030\002"
-          + " \001(\t\"\'\n\016ServiceAccount\022\025\n\remail_address\030"
-          + "\001 \001(\t\"*\n\005Owner\022\016\n\006entity\030\001 \001(\t\022\021\n\tentity"
-          + "_id\030\002 \001(\t\"C\n\014ContentRange\022\r\n\005start\030\001 \001(\003"
-          + "\022\013\n\003end\030\002 \001(\003\022\027\n\017complete_length\030\003 \001(\0032\260"
-          + "\033\n\007Storage\022W\n\014DeleteBucket\022&.google.stor"
-          + "age.v2.DeleteBucketRequest\032\026.google.prot"
-          + "obuf.Empty\"\007\332A\004name\022T\n\tGetBucket\022#.googl"
-          + "e.storage.v2.GetBucketRequest\032\031.google.s"
-          + "torage.v2.Bucket\"\007\332A\004name\022m\n\014CreateBucke"
-          + "t\022&.google.storage.v2.CreateBucketReques"
-          + "t\032\031.google.storage.v2.Bucket\"\032\332A\027parent,"
-          + "bucket,bucket_id\022g\n\013ListBuckets\022%.google"
-          + ".storage.v2.ListBucketsRequest\032&.google."
-          + "storage.v2.ListBucketsResponse\"\t\332A\006paren"
-          + "t\022v\n\031LockBucketRetentionPolicy\0223.google."
-          + "storage.v2.LockBucketRetentionPolicyRequ"
-          + "est\032\031.google.storage.v2.Bucket\"\t\332A\006bucke"
-          + "t\022V\n\014GetIamPolicy\022\".google.iam.v1.GetIam"
-          + "PolicyRequest\032\025.google.iam.v1.Policy\"\013\332A"
-          + "\010resource\022]\n\014SetIamPolicy\022\".google.iam.v"
-          + "1.SetIamPolicyRequest\032\025.google.iam.v1.Po"
-          + "licy\"\022\332A\017resource,policy\022\202\001\n\022TestIamPerm"
-          + "issions\022(.google.iam.v1.TestIamPermissio"
-          + "nsRequest\032).google.iam.v1.TestIamPermiss"
-          + "ionsResponse\"\027\332A\024resource,permissions\022h\n"
-          + "\014UpdateBucket\022&.google.storage.v2.Update"
-          + "BucketRequest\032\031.google.storage.v2.Bucket"
-          + "\"\025\332A\022bucket,update_mask\022c\n\022DeleteNotific"
-          + "ation\022,.google.storage.v2.DeleteNotifica"
-          + "tionRequest\032\026.google.protobuf.Empty\"\007\332A\004"
-          + "name\022f\n\017GetNotification\022).google.storage"
-          + ".v2.GetNotificationRequest\032\037.google.stor"
-          + "age.v2.Notification\"\007\332A\004name\022{\n\022CreateNo"
-          + "tification\022,.google.storage.v2.CreateNot"
-          + "ificationRequest\032\037.google.storage.v2.Not"
-          + "ification\"\026\332A\023parent,notification\022y\n\021Lis"
-          + "tNotifications\022+.google.storage.v2.ListN"
-          + "otificationsRequest\032,.google.storage.v2."
-          + "ListNotificationsResponse\"\t\332A\006parent\022U\n\r"
-          + "ComposeObject\022\'.google.storage.v2.Compos"
-          + "eObjectRequest\032\031.google.storage.v2.Objec"
-          + "t\"\000\022{\n\014DeleteObject\022&.google.storage.v2."
-          + "DeleteObjectRequest\032\026.google.protobuf.Em"
-          + "pty\"+\332A\rbucket,object\332A\030bucket,object,ge"
-          + "neration\022x\n\tGetObject\022#.google.storage.v"
-          + "2.GetObjectRequest\032\031.google.storage.v2.O"
-          + "bject\"+\332A\rbucket,object\332A\030bucket,object,"
-          + "generation\022\210\001\n\nReadObject\022$.google.stora"
-          + "ge.v2.ReadObjectRequest\032%.google.storage"
-          + ".v2.ReadObjectResponse\"+\332A\rbucket,object"
-          + "\332A\030bucket,object,generation0\001\022h\n\014UpdateO"
-          + "bject\022&.google.storage.v2.UpdateObjectRe"
-          + "quest\032\031.google.storage.v2.Object\"\025\332A\022obj"
-          + "ect,update_mask\022`\n\013WriteObject\022%.google."
-          + "storage.v2.WriteObjectRequest\032&.google.s"
-          + "torage.v2.WriteObjectResponse\"\000(\001\022g\n\013Lis"
-          + "tObjects\022%.google.storage.v2.ListObjects"
-          + "Request\032&.google.storage.v2.ListObjectsR"
-          + "esponse\"\t\332A\006parent\022^\n\rRewriteObject\022\'.go"
-          + "ogle.storage.v2.RewriteObjectRequest\032\".g"
-          + "oogle.storage.v2.RewriteResponse\"\000\022v\n\023St"
-          + "artResumableWrite\022-.google.storage.v2.St"
-          + "artResumableWriteRequest\032..google.storag"
-          + "e.v2.StartResumableWriteResponse\"\000\022y\n\020Qu"
-          + "eryWriteStatus\022*.google.storage.v2.Query"
-          + "WriteStatusRequest\032+.google.storage.v2.Q"
-          + "ueryWriteStatusResponse\"\014\332A\tupload_id\022o\n"
-          + "\021GetServiceAccount\022+.google.storage.v2.G"
-          + "etServiceAccountRequest\032!.google.storage"
-          + ".v2.ServiceAccount\"\n\332A\007project\022\204\001\n\rCreat"
-          + "eHmacKey\022\'.google.storage.v2.CreateHmacK"
-          + "eyRequest\032(.google.storage.v2.CreateHmac"
-          + "KeyResponse\" \332A\035project,service_account_"
-          + "email\022f\n\rDeleteHmacKey\022\'.google.storage."
-          + "v2.DeleteHmacKeyRequest\032\026.google.protobu"
-          + "f.Empty\"\024\332A\021access_id,project\022l\n\nGetHmac"
-          + "Key\022$.google.storage.v2.GetHmacKeyReques"
-          + "t\032\".google.storage.v2.HmacKeyMetadata\"\024\332"
-          + "A\021access_id,project\022k\n\014ListHmacKeys\022&.go"
-          + "ogle.storage.v2.ListHmacKeysRequest\032\'.go"
-          + "ogle.storage.v2.ListHmacKeysResponse\"\n\332A"
-          + "\007project\022u\n\rUpdateHmacKey\022\'.google.stora"
-          + "ge.v2.UpdateHmacKeyRequest\032\".google.stor"
-          + "age.v2.HmacKeyMetadata\"\027\332A\024hmac_key,upda"
-          + "te_mask\032\247\002\312A\026storage.googleapis.com\322A\212\002h"
-          + "ttps://www.googleapis.com/auth/cloud-pla"
-          + "tform,https://www.googleapis.com/auth/cl"
-          + "oud-platform.read-only,https://www.googl"
-          + "eapis.com/auth/devstorage.full_control,h"
-          + "ttps://www.googleapis.com/auth/devstorag"
-          + "e.read_only,https://www.googleapis.com/a"
-          + "uth/devstorage.read_writeB\334\001\n\025com.google"
-          + ".storage.v2B\014StorageProtoP\001Z8google.gola"
-          + "ng.org/genproto/googleapis/storage/v2;st"
-          + "orage\352Ax\n!cloudkms.googleapis.com/Crypto"
-          + "Key\022Sprojects/{project}/locations/{locat"
-          + "ion}/keyRings/{key_ring}/cryptoKeys/{cry"
-          + "pto_key}b\006proto3"
+          + "B\017\n\rfirst_messageB\006\n\004data\"n\n\023WriteObject"
+          + "Response\022\030\n\016persisted_size\030\001 \001(\003H\000\022-\n\010re"
+          + "source\030\002 \001(\0132\031.google.storage.v2.ObjectH"
+          + "\000B\016\n\014write_status\"\305\002\n\022ListObjectsRequest"
+          + "\0225\n\006parent\030\001 \001(\tB%\340A\002\372A\037\022\035storage.google"
+          + "apis.com/Bucket\022\021\n\tpage_size\030\002 \001(\005\022\022\n\npa"
+          + "ge_token\030\003 \001(\t\022\021\n\tdelimiter\030\004 \001(\t\022\"\n\032inc"
+          + "lude_trailing_delimiter\030\005 \001(\010\022\016\n\006prefix\030"
+          + "\006 \001(\t\022\020\n\010versions\030\007 \001(\010\0222\n\tread_mask\030\010 \001"
+          + "(\0132\032.google.protobuf.FieldMaskH\000\210\001\001\022\033\n\023l"
+          + "exicographic_start\030\n \001(\t\022\031\n\021lexicographi"
+          + "c_end\030\013 \001(\tB\014\n\n_read_mask\"\205\001\n\027QueryWrite"
+          + "StatusRequest\022\026\n\tupload_id\030\001 \001(\tB\003\340A\002\022R\n"
+          + "\034common_object_request_params\030\002 \001(\0132,.go"
+          + "ogle.storage.v2.CommonObjectRequestParam"
+          + "s\"s\n\030QueryWriteStatusResponse\022\030\n\016persist"
+          + "ed_size\030\001 \001(\003H\000\022-\n\010resource\030\002 \001(\0132\031.goog"
+          + "le.storage.v2.ObjectH\000B\016\n\014write_status\"\302"
+          + "\t\n\024RewriteObjectRequest\022\035\n\020destination_n"
+          + "ame\030\030 \001(\tB\003\340A\005\022A\n\022destination_bucket\030\031 \001"
+          + "(\tB%\340A\005\372A\037\n\035storage.googleapis.com/Bucke"
+          + "t\022C\n\023destination_kms_key\030\033 \001(\tB&\372A#\n!clo"
+          + "udkms.googleapis.com/CryptoKey\022.\n\013destin"
+          + "ation\030\001 \001(\0132\031.google.storage.v2.Object\022\032"
+          + "\n\rsource_bucket\030\002 \001(\tB\003\340A\002\022\032\n\rsource_obj"
+          + "ect\030\003 \001(\tB\003\340A\002\022\031\n\021source_generation\030\004 \001("
+          + "\003\022\025\n\rrewrite_token\030\005 \001(\t\022\"\n\032destination_"
+          + "predefined_acl\030\034 \001(\t\022 \n\023if_generation_ma"
+          + "tch\030\007 \001(\003H\000\210\001\001\022$\n\027if_generation_not_matc"
+          + "h\030\010 \001(\003H\001\210\001\001\022$\n\027if_metageneration_match\030"
+          + "\t \001(\003H\002\210\001\001\022(\n\033if_metageneration_not_matc"
+          + "h\030\n \001(\003H\003\210\001\001\022\'\n\032if_source_generation_mat"
+          + "ch\030\013 \001(\003H\004\210\001\001\022+\n\036if_source_generation_no"
+          + "t_match\030\014 \001(\003H\005\210\001\001\022+\n\036if_source_metagene"
+          + "ration_match\030\r \001(\003H\006\210\001\001\022/\n\"if_source_met"
+          + "ageneration_not_match\030\016 \001(\003H\007\210\001\001\022$\n\034max_"
+          + "bytes_rewritten_per_call\030\017 \001(\003\022(\n copy_s"
+          + "ource_encryption_algorithm\030\020 \001(\t\022(\n copy"
+          + "_source_encryption_key_bytes\030\025 \001(\014\022/\n\'co"
+          + "py_source_encryption_key_sha256_bytes\030\026 "
+          + "\001(\014\022R\n\034common_object_request_params\030\023 \001("
+          + "\0132,.google.storage.v2.CommonObjectReques"
+          + "tParamsB\026\n\024_if_generation_matchB\032\n\030_if_g"
+          + "eneration_not_matchB\032\n\030_if_metageneratio"
+          + "n_matchB\036\n\034_if_metageneration_not_matchB"
+          + "\035\n\033_if_source_generation_matchB!\n\037_if_so"
+          + "urce_generation_not_matchB!\n\037_if_source_"
+          + "metageneration_matchB%\n#_if_source_metag"
+          + "eneration_not_match\"\227\001\n\017RewriteResponse\022"
+          + "\035\n\025total_bytes_rewritten\030\001 \001(\003\022\023\n\013object"
+          + "_size\030\002 \001(\003\022\014\n\004done\030\003 \001(\010\022\025\n\rrewrite_tok"
+          + "en\030\004 \001(\t\022+\n\010resource\030\005 \001(\0132\031.google.stor"
+          + "age.v2.Object\"\257\001\n\032StartResumableWriteReq"
+          + "uest\022=\n\021write_object_spec\030\001 \001(\0132\".google"
+          + ".storage.v2.WriteObjectSpec\022R\n\034common_ob"
+          + "ject_request_params\030\003 \001(\0132,.google.stora"
+          + "ge.v2.CommonObjectRequestParams\"0\n\033Start"
+          + "ResumableWriteResponse\022\021\n\tupload_id\030\001 \001("
+          + "\t\"\345\003\n\023UpdateObjectRequest\022)\n\006object\030\001 \001("
+          + "\0132\031.google.storage.v2.Object\022 \n\023if_gener"
+          + "ation_match\030\002 \001(\003H\000\210\001\001\022$\n\027if_generation_"
+          + "not_match\030\003 \001(\003H\001\210\001\001\022$\n\027if_metageneratio"
+          + "n_match\030\004 \001(\003H\002\210\001\001\022(\n\033if_metageneration_"
+          + "not_match\030\005 \001(\003H\003\210\001\001\022\026\n\016predefined_acl\030\n"
+          + " \001(\t\022/\n\013update_mask\030\007 \001(\0132\032.google.proto"
+          + "buf.FieldMask\022R\n\034common_object_request_p"
+          + "arams\030\010 \001(\0132,.google.storage.v2.CommonOb"
+          + "jectRequestParamsB\026\n\024_if_generation_matc"
+          + "hB\032\n\030_if_generation_not_matchB\032\n\030_if_met"
+          + "ageneration_matchB\036\n\034_if_metageneration_"
+          + "not_match\"`\n\030GetServiceAccountRequest\022D\n"
+          + "\007project\030\001 \001(\tB3\340A\002\372A-\n+cloudresourceman"
+          + "ager.googleapis.com/Project\"\200\001\n\024CreateHm"
+          + "acKeyRequest\022D\n\007project\030\001 \001(\tB3\340A\002\372A-\n+c"
+          + "loudresourcemanager.googleapis.com/Proje"
+          + "ct\022\"\n\025service_account_email\030\002 \001(\tB\003\340A\002\"g"
+          + "\n\025CreateHmacKeyResponse\0224\n\010metadata\030\001 \001("
+          + "\0132\".google.storage.v2.HmacKeyMetadata\022\030\n"
+          + "\020secret_key_bytes\030\003 \001(\014\"t\n\024DeleteHmacKey"
+          + "Request\022\026\n\taccess_id\030\001 \001(\tB\003\340A\002\022D\n\007proje"
+          + "ct\030\002 \001(\tB3\340A\002\372A-\n+cloudresourcemanager.g"
+          + "oogleapis.com/Project\"q\n\021GetHmacKeyReque"
+          + "st\022\026\n\taccess_id\030\001 \001(\tB\003\340A\002\022D\n\007project\030\002 "
+          + "\001(\tB3\340A\002\372A-\n+cloudresourcemanager.google"
+          + "apis.com/Project\"\320\001\n\023ListHmacKeysRequest"
+          + "\022D\n\007project\030\001 \001(\tB3\340A\002\372A-\n+cloudresource"
+          + "manager.googleapis.com/Project\022\026\n\tpage_s"
+          + "ize\030\002 \001(\005B\003\340A\001\022\027\n\npage_token\030\003 \001(\tB\003\340A\001\022"
+          + "\"\n\025service_account_email\030\004 \001(\tB\003\340A\001\022\036\n\021s"
+          + "how_deleted_keys\030\005 \001(\010B\003\340A\001\"f\n\024ListHmacK"
+          + "eysResponse\0225\n\thmac_keys\030\001 \003(\0132\".google."
+          + "storage.v2.HmacKeyMetadata\022\027\n\017next_page_"
+          + "token\030\002 \001(\t\"\202\001\n\024UpdateHmacKeyRequest\0229\n\010"
+          + "hmac_key\030\001 \001(\0132\".google.storage.v2.HmacK"
+          + "eyMetadataB\003\340A\002\022/\n\013update_mask\030\003 \001(\0132\032.g"
+          + "oogle.protobuf.FieldMask\"|\n\031CommonObject"
+          + "RequestParams\022\034\n\024encryption_algorithm\030\001 "
+          + "\001(\t\022\034\n\024encryption_key_bytes\030\004 \001(\014\022#\n\033enc"
+          + "ryption_key_sha256_bytes\030\005 \001(\014\"\312\005\n\020Servi"
+          + "ceConstants\"\265\005\n\006Values\022\026\n\022VALUES_UNSPECI"
+          + "FIED\020\000\022\033\n\024MAX_READ_CHUNK_BYTES\020\200\200\200\001\022\034\n\025M"
+          + "AX_WRITE_CHUNK_BYTES\020\200\200\200\001\022\031\n\022MAX_OBJECT_"
+          + "SIZE_MB\020\200\200\300\002\022)\n$MAX_CUSTOM_METADATA_FIEL"
+          + "D_NAME_BYTES\020\200\010\022*\n%MAX_CUSTOM_METADATA_F"
+          + "IELD_VALUE_BYTES\020\200 \022)\n$MAX_CUSTOM_METADA"
+          + "TA_TOTAL_SIZE_BYTES\020\200@\022*\n$MAX_BUCKET_MET"
+          + "ADATA_TOTAL_SIZE_BYTES\020\200\240\001\022\'\n#MAX_NOTIFI"
+          + "CATION_CONFIGS_PER_BUCKET\020d\022\"\n\036MAX_LIFEC"
+          + "YCLE_RULES_PER_BUCKET\020d\022&\n\"MAX_NOTIFICAT"
+          + "ION_CUSTOM_ATTRIBUTES\020\005\0221\n,MAX_NOTIFICAT"
+          + "ION_CUSTOM_ATTRIBUTE_KEY_LENGTH\020\200\002\0223\n.MA"
+          + "X_NOTIFICATION_CUSTOM_ATTRIBUTE_VALUE_LE"
+          + "NGTH\020\200\010\022\034\n\030MAX_LABELS_ENTRIES_COUNT\020@\022\037\n"
+          + "\033MAX_LABELS_KEY_VALUE_LENGTH\020?\022\037\n\032MAX_LA"
+          + "BELS_KEY_VALUE_BYTES\020\200\001\022.\n)MAX_OBJECT_ID"
+          + "S_PER_DELETE_OBJECTS_REQUEST\020\350\007\022\036\n\032SPLIT"
+          + "_TOKEN_MAX_VALID_DAYS\020\016\032\002\020\001\"\243\026\n\006Bucket\022\021"
+          + "\n\004name\030\001 \001(\tB\003\340A\005\022\026\n\tbucket_id\030\002 \001(\tB\003\340A"
+          + "\003\022D\n\007project\030\003 \001(\tB3\340A\005\372A-\n+cloudresourc"
+          + "emanager.googleapis.com/Project\022\033\n\016metag"
+          + "eneration\030\004 \001(\003B\003\340A\003\022\025\n\010location\030\005 \001(\tB\003"
+          + "\340A\005\022\032\n\rlocation_type\030\006 \001(\tB\003\340A\003\022\025\n\rstora"
+          + "ge_class\030\007 \001(\t\022\013\n\003rpo\030\033 \001(\t\0223\n\003acl\030\010 \003(\013"
+          + "2&.google.storage.v2.BucketAccessControl"
+          + "\022B\n\022default_object_acl\030\t \003(\0132&.google.st"
+          + "orage.v2.ObjectAccessControl\0226\n\tlifecycl"
+          + "e\030\n \001(\0132#.google.storage.v2.Bucket.Lifec"
+          + "ycle\0224\n\013create_time\030\013 \001(\0132\032.google.proto"
+          + "buf.TimestampB\003\340A\003\022,\n\004cors\030\014 \003(\0132\036.googl"
+          + "e.storage.v2.Bucket.Cors\0224\n\013update_time\030"
+          + "\r \001(\0132\032.google.protobuf.TimestampB\003\340A\003\022 "
+          + "\n\030default_event_based_hold\030\016 \001(\010\0225\n\006labe"
+          + "ls\030\017 \003(\0132%.google.storage.v2.Bucket.Labe"
+          + "lsEntry\0222\n\007website\030\020 \001(\0132!.google.storag"
+          + "e.v2.Bucket.Website\0228\n\nversioning\030\021 \001(\0132"
+          + "$.google.storage.v2.Bucket.Versioning\0222\n"
+          + "\007logging\030\022 \001(\0132!.google.storage.v2.Bucke"
+          + "t.Logging\022,\n\005owner\030\023 \001(\0132\030.google.storag"
+          + "e.v2.OwnerB\003\340A\003\0228\n\nencryption\030\024 \001(\0132$.go"
+          + "ogle.storage.v2.Bucket.Encryption\0222\n\007bil"
+          + "ling\030\025 \001(\0132!.google.storage.v2.Bucket.Bi"
+          + "lling\022C\n\020retention_policy\030\026 \001(\0132).google"
+          + ".storage.v2.Bucket.RetentionPolicy\0227\n\nia"
+          + "m_config\030\027 \001(\0132#.google.storage.v2.Bucke"
+          + "t.IamConfig\022\025\n\rsatisfies_pzs\030\031 \001(\010\0226\n\tau"
+          + "toclass\030\034 \001(\0132#.google.storage.v2.Bucket"
+          + ".Autoclass\032!\n\007Billing\022\026\n\016requester_pays\030"
+          + "\001 \001(\010\032X\n\004Cors\022\016\n\006origin\030\001 \003(\t\022\016\n\006method\030"
+          + "\002 \003(\t\022\027\n\017response_header\030\003 \003(\t\022\027\n\017max_ag"
+          + "e_seconds\030\004 \001(\005\032M\n\nEncryption\022?\n\017default"
+          + "_kms_key\030\001 \001(\tB&\372A#\n!cloudkms.googleapis"
+          + ".com/CryptoKey\032\354\001\n\tIamConfig\022a\n\033uniform_"
+          + "bucket_level_access\030\001 \001(\0132<.google.stora"
+          + "ge.v2.Bucket.IamConfig.UniformBucketLeve"
+          + "lAccess\022 \n\030public_access_prevention\030\003 \001("
+          + "\t\032Z\n\030UniformBucketLevelAccess\022\017\n\007enabled"
+          + "\030\001 \001(\010\022-\n\tlock_time\030\002 \001(\0132\032.google.proto"
+          + "buf.Timestamp\032\363\005\n\tLifecycle\0226\n\004rule\030\001 \003("
+          + "\0132(.google.storage.v2.Bucket.Lifecycle.R"
+          + "ule\032\255\005\n\004Rule\022?\n\006action\030\001 \001(\0132/.google.st"
+          + "orage.v2.Bucket.Lifecycle.Rule.Action\022E\n"
+          + "\tcondition\030\002 \001(\01322.google.storage.v2.Buc"
+          + "ket.Lifecycle.Rule.Condition\032-\n\006Action\022\014"
+          + "\n\004type\030\001 \001(\t\022\025\n\rstorage_class\030\002 \001(\t\032\355\003\n\t"
+          + "Condition\022\025\n\010age_days\030\001 \001(\005H\000\210\001\001\022)\n\016crea"
+          + "ted_before\030\002 \001(\0132\021.google.type.Date\022\024\n\007i"
+          + "s_live\030\003 \001(\010H\001\210\001\001\022\037\n\022num_newer_versions\030"
+          + "\004 \001(\005H\002\210\001\001\022\035\n\025matches_storage_class\030\005 \003("
+          + "\t\022#\n\026days_since_custom_time\030\007 \001(\005H\003\210\001\001\022-"
+          + "\n\022custom_time_before\030\010 \001(\0132\021.google.type"
+          + ".Date\022\'\n\032days_since_noncurrent_time\030\t \001("
+          + "\005H\004\210\001\001\0221\n\026noncurrent_time_before\030\n \001(\0132\021"
+          + ".google.type.Date\022\026\n\016matches_prefix\030\013 \003("
+          + "\t\022\026\n\016matches_suffix\030\014 \003(\tB\013\n\t_age_daysB\n"
+          + "\n\010_is_liveB\025\n\023_num_newer_versionsB\031\n\027_da"
+          + "ys_since_custom_timeB\035\n\033_days_since_nonc"
+          + "urrent_time\0328\n\007Logging\022\022\n\nlog_bucket\030\001 \001"
+          + "(\t\022\031\n\021log_object_prefix\030\002 \001(\t\032r\n\017Retenti"
+          + "onPolicy\0222\n\016effective_time\030\001 \001(\0132\032.googl"
+          + "e.protobuf.Timestamp\022\021\n\tis_locked\030\002 \001(\010\022"
+          + "\030\n\020retention_period\030\003 \001(\003\032\035\n\nVersioning\022"
+          + "\017\n\007enabled\030\001 \001(\010\032;\n\007Website\022\030\n\020main_page"
+          + "_suffix\030\001 \001(\t\022\026\n\016not_found_page\030\002 \001(\t\032R\n"
+          + "\tAutoclass\022\017\n\007enabled\030\001 \001(\010\0224\n\013toggle_ti"
+          + "me\030\002 \001(\0132\032.google.protobuf.TimestampB\003\340A"
+          + "\003\032-\n\013LabelsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002"
+          + " \001(\t:\0028\001:G\352AD\n\035storage.googleapis.com/Bu"
+          + "cket\022#projects/{project}/buckets/{bucket"
+          + "}\"\247\001\n\023BucketAccessControl\022\014\n\004role\030\001 \001(\t\022"
+          + "\n\n\002id\030\002 \001(\t\022\016\n\006entity\030\003 \001(\t\022\021\n\tentity_id"
+          + "\030\004 \001(\t\022\r\n\005email\030\005 \001(\t\022\016\n\006domain\030\006 \001(\t\0224\n"
+          + "\014project_team\030\007 \001(\0132\036.google.storage.v2."
+          + "ProjectTeam\"B\n\017ChecksummedData\022\017\n\007conten"
+          + "t\030\001 \001(\014\022\023\n\006crc32c\030\002 \001(\007H\000\210\001\001B\t\n\007_crc32c\""
+          + "C\n\017ObjectChecksums\022\023\n\006crc32c\030\001 \001(\007H\000\210\001\001\022"
+          + "\020\n\010md5_hash\030\002 \001(\014B\t\n\007_crc32c\"\203\002\n\017HmacKey"
+          + "Metadata\022\n\n\002id\030\001 \001(\t\022\021\n\taccess_id\030\002 \001(\t\022"
+          + "A\n\007project\030\003 \001(\tB0\372A-\n+cloudresourcemana"
+          + "ger.googleapis.com/Project\022\035\n\025service_ac"
+          + "count_email\030\004 \001(\t\022\r\n\005state\030\005 \001(\t\022/\n\013crea"
+          + "te_time\030\006 \001(\0132\032.google.protobuf.Timestam"
+          + "p\022/\n\013update_time\030\007 \001(\0132\032.google.protobuf"
+          + ".Timestamp\"\217\003\n\014Notification\022\021\n\004name\030\001 \001("
+          + "\tB\003\340A\002\022\022\n\005topic\030\002 \001(\tB\003\340A\002\022\030\n\013event_type"
+          + "s\030\003 \003(\tB\003\340A\001\022U\n\021custom_attributes\030\004 \003(\0132"
+          + "5.google.storage.v2.Notification.CustomA"
+          + "ttributesEntryB\003\340A\001\022\037\n\022object_name_prefi"
+          + "x\030\005 \001(\tB\003\340A\001\022\033\n\016payload_format\030\006 \001(\tB\003\340A"
+          + "\002\0327\n\025CustomAttributesEntry\022\013\n\003key\030\001 \001(\t\022"
+          + "\r\n\005value\030\002 \001(\t:\0028\001:p\352Am\n#storage.googlea"
+          + "pis.com/Notification\022Fprojects/{project}"
+          + "/buckets/{bucket}/notificationConfigs/{n"
+          + "otification}\"L\n\022CustomerEncryption\022\034\n\024en"
+          + "cryption_algorithm\030\001 \001(\t\022\030\n\020key_sha256_b"
+          + "ytes\030\003 \001(\014\"\364\010\n\006Object\022\021\n\004name\030\001 \001(\tB\003\340A\005"
+          + "\0225\n\006bucket\030\002 \001(\tB%\340A\005\372A\037\n\035storage.google"
+          + "apis.com/Bucket\022\027\n\ngeneration\030\003 \001(\003B\003\340A\005"
+          + "\022\033\n\016metageneration\030\004 \001(\003B\003\340A\003\022\025\n\rstorage"
+          + "_class\030\005 \001(\t\022\021\n\004size\030\006 \001(\003B\003\340A\003\022\030\n\020conte"
+          + "nt_encoding\030\007 \001(\t\022\033\n\023content_disposition"
+          + "\030\010 \001(\t\022\025\n\rcache_control\030\t \001(\t\0223\n\003acl\030\n \003"
+          + "(\0132&.google.storage.v2.ObjectAccessContr"
+          + "ol\022\030\n\020content_language\030\013 \001(\t\0224\n\013delete_t"
+          + "ime\030\014 \001(\0132\032.google.protobuf.TimestampB\003\340"
+          + "A\003\022\024\n\014content_type\030\r \001(\t\0224\n\013create_time\030"
+          + "\016 \001(\0132\032.google.protobuf.TimestampB\003\340A\003\022\034"
+          + "\n\017component_count\030\017 \001(\005B\003\340A\003\022:\n\tchecksum"
+          + "s\030\020 \001(\0132\".google.storage.v2.ObjectChecks"
+          + "umsB\003\340A\003\0224\n\013update_time\030\021 \001(\0132\032.google.p"
+          + "rotobuf.TimestampB\003\340A\003\0227\n\007kms_key\030\022 \001(\tB"
+          + "&\372A#\n!cloudkms.googleapis.com/CryptoKey\022"
+          + "B\n\031update_storage_class_time\030\023 \001(\0132\032.goo"
+          + "gle.protobuf.TimestampB\003\340A\003\022\026\n\016temporary"
+          + "_hold\030\024 \001(\010\0229\n\025retention_expire_time\030\025 \001"
+          + "(\0132\032.google.protobuf.Timestamp\0229\n\010metada"
+          + "ta\030\026 \003(\0132\'.google.storage.v2.Object.Meta"
+          + "dataEntry\022\035\n\020event_based_hold\030\027 \001(\010H\000\210\001\001"
+          + "\022,\n\005owner\030\030 \001(\0132\030.google.storage.v2.Owne"
+          + "rB\003\340A\003\022B\n\023customer_encryption\030\031 \001(\0132%.go"
+          + "ogle.storage.v2.CustomerEncryption\022/\n\013cu"
+          + "stom_time\030\032 \001(\0132\032.google.protobuf.Timest"
+          + "amp\032/\n\rMetadataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005val"
+          + "ue\030\002 \001(\t:\0028\001B\023\n\021_event_based_hold\"\247\001\n\023Ob"
+          + "jectAccessControl\022\014\n\004role\030\001 \001(\t\022\n\n\002id\030\002 "
+          + "\001(\t\022\016\n\006entity\030\003 \001(\t\022\021\n\tentity_id\030\004 \001(\t\022\r"
+          + "\n\005email\030\005 \001(\t\022\016\n\006domain\030\006 \001(\t\0224\n\014project"
+          + "_team\030\007 \001(\0132\036.google.storage.v2.ProjectT"
+          + "eam\"l\n\023ListObjectsResponse\022*\n\007objects\030\001 "
+          + "\003(\0132\031.google.storage.v2.Object\022\020\n\010prefix"
+          + "es\030\002 \003(\t\022\027\n\017next_page_token\030\003 \001(\t\"3\n\013Pro"
+          + "jectTeam\022\026\n\016project_number\030\001 \001(\t\022\014\n\004team"
+          + "\030\002 \001(\t\"\'\n\016ServiceAccount\022\025\n\remail_addres"
+          + "s\030\001 \001(\t\"*\n\005Owner\022\016\n\006entity\030\001 \001(\t\022\021\n\tenti"
+          + "ty_id\030\002 \001(\t\"C\n\014ContentRange\022\r\n\005start\030\001 \001"
+          + "(\003\022\013\n\003end\030\002 \001(\003\022\027\n\017complete_length\030\003 \001(\003"
+          + "2\260\033\n\007Storage\022W\n\014DeleteBucket\022&.google.st"
+          + "orage.v2.DeleteBucketRequest\032\026.google.pr"
+          + "otobuf.Empty\"\007\332A\004name\022T\n\tGetBucket\022#.goo"
+          + "gle.storage.v2.GetBucketRequest\032\031.google"
+          + ".storage.v2.Bucket\"\007\332A\004name\022m\n\014CreateBuc"
+          + "ket\022&.google.storage.v2.CreateBucketRequ"
+          + "est\032\031.google.storage.v2.Bucket\"\032\332A\027paren"
+          + "t,bucket,bucket_id\022g\n\013ListBuckets\022%.goog",
+      "le.storage.v2.ListBucketsRequest\032&.googl"
+          + "e.storage.v2.ListBucketsResponse\"\t\332A\006par"
+          + "ent\022v\n\031LockBucketRetentionPolicy\0223.googl"
+          + "e.storage.v2.LockBucketRetentionPolicyRe"
+          + "quest\032\031.google.storage.v2.Bucket\"\t\332A\006buc"
+          + "ket\022V\n\014GetIamPolicy\022\".google.iam.v1.GetI"
+          + "amPolicyRequest\032\025.google.iam.v1.Policy\"\013"
+          + "\332A\010resource\022]\n\014SetIamPolicy\022\".google.iam"
+          + ".v1.SetIamPolicyRequest\032\025.google.iam.v1."
+          + "Policy\"\022\332A\017resource,policy\022\202\001\n\022TestIamPe"
+          + "rmissions\022(.google.iam.v1.TestIamPermiss"
+          + "ionsRequest\032).google.iam.v1.TestIamPermi"
+          + "ssionsResponse\"\027\332A\024resource,permissions\022"
+          + "h\n\014UpdateBucket\022&.google.storage.v2.Upda"
+          + "teBucketRequest\032\031.google.storage.v2.Buck"
+          + "et\"\025\332A\022bucket,update_mask\022c\n\022DeleteNotif"
+          + "ication\022,.google.storage.v2.DeleteNotifi"
+          + "cationRequest\032\026.google.protobuf.Empty\"\007\332"
+          + "A\004name\022f\n\017GetNotification\022).google.stora"
+          + "ge.v2.GetNotificationRequest\032\037.google.st"
+          + "orage.v2.Notification\"\007\332A\004name\022{\n\022Create"
+          + "Notification\022,.google.storage.v2.CreateN"
+          + "otificationRequest\032\037.google.storage.v2.N"
+          + "otification\"\026\332A\023parent,notification\022y\n\021L"
+          + "istNotifications\022+.google.storage.v2.Lis"
+          + "tNotificationsRequest\032,.google.storage.v"
+          + "2.ListNotificationsResponse\"\t\332A\006parent\022U"
+          + "\n\rComposeObject\022\'.google.storage.v2.Comp"
+          + "oseObjectRequest\032\031.google.storage.v2.Obj"
+          + "ect\"\000\022{\n\014DeleteObject\022&.google.storage.v"
+          + "2.DeleteObjectRequest\032\026.google.protobuf."
+          + "Empty\"+\332A\rbucket,object\332A\030bucket,object,"
+          + "generation\022x\n\tGetObject\022#.google.storage"
+          + ".v2.GetObjectRequest\032\031.google.storage.v2"
+          + ".Object\"+\332A\rbucket,object\332A\030bucket,objec"
+          + "t,generation\022\210\001\n\nReadObject\022$.google.sto"
+          + "rage.v2.ReadObjectRequest\032%.google.stora"
+          + "ge.v2.ReadObjectResponse\"+\332A\rbucket,obje"
+          + "ct\332A\030bucket,object,generation0\001\022h\n\014Updat"
+          + "eObject\022&.google.storage.v2.UpdateObject"
+          + "Request\032\031.google.storage.v2.Object\"\025\332A\022o"
+          + "bject,update_mask\022`\n\013WriteObject\022%.googl"
+          + "e.storage.v2.WriteObjectRequest\032&.google"
+          + ".storage.v2.WriteObjectResponse\"\000(\001\022g\n\013L"
+          + "istObjects\022%.google.storage.v2.ListObjec"
+          + "tsRequest\032&.google.storage.v2.ListObject"
+          + "sResponse\"\t\332A\006parent\022^\n\rRewriteObject\022\'."
+          + "google.storage.v2.RewriteObjectRequest\032\""
+          + ".google.storage.v2.RewriteResponse\"\000\022v\n\023"
+          + "StartResumableWrite\022-.google.storage.v2."
+          + "StartResumableWriteRequest\032..google.stor"
+          + "age.v2.StartResumableWriteResponse\"\000\022y\n\020"
+          + "QueryWriteStatus\022*.google.storage.v2.Que"
+          + "ryWriteStatusRequest\032+.google.storage.v2"
+          + ".QueryWriteStatusResponse\"\014\332A\tupload_id\022"
+          + "o\n\021GetServiceAccount\022+.google.storage.v2"
+          + ".GetServiceAccountRequest\032!.google.stora"
+          + "ge.v2.ServiceAccount\"\n\332A\007project\022\204\001\n\rCre"
+          + "ateHmacKey\022\'.google.storage.v2.CreateHma"
+          + "cKeyRequest\032(.google.storage.v2.CreateHm"
+          + "acKeyResponse\" \332A\035project,service_accoun"
+          + "t_email\022f\n\rDeleteHmacKey\022\'.google.storag"
+          + "e.v2.DeleteHmacKeyRequest\032\026.google.proto"
+          + "buf.Empty\"\024\332A\021access_id,project\022l\n\nGetHm"
+          + "acKey\022$.google.storage.v2.GetHmacKeyRequ"
+          + "est\032\".google.storage.v2.HmacKeyMetadata\""
+          + "\024\332A\021access_id,project\022k\n\014ListHmacKeys\022&."
+          + "google.storage.v2.ListHmacKeysRequest\032\'."
+          + "google.storage.v2.ListHmacKeysResponse\"\n"
+          + "\332A\007project\022u\n\rUpdateHmacKey\022\'.google.sto"
+          + "rage.v2.UpdateHmacKeyRequest\032\".google.st"
+          + "orage.v2.HmacKeyMetadata\"\027\332A\024hmac_key,up"
+          + "date_mask\032\247\002\312A\026storage.googleapis.com\322A\212"
+          + "\002https://www.googleapis.com/auth/cloud-p"
+          + "latform,https://www.googleapis.com/auth/"
+          + "cloud-platform.read-only,https://www.goo"
+          + "gleapis.com/auth/devstorage.full_control"
+          + ",https://www.googleapis.com/auth/devstor"
+          + "age.read_only,https://www.googleapis.com"
+          + "/auth/devstorage.read_writeB\334\001\n\025com.goog"
+          + "le.storage.v2B\014StorageProtoP\001Z8google.go"
+          + "lang.org/genproto/googleapis/storage/v2;"
+          + "storage\352Ax\n!cloudkms.googleapis.com/Cryp"
+          + "toKey\022Sprojects/{project}/locations/{loc"
+          + "ation}/keyRings/{key_ring}/cryptoKeys/{c"
+          + "rypto_key}b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
@@ -874,7 +830,6 @@ public final class StorageProto {
               "Name",
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
-              "CommonRequestParams",
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
             });
@@ -887,7 +842,6 @@ public final class StorageProto {
               "Name",
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
-              "CommonRequestParams",
               "ReadMask",
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
@@ -907,13 +861,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ListBucketsRequest_descriptor,
             new java.lang.String[] {
-              "Parent",
-              "PageSize",
-              "PageToken",
-              "Prefix",
-              "ReadMask",
-              "CommonRequestParams",
-              "ReadMask",
+              "Parent", "PageSize", "PageToken", "Prefix", "ReadMask", "ReadMask",
             });
     internal_static_google_storage_v2_ListBucketsResponse_descriptor =
         getDescriptor().getMessageTypes().get(4);
@@ -929,7 +877,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_LockBucketRetentionPolicyRequest_descriptor,
             new java.lang.String[] {
-              "Bucket", "IfMetagenerationMatch", "CommonRequestParams",
+              "Bucket", "IfMetagenerationMatch",
             });
     internal_static_google_storage_v2_UpdateBucketRequest_descriptor =
         getDescriptor().getMessageTypes().get(6);
@@ -943,7 +891,6 @@ public final class StorageProto {
               "PredefinedAcl",
               "PredefinedDefaultObjectAcl",
               "UpdateMask",
-              "CommonRequestParams",
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
             });
@@ -1000,7 +947,6 @@ public final class StorageProto {
               "IfMetagenerationMatch",
               "KmsKey",
               "CommonObjectRequestParams",
-              "CommonRequestParams",
               "IfGenerationMatch",
               "IfMetagenerationMatch",
             });
@@ -1037,7 +983,6 @@ public final class StorageProto {
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
               "CommonObjectRequestParams",
-              "CommonRequestParams",
               "IfGenerationMatch",
               "IfGenerationNotMatch",
               "IfMetagenerationMatch",
@@ -1059,7 +1004,6 @@ public final class StorageProto {
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
               "CommonObjectRequestParams",
-              "CommonRequestParams",
               "ReadMask",
               "IfGenerationMatch",
               "IfGenerationNotMatch",
@@ -1081,7 +1025,6 @@ public final class StorageProto {
               "IfMetagenerationMatch",
               "IfMetagenerationNotMatch",
               "CommonObjectRequestParams",
-              "CommonRequestParams",
               "ReadMask",
               "IfGenerationMatch",
               "IfGenerationNotMatch",
@@ -1127,7 +1070,6 @@ public final class StorageProto {
               "ObjectChecksums",
               "FinishWrite",
               "CommonObjectRequestParams",
-              "CommonRequestParams",
               "FirstMessage",
               "Data",
             });
@@ -1155,7 +1097,6 @@ public final class StorageProto {
               "ReadMask",
               "LexicographicStart",
               "LexicographicEnd",
-              "CommonRequestParams",
               "ReadMask",
             });
     internal_static_google_storage_v2_QueryWriteStatusRequest_descriptor =
@@ -1164,7 +1105,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_QueryWriteStatusRequest_descriptor,
             new java.lang.String[] {
-              "UploadId", "CommonObjectRequestParams", "CommonRequestParams",
+              "UploadId", "CommonObjectRequestParams",
             });
     internal_static_google_storage_v2_QueryWriteStatusResponse_descriptor =
         getDescriptor().getMessageTypes().get(22);
@@ -1202,7 +1143,6 @@ public final class StorageProto {
               "CopySourceEncryptionKeyBytes",
               "CopySourceEncryptionKeySha256Bytes",
               "CommonObjectRequestParams",
-              "CommonRequestParams",
               "IfGenerationMatch",
               "IfGenerationNotMatch",
               "IfMetagenerationMatch",
@@ -1226,7 +1166,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_StartResumableWriteRequest_descriptor,
             new java.lang.String[] {
-              "WriteObjectSpec", "CommonObjectRequestParams", "CommonRequestParams",
+              "WriteObjectSpec", "CommonObjectRequestParams",
             });
     internal_static_google_storage_v2_StartResumableWriteResponse_descriptor =
         getDescriptor().getMessageTypes().get(26);
@@ -1250,7 +1190,6 @@ public final class StorageProto {
               "PredefinedAcl",
               "UpdateMask",
               "CommonObjectRequestParams",
-              "CommonRequestParams",
               "IfGenerationMatch",
               "IfGenerationNotMatch",
               "IfMetagenerationMatch",
@@ -1262,7 +1201,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_GetServiceAccountRequest_descriptor,
             new java.lang.String[] {
-              "Project", "CommonRequestParams",
+              "Project",
             });
     internal_static_google_storage_v2_CreateHmacKeyRequest_descriptor =
         getDescriptor().getMessageTypes().get(29);
@@ -1270,7 +1209,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_CreateHmacKeyRequest_descriptor,
             new java.lang.String[] {
-              "Project", "ServiceAccountEmail", "CommonRequestParams",
+              "Project", "ServiceAccountEmail",
             });
     internal_static_google_storage_v2_CreateHmacKeyResponse_descriptor =
         getDescriptor().getMessageTypes().get(30);
@@ -1286,7 +1225,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_DeleteHmacKeyRequest_descriptor,
             new java.lang.String[] {
-              "AccessId", "Project", "CommonRequestParams",
+              "AccessId", "Project",
             });
     internal_static_google_storage_v2_GetHmacKeyRequest_descriptor =
         getDescriptor().getMessageTypes().get(32);
@@ -1294,7 +1233,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_GetHmacKeyRequest_descriptor,
             new java.lang.String[] {
-              "AccessId", "Project", "CommonRequestParams",
+              "AccessId", "Project",
             });
     internal_static_google_storage_v2_ListHmacKeysRequest_descriptor =
         getDescriptor().getMessageTypes().get(33);
@@ -1302,12 +1241,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ListHmacKeysRequest_descriptor,
             new java.lang.String[] {
-              "Project",
-              "PageSize",
-              "PageToken",
-              "ServiceAccountEmail",
-              "ShowDeletedKeys",
-              "CommonRequestParams",
+              "Project", "PageSize", "PageToken", "ServiceAccountEmail", "ShowDeletedKeys",
             });
     internal_static_google_storage_v2_ListHmacKeysResponse_descriptor =
         getDescriptor().getMessageTypes().get(34);
@@ -1323,7 +1257,7 @@ public final class StorageProto {
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_UpdateHmacKeyRequest_descriptor,
             new java.lang.String[] {
-              "HmacKey", "CommonRequestParams", "UpdateMask",
+              "HmacKey", "UpdateMask",
             });
     internal_static_google_storage_v2_CommonObjectRequestParams_descriptor =
         getDescriptor().getMessageTypes().get(36);
@@ -1333,21 +1267,13 @@ public final class StorageProto {
             new java.lang.String[] {
               "EncryptionAlgorithm", "EncryptionKeyBytes", "EncryptionKeySha256Bytes",
             });
-    internal_static_google_storage_v2_CommonRequestParams_descriptor =
-        getDescriptor().getMessageTypes().get(37);
-    internal_static_google_storage_v2_CommonRequestParams_fieldAccessorTable =
-        new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-            internal_static_google_storage_v2_CommonRequestParams_descriptor,
-            new java.lang.String[] {
-              "UserProject",
-            });
     internal_static_google_storage_v2_ServiceConstants_descriptor =
-        getDescriptor().getMessageTypes().get(38);
+        getDescriptor().getMessageTypes().get(37);
     internal_static_google_storage_v2_ServiceConstants_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ServiceConstants_descriptor,
             new java.lang.String[] {});
-    internal_static_google_storage_v2_Bucket_descriptor = getDescriptor().getMessageTypes().get(39);
+    internal_static_google_storage_v2_Bucket_descriptor = getDescriptor().getMessageTypes().get(38);
     internal_static_google_storage_v2_Bucket_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_Bucket_descriptor,
@@ -1515,7 +1441,7 @@ public final class StorageProto {
               "Key", "Value",
             });
     internal_static_google_storage_v2_BucketAccessControl_descriptor =
-        getDescriptor().getMessageTypes().get(40);
+        getDescriptor().getMessageTypes().get(39);
     internal_static_google_storage_v2_BucketAccessControl_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_BucketAccessControl_descriptor,
@@ -1523,7 +1449,7 @@ public final class StorageProto {
               "Role", "Id", "Entity", "EntityId", "Email", "Domain", "ProjectTeam",
             });
     internal_static_google_storage_v2_ChecksummedData_descriptor =
-        getDescriptor().getMessageTypes().get(41);
+        getDescriptor().getMessageTypes().get(40);
     internal_static_google_storage_v2_ChecksummedData_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ChecksummedData_descriptor,
@@ -1531,7 +1457,7 @@ public final class StorageProto {
               "Content", "Crc32C", "Crc32C",
             });
     internal_static_google_storage_v2_ObjectChecksums_descriptor =
-        getDescriptor().getMessageTypes().get(42);
+        getDescriptor().getMessageTypes().get(41);
     internal_static_google_storage_v2_ObjectChecksums_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ObjectChecksums_descriptor,
@@ -1539,7 +1465,7 @@ public final class StorageProto {
               "Crc32C", "Md5Hash", "Crc32C",
             });
     internal_static_google_storage_v2_HmacKeyMetadata_descriptor =
-        getDescriptor().getMessageTypes().get(43);
+        getDescriptor().getMessageTypes().get(42);
     internal_static_google_storage_v2_HmacKeyMetadata_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_HmacKeyMetadata_descriptor,
@@ -1553,7 +1479,7 @@ public final class StorageProto {
               "UpdateTime",
             });
     internal_static_google_storage_v2_Notification_descriptor =
-        getDescriptor().getMessageTypes().get(44);
+        getDescriptor().getMessageTypes().get(43);
     internal_static_google_storage_v2_Notification_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_Notification_descriptor,
@@ -1574,14 +1500,14 @@ public final class StorageProto {
               "Key", "Value",
             });
     internal_static_google_storage_v2_CustomerEncryption_descriptor =
-        getDescriptor().getMessageTypes().get(45);
+        getDescriptor().getMessageTypes().get(44);
     internal_static_google_storage_v2_CustomerEncryption_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_CustomerEncryption_descriptor,
             new java.lang.String[] {
               "EncryptionAlgorithm", "KeySha256Bytes",
             });
-    internal_static_google_storage_v2_Object_descriptor = getDescriptor().getMessageTypes().get(46);
+    internal_static_google_storage_v2_Object_descriptor = getDescriptor().getMessageTypes().get(45);
     internal_static_google_storage_v2_Object_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_Object_descriptor,
@@ -1623,7 +1549,7 @@ public final class StorageProto {
               "Key", "Value",
             });
     internal_static_google_storage_v2_ObjectAccessControl_descriptor =
-        getDescriptor().getMessageTypes().get(47);
+        getDescriptor().getMessageTypes().get(46);
     internal_static_google_storage_v2_ObjectAccessControl_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ObjectAccessControl_descriptor,
@@ -1631,7 +1557,7 @@ public final class StorageProto {
               "Role", "Id", "Entity", "EntityId", "Email", "Domain", "ProjectTeam",
             });
     internal_static_google_storage_v2_ListObjectsResponse_descriptor =
-        getDescriptor().getMessageTypes().get(48);
+        getDescriptor().getMessageTypes().get(47);
     internal_static_google_storage_v2_ListObjectsResponse_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ListObjectsResponse_descriptor,
@@ -1639,7 +1565,7 @@ public final class StorageProto {
               "Objects", "Prefixes", "NextPageToken",
             });
     internal_static_google_storage_v2_ProjectTeam_descriptor =
-        getDescriptor().getMessageTypes().get(49);
+        getDescriptor().getMessageTypes().get(48);
     internal_static_google_storage_v2_ProjectTeam_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ProjectTeam_descriptor,
@@ -1647,14 +1573,14 @@ public final class StorageProto {
               "ProjectNumber", "Team",
             });
     internal_static_google_storage_v2_ServiceAccount_descriptor =
-        getDescriptor().getMessageTypes().get(50);
+        getDescriptor().getMessageTypes().get(49);
     internal_static_google_storage_v2_ServiceAccount_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ServiceAccount_descriptor,
             new java.lang.String[] {
               "EmailAddress",
             });
-    internal_static_google_storage_v2_Owner_descriptor = getDescriptor().getMessageTypes().get(51);
+    internal_static_google_storage_v2_Owner_descriptor = getDescriptor().getMessageTypes().get(50);
     internal_static_google_storage_v2_Owner_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_Owner_descriptor,
@@ -1662,7 +1588,7 @@ public final class StorageProto {
               "Entity", "EntityId",
             });
     internal_static_google_storage_v2_ContentRange_descriptor =
-        getDescriptor().getMessageTypes().get(52);
+        getDescriptor().getMessageTypes().get(51);
     internal_static_google_storage_v2_ContentRange_fieldAccessorTable =
         new com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
             internal_static_google_storage_v2_ContentRange_descriptor,

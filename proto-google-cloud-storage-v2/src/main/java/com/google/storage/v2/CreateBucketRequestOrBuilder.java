@@ -57,8 +57,9 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Required. Properties of the new bucket being inserted.
-   * The project and name of the bucket are specified in this request, not in
-   * the bucket resource.
+   * The project and name of the bucket are specified in the parent and
+   * bucket_id fields, respectively. Populating those fields in `bucket` will
+   * result in an error.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -71,8 +72,9 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Required. Properties of the new bucket being inserted.
-   * The project and name of the bucket are specified in this request, not in
-   * the bucket resource.
+   * The project and name of the bucket are specified in the parent and
+   * bucket_id fields, respectively. Populating those fields in `bucket` will
+   * result in an error.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -85,8 +87,9 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Required. Properties of the new bucket being inserted.
-   * The project and name of the bucket are specified in this request, not in
-   * the bucket resource.
+   * The project and name of the bucket are specified in the parent and
+   * bucket_id fields, respectively. Populating those fields in `bucket` will
+   * result in an error.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>

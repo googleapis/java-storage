@@ -291,39 +291,4 @@ public interface ListObjectsRequestOrBuilder
    * @return The bytes for lexicographicEnd.
    */
   com.google.protobuf.ByteString getLexicographicEndBytes();
-
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 9;</code>
-   *
-   * @return Whether the commonRequestParams field is set.
-   */
-  boolean hasCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 9;</code>
-   *
-   * @return The commonRequestParams.
-   */
-  com.google.storage.v2.CommonRequestParams getCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 9;</code>
-   */
-  com.google.storage.v2.CommonRequestParamsOrBuilder getCommonRequestParamsOrBuilder();
 }
