@@ -163,39 +163,4 @@ public interface ListBucketsRequestOrBuilder
    * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
    */
   com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder();
-
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 6;</code>
-   *
-   * @return Whether the commonRequestParams field is set.
-   */
-  boolean hasCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 6;</code>
-   *
-   * @return The commonRequestParams.
-   */
-  com.google.storage.v2.CommonRequestParams getCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 6;</code>
-   */
-  com.google.storage.v2.CommonRequestParamsOrBuilder getCommonRequestParamsOrBuilder();
 }

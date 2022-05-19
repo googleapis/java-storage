@@ -418,8 +418,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The creation time of the bucket in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * Output only. The creation time of the bucket.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -434,8 +433,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The creation time of the bucket in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * Output only. The creation time of the bucket.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -450,8 +448,7 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The creation time of the bucket in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * Output only. The creation time of the bucket.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>

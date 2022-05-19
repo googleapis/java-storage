@@ -65,39 +65,4 @@ public interface LockBucketRetentionPolicyRequestOrBuilder
    * @return The ifMetagenerationMatch.
    */
   long getIfMetagenerationMatch();
-
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 3;</code>
-   *
-   * @return Whether the commonRequestParams field is set.
-   */
-  boolean hasCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 3;</code>
-   *
-   * @return The commonRequestParams.
-   */
-  com.google.storage.v2.CommonRequestParams getCommonRequestParams();
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 3;</code>
-   */
-  com.google.storage.v2.CommonRequestParamsOrBuilder getCommonRequestParamsOrBuilder();
 }
