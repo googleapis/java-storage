@@ -426,7 +426,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The creation time of the HMAC key in RFC 3339 format.
+   * The creation time of the HMAC key.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -441,7 +441,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The creation time of the HMAC key in RFC 3339 format.
+   * The creation time of the HMAC key.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -456,7 +456,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The creation time of the HMAC key in RFC 3339 format.
+   * The creation time of the HMAC key.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -472,7 +472,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata in RFC 3339 format.
+   * The last modification time of the HMAC key metadata.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -487,7 +487,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata in RFC 3339 format.
+   * The last modification time of the HMAC key metadata.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -502,7 +502,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata in RFC 3339 format.
+   * The last modification time of the HMAC key metadata.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1486,7 +1486,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1500,7 +1500,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1520,7 +1520,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1542,7 +1542,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1561,7 +1561,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1585,7 +1585,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1605,7 +1605,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1619,7 +1619,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1637,7 +1637,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key in RFC 3339 format.
+     * The creation time of the HMAC key.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp create_time = 6;</code>
@@ -1669,7 +1669,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1683,7 +1683,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1703,7 +1703,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1725,7 +1725,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1744,7 +1744,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1768,7 +1768,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1788,7 +1788,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1802,7 +1802,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>
@@ -1820,7 +1820,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata in RFC 3339 format.
+     * The last modification time of the HMAC key metadata.
      * </pre>
      *
      * <code>.google.protobuf.Timestamp update_time = 7;</code>

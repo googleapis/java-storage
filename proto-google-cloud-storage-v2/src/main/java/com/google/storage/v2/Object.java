@@ -1340,8 +1340,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * A server-determined value that specifies the earliest time that the
-   * object's retention period expires. This value is in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * object's retention period expires.
    * Note 1: This field is not provided for objects with an active event-based
    * hold, since retention expiration is unknown until the hold is removed.
    * Note 2: This value can be provided even when temporary hold is set (so that
@@ -1362,8 +1361,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * A server-determined value that specifies the earliest time that the
-   * object's retention period expires. This value is in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * object's retention period expires.
    * Note 1: This field is not provided for objects with an active event-based
    * hold, since retention expiration is unknown until the hold is removed.
    * Note 2: This value can be provided even when temporary hold is set (so that
@@ -1386,8 +1384,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * A server-determined value that specifies the earliest time that the
-   * object's retention period expires. This value is in
-   * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+   * object's retention period expires.
    * Note 1: This field is not provided for objects with an active event-based
    * hold, since retention expiration is unknown until the hold is removed.
    * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5442,8 +5439,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5463,8 +5459,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5490,8 +5485,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5519,8 +5513,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5545,8 +5538,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5578,8 +5570,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5605,8 +5596,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5626,8 +5616,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that
@@ -5651,8 +5640,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * A server-determined value that specifies the earliest time that the
-     * object's retention period expires. This value is in
-     * [https://tools.ietf.org/html/rfc3339][RFC 3339] format.
+     * object's retention period expires.
      * Note 1: This field is not provided for objects with an active event-based
      * hold, since retention expiration is unknown until the hold is removed.
      * Note 2: This value can be provided even when temporary hold is set (so that

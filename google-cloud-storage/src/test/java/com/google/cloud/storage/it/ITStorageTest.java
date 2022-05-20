@@ -17,6 +17,7 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -143,6 +144,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.crypto.spec.SecretKeySpec;
@@ -159,6 +161,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.threeten.bp.Clock;
+import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZoneOffset;
@@ -2480,98 +2483,84 @@ public class ITStorageTest {
     }
   }
 
+  // when modifying this test or {@link #cleanUpHmacKeys} be sure to remember multiple simultaneous
+  // runs of the integration suite can run with the same service account. Be sure to not clobber
+  // any possible run state for the other run.
   @Test
   public void testHmacKey() {
     String serviceAccountEmail = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
     assertNotNull("Unable to determine service account email", serviceAccountEmail);
     ServiceAccount serviceAccount = ServiceAccount.of(serviceAccountEmail);
-    try {
-      cleanUpHmacKeys(serviceAccount);
+    cleanUpHmacKeys(serviceAccount);
 
-      HmacKey hmacKey = storage.createHmacKey(serviceAccount);
-      String secretKey = hmacKey.getSecretKey();
-      assertNotNull(secretKey);
-      HmacKey.HmacKeyMetadata metadata = hmacKey.getMetadata();
-      String accessId = metadata.getAccessId();
+    HmacKey hmacKey = storage.createHmacKey(serviceAccount);
+    String secretKey = hmacKey.getSecretKey();
+    assertNotNull(secretKey);
+    HmacKey.HmacKeyMetadata metadata = hmacKey.getMetadata();
+    String accessId = metadata.getAccessId();
 
-      assertNotNull(accessId);
-      assertNotNull(metadata.getEtag());
-      assertNotNull(metadata.getId());
-      assertEquals(remoteStorageHelper.getOptions().getProjectId(), metadata.getProjectId());
-      assertEquals(serviceAccount.getEmail(), metadata.getServiceAccount().getEmail());
-      assertEquals(HmacKey.HmacKeyState.ACTIVE, metadata.getState());
-      assertNotNull(metadata.getCreateTime());
-      assertNotNull(metadata.getUpdateTime());
+    assertNotNull(accessId);
+    assertNotNull(metadata.getEtag());
+    assertNotNull(metadata.getId());
+    assertEquals(remoteStorageHelper.getOptions().getProjectId(), metadata.getProjectId());
+    assertEquals(serviceAccount.getEmail(), metadata.getServiceAccount().getEmail());
+    assertEquals(HmacKey.HmacKeyState.ACTIVE, metadata.getState());
+    assertNotNull(metadata.getCreateTime());
+    assertNotNull(metadata.getUpdateTime());
 
-      Page<HmacKey.HmacKeyMetadata> metadatas =
-          storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
-      boolean createdHmacKeyIsInList = false;
-      for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
-        if (accessId.equals(hmacKeyMetadata.getAccessId())) {
-          createdHmacKeyIsInList = true;
-          break;
-        }
-      }
+    Page<HmacKey.HmacKeyMetadata> metadatas =
+        storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
+    boolean createdInList =
+        StreamSupport.stream(metadatas.iterateAll().spliterator(), false)
+            .map(HmacKey.HmacKeyMetadata::getAccessId)
+            .anyMatch(accessId::equals);
 
-      if (!createdHmacKeyIsInList) {
-        fail("Created an HMAC key but it didn't show up in list()");
-      }
+    assertWithMessage("Created an HMAC key but it didn't show up in list()")
+        .that(createdInList)
+        .isTrue();
 
-      HmacKey.HmacKeyMetadata getResult = storage.getHmacKey(accessId);
-      assertEquals(metadata, getResult);
+    HmacKey.HmacKeyMetadata getResult = storage.getHmacKey(accessId);
+    assertEquals(metadata, getResult);
 
-      storage.updateHmacKeyState(metadata, HmacKey.HmacKeyState.INACTIVE);
+    storage.updateHmacKeyState(metadata, HmacKey.HmacKeyState.INACTIVE);
 
-      storage.deleteHmacKey(metadata);
+    storage.deleteHmacKey(metadata);
 
-      metadatas = storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
-      createdHmacKeyIsInList = false;
-      for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
-        if (accessId.equals(hmacKeyMetadata.getAccessId())) {
-          createdHmacKeyIsInList = true;
-          break;
-        }
-      }
+    metadatas = storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
+    boolean deletedInList =
+        StreamSupport.stream(metadatas.iterateAll().spliterator(), false)
+            .map(HmacKey.HmacKeyMetadata::getAccessId)
+            .anyMatch(accessId::equals);
 
-      if (createdHmacKeyIsInList) {
-        fail("Deleted an HMAC key but it showed up in list()");
-      }
-
-      storage.createHmacKey(serviceAccount);
-      storage.createHmacKey(serviceAccount);
-      storage.createHmacKey(serviceAccount);
-      storage.createHmacKey(serviceAccount);
-
-      metadatas =
-          storage.listHmacKeys(
-              Storage.ListHmacKeysOption.serviceAccount(serviceAccount),
-              Storage.ListHmacKeysOption.maxResults(2L));
-
-      String nextPageToken = metadatas.getNextPageToken();
-
-      assertEquals(2, Iterators.size(metadatas.getValues().iterator()));
-
-      metadatas =
-          storage.listHmacKeys(
-              Storage.ListHmacKeysOption.serviceAccount(serviceAccount),
-              Storage.ListHmacKeysOption.maxResults(2L),
-              Storage.ListHmacKeysOption.pageToken(nextPageToken));
-
-      assertEquals(2, Iterators.size(metadatas.getValues().iterator()));
-    } finally {
-      cleanUpHmacKeys(serviceAccount);
-    }
+    assertWithMessage("Deleted an HMAC key but it showed up in list()")
+        .that(deletedInList)
+        .isFalse();
   }
 
   private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
+    Instant now = Instant.now();
+    Instant yesterday = now.minus(Duration.ofDays(1L));
+
     Page<HmacKey.HmacKeyMetadata> metadatas =
         storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
     for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
-      if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
-        hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
-      }
-      if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
-        storage.deleteHmacKey(hmacKeyMetadata);
+      Instant updated = Instant.ofEpochMilli(hmacKeyMetadata.getUpdateTime());
+      if (updated.isBefore(yesterday)) {
+
+        if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
+          hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
+        }
+
+        if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
+          try {
+            storage.deleteHmacKey(hmacKeyMetadata);
+          } catch (StorageException e) {
+            // attempted to delete concurrently, if the other succeeded swallow the error
+            if (!(e.getReason().equals("invalid") && e.getMessage().contains("deleted"))) {
+              throw e;
+            }
+          }
+        }
       }
     }
   }
