@@ -219,12 +219,13 @@ public final class StorageArbitraries {
       return Combinators.combine(
               Arbitraries.strings().ofMinLength(1).ofMaxLength(1024),
               Arbitraries.strings()
-                  .map(s -> Hashing.sha256().hashString(s, StandardCharsets.UTF_8).asBytes()))
+                  .map(s -> Hashing.sha256().hashString(s, StandardCharsets.UTF_8).asBytes())
+                  .map(ByteString::copyFrom))
           .as(
               (algorithm, key) ->
                   CustomerEncryption.newBuilder()
                       .setEncryptionAlgorithm(algorithm)
-                      .setKeySha256Bytes(ByteString.copyFrom(key))
+                      .setKeySha256Bytes(key)
                       .build());
     }
   }

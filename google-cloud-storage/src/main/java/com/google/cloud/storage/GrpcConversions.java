@@ -207,14 +207,15 @@ final class GrpcConversions {
       CustomerEncryption from) {
     return com.google.storage.v2.CustomerEncryption.newBuilder()
         .setEncryptionAlgorithm(from.getEncryptionAlgorithm())
-        .setKeySha256Bytes(ByteString.copyFrom(from.getKeySha256().getBytes()))
+        .setKeySha256Bytes(ByteString.copyFrom(BaseEncoding.base64().decode(from.getKeySha256())))
         .build();
   }
 
   private CustomerEncryption customerEncryptionDecode(
       com.google.storage.v2.CustomerEncryption from) {
     return new CustomerEncryption(
-        from.getEncryptionAlgorithm(), from.getKeySha256Bytes().toString());
+        from.getEncryptionAlgorithm(),
+        BaseEncoding.base64().encode(from.getKeySha256Bytes().toByteArray()));
   }
 
   private Object blobIdEncode(BlobId from) {
@@ -245,9 +246,10 @@ final class GrpcConversions {
     if (from.getMd5() != null || from.getCrc32c() != null) {
       ObjectChecksums.Builder objectChecksums = ObjectChecksums.newBuilder();
       if (from.getMd5() != null) {
-        objectChecksums.setMd5Hash(ByteString.copyFrom(from.getMd5().getBytes()));
+        objectChecksums.setMd5Hash(
+            ByteString.copyFrom(BaseEncoding.base64().decode(from.getMd5())));
       } else if (from.getCrc32c() != null) {
-        objectChecksums.setCrc32C(crc32cDecode(from.getCrc32c()));
+        objectChecksums.setCrc32C(crc32cCodec.decode(from.getCrc32c()));
       }
       toBuilder.setChecksums(objectChecksums.build());
     }
