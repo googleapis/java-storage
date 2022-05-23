@@ -57,7 +57,7 @@ final class GrpcConversions {
           Codec.of(this::customerEncryptionEncode, this::customerEncryptionDecode);
   private final Codec<BlobId, Object> blobIdCodec =
       Codec.of(this::blobIdEncode, this::blobIdDecode);
-  private final Codec<BlobInfo, Object> blobInfoCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<BlobInfo, Object> blobInfoCodec = Codec.of(this::blobInfoEncode, Utils::todo);
   private final Codec<?, ?> notificationInfoCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<Integer, String> crc32cCodec = Codec.of(Utils::todo, this::crc32cDecode);
 
