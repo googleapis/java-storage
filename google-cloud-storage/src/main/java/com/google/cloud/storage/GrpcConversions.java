@@ -21,18 +21,18 @@ import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.Conversions.Codec;
-import com.google.protobuf.Timestamp;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
-import java.util.concurrent.TimeUnit;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
+import java.util.concurrent.TimeUnit;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
@@ -57,9 +57,11 @@ final class GrpcConversions {
           Codec.of(this::customerEncryptionEncode, this::customerEncryptionDecode);
   private final Codec<BlobId, Object> blobIdCodec =
       Codec.of(this::blobIdEncode, this::blobIdDecode);
-  private final Codec<BlobInfo, Object> blobInfoCodec = Codec.of(this::blobInfoEncode, Utils::todo);
+  private final Codec<BlobInfo, Object> blobInfoCodec =
+      Codec.of(this::blobInfoEncode, this::blobInfoDecode);
   private final Codec<?, ?> notificationInfoCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<Integer, String> crc32cCodec = Codec.of(Utils::todo, this::crc32cDecode);
+  private final Codec<Integer, String> crc32cCodec =
+      Codec.of(this::crc32cEncode, this::crc32cDecode);
 
   private GrpcConversions() {}
 
@@ -248,7 +250,8 @@ final class GrpcConversions {
       if (from.getMd5() != null) {
         objectChecksums.setMd5Hash(
             ByteString.copyFrom(BaseEncoding.base64().decode(from.getMd5())));
-      } else if (from.getCrc32c() != null) {
+      }
+      if (from.getCrc32c() != null) {
         objectChecksums.setCrc32C(crc32cCodec.decode(from.getCrc32c()));
       }
       toBuilder.setChecksums(objectChecksums.build());
@@ -260,7 +263,7 @@ final class GrpcConversions {
     ifNonNull(from.getCustomTime(), Timestamps::fromMillis, toBuilder::setCustomTime);
     ifNonNull(
         from.getCustomerEncryption(),
-        this::customerEncryptionEncode,
+        customerEncryptionCodec::encode,
         toBuilder::setCustomerEncryption);
     ifNonNull(from.getStorageClass(), StorageClass::toString, toBuilder::setStorageClass);
     ifNonNull(
@@ -283,11 +286,52 @@ final class GrpcConversions {
   }
 
   private BlobInfo blobInfoDecode(Object from) {
-    return todo();
+    BlobInfo.Builder toBuilder =
+        BlobInfo.newBuilder(BlobId.of(from.getBucket(), from.getName(), from.getGeneration()));
+    ifNonNull(from.getCacheControl(), toBuilder::setCacheControl);
+    ifNonNull(from.getSize(), toBuilder::setSize);
+    ifNonNull(from.getContentType(), toBuilder::setContentType);
+    ifNonNull(from.getContentEncoding(), toBuilder::setContentEncoding);
+    ifNonNull(from.getContentDisposition(), toBuilder::setContentDisposition);
+    ifNonNull(from.getContentLanguage(), toBuilder::setContentLanguage);
+    ifNonNull(from.getComponentCount(), toBuilder::setComponentCount);
+    if (from.getChecksums() != null) {
+      if (from.getChecksums().hasCrc32C()) {
+        toBuilder.setCrc32c(crc32cCodec.encode(from.getChecksums().getCrc32C()));
+      }
+      if (from.getChecksums().getMd5Hash() != null) {
+        toBuilder.setMd5(
+            BaseEncoding.base64().encode(from.getChecksums().getMd5Hash().toByteArray()));
+      }
+    }
+    ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);
+    ifNonNull(from.getDeleteTime(), Timestamps::toMillis, toBuilder::setDeleteTime);
+    ifNonNull(from.getUpdateTime(), Timestamps::toMillis, toBuilder::setUpdateTime);
+    ifNonNull(from.getCreateTime(), Timestamps::toMillis, toBuilder::setCreateTime);
+    ifNonNull(from.getCustomTime(), Timestamps::toMillis, toBuilder::setCustomTime);
+    ifNonNull(
+        from.getCustomerEncryption(),
+        customerEncryptionCodec::decode,
+        toBuilder::setCustomerEncryption);
+    ifNonNull(from.getStorageClass(), StorageClass::valueOf, toBuilder::setStorageClass);
+    ifNonNull(
+        from.getUpdateStorageClassTime(),
+        Timestamps::toMillis,
+        toBuilder::setTimeStorageClassUpdated);
+    ifNonNull(from.getKmsKey(), toBuilder::setKmsKeyName);
+    ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
+    ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
+    ifNonNull(
+        from.getRetentionExpireTime(), Timestamps::toMillis, toBuilder::setRetentionExpirationTime);
+    return toBuilder.build();
   }
 
   private int crc32cDecode(String from) {
     byte[] decodeCrc32c = BaseEncoding.base64().decode(from);
     return Ints.fromByteArray(decodeCrc32c);
+  }
+
+  private String crc32cEncode(int from) {
+    return BaseEncoding.base64().encode(Ints.toByteArray(from));
   }
 }
