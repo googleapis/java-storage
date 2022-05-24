@@ -128,7 +128,7 @@
     <dependency>
       <groupId>io.grpc</groupId>
       <artifactId>grpc-netty-shaded</artifactId>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
@@ -242,8 +242,8 @@
           <artifactId>maven-dependency-plugin</artifactId>
           <configuration>
             <!--
-              grpc-netty-shaded is needed for integration tests
-              hamcrest-core is used for test mocks
+              grpc-netty-shaded is a runtime dep, we pull it up to our level to raise its transitive dependencies priority
+              that overlap with our pubsub test deps.
               -->
             <usedDependencies>io.grpc:grpc-netty-shaded,io.grpc:grpc-xds</usedDependencies>
             <ignoredDependencies>
