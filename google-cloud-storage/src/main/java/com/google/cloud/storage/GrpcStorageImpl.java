@@ -18,8 +18,13 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.gax.paging.Page;
+import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
@@ -31,21 +36,47 @@ import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.io.ByteStreams;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
+import com.google.storage.v2.Object;
+import com.google.storage.v2.StartResumableWriteRequest;
+import com.google.storage.v2.WriteObjectResponse;
+import com.google.storage.v2.WriteObjectSpec;
 import com.google.storage.v2.stub.GrpcStorageStub;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
+
+  private static final byte[] ZERO_BYTES = new byte[0];
+  private static final Set<OpenOption> READ_OPS = ImmutableSet.of(StandardOpenOption.READ);
+  private static final Set<OpenOption> WRITE_OPS =
+      ImmutableSet.of(
+          StandardOpenOption.WRITE,
+          StandardOpenOption.CREATE,
+          StandardOpenOption.TRUNCATE_EXISTING);
 
   private final GrpcStorageStub grpcStorageStub;
   private final GrpcConversions codecs;
@@ -65,48 +96,82 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob create(BlobInfo blobInfo, BlobTargetOption... options) {
-    return todo();
+    return create(blobInfo, null, options);
   }
 
   @Override
   public Blob create(BlobInfo blobInfo, byte[] content, BlobTargetOption... options) {
-    return todo();
+    content = firstNonNull(content, ZERO_BYTES);
+    return create(blobInfo, content, 0, content.length, options);
   }
 
   @Override
   public Blob create(
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
-    return todo();
+    requireNonNull(blobInfo, "blobInfo must be non null");
+    requireNonNull(content, "content must be non null");
+    BlobWriteOption[] translate = translate(options);
+    try {
+      ApiFuture<WriteObjectResponse> f;
+      try (GrpcBlobWriteChannel c = writer(blobInfo, translate)) {
+        c.write(ByteBuffer.wrap(content, offset, length));
+        f = c.getResults();
+      }
+      WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
+      return codecs.blobInfo().decode(response.getResource()).asBlob(this);
+    } catch (IOException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
-    return todo();
+    try {
+      return createFrom(blobInfo, content, options);
+    } catch (IOException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options)
       throws IOException {
-    return todo();
+    requireNonNull(path, "path must be non null");
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + " is a directory");
+    }
+    try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS)) {
+      return internalCreate(blobInfo, src, options);
+    }
   }
 
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    return todo();
+    requireNonNull(path, "path must be non null");
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + " is a directory");
+    }
+    try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS)) {
+      return internalCreate(blobInfo, src, bufferSize, options);
+    }
   }
 
   @Override
   public Blob createFrom(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException {
-    return todo();
+    ReadableByteChannel src =
+        Channels.newChannel(firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES)));
+    return internalCreate(blobInfo, src, options);
   }
 
   @Override
   public Blob createFrom(
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException {
-    return todo();
+    ReadableByteChannel src =
+        Channels.newChannel(firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES)));
+    return internalCreate(blobInfo, src, bufferSize, options);
   }
 
   @Override
@@ -218,12 +283,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public byte[] readAllBytes(String bucket, String blob, BlobSourceOption... options) {
-    return todo();
+    return readAllBytes(BlobId.of(bucket, blob), options);
   }
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-    return todo();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    try (ReadChannel r = reader(blob, options);
+        WritableByteChannel w = Channels.newChannel(baos)) {
+      ByteStreams.copy(r, w);
+    } catch (IOException e) {
+      throw StorageException.coalesce(e);
+    }
+    return baos.toByteArray();
   }
 
   @Override
@@ -232,28 +304,66 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   }
 
   @Override
-  public ReadChannel reader(String bucket, String blob, BlobSourceOption... options) {
-    return todo();
+  public GrpcBlobReadChannel reader(String bucket, String blob, BlobSourceOption... options) {
+    return reader(BlobId.of(bucket, blob), options);
   }
 
   @Override
-  public ReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    return todo();
+  public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
+    Object pb = codecs.blobId().encode(blob);
+    return new GrpcBlobReadChannel(grpcStorageStub.readObjectCallable(), () -> pb);
   }
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
-    todo();
+    try (WritableByteChannel out = Files.newByteChannel(path, WRITE_OPS);
+        GrpcBlobReadChannel in = reader(blob, options)) {
+      ByteStreams.copy(in, out);
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
   }
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    todo();
+    try (WritableByteChannel out = Channels.newChannel(outputStream);
+        GrpcBlobReadChannel in = reader(blob, options)) {
+      ByteStreams.copy(in, out);
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
   }
 
   @Override
-  public WriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    return todo();
+  public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
+    Object object = codecs.blobInfo().encode(blobInfo);
+    WriteObjectSpec writeObjectSpec =
+        WriteObjectSpec.newBuilder()
+            .setResource(
+                object
+                    .toBuilder()
+                    // required if the data is changing
+                    .clearChecksums()
+                    // trimmed to shave payload size
+                    .clearAcl()
+                    .clearGeneration()
+                    .clearMetageneration()
+                    .clearSize()
+                    .clearCreateTime()
+                    .clearUpdateTime()
+                    .build())
+            .build();
+    StartResumableWriteRequest startResumableWriteRequest =
+        StartResumableWriteRequest.newBuilder().setWriteObjectSpec(writeObjectSpec).build();
+    return new GrpcBlobWriteChannel(
+        grpcStorageStub.writeObjectCallable(),
+        () ->
+            ApiFutures.transform(
+                grpcStorageStub
+                    .startResumableWriteCallable()
+                    .futureCall(startResumableWriteRequest),
+                (resp) -> new ResumableWrite(startResumableWriteRequest, resp),
+                MoreExecutors.directExecutor()));
   }
 
   @Override
@@ -513,5 +623,35 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public StorageOptions getOptions() {
     return todo();
+  }
+
+  private BlobWriteOption[] translate(BlobTargetOption[] options) {
+    return todo();
+  }
+
+  private Blob internalCreate(
+      BlobInfo blobInfo, ReadableByteChannel src, BlobWriteOption... options) throws IOException {
+    requireNonNull(blobInfo, "blobInfo must be non null");
+    ApiFuture<WriteObjectResponse> f;
+    try (GrpcBlobWriteChannel c = writer(blobInfo, options)) {
+      ByteStreams.copy(src, c);
+      f = c.getResults();
+    }
+    WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
+    return codecs.blobInfo().decode(response.getResource()).asBlob(this);
+  }
+
+  private Blob internalCreate(
+      BlobInfo blobInfo, ReadableByteChannel src, int bufferSize, BlobWriteOption... options)
+      throws IOException {
+    requireNonNull(blobInfo, "blobInfo must be non null");
+    ApiFuture<WriteObjectResponse> f;
+    try (GrpcBlobWriteChannel c = writer(blobInfo, options)) {
+      c.setChunkSize(bufferSize);
+      ByteStreams.copy(src, c);
+      f = c.getResults();
+    }
+    WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
+    return codecs.blobInfo().decode(response.getResource()).asBlob(this);
   }
 }

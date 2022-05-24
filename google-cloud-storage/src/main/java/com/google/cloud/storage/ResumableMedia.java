@@ -56,6 +56,10 @@ final class ResumableMedia {
             Function.identity());
   }
 
+  static GapicMediaSession gapic() {
+    return GapicMediaSession.INSTANCE;
+  }
+
   private static boolean isValidSignedURL(String signedURLQuery) {
     boolean isValid = true;
     if (signedURLQuery.startsWith("X-Goog-Algorithm=")) {
@@ -74,5 +78,19 @@ final class ResumableMedia {
       isValid = false;
     }
     return isValid;
+  }
+
+  static final class GapicMediaSession {
+    private static final GapicMediaSession INSTANCE = new GapicMediaSession();
+
+    private GapicMediaSession() {}
+
+    GapicResumableUploadSessionBuilder write() {
+      return GapicResumableUploadSessionBuilder.create();
+    }
+
+    GapicDownloadSessionBuilder read() {
+      return GapicDownloadSessionBuilder.create();
+    }
   }
 }
