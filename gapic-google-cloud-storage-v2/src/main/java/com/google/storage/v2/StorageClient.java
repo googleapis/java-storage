@@ -18,7 +18,6 @@ package com.google.storage.v2;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -144,7 +143,6 @@ public class StorageClient implements BackgroundResource {
    * Constructs an instance of StorageClient, using the given stub for making calls. This is for
    * advanced usage - prefer using create(StorageSettings).
    */
-  @BetaApi("A restructuring of stub classes is planned, so this may break in the future")
   public static final StorageClient create(StorageStub stub) {
     return new StorageClient(stub);
   }
@@ -158,7 +156,6 @@ public class StorageClient implements BackgroundResource {
     this.stub = ((StorageStubSettings) settings.getStubSettings()).createStub();
   }
 
-  @BetaApi("A restructuring of stub classes is planned, so this may break in the future")
   protected StorageClient(StorageStub stub) {
     this.settings = null;
     this.stub = stub;
@@ -168,7 +165,6 @@ public class StorageClient implements BackgroundResource {
     return settings;
   }
 
-  @BetaApi("A restructuring of stub classes is planned, so this may break in the future")
   public StorageStub getStub() {
     return stub;
   }
