@@ -19,20 +19,26 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
 
+import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.common.io.BaseEncoding;
+import com.google.common.primitives.Ints;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectAccessControl;
+import com.google.storage.v2.ObjectChecksums;
 import java.util.concurrent.TimeUnit;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
 
   private final Codec<?, ?> entityCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<?, ?> objectAclCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<Acl, ObjectAccessControl> objectAclCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<?, ?> bucketAclCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec =
       Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
@@ -46,10 +52,16 @@ final class GrpcConversions {
   private final Codec<?, ?> deleteRuleCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
       Codec.of(Utils::todo, this::bucketInfoDecode);
-  private final Codec<?, ?> customerEncryptionCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<BlobId, Object> blobIdCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<?, ?> blobInfoCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<CustomerEncryption, com.google.storage.v2.CustomerEncryption>
+      customerEncryptionCodec =
+          Codec.of(this::customerEncryptionEncode, this::customerEncryptionDecode);
+  private final Codec<BlobId, Object> blobIdCodec =
+      Codec.of(this::blobIdEncode, this::blobIdDecode);
+  private final Codec<BlobInfo, Object> blobInfoCodec =
+      Codec.of(this::blobInfoEncode, this::blobInfoDecode);
   private final Codec<?, ?> notificationInfoCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<Integer, String> crc32cCodec =
+      Codec.of(this::crc32cEncode, this::crc32cDecode);
 
   private GrpcConversions() {}
 
@@ -57,8 +69,8 @@ final class GrpcConversions {
     return todo();
   }
 
-  Codec<?, ?> objectAcl() {
-    return todo();
+  Codec<Acl, ObjectAccessControl> objectAcl() {
+    return objectAclCodec;
   }
 
   Codec<?, ?> bucketAcl() {
@@ -101,16 +113,16 @@ final class GrpcConversions {
     return bucketInfoCodec;
   }
 
-  Codec<?, ?> customerEncryption() {
-    return todo();
+  Codec<CustomerEncryption, com.google.storage.v2.CustomerEncryption> customerEncryption() {
+    return customerEncryptionCodec;
   }
 
   Codec<BlobId, Object> blobId() {
     return blobIdCodec;
   }
 
-  Codec<?, ?> blobInfo() {
-    return todo();
+  Codec<BlobInfo, Object> blobInfo() {
+    return blobInfoCodec;
   }
 
   Codec<?, ?> notificationInfo() {
@@ -191,5 +203,135 @@ final class GrpcConversions {
 
   private ServiceAccount serviceAccountDecode(com.google.storage.v2.ServiceAccount from) {
     return ServiceAccount.of(from.getEmailAddress());
+  }
+
+  private com.google.storage.v2.CustomerEncryption customerEncryptionEncode(
+      CustomerEncryption from) {
+    return com.google.storage.v2.CustomerEncryption.newBuilder()
+        .setEncryptionAlgorithm(from.getEncryptionAlgorithm())
+        .setKeySha256Bytes(ByteString.copyFrom(BaseEncoding.base64().decode(from.getKeySha256())))
+        .build();
+  }
+
+  private CustomerEncryption customerEncryptionDecode(
+      com.google.storage.v2.CustomerEncryption from) {
+    return new CustomerEncryption(
+        from.getEncryptionAlgorithm(),
+        BaseEncoding.base64().encode(from.getKeySha256Bytes().toByteArray()));
+  }
+
+  private Object blobIdEncode(BlobId from) {
+    return Object.newBuilder()
+        .setName(from.getName())
+        .setBucket(from.getBucket())
+        .setGeneration(from.getGeneration())
+        .build();
+  }
+
+  private BlobId blobIdDecode(Object from) {
+    return BlobId.of(from.getBucket(), from.getName(), from.getGeneration());
+  }
+
+  private Object blobInfoEncode(BlobInfo from) {
+    Object.Builder toBuilder =
+        Object.newBuilder()
+            .setBucket(from.getBucket())
+            .setName(from.getName())
+            .setGeneration(from.getGeneration());
+    ifNonNull(from.getCacheControl(), toBuilder::setCacheControl);
+    ifNonNull(from.getSize(), toBuilder::setSize);
+    ifNonNull(from.getContentType(), toBuilder::setContentType);
+    ifNonNull(from.getContentEncoding(), toBuilder::setContentEncoding);
+    ifNonNull(from.getContentDisposition(), toBuilder::setContentDisposition);
+    ifNonNull(from.getContentLanguage(), toBuilder::setContentLanguage);
+    ifNonNull(from.getComponentCount(), toBuilder::setComponentCount);
+    if (from.getMd5() != null || from.getCrc32c() != null) {
+      ObjectChecksums.Builder objectChecksums = ObjectChecksums.newBuilder();
+      if (from.getMd5() != null) {
+        objectChecksums.setMd5Hash(
+            ByteString.copyFrom(BaseEncoding.base64().decode(from.getMd5())));
+      }
+      if (from.getCrc32c() != null) {
+        objectChecksums.setCrc32C(crc32cCodec.decode(from.getCrc32c()));
+      }
+      toBuilder.setChecksums(objectChecksums.build());
+    }
+    toBuilder.setMetageneration(from.getMetageneration());
+    ifNonNull(from.getDeleteTime(), Timestamps::fromMillis, toBuilder::setDeleteTime);
+    ifNonNull(from.getUpdateTime(), Timestamps::fromMillis, toBuilder::setUpdateTime);
+    ifNonNull(from.getCreateTime(), Timestamps::fromMillis, toBuilder::setCreateTime);
+    ifNonNull(from.getCustomTime(), Timestamps::fromMillis, toBuilder::setCustomTime);
+    ifNonNull(
+        from.getCustomerEncryption(),
+        customerEncryptionCodec::encode,
+        toBuilder::setCustomerEncryption);
+    ifNonNull(from.getStorageClass(), StorageClass::toString, toBuilder::setStorageClass);
+    ifNonNull(
+        from.getTimeStorageClassUpdated(),
+        Timestamps::fromMillis,
+        toBuilder::setUpdateStorageClassTime);
+    ifNonNull(from.getKmsKeyName(), toBuilder::setKmsKey);
+    ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
+    ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
+    ifNonNull(
+        from.getRetentionExpirationTime(),
+        Timestamps::fromMillis,
+        toBuilder::setRetentionExpireTime);
+    // TODO(sydmunro): Add Selflink when available
+    // TODO(sydmunro): Add etag when available
+    // TODO(sydmunro): Add Owner
+    // TODO(sydmunro): Add user metadata
+    // TODO(sydmunro): Object ACL
+    return toBuilder.build();
+  }
+
+  private BlobInfo blobInfoDecode(Object from) {
+    BlobInfo.Builder toBuilder =
+        BlobInfo.newBuilder(BlobId.of(from.getBucket(), from.getName(), from.getGeneration()));
+    ifNonNull(from.getCacheControl(), toBuilder::setCacheControl);
+    ifNonNull(from.getSize(), toBuilder::setSize);
+    ifNonNull(from.getContentType(), toBuilder::setContentType);
+    ifNonNull(from.getContentEncoding(), toBuilder::setContentEncoding);
+    ifNonNull(from.getContentDisposition(), toBuilder::setContentDisposition);
+    ifNonNull(from.getContentLanguage(), toBuilder::setContentLanguage);
+    ifNonNull(from.getComponentCount(), toBuilder::setComponentCount);
+    if (from.getChecksums() != null) {
+      if (from.getChecksums().hasCrc32C()) {
+        toBuilder.setCrc32c(crc32cCodec.encode(from.getChecksums().getCrc32C()));
+      }
+      if (from.getChecksums().getMd5Hash() != null) {
+        toBuilder.setMd5(
+            BaseEncoding.base64().encode(from.getChecksums().getMd5Hash().toByteArray()));
+      }
+    }
+    ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);
+    ifNonNull(from.getDeleteTime(), Timestamps::toMillis, toBuilder::setDeleteTime);
+    ifNonNull(from.getUpdateTime(), Timestamps::toMillis, toBuilder::setUpdateTime);
+    ifNonNull(from.getCreateTime(), Timestamps::toMillis, toBuilder::setCreateTime);
+    ifNonNull(from.getCustomTime(), Timestamps::toMillis, toBuilder::setCustomTime);
+    ifNonNull(
+        from.getCustomerEncryption(),
+        customerEncryptionCodec::decode,
+        toBuilder::setCustomerEncryption);
+    ifNonNull(from.getStorageClass(), StorageClass::valueOf, toBuilder::setStorageClass);
+    ifNonNull(
+        from.getUpdateStorageClassTime(),
+        Timestamps::toMillis,
+        toBuilder::setTimeStorageClassUpdated);
+    ifNonNull(from.getKmsKey(), toBuilder::setKmsKeyName);
+    ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
+    ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
+    ifNonNull(
+        from.getRetentionExpireTime(), Timestamps::toMillis, toBuilder::setRetentionExpirationTime);
+    return toBuilder.build();
+  }
+
+  private int crc32cDecode(String from) {
+    byte[] decodeCrc32c = BaseEncoding.base64().decode(from);
+    return Ints.fromByteArray(decodeCrc32c);
+  }
+
+  private String crc32cEncode(int from) {
+    return BaseEncoding.base64().encode(Ints.toByteArray(from));
   }
 }

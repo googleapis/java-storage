@@ -33,6 +33,7 @@ import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.GetBucketRequest;
+import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.stub.GrpcStorageStub;
 import java.io.IOException;
@@ -133,17 +134,31 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob get(String bucket, String blob, BlobGetOption... options) {
-    return todo();
+    return get(BlobId.of(bucket, blob), options);
   }
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    return todo();
+    UnaryCallable<GetObjectRequest, com.google.storage.v2.Object> unaryCallable =
+        grpcStorageStub.getObjectCallable();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GetObjectRequest.Builder getObjectRequestBuilder =
+        GetObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        getObjectRequestBuilder::setIfMetagenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        getObjectRequestBuilder::setIfMetagenerationNotMatch);
+    // TODO(sydmunro) StorageRpc.Option.Fields
+    com.google.storage.v2.Object object = unaryCallable.call(getObjectRequestBuilder.build());
+    BlobInfo blobInfo = codecs.blobInfo().decode(object);
+    return blobInfo.asBlob(this);
   }
 
   @Override
   public Blob get(BlobId blob) {
-    return todo();
+    return get(blob, new BlobGetOption[0]);
   }
 
   @Override
