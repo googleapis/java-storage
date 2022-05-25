@@ -16,6 +16,9 @@
 
 package com.google.cloud.storage.jqwik;
 
+import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
@@ -24,6 +27,9 @@ import com.google.storage.v2.Bucket.Encryption;
 import com.google.storage.v2.Bucket.RetentionPolicy;
 import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
+import com.google.storage.v2.CustomerEncryption;
+import com.google.storage.v2.ObjectChecksums;
+import java.nio.charset.StandardCharsets;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
@@ -43,6 +49,14 @@ public final class StorageArbitraries {
 
   public static Arbitrary<Long> metageneration() {
     return Arbitraries.longs().greaterOrEqual(0);
+  }
+
+  public static Arbitrary<Long> generation() {
+    return Arbitraries.longs().greaterOrEqual(0);
+  }
+
+  public static Arbitrary<String> randomString() {
+    return Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
   }
 
   /**
@@ -160,6 +174,7 @@ public final class StorageArbitraries {
   }
 
   public static final class ProjectID {
+
     private final String value;
 
     private ProjectID(String value) {
@@ -168,6 +183,51 @@ public final class StorageArbitraries {
 
     public String get() {
       return value;
+    }
+  }
+
+  public static Objects objects() {
+    return Objects.INSTANCE;
+  }
+
+  public static final class Objects {
+    private static final Objects INSTANCE = new Objects();
+
+    private Objects() {}
+
+    public Arbitrary<String> storageClass() {
+      // TODO: return each of the real values and edge cases (including invalid values)
+      return Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
+    }
+
+    public Arbitrary<ObjectChecksums> objectChecksumsArbitrary() {
+      return Combinators.combine(
+              Arbitraries.integers().greaterOrEqual(1),
+              Arbitraries.strings()
+                  .map(
+                      s ->
+                          BaseEncoding.base64()
+                              .encode(Hashing.md5().hashBytes(s.getBytes()).asBytes())))
+          .as(
+              (crc32c, md5) ->
+                  ObjectChecksums.newBuilder()
+                      .setCrc32C(crc32c)
+                      .setMd5Hash(ByteString.copyFrom(md5.getBytes()))
+                      .build());
+    }
+
+    public Arbitrary<CustomerEncryption> customerEncryptionArbitrary() {
+      return Combinators.combine(
+              Arbitraries.strings().ofMinLength(1).ofMaxLength(1024),
+              Arbitraries.strings()
+                  .map(s -> Hashing.sha256().hashString(s, StandardCharsets.UTF_8).asBytes())
+                  .map(ByteString::copyFrom))
+          .as(
+              (algorithm, key) ->
+                  CustomerEncryption.newBuilder()
+                      .setEncryptionAlgorithm(algorithm)
+                      .setKeySha256Bytes(key)
+                      .build());
     }
   }
 }
