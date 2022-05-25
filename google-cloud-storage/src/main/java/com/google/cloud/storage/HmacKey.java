@@ -16,7 +16,10 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.BackwardCompatibilityUtils.millisOffsetDateTimeCodec;
+
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /** HMAC key for a service account. */
@@ -113,8 +116,8 @@ public class HmacKey implements Serializable {
     private final String projectId;
     private final ServiceAccount serviceAccount;
     private final HmacKeyState state;
-    private final Long createTime;
-    private final Long updateTime;
+    private final OffsetDateTime createTime;
+    private final OffsetDateTime updateTime;
 
     private HmacKeyMetadata(Builder builder) {
       this.accessId = builder.accessId;
@@ -200,13 +203,33 @@ public class HmacKey implements Serializable {
       return state;
     }
 
-    /** Returns the creation time of this HMAC key. * */
+    /**
+     * Returns the creation time of this HMAC key.
+     *
+     * @deprecated Use {@link #getCreateTimeOffsetDateTime()}
+     */
+    @Deprecated
     public Long getCreateTime() {
+      return millisOffsetDateTimeCodec.decode(createTime);
+    }
+
+    /** Returns the creation time of this HMAC key. * */
+    public OffsetDateTime getCreateTimeOffsetDateTime() {
       return createTime;
     }
 
-    /** Returns the last updated time of this HMAC key. * */
+    /**
+     * Returns the last updated time of this HMAC key.
+     *
+     * @deprecated Use {@link #getUpdateTimeOffsetDateTime()}
+     */
+    @Deprecated
     public Long getUpdateTime() {
+      return millisOffsetDateTimeCodec.decode(updateTime);
+    }
+
+    /** Returns the last updated time of this HMAC key. * */
+    public OffsetDateTime getUpdateTimeOffsetDateTime() {
       return updateTime;
     }
 
@@ -218,8 +241,8 @@ public class HmacKey implements Serializable {
       private String projectId;
       private ServiceAccount serviceAccount;
       private HmacKeyState state;
-      private Long createTime;
-      private Long updateTime;
+      private OffsetDateTime createTime;
+      private OffsetDateTime updateTime;
 
       private Builder(ServiceAccount serviceAccount) {
         this.serviceAccount = serviceAccount;
@@ -261,7 +284,13 @@ public class HmacKey implements Serializable {
         return this;
       }
 
+      /** @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
+      @Deprecated
       public Builder setCreateTime(long createTime) {
+        return setCreateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(createTime));
+      }
+
+      public Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
         this.createTime = createTime;
         return this;
       }
@@ -276,7 +305,13 @@ public class HmacKey implements Serializable {
         return new HmacKeyMetadata(this);
       }
 
+      /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+      @Deprecated
       public Builder setUpdateTime(long updateTime) {
+        return setUpdateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(updateTime));
+      }
+
+      public Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
         this.updateTime = updateTime;
         return this;
       }

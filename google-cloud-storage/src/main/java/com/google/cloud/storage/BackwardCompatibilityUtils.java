@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static java.util.Objects.requireNonNull;
 
 import com.google.cloud.storage.Conversions.Codec;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -37,11 +38,21 @@ final class BackwardCompatibilityUtils {
   // would.
   static final Codec<@Nullable Long, @Nullable OffsetDateTime> millisOffsetDateTimeCodec =
       Codec.<Long, OffsetDateTime>of(
-              m ->
-                  Instant.ofEpochMilli(requireNonNull(m, "m must be non null"))
+              l ->
+                  Instant.ofEpochMilli(requireNonNull(l, "l must be non null"))
                       .atOffset(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())),
               odt -> requireNonNull(odt, "odt must be non null").toInstant().toEpochMilli())
           .nullable();
+
+  static final Codec<Long, OffsetDateTime> millisUtcCodec =
+      Codec.of(
+          l ->
+              Instant.ofEpochMilli(requireNonNull(l, "l must be non null"))
+                  .atOffset(ZoneOffset.UTC),
+          odt -> requireNonNull(odt, "odt must be non null").toInstant().toEpochMilli());
+
+  static final Codec<@Nullable Duration, @Nullable Long> nullableDurationMillisCodec =
+      Utils.durationMillisCodec.nullable();
 
   private BackwardCompatibilityUtils() {}
 }

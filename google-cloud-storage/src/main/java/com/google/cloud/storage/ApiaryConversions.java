@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
@@ -47,14 +48,18 @@ import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
+import com.google.cloud.storage.BucketInfo.AgeDeleteRule;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
+import com.google.cloud.storage.BucketInfo.CreatedBeforeDeleteRule;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
+import com.google.cloud.storage.BucketInfo.IsLiveDeleteRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.DeleteLifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.BucketInfo.Logging;
+import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.cloud.storage.Conversions.Codec;
@@ -79,6 +84,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 @InternalApi
 final class ApiaryConversions {
@@ -122,8 +129,13 @@ final class ApiaryConversions {
       notificationInfoCodec = Codec.of(this::notificationEncode, this::notificationDecode);
 
   @VisibleForTesting
-  final Codec<DateTime, OffsetDateTime> dateTimeCodec =
+  final Codec<OffsetDateTime, DateTime> dateTimeCodec =
       Codec.of(
+          odt -> {
+            ZoneOffset offset = odt.getOffset();
+            int i = Math.toIntExact(TimeUnit.SECONDS.toMinutes(offset.getTotalSeconds()));
+            return new DateTime(odt.toInstant().toEpochMilli(), i);
+          },
           dt -> {
             long milli = dt.getValue();
             int timeZoneShiftMinutes = dt.getTimeZoneShift();
@@ -137,11 +149,6 @@ final class ApiaryConversions {
             ZoneOffset offset = ZoneOffset.ofHoursMinutes(hours, minutes);
 
             return Instant.ofEpochMilli(milli).atOffset(offset);
-          },
-          odt -> {
-            ZoneOffset offset = odt.getOffset();
-            int i = Math.toIntExact(TimeUnit.SECONDS.toMinutes(offset.getTotalSeconds()));
-            return new DateTime(odt.toInstant().toEpochMilli(), i);
           });
 
   private ApiaryConversions() {}
@@ -214,10 +221,10 @@ final class ApiaryConversions {
   private StorageObject blobInfoEncode(BlobInfo from) {
     StorageObject to = blobIdEncode(from.getBlobId());
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), to::setAcl);
-    ifNonNull(from.getDeleteTimeOffsetDateTime(), dateTimeCodec::decode, to::setTimeDeleted);
-    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::decode, to::setUpdated);
-    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::decode, to::setTimeCreated);
-    ifNonNull(from.getCustomTimeOffsetDateTime(), dateTimeCodec::decode, to::setCustomTime);
+    ifNonNull(from.getDeleteTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeDeleted);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
+    ifNonNull(from.getCustomTimeOffsetDateTime(), dateTimeCodec::encode, to::setCustomTime);
     ifNonNull(from.getSize(), BigInteger::valueOf, to::setSize);
     ifNonNull(
         from.getOwner(),
@@ -226,13 +233,13 @@ final class ApiaryConversions {
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
     ifNonNull(
         from.getTimeStorageClassUpdatedOffsetDateTime(),
-        dateTimeCodec::decode,
+        dateTimeCodec::encode,
         to::setTimeStorageClassUpdated);
     ifNonNull(
         from.getCustomerEncryption(), this::customerEncryptionEncode, to::setCustomerEncryption);
     ifNonNull(
         from.getRetentionExpirationTimeOffsetDateTime(),
-        dateTimeCodec::decode,
+        dateTimeCodec::encode,
         to::setRetentionExpirationTime);
     to.setKmsKeyName(from.getKmsKeyName());
     to.setEventBasedHold(from.getEventBasedHold());
@@ -278,10 +285,10 @@ final class ApiaryConversions {
     ifNonNull(from.getId(), to::setGeneratedId);
     ifNonNull(from.getSelfLink(), to::setSelfLink);
     ifNonNull(from.getMetadata(), to::setMetadata);
-    ifNonNull(from.getTimeDeleted(), dateTimeCodec::encode, to::setDeleteTime);
-    ifNonNull(from.getUpdated(), dateTimeCodec::encode, to::setUpdateTime);
-    ifNonNull(from.getTimeCreated(), dateTimeCodec::encode, to::setCreateTime);
-    ifNonNull(from.getCustomTime(), dateTimeCodec::encode, to::setCustomTime);
+    ifNonNull(from.getTimeDeleted(), dateTimeCodec::decode, to::setDeleteTimeOffsetDateTime);
+    ifNonNull(from.getUpdated(), dateTimeCodec::decode, to::setUpdateTimeOffsetDateTime);
+    ifNonNull(from.getTimeCreated(), dateTimeCodec::decode, to::setCreateTimeOffsetDateTime);
+    ifNonNull(from.getCustomTime(), dateTimeCodec::decode, to::setCustomTimeOffsetDateTime);
     ifNonNull(from.getSize(), BigInteger::longValue, to::setSize);
     ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::decode), to::setAcl);
@@ -292,12 +299,16 @@ final class ApiaryConversions {
         from.getCustomerEncryption(), this::customerEncryptionDecode, to::setCustomerEncryption);
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
     ifNonNull(
-        from.getTimeStorageClassUpdated(), dateTimeCodec::encode, to::setTimeStorageClassUpdated);
+        from.getTimeStorageClassUpdated(),
+        dateTimeCodec::decode,
+        to::setTimeStorageClassUpdatedOffsetDateTime);
     ifNonNull(from.getKmsKeyName(), to::setKmsKeyName);
     ifNonNull(from.getEventBasedHold(), to::setEventBasedHold);
     ifNonNull(from.getTemporaryHold(), to::setTemporaryHold);
     ifNonNull(
-        from.getRetentionExpirationTime(), dateTimeCodec::encode, to::setRetentionExpirationTime);
+        from.getRetentionExpirationTime(),
+        dateTimeCodec::decode,
+        to::setRetentionExpirationTimeOffsetDateTime);
     return to.build();
   }
 
@@ -327,7 +338,7 @@ final class ApiaryConversions {
     Bucket to = new Bucket();
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::encode), to::setAcl);
     ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::setCors);
-    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::decode, to::setTimeCreated);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
     ifNonNull(
         from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::setDefaultObjectAcl);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -339,7 +350,7 @@ final class ApiaryConversions {
         to::setOwner);
     ifNonNull(from.getRpo(), Rpo::toString, to::setRpo);
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
-    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::decode, to::setUpdated);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     ifNonNull(from.versioningEnabled(), b -> new Versioning().setEnabled(b), to::setVersioning);
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
@@ -391,19 +402,18 @@ final class ApiaryConversions {
         k -> new Encryption().setDefaultKmsKeyName(k),
         to::setEncryption);
     ifNonNull(from.getLabels(), to::setLabels);
-    if (from.getRetentionPeriod() != null) {
-      if (Data.isNull(from.getRetentionPeriod())) {
-        to.setRetentionPolicy(Data.nullOf(Bucket.RetentionPolicy.class));
-      } else {
-        Bucket.RetentionPolicy retentionPolicy = new Bucket.RetentionPolicy();
-        retentionPolicy.setRetentionPeriod(from.getRetentionPeriod());
-        ifNonNull(
-            from.getRetentionEffectiveTimeOffsetDateTime(),
-            dateTimeCodec::decode,
-            retentionPolicy::setEffectiveTime);
-        ifNonNull(from.retentionPolicyIsLocked(), retentionPolicy::setIsLocked);
-        to.setRetentionPolicy(retentionPolicy);
-      }
+    Duration retentionPeriod = from.getRetentionPeriodDuration();
+    if (retentionPeriod == null) {
+      to.setRetentionPolicy(Data.nullOf(Bucket.RetentionPolicy.class));
+    } else {
+      Bucket.RetentionPolicy retentionPolicy = new Bucket.RetentionPolicy();
+      retentionPolicy.setRetentionPeriod(durationMillisCodec.encode(retentionPeriod));
+      ifNonNull(
+          from.getRetentionEffectiveTimeOffsetDateTime(),
+          dateTimeCodec::encode,
+          retentionPolicy::setEffectiveTime);
+      ifNonNull(from.retentionPolicyIsLocked(), retentionPolicy::setIsLocked);
+      to.setRetentionPolicy(retentionPolicy);
     }
     ifNonNull(from.getIamConfiguration(), this::iamConfigEncode, to::setIamConfiguration);
     ifNonNull(from.getLogging(), this::loggingEncode, to::setLogging);
@@ -427,8 +437,8 @@ final class ApiaryConversions {
     ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);
     ifNonNull(from.getSelfLink(), to::setSelfLink);
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
-    ifNonNull(from.getTimeCreated(), dateTimeCodec::encode, to::setCreateTime);
-    ifNonNull(from.getUpdated(), dateTimeCodec::encode, to::setUpdateTime);
+    ifNonNull(from.getTimeCreated(), dateTimeCodec::decode, to::setCreateTimeOffsetDateTime);
+    ifNonNull(from.getUpdated(), dateTimeCodec::decode, to::setUpdateTimeOffsetDateTime);
     ifNonNull(from.getVersioning(), Versioning::getEnabled, to::setVersioningEnabled);
     ifNonNull(from.getWebsite(), Website::getMainPageSuffix, to::setIndexPage);
     ifNonNull(from.getWebsite(), Website::getNotFoundPage, to::setNotFoundPage);
@@ -453,7 +463,8 @@ final class ApiaryConversions {
 
     RetentionPolicy retentionPolicy = from.getRetentionPolicy();
     if (retentionPolicy != null && retentionPolicy.getEffectiveTime() != null) {
-      to.setRetentionEffectiveTime(dateTimeCodec.encode(retentionPolicy.getEffectiveTime()));
+      to.setRetentionEffectiveTimeOffsetDateTime(
+          dateTimeCodec.decode(retentionPolicy.getEffectiveTime()));
     }
     ifNonNull(retentionPolicy, RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
     ifNonNull(retentionPolicy, RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
@@ -466,13 +477,40 @@ final class ApiaryConversions {
   @SuppressWarnings("deprecation")
   private Rule deleteRuleEncode(BucketInfo.DeleteRule from) {
     if (from instanceof RawDeleteRule) {
-      RawDeleteRule rule = (RawDeleteRule) from;
-      return rule.getRule();
+      RawDeleteRule raw = (RawDeleteRule) from;
+      Rule rule = raw.getRule();
+      String msg =
+          "The lifecycle condition "
+              + resolveRuleActionType(rule)
+              + " is not currently supported. Please update to the latest version of google-cloud-java."
+              + " Also, use LifecycleRule rather than the deprecated DeleteRule.";
+      // manually construct a log record, so we maintain class name and method name
+      // from the old implicit values.
+      LogRecord record = new LogRecord(Level.WARNING, msg);
+      record.setSourceClassName(BucketInfo.RawDeleteRule.class.getName());
+      record.setSourceMethodName("populateCondition");
+      BucketInfo.log.log(record);
+      return rule;
     }
     Rule to = new Rule();
     to.setAction(new Rule.Action().setType(BucketInfo.DeleteRule.SUPPORTED_ACTION));
     Rule.Condition condition = new Rule.Condition();
-    from.populateCondition(condition);
+    if (from instanceof CreatedBeforeDeleteRule) {
+      CreatedBeforeDeleteRule r = (CreatedBeforeDeleteRule) from;
+      ifNonNull(
+          r.getTime(),
+          lift(dateTimeCodec::encode).andThen(this::truncateToDateWithNoTzDrift),
+          condition::setCreatedBefore);
+    } else if (from instanceof AgeDeleteRule) {
+      AgeDeleteRule r = (AgeDeleteRule) from;
+      condition.setAge(r.getDaysToLive());
+    } else if (from instanceof NumNewerVersionsDeleteRule) {
+      NumNewerVersionsDeleteRule r = (NumNewerVersionsDeleteRule) from;
+      condition.setNumNewerVersions(r.getNumNewerVersions());
+    } else if (from instanceof IsLiveDeleteRule) {
+      IsLiveDeleteRule r = (IsLiveDeleteRule) from;
+      condition.setIsLive(r.isLive());
+    } // else would be RawDeleteRule which is handled above
     to.setCondition(condition);
     return to;
   }
@@ -480,7 +518,7 @@ final class ApiaryConversions {
   @SuppressWarnings("deprecation")
   private BucketInfo.DeleteRule deleteRuleDecode(Rule from) {
     if (from.getAction() != null
-        && BucketInfo.DeleteRule.SUPPORTED_ACTION.endsWith(from.getAction().getType())) {
+        && BucketInfo.DeleteRule.SUPPORTED_ACTION.endsWith(resolveRuleActionType(from))) {
       Rule.Condition condition = from.getCondition();
       Integer age = condition.getAge();
       if (age != null) {
@@ -488,7 +526,7 @@ final class ApiaryConversions {
       }
       DateTime dateTime = condition.getCreatedBefore();
       if (dateTime != null) {
-        return new BucketInfo.CreatedBeforeDeleteRule(dateTime.getValue());
+        return new BucketInfo.CreatedBeforeDeleteRule(dateTimeCodec.decode(dateTime));
       }
       Integer numNewerVersions = condition.getNumNewerVersions();
       if (numNewerVersions != null) {
@@ -518,7 +556,9 @@ final class ApiaryConversions {
     IamConfiguration.Builder to =
         IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(ubla.getEnabled());
     ifNonNull(
-        ubla.getLockedTime(), dateTimeCodec::encode, to::setUniformBucketLevelAccessLockedTime);
+        ubla.getLockedTime(),
+        dateTimeCodec::decode,
+        to::setUniformBucketLevelAccessLockedTimeOffsetDateTime);
     ifNonNull(
         from.getPublicAccessPrevention(),
         PublicAccessPrevention::parse,
@@ -531,7 +571,7 @@ final class ApiaryConversions {
     to.setEnabled(from.isUniformBucketLevelAccessEnabled());
     ifNonNull(
         from.getUniformBucketLevelAccessLockedTimeOffsetDateTime(),
-        dateTimeCodec::decode,
+        dateTimeCodec::encode,
         to::setLockedTime);
     return to;
   }
@@ -695,8 +735,8 @@ final class ApiaryConversions {
     to.setProjectId(from.getProjectId());
     ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
     ifNonNull(from.getState(), Object::toString, to::setState);
-    ifNonNull(from.getCreateTime(), DateTime::new, to::setTimeCreated);
-    ifNonNull(from.getUpdateTime(), DateTime::new, to::setUpdated);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     return to;
   }
 
@@ -704,12 +744,12 @@ final class ApiaryConversions {
       com.google.api.services.storage.model.HmacKeyMetadata from) {
     return HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
         .setAccessId(from.getAccessId())
-        .setCreateTime(from.getTimeCreated().getValue())
+        .setCreateTimeOffsetDateTime(dateTimeCodec.decode(from.getTimeCreated()))
         .setEtag(from.getEtag())
         .setId(from.getId())
         .setProjectId(from.getProjectId())
         .setState(HmacKeyState.valueOf(from.getState()))
-        .setUpdateTime(from.getUpdated().getValue())
+        .setUpdateTimeOffsetDateTime(dateTimeCodec.decode(from.getUpdated()))
         .build();
   }
 
@@ -837,5 +877,13 @@ final class ApiaryConversions {
 
   private DateTime truncateToDateWithNoTzDrift(DateTime dt) {
     return new DateTime(true, dt.getValue(), 0);
+  }
+
+  private String resolveRuleActionType(Rule rule) {
+    if (rule != null && rule.getAction() != null) {
+      return rule.getAction().getType();
+    } else {
+      return null;
+    }
   }
 }

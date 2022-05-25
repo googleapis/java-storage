@@ -37,6 +37,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Path;
 import java.security.Key;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -384,9 +385,18 @@ public class Blob extends BlobInfo {
       return this;
     }
 
+    /** @deprecated Use {@link #setTimeStorageClassUpdatedOffsetDateTime(OffsetDateTime)} */
     @Override
+    @Deprecated
     public Builder setTimeStorageClassUpdated(Long timeStorageClassUpdated) {
       infoBuilder.setTimeStorageClassUpdated(timeStorageClassUpdated);
+      return this;
+    }
+
+    @Override
+    public BlobInfo.Builder setTimeStorageClassUpdatedOffsetDateTime(
+        OffsetDateTime timeStorageClassUpdated) {
+      infoBuilder.setTimeStorageClassUpdatedOffsetDateTime(timeStorageClassUpdated);
       return this;
     }
 
@@ -396,27 +406,58 @@ public class Blob extends BlobInfo {
       return this;
     }
 
+    /** @deprecated Use {@link #setDeleteTimeOffsetDateTime(OffsetDateTime)} */
     @Override
+    @Deprecated
     Builder setDeleteTime(Long deleteTime) {
       infoBuilder.setDeleteTime(deleteTime);
       return this;
     }
 
     @Override
+    BlobInfo.Builder setDeleteTimeOffsetDateTime(OffsetDateTime deleteTime) {
+      infoBuilder.setDeleteTimeOffsetDateTime(deleteTime);
+      return this;
+    }
+
+    /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+    @Override
+    @Deprecated
     Builder setUpdateTime(Long updateTime) {
       infoBuilder.setUpdateTime(updateTime);
       return this;
     }
 
     @Override
+    BlobInfo.Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
+      infoBuilder.setUpdateTimeOffsetDateTime(updateTime);
+      return this;
+    }
+
+    @Override
+    @Deprecated
     Builder setCreateTime(Long createTime) {
       infoBuilder.setCreateTime(createTime);
       return this;
     }
 
     @Override
+    BlobInfo.Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
+      infoBuilder.setCreateTimeOffsetDateTime(createTime);
+      return this;
+    }
+
+    /** @deprecated Use {@link #setCustomTimeOffsetDateTime(OffsetDateTime)} */
+    @Override
+    @Deprecated
     public Builder setCustomTime(Long customTime) {
       infoBuilder.setCustomTime(customTime);
+      return this;
+    }
+
+    @Override
+    public BlobInfo.Builder setCustomTimeOffsetDateTime(OffsetDateTime customTime) {
+      infoBuilder.setCustomTimeOffsetDateTime(customTime);
       return this;
     }
 
@@ -450,9 +491,18 @@ public class Blob extends BlobInfo {
       return this;
     }
 
+    /** @deprecated Use {@link #setRetentionExpirationTimeOffsetDateTime(OffsetDateTime)} */
     @Override
+    @Deprecated
     Builder setRetentionExpirationTime(Long retentionExpirationTime) {
       infoBuilder.setRetentionExpirationTime(retentionExpirationTime);
+      return this;
+    }
+
+    @Override
+    BlobInfo.Builder setRetentionExpirationTimeOffsetDateTime(
+        OffsetDateTime retentionExpirationTime) {
+      infoBuilder.setRetentionExpirationTimeOffsetDateTime(retentionExpirationTime);
       return this;
     }
 

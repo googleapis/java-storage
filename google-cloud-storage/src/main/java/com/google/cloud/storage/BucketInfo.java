@@ -17,6 +17,8 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.BackwardCompatibilityUtils.millisOffsetDateTimeCodec;
+import static com.google.cloud.storage.BackwardCompatibilityUtils.millisUtcCodec;
+import static com.google.cloud.storage.BackwardCompatibilityUtils.nullableDurationMillisCodec;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +84,7 @@ public class BucketInfo implements Serializable {
   private final Boolean defaultEventBasedHold;
   private final OffsetDateTime retentionEffectiveTime;
   private final Boolean retentionPolicyIsLocked;
-  private final Long retentionPeriod; // TODO: duration
+  private final Duration retentionPeriod;
   private final IamConfiguration iamConfiguration;
   private final String locationType;
   private final Logging logging;
@@ -262,11 +265,11 @@ public class BucketInfo implements Serializable {
        * this field should never be set by a user--it's automatically set by the backend when {@code
        * enabled} is set to true.
        *
-       * @deprecated {@link #setUniformBucketLevelAccessLockedTime(OffsetDateTime)}
+       * @deprecated {@link #setUniformBucketLevelAccessLockedTimeOffsetDateTime(OffsetDateTime)}
        */
       @Deprecated
       Builder setUniformBucketLevelAccessLockedTime(Long uniformBucketLevelAccessLockedTime) {
-        return setUniformBucketLevelAccessLockedTime(
+        return setUniformBucketLevelAccessLockedTimeOffsetDateTime(
             millisOffsetDateTimeCodec.encode(uniformBucketLevelAccessLockedTime));
       }
 
@@ -276,7 +279,7 @@ public class BucketInfo implements Serializable {
        * this field should never be set by a user--it's automatically set by the backend when {@code
        * enabled} is set to true.
        */
-      Builder setUniformBucketLevelAccessLockedTime(
+      Builder setUniformBucketLevelAccessLockedTimeOffsetDateTime(
           OffsetDateTime uniformBucketLevelAccessLockedTime) {
         this.uniformBucketLevelAccessLockedTime = uniformBucketLevelAccessLockedTime;
         return this;
@@ -812,8 +815,6 @@ public class BucketInfo implements Serializable {
           Conversions.apiary().deleteRule().encode(this),
           Conversions.apiary().deleteRule().encode(other));
     }
-
-    abstract void populateCondition(Rule.Condition condition);
   }
 
   /**
@@ -847,15 +848,10 @@ public class BucketInfo implements Serializable {
     public int getDaysToLive() {
       return daysToLive;
     }
-
-    @Override
-    void populateCondition(Rule.Condition condition) {
-      condition.setAge(daysToLive);
-    }
   }
 
   static class RawDeleteRule extends DeleteRule {
-
+    // TODO(benwhitehead): investigate having deleted the populateCondition method
     private static final long serialVersionUID = -7166938278642301933L;
 
     private transient Rule rule;
@@ -863,15 +859,6 @@ public class BucketInfo implements Serializable {
     RawDeleteRule(Rule rule) {
       super(Type.UNKNOWN);
       this.rule = rule;
-    }
-
-    @Override
-    void populateCondition(Rule.Condition condition) {
-      log.warning(
-          "The lifecycle condition "
-              + condition
-              + " is not currently supported. Please update to the latest version of google-cloud-java."
-              + " Also, use LifecycleRule rather than the deprecated DeleteRule.");
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -900,26 +887,39 @@ public class BucketInfo implements Serializable {
   public static class CreatedBeforeDeleteRule extends DeleteRule {
 
     private static final long serialVersionUID = 881692650279195867L;
-    private final long timeMillis;
+    private final OffsetDateTime time;
 
     /**
      * Creates an {@code CreatedBeforeDeleteRule} object.
      *
      * @param timeMillis a date in UTC. Blobs that have been created before midnight of the provided
      *     date meet the delete condition
+     * @deprecated Use {@link #CreatedBeforeDeleteRule(OffsetDateTime)} instead
      */
+    @Deprecated
     public CreatedBeforeDeleteRule(long timeMillis) {
+      this(millisUtcCodec.encode(timeMillis));
+    }
+
+    /**
+     * Creates an {@code CreatedBeforeDeleteRule} object.
+     *
+     * @param time Blobs that have been created before midnight of the provided date meet the delete
+     *     condition
+     */
+    public CreatedBeforeDeleteRule(OffsetDateTime time) {
       super(Type.CREATE_BEFORE);
-      this.timeMillis = timeMillis;
+      this.time = time;
     }
 
+    /** @deprecated {@link #getTime()} */
+    @Deprecated
     public long getTimeMillis() {
-      return timeMillis;
+      return millisUtcCodec.decode(time);
     }
 
-    @Override
-    void populateCondition(Rule.Condition condition) {
-      condition.setCreatedBefore(new DateTime(true, timeMillis, 0));
+    public OffsetDateTime getTime() {
+      return time;
     }
   }
 
@@ -951,11 +951,6 @@ public class BucketInfo implements Serializable {
     public int getNumNewerVersions() {
       return numNewerVersions;
     }
-
-    @Override
-    void populateCondition(Rule.Condition condition) {
-      condition.setNumNewerVersions(numNewerVersions);
-    }
   }
 
   /**
@@ -984,11 +979,6 @@ public class BucketInfo implements Serializable {
 
     public boolean isLive() {
       return isLive;
-    }
-
-    @Override
-    void populateCondition(Rule.Condition condition) {
-      condition.setIsLive(isLive);
     }
   }
 
@@ -1029,7 +1019,7 @@ public class BucketInfo implements Serializable {
     /**
      * Sets the bucket's lifecycle configuration as a number of delete rules.
      *
-     * @deprecated Use {@code setLifecycleRules} instead, as in {@code
+     * @deprecated Use {@link #setLifecycleRules(Iterable)} instead, as in {@code
      *     setLifecycleRules(Collections.singletonList( new BucketInfo.LifecycleRule(
      *     LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(5).build())));}
      */
@@ -1073,21 +1063,21 @@ public class BucketInfo implements Serializable {
 
     abstract Builder setEtag(String etag);
 
-    /** @deprecated {@link #setCreateTime(OffsetDateTime)} */
+    /** @deprecated {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
     @Deprecated
     abstract Builder setCreateTime(Long createTime);
 
-    Builder setCreateTime(OffsetDateTime createTime) {
+    Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
       // provide an implementation for source and binary compatibility which we override ourselves
       setCreateTime(millisOffsetDateTimeCodec.decode(createTime));
       return this;
     }
 
-    /** @deprecated {@link #setUpdateTime(OffsetDateTime)} */
+    /** @deprecated {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
     @Deprecated
     abstract Builder setUpdateTime(Long updateTime);
 
-    Builder setUpdateTime(OffsetDateTime updateTime) {
+    Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
       // provide an implementation for source and binary compatibility which we override ourselves
       setCreateTime(millisOffsetDateTimeCodec.decode(updateTime));
       return this;
@@ -1134,13 +1124,13 @@ public class BucketInfo implements Serializable {
     @BetaApi
     public abstract Builder setDefaultEventBasedHold(Boolean defaultEventBasedHold);
 
-    /** @deprecated {@link #setRetentionEffectiveTime(OffsetDateTime)} */
+    /** @deprecated {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)} */
     @BetaApi
     @Deprecated
     abstract Builder setRetentionEffectiveTime(Long retentionEffectiveTime);
 
     @BetaApi
-    Builder setRetentionEffectiveTime(OffsetDateTime retentionEffectiveTime) {
+    Builder setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime retentionEffectiveTime) {
       return setRetentionEffectiveTime(millisOffsetDateTimeCodec.decode(retentionEffectiveTime));
     }
 
@@ -1150,9 +1140,21 @@ public class BucketInfo implements Serializable {
     /**
      * If policy is not locked this value can be cleared, increased, and decreased. If policy is
      * locked the retention period can only be increased.
+     *
+     * @deprecated Use {@link #setRetentionPeriodDuration(Duration)}
      */
     @BetaApi
+    @Deprecated
     public abstract Builder setRetentionPeriod(Long retentionPeriod);
+
+    /**
+     * If policy is not locked this value can be cleared, increased, and decreased. If policy is
+     * locked the retention period can only be increased.
+     */
+    @BetaApi
+    public Builder setRetentionPeriodDuration(Duration retentionPeriod) {
+      return setRetentionPeriod(nullableDurationMillisCodec.encode(retentionPeriod));
+    }
 
     /**
      * Sets the IamConfiguration to specify whether IAM access should be enabled.
@@ -1196,7 +1198,7 @@ public class BucketInfo implements Serializable {
     private Boolean defaultEventBasedHold;
     private OffsetDateTime retentionEffectiveTime;
     private Boolean retentionPolicyIsLocked;
-    private Long retentionPeriod;
+    private Duration retentionPeriod;
     private IamConfiguration iamConfiguration;
     private String locationType;
     private Logging logging;
@@ -1331,7 +1333,7 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
-    /** @deprecated {@link #setCreateTime(OffsetDateTime)} */
+    /** @deprecated {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
     @Deprecated
     @Override
     Builder setCreateTime(Long createTime) {
@@ -1340,12 +1342,12 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    Builder setCreateTime(OffsetDateTime createTime) {
+    Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
       this.createTime = createTime;
       return this;
     }
 
-    /** @deprecated {@link #setUpdateTime(OffsetDateTime)} */
+    /** @deprecated {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
     @Deprecated
     @Override
     Builder setUpdateTime(Long updateTime) {
@@ -1354,7 +1356,7 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    Builder setUpdateTime(OffsetDateTime updateTime) {
+    Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
       this.updateTime = updateTime;
       return this;
     }
@@ -1414,14 +1416,16 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    /** @deprecated Use {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)} */
     @Override
     @Deprecated
     Builder setRetentionEffectiveTime(Long retentionEffectiveTime) {
-      return setRetentionEffectiveTime(millisOffsetDateTimeCodec.encode(retentionEffectiveTime));
+      return setRetentionEffectiveTimeOffsetDateTime(
+          millisOffsetDateTimeCodec.encode(retentionEffectiveTime));
     }
 
     @Override
-    Builder setRetentionEffectiveTime(OffsetDateTime retentionEffectiveTime) {
+    Builder setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime retentionEffectiveTime) {
       this.retentionEffectiveTime = retentionEffectiveTime;
       return this;
     }
@@ -1433,9 +1437,15 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    /** @deprecated Use {@link #setRetentionPeriodDuration(Duration)} */
     @Override
     public Builder setRetentionPeriod(Long retentionPeriod) {
-      this.retentionPeriod = firstNonNull(retentionPeriod, Data.<Long>nullOf(Long.class));
+      return setRetentionPeriodDuration(nullableDurationMillisCodec.decode(retentionPeriod));
+    }
+
+    @Override
+    public Builder setRetentionPeriodDuration(Duration retentionPeriod) {
+      this.retentionPeriod = retentionPeriod;
       return this;
     }
 
@@ -1742,6 +1752,8 @@ public class BucketInfo implements Serializable {
   /**
    * Returns the retention effective time a policy took effect if a retention policy is defined as a
    * {@code Long}.
+   *
+   * @deprecated Use {@link #getRetentionPeriodDuration()}
    */
   @BetaApi
   @Deprecated
@@ -1778,9 +1790,20 @@ public class BucketInfo implements Serializable {
     return Data.isNull(retentionPolicyIsLocked) ? null : retentionPolicyIsLocked;
   }
 
+  /**
+   * Returns the retention policy retention period.
+   *
+   * @deprecated Use {@link #getRetentionPeriodDuration()}
+   */
+  @BetaApi
+  @Deprecated
+  public Long getRetentionPeriod() {
+    return nullableDurationMillisCodec.encode(retentionPeriod);
+  }
+
   /** Returns the retention policy retention period. */
   @BetaApi
-  public Long getRetentionPeriod() {
+  public Duration getRetentionPeriodDuration() {
     return retentionPeriod;
   }
 

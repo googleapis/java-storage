@@ -17,7 +17,9 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.InternalApi;
+import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.collect.ImmutableList;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
@@ -35,6 +37,8 @@ final class Utils {
 
   static final DateTimeFormatter RFC_3339_DATE_TIME_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+  static final Codec<Duration, Long> durationMillisCodec =
+      Codec.of(Duration::toMillis, Duration::ofMillis);
 
   private Utils() {}
 
