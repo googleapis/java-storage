@@ -38,6 +38,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.security.Key;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -558,6 +560,11 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
+    /**
+     * @deprecated Use {@link #setLifecycleRules(Iterable)} instead, as in {@code
+     *     setLifecycleRules(Collections.singletonList( new BucketInfo.LifecycleRule(
+     *     LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(5).build())));}
+     */
     @Override
     @Deprecated
     public Builder setDeleteRules(Iterable<? extends DeleteRule> rules) {
@@ -601,15 +608,31 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
+    /** @deprecated Use {@link #setCreateTimeOffsetDateTime(OffsetDateTime)} */
     @Override
+    @Deprecated
     Builder setCreateTime(Long createTime) {
       infoBuilder.setCreateTime(createTime);
       return this;
     }
 
     @Override
+    BucketInfo.Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
+      infoBuilder.setCreateTimeOffsetDateTime(createTime);
+      return this;
+    }
+
+    /** @deprecated Use {@link #setUpdateTimeOffsetDateTime(OffsetDateTime)} */
+    @Override
+    @Deprecated
     Builder setUpdateTime(Long updateTime) {
       infoBuilder.setUpdateTime(updateTime);
+      return this;
+    }
+
+    @Override
+    BucketInfo.Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
+      infoBuilder.setUpdateTimeOffsetDateTime(updateTime);
       return this;
     }
 
@@ -655,9 +678,18 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
+    /** @deprecated {@link #setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime)} */
     @Override
+    @Deprecated
     Builder setRetentionEffectiveTime(Long retentionEffectiveTime) {
       infoBuilder.setRetentionEffectiveTime(retentionEffectiveTime);
+      return this;
+    }
+
+    @Override
+    BucketInfo.Builder setRetentionEffectiveTimeOffsetDateTime(
+        OffsetDateTime retentionEffectiveTime) {
+      infoBuilder.setRetentionEffectiveTimeOffsetDateTime(retentionEffectiveTime);
       return this;
     }
 
@@ -667,9 +699,17 @@ public class Bucket extends BucketInfo {
       return this;
     }
 
+    /** @deprecated Use {@link #setRetentionPeriodDuration(Duration)} */
     @Override
+    @Deprecated
     public Builder setRetentionPeriod(Long retentionPeriod) {
       infoBuilder.setRetentionPeriod(retentionPeriod);
+      return this;
+    }
+
+    @Override
+    public BucketInfo.Builder setRetentionPeriodDuration(Duration retentionPeriod) {
+      infoBuilder.setRetentionPeriodDuration(retentionPeriod);
       return this;
     }
 
