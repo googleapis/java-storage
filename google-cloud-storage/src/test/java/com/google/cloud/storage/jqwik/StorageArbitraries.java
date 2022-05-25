@@ -20,7 +20,6 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
-import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Encryption;
@@ -30,17 +29,24 @@ import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.CustomerEncryption;
 import com.google.storage.v2.ObjectChecksums;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.providers.TypeUsage;
+import net.jqwik.time.api.DateTimes;
 
 public final class StorageArbitraries {
 
   private StorageArbitraries() {}
 
   public static Arbitrary<Timestamp> timestamp() {
-    return Arbitraries.longs().between(0, 100000000L).map(s -> Timestamps.fromMillis(s));
+    return Combinators.combine(
+            DateTimes.offsetDateTimes().offsetBetween(ZoneOffset.UTC, ZoneOffset.UTC),
+            Arbitraries.integers().between(0, 999_999_999))
+        .as(
+            (odt, nanos) ->
+                Timestamp.newBuilder().setSeconds(odt.toEpochSecond()).setNanos(nanos).build());
   }
 
   public static Arbitrary<Boolean> bool() {

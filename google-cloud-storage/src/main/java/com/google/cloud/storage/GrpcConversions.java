@@ -17,22 +17,25 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.ifNonNull;
+import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
-import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
-import java.util.concurrent.TimeUnit;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
@@ -62,6 +65,19 @@ final class GrpcConversions {
   private final Codec<?, ?> notificationInfoCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<Integer, String> crc32cCodec =
       Codec.of(this::crc32cEncode, this::crc32cDecode);
+
+  @VisibleForTesting
+  final Codec<OffsetDateTime, Timestamp> timestampCodec =
+      Codec.of(
+          odt ->
+              Timestamp.newBuilder()
+                  .setSeconds(odt.toEpochSecond())
+                  .setNanos(odt.getNano())
+                  .build(),
+          t ->
+              Instant.ofEpochSecond(t.getSeconds())
+                  .plusNanos(t.getNanos())
+                  .atOffset(ZoneOffset.UTC));
 
   private GrpcConversions() {}
 
@@ -133,17 +149,21 @@ final class GrpcConversions {
     BucketInfo.Builder to = BucketInfo.newBuilder(from.getName());
     Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
     ifNonNull(retentionPolicy, Bucket.RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
-    ifNonNull(retentionPolicy, Bucket.RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
+    ifNonNull(
+        retentionPolicy,
+        lift(Bucket.RetentionPolicy::getRetentionPeriod).andThen(Utils.durationMillisCodec::decode),
+        to::setRetentionPeriodDuration);
     if (from.hasRetentionPolicy() && retentionPolicy.hasEffectiveTime()) {
-      to.setRetentionEffectiveTime(retentionPolicy.getEffectiveTime().getSeconds());
+      to.setRetentionEffectiveTimeOffsetDateTime(
+          timestampCodec.decode(retentionPolicy.getEffectiveTime()));
     }
     ifNonNull(from.getBucketId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
     ifNonNull(from.getBilling(), Billing::getRequesterPays, to::setRequesterPays);
-    ifNonNull(from.getCreateTime(), Timestamps::toMillis, to::setCreateTime);
-    ifNonNull(from.getUpdateTime(), Timestamps::toMillis, to::setUpdateTime);
+    ifNonNull(from.getCreateTime(), timestampCodec::decode, to::setCreateTimeOffsetDateTime);
+    ifNonNull(from.getUpdateTime(), timestampCodec::decode, to::setUpdateTimeOffsetDateTime);
     ifNonNull(from.getEncryption(), Bucket.Encryption::getDefaultKmsKey, to::setDefaultKmsKeyName);
     ifNonNull(from.getWebsite(), Bucket.Website::getMainPageSuffix, to::setIndexPage);
     ifNonNull(from.getWebsite(), Bucket.Website::getNotFoundPage, to::setNotFoundPage);
@@ -173,25 +193,19 @@ final class GrpcConversions {
     to.setProject(from.getProjectId());
     ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
     ifNonNull(from.getState(), java.lang.Object::toString, to::setState);
-    if (from.getCreateTime() != null) {
-      to.setCreateTime(
-          Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
-    }
-    if (from.getUpdateTime() != null) {
-      to.setUpdateTime(
-          Timestamp.newBuilder().setSeconds(TimeUnit.MILLISECONDS.toSeconds(from.getCreateTime())));
-    }
+    ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, to::setCreateTime);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, to::setUpdateTime);
     return to.build();
   }
 
   private HmacKey.HmacKeyMetadata hmacKeyMetadataDecode(HmacKeyMetadata from) {
     return HmacKey.HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
         .setAccessId(from.getAccessId())
-        .setCreateTime(TimeUnit.SECONDS.toMillis(from.getCreateTime().getSeconds()))
+        .setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()))
         .setId(from.getId())
         .setProjectId(from.getProject())
         .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
-        .setUpdateTime(TimeUnit.SECONDS.toMillis(from.getUpdateTime().getSeconds()))
+        .setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()))
         .build();
   }
 
@@ -257,25 +271,25 @@ final class GrpcConversions {
       toBuilder.setChecksums(objectChecksums.build());
     }
     toBuilder.setMetageneration(from.getMetageneration());
-    ifNonNull(from.getDeleteTime(), Timestamps::fromMillis, toBuilder::setDeleteTime);
-    ifNonNull(from.getUpdateTime(), Timestamps::fromMillis, toBuilder::setUpdateTime);
-    ifNonNull(from.getCreateTime(), Timestamps::fromMillis, toBuilder::setCreateTime);
-    ifNonNull(from.getCustomTime(), Timestamps::fromMillis, toBuilder::setCustomTime);
+    ifNonNull(from.getDeleteTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setDeleteTime);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setUpdateTime);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setCreateTime);
+    ifNonNull(from.getCustomTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setCustomTime);
     ifNonNull(
         from.getCustomerEncryption(),
         customerEncryptionCodec::encode,
         toBuilder::setCustomerEncryption);
     ifNonNull(from.getStorageClass(), StorageClass::toString, toBuilder::setStorageClass);
     ifNonNull(
-        from.getTimeStorageClassUpdated(),
-        Timestamps::fromMillis,
+        from.getTimeStorageClassUpdatedOffsetDateTime(),
+        timestampCodec::encode,
         toBuilder::setUpdateStorageClassTime);
     ifNonNull(from.getKmsKeyName(), toBuilder::setKmsKey);
     ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
     ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
     ifNonNull(
-        from.getRetentionExpirationTime(),
-        Timestamps::fromMillis,
+        from.getRetentionExpirationTimeOffsetDateTime(),
+        timestampCodec::encode,
         toBuilder::setRetentionExpireTime);
     // TODO(sydmunro): Add Selflink when available
     // TODO(sydmunro): Add etag when available
@@ -305,10 +319,10 @@ final class GrpcConversions {
       }
     }
     ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);
-    ifNonNull(from.getDeleteTime(), Timestamps::toMillis, toBuilder::setDeleteTime);
-    ifNonNull(from.getUpdateTime(), Timestamps::toMillis, toBuilder::setUpdateTime);
-    ifNonNull(from.getCreateTime(), Timestamps::toMillis, toBuilder::setCreateTime);
-    ifNonNull(from.getCustomTime(), Timestamps::toMillis, toBuilder::setCustomTime);
+    ifNonNull(from.getDeleteTime(), timestampCodec::decode, toBuilder::setDeleteTimeOffsetDateTime);
+    ifNonNull(from.getUpdateTime(), timestampCodec::decode, toBuilder::setUpdateTimeOffsetDateTime);
+    ifNonNull(from.getCreateTime(), timestampCodec::decode, toBuilder::setCreateTimeOffsetDateTime);
+    ifNonNull(from.getCustomTime(), timestampCodec::decode, toBuilder::setCustomTimeOffsetDateTime);
     ifNonNull(
         from.getCustomerEncryption(),
         customerEncryptionCodec::decode,
@@ -316,13 +330,15 @@ final class GrpcConversions {
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, toBuilder::setStorageClass);
     ifNonNull(
         from.getUpdateStorageClassTime(),
-        Timestamps::toMillis,
-        toBuilder::setTimeStorageClassUpdated);
+        timestampCodec::decode,
+        toBuilder::setTimeStorageClassUpdatedOffsetDateTime);
     ifNonNull(from.getKmsKey(), toBuilder::setKmsKeyName);
     ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
     ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
     ifNonNull(
-        from.getRetentionExpireTime(), Timestamps::toMillis, toBuilder::setRetentionExpirationTime);
+        from.getRetentionExpireTime(),
+        timestampCodec::decode,
+        toBuilder::setRetentionExpirationTimeOffsetDateTime);
     return toBuilder.build();
   }
 
