@@ -22,7 +22,6 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.ApiFutures;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
@@ -33,12 +32,14 @@ import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -46,7 +47,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CommonObjectRequestParams;
@@ -62,13 +62,13 @@ import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
-import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StorageClient.ListBucketsPage;
 import com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
 import com.google.storage.v2.StorageClient.ListHmacKeysPage;
 import com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
 import com.google.storage.v2.StorageClient.ListObjectsPage;
 import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
+import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
 import com.google.storage.v2.stub.GrpcStorageStub;
@@ -106,6 +106,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           StandardOpenOption.WRITE,
           StandardOpenOption.CREATE,
           StandardOpenOption.TRUNCATE_EXISTING);
+  static final int _256KiB = 256 * 1024;
+  static final int _15MiB = 15 * 1024 * 1024;
 
   private final GrpcStorageStub grpcStorageStub;
   private final GrpcConversions codecs;
@@ -170,16 +172,31 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(content, "content must be non null");
-    BlobWriteOption[] translate = translate(options);
+    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
     try {
-      ApiFuture<WriteObjectResponse> f;
-      try (GrpcBlobWriteChannel c = writer(blobInfo, translate)) {
+      WriteObjectRequest req =
+          WriteObjectRequest.newBuilder()
+              .setWriteObjectSpec(spec)
+              .setWriteOffset(offset) // TODO: is this correct?
+              .build();
+
+      UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+          ResumableMedia.gapic()
+              .write()
+              .byteChannel(grpcStorageStub.writeObjectCallable())
+              .setByteStringStrategy(ByteStringStrategy.noCopy())
+              .setHasher(Hasher.enabled())
+              .direct()
+              .unbuffered()
+              .setRequest(req)
+              .build();
+
+      try (UnbufferedWritableByteChannel c = session.open()) {
         c.write(ByteBuffer.wrap(content, offset, length));
-        f = c.getResults();
       }
-      WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
-      return syntaxDecoders.blob.decode(response.getResource());
-    } catch (IOException e) {
+      return getBlob(session.getResult());
+    } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
   }
@@ -196,13 +213,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options)
       throws IOException {
-    requireNonNull(path, "path must be non null");
-    if (Files.isDirectory(path)) {
-      throw new StorageException(0, path + " is a directory");
-    }
-    try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS)) {
-      return internalCreate(blobInfo, src, options);
-    }
+    return createFrom(blobInfo, path, _15MiB, options);
   }
 
   @Override
@@ -212,26 +223,90 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
-    try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS)) {
-      return internalCreate(blobInfo, src, bufferSize, options);
+
+    BlobTargetOption[] translate = translate(options);
+    // TODO: Why does optionMap not accept BlobWriteOption?
+    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
+
+    GapicWritableByteChannelSessionBuilder channelSessionBuilder =
+        ResumableMedia.gapic()
+            .write()
+            .byteChannel(grpcStorageStub.writeObjectCallable())
+            .setHasher(Hasher.enabled())
+            .setByteStringStrategy(ByteStringStrategy.noCopy());
+
+    BufferedWritableByteChannelSession<WriteObjectResponse> session;
+    long size = Files.size(path);
+    if (size < bufferSize) {
+      // ignore the bufferSize argument if the file is smaller than it
+      WriteObjectRequest req = WriteObjectRequest.newBuilder().setWriteObjectSpec(spec).build();
+      session =
+          channelSessionBuilder.direct().buffered(Buffers.allocate(size)).setRequest(req).build();
+    } else {
+      ApiFuture<ResumableWrite> start =
+          ResumableMedia.gapic()
+              .write()
+              .resumableWrite(grpcStorageStub.startResumableWriteCallable(), spec);
+      session =
+          channelSessionBuilder
+              .resumable()
+              .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
+              .setStartAsync(start)
+              .build();
     }
+
+    try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS);
+        BufferedWritableByteChannel dst = session.open()) {
+      ByteStreams.copy(src, dst);
+    } catch (Exception e) {
+      throw StorageException.coalesce(e);
+    }
+    return getBlob(session.getResult());
   }
 
   @Override
   public Blob createFrom(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException {
-    ReadableByteChannel src =
-        Channels.newChannel(firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES)));
-    return internalCreate(blobInfo, src, options);
+    return createFrom(blobInfo, content, _15MiB, options);
   }
 
   @Override
   public Blob createFrom(
-      BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
+      BlobInfo blobInfo, InputStream in, int bufferSize, BlobWriteOption... options)
       throws IOException {
+    requireNonNull(blobInfo, "blobInfo must be non null");
+
+    BlobTargetOption[] translate = translate(options);
+    // TODO: Why does optionMap not accept BlobWriteOption?
+    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
+
+    ApiFuture<ResumableWrite> start =
+        ResumableMedia.gapic()
+            .write()
+            .resumableWrite(grpcStorageStub.startResumableWriteCallable(), spec);
+
+    BufferedWritableByteChannelSession<WriteObjectResponse> session =
+        ResumableMedia.gapic()
+            .write()
+            .byteChannel(grpcStorageStub.writeObjectCallable())
+            .setHasher(Hasher.enabled())
+            .setByteStringStrategy(ByteStringStrategy.noCopy())
+            .resumable()
+            .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
+            .setStartAsync(start)
+            .build();
+
+    // Specifically not in the try-with, so we don't close the provided stream
     ReadableByteChannel src =
-        Channels.newChannel(firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES)));
-    return internalCreate(blobInfo, src, bufferSize, options);
+        Channels.newChannel(firstNonNull(in, new ByteArrayInputStream(ZERO_BYTES)));
+    try (BufferedWritableByteChannel dst = session.open()) {
+      ByteStreams.copy(src, dst);
+    } catch (Exception e) {
+      throw StorageException.coalesce(e);
+    }
+    return getBlob(session.getResult());
   }
 
   @Override
@@ -524,34 +599,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Object object = codecs.blobInfo().encode(blobInfo);
-    WriteObjectSpec writeObjectSpec =
-        WriteObjectSpec.newBuilder()
-            .setResource(
-                object
-                    .toBuilder()
-                    // required if the data is changing
-                    .clearChecksums()
-                    // trimmed to shave payload size
-                    .clearAcl()
-                    .clearGeneration()
-                    .clearMetageneration()
-                    .clearSize()
-                    .clearCreateTime()
-                    .clearUpdateTime()
-                    .build())
-            .build();
-    StartResumableWriteRequest startResumableWriteRequest =
-        StartResumableWriteRequest.newBuilder().setWriteObjectSpec(writeObjectSpec).build();
+    BlobTargetOption[] translate = translate(options);
+    // TODO: Why does optionMap not accept BlobWriteOption?
+    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
     return new GrpcBlobWriteChannel(
         grpcStorageStub.writeObjectCallable(),
         () ->
-            ApiFutures.transform(
-                grpcStorageStub
-                    .startResumableWriteCallable()
-                    .futureCall(startResumableWriteRequest),
-                (resp) -> new ResumableWrite(startResumableWriteRequest, resp),
-                MoreExecutors.directExecutor()));
+            ResumableMedia.gapic()
+                .write()
+                .resumableWrite(grpcStorageStub.startResumableWriteCallable(), spec));
   }
 
   @Override
@@ -875,29 +932,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return todo();
   }
 
-  private Blob internalCreate(
-      BlobInfo blobInfo, ReadableByteChannel src, BlobWriteOption... options) throws IOException {
-    requireNonNull(blobInfo, "blobInfo must be non null");
-    ApiFuture<WriteObjectResponse> f;
-    try (GrpcBlobWriteChannel c = writer(blobInfo, options)) {
-      ByteStreams.copy(src, c);
-      f = c.getResults();
-    }
-    WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
-    return syntaxDecoders.blob.decode(response.getResource());
+  private BlobTargetOption[] translate(BlobWriteOption[] options) {
+    return todo();
   }
 
-  private Blob internalCreate(
-      BlobInfo blobInfo, ReadableByteChannel src, int bufferSize, BlobWriteOption... options)
-      throws IOException {
-    requireNonNull(blobInfo, "blobInfo must be non null");
-    ApiFuture<WriteObjectResponse> f;
-    try (GrpcBlobWriteChannel c = writer(blobInfo, options)) {
-      c.setChunkSize(bufferSize);
-      ByteStreams.copy(src, c);
-      f = c.getResults();
-    }
-    WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
+  private Blob getBlob(ApiFuture<WriteObjectResponse> result) {
+    // TODO: investigate if we need to unnest any exception
+    WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(result);
     return syntaxDecoders.blob.decode(response.getResource());
   }
 
@@ -1043,5 +1084,25 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       }
       return ctx;
     }
+  }
+
+  private WriteObjectSpec getWriteObjectSpec(BlobInfo info, Map<StorageRpc.Option, ?> optionsMap) {
+    Object object = codecs.blobInfo().encode(info);
+    // TODO: map options
+    return WriteObjectSpec.newBuilder()
+        .setResource(
+            object
+                .toBuilder()
+                // required if the data is changing
+                .clearChecksums()
+                // trimmed to shave payload size
+                .clearAcl()
+                .clearGeneration()
+                .clearMetageneration()
+                .clearSize()
+                .clearCreateTime()
+                .clearUpdateTime()
+                .build())
+        .build();
   }
 }

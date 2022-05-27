@@ -85,8 +85,8 @@ final class ResumableMedia {
 
     private GapicMediaSession() {}
 
-    GapicResumableUploadSessionBuilder write() {
-      return GapicResumableUploadSessionBuilder.create();
+    GapicUploadSessionBuilder write() {
+      return GapicUploadSessionBuilder.create();
     }
 
     GapicDownloadSessionBuilder read() {

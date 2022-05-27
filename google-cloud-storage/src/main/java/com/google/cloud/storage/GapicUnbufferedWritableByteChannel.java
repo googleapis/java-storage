@@ -17,12 +17,13 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
-import com.google.common.collect.ImmutableList;
+import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
+import com.google.cloud.storage.WriteFlushStrategy.Flusher;
+import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
@@ -34,18 +35,18 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByteChannel {
-
-  private final String uploadId;
+final class GapicUnbufferedWritableByteChannel<
+        RequestFactoryT extends WriteObjectRequestBuilderFactory>
+    implements UnbufferedWritableByteChannel {
 
   private final SettableApiFuture<WriteObjectResponse> resultFuture;
-  private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
   private final ByteStringStrategy byteStringStrategy;
   private final Hasher hasher;
-  private final ServerState serverState;
+  private final WriteCtx<RequestFactoryT> writeCtx;
   private final int perMessageLimit;
+
+  private final Flusher flusher;
 
   private boolean open = true;
   private boolean finished = false;
@@ -53,16 +54,18 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
   GapicUnbufferedWritableByteChannel(
       SettableApiFuture<WriteObjectResponse> resultFuture,
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-      ResumableWrite resumableWrite,
+      RequestFactoryT requestFactory,
       ByteStringStrategy byteStringStrategy,
-      Hasher hasher) {
-    this.uploadId = resumableWrite.getRes().getUploadId();
+      Hasher hasher,
+      FlusherFactory flusher) {
     this.resultFuture = resultFuture;
-    this.write = write; // todo: transform to retry once if request is non-idempotent
     this.byteStringStrategy = byteStringStrategy;
-    this.serverState = new ServerState(resumableWrite);
     this.hasher = hasher;
+
+    this.writeCtx = new WriteCtx<>(requestFactory);
     this.perMessageLimit = Values.MAX_WRITE_CHUNK_BYTES_VALUE;
+    this.flusher =
+        flusher.newFlusher(write, writeCtx.getConfirmedBytes()::addAndGet, resultFuture::set);
   }
 
   @Override
@@ -92,15 +95,15 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
       Crc32cLengthKnown crc32c = datum.getCrc32c();
       ByteString b = datum.getB();
       int contentSize = b.size();
-      long offset = serverState.getTotalSentBytes().getAndAdd(contentSize);
+      long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
       ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
       if (crc32c != null) {
-        serverState.getCumulativeCrc32c().getAndAccumulate(crc32c, Crc32cValue::concat);
+        writeCtx.getCumulativeCrc32c().getAndAccumulate(crc32c, Crc32cValue::nullSafeConcat);
         checksummedData.setCrc32C(crc32c.getValue());
       }
       WriteObjectRequest.Builder builder =
-          WriteObjectRequest.newBuilder()
-              .setUploadId(uploadId)
+          writeCtx
+              .newRequestBuilder()
               .setWriteOffset(offset)
               .setChecksummedData(checksummedData.build());
       if (contentSize < perMessageLimit) {
@@ -108,7 +111,7 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
         if (crc32c != null) {
           builder.setObjectChecksums(
               ObjectChecksums.newBuilder()
-                  .setCrc32C(serverState.getCumulativeCrc32c().get().getValue())
+                  .setCrc32C(writeCtx.getCumulativeCrc32c().get().getValue())
                   .build());
         }
         finished = true;
@@ -119,7 +122,12 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
       bytesConsumed += contentSize;
     }
 
-    sendMessages(messages);
+    try {
+      flusher.flush(messages);
+    } catch (RuntimeException e) {
+      resultFuture.setException(e);
+      throw e;
+    }
 
     return bytesConsumed;
   }
@@ -132,83 +140,26 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
   @Override
   public void close() throws IOException {
     if (!finished) {
-      long offset = serverState.getTotalSentBytes().get();
+      long offset = writeCtx.getTotalSentBytes().get();
+      Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
+
       WriteObjectRequest.Builder b =
-          WriteObjectRequest.newBuilder()
-              .setUploadId(uploadId)
-              .setFinishWrite(true)
-              .setWriteOffset(offset);
-      Crc32cLengthKnown crc32cValue = serverState.getCumulativeCrc32c().get();
+          writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
       if (crc32cValue != null) {
         b.setObjectChecksums(
             ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
       }
       WriteObjectRequest message = b.build();
-      finished = true;
-      sendMessages(ImmutableList.of(message));
+      try {
+        flusher.close(message);
+        finished = true;
+      } catch (RuntimeException e) {
+        resultFuture.setException(e);
+        throw e;
+      }
+    } else {
+      flusher.close(null);
     }
     open = false;
-  }
-
-  private void sendMessages(List<WriteObjectRequest> messages) {
-
-    Observer observer = new Observer();
-    ApiStreamObserver<WriteObjectRequest> write = this.write.clientStreamingCall(observer);
-
-    messages.forEach(write::onNext);
-    write.onCompleted();
-    try {
-      observer.invocationHandle.get();
-    } catch (InterruptedException | ExecutionException e) {
-      if (e.getCause() instanceof RuntimeException) {
-        throw (RuntimeException) e.getCause();
-      } else {
-        throw new RuntimeException(e);
-      }
-    }
-  }
-
-  private class Observer implements ApiStreamObserver<WriteObjectResponse> {
-
-    private final SettableApiFuture<Void> invocationHandle;
-
-    private Observer() {
-      invocationHandle = SettableApiFuture.create();
-    }
-
-    @Override
-    public void onNext(WriteObjectResponse value) {
-      // incremental update
-      if (value.hasPersistedSize()) {
-        serverState.getConfirmedBytes().addAndGet(value.getPersistedSize());
-      } else if (value.hasResource()) {
-        // testbench_seems to return this even on finish
-      } else {
-        // serverState.confirmedBytes.set(serverState.totalSentBytes.get());
-      }
-      if (finished) {
-        resultFuture.set(value);
-      }
-    }
-
-    /**
-     * observed exceptions so far
-     *
-     * <ol>
-     *   <li>{@link com.google.api.gax.rpc.OutOfRangeException}
-     *   <li>{@link com.google.api.gax.rpc.AlreadyExistsException}
-     *   <li>{@link io.grpc.StatusRuntimeException}
-     * </ol>
-     */
-    @Override
-    public void onError(Throwable t) {
-      // TODO: is retryable?
-      invocationHandle.setException(t);
-    }
-
-    @Override
-    public void onCompleted() {
-      invocationHandle.set(null);
-    }
   }
 }

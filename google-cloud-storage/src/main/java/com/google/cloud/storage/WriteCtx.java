@@ -16,26 +16,31 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
+
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
+import com.google.storage.v2.WriteObjectRequest;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-final class ServerState {
+final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
 
-  private final ResumableWrite resumableWrite;
+  private final RequestFactoryT requestFactory;
+
   private final AtomicLong totalSentBytes;
   private final AtomicLong confirmedBytes;
   private final AtomicReference<Crc32cLengthKnown> cumulativeCrc32c;
 
-  public ServerState(ResumableWrite resumableWrite) {
-    this.resumableWrite = resumableWrite;
-    totalSentBytes = new AtomicLong(0);
-    confirmedBytes = new AtomicLong(0);
-    cumulativeCrc32c = new AtomicReference<>();
+  WriteCtx(RequestFactoryT requestFactory) {
+    this.requestFactory = requestFactory;
+    this.totalSentBytes = new AtomicLong(0);
+    this.confirmedBytes = new AtomicLong(0);
+    this.cumulativeCrc32c = new AtomicReference<>();
   }
 
-  public ResumableWrite getStart() {
-    return resumableWrite;
+  public WriteObjectRequest.Builder newRequestBuilder() {
+    return requestFactory.newBuilder();
   }
 
   public AtomicLong getTotalSentBytes() {
@@ -58,8 +63,8 @@ final class ServerState {
   @Override
   public String toString() {
     return "ServerState{"
-        + "start="
-        + resumableWrite
+        + "requestFactory="
+        + requestFactory
         + ", totalSentBytes="
         + totalSentBytes
         + ", confirmedBytes="
@@ -67,5 +72,33 @@ final class ServerState {
         + ", totalSentCrc32c="
         + cumulativeCrc32c
         + '}';
+  }
+
+  @FunctionalInterface
+  interface WriteObjectRequestBuilderFactory {
+    WriteObjectRequest.Builder newBuilder();
+
+    static SimpleWriteObjectRequestBuilderFactory simple(WriteObjectRequest req) {
+      return new SimpleWriteObjectRequestBuilderFactory(req);
+    }
+  }
+
+  static final class SimpleWriteObjectRequestBuilderFactory
+      implements WriteObjectRequestBuilderFactory {
+    private final WriteObjectRequest req;
+
+    private SimpleWriteObjectRequestBuilderFactory(WriteObjectRequest req) {
+      this.req = req;
+    }
+
+    @Override
+    public WriteObjectRequest.Builder newBuilder() {
+      return req.toBuilder();
+    }
+
+    @Override
+    public String toString() {
+      return "SimpleWriteObjectRequestBuilderFactory{" + "req=" + fmtProto(req) + '}';
+    }
   }
 }

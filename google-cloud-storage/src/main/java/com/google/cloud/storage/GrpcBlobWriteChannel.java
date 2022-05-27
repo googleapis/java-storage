@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.GrpcStorageImpl._15MiB;
+import static com.google.cloud.storage.GrpcStorageImpl._256KiB;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.api.core.ApiFuture;
@@ -35,7 +37,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   private final LazyWriteChannel lazyWriteChannel;
 
-  private int chunkSize = 16 * 1024 * 1024;
+  private int chunkSize = _15MiB;
 
   GrpcBlobWriteChannel(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
@@ -49,14 +51,14 @@ final class GrpcBlobWriteChannel implements WriteChannel {
                         .byteChannel(write)
                         .setHasher(Hasher.noop())
                         .setByteStringStrategy(ByteStringStrategy.copy())
-                        .buffered(ByteBuffer.allocate(chunkSize))
+                        .resumable()
+                        .buffered(Buffers.allocateAligned(chunkSize, _256KiB))
                         .setStartAsync(start.get())
                         .build()));
   }
 
   @Override
   public void setChunkSize(int chunkSize) {
-    // TODO: push value to next 256KiB boundary
     Preconditions.checkState(!isOpen(), "Unable to change chunkSize after write");
     this.chunkSize = chunkSize;
   }

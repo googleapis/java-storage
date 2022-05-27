@@ -16,18 +16,26 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
+
+import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
+import com.google.storage.v2.WriteObjectRequest;
 import java.util.Objects;
+import java.util.function.Function;
 
-final class ResumableWrite {
+final class ResumableWrite implements WriteObjectRequestBuilderFactory {
 
   private final StartResumableWriteRequest req;
   private final StartResumableWriteResponse res;
 
+  private final WriteObjectRequest writeRequest;
+
   public ResumableWrite(StartResumableWriteRequest req, StartResumableWriteResponse res) {
     this.req = req;
     this.res = res;
+    this.writeRequest = WriteObjectRequest.newBuilder().setUploadId(res.getUploadId()).build();
   }
 
   public StartResumableWriteRequest getReq() {
@@ -39,8 +47,13 @@ final class ResumableWrite {
   }
 
   @Override
+  public WriteObjectRequest.Builder newBuilder() {
+    return writeRequest.toBuilder();
+  }
+
+  @Override
   public String toString() {
-    return "Start{" + "req=" + req + ", res=" + res + '}';
+    return "ResumableWrite{" + "req=" + fmtProto(req) + ", res=" + fmtProto(res) + '}';
   }
 
   @Override
@@ -58,5 +71,13 @@ final class ResumableWrite {
   @Override
   public int hashCode() {
     return Objects.hash(req, res);
+  }
+
+  /**
+   * Helper function which is more specific than {@link Function#identity()}. Constraining the input
+   * and output to be exactly {@link ResumableWrite}.
+   */
+  static ResumableWrite identity(ResumableWrite w) {
+    return w;
   }
 }
