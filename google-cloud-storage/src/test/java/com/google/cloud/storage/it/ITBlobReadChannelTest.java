@@ -25,7 +25,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.io.ByteStreams;
 import java.io.File;
@@ -54,13 +54,15 @@ public final class ITBlobReadChannelTest {
 
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
 
+  @Rule public final StorageFixture storageFixture = StorageFixture.defaultHttp();
+
   private Storage storage;
   private String bucketName;
   private String blobName;
 
   @Before
   public void setUp() throws Exception {
-    storage = StorageOptions.http().build().getService();
+    storage = storageFixture.getInstance();
 
     bucketName = RemoteStorageHelper.generateBucketName();
     storage.create(BucketInfo.of(bucketName));

@@ -46,4 +46,15 @@
     <method>* setTransportOptions(*)</method>
   </difference>
 
+  <!--
+  Allow com.google.cloud.storage.Storage to extends AutoClosable
+  // Storage defines a default implementation in the interface, but clirr
+  // is ignorant to java 8 constructs
+  -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/Storage</className>
+    <method>void close()</method>
+  </difference>
+
 </differences>

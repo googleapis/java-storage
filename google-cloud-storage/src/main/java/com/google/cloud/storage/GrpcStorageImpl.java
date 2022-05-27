@@ -59,6 +59,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   }
 
   @Override
+  public void close() throws Exception {
+    try (GrpcStorageStub s = grpcStorageStub) {
+      s.shutdownNow();
+    }
+  }
+
+  @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
     return todo();
   }
