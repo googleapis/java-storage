@@ -183,9 +183,7 @@ final class GapicUnbufferedReadableByteChannel
     private final long limit;
 
     public ReadCursor(long beginning, long limit) {
-      checkArgument(beginning >= 0);
-      checkArgument(limit >= 0);
-      // checkArgument(begin <= offset && offset <= capacity);
+      checkArgument(0 <= beginning && beginning <= limit);
       this.limit = limit;
       this.beginning = beginning;
       this.offset = beginning;

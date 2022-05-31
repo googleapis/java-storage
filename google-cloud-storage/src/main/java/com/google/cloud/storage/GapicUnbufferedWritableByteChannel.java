@@ -113,7 +113,9 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
         builder.setFinishWrite(true);
         if (crc32c != null) {
           builder.setObjectChecksums(
-              ObjectChecksums.newBuilder().setCrc32C(crc32c.getValue()).build());
+              ObjectChecksums.newBuilder()
+                  .setCrc32C(serverState.getCumulativeCrc32c().get().getValue())
+                  .build());
         }
         finished = true;
       }
