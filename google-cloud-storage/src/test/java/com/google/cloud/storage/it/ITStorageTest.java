@@ -88,6 +88,7 @@ import com.google.cloud.storage.StorageBatch;
 import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.spi.StorageRpcFactory;
@@ -157,6 +158,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -169,7 +171,6 @@ import org.threeten.bp.format.DateTimeFormatter;
 
 public class ITStorageTest {
 
-  private static RemoteStorageHelper remoteStorageHelper;
   private static Storage storage;
   private static TopicAdminClient topicAdminClient;
   private static String kmsKeyOneResourcePath;
@@ -227,6 +228,10 @@ public class ITStorageTest {
   private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
       ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
+  @ClassRule
+  public static final StorageFixture storageFixture =
+      StorageFixture.of(() -> RemoteStorageHelper.create().getOptions().getService());
+
   @Rule public final TestName testName = new TestName();
   @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
   private static final String PROJECT = ServiceOptions.getDefaultProjectId();
@@ -241,8 +246,7 @@ public class ITStorageTest {
 
   @BeforeClass
   public static void beforeClass() throws IOException {
-    remoteStorageHelper = RemoteStorageHelper.create();
-    storage = remoteStorageHelper.getOptions().getService();
+    storage = storageFixture.getInstance();
 
     storage.create(
         BucketInfo.newBuilder(BUCKET)
@@ -329,7 +333,7 @@ public class ITStorageTest {
 
   private static void prepareKmsKeys() throws IOException {
     // https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
     kmsChannel = ManagedChannelBuilder.forTarget("cloudkms.googleapis.com:443").build();
     KeyManagementServiceBlockingStub kmsStub =
@@ -1067,7 +1071,7 @@ public class ITStorageTest {
       assertTrue(e.getMessage().contains("User project specified in the request is invalid"));
     }
 
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     while (true) {
       Page<Blob> page =
           storage.list(
@@ -2380,7 +2384,7 @@ public class ITStorageTest {
       assertTrue(updatedBucket.requesterPays());
     }
 
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
 
     Storage.BucketSourceOption[] bucketOptions =
         requesterPays
@@ -2502,7 +2506,7 @@ public class ITStorageTest {
     assertNotNull(accessId);
     assertNotNull(metadata.getEtag());
     assertNotNull(metadata.getId());
-    assertEquals(remoteStorageHelper.getOptions().getProjectId(), metadata.getProjectId());
+    assertEquals(storage.getOptions().getProjectId(), metadata.getProjectId());
     assertEquals(serviceAccount.getEmail(), metadata.getServiceAccount().getEmail());
     assertEquals(HmacKey.HmacKeyState.ACTIVE, metadata.getState());
     assertNotNull(metadata.getCreateTime());
@@ -2606,7 +2610,7 @@ public class ITStorageTest {
     Bucket bucketTrue = storage.update(bucketDefault.toBuilder().setRequesterPays(true).build());
     assertTrue(bucketTrue.requesterPays());
 
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
 
     Storage.BucketSourceOption[] bucketOptions =
         new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
@@ -2669,7 +2673,7 @@ public class ITStorageTest {
 
   @Test
   public void testBucketPolicyV1() {
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
 
     Storage.BucketSourceOption[] bucketOptions = new Storage.BucketSourceOption[] {};
     Identity projectOwner = Identity.projectOwner(projectId);
@@ -2734,7 +2738,7 @@ public class ITStorageTest {
                     .setIsUniformBucketLevelAccessEnabled(true)
                     .build())
             .build());
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
 
     Storage.BucketSourceOption[] bucketOptions =
         new Storage.BucketSourceOption[] {Storage.BucketSourceOption.requestedPolicyVersion(3)};
@@ -2904,7 +2908,7 @@ public class ITStorageTest {
     Bucket updatedBucket = storage.update(remoteBucket);
     assertTrue(updatedBucket.requesterPays());
 
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     Bucket.BlobTargetOption option = Bucket.BlobTargetOption.userProject(projectId);
     String blobName = "test-create-empty-blob-requester-pays";
     Blob remoteBlob = updatedBucket.create(blobName, BLOB_BYTE_CONTENT, option);
@@ -2920,7 +2924,7 @@ public class ITStorageTest {
 
   @Test
   public void testListBucketRequesterPaysFails() throws InterruptedException {
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     Iterator<Bucket> bucketIterator =
         storage
             .list(
@@ -3023,7 +3027,7 @@ public class ITStorageTest {
 
   private void retentionPolicyLockRequesterPays(boolean requesterPays)
       throws ExecutionException, InterruptedException {
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     String bucketName = RemoteStorageHelper.generateBucketName();
     BucketInfo bucketInfo;
     if (requesterPays) {
@@ -3163,7 +3167,7 @@ public class ITStorageTest {
 
   @Test
   public void testGetServiceAccount() {
-    String projectId = remoteStorageHelper.getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     ServiceAccount serviceAccount = storage.getServiceAccount(projectId);
     assertNotNull(serviceAccount);
     assertTrue(serviceAccount.getEmail().endsWith(SERVICE_ACCOUNT_EMAIL_SUFFIX));

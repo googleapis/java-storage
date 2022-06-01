@@ -31,7 +31,6 @@ import com.google.cloud.Service;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
-import com.google.cloud.storage.Blob.BlobSourceOption;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
@@ -63,7 +62,7 @@ import java.util.concurrent.TimeUnit;
  * @see <a href="https://cloud.google.com/storage/docs">Google Cloud Storage</a>
  */
 @InternalExtensionOnly
-public interface Storage extends Service<StorageOptions> {
+public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   enum PredefinedAcl {
     AUTHENTICATED_READ("authenticatedRead"),
@@ -3746,4 +3745,7 @@ public interface Storage extends Service<StorageOptions> {
    * @throws StorageException upon failure
    */
   boolean deleteNotification(String bucket, String notificationId);
+
+  @Override
+  default void close() throws Exception {}
 }
