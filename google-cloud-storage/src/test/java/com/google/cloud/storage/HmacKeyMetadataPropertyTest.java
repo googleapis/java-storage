@@ -15,26 +15,14 @@
  */
 package com.google.cloud.storage;
 
-import static com.google.common.truth.Truth.assertThat;
-
+import com.google.cloud.storage.Conversions.Codec;
 import com.google.storage.v2.HmacKeyMetadata;
-import java.util.concurrent.TimeUnit;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
 
-public class HmacKeyMetadataPropertyTest {
-  @Property
-  void allKeysDecode(@ForAll HmacKeyMetadata metadata) {
-    HmacKey.HmacKeyMetadata decoded = Conversions.grpc().hmacKeyMetadata().decode(metadata);
-    assertThat(decoded.getAccessId()).isEqualTo(metadata.getAccessId());
-    assertThat(decoded.getProjectId()).isEqualTo(metadata.getProject());
-    assertThat(TimeUnit.MILLISECONDS.toSeconds(decoded.getUpdateTime()))
-        .isEqualTo(metadata.getUpdateTime().getSeconds());
-    assertThat(TimeUnit.MILLISECONDS.toSeconds(decoded.getCreateTime()))
-        .isEqualTo(metadata.getCreateTime().getSeconds());
-    assertThat(decoded.getId()).isEqualTo(metadata.getId());
-    assertThat(decoded.getState().toString()).isEqualTo(metadata.getState());
-    assertThat(decoded.getServiceAccount().getEmail()).isEqualTo(metadata.getServiceAccountEmail());
-    // TODO etag
+public class HmacKeyMetadataPropertyTest
+    extends BaseConvertablePropertyTest<HmacKey.HmacKeyMetadata, HmacKeyMetadata> {
+
+  @Override
+  Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> codec() {
+    return Conversions.grpc().hmacKeyMetadata();
   }
 }
