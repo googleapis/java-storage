@@ -36,16 +36,14 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
     Arbitrary<String> bucketID = Arbitraries.strings().all().ofMinLength(0).ofLength(1024);
-    Arbitrary<String> location = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-    Arbitrary<String> locationType = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
     Arbitrary<Bucket> as =
         Combinators.combine(
                 Combinators.combine(
                         bucketID,
                         StorageArbitraries.bucketName(),
                         StorageArbitraries.buckets().storageClass(),
-                        location,
-                        locationType,
+                        StorageArbitraries.buckets().location(),
+                        StorageArbitraries.buckets().locationType(),
                         StorageArbitraries.metageneration(),
                         StorageArbitraries.buckets().versioning(),
                         StorageArbitraries.timestamp())
@@ -57,7 +55,8 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().rpo(),
                         StorageArbitraries.buckets().billing(),
                         StorageArbitraries.buckets().encryption(),
-                        StorageArbitraries.buckets().retentionPolicy())
+                        StorageArbitraries.buckets().retentionPolicy(),
+                        StorageArbitraries.buckets().lifecycle())
                     .as(Tuple::of))
             .as(
                 (t1, t2) ->
@@ -77,6 +76,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         .setBilling(t2.get5())
                         .setEncryption(t2.get6())
                         .setRetentionPolicy(t2.get7())
+                        .setLifecycle(t2.get8())
                         .build());
     return Collections.singleton(as);
   }

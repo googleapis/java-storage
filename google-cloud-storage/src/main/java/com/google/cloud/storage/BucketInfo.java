@@ -469,13 +469,13 @@ public class BucketInfo implements Serializable {
     public static class LifecycleCondition implements Serializable {
       private static final long serialVersionUID = -6482314338394768785L;
       private final Integer age;
-      private final DateTime createdBefore;
+      private final OffsetDateTime createdBefore;
       private final Integer numberOfNewerVersions;
       private final Boolean isLive;
       private final List<StorageClass> matchesStorageClass;
       private final Integer daysSinceNoncurrentTime;
-      private final DateTime noncurrentTimeBefore;
-      private final DateTime customTimeBefore;
+      private final OffsetDateTime noncurrentTimeBefore;
+      private final OffsetDateTime customTimeBefore;
       private final Integer daysSinceCustomTime;
 
       private LifecycleCondition(Builder builder) {
@@ -493,13 +493,13 @@ public class BucketInfo implements Serializable {
       public Builder toBuilder() {
         return newBuilder()
             .setAge(this.age)
-            .setCreatedBefore(this.createdBefore)
+            .setCreateBeforeOffsetDateTime(this.createdBefore)
             .setNumberOfNewerVersions(this.numberOfNewerVersions)
             .setIsLive(this.isLive)
             .setMatchesStorageClass(this.matchesStorageClass)
             .setDaysSinceNoncurrentTime(this.daysSinceNoncurrentTime)
-            .setNoncurrentTimeBefore(this.noncurrentTimeBefore)
-            .setCustomTimeBefore(this.customTimeBefore)
+            .setNoncurrentTimeBeforeOffsetDateTime(this.noncurrentTimeBefore)
+            .setCustomTimeBeforeOffsetDateTime(this.customTimeBefore)
             .setDaysSinceCustomTime(this.daysSinceCustomTime);
       }
 
@@ -526,7 +526,14 @@ public class BucketInfo implements Serializable {
         return age;
       }
 
+      /** @deprecated Use {@link #getCreatedBeforeOffsetDateTime()} */
+      @Deprecated
       public DateTime getCreatedBefore() {
+        if (createdBefore == null) return null;
+        return new DateTime(millisOffsetDateTimeCodec.decode(createdBefore));
+      }
+
+      public OffsetDateTime getCreatedBeforeOffsetDateTime() {
         return createdBefore;
       }
 
@@ -549,13 +556,37 @@ public class BucketInfo implements Serializable {
 
       /**
        * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       *
+       * @deprecated {@link #getNoncurrentTimeBeforeOffsetDateTime()}
        */
+      @Deprecated
       public DateTime getNoncurrentTimeBefore() {
+        if (noncurrentTimeBefore == null) return null;
+        return new DateTime(millisOffsetDateTimeCodec.decode(noncurrentTimeBefore));
+      }
+
+      /**
+       * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       */
+      public OffsetDateTime getNoncurrentTimeBeforeOffsetDateTime() {
         return noncurrentTimeBefore;
       }
 
-      /* Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").*/
+      /**
+       * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       *
+       * @deprecated Use {@link #getCustomTimeBeforeOffsetDateTime()}
+       */
+      @Deprecated
       public DateTime getCustomTimeBefore() {
+        if (customTimeBefore == null) return null;
+        return new DateTime(millisOffsetDateTimeCodec.decode(customTimeBefore));
+      }
+
+      /**
+       * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       */
+      public OffsetDateTime getCustomTimeBeforeOffsetDateTime() {
         return customTimeBefore;
       }
 
@@ -567,13 +598,13 @@ public class BucketInfo implements Serializable {
       /** Builder for {@code LifecycleCondition}. */
       public static class Builder {
         private Integer age;
-        private DateTime createdBefore;
+        private OffsetDateTime createdBefore;
         private Integer numberOfNewerVersions;
         private Boolean isLive;
         private List<StorageClass> matchesStorageClass;
         private Integer daysSinceNoncurrentTime;
-        private DateTime noncurrentTimeBefore;
-        private DateTime customTimeBefore;
+        private OffsetDateTime noncurrentTimeBefore;
+        private OffsetDateTime customTimeBefore;
         private Integer daysSinceCustomTime;
 
         private Builder() {}
@@ -594,9 +625,24 @@ public class BucketInfo implements Serializable {
          * Sets the date a Blob should be created before for an Action to be executed. Note that
          * only the date will be considered, if the time is specified it will be truncated. This
          * condition is satisfied when an object is created before midnight of the specified date in
-         * UTC. *
+         * UTC.
+         *
+         * @deprecated Use {@link #setCreateBeforeOffsetDateTime(OffsetDateTime)}
          */
+        @Deprecated
         public Builder setCreatedBefore(DateTime createdBefore) {
+          if (createdBefore == null) return this;
+          return setCreateBeforeOffsetDateTime(
+              millisOffsetDateTimeCodec.encode(createdBefore.getValue()));
+        }
+
+        /**
+         * Sets the date a Blob should be created before for an Action to be executed. Note that
+         * only the date will be considered, if the time is specified it will be truncated. This
+         * condition is satisfied when an object is created before midnight of the specified date in
+         * UTC.
+         */
+        public Builder setCreateBeforeOffsetDateTime(OffsetDateTime createdBefore) {
           this.createdBefore = createdBefore;
           return this;
         }
@@ -646,8 +692,23 @@ public class BucketInfo implements Serializable {
          * Note that only date part will be considered, if the time is specified it will be
          * truncated. This condition is satisfied when the noncurrent time on an object is before
          * this date. This condition is relevant only for versioned objects.
+         *
+         * @deprecated Use {@link #setNoncurrentTimeBeforeOffsetDateTime(OffsetDateTime)}
          */
+        @Deprecated
         public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
+          if (noncurrentTimeBefore == null) return this;
+          return setNoncurrentTimeBeforeOffsetDateTime(
+              millisOffsetDateTimeCodec.encode(noncurrentTimeBefore.getValue()));
+        }
+
+        /**
+         * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+         * Note that only date part will be considered, if the time is specified it will be
+         * truncated. This condition is satisfied when the noncurrent time on an object is before
+         * this date. This condition is relevant only for versioned objects.
+         */
+        public Builder setNoncurrentTimeBeforeOffsetDateTime(OffsetDateTime noncurrentTimeBefore) {
           this.noncurrentTimeBefore = noncurrentTimeBefore;
           return this;
         }
@@ -657,8 +718,23 @@ public class BucketInfo implements Serializable {
          * Note that only date part will be considered, if the time is specified it will be
          * truncated. This condition is satisfied when the custom time on an object is before this
          * date in UTC.
+         *
+         * @deprecated {@link #setCustomTimeBeforeOffsetDateTime(OffsetDateTime)}
          */
+        @Deprecated
         public Builder setCustomTimeBefore(DateTime customTimeBefore) {
+          if (customTimeBefore == null) return this;
+          return setCustomTimeBeforeOffsetDateTime(
+              millisOffsetDateTimeCodec.encode(customTimeBefore.getValue()));
+        }
+
+        /**
+         * Sets the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+         * Note that only date part will be considered, if the time is specified it will be
+         * truncated. This condition is satisfied when the custom time on an object is before this
+         * date in UTC.
+         */
+        public Builder setCustomTimeBeforeOffsetDateTime(OffsetDateTime customTimeBefore) {
           this.customTimeBefore = customTimeBefore;
           return this;
         }

@@ -16,12 +16,19 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.client.util.DateTime;
 import com.google.api.core.InternalApi;
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -39,6 +46,29 @@ final class Utils {
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
   static final Codec<Duration, Long> durationMillisCodec =
       Codec.of(Duration::toMillis, Duration::ofMillis);
+
+  @VisibleForTesting
+  static final Codec<OffsetDateTime, DateTime> dateTimeCodec =
+      Codec.of(
+          odt -> {
+            ZoneOffset offset = odt.getOffset();
+            int i = Math.toIntExact(TimeUnit.SECONDS.toMinutes(offset.getTotalSeconds()));
+            return new DateTime(odt.toInstant().toEpochMilli(), i);
+          },
+          dt -> {
+            long milli = dt.getValue();
+            int timeZoneShiftMinutes = dt.getTimeZoneShift();
+
+            Duration timeZoneShift = Duration.of(timeZoneShiftMinutes, ChronoUnit.MINUTES);
+
+            int hours = Math.toIntExact(timeZoneShift.toHours());
+            int minutes =
+                Math.toIntExact(
+                    timeZoneShift.minusHours(timeZoneShift.toHours()).getSeconds() / 60);
+            ZoneOffset offset = ZoneOffset.ofHoursMinutes(hours, minutes);
+
+            return Instant.ofEpochMilli(milli).atOffset(offset);
+          });
 
   private Utils() {}
 
