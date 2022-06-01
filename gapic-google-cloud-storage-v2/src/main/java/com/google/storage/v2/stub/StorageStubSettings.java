@@ -565,7 +565,6 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     return updateHmacKeySettings;
   }
 
-  @BetaApi("A restructuring of stub classes is planned, so this may break in the future")
   public StorageStub createStub() throws IOException {
     if (getTransportChannelProvider()
         .getTransportName()

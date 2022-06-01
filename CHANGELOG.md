@@ -1,5 +1,45 @@
 # Changelog
 
+### [2.7.2](https://github.com/googleapis/java-storage/compare/v2.7.1...v2.7.2) (2022-05-27)
+
+
+### Dependencies
+
+* update kms.version to v0.96.1 ([#1418](https://github.com/googleapis/java-storage/issues/1418)) ([d2f325b](https://github.com/googleapis/java-storage/commit/d2f325b3d31ac5da367873be1fb530fb6356036a))
+
+### [2.7.1](https://github.com/googleapis/java-storage/compare/v2.7.0...v2.7.1) (2022-05-24)
+
+
+### Dependencies
+
+* update kms.version to v0.96.0 ([#1408](https://github.com/googleapis/java-storage/issues/1408)) ([7501ffc](https://github.com/googleapis/java-storage/commit/7501ffc97d5a7943d3852ea26133b6c62cbbff1f))
+
+## [2.7.0](https://github.com/googleapis/java-storage/compare/v2.6.1...v2.7.0) (2022-05-24)
+
+
+### Features
+
+* add build scripts for native image testing in Java 17 ([#1440](https://github.com/googleapis/java-storage/issues/1440)) ([#1400](https://github.com/googleapis/java-storage/issues/1400)) ([274a373](https://github.com/googleapis/java-storage/commit/274a3733b72d2aa1e2916edf40a72c013aaf1711))
+* add Storage#downloadTo ([#1354](https://github.com/googleapis/java-storage/issues/1354)) ([5a565a7](https://github.com/googleapis/java-storage/commit/5a565a74cd6aaa85ed81a8cea026477512fbd5da))
+* change GCS gRPC API to get user billing project from gRPC metadata instead of CommonRequestParams, and remove latter ([#1396](https://github.com/googleapis/java-storage/issues/1396)) ([8a7755c](https://github.com/googleapis/java-storage/commit/8a7755cc8352b3ab21c252885fb86576474d7f09))
+
+
+### Documentation
+
+* add new storage_download_byte_range samples ([#1325](https://github.com/googleapis/java-storage/issues/1325)) ([cef3d13](https://github.com/googleapis/java-storage/commit/cef3d138fd11762437ac59adee6a198139acb7f5))
+* **sample:** removing unnecessary native-image-support dependency ([#1373](https://github.com/googleapis/java-storage/issues/1373)) ([3a246ef](https://github.com/googleapis/java-storage/commit/3a246ef4f0a75e52734df52772d34547632ab85f))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220509-1.32.1 ([#1386](https://github.com/googleapis/java-storage/issues/1386)) ([4e93c8e](https://github.com/googleapis/java-storage/commit/4e93c8e6f3c8259968a3dd35a15e752a81491af2))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.116.4 ([#1360](https://github.com/googleapis/java-storage/issues/1360)) ([66c7ffe](https://github.com/googleapis/java-storage/commit/66c7ffe112242915165286a972c44fc2568b67c8))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.117.0 ([#1382](https://github.com/googleapis/java-storage/issues/1382)) ([0cd01a0](https://github.com/googleapis/java-storage/commit/0cd01a0eb498a994c330cc985c21b3248ecba8fa))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.118.0 ([#1397](https://github.com/googleapis/java-storage/issues/1397)) ([fc0c187](https://github.com/googleapis/java-storage/commit/fc0c187096058f84a2f73704b29457c5c6d744fe))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.11.0 ([#1398](https://github.com/googleapis/java-storage/issues/1398)) ([8834423](https://github.com/googleapis/java-storage/commit/8834423f8772310b1a99aa393095e319a4169307))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.12.0 ([#1402](https://github.com/googleapis/java-storage/issues/1402)) ([32cded4](https://github.com/googleapis/java-storage/commit/32cded493442ed5e7b524cd2478e97f00fd90c3c))
+* update kms.version to v0.95.4 ([#1361](https://github.com/googleapis/java-storage/issues/1361)) ([2f42ba2](https://github.com/googleapis/java-storage/commit/2f42ba296bf5ace92159ee02885eaf0e4d9c9864))
+
 ### [2.6.1](https://github.com/googleapis/java-storage/compare/v2.6.0...v2.6.1) (2022-04-15)
 
 
