@@ -24,16 +24,18 @@ import java.util.Deque;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * When processing a "chunk" of data to write to GCS, we must turn our logical chunk into N segments.
- * Each resulting segment will then become an individual message.
+ * When processing a "chunk" of data to write to GCS, we must turn our logical chunk into N
+ * segments. Each resulting segment will then become an individual message.
  */
 final class ChunkSegmenter {
 
   /**
-   * Given {@code bbs}, yield N segments,  where each segment is at most {@code maxSegmentSize} bytes.
+   * Given {@code bbs}, yield N segments, where each segment is at most {@code maxSegmentSize}
+   * bytes.
    *
-   * An example:
+   * <p>An example:
    *
+   * <pre>
    * Given a "chunk" consisting of two ByteBuffers, A and B, where A contains 3 MiB and B contains 6.6 MiB
    *    A: 3 MiB                       B: 6.6 MiB
    * |-----------------------------|-----------------------------------------------------------------|
@@ -41,11 +43,14 @@ final class ChunkSegmenter {
    * Produce segments
    *   S1: 2 MiB            S2: 2 MiB           S3: 2 MiB           S4: 2 MiB           S5: 1.6 MiB
    * |-------------------|-------------------|-------------------|-------------------|---------------|
+   * </pre>
    *
    * Each segment will conditionally compute a crc32c value depending upon {@code hasher}.
+   *
    * @see #segmentBuffers(ByteBuffer[], Hasher, ByteStringStrategy, int, int, int)
    */
-  static ChunkSegment[] segmentBuffers(ByteBuffer[] bbs, Hasher hasher, ByteStringStrategy bss, int maxSegmentSize) {
+  static ChunkSegment[] segmentBuffers(
+      ByteBuffer[] bbs, Hasher hasher, ByteStringStrategy bss, int maxSegmentSize) {
     return segmentBuffers(bbs, hasher, bss, maxSegmentSize, 0, bbs.length);
   }
 
@@ -82,7 +87,8 @@ final class ChunkSegmenter {
     return data.toArray(new ChunkSegment[0]);
   }
 
-  private static ChunkSegment getData(ByteBuffer buffer, Hasher hasher, ByteStringStrategy bss, int limit) {
+  private static ChunkSegment getData(
+      ByteBuffer buffer, Hasher hasher, ByteStringStrategy bss, int limit) {
     final ByteBuffer slice = buffer.slice();
     slice.limit(limit);
 

@@ -25,11 +25,12 @@ import java.nio.ByteBuffer;
  * <p>Several methods are copied from {@link com.google.common.base.Java8Compatibility} which is
  * package private. Each of these methods will need to be kept as long as we are supporting Java 8.
  * The list of applicable methods are:
+ *
  * <ol>
- *   <li>{@link #clear}</li>
- *   <li>{@link #flip}</li>
- *   <li>{@link #limit}</li>
- *   <li>{@link #position}</li>
+ *   <li>{@link #clear}
+ *   <li>{@link #flip}
+ *   <li>{@link #limit}
+ *   <li>{@link #position}
  * </ol>
  */
 final class Buffers {

@@ -89,7 +89,8 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
     }
 
     ChunkSegment[] data =
-        ChunkSegmenter.segmentBuffers(srcs, hasher, byteStringStrategy, perMessageLimit, srcsOffset, srcLength);
+        ChunkSegmenter.segmentBuffers(
+            srcs, hasher, byteStringStrategy, perMessageLimit, srcsOffset, srcLength);
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
