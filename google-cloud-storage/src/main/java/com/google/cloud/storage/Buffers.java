@@ -20,10 +20,17 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 /**
- * Utility methods for working by various buffers.
+ * Utility methods for working with ByteBuffers
  *
  * <p>Several methods are copied from {@link com.google.common.base.Java8Compatibility} which is
- * package private
+ * package private. Each of these methods will need to be kept as long as we are supporting Java 8.
+ * The list of applicable methods are:
+ * <ol>
+ *   <li>{@link #clear}</li>
+ *   <li>{@link #flip}</li>
+ *   <li>{@link #limit}</li>
+ *   <li>{@link #position}</li>
+ * </ol>
  */
 final class Buffers {
 

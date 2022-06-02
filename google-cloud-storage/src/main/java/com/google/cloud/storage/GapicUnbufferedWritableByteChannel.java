@@ -19,7 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
-import com.google.cloud.storage.Chunker.Data;
+import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.common.collect.ImmutableList;
@@ -88,13 +88,13 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
       throw new ClosedChannelException();
     }
 
-    Data[] data =
-        Chunker.chunkIt(srcs, hasher, byteStringStrategy, perMessageLimit, srcsOffset, srcLength);
+    ChunkSegment[] data =
+        ChunkSegmenter.segmentBuffers(srcs, hasher, byteStringStrategy, perMessageLimit, srcsOffset, srcLength);
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
     int bytesConsumed = 0;
-    for (Data datum : data) {
+    for (ChunkSegment datum : data) {
       Crc32cLengthKnown crc32c = datum.getCrc32c();
       ByteString b = datum.getB();
       int contentSize = b.size();

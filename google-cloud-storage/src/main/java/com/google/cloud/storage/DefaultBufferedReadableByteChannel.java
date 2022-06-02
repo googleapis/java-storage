@@ -55,8 +55,7 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
       int dstPosition = dst.position();
 
       final int tmpBytesCopied;
-      boolean enqueuedBytes = enqueuedBytes();
-      if (enqueuedBytes) {
+      if (enqueuedBytes()) {
         long copy = Buffers.copy(buffer, new ByteBuffer[] {dst});
         if (buffer.remaining() == 0) {
           Buffers.clear(buffer);

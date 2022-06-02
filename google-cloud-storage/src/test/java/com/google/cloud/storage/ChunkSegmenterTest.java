@@ -18,7 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.cloud.storage.Chunker.Data;
+import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -33,20 +33,20 @@ import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 import net.jqwik.api.RandomDistribution;
 
-final class ChunkerTest {
+final class ChunkSegmenterTest {
   private static final int _2MiB = 2 * 1024 * 1024;
 
   @Property
   void chunkIt(@ForAll("TestData") TestData td) {
     System.out.println("td = " + td);
 
-    Data[] data =
-        Chunker.chunkIt(td.buffers, Hasher.noop(), ByteStringStrategy.noCopy(), td.chunkSize);
+    ChunkSegment[] data =
+        ChunkSegmenter.segmentBuffers(td.buffers, Hasher.noop(), ByteStringStrategy.noCopy(), td.chunkSize);
 
     long dataTotalSize = Arrays.stream(data).mapToLong(d -> d.getB().size()).sum();
     Optional<Crc32cLengthKnown> reduce =
         Arrays.stream(data)
-            .map(Data::getCrc32c)
+            .map(ChunkSegment::getCrc32c)
             .filter(Objects::nonNull)
             .reduce(Crc32cValue::concat);
 
