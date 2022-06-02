@@ -136,7 +136,7 @@ public class BucketTest {
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
   private static final Key KEY =
       new SecretKeySpec(BaseEncoding.base64().decode(BASE64_KEY), "AES256");
-  private final RetryAlgorithmManager retryAlgorithmManager =
+  private final HttpRetryAlgorithmManager retryAlgorithmManager =
       HttpStorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   private Storage storage;

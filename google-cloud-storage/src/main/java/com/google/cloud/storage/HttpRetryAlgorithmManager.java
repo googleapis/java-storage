@@ -29,12 +29,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-final class RetryAlgorithmManager implements Serializable {
+final class HttpRetryAlgorithmManager implements Serializable {
 
   private static final long serialVersionUID = -8615379702537758604L;
   private final StorageRetryStrategy retryStrategy;
 
-  RetryAlgorithmManager(StorageRetryStrategy retryStrategy) {
+  HttpRetryAlgorithmManager(StorageRetryStrategy retryStrategy) {
     this.retryStrategy = retryStrategy;
   }
 

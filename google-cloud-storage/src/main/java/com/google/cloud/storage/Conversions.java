@@ -38,6 +38,10 @@ final class Conversions {
   @FunctionalInterface
   interface Decoder<From, To> {
     To decode(From f);
+
+    static <X> Decoder<X, X> identity() {
+      return (x) -> x;
+    }
   }
 
   interface Codec<A, B> extends Encoder<A, B>, Decoder<B, A> {

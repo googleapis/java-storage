@@ -94,8 +94,6 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   @Override
   public abstract boolean equals(Object obj);
 
-  abstract RetryAlgorithmManager getRetryAlgorithmManager();
-
   /** Returns a default {@code StorageOptions} instance. */
   public static StorageOptions getDefaultInstance() {
     return HttpStorageOptions.newBuilder().build();
