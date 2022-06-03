@@ -113,7 +113,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static final ApiaryConversions codecs = Conversions.apiary();
 
-  private final RetryAlgorithmManager retryAlgorithmManager;
+  private final HttpRetryAlgorithmManager retryAlgorithmManager;
   private final StorageRpc storageRpc;
 
   StorageImpl(HttpStorageOptions options) {
@@ -357,12 +357,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
     private static final long serialVersionUID = 308012320541700881L;
     private final HttpStorageOptions serviceOptions;
-    private final RetryAlgorithmManager retryAlgorithmManager;
+    private final HttpRetryAlgorithmManager retryAlgorithmManager;
     private final Map<StorageRpc.Option, ?> options;
 
     HmacKeyMetadataPageFetcher(
         HttpStorageOptions serviceOptions,
-        RetryAlgorithmManager retryAlgorithmManager,
+        HttpRetryAlgorithmManager retryAlgorithmManager,
         Map<StorageRpc.Option, ?> options) {
       this.serviceOptions = serviceOptions;
       this.retryAlgorithmManager = retryAlgorithmManager;
@@ -1381,7 +1381,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static Page<HmacKeyMetadata> listHmacKeys(
       final HttpStorageOptions serviceOptions,
-      final RetryAlgorithmManager retryAlgorithmManager,
+      final HttpRetryAlgorithmManager retryAlgorithmManager,
       final Map<StorageRpc.Option, ?> options) {
     ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForHmacKeyList(options);
     return Retrying.run(

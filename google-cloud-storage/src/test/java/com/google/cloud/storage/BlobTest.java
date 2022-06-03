@@ -165,7 +165,7 @@ public class BlobTest {
   private Blob expectedBlob;
   private Storage serviceMockReturnsOptions = createMock(Storage.class);
   private HttpStorageOptions mockOptions = createMock(HttpStorageOptions.class);
-  private final RetryAlgorithmManager retryAlgorithmManager =
+  private final HttpRetryAlgorithmManager retryAlgorithmManager =
       HttpStorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   @Before

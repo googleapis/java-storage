@@ -31,6 +31,7 @@ import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -80,13 +81,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   private final GrpcStorageStub grpcStorageStub;
   private final GrpcConversions codecs;
-  private final RetryAlgorithmManager retryAlgorithmManager;
+  private final GrpcRetryAlgorithmManager retryAlgorithmManager;
+  private final SyntaxDecoders syntaxDecoders;
 
   GrpcStorageImpl(GrpcStorageOptions options, GrpcStorageStub grpcStorageStub) {
     super(options);
     this.grpcStorageStub = grpcStorageStub;
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
+    this.syntaxDecoders = new SyntaxDecoders();
   }
 
   @Override
@@ -125,7 +128,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         f = c.getResults();
       }
       WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
-      return codecs.blobInfo().decode(response.getResource()).asBlob(this);
+      return syntaxDecoders.blob.decode(response.getResource());
     } catch (IOException e) {
       throw StorageException.coalesce(e);
     }
@@ -193,10 +196,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
         bucketRequestBuilder::setIfMetagenerationNotMatch);
+    GetBucketRequest req = bucketRequestBuilder.build();
     // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
     // projection=full
-    com.google.storage.v2.Bucket protoBucket = bucketCallable.call(bucketRequestBuilder.build());
-    return Conversions.grpc().bucketInfo().decode(protoBucket).asBucket(this);
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> grpcStorageStub.getBucketCallable().call(req),
+        syntaxDecoders.bucket);
   }
 
   @Override
@@ -223,9 +230,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
         getObjectRequestBuilder::setIfMetagenerationNotMatch);
     // TODO(sydmunro) StorageRpc.Option.Fields
-    com.google.storage.v2.Object object = unaryCallable.call(getObjectRequestBuilder.build());
-    BlobInfo blobInfo = codecs.blobInfo().decode(object);
-    return blobInfo.asBlob(this);
+    GetObjectRequest req = getObjectRequestBuilder.build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> grpcStorageStub.getObjectCallable().call(req),
+        syntaxDecoders.blob);
   }
 
   @Override
@@ -572,8 +582,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setAccessId(hmacKeyMetadata.getAccessId())
             .setProject(hmacKeyMetadata.getProjectId())
             .build();
-    // TODO retries
-    grpcStorageStub.deleteHmacKeyCallable().call(req);
+    Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          grpcStorageStub.deleteHmacKeyCallable().call(req);
+          return null;
+        },
+        Decoder.identity());
   }
 
   @Override
@@ -602,9 +618,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public ServiceAccount getServiceAccount(String projectId) {
     GetServiceAccountRequest req =
         GetServiceAccountRequest.newBuilder().setProject(projectId).build();
-    com.google.storage.v2.ServiceAccount resp =
-        grpcStorageStub.getServiceAccountCallable().call(req);
-    return codecs.serviceAccount().decode(resp);
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> grpcStorageStub.getServiceAccountCallable().call(req),
+        codecs.serviceAccount());
   }
 
   @Override
@@ -628,8 +646,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   }
 
   @Override
-  public StorageOptions getOptions() {
-    return todo();
+  public GrpcStorageOptions getOptions() {
+    return (GrpcStorageOptions) super.getOptions();
   }
 
   private BlobWriteOption[] translate(BlobTargetOption[] options) {
@@ -645,7 +663,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       f = c.getResults();
     }
     WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
-    return codecs.blobInfo().decode(response.getResource()).asBlob(this);
+    return syntaxDecoders.blob.decode(response.getResource());
   }
 
   private Blob internalCreate(
@@ -659,6 +677,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       f = c.getResults();
     }
     WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(f);
-    return codecs.blobInfo().decode(response.getResource()).asBlob(this);
+    return syntaxDecoders.blob.decode(response.getResource());
+  }
+
+  /** Bind some decoders for our "Syntax" classes to this instance of GrpcStorageImpl */
+  private final class SyntaxDecoders {
+    final Decoder<Object, Blob> blob =
+        o -> codecs.blobInfo().decode(o).asBlob(GrpcStorageImpl.this);
+    final Decoder<com.google.storage.v2.Bucket, Bucket> bucket =
+        b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
   }
 }

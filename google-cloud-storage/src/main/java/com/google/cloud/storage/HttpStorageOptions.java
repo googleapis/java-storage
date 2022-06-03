@@ -44,12 +44,12 @@ public class HttpStorageOptions extends StorageOptions {
   private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
-  private final RetryAlgorithmManager retryAlgorithmManager;
+  private final HttpRetryAlgorithmManager retryAlgorithmManager;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
     this.retryAlgorithmManager =
-        new RetryAlgorithmManager(
+        new HttpRetryAlgorithmManager(
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, defaults().getStorageRetryStrategy()));
   }
@@ -59,8 +59,7 @@ public class HttpStorageOptions extends StorageOptions {
     return SCOPES;
   }
 
-  @Override
-  RetryAlgorithmManager getRetryAlgorithmManager() {
+  HttpRetryAlgorithmManager getRetryAlgorithmManager() {
     return retryAlgorithmManager;
   }
 

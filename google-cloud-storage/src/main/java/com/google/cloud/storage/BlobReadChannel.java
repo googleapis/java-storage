@@ -42,7 +42,7 @@ class BlobReadChannel implements ReadChannel {
   private final HttpStorageOptions serviceOptions;
   private final BlobId blob;
   private final Map<StorageRpc.Option, ?> requestOptions;
-  private final RetryAlgorithmManager retryAlgorithmManager;
+  private final HttpRetryAlgorithmManager retryAlgorithmManager;
   private String lastEtag;
   private long position;
   private boolean isOpen;

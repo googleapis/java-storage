@@ -54,7 +54,7 @@ public class StorageBatchTest {
     BlobTargetOption.generationMatch(), BlobTargetOption.metagenerationMatch()
   };
   private static final GoogleJsonError GOOGLE_JSON_ERROR = new GoogleJsonError();
-  private final RetryAlgorithmManager retryAlgorithmManager =
+  private final HttpRetryAlgorithmManager retryAlgorithmManager =
       HttpStorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   private HttpStorageOptions optionsMock;

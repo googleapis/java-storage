@@ -83,7 +83,7 @@ public class BlobWriteChannelTest {
   private StorageRpcFactory rpcFactoryMock;
   private StorageRpc storageRpcMock;
   private BlobWriteChannel writer;
-  private RetryAlgorithmManager retryAlgorithmManager;
+  private HttpRetryAlgorithmManager retryAlgorithmManager;
 
   @Before
   public void setUp() {
