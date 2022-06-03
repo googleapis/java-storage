@@ -529,10 +529,13 @@ public class BucketInfo implements Serializable {
       /** @deprecated Use {@link #getCreatedBeforeOffsetDateTime()} */
       @Deprecated
       public DateTime getCreatedBefore() {
-        if (createdBefore == null) return null;
-        return new DateTime(millisOffsetDateTimeCodec.decode(createdBefore));
+        return Utils.dateTimeCodec.nullable().encode(createdBefore);
       }
 
+      /**
+       * Returns the date and offset from UTC for this condition.
+       * If a time other than 00:00:00.000 is present in the value, GCS will truncate to 00:00:00.000.
+       */
       public OffsetDateTime getCreatedBeforeOffsetDateTime() {
         return createdBefore;
       }
@@ -561,12 +564,12 @@ public class BucketInfo implements Serializable {
        */
       @Deprecated
       public DateTime getNoncurrentTimeBefore() {
-        if (noncurrentTimeBefore == null) return null;
-        return new DateTime(millisOffsetDateTimeCodec.decode(noncurrentTimeBefore));
+        return Utils.dateTimeCodec.nullable().encode(noncurrentTimeBefore);
       }
 
       /**
-       * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       * Returns the date and offset from UTC for this condition.
+       * If a time other than 00:00:00.000 is present in the value, GCS will truncate to 00:00:00.000.
        */
       public OffsetDateTime getNoncurrentTimeBeforeOffsetDateTime() {
         return noncurrentTimeBefore;
@@ -579,12 +582,12 @@ public class BucketInfo implements Serializable {
        */
       @Deprecated
       public DateTime getCustomTimeBefore() {
-        if (customTimeBefore == null) return null;
-        return new DateTime(millisOffsetDateTimeCodec.decode(customTimeBefore));
+        return Utils.dateTimeCodec.nullable().encode(customTimeBefore);
       }
 
       /**
-       * Returns the date in RFC 3339 format with only the date part (for instance, "2013-01-15").
+       * Returns the date and offset from UTC for this condition.
+       * If a time other than 00:00:00.000 is present in the value, GCS will truncate to 00:00:00.000.
        */
       public OffsetDateTime getCustomTimeBeforeOffsetDateTime() {
         return customTimeBefore;
@@ -631,10 +634,8 @@ public class BucketInfo implements Serializable {
          */
         @Deprecated
         public Builder setCreatedBefore(DateTime createdBefore) {
-          if (createdBefore == null) return this;
-          return setCreateBeforeOffsetDateTime(
-              millisOffsetDateTimeCodec.encode(createdBefore.getValue()));
-        }
+          return setCustomTimeBeforeOffsetDateTime(Utils.dateTimeCodec.nullable().decode(createdBefore));
+         }
 
         /**
          * Sets the date a Blob should be created before for an Action to be executed. Note that
@@ -697,9 +698,7 @@ public class BucketInfo implements Serializable {
          */
         @Deprecated
         public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
-          if (noncurrentTimeBefore == null) return this;
-          return setNoncurrentTimeBeforeOffsetDateTime(
-              millisOffsetDateTimeCodec.encode(noncurrentTimeBefore.getValue()));
+          return setNoncurrentTimeBeforeOffsetDateTime(Utils.dateTimeCodec.nullable().decode(noncurrentTimeBefore));
         }
 
         /**
@@ -723,9 +722,7 @@ public class BucketInfo implements Serializable {
          */
         @Deprecated
         public Builder setCustomTimeBefore(DateTime customTimeBefore) {
-          if (customTimeBefore == null) return this;
-          return setCustomTimeBeforeOffsetDateTime(
-              millisOffsetDateTimeCodec.encode(customTimeBefore.getValue()));
+          return setCustomTimeBeforeOffsetDateTime(Utils.dateTimeCodec.nullable().decode(customTimeBefore));
         }
 
         /**

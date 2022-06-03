@@ -195,9 +195,7 @@ final class GrpcConversions {
     ifNonNull(from.getVersioning(), Bucket.Versioning::getEnabled, to::setVersioningEnabled);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::setLabels);
-    if (from.getWebsite() != null
-        || from.getWebsite().getMainPageSuffix() != null
-        || from.getWebsite().getNotFoundPage() != null) {
+    if (from.hasWebsite()) {
       to.setIndexPage(from.getWebsite().getMainPageSuffix());
       to.setNotFoundPage(from.getWebsite().getNotFoundPage());
     }
@@ -265,10 +263,10 @@ final class GrpcConversions {
         from.getLifecycleRules(),
         Utils.toImmutableListOf(lifecycleRule()::encode),
         lifecycleBuilder::addAllRule);
-    ifNonNull(
-        from.getDeleteRules(),
-        Utils.toImmutableListOf(deleteRule()::encode),
-        lifecycleBuilder::addAllRule);
+    //    ifNonNull(
+    //        from.getDeleteRules(),
+    //        Utils.toImmutableListOf(deleteRule()::encode),
+    //        lifecycleBuilder::addAllRule);
     to.setLifecycle(lifecycleBuilder.build());
     // TODO(frankyn): Add logging decoder
     // TODO(frankyn): Add entity decoder
@@ -389,11 +387,9 @@ final class GrpcConversions {
     ifNonNull(
         from.getNoncurrentTimeBeforeOffsetDateTime(),
         odtDateCodec::encode,
-        to::setCustomTimeBefore);
-    ifNonNull(
-        from.getCustomTimeBeforeOffsetDateTime(),
-        odtDateCodec::encode,
         to::setNoncurrentTimeBefore);
+    ifNonNull(
+        from.getCustomTimeBeforeOffsetDateTime(), odtDateCodec::encode, to::setCustomTimeBefore);
     ifNonNull(
         from.getMatchesStorageClass(),
         toImmutableListOf(StorageClass::toString),

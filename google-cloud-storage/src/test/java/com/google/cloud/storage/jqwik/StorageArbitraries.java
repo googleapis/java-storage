@@ -58,11 +58,10 @@ public final class StorageArbitraries {
         .offsetBetween(ZoneOffset.UTC, ZoneOffset.UTC)
         .map(
             odt -> {
-              OffsetDateTime utc = odt.withOffsetSameInstant(ZoneOffset.UTC);
               return Date.newBuilder()
-                  .setYear(utc.getYear())
-                  .setMonth(utc.getMonthValue())
-                  .setDay(utc.getDayOfMonth())
+                  .setYear(odt.getYear())
+                  .setMonth(odt.getMonthValue())
+                  .setDay(odt.getDayOfMonth())
                   .build();
             });
   }
@@ -140,14 +139,21 @@ public final class StorageArbitraries {
 
     private Buckets() {}
 
+    public Arbitrary<Bucket.Lifecycle.Rule.Action> actions() {
+      return Combinators.combine(Arbitraries.of("Delete", "SetStorageClass"), storageClass())
+          .as(
+              (a, s) -> {
+                Bucket.Lifecycle.Rule.Action.Builder actionBuilder =
+                    Bucket.Lifecycle.Rule.Action.newBuilder();
+                actionBuilder.setType(a);
+                if (a.equals("SetStorageClass")) {
+                  actionBuilder.setStorageClass(s);
+                }
+                return actionBuilder.build();
+              });
+    }
+
     public Arbitrary<Bucket.Lifecycle.Rule> rule() {
-      Arbitrary<Bucket.Lifecycle.Rule.Action> actions =
-          Arbitraries.of(
-              Bucket.Lifecycle.Rule.Action.newBuilder().setType("delete").build(),
-              Bucket.Lifecycle.Rule.Action.newBuilder()
-                  .setType("setStorageClass")
-                  .setStorageClass("COLDLINE")
-                  .build());
       Arbitrary<Boolean> conditionIsLive = bool();
       Arbitrary<Integer> conditionAgeDays = Arbitraries.integers().between(0, 100);
       Arbitrary<Integer> conditionNumberOfNewVersions = Arbitraries.integers().between(0, 10);
@@ -156,11 +162,10 @@ public final class StorageArbitraries {
       Arbitrary<Date> conditionNoncurrentTime = date();
       Arbitrary<Integer> conditionDaysSinceCustomTime = Arbitraries.integers().between(0, 10);
       Arbitrary<Date> conditionCustomTime = date();
-      ListArbitrary<String> storageClassMatches =
-          Arbitraries.of("COLDLINE", "NEARLINE", "STANDARD", "ARCHIVE").list().uniqueElements();
+      ListArbitrary<String> storageClassMatches = storageClass().list().uniqueElements();
 
       return Combinators.combine(
-              actions,
+              actions(),
               Combinators.combine(
                       conditionIsLive,
                       conditionAgeDays,
@@ -221,12 +226,15 @@ public final class StorageArbitraries {
     public Arbitrary<Bucket.RetentionPolicy> retentionPolicy() {
       return Combinators.combine(bool(), Arbitraries.longs().greaterOrEqual(0), timestamp())
           .as(
-              (locked, period, effectiveTime) ->
-                  RetentionPolicy.newBuilder()
-                      .setIsLocked(locked)
-                      .setRetentionPeriod(period)
-                      .setEffectiveTime(effectiveTime)
-                      .build());
+              (locked, period, effectiveTime) -> {
+                RetentionPolicy.Builder retentionBuilder = RetentionPolicy.newBuilder();
+                retentionBuilder.setRetentionPeriod(period);
+                retentionBuilder.setIsLocked(locked);
+                if (locked) {
+                  retentionBuilder.setEffectiveTime(effectiveTime);
+                }
+                return retentionBuilder.build();
+              });
     }
 
     public Arbitrary<Bucket.Versioning> versioning() {

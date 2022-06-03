@@ -19,7 +19,6 @@ package com.google.cloud.storage.jqwik;
 import com.google.storage.v2.Bucket;
 import java.util.Collections;
 import java.util.Set;
-import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.Tuple;
@@ -35,11 +34,10 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
 
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-    Arbitrary<String> bucketID = Arbitraries.strings().all().ofMinLength(0).ofLength(1024);
     Arbitrary<Bucket> as =
         Combinators.combine(
                 Combinators.combine(
-                        bucketID,
+                        StorageArbitraries.bucketName(),
                         StorageArbitraries.bucketName(),
                         StorageArbitraries.buckets().storageClass(),
                         StorageArbitraries.buckets().location(),
@@ -61,7 +59,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
             .as(
                 (t1, t2) ->
                     Bucket.newBuilder()
-                        .setBucketId(t1.get1())
+                        .setBucketId(t1.get1().get())
                         .setName(t1.get2().get())
                         .setStorageClass(t1.get3())
                         .setLocation(t1.get4())

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.dateTimeCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
@@ -192,10 +193,10 @@ final class ApiaryConversions {
   private StorageObject blobInfoEncode(BlobInfo from) {
     StorageObject to = blobIdEncode(from.getBlobId());
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), to::setAcl);
-    ifNonNull(from.getDeleteTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setTimeDeleted);
-    ifNonNull(from.getUpdateTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setUpdated);
-    ifNonNull(from.getCreateTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setTimeCreated);
-    ifNonNull(from.getCustomTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setCustomTime);
+    ifNonNull(from.getDeleteTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeDeleted);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
+    ifNonNull(from.getCustomTimeOffsetDateTime(), dateTimeCodec::encode, to::setCustomTime);
     ifNonNull(from.getSize(), BigInteger::valueOf, to::setSize);
     ifNonNull(
         from.getOwner(),
@@ -204,13 +205,13 @@ final class ApiaryConversions {
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
     ifNonNull(
         from.getTimeStorageClassUpdatedOffsetDateTime(),
-        Utils.dateTimeCodec::encode,
+        dateTimeCodec::encode,
         to::setTimeStorageClassUpdated);
     ifNonNull(
         from.getCustomerEncryption(), this::customerEncryptionEncode, to::setCustomerEncryption);
     ifNonNull(
         from.getRetentionExpirationTimeOffsetDateTime(),
-        Utils.dateTimeCodec::encode,
+        dateTimeCodec::encode,
         to::setRetentionExpirationTime);
     to.setKmsKeyName(from.getKmsKeyName());
     to.setEventBasedHold(from.getEventBasedHold());
@@ -256,10 +257,10 @@ final class ApiaryConversions {
     ifNonNull(from.getId(), to::setGeneratedId);
     ifNonNull(from.getSelfLink(), to::setSelfLink);
     ifNonNull(from.getMetadata(), to::setMetadata);
-    ifNonNull(from.getTimeDeleted(), Utils.dateTimeCodec::decode, to::setDeleteTimeOffsetDateTime);
-    ifNonNull(from.getUpdated(), Utils.dateTimeCodec::decode, to::setUpdateTimeOffsetDateTime);
-    ifNonNull(from.getTimeCreated(), Utils.dateTimeCodec::decode, to::setCreateTimeOffsetDateTime);
-    ifNonNull(from.getCustomTime(), Utils.dateTimeCodec::decode, to::setCustomTimeOffsetDateTime);
+    ifNonNull(from.getTimeDeleted(), dateTimeCodec::decode, to::setDeleteTimeOffsetDateTime);
+    ifNonNull(from.getUpdated(), dateTimeCodec::decode, to::setUpdateTimeOffsetDateTime);
+    ifNonNull(from.getTimeCreated(), dateTimeCodec::decode, to::setCreateTimeOffsetDateTime);
+    ifNonNull(from.getCustomTime(), dateTimeCodec::decode, to::setCustomTimeOffsetDateTime);
     ifNonNull(from.getSize(), BigInteger::longValue, to::setSize);
     ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::decode), to::setAcl);
@@ -271,14 +272,14 @@ final class ApiaryConversions {
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
     ifNonNull(
         from.getTimeStorageClassUpdated(),
-        Utils.dateTimeCodec::decode,
+        dateTimeCodec::decode,
         to::setTimeStorageClassUpdatedOffsetDateTime);
     ifNonNull(from.getKmsKeyName(), to::setKmsKeyName);
     ifNonNull(from.getEventBasedHold(), to::setEventBasedHold);
     ifNonNull(from.getTemporaryHold(), to::setTemporaryHold);
     ifNonNull(
         from.getRetentionExpirationTime(),
-        Utils.dateTimeCodec::decode,
+        dateTimeCodec::decode,
         to::setRetentionExpirationTimeOffsetDateTime);
     return to.build();
   }
@@ -309,7 +310,7 @@ final class ApiaryConversions {
     Bucket to = new Bucket();
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::encode), to::setAcl);
     ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::setCors);
-    ifNonNull(from.getCreateTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setTimeCreated);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
     ifNonNull(
         from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::setDefaultObjectAcl);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -321,7 +322,7 @@ final class ApiaryConversions {
         to::setOwner);
     ifNonNull(from.getRpo(), Rpo::toString, to::setRpo);
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
-    ifNonNull(from.getUpdateTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setUpdated);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     ifNonNull(from.versioningEnabled(), b -> new Versioning().setEnabled(b), to::setVersioning);
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
@@ -381,7 +382,7 @@ final class ApiaryConversions {
       retentionPolicy.setRetentionPeriod(durationMillisCodec.encode(retentionPeriod));
       ifNonNull(
           from.getRetentionEffectiveTimeOffsetDateTime(),
-          Utils.dateTimeCodec::encode,
+          dateTimeCodec::encode,
           retentionPolicy::setEffectiveTime);
       ifNonNull(from.retentionPolicyIsLocked(), retentionPolicy::setIsLocked);
       to.setRetentionPolicy(retentionPolicy);
@@ -408,8 +409,8 @@ final class ApiaryConversions {
     ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);
     ifNonNull(from.getSelfLink(), to::setSelfLink);
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
-    ifNonNull(from.getTimeCreated(), Utils.dateTimeCodec::decode, to::setCreateTimeOffsetDateTime);
-    ifNonNull(from.getUpdated(), Utils.dateTimeCodec::decode, to::setUpdateTimeOffsetDateTime);
+    ifNonNull(from.getTimeCreated(), dateTimeCodec::decode, to::setCreateTimeOffsetDateTime);
+    ifNonNull(from.getUpdated(), dateTimeCodec::decode, to::setUpdateTimeOffsetDateTime);
     ifNonNull(from.getVersioning(), Versioning::getEnabled, to::setVersioningEnabled);
     ifNonNull(from.getWebsite(), Website::getMainPageSuffix, to::setIndexPage);
     ifNonNull(from.getWebsite(), Website::getNotFoundPage, to::setNotFoundPage);
@@ -435,7 +436,7 @@ final class ApiaryConversions {
     RetentionPolicy retentionPolicy = from.getRetentionPolicy();
     if (retentionPolicy != null && retentionPolicy.getEffectiveTime() != null) {
       to.setRetentionEffectiveTimeOffsetDateTime(
-          Utils.dateTimeCodec.decode(retentionPolicy.getEffectiveTime()));
+          dateTimeCodec.decode(retentionPolicy.getEffectiveTime()));
     }
     ifNonNull(retentionPolicy, RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
     ifNonNull(retentionPolicy, RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
@@ -470,7 +471,7 @@ final class ApiaryConversions {
       CreatedBeforeDeleteRule r = (CreatedBeforeDeleteRule) from;
       ifNonNull(
           r.getTime(),
-          lift(Utils.dateTimeCodec::encode).andThen(this::truncateToDateWithNoTzDrift),
+          lift(dateTimeCodec::encode).andThen(this::truncateToDateWithNoTzDrift),
           condition::setCreatedBefore);
     } else if (from instanceof AgeDeleteRule) {
       AgeDeleteRule r = (AgeDeleteRule) from;
@@ -497,7 +498,7 @@ final class ApiaryConversions {
       }
       DateTime dateTime = condition.getCreatedBefore();
       if (dateTime != null) {
-        return new BucketInfo.CreatedBeforeDeleteRule(Utils.dateTimeCodec.decode(dateTime));
+        return new BucketInfo.CreatedBeforeDeleteRule(dateTimeCodec.decode(dateTime));
       }
       Integer numNewerVersions = condition.getNumNewerVersions();
       if (numNewerVersions != null) {
@@ -528,7 +529,7 @@ final class ApiaryConversions {
         IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(ubla.getEnabled());
     ifNonNull(
         ubla.getLockedTime(),
-        Utils.dateTimeCodec::decode,
+        dateTimeCodec::decode,
         to::setUniformBucketLevelAccessLockedTimeOffsetDateTime);
     ifNonNull(
         from.getPublicAccessPrevention(),
@@ -542,7 +543,7 @@ final class ApiaryConversions {
     to.setEnabled(from.isUniformBucketLevelAccessEnabled());
     ifNonNull(
         from.getUniformBucketLevelAccessLockedTimeOffsetDateTime(),
-        Utils.dateTimeCodec::encode,
+        dateTimeCodec::encode,
         to::setLockedTime);
     return to;
   }
@@ -706,8 +707,8 @@ final class ApiaryConversions {
     to.setProjectId(from.getProjectId());
     ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
     ifNonNull(from.getState(), Object::toString, to::setState);
-    ifNonNull(from.getCreateTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setTimeCreated);
-    ifNonNull(from.getUpdateTimeOffsetDateTime(), Utils.dateTimeCodec::encode, to::setUpdated);
+    ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
+    ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     return to;
   }
 
@@ -715,12 +716,12 @@ final class ApiaryConversions {
       com.google.api.services.storage.model.HmacKeyMetadata from) {
     return HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
         .setAccessId(from.getAccessId())
-        .setCreateTimeOffsetDateTime(Utils.dateTimeCodec.decode(from.getTimeCreated()))
+        .setCreateTimeOffsetDateTime(dateTimeCodec.decode(from.getTimeCreated()))
         .setEtag(from.getEtag())
         .setId(from.getId())
         .setProjectId(from.getProjectId())
         .setState(HmacKeyState.valueOf(from.getState()))
-        .setUpdateTimeOffsetDateTime(Utils.dateTimeCodec.decode(from.getUpdated()))
+        .setUpdateTimeOffsetDateTime(dateTimeCodec.decode(from.getUpdated()))
         .build();
   }
 
