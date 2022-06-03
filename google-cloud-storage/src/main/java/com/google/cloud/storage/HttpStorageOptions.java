@@ -59,7 +59,6 @@ public class HttpStorageOptions extends StorageOptions {
     return SCOPES;
   }
 
-  @Override
   HttpRetryAlgorithmManager getRetryAlgorithmManager() {
     return retryAlgorithmManager;
   }
