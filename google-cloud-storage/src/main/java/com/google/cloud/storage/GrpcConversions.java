@@ -268,21 +268,7 @@ final class GrpcConversions {
     to.setVersioning(versioningBuilder.build());
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::putAllLabels);
-    // preserve mapping to deprecated property
-
-    Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
-    ifNonNull(
-        from.getLifecycleRules(),
-        Utils.toImmutableListOf(lifecycleRule()::encode),
-        lifecycleBuilder::addAllRule);
-    to.setLifecycle(lifecycleBuilder.build());
-    /*
-    // TODO: Corruption occurs by having deleteRule() values added
-    ifNonNull(
-       from.getDeleteRules(),
-       Utils.toImmutableListOf(deleteRule()::encode),
-       lifecycleBuilder::addAllRule);
-    */
+    to.setLifecycle(buildLifecyclePolicy(from));
     ifNonNull(from.getLogging(), loggingCodec::encode, to::setLogging);
     ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::addAllCors);
     ifNonNull(
@@ -295,6 +281,21 @@ final class GrpcConversions {
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is avialable
     return to.build();
+  }
+
+  private Bucket.Lifecycle buildLifecyclePolicy(BucketInfo from) {
+    Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
+    ifNonNull(
+        from.getLifecycleRules(),
+        Utils.toImmutableListOf(lifecycleRule()::encode),
+        lifecycleBuilder::addAllRule);
+    // preserve mapping to deprecated property
+    // TODO: Corruption occurs by having deleteRule() values added
+    ifNonNull(
+        from.getDeleteRules(),
+        Utils.toImmutableListOf(deleteRule()::encode),
+        lifecycleBuilder::addAllRule);
+    return lifecycleBuilder.build();
   }
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
@@ -451,7 +452,7 @@ final class GrpcConversions {
       record.setSourceClassName(BucketInfo.RawDeleteRule.class.getName());
       record.setSourceMethodName("populateCondition");
       BucketInfo.log.log(record);
-      return rule;
+      return null;
     }
     Bucket.Lifecycle.Rule.Builder to = Bucket.Lifecycle.Rule.newBuilder();
     to.setAction(
@@ -497,27 +498,46 @@ final class GrpcConversions {
       Bucket.Lifecycle.Rule.Condition condition = from.getCondition();
       Integer age = condition.getAgeDays();
       if (age != null) {
-        return new BucketInfo.AgeDeleteRule(age);
+        BucketInfo.AgeDeleteRule ageDeleteRule = new BucketInfo.AgeDeleteRule(age);
+        if (deleteRuleEncode(ageDeleteRule).equals(from)) {
+          return ageDeleteRule;
+        } else {
+          return null;
+        }
       }
       Date date = condition.getCreatedBefore();
       if (date != null) {
-        return new BucketInfo.CreatedBeforeDeleteRule(
-            OffsetDateTime.from(LocalDate.of(date.getYear(), date.getMonth(), date.getDay())));
+
+        BucketInfo.CreatedBeforeDeleteRule createdBeforeDeleteRule =
+            new BucketInfo.CreatedBeforeDeleteRule(
+                OffsetDateTime.from(LocalDate.of(date.getYear(), date.getMonth(), date.getDay())));
+        if (deleteRuleEncode(createdBeforeDeleteRule).equals(from)) {
+          return createdBeforeDeleteRule;
+        } else {
+          return null;
+        }
       }
       Integer numNewerVersions = condition.getNumNewerVersions();
       if (numNewerVersions != null) {
-        return new BucketInfo.NumNewerVersionsDeleteRule(numNewerVersions);
+        BucketInfo.NumNewerVersionsDeleteRule numNewerVersionsDeleteRule =
+            new BucketInfo.NumNewerVersionsDeleteRule(numNewerVersions);
+        if (deleteRuleEncode(numNewerVersionsDeleteRule).equals(from)) {
+          return numNewerVersionsDeleteRule;
+        } else {
+          return null;
+        }
       }
       Boolean isLive = condition.getIsLive();
       if (isLive != null) {
-        return new BucketInfo.IsLiveDeleteRule(isLive);
+        BucketInfo.IsLiveDeleteRule isLiveDeleteRule = new BucketInfo.IsLiveDeleteRule(isLive);
+        if (deleteRuleEncode(isLiveDeleteRule).equals(from)) {
+          return isLiveDeleteRule;
+        } else {
+          return null;
+        }
       }
     }
-    return new BucketInfo.RawDeleteRule(
-        new com.google.api.services.storage.model.Bucket.Lifecycle.Rule()
-            .setAction(
-                new com.google.api.services.storage.model.Bucket.Lifecycle.Rule.Action()
-                    .setType(resolveRuleActionType(from))));
+    return null;
   }
 
   private Bucket.Lifecycle.Rule lifecycleRuleEncode(BucketInfo.LifecycleRule from) {
