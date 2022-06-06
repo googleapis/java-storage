@@ -34,8 +34,7 @@ import net.jqwik.time.api.DateTimes;
 
 final class DateTimeCodecPropertyTest {
 
-  private static final Codec<OffsetDateTime, DateTime> codec =
-      ApiaryConversions.INSTANCE.dateTimeCodec;
+  private static final Codec<OffsetDateTime, DateTime> codec = Utils.dateTimeCodec;
 
   @Example
   void codecShouldRoundTrip_UTC() {

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.dateTimeCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
@@ -68,22 +69,16 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.NotificationInfo.EventType;
 import com.google.cloud.storage.NotificationInfo.PayloadFormat;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import java.math.BigInteger;
 import java.time.Duration;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -127,29 +122,6 @@ final class ApiaryConversions {
 
   private final Codec<NotificationInfo, com.google.api.services.storage.model.Notification>
       notificationInfoCodec = Codec.of(this::notificationEncode, this::notificationDecode);
-
-  @VisibleForTesting
-  final Codec<OffsetDateTime, DateTime> dateTimeCodec =
-      Codec.of(
-          odt -> {
-            ZoneOffset offset = odt.getOffset();
-            int i = Math.toIntExact(TimeUnit.SECONDS.toMinutes(offset.getTotalSeconds()));
-            return new DateTime(odt.toInstant().toEpochMilli(), i);
-          },
-          dt -> {
-            long milli = dt.getValue();
-            int timeZoneShiftMinutes = dt.getTimeZoneShift();
-
-            Duration timeZoneShift = Duration.of(timeZoneShiftMinutes, ChronoUnit.MINUTES);
-
-            int hours = Math.toIntExact(timeZoneShift.toHours());
-            int minutes =
-                Math.toIntExact(
-                    timeZoneShift.minusHours(timeZoneShift.toHours()).getSeconds() / 60);
-            ZoneOffset offset = ZoneOffset.ofHoursMinutes(hours, minutes);
-
-            return Instant.ofEpochMilli(milli).atOffset(offset);
-          });
 
   private ApiaryConversions() {}
 

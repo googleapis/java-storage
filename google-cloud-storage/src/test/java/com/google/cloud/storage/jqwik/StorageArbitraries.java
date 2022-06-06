@@ -28,11 +28,14 @@ import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.CustomerEncryption;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.type.Date;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
+import net.jqwik.api.Tuple;
+import net.jqwik.api.arbitraries.ListArbitrary;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.time.api.DateTimes;
 
@@ -47,6 +50,19 @@ public final class StorageArbitraries {
         .as(
             (odt, nanos) ->
                 Timestamp.newBuilder().setSeconds(odt.toEpochSecond()).setNanos(nanos).build());
+  }
+
+  public static Arbitrary<Date> date() {
+    return DateTimes.offsetDateTimes()
+        .offsetBetween(ZoneOffset.UTC, ZoneOffset.UTC)
+        .map(
+            odt -> {
+              return Date.newBuilder()
+                  .setYear(odt.getYear())
+                  .setMonth(odt.getMonthValue())
+                  .setDay(odt.getDayOfMonth())
+                  .build();
+            });
   }
 
   public static Arbitrary<Boolean> bool() {
@@ -122,6 +138,71 @@ public final class StorageArbitraries {
 
     private Buckets() {}
 
+    public Arbitrary<Bucket.Lifecycle.Rule.Action> actions() {
+      return Combinators.combine(Arbitraries.of("Delete", "SetStorageClass"), storageClass())
+          .as(
+              (a, s) -> {
+                Bucket.Lifecycle.Rule.Action.Builder actionBuilder =
+                    Bucket.Lifecycle.Rule.Action.newBuilder();
+                actionBuilder.setType(a);
+                if (a.equals("SetStorageClass")) {
+                  actionBuilder.setStorageClass(s);
+                }
+                return actionBuilder.build();
+              });
+    }
+
+    public Arbitrary<Bucket.Lifecycle.Rule> rule() {
+      Arbitrary<Boolean> conditionIsLive = bool();
+      Arbitrary<Integer> conditionAgeDays = Arbitraries.integers().between(0, 100);
+      Arbitrary<Integer> conditionNumberOfNewVersions = Arbitraries.integers().between(0, 10);
+      Arbitrary<Date> conditionCreatedBeforeTime = date();
+      Arbitrary<Integer> conditionDaysSinceNoncurrentTime = Arbitraries.integers().between(0, 10);
+      Arbitrary<Date> conditionNoncurrentTime = date();
+      Arbitrary<Integer> conditionDaysSinceCustomTime = Arbitraries.integers().between(0, 10);
+      Arbitrary<Date> conditionCustomTime = date();
+      ListArbitrary<String> storageClassMatches = storageClass().list().uniqueElements();
+
+      return Combinators.combine(
+              actions(),
+              Combinators.combine(
+                      conditionIsLive,
+                      conditionAgeDays,
+                      conditionNumberOfNewVersions,
+                      conditionCreatedBeforeTime,
+                      conditionDaysSinceNoncurrentTime,
+                      conditionNoncurrentTime,
+                      conditionDaysSinceCustomTime,
+                      conditionCustomTime)
+                  .as(Tuple::of),
+              storageClassMatches)
+          .as(
+              (a, ct, s) ->
+                  Bucket.Lifecycle.Rule.newBuilder()
+                      .setAction(a)
+                      .setCondition(
+                          Bucket.Lifecycle.Rule.Condition.newBuilder()
+                              .setIsLive(ct.get1())
+                              .setAgeDays(ct.get2())
+                              .setNumNewerVersions(ct.get3())
+                              .setCreatedBefore(ct.get4())
+                              .setDaysSinceNoncurrentTime(ct.get5())
+                              .setNoncurrentTimeBefore(ct.get6())
+                              .setDaysSinceCustomTime(ct.get7())
+                              .setCustomTimeBefore(ct.get8())
+                              .addAllMatchesStorageClass(s)
+                              .build())
+                      .build());
+    }
+
+    public Arbitrary<Bucket.Lifecycle> lifecycle() {
+      return rule()
+          .list()
+          .ofMinSize(0)
+          .ofMaxSize(100)
+          .map((r) -> Bucket.Lifecycle.newBuilder().addAllRule(r).build());
+    }
+
     public Arbitrary<Website> website() {
       Arbitrary<String> indexPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
       Arbitrary<String> notFoundPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
@@ -144,12 +225,15 @@ public final class StorageArbitraries {
     public Arbitrary<Bucket.RetentionPolicy> retentionPolicy() {
       return Combinators.combine(bool(), Arbitraries.longs().greaterOrEqual(0), timestamp())
           .as(
-              (locked, period, effectiveTime) ->
-                  RetentionPolicy.newBuilder()
-                      .setIsLocked(locked)
-                      .setRetentionPeriod(period)
-                      .setEffectiveTime(effectiveTime)
-                      .build());
+              (locked, period, effectiveTime) -> {
+                RetentionPolicy.Builder retentionBuilder = RetentionPolicy.newBuilder();
+                retentionBuilder.setRetentionPeriod(period);
+                retentionBuilder.setIsLocked(locked);
+                if (locked) {
+                  retentionBuilder.setEffectiveTime(effectiveTime);
+                }
+                return retentionBuilder.build();
+              });
     }
 
     public Arbitrary<Bucket.Versioning> versioning() {
@@ -157,13 +241,27 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<String> storageClass() {
-      // TODO: return each of the real values and edge cases (including invalid values)
-      return Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
+      return Arbitraries.of(
+          "STANDARD",
+          "NEARLINE",
+          "COLDLINE",
+          "ARCHIVE",
+          "MULTI_REGIONAL",
+          "REGIONAL",
+          "DURABLE_REDUCED_AVAILABILITY");
     }
 
     public Arbitrary<String> rpo() {
-      // TODO: return each of the real values and edge cases (including invalid values)
-      return Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
+      return Arbitraries.of("DEFAULT", "ASYNC_TURBO");
+    }
+
+    public Arbitrary<String> location() {
+      return Arbitraries.of(
+          "US", "US-CENTRAL1", "US-EAST1", "EUROPE-CENTRAL2", "SOUTHAMERICA-EAST1");
+    }
+
+    public Arbitrary<String> locationType() {
+      return Arbitraries.of("region", "dual-region", "multi-region");
     }
   }
 

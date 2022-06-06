@@ -19,7 +19,6 @@ package com.google.cloud.storage.jqwik;
 import com.google.storage.v2.Bucket;
 import java.util.Collections;
 import java.util.Set;
-import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.Tuple;
@@ -35,17 +34,14 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
 
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-    Arbitrary<String> bucketID = Arbitraries.strings().all().ofMinLength(0).ofLength(1024);
-    Arbitrary<String> location = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-    Arbitrary<String> locationType = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
     Arbitrary<Bucket> as =
         Combinators.combine(
                 Combinators.combine(
-                        bucketID,
+                        StorageArbitraries.bucketName(),
                         StorageArbitraries.bucketName(),
                         StorageArbitraries.buckets().storageClass(),
-                        location,
-                        locationType,
+                        StorageArbitraries.buckets().location(),
+                        StorageArbitraries.buckets().locationType(),
                         StorageArbitraries.metageneration(),
                         StorageArbitraries.buckets().versioning(),
                         StorageArbitraries.timestamp())
@@ -57,12 +53,13 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().rpo(),
                         StorageArbitraries.buckets().billing(),
                         StorageArbitraries.buckets().encryption(),
-                        StorageArbitraries.buckets().retentionPolicy())
+                        StorageArbitraries.buckets().retentionPolicy(),
+                        StorageArbitraries.buckets().lifecycle())
                     .as(Tuple::of))
             .as(
                 (t1, t2) ->
                     Bucket.newBuilder()
-                        .setBucketId(t1.get1())
+                        .setBucketId(t1.get1().get())
                         .setName(t1.get2().get())
                         .setStorageClass(t1.get3())
                         .setLocation(t1.get4())
@@ -77,6 +74,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         .setBilling(t2.get5())
                         .setEncryption(t2.get6())
                         .setRetentionPolicy(t2.get7())
+                        .setLifecycle(t2.get8())
                         .build());
     return Collections.singleton(as);
   }

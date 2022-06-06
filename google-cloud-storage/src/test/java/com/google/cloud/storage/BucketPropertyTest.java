@@ -16,33 +16,12 @@
 
 package com.google.cloud.storage;
 
-import static com.google.common.truth.Truth.assertThat;
-
-import com.google.protobuf.util.Timestamps;
 import com.google.storage.v2.Bucket;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
 
-final class BucketPropertyTest {
+final class BucketInfoPropertyTest extends BaseConvertablePropertyTest<BucketInfo, Bucket> {
 
-  @Property
-  void allBucketsDecode(@ForAll Bucket b) {
-    BucketInfo decoded = Conversions.grpc().bucketInfo().decode(b);
-    assertThat(decoded.getGeneratedId()).isEqualTo(b.getBucketId());
-    assertThat(decoded.getName()).isEqualTo(b.getName());
-    assertThat(decoded.getMetageneration()).isEqualTo(b.getMetageneration());
-    assertThat(decoded.getStorageClass().toString()).isEqualTo(b.getStorageClass());
-    assertThat(decoded.getLocation()).isEqualTo(b.getLocation());
-    assertThat(decoded.getLocationType()).isEqualTo(b.getLocationType());
-    assertThat(decoded.getCreateTime()).isEqualTo(Timestamps.toMillis(b.getCreateTime()));
-    assertThat(decoded.getUpdateTime()).isEqualTo(Timestamps.toMillis(b.getUpdateTime()));
-    assertThat(decoded.versioningEnabled()).isEqualTo(b.getVersioning().getEnabled());
-    assertThat(decoded.getRpo().toString()).isEqualTo(b.getRpo());
-    assertThat(decoded.requesterPays()).isEqualTo(b.getBilling().getRequesterPays());
-    assertThat(decoded.getDefaultKmsKeyName()).isEqualTo(b.getEncryption().getDefaultKmsKey());
-    if (b.getWebsite() != null) {
-      assertThat(decoded.getIndexPage()).isEqualTo(b.getWebsite().getMainPageSuffix());
-      assertThat(decoded.getNotFoundPage()).isEqualTo(b.getWebsite().getNotFoundPage());
-    }
+  @Override
+  Conversions.Codec<BucketInfo, Bucket> codec() {
+    return Conversions.grpc().bucketInfo();
   }
 }
