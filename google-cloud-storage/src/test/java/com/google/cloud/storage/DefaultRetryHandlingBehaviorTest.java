@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.truth.Truth.assertWithMessage;
+import static org.junit.Assert.fail;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.io.JsonEOFException;
@@ -96,6 +97,7 @@ public final class DefaultRetryHandlingBehaviorTest {
     } else if (shouldRetry && !defaultShouldRetryResult && !legacyShouldRetryResult) {
       actualBehavior = Behavior.SAME;
       message = "both are rejecting when we want a retry";
+      fail(message);
     } else if (shouldRetry && defaultShouldRetryResult && legacyShouldRetryResult) {
       actualBehavior = Behavior.SAME;
       message = "both are allowing";
@@ -111,6 +113,7 @@ public final class DefaultRetryHandlingBehaviorTest {
     } else if (!shouldRetry && defaultShouldRetryResult && legacyShouldRetryResult) {
       actualBehavior = Behavior.SAME;
       message = "both are too permissive";
+      fail(message);
     } else if (!shouldRetry && defaultShouldRetryResult && !legacyShouldRetryResult) {
       actualBehavior = Behavior.DEFAULT_MORE_PERMISSIBLE;
       message = "default is too permissive";
@@ -298,7 +301,7 @@ public final class DefaultRetryHandlingBehaviorTest {
     STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_503(new StorageException(C.JSON_503)),
     STORAGE_EXCEPTION_GOOGLE_JSON_ERROR_504(new StorageException(C.JSON_504)),
     STORAGE_EXCEPTION_SOCKET_TIMEOUT_EXCEPTION(new StorageException(C.SOCKET_TIMEOUT_EXCEPTION)),
-    STORAGE_EXCEPTION_SOCKET_EXCEPTION(new StorageException(C.SOCKET_EXCEPTION)),
+    STORAGE_EXCEPTION_SOCKET_EXCEPTION(StorageException.translate(C.SOCKET_EXCEPTION)),
     STORAGE_EXCEPTION_SSL_EXCEPTION(new StorageException(C.SSL_EXCEPTION)),
     STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_SHUTDOWN(
         new StorageException(C.SSL_EXCEPTION_CONNECTION_SHUTDOWN)),
@@ -322,6 +325,9 @@ public final class DefaultRetryHandlingBehaviorTest {
             "connectionClosedPrematurely",
             "connectionClosedPrematurely",
             C.CONNECTION_CLOSED_PREMATURELY)),
+    STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY_IO_CAUSE_NO_REASON(
+        StorageException.translate(C.CONNECTION_CLOSED_PREMATURELY)),
+    STORAGE_EXCEPTION_0_IO_PREMATURE_EOF(StorageException.translate(C.IO_PREMATURE_EOF)),
     EMPTY_JSON_PARSE_ERROR(new IllegalArgumentException("no JSON input found")),
     JACKSON_EOF_EXCEPTION(C.JACKSON_EOF_EXCEPTION),
     STORAGE_EXCEPTION_0_JACKSON_EOF_EXCEPTION(
@@ -400,6 +406,7 @@ public final class DefaultRetryHandlingBehaviorTest {
           new JsonEOFException(null, JsonToken.VALUE_STRING, "parse-exception");
       private static final MalformedJsonException GSON_MALFORMED_EXCEPTION =
           new MalformedJsonException("parse-exception");
+      private static final IOException IO_PREMATURE_EOF = new IOException("Premature EOF");
 
       private static HttpResponseException newHttpResponseException(
           int httpStatusCode, String name) {
@@ -916,6 +923,28 @@ public final class DefaultRetryHandlingBehaviorTest {
                 Behavior.SAME),
             new Case(
                 ThrowableCategory.STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY_IO_CAUSE,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.DEFAULT_MORE_STRICT),
+            new Case(
+                ThrowableCategory
+                    .STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY_IO_CAUSE_NO_REASON,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory
+                    .STORAGE_EXCEPTION_0_CONNECTION_CLOSED_PREMATURELY_IO_CAUSE_NO_REASON,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.DEFAULT_MORE_STRICT),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_IO_PREMATURE_EOF,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_0_IO_PREMATURE_EOF,
                 HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
                 Behavior.DEFAULT_MORE_STRICT),
