@@ -30,7 +30,6 @@ import com.google.storage.v2.CustomerEncryption;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.type.Date;
 import java.nio.charset.StandardCharsets;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;

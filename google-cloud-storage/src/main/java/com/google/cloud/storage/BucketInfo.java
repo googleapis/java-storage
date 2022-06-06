@@ -533,8 +533,8 @@ public class BucketInfo implements Serializable {
       }
 
       /**
-       * Returns the date and offset from UTC for this condition.
-       * If a time other than 00:00:00.000 is present in the value, GCS will truncate to 00:00:00.000.
+       * Returns the date and offset from UTC for this condition. If a time other than 00:00:00.000
+       * is present in the value, GCS will truncate to 00:00:00.000.
        */
       public OffsetDateTime getCreatedBeforeOffsetDateTime() {
         return createdBefore;
@@ -568,8 +568,8 @@ public class BucketInfo implements Serializable {
       }
 
       /**
-       * Returns the date and offset from UTC for this condition.
-       * If a time other than 00:00:00.000 is present in the value, GCS will truncate to 00:00:00.000.
+       * Returns the date and offset from UTC for this condition. If a time other than 00:00:00.000
+       * is present in the value, GCS will truncate to 00:00:00.000.
        */
       public OffsetDateTime getNoncurrentTimeBeforeOffsetDateTime() {
         return noncurrentTimeBefore;
@@ -586,8 +586,8 @@ public class BucketInfo implements Serializable {
       }
 
       /**
-       * Returns the date and offset from UTC for this condition.
-       * If a time other than 00:00:00.000 is present in the value, GCS will truncate to 00:00:00.000.
+       * Returns the date and offset from UTC for this condition. If a time other than 00:00:00.000
+       * is present in the value, GCS will truncate to 00:00:00.000.
        */
       public OffsetDateTime getCustomTimeBeforeOffsetDateTime() {
         return customTimeBefore;
@@ -634,8 +634,9 @@ public class BucketInfo implements Serializable {
          */
         @Deprecated
         public Builder setCreatedBefore(DateTime createdBefore) {
-          return setCustomTimeBeforeOffsetDateTime(Utils.dateTimeCodec.nullable().decode(createdBefore));
-         }
+          return setCustomTimeBeforeOffsetDateTime(
+              Utils.dateTimeCodec.nullable().decode(createdBefore));
+        }
 
         /**
          * Sets the date a Blob should be created before for an Action to be executed. Note that
@@ -698,14 +699,15 @@ public class BucketInfo implements Serializable {
          */
         @Deprecated
         public Builder setNoncurrentTimeBefore(DateTime noncurrentTimeBefore) {
-          return setNoncurrentTimeBeforeOffsetDateTime(Utils.dateTimeCodec.nullable().decode(noncurrentTimeBefore));
+          return setNoncurrentTimeBeforeOffsetDateTime(
+              Utils.dateTimeCodec.nullable().decode(noncurrentTimeBefore));
         }
 
         /**
-         * Sets the date with only the date part (for instance, "2013-01-15").
-         * Note that only date part will be considered, if the time is specified it will be
-         * truncated. This condition is satisfied when the noncurrent time on an object is before
-         * this date. This condition is relevant only for versioned objects.
+         * Sets the date with only the date part (for instance, "2013-01-15"). Note that only date
+         * part will be considered, if the time is specified it will be truncated. This condition is
+         * satisfied when the noncurrent time on an object is before this date. This condition is
+         * relevant only for versioned objects.
          */
         public Builder setNoncurrentTimeBeforeOffsetDateTime(OffsetDateTime noncurrentTimeBefore) {
           this.noncurrentTimeBefore = noncurrentTimeBefore;
@@ -722,14 +724,14 @@ public class BucketInfo implements Serializable {
          */
         @Deprecated
         public Builder setCustomTimeBefore(DateTime customTimeBefore) {
-          return setCustomTimeBeforeOffsetDateTime(Utils.dateTimeCodec.nullable().decode(customTimeBefore));
+          return setCustomTimeBeforeOffsetDateTime(
+              Utils.dateTimeCodec.nullable().decode(customTimeBefore));
         }
 
         /**
-         * Sets the date with only the date part (for instance, "2013-01-15").
-         * Note that only date part will be considered, if the time is specified it will be
-         * truncated. This condition is satisfied when the custom time on an object is before this
-         * date in UTC.
+         * Sets the date with only the date part (for instance, "2013-01-15"). Note that only date
+         * part will be considered, if the time is specified it will be truncated. This condition is
+         * satisfied when the custom time on an object is before this date in UTC.
          */
         public Builder setCustomTimeBeforeOffsetDateTime(OffsetDateTime customTimeBefore) {
           this.customTimeBefore = customTimeBefore;
