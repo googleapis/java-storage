@@ -25,6 +25,7 @@ import static com.google.cloud.storage.Utils.todo;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
@@ -35,6 +36,7 @@ import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.Owner;
 import com.google.type.Date;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -46,17 +48,21 @@ import java.util.logging.LogRecord;
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
 
-  private final Codec<?, ?> entityCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<Acl, ObjectAccessControl> objectAclCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<Acl.Entity, String> entityCodec =
+      Codec.of(this::entityEncode, this::entityDecode);
+  private final Codec<Acl, ObjectAccessControl> objectAclCodec =
+      Codec.of(this::objectAclEncode, this::objectAclDecode);
   private final Codec<?, ?> bucketAclCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec =
       Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
   private final Codec<?, ?> hmacKeyCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccountCodec =
       Codec.of(this::serviceAccountEncode, this::serviceAccountDecode);
-  private final Codec<?, ?> corsCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<?, ?> loggingCodec = Codec.of(Utils::todo, Utils::todo);
-  private final Codec<?, ?> iamConfigurationCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<Cors, Bucket.Cors> corsCodec = Codec.of(this::corsEncode, this::corsDecode);
+  private final Codec<BucketInfo.Logging, Bucket.Logging> loggingCodec =
+      Codec.of(this::loggingEncode, this::loggingDecode);
+  private final Codec<BucketInfo.IamConfiguration, Bucket.IamConfig> iamConfigurationCodec =
+      Codec.of(this::iamConfigEncode, this::iamConfigDecode);
   private final Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<BucketInfo.DeleteRule, Bucket.Lifecycle.Rule> deleteRuleCodec =
@@ -105,8 +111,8 @@ final class GrpcConversions {
 
   private GrpcConversions() {}
 
-  Codec<?, ?> entity() {
-    return todo();
+  Codec<Acl.Entity, String> entity() {
+    return entityCodec;
   }
 
   Codec<Acl, ObjectAccessControl> objectAcl() {
@@ -129,16 +135,16 @@ final class GrpcConversions {
     return serviceAccountCodec;
   }
 
-  Codec<?, ?> cors() {
-    return todo();
+  Codec<Cors, Bucket.Cors> cors() {
+    return corsCodec;
   }
 
-  Codec<?, ?> logging() {
-    return todo();
+  Codec<BucketInfo.Logging, Bucket.Logging> logging() {
+    return loggingCodec;
   }
 
-  Codec<?, ?> iamConfiguration() {
-    return todo();
+  Codec<BucketInfo.IamConfiguration, Bucket.IamConfig> iamConfiguration() {
+    return iamConfigurationCodec;
   }
 
   Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRule() {
@@ -210,14 +216,13 @@ final class GrpcConversions {
         from.getLifecycle(),
         lift(Bucket.Lifecycle::getRuleList).andThen(toImmutableListOf(deleteRule()::decode)),
         to::setDeleteRules);
-    // TODO(frankyn): Add logging decoder
-    // TODO(frankyn): Add entity decoder
-    // TODO(frankyn): Add Cors decoder support
-    // TODO(frnakyn): Add DefaultObjectAcl decoder support
-    // TODO(frankyn): Add lifeycle decoder
-    // TODO(frankyn): Add deleteRules decoder
+    ifNonNull(from.getCorsList(), toImmutableListOf(cors()::decode), to::setCors);
+    ifNonNull(from.getLogging(), loggingCodec::decode, to::setLogging);
+    ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
+    ifNonNull(
+        from.getDefaultObjectAclList(), toImmutableListOf(objectAcl()::decode), to::setDefaultAcl);
+    ifNonNull(from.getIamConfig(), iamConfiguration()::decode, to::setIamConfiguration);
     // TODO(frankyn): Add SelfLink when the field is available
-    // TODO(frankyn): Add decoder for iamConfig
     // TODO(frankyn): Add Etag when support is available
     return to.build();
   }
@@ -264,28 +269,167 @@ final class GrpcConversions {
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::putAllLabels);
     // preserve mapping to deprecated property
+
     Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
     ifNonNull(
         from.getLifecycleRules(),
         Utils.toImmutableListOf(lifecycleRule()::encode),
         lifecycleBuilder::addAllRule);
+    to.setLifecycle(lifecycleBuilder.build());
     /*
-    // Corruption occurs by having deleteRule() values added
+    // TODO: Corruption occurs by having deleteRule() values added
     ifNonNull(
        from.getDeleteRules(),
        Utils.toImmutableListOf(deleteRule()::encode),
        lifecycleBuilder::addAllRule);
     */
-    to.setLifecycle(lifecycleBuilder.build());
-    // TODO(frankyn): Add logging decoder
-    // TODO(frankyn): Add entity decoder
-    // TODO(frankyn): Add Cors decoder support
-    // TODO(frnakyn): Add DefaultObjectAcl decoder support
-    // TODO(frankyn): Add lifeycle decoder
-    // TODO(frankyn): Add deleteRules decoder
+    ifNonNull(from.getLogging(), loggingCodec::encode, to::setLogging);
+    ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::addAllCors);
+    ifNonNull(
+        from.getOwner(),
+        lift(entity()::encode).andThen(o -> Owner.newBuilder().setEntity(o).build()),
+        to::setOwner);
+    ifNonNull(
+        from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::addAllDefaultObjectAcl);
+    ifNonNull(from.getIamConfiguration(), iamConfiguration()::encode, to::setIamConfig);
     // TODO(frankyn): Add SelfLink when the field is available
-    // TODO(frankyn): Add decoder for iamConfig
     // TODO(frankyn): Add Etag when support is avialable
+    return to.build();
+  }
+
+  private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
+    Bucket.Logging.Builder to = Bucket.Logging.newBuilder();
+    if (from.getLogBucket() != null || from.getLogObjectPrefix() != null) {
+      to.setLogBucket(from.getLogBucket());
+      to.setLogObjectPrefix(from.getLogObjectPrefix());
+    }
+    return to.build();
+  }
+
+  private BucketInfo.Logging loggingDecode(Bucket.Logging from) {
+    return BucketInfo.Logging.newBuilder()
+        .setLogBucket(from.getLogBucket())
+        .setLogObjectPrefix(from.getLogObjectPrefix())
+        .build();
+  }
+
+  private Bucket.Cors corsEncode(Cors from) {
+    Bucket.Cors.Builder to = Bucket.Cors.newBuilder();
+    to.setMaxAgeSeconds(from.getMaxAgeSeconds());
+    to.addAllResponseHeader(from.getResponseHeaders());
+    ifNonNull(from.getMethods(), toImmutableListOf(java.lang.Object::toString), to::addAllMethod);
+    ifNonNull(from.getOrigins(), toImmutableListOf(java.lang.Object::toString), to::addAllOrigin);
+    return to.build();
+  }
+
+  private Cors corsDecode(Bucket.Cors from) {
+    Cors.Builder to = Cors.newBuilder().setMaxAgeSeconds(from.getMaxAgeSeconds());
+    ifNonNull(
+        from.getMethodList(),
+        m ->
+            m.stream()
+                .map(String::toUpperCase)
+                .map(HttpMethod::valueOf)
+                .collect(ImmutableList.toImmutableList()),
+        to::setMethods);
+    ifNonNull(from.getOriginList(), toImmutableListOf(Cors.Origin::of), to::setOrigins);
+    to.setResponseHeaders(from.getResponseHeaderList());
+    return to.build();
+  }
+
+  private String entityEncode(Acl.Entity from) {
+    if (from instanceof Acl.RawEntity) {
+      return from.getValue();
+    } else if (from instanceof Acl.User) {
+      switch (from.getValue()) {
+        case Acl.User.ALL_AUTHENTICATED_USERS:
+          return Acl.User.ALL_AUTHENTICATED_USERS;
+        case Acl.User.ALL_USERS:
+          return Acl.User.ALL_USERS;
+        default:
+          break;
+      }
+    }
+    // intentionally not an else so that if the default is hit above it will fall through to here
+    return from.getType().name().toLowerCase() + "-" + from.getValue();
+  }
+
+  private Acl.Entity entityDecode(String from) {
+    if (from.startsWith("user-")) {
+      return new Acl.User(from.substring(5));
+    }
+    if (from.equals(Acl.User.ALL_USERS)) {
+      return Acl.User.ofAllUsers();
+    }
+    if (from.equals(Acl.User.ALL_AUTHENTICATED_USERS)) {
+      return Acl.User.ofAllAuthenticatedUsers();
+    }
+    if (from.startsWith("group-")) {
+      return new Acl.Group(from.substring(6));
+    }
+    if (from.startsWith("domain-")) {
+      return new Acl.Domain(from.substring(7));
+    }
+    if (from.startsWith("project-")) {
+      int idx = from.indexOf('-', 8);
+      String team = from.substring(8, idx);
+      String projectId = from.substring(idx + 1);
+      return new Acl.Project(Acl.Project.ProjectRole.valueOf(team.toUpperCase()), projectId);
+    }
+    return new Acl.RawEntity(from);
+  }
+
+  private Acl objectAclDecode(ObjectAccessControl from) {
+    Acl.Role role = Acl.Role.valueOf(from.getRole());
+    Acl.Entity entity = entityDecode(from.getEntity());
+    // TODO: Add etag when it becomes available
+    return Acl.newBuilder(entity, role).setId(from.getId()).build();
+  }
+
+  private ObjectAccessControl objectAclEncode(Acl from) {
+    // TODO: Add etag when it becomes available
+    return ObjectAccessControl.newBuilder()
+        .setEntity(entityEncode(from.getEntity()))
+        .setRole(from.getRole().name())
+        .setId(from.getId())
+        .build();
+  }
+
+  private Bucket.IamConfig.UniformBucketLevelAccess ublaEncode(BucketInfo.IamConfiguration from) {
+    Bucket.IamConfig.UniformBucketLevelAccess.Builder to =
+        Bucket.IamConfig.UniformBucketLevelAccess.newBuilder();
+    to.setEnabled(from.isUniformBucketLevelAccessEnabled());
+    if (from.isUniformBucketLevelAccessEnabled() == Boolean.TRUE) {
+      ifNonNull(
+          from.getUniformBucketLevelAccessLockedTimeOffsetDateTime(),
+          timestampCodec::encode,
+          to::setLockTime);
+    }
+    return to.build();
+  }
+
+  private Bucket.IamConfig iamConfigEncode(BucketInfo.IamConfiguration from) {
+    Bucket.IamConfig.Builder to = Bucket.IamConfig.newBuilder();
+    to.setUniformBucketLevelAccess(ublaEncode(from));
+    if (from.getPublicAccessPrevention() != null) {
+      ifNonNull(from.getPublicAccessPrevention().getValue(), to::setPublicAccessPrevention);
+    }
+    return to.build();
+  }
+
+  private BucketInfo.IamConfiguration iamConfigDecode(Bucket.IamConfig from) {
+    Bucket.IamConfig.UniformBucketLevelAccess ubla = from.getUniformBucketLevelAccess();
+
+    BucketInfo.IamConfiguration.Builder to = BucketInfo.IamConfiguration.newBuilder();
+    ifNonNull(ubla.getEnabled(), to::setIsUniformBucketLevelAccessEnabled);
+    ifNonNull(
+        ubla.getLockTime(),
+        timestampCodec::decode,
+        to::setUniformBucketLevelAccessLockedTimeOffsetDateTime);
+    ifNonNull(
+        from.getPublicAccessPrevention(),
+        BucketInfo.PublicAccessPrevention::parse,
+        to::setPublicAccessPrevention);
     return to.build();
   }
 

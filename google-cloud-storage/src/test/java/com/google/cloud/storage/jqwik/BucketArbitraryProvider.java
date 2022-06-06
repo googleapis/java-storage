@@ -55,9 +55,16 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().encryption(),
                         StorageArbitraries.buckets().retentionPolicy(),
                         StorageArbitraries.buckets().lifecycle())
+                    .as(Tuple::of),
+                Combinators.combine(
+                        StorageArbitraries.buckets().logging(),
+                        StorageArbitraries.buckets().cors(),
+                        StorageArbitraries.buckets().objectAccessControl(),
+                        StorageArbitraries.buckets().owner(),
+                        StorageArbitraries.buckets().iamConfig())
                     .as(Tuple::of))
             .as(
-                (t1, t2) ->
+                (t1, t2, t3) ->
                     Bucket.newBuilder()
                         .setBucketId(t1.get1().get())
                         .setName(t1.get2().get())
@@ -75,6 +82,11 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         .setEncryption(t2.get6())
                         .setRetentionPolicy(t2.get7())
                         .setLifecycle(t2.get8())
+                        .setLogging(t3.get1())
+                        .addAllCors(t3.get2())
+                        .addAllDefaultObjectAcl(t3.get3())
+                        .setOwner(t3.get4())
+                        .setIamConfig(t3.get5())
                         .build());
     return Collections.singleton(as);
   }
