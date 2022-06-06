@@ -634,7 +634,7 @@ public class BucketInfo implements Serializable {
          */
         @Deprecated
         public Builder setCreatedBefore(DateTime createdBefore) {
-          return setCustomTimeBeforeOffsetDateTime(
+          return setCreateBeforeOffsetDateTime(
               Utils.dateTimeCodec.nullable().decode(createdBefore));
         }
 
