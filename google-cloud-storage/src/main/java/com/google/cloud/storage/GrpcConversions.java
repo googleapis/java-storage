@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
@@ -172,15 +173,15 @@ final class GrpcConversions {
   private BucketInfo bucketInfoDecode(Bucket from) {
     BucketInfo.Builder to = BucketInfo.newBuilder(from.getName());
     to.setGeneratedId(from.getBucketId());
-    Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
-    ifNonNull(retentionPolicy, Bucket.RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
-    ifNonNull(
-        retentionPolicy,
-        lift(Bucket.RetentionPolicy::getRetentionPeriod).andThen(Utils.durationMillisCodec::decode),
-        to::setRetentionPeriodDuration);
-    if (from.hasRetentionPolicy() && retentionPolicy.hasEffectiveTime()) {
-      to.setRetentionEffectiveTimeOffsetDateTime(
-          timestampCodec.decode(retentionPolicy.getEffectiveTime()));
+    if(from.hasRetentionPolicy()) {
+      Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
+      ifNonNull(retentionPolicy.getIsLocked(), to::setRetentionPolicyIsLocked);
+      ifNonNull(retentionPolicy.getRetentionPeriod(),
+              Utils.durationMillisCodec::decode,
+              to::setRetentionPeriodDuration);
+      ifNonNull(retentionPolicy.getEffectiveTime(),
+              timestampCodec::decode,
+        to::setRetentionEffectiveTimeOffsetDateTime);
     }
     ifNonNull(from.getBucketId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -224,17 +225,21 @@ final class GrpcConversions {
     Bucket.Builder to = Bucket.newBuilder();
     to.setName(from.getName());
     to.setBucketId(from.getGeneratedId());
-    Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
-    ifNonNull(
-        from.getRetentionPeriodDuration(),
-        Duration::getSeconds,
-        retentionPolicyBuilder::setRetentionPeriod);
-    ifNonNull(
-        from.getRetentionEffectiveTimeOffsetDateTime(),
-        timestampCodec::encode,
-        retentionPolicyBuilder::setEffectiveTime);
-    ifNonNull(from.retentionPolicyIsLocked(), retentionPolicyBuilder::setIsLocked);
-    to.setRetentionPolicy(retentionPolicyBuilder.build());
+    if(from.getRetentionPeriodDuration() != null) {
+      Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
+      ifNonNull(
+              from.getRetentionPeriodDuration(),
+              durationMillisCodec::encode,
+              retentionPolicyBuilder::setRetentionPeriod);
+      ifNonNull(from.retentionPolicyIsLocked(), retentionPolicyBuilder::setIsLocked);
+      if(from.retentionPolicyIsLocked() == Boolean.TRUE) {
+        ifNonNull(
+                from.getRetentionEffectiveTimeOffsetDateTime(),
+                timestampCodec::encode,
+                retentionPolicyBuilder::setEffectiveTime);
+      }
+      to.setRetentionPolicy(retentionPolicyBuilder.build());
+    }
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
@@ -263,10 +268,13 @@ final class GrpcConversions {
         from.getLifecycleRules(),
         Utils.toImmutableListOf(lifecycleRule()::encode),
         lifecycleBuilder::addAllRule);
-    //    ifNonNull(
-    //        from.getDeleteRules(),
-    //        Utils.toImmutableListOf(deleteRule()::encode),
-    //        lifecycleBuilder::addAllRule);
+    /*
+     // Corruption occurs by having deleteRule() values added
+     ifNonNull(
+        from.getDeleteRules(),
+        Utils.toImmutableListOf(deleteRule()::encode),
+        lifecycleBuilder::addAllRule);
+     */
     to.setLifecycle(lifecycleBuilder.build());
     // TODO(frankyn): Add logging decoder
     // TODO(frankyn): Add entity decoder
