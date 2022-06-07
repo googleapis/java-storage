@@ -446,7 +446,9 @@ public class BucketInfo implements Serializable {
           && condition.getDaysSinceNoncurrentTime() == null
           && condition.getNoncurrentTimeBefore() == null
           && condition.getCustomTimeBefore() == null
-          && condition.getDaysSinceCustomTime() == null) {
+          && condition.getDaysSinceCustomTime() == null
+          && condition.getMatchesPrefix() == null
+          && condition.getMatchesSuffix() == null) {
         log.warning(
             "Creating a lifecycle condition with no supported conditions:\n"
                 + this
@@ -527,7 +529,9 @@ public class BucketInfo implements Serializable {
                   lifecycleCondition.getCustomTimeBefore() == null
                       ? null
                       : new DateTime(true, lifecycleCondition.getCustomTimeBefore().getValue(), 0))
-              .setDaysSinceCustomTime(lifecycleCondition.getDaysSinceCustomTime());
+              .setDaysSinceCustomTime(lifecycleCondition.getDaysSinceCustomTime())
+              .setMatchesPrefix(lifecycleCondition.getMatchesPrefix())
+              .setMatchesSuffix(lifecycleCondition.getMatchesSuffix());
 
       rule.setCondition(condition);
 
@@ -604,6 +608,8 @@ public class BucketInfo implements Serializable {
       private final DateTime noncurrentTimeBefore;
       private final DateTime customTimeBefore;
       private final Integer daysSinceCustomTime;
+      private final List<String> matchesPrefix;
+      private final List<String> matchesSuffix;
 
       private LifecycleCondition(Builder builder) {
         this.age = builder.age;
@@ -615,6 +621,8 @@ public class BucketInfo implements Serializable {
         this.noncurrentTimeBefore = builder.noncurrentTimeBefore;
         this.customTimeBefore = builder.customTimeBefore;
         this.daysSinceCustomTime = builder.daysSinceCustomTime;
+        this.matchesPrefix = builder.matchesPrefix;
+        this.matchesSuffix = builder.matchesSuffix;
       }
 
       public Builder toBuilder() {
@@ -627,7 +635,9 @@ public class BucketInfo implements Serializable {
             .setDaysSinceNoncurrentTime(this.daysSinceNoncurrentTime)
             .setNoncurrentTimeBefore(this.noncurrentTimeBefore)
             .setCustomTimeBefore(this.customTimeBefore)
-            .setDaysSinceCustomTime(this.daysSinceCustomTime);
+            .setDaysSinceCustomTime(this.daysSinceCustomTime)
+            .setMatchesPrefix(this.matchesPrefix)
+            .setMatchesSuffix(this.matchesSuffix);
       }
 
       public static Builder newBuilder() {
@@ -646,6 +656,8 @@ public class BucketInfo implements Serializable {
             .add("noncurrentTimeBefore", noncurrentTimeBefore)
             .add("customTimeBefore", customTimeBefore)
             .add("daysSinceCustomTime", daysSinceCustomTime)
+            .add("matchesPrefix", matchesPrefix)
+            .add("matchesSuffix", matchesSuffix)
             .toString();
       }
 
@@ -691,6 +703,14 @@ public class BucketInfo implements Serializable {
         return daysSinceCustomTime;
       }
 
+      public List<String> getMatchesPrefix() {
+        return matchesPrefix;
+      }
+
+      public List<String> getMatchesSuffix() {
+        return matchesSuffix;
+      }
+
       /** Builder for {@code LifecycleCondition}. */
       public static class Builder {
         private Integer age;
@@ -702,6 +722,8 @@ public class BucketInfo implements Serializable {
         private DateTime noncurrentTimeBefore;
         private DateTime customTimeBefore;
         private Integer daysSinceCustomTime;
+        private List<String> matchesPrefix;
+        private List<String> matchesSuffix;
 
         private Builder() {}
 
@@ -797,6 +819,24 @@ public class BucketInfo implements Serializable {
          */
         public Builder setDaysSinceCustomTime(Integer daysSinceCustomTime) {
           this.daysSinceCustomTime = daysSinceCustomTime;
+          return this;
+        }
+
+        /**
+         * Sets the list of prefixes. If any prefix matches the beginning of the object’s name, this
+         * portion of the condition is satisfied for that object.
+         */
+        public Builder setMatchesPrefix(List<String> matchesPrefix) {
+          this.matchesPrefix = matchesPrefix != null ? ImmutableList.copyOf(matchesPrefix) : null;
+          return this;
+        }
+
+        /**
+         * Sets the list of suffixes. If any suffix matches the end of the object’s name, this
+         * portion of the condition is satisfied for that object.
+         */
+        public Builder setMatchesSuffix(List<String> matchesSuffix) {
+          this.matchesSuffix = matchesSuffix != null ? ImmutableList.copyOf(matchesSuffix) : null;
           return this;
         }
 

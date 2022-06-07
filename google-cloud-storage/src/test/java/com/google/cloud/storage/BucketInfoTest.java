@@ -365,6 +365,8 @@ public class BucketInfoTest {
                     .setNoncurrentTimeBefore(new DateTime(System.currentTimeMillis()))
                     .setCustomTimeBefore(new DateTime(System.currentTimeMillis()))
                     .setDaysSinceCustomTime(30)
+                    .setMatchesSuffix(Collections.singletonList("-suffix"))
+                    .setMatchesPrefix(Collections.singletonList("prefix-"))
                     .build())
             .toPb();
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
@@ -375,6 +377,8 @@ public class BucketInfoTest {
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
+    assertEquals("prefix-", lifecycleRule.getCondition().getMatchesPrefix().get(0));
+    assertEquals("-suffix", lifecycleRule.getCondition().getMatchesSuffix().get(0));
     assertTrue(
         LifecycleRule.fromPb(lifecycleRule).getAction() instanceof SetStorageClassLifecycleAction);
 
