@@ -552,6 +552,9 @@ public class BucketInfo implements Serializable {
               LifecycleAction.newSetStorageClassAction(
                   StorageClass.valueOf(action.getStorageClass()));
           break;
+        case AbortIncompleteMPUAction.TYPE:
+          lifecycleAction = LifecycleAction.newAbortIncompleteMPUploadAction();
+          break;
         default:
           log.warning(
               "The lifecycle action "
@@ -886,6 +889,15 @@ public class BucketInfo implements Serializable {
       }
 
       /**
+       * Create a new {@code AbortIncompleteMPUAction}. An incomplete multipart upload will be
+       * aborted when the multipart upload meets the specified condition. Age is the only condition
+       * supported for this action. See: https://cloud.google.com/storage/docs/lifecycle##abort-mpu
+       */
+      public static LifecycleAction newAbortIncompleteMPUploadAction() {
+        return new AbortIncompleteMPUAction();
+      }
+
+      /**
        * Creates a new {@code LifecycleAction , with no specific supported action associated with it. This
        * is only intended as a "backup" for when the library doesn't recognize the type, and should
        * generally not be used, instead use the supported actions, and upgrade the library if necessary
@@ -926,6 +938,15 @@ public class BucketInfo implements Serializable {
 
       public StorageClass getStorageClass() {
         return storageClass;
+      }
+    }
+
+    public static class AbortIncompleteMPUAction extends LifecycleAction {
+      public static final String TYPE = "AbortIncompleteMultipartUpload";
+      private static final long serialVersionUID = -1072182310389348060L;
+
+      private AbortIncompleteMPUAction() {
+        super(TYPE);
       }
     }
   }
