@@ -186,7 +186,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Function<com.google.storage.v2.Bucket, BucketInfo> decode = codecs.bucketInfo()::decode;
 
     Function<com.google.storage.v2.Bucket, Bucket> translator =
-        decode.andThen(bi -> bi.asBucket(this));
+        decode.andThen(bucketInfo -> bucketInfo.asBucket(this));
     return new TransformPageDecorator<>(page, translator);
   }
 
@@ -199,7 +199,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ListObjectsPagedResponse call = listObjectsPagedResponseUnaryCallable.call(req);
     ListObjectsPage page = call.getPage();
     Function<com.google.storage.v2.Object, BlobInfo> decode = codecs.blobInfo()::decode;
-    Function<com.google.storage.v2.Object, Blob> translator = decode.andThen(bi -> bi.asBlob(this));
+    Function<com.google.storage.v2.Object, Blob> translator =
+        decode.andThen(blobInfo -> blobInfo.asBlob(this));
     return new TransformPageDecorator<>(page, translator);
   }
 
