@@ -66,6 +66,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
@@ -560,6 +561,29 @@ public class ITStorageTest {
       assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBefore());
       assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
       assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
+    } finally {
+      storage.delete(lifecycleTestBucketName);
+    }
+  }
+
+  @Test
+  public void testGetBucketAbortMPULifecycle() {
+    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
+    storage.create(
+        BucketInfo.newBuilder(lifecycleTestBucketName)
+            .setLocation("us")
+            .setLifecycleRules(
+                ImmutableList.of(
+                    new LifecycleRule(
+                        LifecycleAction.newAbortIncompleteMPUploadAction(),
+                        LifecycleCondition.newBuilder().setAge(1).build())))
+            .build());
+    Bucket remoteBucket =
+        storage.get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
+    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
+    try {
+      assertEquals(AbortIncompleteMPUAction.TYPE, lifecycleRule.getAction().getActionType());
+      assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
     } finally {
       storage.delete(lifecycleTestBucketName);
     }
