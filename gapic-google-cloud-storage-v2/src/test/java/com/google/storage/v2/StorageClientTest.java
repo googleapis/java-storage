@@ -1349,7 +1349,6 @@ public class StorageClientTest {
                 CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
                     .toString())
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-            .setCommonRequestParams(CommonRequestParams.newBuilder().build())
             .build();
 
     Object actualResponse = client.composeObject(request);
@@ -1369,7 +1368,6 @@ public class StorageClientTest {
     Assert.assertEquals(request.getKmsKey(), actualRequest.getKmsKey());
     Assert.assertEquals(
         request.getCommonObjectRequestParams(), actualRequest.getCommonObjectRequestParams());
-    Assert.assertEquals(request.getCommonRequestParams(), actualRequest.getCommonRequestParams());
     Assert.assertTrue(
         channelProvider.isHeaderSent(
             ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -1393,7 +1391,6 @@ public class StorageClientTest {
                   CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
                       .toString())
               .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-              .setCommonRequestParams(CommonRequestParams.newBuilder().build())
               .build();
       client.composeObject(request);
       Assert.fail("No exception raised");
@@ -1640,7 +1637,6 @@ public class StorageClientTest {
             .setIfMetagenerationMatch(1043427781)
             .setIfMetagenerationNotMatch(1025430873)
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-            .setCommonRequestParams(CommonRequestParams.newBuilder().build())
             .setReadMask(FieldMask.newBuilder().build())
             .build();
 
@@ -1671,7 +1667,6 @@ public class StorageClientTest {
             .setIfMetagenerationMatch(1043427781)
             .setIfMetagenerationNotMatch(1025430873)
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-            .setCommonRequestParams(CommonRequestParams.newBuilder().build())
             .setReadMask(FieldMask.newBuilder().build())
             .build();
 
@@ -1769,7 +1764,6 @@ public class StorageClientTest {
             .setObjectChecksums(ObjectChecksums.newBuilder().build())
             .setFinishWrite(true)
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-            .setCommonRequestParams(CommonRequestParams.newBuilder().build())
             .build();
 
     MockStreamObserver<WriteObjectResponse> responseObserver = new MockStreamObserver<>();
@@ -1797,7 +1791,6 @@ public class StorageClientTest {
             .setObjectChecksums(ObjectChecksums.newBuilder().build())
             .setFinishWrite(true)
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-            .setCommonRequestParams(CommonRequestParams.newBuilder().build())
             .build();
 
     MockStreamObserver<WriteObjectResponse> responseObserver = new MockStreamObserver<>();
@@ -1945,7 +1938,6 @@ public class StorageClientTest {
             .setCopySourceEncryptionKeyBytes(ByteString.EMPTY)
             .setCopySourceEncryptionKeySha256Bytes(ByteString.EMPTY)
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-            .setCommonRequestParams(CommonRequestParams.newBuilder().build())
             .build();
 
     RewriteResponse actualResponse = client.rewriteObject(request);
@@ -1992,7 +1984,6 @@ public class StorageClientTest {
         actualRequest.getCopySourceEncryptionKeySha256Bytes());
     Assert.assertEquals(
         request.getCommonObjectRequestParams(), actualRequest.getCommonObjectRequestParams());
-    Assert.assertEquals(request.getCommonRequestParams(), actualRequest.getCommonRequestParams());
     Assert.assertTrue(
         channelProvider.isHeaderSent(
             ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -2031,7 +2022,6 @@ public class StorageClientTest {
               .setCopySourceEncryptionKeyBytes(ByteString.EMPTY)
               .setCopySourceEncryptionKeySha256Bytes(ByteString.EMPTY)
               .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-              .setCommonRequestParams(CommonRequestParams.newBuilder().build())
               .build();
       client.rewriteObject(request);
       Assert.fail("No exception raised");
@@ -2050,7 +2040,6 @@ public class StorageClientTest {
         StartResumableWriteRequest.newBuilder()
             .setWriteObjectSpec(WriteObjectSpec.newBuilder().build())
             .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-            .setCommonRequestParams(CommonRequestParams.newBuilder().build())
             .build();
 
     StartResumableWriteResponse actualResponse = client.startResumableWrite(request);
@@ -2063,7 +2052,6 @@ public class StorageClientTest {
     Assert.assertEquals(request.getWriteObjectSpec(), actualRequest.getWriteObjectSpec());
     Assert.assertEquals(
         request.getCommonObjectRequestParams(), actualRequest.getCommonObjectRequestParams());
-    Assert.assertEquals(request.getCommonRequestParams(), actualRequest.getCommonRequestParams());
     Assert.assertTrue(
         channelProvider.isHeaderSent(
             ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -2080,7 +2068,6 @@ public class StorageClientTest {
           StartResumableWriteRequest.newBuilder()
               .setWriteObjectSpec(WriteObjectSpec.newBuilder().build())
               .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
-              .setCommonRequestParams(CommonRequestParams.newBuilder().build())
               .build();
       client.startResumableWrite(request);
       Assert.fail("No exception raised");

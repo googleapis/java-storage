@@ -77,22 +77,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
               project_ = s;
               break;
             }
-          case 18:
-            {
-              com.google.storage.v2.CommonRequestParams.Builder subBuilder = null;
-              if (commonRequestParams_ != null) {
-                subBuilder = commonRequestParams_.toBuilder();
-              }
-              commonRequestParams_ =
-                  input.readMessage(
-                      com.google.storage.v2.CommonRequestParams.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(commonRequestParams_);
-                commonRequestParams_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -182,54 +166,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     }
   }
 
-  public static final int COMMON_REQUEST_PARAMS_FIELD_NUMBER = 2;
-  private com.google.storage.v2.CommonRequestParams commonRequestParams_;
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-   *
-   * @return Whether the commonRequestParams field is set.
-   */
-  @java.lang.Override
-  public boolean hasCommonRequestParams() {
-    return commonRequestParams_ != null;
-  }
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-   *
-   * @return The commonRequestParams.
-   */
-  @java.lang.Override
-  public com.google.storage.v2.CommonRequestParams getCommonRequestParams() {
-    return commonRequestParams_ == null
-        ? com.google.storage.v2.CommonRequestParams.getDefaultInstance()
-        : commonRequestParams_;
-  }
-  /**
-   *
-   *
-   * <pre>
-   * A set of parameters common to all Storage API requests.
-   * </pre>
-   *
-   * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-   */
-  @java.lang.Override
-  public com.google.storage.v2.CommonRequestParamsOrBuilder getCommonRequestParamsOrBuilder() {
-    return getCommonRequestParams();
-  }
-
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -247,9 +183,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(project_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, project_);
     }
-    if (commonRequestParams_ != null) {
-      output.writeMessage(2, getCommonRequestParams());
-    }
     unknownFields.writeTo(output);
   }
 
@@ -261,9 +194,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     size = 0;
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(project_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, project_);
-    }
-    if (commonRequestParams_ != null) {
-      size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getCommonRequestParams());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -282,10 +212,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
         (com.google.storage.v2.GetServiceAccountRequest) obj;
 
     if (!getProject().equals(other.getProject())) return false;
-    if (hasCommonRequestParams() != other.hasCommonRequestParams()) return false;
-    if (hasCommonRequestParams()) {
-      if (!getCommonRequestParams().equals(other.getCommonRequestParams())) return false;
-    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -299,10 +225,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + PROJECT_FIELD_NUMBER;
     hash = (53 * hash) + getProject().hashCode();
-    if (hasCommonRequestParams()) {
-      hash = (37 * hash) + COMMON_REQUEST_PARAMS_FIELD_NUMBER;
-      hash = (53 * hash) + getCommonRequestParams().hashCode();
-    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -450,12 +372,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
       super.clear();
       project_ = "";
 
-      if (commonRequestParamsBuilder_ == null) {
-        commonRequestParams_ = null;
-      } else {
-        commonRequestParams_ = null;
-        commonRequestParamsBuilder_ = null;
-      }
       return this;
     }
 
@@ -484,11 +400,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
       com.google.storage.v2.GetServiceAccountRequest result =
           new com.google.storage.v2.GetServiceAccountRequest(this);
       result.project_ = project_;
-      if (commonRequestParamsBuilder_ == null) {
-        result.commonRequestParams_ = commonRequestParams_;
-      } else {
-        result.commonRequestParams_ = commonRequestParamsBuilder_.build();
-      }
       onBuilt();
       return result;
     }
@@ -541,9 +452,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
       if (!other.getProject().isEmpty()) {
         project_ = other.project_;
         onChanged();
-      }
-      if (other.hasCommonRequestParams()) {
-        mergeCommonRequestParams(other.getCommonRequestParams());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -688,192 +596,6 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
       project_ = value;
       onChanged();
       return this;
-    }
-
-    private com.google.storage.v2.CommonRequestParams commonRequestParams_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.CommonRequestParams,
-            com.google.storage.v2.CommonRequestParams.Builder,
-            com.google.storage.v2.CommonRequestParamsOrBuilder>
-        commonRequestParamsBuilder_;
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     *
-     * @return Whether the commonRequestParams field is set.
-     */
-    public boolean hasCommonRequestParams() {
-      return commonRequestParamsBuilder_ != null || commonRequestParams_ != null;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     *
-     * @return The commonRequestParams.
-     */
-    public com.google.storage.v2.CommonRequestParams getCommonRequestParams() {
-      if (commonRequestParamsBuilder_ == null) {
-        return commonRequestParams_ == null
-            ? com.google.storage.v2.CommonRequestParams.getDefaultInstance()
-            : commonRequestParams_;
-      } else {
-        return commonRequestParamsBuilder_.getMessage();
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     */
-    public Builder setCommonRequestParams(com.google.storage.v2.CommonRequestParams value) {
-      if (commonRequestParamsBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        commonRequestParams_ = value;
-        onChanged();
-      } else {
-        commonRequestParamsBuilder_.setMessage(value);
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     */
-    public Builder setCommonRequestParams(
-        com.google.storage.v2.CommonRequestParams.Builder builderForValue) {
-      if (commonRequestParamsBuilder_ == null) {
-        commonRequestParams_ = builderForValue.build();
-        onChanged();
-      } else {
-        commonRequestParamsBuilder_.setMessage(builderForValue.build());
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     */
-    public Builder mergeCommonRequestParams(com.google.storage.v2.CommonRequestParams value) {
-      if (commonRequestParamsBuilder_ == null) {
-        if (commonRequestParams_ != null) {
-          commonRequestParams_ =
-              com.google.storage.v2.CommonRequestParams.newBuilder(commonRequestParams_)
-                  .mergeFrom(value)
-                  .buildPartial();
-        } else {
-          commonRequestParams_ = value;
-        }
-        onChanged();
-      } else {
-        commonRequestParamsBuilder_.mergeFrom(value);
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     */
-    public Builder clearCommonRequestParams() {
-      if (commonRequestParamsBuilder_ == null) {
-        commonRequestParams_ = null;
-        onChanged();
-      } else {
-        commonRequestParams_ = null;
-        commonRequestParamsBuilder_ = null;
-      }
-
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     */
-    public com.google.storage.v2.CommonRequestParams.Builder getCommonRequestParamsBuilder() {
-
-      onChanged();
-      return getCommonRequestParamsFieldBuilder().getBuilder();
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     */
-    public com.google.storage.v2.CommonRequestParamsOrBuilder getCommonRequestParamsOrBuilder() {
-      if (commonRequestParamsBuilder_ != null) {
-        return commonRequestParamsBuilder_.getMessageOrBuilder();
-      } else {
-        return commonRequestParams_ == null
-            ? com.google.storage.v2.CommonRequestParams.getDefaultInstance()
-            : commonRequestParams_;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A set of parameters common to all Storage API requests.
-     * </pre>
-     *
-     * <code>.google.storage.v2.CommonRequestParams common_request_params = 2;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.storage.v2.CommonRequestParams,
-            com.google.storage.v2.CommonRequestParams.Builder,
-            com.google.storage.v2.CommonRequestParamsOrBuilder>
-        getCommonRequestParamsFieldBuilder() {
-      if (commonRequestParamsBuilder_ == null) {
-        commonRequestParamsBuilder_ =
-            new com.google.protobuf.SingleFieldBuilderV3<
-                com.google.storage.v2.CommonRequestParams,
-                com.google.storage.v2.CommonRequestParams.Builder,
-                com.google.storage.v2.CommonRequestParamsOrBuilder>(
-                getCommonRequestParams(), getParentForChildren(), isClean());
-        commonRequestParams_ = null;
-      }
-      return commonRequestParamsBuilder_;
     }
 
     @java.lang.Override
