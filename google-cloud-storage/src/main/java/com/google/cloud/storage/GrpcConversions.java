@@ -290,7 +290,6 @@ final class GrpcConversions {
         Utils.toImmutableListOf(lifecycleRule()::encode),
         lifecycleBuilder::addAllRule);
     // preserve mapping to deprecated property
-    // TODO: Corruption occurs by having deleteRule() values added
     ifNonNull(
         from.getDeleteRules(),
         Utils.toImmutableListOf(deleteRule()::encode),
