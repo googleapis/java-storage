@@ -50,10 +50,8 @@ public final class ITDownloadToTest {
     BucketInfo bucketInfo = BucketInfo.of(BUCKET);
     blobId = BlobId.of(BUCKET, "zipped_blob");
 
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId)
-            .setContentEncoding("gzip")
-            .setContentType("text/plain")
-            .build();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
 
     storage = StorageOptions.newBuilder().build().getService();
     storage.create(bucketInfo);
@@ -63,7 +61,8 @@ public final class ITDownloadToTest {
   @Test
   public void downloadTo_returnRawInputStream_yes() throws IOException {
     Path helloWorldTxtGz = File.createTempFile("helloWorld", ".txt.gz").toPath();
-    storage.downloadTo(blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
+    storage.downloadTo(
+        blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
 
     byte[] actualTxtGzBytes = Files.readAllBytes(helloWorldTxtGz);
     if (Arrays.equals(actualTxtGzBytes, helloWorldTextBytes)) {
@@ -75,7 +74,8 @@ public final class ITDownloadToTest {
   @Test
   public void downloadTo_returnRawInputStream_no() throws IOException {
     Path helloWorldTxt = File.createTempFile("helloWorld", ".txt").toPath();
-    storage.downloadTo(blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
+    storage.downloadTo(
+        blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
     byte[] actualTxtBytes = Files.readAllBytes(helloWorldTxt);
     assertThat(actualTxtBytes).isEqualTo(helloWorldTextBytes);
   }
@@ -84,9 +84,9 @@ public final class ITDownloadToTest {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
     try (OutputStream out = new GZIPOutputStream(byteArrayOutputStream)) {
       out.write(bytes);
-    } catch (IOException ignore) {}
+    } catch (IOException ignore) {
+    }
 
     return byteArrayOutputStream.toByteArray();
   }
-
 }
