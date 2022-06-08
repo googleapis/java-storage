@@ -108,9 +108,11 @@ public final class StorageException extends BaseHttpServiceException {
    * @returns {@code StorageException}
    */
   public static StorageException translate(IOException exception) {
-    if (exception.getMessage().contains("Connection closed prematurely")) {
-      return new StorageException(
-          0, exception.getMessage(), CONNECTION_CLOSED_PREMATURELY, exception);
+    String message = exception.getMessage();
+    if (message != null
+        && (message.contains("Connection closed prematurely")
+            || message.contains("Premature EOF"))) {
+      return new StorageException(0, message, CONNECTION_CLOSED_PREMATURELY, exception);
     } else {
       // default
       return new StorageException(exception);

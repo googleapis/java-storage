@@ -24,6 +24,7 @@ import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import com.google.api.client.googleapis.batch.BatchRequest;
 import com.google.api.client.googleapis.batch.json.JsonBatchCallback;
 import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.client.googleapis.media.MediaHttpDownloader;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
@@ -283,7 +284,7 @@ public class HttpStorageRpc implements StorageRpc {
   }
 
   private static StorageException translate(IOException exception) {
-    return new StorageException(exception);
+    return StorageException.translate(exception);
   }
 
   private static StorageException translate(GoogleJsonError exception) {
@@ -750,10 +751,14 @@ public class HttpStorageRpc implements StorageRpc {
       } else {
         req.setReturnRawInputStream(false);
       }
-      req.getMediaHttpDownloader().setBytesDownloaded(position);
-      req.getMediaHttpDownloader().setDirectDownloadEnabled(true);
+
+      if (position > 0) {
+        req.getRequestHeaders().setRange(String.format("bytes=%d-", position));
+      }
+      MediaHttpDownloader mediaHttpDownloader = req.getMediaHttpDownloader();
+      mediaHttpDownloader.setDirectDownloadEnabled(true);
       req.executeMedia().download(outputStream);
-      return req.getMediaHttpDownloader().getNumBytesDownloaded();
+      return mediaHttpDownloader.getNumBytesDownloaded();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
       StorageException serviceException = translate(ex);
