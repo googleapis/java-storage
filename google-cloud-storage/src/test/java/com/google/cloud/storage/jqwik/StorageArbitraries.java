@@ -34,6 +34,7 @@ import java.time.ZoneOffset;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
+import net.jqwik.api.Provide;
 import net.jqwik.api.Tuple;
 import net.jqwik.api.arbitraries.ListArbitrary;
 import net.jqwik.api.providers.TypeUsage;
@@ -304,6 +305,7 @@ public final class StorageArbitraries {
       return Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
     }
 
+    @Provide("objectChecksums")
     public Arbitrary<ObjectChecksums> objectChecksumsArbitrary() {
       return Combinators.combine(
               Arbitraries.integers().greaterOrEqual(1),
