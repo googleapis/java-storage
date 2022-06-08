@@ -519,6 +519,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    Builder setProject(String project) {
+      infoBuilder.setProject(project);
+      return this;
+    }
+
+    @Override
     Builder setGeneratedId(String generatedId) {
       infoBuilder.setGeneratedId(generatedId);
       return this;

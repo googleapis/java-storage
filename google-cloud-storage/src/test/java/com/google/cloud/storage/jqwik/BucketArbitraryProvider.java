@@ -66,8 +66,9 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
             .as(
                 (t1, t2, t3) ->
                     Bucket.newBuilder()
-                        .setBucketId(t1.get1().get())
-                        .setName(t1.get2().get())
+                        .setBucketId(t1.get1().getBucket())
+                        .setName(t1.get2().toString())
+                        .setProject(t1.get2().getProject())
                         .setStorageClass(t1.get3())
                         .setLocation(t1.get4())
                         .setLocationType(t1.get5())

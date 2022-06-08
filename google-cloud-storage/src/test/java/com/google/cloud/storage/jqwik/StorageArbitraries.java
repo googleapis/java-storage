@@ -26,6 +26,7 @@ import com.google.storage.v2.Bucket.Encryption;
 import com.google.storage.v2.Bucket.RetentionPolicy;
 import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
+import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CustomerEncryption;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
@@ -84,6 +85,28 @@ public final class StorageArbitraries {
     return Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
   }
 
+  public static Arbitrary<ProjectID> projectID() {
+    return Arbitraries.oneOf(
+        Combinators.combine(
+                // must start with a letter
+                Arbitraries.chars().range('a', 'z'),
+                // can only contain numbers, lowercase letters, and hyphens, and must be 6-30 chars
+                Arbitraries.strings()
+                    .withCharRange('a', 'z')
+                    .numeric()
+                    .withChars('-')
+                    .ofMinLength(4)
+                    .ofMaxLength(28),
+                // must not end with a hyphen
+                Arbitraries.chars().range('a', 'z').numeric())
+            .as(
+                (first, mid, last) -> {
+                  final StringBuilder sb = new StringBuilder();
+                  sb.append(first).append(mid).append(last);
+                  return new ProjectID(sb.toString());
+                }));
+  }
+
   /**
    * Generated bucket name based on the rules outlined in <a target="_blank" rel="noopener
    * noreferrer"
@@ -91,6 +114,10 @@ public final class StorageArbitraries {
    */
   public static Arbitrary<BucketName> bucketName() {
     return Combinators.combine(
+            Arbitraries.oneOf(
+                projectID(),
+                // Global buckets have prefix of projects/_
+                Arbitraries.of(new ProjectID("_"))),
             Arbitraries.oneOf(Arbitraries.chars().alpha(), Arbitraries.chars().numeric()),
             Arbitraries.oneOf(
                     Arbitraries.chars().alpha(),
@@ -101,34 +128,12 @@ public final class StorageArbitraries {
                 .ofMaxSize(61),
             Arbitraries.oneOf(Arbitraries.chars().alpha(), Arbitraries.chars().numeric()))
         .as(
-            (first, mid, last) -> {
+            (p, first, mid, last) -> {
               final StringBuilder sb = new StringBuilder();
               sb.append(first);
               mid.forEach(sb::append);
               sb.append(last);
-
-              return new BucketName(sb.toString());
-            });
-  }
-
-  public static Arbitrary<ProjectID> projectID() {
-    return Combinators.combine(
-            // must start with a letter
-            Arbitraries.chars().range('a', 'z'),
-            // can only contain numbers, lowercase letters, and hyphens, and must be 6-30 chars
-            Arbitraries.strings()
-                .withCharRange('a', 'z')
-                .numeric()
-                .withChars('-')
-                .ofMinLength(4)
-                .ofMaxLength(28),
-            // must not end with a hyphen
-            Arbitraries.chars().range('a', 'z').numeric())
-        .as(
-            (first, mid, last) -> {
-              final StringBuilder sb = new StringBuilder();
-              sb.append(first).append(mid).append(last);
-              return new ProjectID(sb.toString());
+              return BucketName.of(p.get(), sb.toString());
             });
   }
 
@@ -223,10 +228,18 @@ public final class StorageArbitraries {
     public Arbitrary<Bucket.Logging> logging() {
       Arbitrary<BucketName> loggingBucketName = StorageArbitraries.bucketName();
       Arbitrary<String> loggingPrefix = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(10);
-      return Combinators.combine(loggingBucketName, loggingPrefix)
+      return Combinators.combine(loggingBucketName, loggingPrefix, bool())
           .as(
-              (b, p) ->
-                  Bucket.Logging.newBuilder().setLogBucket(b.get()).setLogObjectPrefix(p).build());
+              (b, p, u) -> {
+                Bucket.Logging.Builder loggingBuilder =
+                    Bucket.Logging.newBuilder().setLogObjectPrefix(p);
+                if (u == Boolean.TRUE) {
+                  loggingBuilder.setLogBucket(b.toString());
+                } else {
+                  loggingBuilder.setLogBucket(b.getBucket());
+                }
+                return loggingBuilder.build();
+              });
     }
 
     public ListArbitrary<Bucket.Cors> cors() {
@@ -347,18 +360,6 @@ public final class StorageArbitraries {
 
     public Arbitrary<String> locationType() {
       return Arbitraries.of("region", "dual-region", "multi-region");
-    }
-  }
-
-  public static final class BucketName {
-    private final String value;
-
-    private BucketName(String value) {
-      this.value = value;
-    }
-
-    public String get() {
-      return value;
     }
   }
 
