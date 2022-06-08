@@ -25,7 +25,7 @@ import net.jqwik.api.ForAll;
 import net.jqwik.api.Provide;
 
 public class Crc32cUtilityPropertyTest {
-  @Example
+  @Property
   public void testCrc32cCombinePropertyTest(
       @ForAll("randomData") String firstObject, @ForAll("randomData") String secondObject) {
     int firstPartHash = Hashing.crc32c().hashBytes(firstObject.getBytes()).asInt();
