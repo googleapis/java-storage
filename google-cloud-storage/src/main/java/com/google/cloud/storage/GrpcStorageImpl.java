@@ -628,7 +628,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
     ifNonNull(
-        (boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
+        (Boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PROJECT_ID), builder::setProject);
     ListHmacKeysPagedResponse call =
         listBucketsRequestListHmacKeysPagedResponseUnaryCallable.call(builder.build());
