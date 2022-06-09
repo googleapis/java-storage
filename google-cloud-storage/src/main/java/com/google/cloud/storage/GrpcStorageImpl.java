@@ -45,19 +45,19 @@ import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
-import com.google.storage.v2.Object;
-import com.google.storage.v2.StartResumableWriteRequest;
-import com.google.storage.v2.WriteObjectResponse;
-import com.google.storage.v2.WriteObjectSpec;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
+import com.google.storage.v2.Object;
+import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StorageClient.ListBucketsPage;
 import com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
 import com.google.storage.v2.StorageClient.ListHmacKeysPage;
 import com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
 import com.google.storage.v2.StorageClient.ListObjectsPage;
 import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
+import com.google.storage.v2.WriteObjectResponse;
+import com.google.storage.v2.WriteObjectSpec;
 import com.google.storage.v2.stub.GrpcStorageStub;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -260,10 +260,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse>
         listBucketsRequestListBucketsPagedResponseUnaryCallable =
             grpcStorageStub.listBucketsPagedCallable();
-    // TODO: Actually construct request
-    ListBucketsRequest req = ListBucketsRequest.getDefaultInstance();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder();
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
+    // TODO(sydmunro): StorageRpc.Option.Fields
+    // TODO(sydmunro): User Project
     ListBucketsPagedResponse call =
-        listBucketsRequestListBucketsPagedResponseUnaryCallable.call(req);
+        listBucketsRequestListBucketsPagedResponseUnaryCallable.call(builder.build());
     ListBucketsPage page = call.getPage();
     Function<com.google.storage.v2.Bucket, BucketInfo> decode = codecs.bucketInfo()::decode;
 
@@ -276,9 +282,18 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Page<Blob> list(String bucket, BlobListOption... options) {
     UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse>
         listObjectsPagedResponseUnaryCallable = grpcStorageStub.listObjectsPagedCallable();
-    // TODO: Actually construct request
-    ListObjectsRequest req = ListObjectsRequest.getDefaultInstance();
-    ListObjectsPagedResponse call = listObjectsPagedResponseUnaryCallable.call(req);
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ListObjectsRequest.Builder builder = ListObjectsRequest.newBuilder().setParent(bucket);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.DELIMITER), builder::setDelimiter);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.START_OFF_SET), builder::setLexicographicStart);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.END_OFF_SET), builder::setLexicographicEnd);
+    // TODO(sydmunro) StorageRpc.Option.Fields
+    ListObjectsPagedResponse call = listObjectsPagedResponseUnaryCallable.call(builder.build());
     ListObjectsPage page = call.getPage();
     Function<com.google.storage.v2.Object, BlobInfo> decode = codecs.blobInfo()::decode;
     Function<com.google.storage.v2.Object, Blob> translator =
@@ -603,10 +618,20 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse>
         listBucketsRequestListHmacKeysPagedResponseUnaryCallable =
             grpcStorageStub.listHmacKeysPagedCallable();
-    // TODO: Actually construct request
-    ListHmacKeysRequest req = ListHmacKeysRequest.getDefaultInstance();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    // TODO: Project is required?
+    ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder();
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL),
+        builder::setServiceAccountEmail);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
+    ifNonNull(
+        (boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PROJECT_ID), builder::setProject);
     ListHmacKeysPagedResponse call =
-        listBucketsRequestListHmacKeysPagedResponseUnaryCallable.call(req);
+        listBucketsRequestListHmacKeysPagedResponseUnaryCallable.call(builder.build());
     ListHmacKeysPage page = call.getPage();
     Function<com.google.storage.v2.HmacKeyMetadata, HmacKey.HmacKeyMetadata> decode =
         codecs.hmacKeyMetadata()::decode;
