@@ -22,7 +22,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.BufferedReadableByteChannel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.storage.v2.Object;
@@ -106,10 +106,12 @@ final class GrpcBlobReadChannel implements ReadChannel {
   }
 
   private static final class LazyReadChannel {
-    private final Supplier<BufferedReadableByteChannelSession<Object>> session;
+    private final Supplier<StorageByteChannels.Sessions.BufferedReadableByteChannelSession<Object>>
+        session;
     private final Supplier<BufferedReadableByteChannel> channel;
 
-    public LazyReadChannel(Supplier<BufferedReadableByteChannelSession<Object>> session) {
+    public LazyReadChannel(
+        Supplier<StorageByteChannels.Sessions.BufferedReadableByteChannelSession<Object>> session) {
       this.session = session;
       this.channel = Suppliers.memoize(() -> session.get().open());
     }

@@ -16,8 +16,8 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
-import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.BufferedReadableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.UnbufferedReadableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -32,13 +32,6 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
     this.buffer = buffer;
     this.channel = channel;
   }
-
-  @Override
-  public boolean isComplete() {
-    return channel.isComplete();
-  }
-
-  long totalRead = 0;
 
   @Override
   public int read(ByteBuffer dst) throws IOException {
@@ -115,7 +108,6 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
       }
       bytesConsumed += tmpBytesCopied;
     }
-    totalRead += bytesConsumed;
     return bytesConsumed;
   }
 

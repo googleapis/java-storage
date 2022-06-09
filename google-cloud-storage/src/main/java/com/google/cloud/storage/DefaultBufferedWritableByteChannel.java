@@ -16,8 +16,8 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
-import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.BufferedWritableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.UnbufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -31,11 +31,6 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
   DefaultBufferedWritableByteChannel(ByteBuffer buffer, UnbufferedWritableByteChannel channel) {
     this.buffer = buffer;
     this.channel = channel;
-  }
-
-  @Override
-  public boolean isComplete() {
-    return channel.isComplete();
   }
 
   @Override

@@ -22,7 +22,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
-import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.BufferedWritableByteChannel;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.storage.v2.WriteObjectRequest;
@@ -88,11 +88,16 @@ final class GrpcBlobWriteChannel implements WriteChannel {
   }
 
   private static final class LazyWriteChannel {
-    private final Supplier<BufferedWritableByteChannelSession<WriteObjectResponse>> session;
+    private final Supplier<
+            StorageByteChannels.Sessions.BufferedWritableByteChannelSession<WriteObjectResponse>>
+        session;
     private final Supplier<BufferedWritableByteChannel> channel;
 
     public LazyWriteChannel(
-        Supplier<BufferedWritableByteChannelSession<WriteObjectResponse>> session) {
+        Supplier<
+                StorageByteChannels.Sessions.BufferedWritableByteChannelSession<
+                    WriteObjectResponse>>
+            session) {
       this.session = session;
       this.channel = Suppliers.memoize(() -> session.get().open());
     }

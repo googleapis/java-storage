@@ -16,14 +16,23 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
-import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
-import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
-import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.api.core.ApiFunction;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.rpc.ApiExceptions;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.GatheringByteChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.ScatteringByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.util.function.BiFunction;
 
 final class StorageByteChannels {
+
+  private StorageByteChannels() {}
 
   static Readable readable() {
     return Readable.INSTANCE;
@@ -31,6 +40,130 @@ final class StorageByteChannels {
 
   static Writable writable() {
     return Writable.INSTANCE;
+  }
+
+  interface BufferedWritableByteChannel extends WritableByteChannel {
+    void flush() throws IOException;
+  }
+
+  interface BufferedReadableByteChannel extends ReadableByteChannel {}
+
+  interface UnbufferedWritableByteChannel extends GatheringByteChannel {}
+
+  interface UnbufferedReadableByteChannel extends ScatteringByteChannel {}
+
+  static final class Sessions {
+
+    interface UnbufferedReadableByteChannelSession<ResultT>
+        extends ReadableByteChannelSession<UnbufferedReadableByteChannel, ResultT> {}
+
+    interface UnbufferedWritableByteChannelSession<ResultT>
+        extends WritableByteChannelSession<UnbufferedWritableByteChannel, ResultT> {}
+
+    interface BufferedReadableByteChannelSession<ResultT>
+        extends ReadableByteChannelSession<BufferedReadableByteChannel, ResultT> {}
+
+    interface BufferedWritableByteChannelSession<ResultT>
+        extends WritableByteChannelSession<BufferedWritableByteChannel, ResultT> {}
+
+    interface ReadableByteChannelSession<RBC extends ReadableByteChannel, ResultT> {
+
+      default RBC open() {
+        return ApiExceptions.callAndTranslateApiException(openAsync());
+      }
+
+      ApiFuture<RBC> openAsync();
+
+      ApiFuture<ResultT> getResult();
+    }
+
+    interface WritableByteChannelSession<WBC extends WritableByteChannel, ResultT> {
+
+      default WBC open() {
+        return ApiExceptions.callAndTranslateApiException(openAsync());
+      }
+
+      ApiFuture<WBC> openAsync();
+
+      ApiFuture<ResultT> getResult();
+    }
+
+    static final class UnbufferedReadSession<S, R>
+        extends DefaultSession<S, R, UnbufferedReadableByteChannel>
+        implements UnbufferedReadableByteChannelSession<R> {
+
+      UnbufferedReadSession(
+          ApiFuture<S> startFuture,
+          BiFunction<S, SettableApiFuture<R>, UnbufferedReadableByteChannel> f) {
+        super(startFuture, f);
+      }
+    }
+
+    static final class BufferedReadSession<S, R>
+        extends DefaultSession<S, R, BufferedReadableByteChannel>
+        implements BufferedReadableByteChannelSession<R> {
+
+      BufferedReadSession(
+          ApiFuture<S> startFuture,
+          BiFunction<S, SettableApiFuture<R>, BufferedReadableByteChannel> f) {
+        super(startFuture, f);
+      }
+    }
+
+    static final class UnbufferedWriteSession<S, R>
+        extends DefaultSession<S, R, UnbufferedWritableByteChannel>
+        implements UnbufferedWritableByteChannelSession<R> {
+
+      UnbufferedWriteSession(
+          ApiFuture<S> startFuture,
+          BiFunction<S, SettableApiFuture<R>, UnbufferedWritableByteChannel> f) {
+        super(startFuture, f);
+      }
+    }
+
+    static final class BufferedWriteSession<S, R>
+        extends DefaultSession<S, R, BufferedWritableByteChannel>
+        implements BufferedWritableByteChannelSession<R> {
+
+      BufferedWriteSession(
+          ApiFuture<S> startFuture,
+          BiFunction<S, SettableApiFuture<R>, BufferedWritableByteChannel> f) {
+        super(startFuture, f);
+      }
+    }
+
+    private abstract static class DefaultSession<StartT, ResultT, ChannelT> {
+      private final Object channelInitSyncObj = new Object();
+
+      private final ApiFuture<StartT> startFuture;
+      private final ApiFunction<StartT, ChannelT> f;
+      private final SettableApiFuture<ResultT> resultFuture;
+
+      private volatile ApiFuture<ChannelT> channel;
+
+      private DefaultSession(
+          ApiFuture<StartT> startFuture,
+          BiFunction<StartT, SettableApiFuture<ResultT>, ChannelT> f) {
+        this.startFuture = startFuture;
+        this.resultFuture = SettableApiFuture.create();
+        this.f = (s) -> f.apply(s, resultFuture);
+      }
+
+      public ApiFuture<ChannelT> openAsync() {
+        if (channel == null) {
+          synchronized (channelInitSyncObj) {
+            if (channel == null) {
+              channel = ApiFutures.transform(startFuture, f, MoreExecutors.directExecutor());
+            }
+          }
+        }
+        return channel;
+      }
+
+      public ApiFuture<ResultT> getResult() {
+        return resultFuture;
+      }
+    }
   }
 
   static final class Readable {
@@ -68,13 +201,8 @@ final class StorageByteChannels {
 
     private final BufferedReadableByteChannel delegate;
 
-    public SynchronizedBufferedReadableByteChannel(BufferedReadableByteChannel delegate) {
+    private SynchronizedBufferedReadableByteChannel(BufferedReadableByteChannel delegate) {
       this.delegate = delegate;
-    }
-
-    @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
     }
 
     @Override
@@ -98,13 +226,8 @@ final class StorageByteChannels {
 
     private final BufferedWritableByteChannel delegate;
 
-    public SynchronizedBufferedWritableByteChannel(BufferedWritableByteChannel delegate) {
+    private SynchronizedBufferedWritableByteChannel(BufferedWritableByteChannel delegate) {
       this.delegate = delegate;
-    }
-
-    @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
     }
 
     @Override
@@ -135,11 +258,6 @@ final class StorageByteChannels {
 
     private SynchronizedUnbufferedReadableByteChannel(UnbufferedReadableByteChannel delegate) {
       this.delegate = delegate;
-    }
-
-    @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
     }
 
     @Override
@@ -175,11 +293,6 @@ final class StorageByteChannels {
 
     private SynchronizedUnbufferedWritableByteChannel(UnbufferedWritableByteChannel delegate) {
       this.delegate = delegate;
-    }
-
-    @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
     }
 
     @Override

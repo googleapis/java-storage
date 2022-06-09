@@ -24,7 +24,7 @@ import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthUnknown;
-import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.UnbufferedReadableByteChannel;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
@@ -149,11 +149,6 @@ final class GapicUnbufferedReadableByteChannel
   @Override
   public boolean isOpen() {
     return open;
-  }
-
-  @Override
-  public boolean isComplete() {
-    return complete;
   }
 
   @Override

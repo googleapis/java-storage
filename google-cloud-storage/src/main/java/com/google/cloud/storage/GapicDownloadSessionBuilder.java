@@ -18,10 +18,11 @@ package com.google.cloud.storage;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.ServerStreamingCallable;
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
-import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.BufferedReadableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.UnbufferedReadableByteChannel;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -91,9 +92,10 @@ final class GapicDownloadSessionBuilder {
         return this;
       }
 
-      public BufferedReadableByteChannelSession<Object> build() {
-        return new DefaultBufferedReadableByteChannelSession<>(
-            obj, f.andThen(StorageByteChannels.readable()::createSynchronized));
+      public StorageByteChannels.Sessions.BufferedReadableByteChannelSession<Object> build() {
+        return new StorageByteChannels.Sessions.BufferedReadSession<>(
+            ApiFutures.immediateFuture(obj),
+            f.andThen(StorageByteChannels.readable()::createSynchronized));
       }
     }
 
@@ -113,9 +115,10 @@ final class GapicDownloadSessionBuilder {
         return this;
       }
 
-      public UnbufferedReadableByteChannelSession<Object> build() {
-        return new DefaultUnbufferedReadableByteChannelSession<>(
-            obj, f.andThen(StorageByteChannels.readable()::createSynchronized));
+      public StorageByteChannels.Sessions.UnbufferedReadableByteChannelSession<Object> build() {
+        return new StorageByteChannels.Sessions.UnbufferedReadSession<>(
+            ApiFutures.immediateFuture(obj),
+            f.andThen(StorageByteChannels.readable()::createSynchronized));
       }
     }
   }

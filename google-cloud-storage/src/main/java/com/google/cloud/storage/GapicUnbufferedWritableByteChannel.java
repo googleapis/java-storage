@@ -21,7 +21,7 @@ import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
-import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.UnbufferedWritableByteChannel;
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
@@ -35,7 +35,6 @@ import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByteChannel {
 
@@ -49,7 +48,6 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
   private final int perMessageLimit;
 
   private boolean open = true;
-  private final AtomicBoolean complete = new AtomicBoolean(false);
   private boolean finished = false;
 
   GapicUnbufferedWritableByteChannel(
@@ -65,11 +63,6 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
     this.serverState = new ServerState(resumableWrite);
     this.hasher = hasher;
     this.perMessageLimit = Values.MAX_WRITE_CHUNK_BYTES_VALUE;
-  }
-
-  @Override
-  public boolean isComplete() {
-    return complete.get();
   }
 
   @Override
@@ -195,7 +188,6 @@ final class GapicUnbufferedWritableByteChannel implements UnbufferedWritableByte
       }
       if (finished) {
         resultFuture.set(value);
-        complete.set(true);
       }
     }
 

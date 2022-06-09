@@ -21,8 +21,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.ClientStreamingCallable;
-import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
-import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.BufferedWritableByteChannel;
+import com.google.cloud.storage.StorageByteChannels.UnbufferedWritableByteChannel;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.nio.ByteBuffer;
@@ -114,8 +114,9 @@ final class GapicResumableUploadSessionBuilder {
         return this;
       }
 
-      public BufferedWritableByteChannelSession<WriteObjectResponse> build() {
-        return new DefaultBufferedWritableByteChannelSession<>(
+      public StorageByteChannels.Sessions.BufferedWritableByteChannelSession<WriteObjectResponse>
+          build() {
+        return new StorageByteChannels.Sessions.BufferedWriteSession<>(
             requireNonNull(uploadIdFuture, "uploadIdFuture must be non null"),
             f.andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -143,8 +144,9 @@ final class GapicResumableUploadSessionBuilder {
         return this;
       }
 
-      public UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
-        return new DefaultUnbufferedWriteableByteChannelSession<>(
+      public StorageByteChannels.Sessions.UnbufferedWritableByteChannelSession<WriteObjectResponse>
+          build() {
+        return new StorageByteChannels.Sessions.UnbufferedWriteSession<>(
             requireNonNull(uploadIdFuture, "uploadIdFuture must be non null"),
             f.andThen(StorageByteChannels.writable()::createSynchronized));
       }
