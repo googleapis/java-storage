@@ -22,24 +22,17 @@ import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Example;
 import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 
 public class Crc32cUtilityPropertyTest {
   @Property
   public void testCrc32cCombinePropertyTest(
-      @ForAll("randomData") String firstObject, @ForAll("randomData") String secondObject) {
-    int firstPartHash = Hashing.crc32c().hashBytes(firstObject.getBytes()).asInt();
-    int secondPartHash = Hashing.crc32c().hashBytes(secondObject.getBytes()).asInt();
-    String mergedParts = firstObject + secondObject;
-    int combined = Hashing.crc32c().hashBytes(mergedParts.getBytes()).asInt();
-    assertThat(combined)
-        .isEqualTo(
-            Crc32cUtility.crc32cCombineGoogle(
-                firstPartHash, secondPartHash, secondObject.getBytes().length));
-  }
-
-  @Provide("randomData")
-  Arbitrary<String> stringArrays() {
-    return Arbitraries.strings().ofMinLength(0).ofMaxLength(1024 * 1024);
+      @ForAll byte[] firstObject, @ForAll byte[] secondObject) {
+    int firstPartHash = Hashing.crc32c().hashBytes(firstObject).asInt();
+    int secondPartHash = Hashing.crc32c().hashBytes(secondObject).asInt();
+    int expected = Hashing.crc32c().newHasher().putBytes(firstObject).putBytes(secondObject).hash().asInt();
+    int actual = Crc32cUtility.crc32cCombineGoogle(firstPartHash, secondPartHash, secondObject.length);
+    assertThat(actual).isEqualTo(expected);
   }
 }
