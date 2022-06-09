@@ -128,7 +128,7 @@ final class Utils {
    */
   @InternalApi
   static <T1, T2> Function<List<T1>, ImmutableList<T2>> toImmutableListOf(Function<T1, T2> f) {
-    return l -> l.stream().map(f).filter(i -> i != null).collect(ImmutableList.toImmutableList());
+    return l -> l.stream().map(f).collect(ImmutableList.toImmutableList());
   }
 
   static final <T> T todo() {

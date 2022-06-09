@@ -166,43 +166,49 @@ public final class StorageArbitraries {
       Arbitrary<Date> conditionCustomTime = date();
       ListArbitrary<String> storageClassMatches = storageClass().list().uniqueElements();
 
-      return Combinators.combine(
-              actions(),
-              Combinators.combine(
-                      conditionIsLive,
-                      conditionAgeDays,
-                      conditionNumberOfNewVersions,
-                      conditionCreatedBeforeTime,
-                      conditionDaysSinceNoncurrentTime,
-                      conditionNoncurrentTime,
-                      conditionDaysSinceCustomTime,
-                      conditionCustomTime)
-                  .as(Tuple::of),
-              storageClassMatches)
-          .as(
-              (a, ct, s) ->
-                  Bucket.Lifecycle.Rule.newBuilder()
-                      .setAction(a)
-                      .setCondition(
-                          Bucket.Lifecycle.Rule.Condition.newBuilder()
-                              .setIsLive(ct.get1())
-                              .setAgeDays(ct.get2())
-                              .setNumNewerVersions(ct.get3())
-                              .setCreatedBefore(ct.get4())
-                              .setDaysSinceNoncurrentTime(ct.get5())
-                              .setNoncurrentTimeBefore(ct.get6())
-                              .setDaysSinceCustomTime(ct.get7())
-                              .setCustomTimeBefore(ct.get8())
-                              .addAllMatchesStorageClass(s)
-                              .build())
-                      .build());
+      return Arbitraries.oneOf(
+          Arbitraries.of(
+              Bucket.Lifecycle.Rule.newBuilder()
+                  .setAction(Bucket.Lifecycle.Rule.Action.newBuilder().setType("Delete").build())
+                  .setCondition(Bucket.Lifecycle.Rule.Condition.newBuilder().setAgeDays(10).build())
+                  .build()),
+          Combinators.combine(
+                  actions(),
+                  Combinators.combine(
+                          conditionIsLive,
+                          conditionAgeDays,
+                          conditionNumberOfNewVersions,
+                          conditionCreatedBeforeTime,
+                          conditionDaysSinceNoncurrentTime,
+                          conditionNoncurrentTime,
+                          conditionDaysSinceCustomTime,
+                          conditionCustomTime)
+                      .as(Tuple::of),
+                  storageClassMatches)
+              .as(
+                  (a, ct, s) ->
+                      Bucket.Lifecycle.Rule.newBuilder()
+                          .setAction(a)
+                          .setCondition(
+                              Bucket.Lifecycle.Rule.Condition.newBuilder()
+                                  .setIsLive(ct.get1())
+                                  .setAgeDays(ct.get2())
+                                  .setNumNewerVersions(ct.get3())
+                                  .setCreatedBefore(ct.get4())
+                                  .setDaysSinceNoncurrentTime(ct.get5())
+                                  .setNoncurrentTimeBefore(ct.get6())
+                                  .setDaysSinceCustomTime(ct.get7())
+                                  .setCustomTimeBefore(ct.get8())
+                                  .addAllMatchesStorageClass(s)
+                                  .build())
+                          .build()));
     }
 
     public Arbitrary<Bucket.Lifecycle> lifecycle() {
       return rule()
           .list()
           .ofMinSize(0)
-          .ofMaxSize(100)
+          .ofMaxSize(100).uniqueElements()
           .map((r) -> Bucket.Lifecycle.newBuilder().addAllRule(r).build());
     }
 
