@@ -258,7 +258,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Page<Bucket> list(BucketListOption... options) {
     UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse>
-        listBucketsRequestListBucketsPagedResponseUnaryCallable =
+        listBucketsCallable =
             grpcStorageStub.listBucketsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder();
@@ -281,7 +281,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Page<Blob> list(String bucket, BlobListOption... options) {
     UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse>
-        listObjectsPagedResponseUnaryCallable = grpcStorageStub.listObjectsPagedCallable();
+        listObjectsCallable = grpcStorageStub.listObjectsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     ListObjectsRequest.Builder builder = ListObjectsRequest.newBuilder().setParent(bucket);
     ifNonNull(
@@ -616,7 +616,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
     UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse>
-        listBucketsRequestListHmacKeysPagedResponseUnaryCallable =
+        listHmacKeysCallable =
             grpcStorageStub.listHmacKeysPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     // TODO: Project is required?
