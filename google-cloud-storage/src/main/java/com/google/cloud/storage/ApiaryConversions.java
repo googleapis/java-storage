@@ -20,6 +20,7 @@ import static com.google.cloud.storage.Utils.dateTimeCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
+import static com.google.cloud.storage.Utils.nullableDateTimeCodec;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.common.base.MoreObjects.firstNonNull;
 
@@ -49,20 +50,15 @@ import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
-import com.google.cloud.storage.BucketInfo.AgeDeleteRule;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
-import com.google.cloud.storage.BucketInfo.CreatedBeforeDeleteRule;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
-import com.google.cloud.storage.BucketInfo.IsLiveDeleteRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.DeleteLifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.BucketInfo.Logging;
-import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
-import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.Cors.Origin;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
@@ -73,14 +69,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import java.math.BigInteger;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
+import java.util.function.Function;
 
 @InternalApi
 final class ApiaryConversions {
@@ -105,10 +101,8 @@ final class ApiaryConversions {
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
   private final Codec<LifecycleRule, Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
-
-  @SuppressWarnings("deprecation")
-  private final Codec<BucketInfo.DeleteRule, Rule> deleteRuleCodec =
-      Codec.of(this::deleteRuleEncode, this::deleteRuleDecode);
+  private final Codec<LifecycleCondition, Condition> lifecycleConditionCodec =
+      Codec.of(this::ruleConditionEncode, this::ruleConditionDecode);
 
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
       Codec.of(this::bucketInfoEncode, this::bucketInfoDecode);
@@ -165,11 +159,6 @@ final class ApiaryConversions {
     return lifecycleRuleCodec;
   }
 
-  @SuppressWarnings("deprecation")
-  Codec<BucketInfo.DeleteRule, Rule> deleteRule() {
-    return deleteRuleCodec;
-  }
-
   Codec<BucketInfo, com.google.api.services.storage.model.Bucket> bucketInfo() {
     return bucketInfoCodec;
   }
@@ -188,6 +177,10 @@ final class ApiaryConversions {
 
   Codec<NotificationInfo, com.google.api.services.storage.model.Notification> notificationInfo() {
     return notificationInfoCodec;
+  }
+
+  Codec<LifecycleCondition, Rule.Condition> lifecycleCondition() {
+    return lifecycleConditionCodec;
   }
 
   private StorageObject blobInfoEncode(BlobInfo from) {
@@ -337,28 +330,14 @@ final class ApiaryConversions {
       to.setWebsite(website);
     }
 
-    @SuppressWarnings("deprecation")
-    List<? extends BucketInfo.DeleteRule> deleteRules = from.getDeleteRules();
     // Do not use, #getLifecycleRules, it can not return null, which is important to our logic here
     List<? extends LifecycleRule> lifecycleRules = from.lifecycleRules;
-    if (deleteRules != null || lifecycleRules != null) {
+    if (lifecycleRules != null) {
       Lifecycle lifecycle = new Lifecycle();
-
-      // Here we determine if we need to "clear" any defined Lifecycle rules by explicitly setting
-      // the Rule list of lifecycle to the empty list.
-      // In order for us to clear the rules, one of the three following must be true:
-      //   1. deleteRules is null while lifecycleRules is non-null and empty
-      //   2. lifecycleRules is null while deleteRules is non-null and empty
-      //   3. lifecycleRules is non-null and empty while deleteRules is non-null and empty
-      // If none of the above three is true, we will interpret as the Lifecycle rules being
-      // updated to the defined set of DeleteRule and LifecycleRule.
-      if ((deleteRules == null && lifecycleRules.isEmpty())
-          || (lifecycleRules == null && deleteRules.isEmpty())
-          || (deleteRules != null && deleteRules.isEmpty() && lifecycleRules.isEmpty())) {
+      if (lifecycleRules.isEmpty()) {
         lifecycle.setRule(Collections.emptyList());
       } else {
         Set<Rule> rules = new HashSet<>();
-        ifNonNull(deleteRules, r -> r.stream().map(deleteRule()::encode).forEach(rules::add));
         ifNonNull(lifecycleRules, r -> r.stream().map(lifecycleRule()::encode).forEach(rules::add));
         if (!rules.isEmpty()) {
           lifecycle.setRule(ImmutableList.copyOf(rules));
@@ -418,11 +397,6 @@ final class ApiaryConversions {
         from.getLifecycle(),
         lift(Lifecycle::getRule).andThen(toImmutableListOf(lifecycleRule()::decode)),
         to::setLifecycleRules);
-    // preserve mapping to deprecated property
-    ifNonNull(
-        from.getLifecycle(),
-        lift(Lifecycle::getRule).andThen(toImmutableListOf(deleteRule()::decode)),
-        to::setDeleteRules);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::setLabels);
     ifNonNull(from.getBilling(), Billing::getRequesterPays, to::setRequesterPays);
@@ -444,72 +418,6 @@ final class ApiaryConversions {
     ifNonNull(from.getLogging(), this::loggingDecode, to::setLogging);
 
     return to.build();
-  }
-
-  @SuppressWarnings("deprecation")
-  private Rule deleteRuleEncode(BucketInfo.DeleteRule from) {
-    if (from instanceof RawDeleteRule) {
-      RawDeleteRule raw = (RawDeleteRule) from;
-      Rule rule = raw.getRule();
-      String msg =
-          "The lifecycle condition "
-              + resolveRuleActionType(rule)
-              + " is not currently supported. Please update to the latest version of google-cloud-java."
-              + " Also, use LifecycleRule rather than the deprecated DeleteRule.";
-      // manually construct a log record, so we maintain class name and method name
-      // from the old implicit values.
-      LogRecord record = new LogRecord(Level.WARNING, msg);
-      record.setSourceClassName(BucketInfo.RawDeleteRule.class.getName());
-      record.setSourceMethodName("populateCondition");
-      BucketInfo.log.log(record);
-      return rule;
-    }
-    Rule to = new Rule();
-    to.setAction(new Rule.Action().setType(BucketInfo.DeleteRule.SUPPORTED_ACTION));
-    Rule.Condition condition = new Rule.Condition();
-    if (from instanceof CreatedBeforeDeleteRule) {
-      CreatedBeforeDeleteRule r = (CreatedBeforeDeleteRule) from;
-      ifNonNull(
-          r.getTime(),
-          lift(dateTimeCodec::encode).andThen(this::truncateToDateWithNoTzDrift),
-          condition::setCreatedBefore);
-    } else if (from instanceof AgeDeleteRule) {
-      AgeDeleteRule r = (AgeDeleteRule) from;
-      condition.setAge(r.getDaysToLive());
-    } else if (from instanceof NumNewerVersionsDeleteRule) {
-      NumNewerVersionsDeleteRule r = (NumNewerVersionsDeleteRule) from;
-      condition.setNumNewerVersions(r.getNumNewerVersions());
-    } else if (from instanceof IsLiveDeleteRule) {
-      IsLiveDeleteRule r = (IsLiveDeleteRule) from;
-      condition.setIsLive(r.isLive());
-    } // else would be RawDeleteRule which is handled above
-    to.setCondition(condition);
-    return to;
-  }
-
-  @SuppressWarnings("deprecation")
-  private BucketInfo.DeleteRule deleteRuleDecode(Rule from) {
-    if (from.getAction() != null
-        && BucketInfo.DeleteRule.SUPPORTED_ACTION.endsWith(resolveRuleActionType(from))) {
-      Rule.Condition condition = from.getCondition();
-      Integer age = condition.getAge();
-      if (age != null) {
-        return new BucketInfo.AgeDeleteRule(age);
-      }
-      DateTime dateTime = condition.getCreatedBefore();
-      if (dateTime != null) {
-        return new BucketInfo.CreatedBeforeDeleteRule(dateTimeCodec.decode(dateTime));
-      }
-      Integer numNewerVersions = condition.getNumNewerVersions();
-      if (numNewerVersions != null) {
-        return new BucketInfo.NumNewerVersionsDeleteRule(numNewerVersions);
-      }
-      Boolean isLive = condition.getIsLive();
-      if (isLive != null) {
-        return new BucketInfo.IsLiveDeleteRule(isLive);
-      }
-    }
-    return new RawDeleteRule(from);
   }
 
   private Bucket.IamConfiguration iamConfigEncode(IamConfiguration from) {
@@ -550,12 +458,16 @@ final class ApiaryConversions {
 
   private Rule lifecycleRuleEncode(LifecycleRule from) {
     Rule to = new Rule();
-    to.setAction(ruleActionEncode(from.getLifecycleAction()));
-    to.setCondition(ruleConditionEncode(from.getLifecycleCondition()));
+    to.setAction(ruleActionEncode(from.getAction()));
+    to.setCondition(ruleConditionEncode(from.getCondition()));
     return to;
   }
 
   private Condition ruleConditionEncode(LifecycleCondition from) {
+    Function<OffsetDateTime, DateTime> truncatingDateFunction =
+        lift(dateTimeCodec::encode)
+            // truncate the date time to the date, and strip any tz drift
+            .andThen(dt -> new DateTime(true, dt.getValue(), 0));
     Condition to =
         new Condition()
             .setAge(from.getAge())
@@ -563,18 +475,44 @@ final class ApiaryConversions {
             .setNumNewerVersions(from.getNumberOfNewerVersions())
             .setDaysSinceNoncurrentTime(from.getDaysSinceNoncurrentTime())
             .setDaysSinceCustomTime(from.getDaysSinceCustomTime());
-    ifNonNull(from.getCreatedBefore(), this::truncateToDateWithNoTzDrift, to::setCreatedBefore);
+    ifNonNull(from.getCreatedBeforeOffsetDateTime(), truncatingDateFunction, to::setCreatedBefore);
     ifNonNull(
-        from.getNoncurrentTimeBefore(),
-        this::truncateToDateWithNoTzDrift,
+        from.getNoncurrentTimeBeforeOffsetDateTime(),
+        truncatingDateFunction,
         to::setNoncurrentTimeBefore);
     ifNonNull(
-        from.getCustomTimeBefore(), this::truncateToDateWithNoTzDrift, to::setCustomTimeBefore);
+        from.getCustomTimeBeforeOffsetDateTime(), truncatingDateFunction, to::setCustomTimeBefore);
     ifNonNull(
         from.getMatchesStorageClass(),
         toImmutableListOf(Object::toString),
         to::setMatchesStorageClass);
     return to;
+  }
+
+  private LifecycleCondition ruleConditionDecode(Condition condition) {
+    if (condition == null) {
+      return LifecycleCondition.newBuilder().build();
+    }
+
+    LifecycleCondition.Builder conditionBuilder =
+        LifecycleCondition.newBuilder()
+            .setAge(condition.getAge())
+            .setCreatedBeforeOffsetDateTime(
+                nullableDateTimeCodec.decode(condition.getCreatedBefore()))
+            .setIsLive(condition.getIsLive())
+            .setNumberOfNewerVersions(condition.getNumNewerVersions())
+            .setDaysSinceNoncurrentTime(condition.getDaysSinceNoncurrentTime())
+            .setNoncurrentTimeBeforeOffsetDateTime(
+                nullableDateTimeCodec.decode(condition.getNoncurrentTimeBefore()))
+            .setCustomTimeBeforeOffsetDateTime(
+                nullableDateTimeCodec.decode(condition.getCustomTimeBefore()))
+            .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
+    ifNonNull(
+        condition.getMatchesStorageClass(),
+        toImmutableListOf(StorageClass::valueOf),
+        conditionBuilder::setMatchesStorageClass);
+
+    return conditionBuilder.build();
   }
 
   private Action ruleActionEncode(LifecycleAction from) {
@@ -609,24 +547,8 @@ final class ApiaryConversions {
         lifecycleAction = LifecycleAction.newLifecycleAction("Unknown action");
     }
 
-    Rule.Condition condition = from.getCondition();
-
-    LifecycleCondition.Builder conditionBuilder =
-        LifecycleCondition.newBuilder()
-            .setAge(condition.getAge())
-            .setCreatedBefore(condition.getCreatedBefore())
-            .setIsLive(condition.getIsLive())
-            .setNumberOfNewerVersions(condition.getNumNewerVersions())
-            .setDaysSinceNoncurrentTime(condition.getDaysSinceNoncurrentTime())
-            .setNoncurrentTimeBefore(condition.getNoncurrentTimeBefore())
-            .setCustomTimeBefore(condition.getCustomTimeBefore())
-            .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
-    ifNonNull(
-        condition.getMatchesStorageClass(),
-        toImmutableListOf(StorageClass::valueOf),
-        conditionBuilder::setMatchesStorageClass);
-
-    return new LifecycleRule(lifecycleAction, conditionBuilder.build());
+    LifecycleCondition lifecycleCondition = ruleConditionDecode(from.getCondition());
+    return new LifecycleRule(lifecycleAction, lifecycleCondition);
   }
 
   private Bucket.Logging loggingEncode(Logging from) {
@@ -845,17 +767,5 @@ final class ApiaryConversions {
       builder.setEventTypes(eventTypes);
     }
     return builder.build();
-  }
-
-  private DateTime truncateToDateWithNoTzDrift(DateTime dt) {
-    return new DateTime(true, dt.getValue(), 0);
-  }
-
-  private String resolveRuleActionType(Rule rule) {
-    if (rule != null && rule.getAction() != null) {
-      return rule.getAction().getType();
-    } else {
-      return null;
-    }
   }
 }

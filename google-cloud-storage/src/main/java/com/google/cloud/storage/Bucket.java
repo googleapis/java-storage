@@ -1273,10 +1273,7 @@ public class Bucket extends BucketInfo {
       return false;
     }
     Bucket other = (Bucket) obj;
-    return Objects.equals(
-            Conversions.apiary().bucketInfo().encode(this),
-            Conversions.apiary().bucketInfo().encode(other))
-        && Objects.equals(options, other.options);
+    return super.equals(other) && Objects.equals(options, other.options);
   }
 
   @Override

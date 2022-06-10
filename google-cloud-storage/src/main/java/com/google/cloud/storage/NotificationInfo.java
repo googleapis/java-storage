@@ -227,17 +227,34 @@ public class NotificationInfo implements Serializable {
 
   @Override
   public int hashCode() {
-    return Conversions.apiary().notificationInfo().encode(this).hashCode();
+    return Objects.hash(
+        notificationId,
+        topic,
+        eventTypes,
+        customAttributes,
+        payloadFormat,
+        objectNamePrefix,
+        etag,
+        selfLink);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    return obj == this
-        || obj != null
-            && obj.getClass().equals(NotificationInfo.class)
-            && Objects.equals(
-                Conversions.apiary().notificationInfo().encode(this),
-                Conversions.apiary().notificationInfo().encode(((NotificationInfo) obj)));
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof NotificationInfo)) {
+      return false;
+    }
+    NotificationInfo that = (NotificationInfo) o;
+    return Objects.equals(notificationId, that.notificationId)
+        && Objects.equals(topic, that.topic)
+        && Objects.equals(eventTypes, that.eventTypes)
+        && Objects.equals(customAttributes, that.customAttributes)
+        && payloadFormat == that.payloadFormat
+        && Objects.equals(objectNamePrefix, that.objectNamePrefix)
+        && Objects.equals(etag, that.etag)
+        && Objects.equals(selfLink, that.selfLink);
   }
 
   @Override

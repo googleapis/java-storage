@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -33,17 +34,13 @@ import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BucketInfo.AgeDeleteRule;
-import com.google.cloud.storage.BucketInfo.CreatedBeforeDeleteRule;
 import com.google.cloud.storage.BucketInfo.DeleteRule;
-import com.google.cloud.storage.BucketInfo.DeleteRule.Type;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
-import com.google.cloud.storage.BucketInfo.IsLiveDeleteRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
-import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
-import com.google.cloud.storage.BucketInfo.RawDeleteRule;
+import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
@@ -183,7 +180,7 @@ public class BucketInfoTest {
           .setLogging(LOGGING)
           .build();
 
-  private static final Lifecycle EMPTY_LIFECYCLE = lifecycle(Collections.<Rule>emptyList());
+  private static final Lifecycle EMPTY_LIFECYCLE = lifecycle(Collections.emptyList());
 
   @Test
   public void testToBuilder() {
@@ -243,27 +240,24 @@ public class BucketInfoTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testToPbAndFromPb() {
-    compareBuckets(
-        BUCKET_INFO,
-        Conversions.apiary()
-            .bucketInfo()
-            .decode(Conversions.apiary().bucketInfo().encode(BUCKET_INFO)));
+    Codec<BucketInfo, Bucket> codec = Conversions.apiary().bucketInfo();
+
+    Bucket encode1 = codec.encode(BUCKET_INFO);
+    BucketInfo decode1 = codec.decode(encode1);
+    compareBuckets(BUCKET_INFO, decode1);
+
     BucketInfo bucketInfo =
         BucketInfo.newBuilder("b")
             .setDeleteRules(DELETE_RULES)
             .setLifecycleRules(LIFECYCLE_RULES)
             .setLogging(LOGGING)
             .build();
-    compareBuckets(
-        bucketInfo,
-        Conversions.apiary()
-            .bucketInfo()
-            .decode(Conversions.apiary().bucketInfo().encode(bucketInfo)));
+    Bucket encode2 = codec.encode(bucketInfo);
+    BucketInfo decode2 = codec.decode(encode2);
+    compareBuckets(bucketInfo, decode2);
   }
 
-  @SuppressWarnings({"unchecked", "deprecation"})
   private void compareBuckets(BucketInfo expected, BucketInfo value) {
-    assertEquals(expected, value);
     assertEquals(expected.getName(), value.getName());
     assertEquals(expected.getAcl(), value.getAcl());
     assertEquals(expected.getEtag(), value.getEtag());
@@ -271,8 +265,8 @@ public class BucketInfoTest {
     assertEquals(expected.getMetageneration(), value.getMetageneration());
     assertEquals(expected.getOwner(), value.getOwner());
     assertEquals(expected.getSelfLink(), value.getSelfLink());
-    assertEquals(expected.getCreateTime(), value.getCreateTime());
-    assertEquals(expected.getUpdateTime(), value.getUpdateTime());
+    assertEquals(expected.getCreateTimeOffsetDateTime(), value.getCreateTimeOffsetDateTime());
+    assertEquals(expected.getUpdateTimeOffsetDateTime(), value.getUpdateTimeOffsetDateTime());
     assertEquals(expected.getCors(), value.getCors());
     assertEquals(expected.getDefaultAcl(), value.getDefaultAcl());
     assertEquals(expected.getDeleteRules(), value.getDeleteRules());
@@ -287,50 +281,13 @@ public class BucketInfoTest {
     assertEquals(expected.getLabels(), value.getLabels());
     assertEquals(expected.requesterPays(), value.requesterPays());
     assertEquals(expected.getDefaultEventBasedHold(), value.getDefaultEventBasedHold());
-    assertEquals(expected.getRetentionEffectiveTime(), value.getRetentionEffectiveTime());
-    assertEquals(expected.getRetentionPeriod(), value.getRetentionPeriod());
+    assertEquals(
+        expected.getRetentionEffectiveTimeOffsetDateTime(),
+        value.getRetentionEffectiveTimeOffsetDateTime());
+    assertEquals(expected.getRetentionPeriodDuration(), value.getRetentionPeriodDuration());
     assertEquals(expected.retentionPolicyIsLocked(), value.retentionPolicyIsLocked());
     assertEquals(expected.getLogging(), value.getLogging());
-  }
-
-  @Test
-  @SuppressWarnings({"unchecked", "deprecation"})
-  public void testDeleteRules() {
-    AgeDeleteRule ageRule = new AgeDeleteRule(10);
-    assertEquals(10, ageRule.getDaysToLive());
-    assertEquals(10, ageRule.getDaysToLive());
-    assertEquals(Type.AGE, ageRule.getType());
-    assertEquals(Type.AGE, ageRule.getType());
-    CreatedBeforeDeleteRule createBeforeRule = new CreatedBeforeDeleteRule(1);
-    assertEquals(1, createBeforeRule.getTimeMillis());
-    assertEquals(1, createBeforeRule.getTimeMillis());
-    assertEquals(Type.CREATE_BEFORE, createBeforeRule.getType());
-    NumNewerVersionsDeleteRule versionsRule = new NumNewerVersionsDeleteRule(2);
-    assertEquals(2, versionsRule.getNumNewerVersions());
-    assertEquals(2, versionsRule.getNumNewerVersions());
-    assertEquals(Type.NUM_NEWER_VERSIONS, versionsRule.getType());
-    IsLiveDeleteRule isLiveRule = new IsLiveDeleteRule(true);
-    assertTrue(isLiveRule.isLive());
-    assertEquals(Type.IS_LIVE, isLiveRule.getType());
-    assertEquals(Type.IS_LIVE, isLiveRule.getType());
-    Rule rule = new Rule().set("a", "b");
-    RawDeleteRule rawRule = new RawDeleteRule(rule);
-    assertEquals(Type.IS_LIVE, isLiveRule.getType());
-    assertEquals(Type.IS_LIVE, isLiveRule.getType());
-    ImmutableList<DeleteRule> rules =
-        ImmutableList.of(ageRule, createBeforeRule, versionsRule, isLiveRule, rawRule);
-    for (DeleteRule delRule : rules) {
-      assertEquals(
-          delRule,
-          Conversions.apiary()
-              .deleteRule()
-              .decode(Conversions.apiary().deleteRule().encode(delRule)));
-    }
-    Rule unsupportedRule =
-        new Rule().setAction(new Rule.Action().setType("This action doesn't exist"));
-    Conversions.apiary()
-        .deleteRule()
-        .decode(unsupportedRule); // if this doesn't throw an exception, unsupported rules work
+    assertEquals(expected, value);
   }
 
   @Test
@@ -490,11 +447,11 @@ public class BucketInfoTest {
   @Test
   @SuppressWarnings({"deprecation"})
   public void testRuleMappingIsCorrect_setDeleteRules_empty() {
-    Bucket bucket =
-        Conversions.apiary()
-            .bucketInfo()
-            .encode(bi().setDeleteRules(Collections.<DeleteRule>emptyList()).build());
-    assertEquals(EMPTY_LIFECYCLE, bucket.getLifecycle());
+    Codec<BucketInfo, Bucket> codec = Conversions.apiary().bucketInfo();
+    BucketInfo bucketInfo = bi().setDeleteRules(Collections.emptyList()).build();
+    Bucket bucket = codec.encode(bucketInfo);
+    Lifecycle actual = bucket.getLifecycle();
+    assertThat(actual).isEqualTo(EMPTY_LIFECYCLE);
   }
 
   @Test
@@ -517,18 +474,6 @@ public class BucketInfoTest {
             .bucketInfo()
             .encode(bi().setLifecycleRules(ImmutableList.of(lifecycleRule)).build());
     assertEquals(lifecycle(lifecycleDeleteAfter10), bucket.getLifecycle());
-  }
-
-  @Test
-  @SuppressWarnings({"deprecation"})
-  public void testRuleMappingIsCorrect_setDeleteRules_nonEmpty() {
-    DeleteRule deleteRule = DELETE_RULES.get(0);
-    Rule deleteRuleAge5 = Conversions.apiary().deleteRule().encode(deleteRule);
-    Bucket bucket =
-        Conversions.apiary()
-            .bucketInfo()
-            .encode(bi().setDeleteRules(ImmutableList.of(deleteRule)).build());
-    assertEquals(lifecycle(deleteRuleAge5), bucket.getLifecycle());
   }
 
   private static Lifecycle lifecycle(Rule... rules) {

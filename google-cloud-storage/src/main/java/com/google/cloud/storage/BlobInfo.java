@@ -1199,19 +1199,78 @@ public class BlobInfo implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(blobId);
+    return Objects.hash(
+        blobId,
+        generatedId,
+        selfLink,
+        cacheControl,
+        acl,
+        owner,
+        size,
+        etag,
+        md5,
+        crc32c,
+        customTime,
+        mediaLink,
+        metadata,
+        metageneration,
+        deleteTime,
+        updateTime,
+        createTime,
+        contentType,
+        contentEncoding,
+        contentDisposition,
+        contentLanguage,
+        storageClass,
+        timeStorageClassUpdated,
+        componentCount,
+        isDirectory,
+        customerEncryption,
+        kmsKeyName,
+        eventBasedHold,
+        temporaryHold,
+        retentionExpirationTime);
   }
 
   @Override
-  public boolean equals(Object obj) {
-    return obj == this
-        || obj != null
-            && obj.getClass().equals(BlobInfo.class)
-            && Objects.equals(
-                Conversions.apiary().blobInfo().encode(this),
-                Conversions.apiary()
-                    .blobInfo()
-                    .encode(((BlobInfo) obj))); // TODO: remove this excessive allocation
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof BlobInfo)) {
+      return false;
+    }
+    BlobInfo blobInfo = (BlobInfo) o;
+    return isDirectory == blobInfo.isDirectory
+        && Objects.equals(blobId, blobInfo.blobId)
+        && Objects.equals(generatedId, blobInfo.generatedId)
+        && Objects.equals(selfLink, blobInfo.selfLink)
+        && Objects.equals(cacheControl, blobInfo.cacheControl)
+        && Objects.equals(acl, blobInfo.acl)
+        && Objects.equals(owner, blobInfo.owner)
+        && Objects.equals(size, blobInfo.size)
+        && Objects.equals(etag, blobInfo.etag)
+        && Objects.equals(md5, blobInfo.md5)
+        && Objects.equals(crc32c, blobInfo.crc32c)
+        && Objects.equals(customTime, blobInfo.customTime)
+        && Objects.equals(mediaLink, blobInfo.mediaLink)
+        && Objects.equals(metadata, blobInfo.metadata)
+        && Objects.equals(metageneration, blobInfo.metageneration)
+        && Objects.equals(deleteTime, blobInfo.deleteTime)
+        && Objects.equals(updateTime, blobInfo.updateTime)
+        && Objects.equals(createTime, blobInfo.createTime)
+        && Objects.equals(contentType, blobInfo.contentType)
+        && Objects.equals(contentEncoding, blobInfo.contentEncoding)
+        && Objects.equals(contentDisposition, blobInfo.contentDisposition)
+        && Objects.equals(contentLanguage, blobInfo.contentLanguage)
+        && Objects.equals(storageClass, blobInfo.storageClass)
+        && Objects.equals(timeStorageClassUpdated, blobInfo.timeStorageClassUpdated)
+        && Objects.equals(componentCount, blobInfo.componentCount)
+        && Objects.equals(customerEncryption, blobInfo.customerEncryption)
+        && Objects.equals(kmsKeyName, blobInfo.kmsKeyName)
+        && Objects.equals(eventBasedHold, blobInfo.eventBasedHold)
+        && Objects.equals(temporaryHold, blobInfo.temporaryHold)
+        && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime);
   }
 
   /**

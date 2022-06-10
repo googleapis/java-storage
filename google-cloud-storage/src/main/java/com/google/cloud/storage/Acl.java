@@ -310,6 +310,27 @@ public final class Acl implements Serializable {
     public String getProjectId() {
       return projectId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Project)) {
+        return false;
+      }
+      if (!super.equals(o)) {
+        return false;
+      }
+      Project project = (Project) o;
+      return Objects.equals(projectRole, project.projectRole)
+          && Objects.equals(projectId, project.projectId);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(super.hashCode(), projectRole, projectId);
+    }
   }
 
   public static final class RawEntity extends Entity {

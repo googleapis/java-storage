@@ -52,16 +52,15 @@ public final class ServiceAccount implements Serializable {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (obj == this) {
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if (!(obj instanceof ServiceAccount)) {
+    if (!(o instanceof ServiceAccount)) {
       return false;
     }
-    return Objects.equals(
-        Conversions.apiary().serviceAccount().encode(this),
-        Conversions.apiary().serviceAccount().encode((ServiceAccount) obj));
+    ServiceAccount that = (ServiceAccount) o;
+    return Objects.equals(email, that.email);
   }
 
   /** Returns a {@code ServiceAccount} object for the provided email. */

@@ -49,6 +49,21 @@ final class Conversions {
       return new SimpleCodec<>(e, d);
     }
 
+    default <R> Codec<A, R> andThen(Codec<B, R> c) {
+      Codec<A, B> self = this;
+      return new Codec<A, R>() {
+        @Override
+        public A decode(R f) {
+          return self.decode(c.decode(f));
+        }
+
+        @Override
+        public R encode(A f) {
+          return c.encode(self.encode(f));
+        }
+      };
+    }
+
     /**
      * Create a new Codec which guards calling each method with a null check.
      *
