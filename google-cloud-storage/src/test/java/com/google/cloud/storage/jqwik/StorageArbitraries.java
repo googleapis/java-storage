@@ -27,9 +27,12 @@ import com.google.storage.v2.Bucket.RetentionPolicy;
 import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.CustomerEncryption;
+import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.Owner;
 import com.google.type.Date;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
@@ -163,36 +166,42 @@ public final class StorageArbitraries {
       Arbitrary<Date> conditionCustomTime = date();
       ListArbitrary<String> storageClassMatches = storageClass().list().uniqueElements();
 
-      return Combinators.combine(
-              actions(),
-              Combinators.combine(
-                      conditionIsLive,
-                      conditionAgeDays,
-                      conditionNumberOfNewVersions,
-                      conditionCreatedBeforeTime,
-                      conditionDaysSinceNoncurrentTime,
-                      conditionNoncurrentTime,
-                      conditionDaysSinceCustomTime,
-                      conditionCustomTime)
-                  .as(Tuple::of),
-              storageClassMatches)
-          .as(
-              (a, ct, s) ->
-                  Bucket.Lifecycle.Rule.newBuilder()
-                      .setAction(a)
-                      .setCondition(
-                          Bucket.Lifecycle.Rule.Condition.newBuilder()
-                              .setIsLive(ct.get1())
-                              .setAgeDays(ct.get2())
-                              .setNumNewerVersions(ct.get3())
-                              .setCreatedBefore(ct.get4())
-                              .setDaysSinceNoncurrentTime(ct.get5())
-                              .setNoncurrentTimeBefore(ct.get6())
-                              .setDaysSinceCustomTime(ct.get7())
-                              .setCustomTimeBefore(ct.get8())
-                              .addAllMatchesStorageClass(s)
-                              .build())
-                      .build());
+      return Arbitraries.oneOf(
+          Arbitraries.of(
+              Bucket.Lifecycle.Rule.newBuilder()
+                  .setAction(Bucket.Lifecycle.Rule.Action.newBuilder().setType("Delete").build())
+                  .setCondition(Bucket.Lifecycle.Rule.Condition.newBuilder().setAgeDays(10).build())
+                  .build()),
+          Combinators.combine(
+                  actions(),
+                  Combinators.combine(
+                          conditionIsLive,
+                          conditionAgeDays,
+                          conditionNumberOfNewVersions,
+                          conditionCreatedBeforeTime,
+                          conditionDaysSinceNoncurrentTime,
+                          conditionNoncurrentTime,
+                          conditionDaysSinceCustomTime,
+                          conditionCustomTime)
+                      .as(Tuple::of),
+                  storageClassMatches)
+              .as(
+                  (a, ct, s) ->
+                      Bucket.Lifecycle.Rule.newBuilder()
+                          .setAction(a)
+                          .setCondition(
+                              Bucket.Lifecycle.Rule.Condition.newBuilder()
+                                  .setIsLive(ct.get1())
+                                  .setAgeDays(ct.get2())
+                                  .setNumNewerVersions(ct.get3())
+                                  .setCreatedBefore(ct.get4())
+                                  .setDaysSinceNoncurrentTime(ct.get5())
+                                  .setNoncurrentTimeBefore(ct.get6())
+                                  .setDaysSinceCustomTime(ct.get7())
+                                  .setCustomTimeBefore(ct.get8())
+                                  .addAllMatchesStorageClass(s)
+                                  .build())
+                          .build()));
     }
 
     public Arbitrary<Bucket.Lifecycle> lifecycle() {
@@ -200,6 +209,7 @@ public final class StorageArbitraries {
           .list()
           .ofMinSize(0)
           .ofMaxSize(100)
+          .uniqueElements()
           .map((r) -> Bucket.Lifecycle.newBuilder().addAllRule(r).build());
     }
 
@@ -210,8 +220,83 @@ public final class StorageArbitraries {
           .as((i, n) -> Website.newBuilder().setMainPageSuffix(i).setNotFoundPage(n).build());
     }
 
+    public Arbitrary<Bucket.Logging> logging() {
+      Arbitrary<BucketName> loggingBucketName = StorageArbitraries.bucketName();
+      Arbitrary<String> loggingPrefix = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(10);
+      return Combinators.combine(loggingBucketName, loggingPrefix)
+          .as(
+              (b, p) ->
+                  Bucket.Logging.newBuilder().setLogBucket(b.get()).setLogObjectPrefix(p).build());
+    }
+
+    public ListArbitrary<Bucket.Cors> cors() {
+      Arbitrary<Integer> maxAgeSeconds =
+          Arbitraries.integers().between(0, OffsetDateTime.MAX.getSecond());
+      ListArbitrary<String> methods =
+          Arbitraries.of("GET", "DELETE", "UPDATE", "PATCH").list().uniqueElements();
+      ListArbitrary<String> responseHeaders =
+          Arbitraries.of("Content-Type", "Origin").list().uniqueElements();
+      ListArbitrary<String> origins = Arbitraries.of("*", "google.com").list().uniqueElements();
+      return Combinators.combine(methods, responseHeaders, origins, maxAgeSeconds)
+          .as(
+              (m, r, o, a) -> {
+                return Bucket.Cors.newBuilder()
+                    .addAllMethod(m)
+                    .addAllResponseHeader(r)
+                    .addAllOrigin(o)
+                    .setMaxAgeSeconds(a)
+                    .build();
+              })
+          .list()
+          .ofMinSize(0)
+          .ofMaxSize(10);
+    }
+
     public Arbitrary<Bucket.Billing> billing() {
       return bool().map(b -> Billing.newBuilder().setRequesterPays(b).build());
+    }
+
+    public ListArbitrary<ObjectAccessControl> objectAccessControl() {
+      Arbitrary<String> entity = Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(1024);
+      Arbitrary<String> role = Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(1024);
+      return Combinators.combine(entity, role)
+          .as((e, r) -> ObjectAccessControl.newBuilder().setEntity(e).setRole(r).build())
+          .list();
+    }
+
+    public Arbitrary<Owner> owner() {
+      Arbitrary<String> entity = Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(1024);
+      return entity.map(e -> Owner.newBuilder().setEntity(e).build());
+    }
+
+    public Arbitrary<Bucket.IamConfig.UniformBucketLevelAccess> uniformBucketLevelAccess() {
+      return Combinators.combine(bool(), timestamp())
+          .as(
+              (e, l) -> {
+                Bucket.IamConfig.UniformBucketLevelAccess.Builder ublaBuilder =
+                    Bucket.IamConfig.UniformBucketLevelAccess.newBuilder();
+                ublaBuilder.setEnabled(e);
+                if (e) {
+                  ublaBuilder.setLockTime(l);
+                }
+                return ublaBuilder.build();
+              });
+    }
+
+    public Arbitrary<Bucket.IamConfig> iamConfig() {
+      Arbitrary<Bucket.IamConfig.UniformBucketLevelAccess> uniformBucketLevelAccess =
+          uniformBucketLevelAccess();
+      Arbitrary<String> pap = Arbitraries.of("enforced", "inherited");
+      return Combinators.combine(pap, uniformBucketLevelAccess())
+          .as(
+              (p, u) -> {
+                Bucket.IamConfig.Builder iamConfigBuilder = Bucket.IamConfig.newBuilder();
+                iamConfigBuilder.setUniformBucketLevelAccess(u);
+                if (u.getEnabled()) {
+                  iamConfigBuilder.setPublicAccessPrevention(p);
+                }
+                return iamConfigBuilder.build();
+              });
     }
 
     public Arbitrary<Bucket.Encryption> encryption() {
