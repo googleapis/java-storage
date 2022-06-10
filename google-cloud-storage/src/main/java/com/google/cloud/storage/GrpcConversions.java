@@ -218,7 +218,7 @@ final class GrpcConversions {
           from.getLifecycle().getRuleList().stream()
               .filter(this::isValidDeleteRule)
               .map(deleteRule()::decode)
-              .collect(ImmutableSet.toImmutableSet()));
+              .collect(ImmutableList.toImmutableList()));
     }
     ifNonNull(from.getCorsList(), toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(from.getLogging(), loggingCodec::decode, to::setLogging);
