@@ -208,7 +208,8 @@ public final class StorageArbitraries {
       return rule()
           .list()
           .ofMinSize(0)
-          .ofMaxSize(100).uniqueElements()
+          .ofMaxSize(100)
+          .uniqueElements()
           .map((r) -> Bucket.Lifecycle.newBuilder().addAllRule(r).build());
     }
 

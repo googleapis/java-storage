@@ -26,6 +26,7 @@ import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
@@ -217,7 +218,7 @@ final class GrpcConversions {
           from.getLifecycle().getRuleList().stream()
               .filter(this::isValidDeleteRule)
               .map(deleteRule()::decode)
-              .collect(ImmutableList.toImmutableList()));
+              .collect(ImmutableSet.toImmutableSet()));
     }
     ifNonNull(from.getCorsList(), toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(from.getLogging(), loggingCodec::decode, to::setLogging);
@@ -287,17 +288,23 @@ final class GrpcConversions {
   }
 
   private Bucket.Lifecycle buildLifecyclePolicy(BucketInfo from) {
+    // Handle duplicate rules introduced by deleteRules using a backing ImmutableSet
     Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
-    ifNonNull(
-        from.getLifecycleRules(),
-        Utils.toImmutableListOf(lifecycleRule()::encode),
-        lifecycleBuilder::addAllRule);
+    ImmutableSet.Builder<Bucket.Lifecycle.Rule> rules = new ImmutableSet.Builder<>();
+    if (from.getLifecycleRules() != null) {
+      rules.addAll(
+          from.getLifecycleRules().stream()
+              .map(lifecycleRule()::encode)
+              .collect(ImmutableSet.toImmutableSet()));
+    }
     // preserve mapping to deprecated property
-    ifNonNull(
-        from.getDeleteRules(),
-        Utils.toImmutableListOf(deleteRule()::encode),
-        lifecycleBuilder::addAllRule);
-    return lifecycleBuilder.build();
+    if (from.getDeleteRules() != null) {
+      rules.addAll(
+          from.getDeleteRules().stream()
+              .map(deleteRule()::encode)
+              .collect(ImmutableSet.toImmutableSet()));
+    }
+    return lifecycleBuilder.addAllRule(rules.build()).build();
   }
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
