@@ -79,7 +79,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
 
@@ -257,9 +256,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<Bucket> list(BucketListOption... options) {
-    UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse>
-        listBucketsCallable =
-            grpcStorageStub.listBucketsPagedCallable();
+    UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse> listBucketsCallable =
+        grpcStorageStub.listBucketsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder();
     ifNonNull(
@@ -268,20 +266,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
     // TODO(sydmunro): StorageRpc.Option.Fields
     // TODO(sydmunro): User Project
-    ListBucketsPagedResponse call =
-        listBucketsRequestListBucketsPagedResponseUnaryCallable.call(builder.build());
+    ListBucketsPagedResponse call = listBucketsCallable.call(builder.build());
     ListBucketsPage page = call.getPage();
-    Function<com.google.storage.v2.Bucket, BucketInfo> decode = codecs.bucketInfo()::decode;
-
-    Function<com.google.storage.v2.Bucket, Bucket> translator =
-        decode.andThen(bucketInfo -> bucketInfo.asBucket(this));
-    return new TransformPageDecorator<>(page, translator);
+    return new TransformingPageDecorator<>(page, syntaxDecoders.bucket);
   }
 
   @Override
   public Page<Blob> list(String bucket, BlobListOption... options) {
-    UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse>
-        listObjectsCallable = grpcStorageStub.listObjectsPagedCallable();
+    UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsCallable =
+        grpcStorageStub.listObjectsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     ListObjectsRequest.Builder builder = ListObjectsRequest.newBuilder().setParent(bucket);
     ifNonNull(
@@ -293,12 +286,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         (String) optionsMap.get(StorageRpc.Option.START_OFF_SET), builder::setLexicographicStart);
     ifNonNull((String) optionsMap.get(StorageRpc.Option.END_OFF_SET), builder::setLexicographicEnd);
     // TODO(sydmunro) StorageRpc.Option.Fields
-    ListObjectsPagedResponse call = listObjectsPagedResponseUnaryCallable.call(builder.build());
+    ListObjectsPagedResponse call = listObjectsCallable.call(builder.build());
     ListObjectsPage page = call.getPage();
-    Function<com.google.storage.v2.Object, BlobInfo> decode = codecs.blobInfo()::decode;
-    Function<com.google.storage.v2.Object, Blob> translator =
-        decode.andThen(blobInfo -> blobInfo.asBlob(this));
-    return new TransformPageDecorator<>(page, translator);
+    return new TransformingPageDecorator<>(page, syntaxDecoders.blob);
   }
 
   @Override
@@ -615,9 +605,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
-    UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse>
-        listHmacKeysCallable =
-            grpcStorageStub.listHmacKeysPagedCallable();
+    UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysCallable =
+        grpcStorageStub.listHmacKeysPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     // TODO: Project is required?
     ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder();
@@ -630,12 +619,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (Boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PROJECT_ID), builder::setProject);
-    ListHmacKeysPagedResponse call =
-        listBucketsRequestListHmacKeysPagedResponseUnaryCallable.call(builder.build());
+    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build());
     ListHmacKeysPage page = call.getPage();
-    Function<com.google.storage.v2.HmacKeyMetadata, HmacKey.HmacKeyMetadata> decode =
-        codecs.hmacKeyMetadata()::decode;
-    return new TransformPageDecorator<>(page, decode);
+    return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
   }
 
   @Override
@@ -757,7 +743,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
   }
 
-  private static class TransformPageDecorator<
+  private static class TransformingPageDecorator<
           RequestT,
           ResponseT,
           ResourceT,
@@ -766,9 +752,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       implements Page<ModelT> {
 
     private final PageT page;
-    private final Function<ResourceT, ModelT> translator;
+    private final Decoder<ResourceT, ModelT> translator;
 
-    public TransformPageDecorator(PageT page, Function<ResourceT, ModelT> translator) {
+    public TransformingPageDecorator(PageT page, Decoder<ResourceT, ModelT> translator) {
       this.page = page;
       this.translator = translator;
     }
@@ -785,14 +771,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
     @Override
     public Page<ModelT> getNextPage() {
-      return new TransformPageDecorator<>(page.getNextPage(), translator);
+      return new TransformingPageDecorator<>(page.getNextPage(), translator);
     }
 
     @Override
     public Iterable<ModelT> iterateAll() {
       return () -> {
         final Iterator<ResourceT> iter = page.iterateAll().iterator();
-        return new ResourceIterator(iter);
+        return new TransformingIterator(iter);
       };
     }
 
@@ -800,15 +786,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     public Iterable<ModelT> getValues() {
       return () -> {
         final Iterator<ResourceT> inter = page.getValues().iterator();
-        return new ResourceIterator(inter);
+        return new TransformingIterator(inter);
       };
     }
 
-    private class ResourceIterator implements Iterator<ModelT> {
+    private class TransformingIterator implements Iterator<ModelT> {
 
       private final Iterator<ResourceT> iter;
 
-      public ResourceIterator(Iterator<ResourceT> iter) {
+      public TransformingIterator(Iterator<ResourceT> iter) {
         this.iter = iter;
       }
 
@@ -820,7 +806,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       @Override
       public ModelT next() {
         ResourceT next = iter.next();
-        return translator.apply(next);
+        return translator.decode(next);
       }
     }
   }
