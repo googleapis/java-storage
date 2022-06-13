@@ -28,6 +28,9 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
 
   private final UnbufferedReadableByteChannel channel;
 
+  private boolean flipped = false;
+  private boolean retEOF = false;
+
   DefaultBufferedReadableByteChannel(ByteBuffer buffer, UnbufferedReadableByteChannel channel) {
     this.buffer = buffer;
     this.channel = channel;
@@ -38,11 +41,12 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
     return channel.isComplete();
   }
 
-  long totalRead = 0;
-
   @Override
   public int read(ByteBuffer dst) throws IOException {
-    if (!channel.isOpen()) {
+    if (retEOF) {
+      retEOF = false;
+      return -1;
+    } else if (!channel.isOpen()) {
       throw new ClosedChannelException();
     }
 
@@ -56,35 +60,40 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
 
       final int tmpBytesCopied;
       if (enqueuedBytes()) {
+        if (!flipped) {
+          buffer.flip();
+          flipped = true;
+        }
         long copy = Buffers.copy(buffer, new ByteBuffer[] {dst});
         if (buffer.remaining() == 0) {
           Buffers.clear(buffer);
         }
         tmpBytesCopied = Math.toIntExact(copy);
       } else {
-        if (bufferRemaining < dstRemaining) {
-          // no enqueued data and the available space in dst is larger than our buffer
-          // rather than copying into the buffer before copying to dst, simply read a buffer size
-          // worth of bytes directly into dst
-          ByteBuffer slice = dst.slice();
-          int sliceLimit = dstPosition + bufferRemaining;
-          Buffers.limit(slice, sliceLimit);
-          int read = channel.read(slice);
+        if (bufferRemaining <= dstRemaining) {
+          ByteBuffer buf;
+          if (bufferRemaining == dstRemaining) {
+            // the available space in dst is the same as our buffer rather than reading into buffer
+            // before copying to dst, simply read directly into dst
+            buf = dst;
+          } else {
+            // the available space in dst is larger than our buffer rather than reading into buffer
+            // before copying to dst, simply read a buffer size worth of bytes directly into dst
+            buf = dst.slice();
+            Buffers.limit(buf, bufferRemaining);
+          }
+          int read = channel.read(buf);
           if (read == -1) {
-            close();
-            return -1;
+            if (bytesConsumed == 0) {
+              close();
+              return -1;
+            } else {
+              retEOF = true;
+              close();
+              break;
+            }
           }
           Buffers.position(dst, dstPosition + read);
-          tmpBytesCopied = read;
-        } else if (bufferRemaining == dstRemaining) {
-          // no enqueued data and the available space in dst is the same as our buffer
-          // rather than copying into the buffer before copying to dst, simply read directly into
-          // dst
-          int read = channel.read(dst);
-          if (read == -1) {
-            close();
-            return -1;
-          }
           tmpBytesCopied = read;
         } else {
 
@@ -99,8 +108,14 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
           ByteBuffer[] dsts = {dst, slice};
           long read = channel.read(dsts);
           if (read == -1) {
-            close();
-            return -1;
+            if (bytesConsumed == 0) {
+              close();
+              return -1;
+            } else {
+              retEOF = true;
+              close();
+              break;
+            }
           } else if (read < dstRemaining) {
             // we didn't read enough bytes to fill up dst, no need to advance buffer position
             tmpBytesCopied = Math.toIntExact(read);
@@ -109,13 +124,13 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
             // determine the position buffer needs to be set to
             long bytesReadIntoBuffer = read - dstRemaining;
             Buffers.position(buffer, Math.toIntExact(bytesReadIntoBuffer));
-            tmpBytesCopied = Math.toIntExact(read);
+            flipped = false;
+            tmpBytesCopied = dstRemaining;
           }
         }
       }
       bytesConsumed += tmpBytesCopied;
     }
-    totalRead += bytesConsumed;
     return bytesConsumed;
   }
 
