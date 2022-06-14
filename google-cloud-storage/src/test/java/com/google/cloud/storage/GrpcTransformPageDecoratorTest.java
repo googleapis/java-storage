@@ -3,6 +3,7 @@ package com.google.cloud.storage;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.PageContext;
@@ -11,36 +12,53 @@ import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.GrpcStorageImpl.TransformingPageDecorator;
 import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class GrpcTransformPageDecoratorTest {
 
   @Test
   public void valueTranslationTest() {
+    // Initial values for the first page
     List<String> initialValues = Arrays.asList("string1", "string2", "string3");
-    List<String> expectedValues = Arrays.asList("STRING1", "STRING2", "STRING3");
+    // Request which will be appended to the second page
+    String request = "string4";
+
+    // Expected values after the translation
+    List<String> expectedValuesPageOne = Arrays.asList("STRING1", "STRING2", "STRING3");
+    List<String> expectedValuesPageTwo = Arrays.asList("STRING4");
+    List<String> expectedPagesValuesMerged =
+        Stream.of(expectedValuesPageOne, expectedValuesPageTwo)
+            .flatMap(list -> list.stream())
+            .collect(Collectors.toList());
+
     StringPagedListDescriptor descriptor = new StringPagedListDescriptor();
     UnaryCallable callable = new StringPagedCallable();
-    PageContext<String, List<String>, String> context = new StringPageContext(descriptor, callable);
+    PageContext<String, List<String>, String> context =
+        PageContext.create(callable, descriptor, request, Mockito.mock(ApiCallContext.class));
     ListStringPage page = new ListStringPage(context, initialValues);
     TransformingPageDecorator decorator =
         new TransformingPageDecorator<>(page, String::toUpperCase);
+
     assertThat(ImmutableList.copyOf(decorator.getValues().iterator()))
-        .containsExactlyElementsIn(expectedValues);
+        .containsExactlyElementsIn(expectedValuesPageOne);
     assertThat(ImmutableList.copyOf(decorator.iterateAll().iterator()))
-        .containsExactlyElementsIn(expectedValues);
+        .containsExactlyElementsIn(expectedPagesValuesMerged);
   }
 
   private class ListStringPage extends AbstractPage<String, List<String>, String, ListStringPage> {
 
-    protected ListStringPage(
+    public ListStringPage(
         PageContext<String, List<String>, String> context, List<String> response) {
       super(context, response);
     }
 
     @Override
-    protected ListStringPage createPage(
+    public ListStringPage createPage(
         PageContext<String, List<String>, String> context, List<String> response) {
       return new ListStringPage(context, response);
     }
@@ -55,7 +73,7 @@ public class GrpcTransformPageDecoratorTest {
 
     @Override
     public String injectToken(String payload, String token) {
-      return null;
+      return payload;
     }
 
     @Override
@@ -70,7 +88,7 @@ public class GrpcTransformPageDecoratorTest {
 
     @Override
     public String extractNextToken(List<String> payload) {
-      return emptyToken();
+      return payload.size() > 0 ? payload.get(0) : emptyToken();
     }
 
     @Override
@@ -79,41 +97,18 @@ public class GrpcTransformPageDecoratorTest {
     }
   }
 
-  private class StringPageContext extends PageContext<String, List<String>, String> {
-    private PagedListDescriptor pageDescriptor;
-    private UnaryCallable callable;
-
-    private StringPageContext(PagedListDescriptor pageDescriptor, UnaryCallable callable) {
-      this.pageDescriptor = pageDescriptor;
-      this.callable = callable;
-    }
-
-    @Override
-    public UnaryCallable<String, List<String>> getCallable() {
-      return callable;
-    }
-
-    @Override
-    public PagedListDescriptor<String, List<String>, String> getPageDescriptor() {
-      return pageDescriptor;
-    }
-
-    @Override
-    public String getRequest() {
-      return null;
-    }
-
-    @Override
-    public ApiCallContext getCallContext() {
-      return null;
-    }
-  }
-
   private class StringPagedCallable extends UnaryCallable<String, List<String>> {
+    // We only want to add one additional page with the same value as the request,
+    // this is kind of hacky, but I wanted to validate we are performing iterate all
+    // properly.
+    private int numberOfPages = 1;
 
     @Override
     public ApiFuture<List<String>> futureCall(String request, ApiCallContext context) {
-      return null;
+      if (numberOfPages-- > 0) {
+        return ApiFutures.immediateFuture(Arrays.asList(request));
+      }
+      return ApiFutures.immediateFuture(Collections.emptyList());
     }
   }
 }
