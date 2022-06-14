@@ -24,9 +24,12 @@ public class GrpcTransformPageDecoratorTest {
     UnaryCallable callable = new StringPagedCallable();
     PageContext<String, List<String>, String> context = new StringPageContext(descriptor, callable);
     ListStringPage page = new ListStringPage(context, initialValues);
-    TransformingPageDecorator decorator = new TransformingPageDecorator<>(page, String::toUpperCase);
-    assertThat(ImmutableList.copyOf(decorator.getValues().iterator())).containsExactlyElementsIn(expectedValues);
-    assertThat(ImmutableList.copyOf(decorator.iterateAll().iterator())).containsExactlyElementsIn(expectedValues);
+    TransformingPageDecorator decorator =
+        new TransformingPageDecorator<>(page, String::toUpperCase);
+    assertThat(ImmutableList.copyOf(decorator.getValues().iterator()))
+        .containsExactlyElementsIn(expectedValues);
+    assertThat(ImmutableList.copyOf(decorator.iterateAll().iterator()))
+        .containsExactlyElementsIn(expectedValues);
   }
 
   private class ListStringPage extends AbstractPage<String, List<String>, String, ListStringPage> {
@@ -37,11 +40,10 @@ public class GrpcTransformPageDecoratorTest {
     }
 
     @Override
-    protected ListStringPage createPage(PageContext<String, List<String>, String> context,
-        List<String> response) {
+    protected ListStringPage createPage(
+        PageContext<String, List<String>, String> context, List<String> response) {
       return new ListStringPage(context, response);
     }
-
   }
 
   private static class StringPagedListDescriptor
