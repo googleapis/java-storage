@@ -259,7 +259,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse> listBucketsCallable =
         grpcStorageStub.listBucketsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder();
+    String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
+    if (projectId == null) {
+      projectId = this.getOptions().getProjectId();
+    }
+    ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder().setParent(projectId);
     ifNonNull(
         (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
@@ -608,8 +612,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysCallable =
         grpcStorageStub.listHmacKeysPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    // TODO: Project is required?
-    ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder();
+    String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
+    if (projectId == null) {
+      projectId = this.getOptions().getProjectId();
+    }
+    ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder().setProject(projectId);
     ifNonNull(
         (String) optionsMap.get(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL),
         builder::setServiceAccountEmail);
@@ -618,7 +625,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
     ifNonNull(
         (Boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.PROJECT_ID), builder::setProject);
     ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build());
     ListHmacKeysPage page = call.getPage();
     return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
