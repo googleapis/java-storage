@@ -23,6 +23,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.UnaryCallable;
@@ -44,8 +45,17 @@ import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
+import com.google.storage.v2.ListBucketsRequest;
+import com.google.storage.v2.ListHmacKeysRequest;
+import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.StartResumableWriteRequest;
+import com.google.storage.v2.StorageClient.ListBucketsPage;
+import com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
+import com.google.storage.v2.StorageClient.ListHmacKeysPage;
+import com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
+import com.google.storage.v2.StorageClient.ListObjectsPage;
+import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
 import com.google.storage.v2.stub.GrpcStorageStub;
@@ -64,6 +74,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -245,12 +256,43 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<Bucket> list(BucketListOption... options) {
-    return todo();
+    UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse> listBucketsCallable =
+        grpcStorageStub.listBucketsPagedCallable();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
+    if (projectId == null) {
+      projectId = this.getOptions().getProjectId();
+    }
+    ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder().setParent(projectId);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
+    // TODO(sydmunro): StorageRpc.Option.Fields
+    // TODO(sydmunro): User Project
+    ListBucketsPagedResponse call = listBucketsCallable.call(builder.build());
+    ListBucketsPage page = call.getPage();
+    return new TransformingPageDecorator<>(page, syntaxDecoders.bucket);
   }
 
   @Override
   public Page<Blob> list(String bucket, BlobListOption... options) {
-    return todo();
+    UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsCallable =
+        grpcStorageStub.listObjectsPagedCallable();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ListObjectsRequest.Builder builder = ListObjectsRequest.newBuilder().setParent(bucket);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.DELIMITER), builder::setDelimiter);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.START_OFF_SET), builder::setLexicographicStart);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.END_OFF_SET), builder::setLexicographicEnd);
+    // TODO(sydmunro) StorageRpc.Option.Fields
+    ListObjectsPagedResponse call = listObjectsCallable.call(builder.build());
+    ListObjectsPage page = call.getPage();
+    return new TransformingPageDecorator<>(page, syntaxDecoders.blob);
   }
 
   @Override
@@ -567,7 +609,25 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
-    return todo();
+    UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysCallable =
+        grpcStorageStub.listHmacKeysPagedCallable();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
+    if (projectId == null) {
+      projectId = this.getOptions().getProjectId();
+    }
+    ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder().setProject(projectId);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL),
+        builder::setServiceAccountEmail);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
+    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
+    ifNonNull(
+        (Boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
+    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build());
+    ListHmacKeysPage page = call.getPage();
+    return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
   }
 
   @Override
@@ -682,9 +742,78 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   /** Bind some decoders for our "Syntax" classes to this instance of GrpcStorageImpl */
   private final class SyntaxDecoders {
+
     final Decoder<Object, Blob> blob =
         o -> codecs.blobInfo().decode(o).asBlob(GrpcStorageImpl.this);
     final Decoder<com.google.storage.v2.Bucket, Bucket> bucket =
         b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
+  }
+
+  static final class TransformingPageDecorator<
+          RequestT,
+          ResponseT,
+          ResourceT,
+          PageT extends AbstractPage<RequestT, ResponseT, ResourceT, PageT>,
+          ModelT>
+      implements Page<ModelT> {
+
+    private final PageT page;
+    private final Decoder<ResourceT, ModelT> translator;
+
+    public TransformingPageDecorator(PageT page, Decoder<ResourceT, ModelT> translator) {
+      this.page = page;
+      this.translator = translator;
+    }
+
+    @Override
+    public boolean hasNextPage() {
+      return page.hasNextPage();
+    }
+
+    @Override
+    public String getNextPageToken() {
+      return page.getNextPageToken();
+    }
+
+    @Override
+    public Page<ModelT> getNextPage() {
+      return new TransformingPageDecorator<>(page.getNextPage(), translator);
+    }
+
+    @Override
+    public Iterable<ModelT> iterateAll() {
+      return () -> {
+        final Iterator<ResourceT> iter = page.iterateAll().iterator();
+        return new TransformingIterator(iter);
+      };
+    }
+
+    @Override
+    public Iterable<ModelT> getValues() {
+      return () -> {
+        final Iterator<ResourceT> inter = page.getValues().iterator();
+        return new TransformingIterator(inter);
+      };
+    }
+
+    private class TransformingIterator implements Iterator<ModelT> {
+
+      private final Iterator<ResourceT> iter;
+
+      public TransformingIterator(Iterator<ResourceT> iter) {
+        this.iter = iter;
+      }
+
+      @Override
+      public boolean hasNext() {
+        return iter.hasNext();
+      }
+
+      @Override
+      public ModelT next() {
+        ResourceT next = iter.next();
+        return translator.decode(next);
+      }
+    }
   }
 }
