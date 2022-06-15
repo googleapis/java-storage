@@ -749,7 +749,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
   }
 
-  protected static class TransformingPageDecorator<
+  static final class TransformingPageDecorator<
           RequestT,
           ResponseT,
           ResourceT,

@@ -27,11 +27,9 @@ import com.google.api.gax.rpc.PagedListDescriptor;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.GrpcStorageImpl.TransformingPageDecorator;
 import com.google.common.collect.ImmutableList;
-import java.util.Arrays;
+import com.google.common.collect.Streams;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -40,24 +38,23 @@ public class GrpcTransformPageDecoratorTest {
   @Test
   public void valueTranslationTest() {
     // Initial values for the first page
-    List<String> initialValues = Arrays.asList("string1", "string2", "string3");
+    List<String> initialValues = ImmutableList.of("string1", "string2", "string3");
     // Request which will be appended to the second page
     String request = "string4";
 
     // Expected values after the translation
-    List<String> expectedValuesPageOne = Arrays.asList("STRING1", "STRING2", "STRING3");
-    List<String> expectedValuesPageTwo = Arrays.asList("STRING4");
+    List<String> expectedValuesPageOne = ImmutableList.of("STRING1", "STRING2", "STRING3");
+    List<String> expectedValuesPageTwo = ImmutableList.of("STRING4");
     List<String> expectedPagesValuesMerged =
-        Stream.of(expectedValuesPageOne, expectedValuesPageTwo)
-            .flatMap(list -> list.stream())
-            .collect(Collectors.toList());
+        Streams.concat(expectedValuesPageOne.stream(), expectedValuesPageTwo.stream())
+            .collect(ImmutableList.toImmutableList());
 
     StringPagedListDescriptor descriptor = new StringPagedListDescriptor();
-    UnaryCallable callable = new StringPagedCallable();
+    UnaryCallable<String, List<String>> callable = new StringPagedCallable();
     PageContext<String, List<String>, String> context =
         PageContext.create(callable, descriptor, request, Mockito.mock(ApiCallContext.class));
     ListStringPage page = new ListStringPage(context, initialValues);
-    TransformingPageDecorator decorator =
+    TransformingPageDecorator<String, List<String>, String, ListStringPage, String> decorator =
         new TransformingPageDecorator<>(page, String::toUpperCase);
 
     assertThat(ImmutableList.copyOf(decorator.getValues().iterator()))
@@ -66,7 +63,8 @@ public class GrpcTransformPageDecoratorTest {
         .containsExactlyElementsIn(expectedPagesValuesMerged);
   }
 
-  private class ListStringPage extends AbstractPage<String, List<String>, String, ListStringPage> {
+  private static class ListStringPage
+      extends AbstractPage<String, List<String>, String, ListStringPage> {
 
     public ListStringPage(
         PageContext<String, List<String>, String> context, List<String> response) {
@@ -113,7 +111,7 @@ public class GrpcTransformPageDecoratorTest {
     }
   }
 
-  private class StringPagedCallable extends UnaryCallable<String, List<String>> {
+  private static class StringPagedCallable extends UnaryCallable<String, List<String>> {
     // We only want to add one additional page with the same value as the request,
     // this is kind of hacky, but I wanted to validate we are performing iterate all
     // properly.
@@ -122,7 +120,7 @@ public class GrpcTransformPageDecoratorTest {
     @Override
     public ApiFuture<List<String>> futureCall(String request, ApiCallContext context) {
       if (numberOfPages-- > 0) {
-        return ApiFutures.immediateFuture(Arrays.asList(request));
+        return ApiFutures.immediateFuture(ImmutableList.of(request));
       }
       return ApiFutures.immediateFuture(Collections.emptyList());
     }
