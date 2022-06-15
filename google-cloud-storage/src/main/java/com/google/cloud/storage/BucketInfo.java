@@ -25,6 +25,7 @@ import com.google.api.client.util.Data;
 import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
 import com.google.api.services.storage.model.Bucket;
+import com.google.api.services.storage.model.Bucket.CustomPlacementConfig;
 import com.google.api.services.storage.model.Bucket.Encryption;
 import com.google.api.services.storage.model.Bucket.Lifecycle;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
@@ -103,6 +104,7 @@ public class BucketInfo implements Serializable {
   private final IamConfiguration iamConfiguration;
   private final String locationType;
   private final Logging logging;
+  private final CustomPlacementConfig customPlacementConfig;
 
   private static final Logger log = Logger.getLogger(BucketInfo.class.getName());
 
@@ -324,6 +326,79 @@ public class BucketInfo implements Serializable {
       /** Builds an {@code IamConfiguration} object */
       public IamConfiguration build() {
         return new IamConfiguration(this);
+      }
+    }
+  }
+
+  /**
+   * The bucket's custom placement configuration for Custom Dual Regions.
+   */
+  public static class CustomPlacementConfig implements Serializable {
+
+    private static final long serialVersionUID = -3172255903331692127L;
+    private List<String> dataLocations;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      CustomPlacementConfig other = (CustomPlacementConfig) o;
+      return Objects.equals(toPb(), other.toPb());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(dataLocations);
+    }
+
+    public static Builder newBuilder() {return new Builder();}
+
+    public Builder toBuilder() {
+      Builder builder = new Builder();
+      builder.dataLocations = dataLocations;
+      return builder;
+    }
+
+    public List<String> getDataLocations() {
+      return dataLocations;
+    }
+
+    Bucket.CustomPlacementConfig toPb() {
+      Bucket.CustomPlacementConfig customPlacementConfig;
+      if(dataLocations != null) {
+        customPlacementConfig = new Bucket.CustomPlacementConfig();
+        customPlacementConfig.setDataLocations(dataLocations);
+      } else {
+        customPlacementConfig = Data.nullOf(Bucket.CustomPlacementConfig.class);
+      }
+      return customPlacementConfig;
+    }
+
+    static CustomPlacementConfig fromPb(Bucket.CustomPlacementConfig customPlacementConfig) {
+      return newBuilder()
+          .setDataLocations(customPlacementConfig.getDataLocations())
+          .build();
+    }
+
+    private CustomPlacementConfig(Builder builder) {
+      this.dataLocations = builder.dataLocations;
+    }
+
+    public static class Builder {
+      private List<String> dataLocations;
+
+      /**
+       * A list of regions for custom placement configurations.
+       */
+      public Builder setDataLocations(List<String> dataLocations) {
+        this.dataLocations = dataLocations != null ? ImmutableList.copyOf(dataLocations) : null;
+        return this;
+      }
+
+      public CustomPlacementConfig build() {
+        return new CustomPlacementConfig(this);
       }
     }
   }
