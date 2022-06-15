@@ -22,6 +22,37 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 
+/**
+ * Buffering {@link java.nio.channels.WritableByteChannel} which attempts to maximize the amount of
+ * bytes written to the underlying {@link UnbufferedWritableByteChannel} while minimizing
+ * unnecessary copying of said bytes.
+ *
+ * <p>Our flushing strategy is "eager", meaning as soon as we have enough total bytes equal to the
+ * capacity of our buffer we will write to the underlying channel.
+ *
+ * <p>A few strategies are employed to meet the state goals.
+ *
+ * <ol>
+ *   <li>If we do not have any bytes in our buffer and {@code src} is the same size as our buffer,
+ *       simply {@link UnbufferedWritableByteChannel#write(ByteBuffer) write(src)} to the the
+ *       underlying channel
+ *   <li>If we do not have any bytes in our buffer and {@code src} is larger than the size of our
+ *       buffer, take a slice of {@code src} the same size as our buffer and {@link
+ *       UnbufferedWritableByteChannel#write(ByteBuffer[]) write([buffer, slice])} before enqueuing
+ *       any outstanding bytes which are smaller than our buffer.
+ *   <li>If we do not have any bytes in our buffer and {@code src} is smaller than the size of our
+ *       buffer, enqueue it in full
+ *   <li>If we do have enqueued bytes and {@code src} is the size of our remaining buffer space
+ *       {@link UnbufferedWritableByteChannel#write(ByteBuffer[]) write([buffer, src])} to the
+ *       underlying channel
+ *   <li>If we do have enqueued bytes and {@code src} is larger than the size of our remaining
+ *       buffer space, take a slice of {@code src} the same size as our buffer and {@link
+ *       UnbufferedWritableByteChannel#write(ByteBuffer[]) write([buffer, slice])} to the underlying
+ *       channel before enqueuing any outstanding bytes which are smaller than our buffer.
+ *   <li>If we do have enqueued bytes and {@code src} is smaller than our remaining buffer space,
+ *       enqueue it in full
+ * </ol>
+ */
 final class DefaultBufferedWritableByteChannel implements BufferedWritableByteChannel {
 
   private final ByteBuffer buffer;
@@ -38,6 +69,7 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
     return channel.isComplete();
   }
 
+  @SuppressWarnings("UnnecessaryLocalVariable")
   @Override
   public int write(ByteBuffer src) throws IOException {
     if (!channel.isOpen()) {
@@ -46,41 +78,85 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
     int bytesConsumed = 0;
 
     while (src.hasRemaining()) {
-      int bufferRemaining = buffer.remaining();
       int srcRemaining = src.remaining();
+      int srcPosition = src.position();
 
-      final int tmpBytesConsumed;
-      if (!enqueuedBytes() && bufferRemaining == srcRemaining) {
-        channel.write(src);
-        tmpBytesConsumed = bufferRemaining;
-      } else if (!enqueuedBytes() && bufferRemaining <= srcRemaining) {
-        // no enqueued data and the src provided is larger than our buffer
-        // rather than copying into the buffer, simply flush a slice from the source
-        ByteBuffer slice = src.slice();
-        Buffers.limit(slice, bufferRemaining);
-        int write = channel.write(slice);
-        Buffers.position(src, src.position() + write);
-        tmpBytesConsumed = bufferRemaining;
+      int capacity = buffer.capacity();
+      int bufferRemaining = buffer.remaining();
+      int bufferPending = capacity - bufferRemaining;
+
+      boolean enqueuedBytes = buffer.hasRemaining();
+      if (enqueuedBytes && srcRemaining < bufferRemaining) {
+        // srcRemaining is smaller than the remaining space in our buffer, enqueue it in full
+        buffer.put(src);
+        bytesConsumed += srcRemaining;
+        break;
+      } else if (enqueuedBytes) {
+        // between bufferPending and srcRemaining we have a full buffers worth of data
+        // Figure out what we need to do before flushing it
+
+        ByteBuffer buf;
+        int sliceLimit = bufferRemaining; // alias for easier readability below
+        boolean usingSlice = false;
+        if (srcRemaining == bufferRemaining) {
+          // our buffer and all of src are equal to a full buffer, no need to slice src
+          buf = src;
+        } else {
+          // our buffer and all of src are larger than a full buffer, take a slice of src such that
+          // the total number of bytes are equal to capacity
+          ByteBuffer slice = src.slice();
+          Buffers.limit(slice, sliceLimit);
+          usingSlice = true;
+          buf = slice;
+        }
+
+        Buffers.flip(buffer);
+        ByteBuffer[] srcs = {buffer, buf};
+        long write = channel.write(srcs);
+        if (write == capacity) {
+          // we successfully wrote all the bytes we wanted to
+          Buffers.clear(buffer);
+          if (usingSlice) {
+            Buffers.position(src, srcPosition + sliceLimit);
+          }
+          bytesConsumed += sliceLimit;
+        } else {
+          if (buffer.hasRemaining()) {
+            // we didn't write enough bytes to consume the whole buffer. Do not advance the
+            // position of src
+            buffer.compact();
+          } else {
+            // we wrote enough to consume the buffer
+            Buffers.clear(buffer);
+            // we didn't write enough to consume the whole slice, determine how much of the slice
+            // was written and advance the position of src
+            int sliceWritten = Math.toIntExact(write - bufferPending);
+            Buffers.position(src, srcPosition + sliceWritten);
+            bytesConsumed += sliceWritten;
+          }
+        }
       } else {
-        if (bufferRemaining <= srcRemaining) {
-          // some enqueued bytes in the buffer, fill the remaining capacity of buffer
-          // before yielding
+        // no enqueued data, see if we can simply write the provided src or a slice of it
+        // since our buffer is empty
+        if (bufferRemaining == srcRemaining) {
+          // the capacity of buffer and the bytes remaining in src are the same, directly
+          // write src
+          bytesConsumed += channel.write(src);
+        } else if (bufferRemaining <= srcRemaining) {
+          // the src provided is larger than our buffer. rather than copying into the buffer, simply
+          // write a slice
           ByteBuffer slice = src.slice();
           Buffers.limit(slice, bufferRemaining);
-          buffer.put(slice);
-          Buffers.position(src, src.position() + bufferRemaining);
-          tmpBytesConsumed = bufferRemaining;
+          int write = channel.write(slice);
+          Buffers.position(src, srcPosition + write);
+          bytesConsumed += write;
         } else {
-          // the available in src is less than buffers remaining capacity, enqueue it in full
+          // srcRemaining is smaller than the remaining space in our buffer, enqueue it in full
           buffer.put(src);
-          tmpBytesConsumed = srcRemaining;
+          bytesConsumed += srcRemaining;
         }
-        maybeFlushBuffer();
       }
-
-      bytesConsumed += tmpBytesConsumed;
     }
-
     return bytesConsumed;
   }
 
@@ -98,22 +174,14 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
 
   @Override
   public void flush() throws IOException {
-    if (enqueuedBytes()) {
-      ByteBuffer b = buffer.duplicate();
-      Buffers.position(b, 0);
-      Buffers.limit(b, buffer.position());
-      channel.write(b);
-      Buffers.position(buffer, 0);
+    if (buffer.hasRemaining()) {
+      Buffers.flip(buffer);
+      channel.write(buffer);
+      if (buffer.hasRemaining()) {
+        buffer.compact();
+      } else {
+        Buffers.clear(buffer);
+      }
     }
-  }
-
-  private void maybeFlushBuffer() throws IOException {
-    if (enqueuedBytes() && !buffer.hasRemaining()) {
-      flush();
-    }
-  }
-
-  private boolean enqueuedBytes() {
-    return buffer.position() > 0;
   }
 }
