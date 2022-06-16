@@ -123,11 +123,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     CreateBucketRequest.Builder bucketRequestBuilder =
         CreateBucketRequest.newBuilder().setBucket(bucket);
     ifNonNull(
-            (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
-            bucketRequestBuilder::setPredefinedAcl);
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
+        bucketRequestBuilder::setPredefinedAcl);
     ifNonNull(
-            (String) optionsMap.get(StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL),
-            bucketRequestBuilder::setPredefinedDefaultObjectAcl);
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL),
+        bucketRequestBuilder::setPredefinedDefaultObjectAcl);
     CreateBucketRequest req = bucketRequestBuilder.build();
     // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
     // projection=full
