@@ -1,5 +1,31 @@
 # Changelog
 
+## [2.8.1](https://github.com/googleapis/java-storage/compare/v2.8.0...v2.8.1) (2022-06-13)
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220608-1.32.1 ([#1448](https://github.com/googleapis/java-storage/issues/1448)) ([96676cd](https://github.com/googleapis/java-storage/commit/96676cd830aca27c23c08e02e8cc7c58dece686c))
+
+## [2.8.0](https://github.com/googleapis/java-storage/compare/v2.7.2...v2.8.0) (2022-06-08)
+
+
+### Features
+
+* Prefix/Suffix Matches Lifecycle Condition ([#1389](https://github.com/googleapis/java-storage/issues/1389)) ([20c8848](https://github.com/googleapis/java-storage/commit/20c88489d80d716da28f78fed628b54345f32ca4))
+* Support AbortIncompleteMultipartUpload LifecycleAction ([#1347](https://github.com/googleapis/java-storage/issues/1347)) ([7c3aba2](https://github.com/googleapis/java-storage/commit/7c3aba2f0a26ac550e4f37f9287ed6b041d75919))
+
+
+### Bug Fixes
+
+* update request method of HttpStorageRpc to properly configure offset on requests ([#1434](https://github.com/googleapis/java-storage/issues/1434)) ([72dc0df](https://github.com/googleapis/java-storage/commit/72dc0dff20d76875401dac721c0268c32e475e39))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220604-1.32.1 ([#1438](https://github.com/googleapis/java-storage/issues/1438)) ([df8fcd9](https://github.com/googleapis/java-storage/commit/df8fcd9925ef06c91ebebe0a3a7b5aedeb15ec4d))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.119.0 ([#1426](https://github.com/googleapis/java-storage/issues/1426)) ([93ba28c](https://github.com/googleapis/java-storage/commit/93ba28cff16d428e0222078dc60dbf49fda7632a))
+
 ### [2.7.2](https://github.com/googleapis/java-storage/compare/v2.7.1...v2.7.2) (2022-05-27)
 
 

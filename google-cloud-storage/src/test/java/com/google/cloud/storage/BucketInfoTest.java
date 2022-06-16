@@ -37,8 +37,11 @@ import com.google.cloud.storage.BucketInfo.AgeDeleteRule;
 import com.google.cloud.storage.BucketInfo.DeleteRule;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.DeleteLifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.collect.ImmutableList;
@@ -303,6 +306,9 @@ public class BucketInfoTest {
     assertEquals(
         LifecycleRule.DeleteLifecycleAction.TYPE, deleteLifecycleRule.getAction().getType());
     assertEquals(10, deleteLifecycleRule.getCondition().getAge().intValue());
+    assertTrue(
+        Conversions.apiary().lifecycleRule().decode(deleteLifecycleRule).getAction()
+            instanceof DeleteLifecycleAction);
 
     Rule setStorageClassLifecycleRule =
         Conversions.apiary()
@@ -320,6 +326,9 @@ public class BucketInfoTest {
         setStorageClassLifecycleRule.getAction().getStorageClass());
     assertTrue(setStorageClassLifecycleRule.getCondition().getIsLive());
     assertEquals(10, setStorageClassLifecycleRule.getCondition().getNumNewerVersions().intValue());
+    assertTrue(
+        Conversions.apiary().lifecycleRule().decode(setStorageClassLifecycleRule).getAction()
+            instanceof SetStorageClassLifecycleAction);
 
     Rule lifecycleRule =
         Conversions.apiary()
@@ -334,6 +343,8 @@ public class BucketInfoTest {
                         .setNoncurrentTimeBefore(new DateTime(System.currentTimeMillis()))
                         .setCustomTimeBefore(new DateTime(System.currentTimeMillis()))
                         .setDaysSinceCustomTime(30)
+                        .setMatchesSuffix(Collections.singletonList("-suffix"))
+                        .setMatchesPrefix(Collections.singletonList("prefix-"))
                         .build()));
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
     assertTrue(lifecycleRule.getCondition().getIsLive());
@@ -343,6 +354,23 @@ public class BucketInfoTest {
     assertEquals(StorageClass.COLDLINE.toString(), lifecycleRule.getAction().getStorageClass());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
+    assertEquals("prefix-", lifecycleRule.getCondition().getMatchesPrefix().get(0));
+    assertEquals("-suffix", lifecycleRule.getCondition().getMatchesSuffix().get(0));
+    assertTrue(
+        Conversions.apiary().lifecycleRule().decode(lifecycleRule).getAction()
+            instanceof SetStorageClassLifecycleAction);
+
+    Rule abortMpuLifecycleRule =
+        Conversions.apiary()
+            .lifecycleRule()
+            .encode(
+                new LifecycleRule(
+                    LifecycleAction.newAbortIncompleteMPUploadAction(),
+                    LifecycleCondition.newBuilder().setAge(10).build()));
+    assertEquals(AbortIncompleteMPUAction.TYPE, abortMpuLifecycleRule.getAction().getType());
+    assertEquals(10, abortMpuLifecycleRule.getCondition().getAge().intValue());
+    LifecycleRule decode = Conversions.apiary().lifecycleRule().decode(abortMpuLifecycleRule);
+    assertThat(decode.getAction()).isInstanceOf(AbortIncompleteMPUAction.class);
 
     Rule unsupportedRule =
         Conversions.apiary()

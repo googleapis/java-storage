@@ -440,7 +440,9 @@ public class BucketInfo implements Serializable {
           && condition.getDaysSinceNoncurrentTime() == null
           && condition.getNoncurrentTimeBefore() == null
           && condition.getCustomTimeBefore() == null
-          && condition.getDaysSinceCustomTime() == null) {
+          && condition.getDaysSinceCustomTime() == null
+          && condition.getMatchesPrefix() == null
+          && condition.getMatchesSuffix() == null) {
         log.warning(
             "Creating a lifecycle condition with no supported conditions:\n"
                 + this
@@ -503,6 +505,8 @@ public class BucketInfo implements Serializable {
       private final OffsetDateTime noncurrentTimeBefore;
       private final OffsetDateTime customTimeBefore;
       private final Integer daysSinceCustomTime;
+      private final List<String> matchesPrefix;
+      private final List<String> matchesSuffix;
 
       private LifecycleCondition(Builder builder) {
         this.age = builder.age;
@@ -514,6 +518,8 @@ public class BucketInfo implements Serializable {
         this.noncurrentTimeBefore = builder.noncurrentTimeBefore;
         this.customTimeBefore = builder.customTimeBefore;
         this.daysSinceCustomTime = builder.daysSinceCustomTime;
+        this.matchesPrefix = builder.matchesPrefix;
+        this.matchesSuffix = builder.matchesSuffix;
       }
 
       public Builder toBuilder() {
@@ -526,7 +532,9 @@ public class BucketInfo implements Serializable {
             .setDaysSinceNoncurrentTime(this.daysSinceNoncurrentTime)
             .setNoncurrentTimeBeforeOffsetDateTime(this.noncurrentTimeBefore)
             .setCustomTimeBeforeOffsetDateTime(this.customTimeBefore)
-            .setDaysSinceCustomTime(this.daysSinceCustomTime);
+            .setDaysSinceCustomTime(this.daysSinceCustomTime)
+            .setMatchesPrefix(this.matchesPrefix)
+            .setMatchesSuffix(this.matchesSuffix);
       }
 
       public static Builder newBuilder() {
@@ -545,6 +553,8 @@ public class BucketInfo implements Serializable {
             .add("noncurrentTimeBefore", noncurrentTimeBefore)
             .add("customTimeBefore", customTimeBefore)
             .add("daysSinceCustomTime", daysSinceCustomTime)
+            .add("matchesPrefix", matchesPrefix)
+            .add("matchesSuffix", matchesSuffix)
             .toString();
       }
 
@@ -624,6 +634,14 @@ public class BucketInfo implements Serializable {
         return daysSinceCustomTime;
       }
 
+      public List<String> getMatchesPrefix() {
+        return matchesPrefix;
+      }
+
+      public List<String> getMatchesSuffix() {
+        return matchesSuffix;
+      }
+
       @Override
       public boolean equals(Object o) {
         if (this == o) {
@@ -669,6 +687,8 @@ public class BucketInfo implements Serializable {
         private OffsetDateTime noncurrentTimeBefore;
         private OffsetDateTime customTimeBefore;
         private Integer daysSinceCustomTime;
+        private List<String> matchesPrefix;
+        private List<String> matchesSuffix;
 
         private Builder() {}
 
@@ -808,6 +828,24 @@ public class BucketInfo implements Serializable {
           return this;
         }
 
+        /**
+         * Sets the list of prefixes. If any prefix matches the beginning of the object’s name, this
+         * portion of the condition is satisfied for that object.
+         */
+        public Builder setMatchesPrefix(List<String> matchesPrefix) {
+          this.matchesPrefix = matchesPrefix != null ? ImmutableList.copyOf(matchesPrefix) : null;
+          return this;
+        }
+
+        /**
+         * Sets the list of suffixes. If any suffix matches the end of the object’s name, this
+         * portion of the condition is satisfied for that object.
+         */
+        public Builder setMatchesSuffix(List<String> matchesSuffix) {
+          this.matchesSuffix = matchesSuffix != null ? ImmutableList.copyOf(matchesSuffix) : null;
+          return this;
+        }
+
         /** Builds a {@code LifecycleCondition} object. * */
         public LifecycleCondition build() {
           return new LifecycleCondition(this);
@@ -874,6 +912,15 @@ public class BucketInfo implements Serializable {
       }
 
       /**
+       * Create a new {@code AbortIncompleteMPUAction}. An incomplete multipart upload will be
+       * aborted when the multipart upload meets the specified condition. Age is the only condition
+       * supported for this action. See: https://cloud.google.com/storage/docs/lifecycle##abort-mpu
+       */
+      public static LifecycleAction newAbortIncompleteMPUploadAction() {
+        return new AbortIncompleteMPUAction();
+      }
+
+      /**
        * Creates a new {@code LifecycleAction , with no specific supported action associated with it. This
        * is only intended as a "backup" for when the library doesn't recognize the type, and should
        * generally not be used, instead use the supported actions, and upgrade the library if necessary
@@ -914,6 +961,15 @@ public class BucketInfo implements Serializable {
 
       public StorageClass getStorageClass() {
         return storageClass;
+      }
+    }
+
+    public static class AbortIncompleteMPUAction extends LifecycleAction {
+      public static final String TYPE = "AbortIncompleteMultipartUpload";
+      private static final long serialVersionUID = -1072182310389348060L;
+
+      private AbortIncompleteMPUAction() {
+        super(TYPE);
       }
     }
   }

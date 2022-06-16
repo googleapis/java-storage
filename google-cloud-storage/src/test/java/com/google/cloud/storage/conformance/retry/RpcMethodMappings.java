@@ -18,6 +18,7 @@ package com.google.cloud.storage.conformance.retry;
 
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.serviceAccount;
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -66,6 +67,7 @@ import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.Not
 import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.ObjectAcl;
 import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.Objects;
 import com.google.cloud.storage.conformance.retry.RpcMethodMappings.Mappings.ServiceAccount;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
@@ -108,6 +110,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Guava")
 final class RpcMethodMappings {
   private static final Logger LOGGER = Logger.getLogger(RpcMethodMappings.class.getName());
+
+  private static final Predicate<TestRetryConformance> groupIsDownload =
+      methodGroupIs("storage.objects.download");
+  private static final Predicate<TestRetryConformance> groupIsResumableUpload =
+      methodGroupIs("storage.resumable.upload");
 
   static final int _2MiB = 2 * 1024 * 1024;
   final Multimap<RpcMethod, RpcMethodMapping> funcMap;
@@ -1080,7 +1087,8 @@ final class RpcMethodMappings {
       private static void get(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(39, objects.get)
-                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withApplicable(
+                    and(not(TestRetryConformance::isPreconditionsProvided), not(groupIsDownload)))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
                     (ctx, c) ->
@@ -1089,13 +1097,15 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(239, objects.get)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(
+                    and(TestRetryConformance::isPreconditionsProvided, not(groupIsDownload)))
                 .withTest(
                     (ctx, c) ->
                         ctx.peek(state -> ctx.getStorage().get(state.getBlob().getBlobId())))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(40, objects.get)
+                .withApplicable(not(groupIsDownload))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -1109,6 +1119,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(41, objects.get)
+                .withApplicable(not(groupIsDownload))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -1197,7 +1208,8 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(60, objects.get)
-                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withApplicable(
+                    and(not(TestRetryConformance::isPreconditionsProvided), not(groupIsDownload)))
                 .withTest((ctx, c) -> ctx.peek(state -> assertTrue(state.getBlob().exists())))
                 .build());
         a.add(
@@ -1298,10 +1310,12 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(75, objects.get)
+                .withApplicable(not(groupIsDownload))
                 .withTest((ctx, c) -> ctx.peek(state -> state.getBlob().reload()))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(76, objects.get)
+                .withApplicable(not(groupIsDownload))
                 .withTest(
                     (ctx, c) ->
                         ctx.peek(
@@ -1312,7 +1326,8 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(107, objects.get)
-                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
+                .withApplicable(
+                    and(not(TestRetryConformance::isPreconditionsProvided), not(groupIsDownload)))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(state -> state.with(state.getBucket().get(c.getObjectName()))))
@@ -1356,7 +1371,8 @@ final class RpcMethodMappings {
       private static void insert(ArrayList<RpcMethodMapping> a) {
         a.add(
             RpcMethodMapping.newBuilder(46, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(
+                    and(TestRetryConformance::isPreconditionsProvided, not(groupIsResumableUpload)))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
                     (ctx, c) ->
@@ -1371,7 +1387,8 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(47, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(
+                    and(TestRetryConformance::isPreconditionsProvided, not(groupIsResumableUpload)))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithGenerationZero))
                 .withTest(
                     (ctx, c) ->
@@ -1966,5 +1983,9 @@ final class RpcMethodMappings {
 
       private static void put(ArrayList<RpcMethodMapping> a) {}
     }
+  }
+
+  private static Predicate<TestRetryConformance> methodGroupIs(String s) {
+    return (c) -> s.equals(c.getMethod().getGroup());
   }
 }

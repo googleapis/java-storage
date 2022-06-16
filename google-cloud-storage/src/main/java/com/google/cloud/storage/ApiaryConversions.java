@@ -53,6 +53,7 @@ import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.DeleteLifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
@@ -486,6 +487,8 @@ final class ApiaryConversions {
         from.getMatchesStorageClass(),
         toImmutableListOf(Object::toString),
         to::setMatchesStorageClass);
+    ifNonNull(from.getMatchesPrefix(), to::setMatchesPrefix);
+    ifNonNull(from.getMatchesSuffix(), to::setMatchesSuffix);
     return to;
   }
 
@@ -511,6 +514,8 @@ final class ApiaryConversions {
         condition.getMatchesStorageClass(),
         toImmutableListOf(StorageClass::valueOf),
         conditionBuilder::setMatchesStorageClass);
+    ifNonNull(condition.getMatchesPrefix(), conditionBuilder::setMatchesPrefix);
+    ifNonNull(condition.getMatchesSuffix(), conditionBuilder::setMatchesSuffix);
 
     return conditionBuilder.build();
   }
@@ -536,6 +541,9 @@ final class ApiaryConversions {
         lifecycleAction =
             LifecycleAction.newSetStorageClassAction(
                 StorageClass.valueOf(action.getStorageClass()));
+        break;
+      case AbortIncompleteMPUAction.TYPE:
+        lifecycleAction = LifecycleAction.newAbortIncompleteMPUploadAction();
         break;
       default:
         BucketInfo.log.warning(

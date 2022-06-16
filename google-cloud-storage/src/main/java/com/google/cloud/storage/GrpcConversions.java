@@ -553,6 +553,8 @@ final class GrpcConversions {
         from.getMatchesStorageClass(),
         toImmutableListOf(StorageClass::toString),
         to::addAllMatchesStorageClass);
+    ifNonNull(from.getMatchesPrefix(), to::addAllMatchesPrefix);
+    ifNonNull(from.getMatchesSuffix(), to::addAllMatchesSuffix);
     return to.build();
   }
 
@@ -629,6 +631,8 @@ final class GrpcConversions {
         condition.getMatchesStorageClassList(),
         toImmutableListOf(StorageClass::valueOf),
         conditionBuilder::setMatchesStorageClass);
+    conditionBuilder.setMatchesPrefix(condition.getMatchesPrefixList());
+    conditionBuilder.setMatchesSuffix(condition.getMatchesSuffixList());
     return new BucketInfo.LifecycleRule(lifecycleAction, conditionBuilder.build());
   }
 
