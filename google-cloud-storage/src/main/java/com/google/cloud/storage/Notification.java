@@ -115,17 +115,14 @@ public class Notification extends NotificationInfo {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof Notification)) {
       return false;
     }
     if (!super.equals(o)) {
       return false;
     }
-    Notification notification = (Notification) o;
-    return Objects.equals(
-            Conversions.apiary().notificationInfo().encode(this),
-            Conversions.apiary().notificationInfo().encode(notification))
-        && Objects.equals(options, notification.options);
+    Notification that = (Notification) o;
+    return Objects.equals(options, that.options) && Objects.equals(storage, that.storage);
   }
 
   @Override

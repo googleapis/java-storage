@@ -77,15 +77,19 @@ public final class Cors implements Serializable {
 
     @Override
     public int hashCode() {
-      return value.hashCode();
+      return Objects.hash(value);
     }
 
     @Override
     public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
       if (!(obj instanceof Origin)) {
         return false;
       }
-      return value.equals(((Origin) obj).value);
+      Origin origin = (Origin) obj;
+      return Objects.equals(value, origin.value);
     }
 
     @Override

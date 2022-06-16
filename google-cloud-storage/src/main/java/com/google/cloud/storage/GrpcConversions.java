@@ -212,14 +212,6 @@ final class GrpcConversions {
         from.getLifecycle(),
         lift(Bucket.Lifecycle::getRuleList).andThen(toImmutableListOf(lifecycleRule()::decode)),
         to::setLifecycleRules);
-    // preserve mapping to deprecated property
-    if (from.hasLifecycle()) {
-      to.setDeleteRules(
-          from.getLifecycle().getRuleList().stream()
-              .filter(this::isValidDeleteRule)
-              .map(deleteRule()::decode)
-              .collect(ImmutableList.toImmutableList()));
-    }
     ifNonNull(from.getCorsList(), toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(from.getLogging(), loggingCodec::decode, to::setLogging);
     ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
@@ -295,13 +287,6 @@ final class GrpcConversions {
       rules.addAll(
           from.getLifecycleRules().stream()
               .map(lifecycleRule()::encode)
-              .collect(ImmutableSet.toImmutableSet()));
-    }
-    // preserve mapping to deprecated property
-    if (from.getDeleteRules() != null) {
-      rules.addAll(
-          from.getDeleteRules().stream()
-              .map(deleteRule()::encode)
               .collect(ImmutableSet.toImmutableSet()));
     }
     return lifecycleBuilder.addAllRule(rules.build()).build();
@@ -514,8 +499,8 @@ final class GrpcConversions {
 
   private Bucket.Lifecycle.Rule lifecycleRuleEncode(BucketInfo.LifecycleRule from) {
     Bucket.Lifecycle.Rule.Builder to = Bucket.Lifecycle.Rule.newBuilder();
-    to.setAction(ruleActionEncode(from.getLifecycleAction()));
-    to.setCondition(ruleConditionEncode(from.getLifecycleCondition()));
+    to.setAction(ruleActionEncode(from.getAction()));
+    to.setCondition(ruleConditionEncode(from.getCondition()));
     return to.build();
   }
 
@@ -597,7 +582,7 @@ final class GrpcConversions {
       conditionBuilder.setAge(condition.getAgeDays());
     }
     if (condition.hasCreatedBefore()) {
-      conditionBuilder.setCreateBeforeOffsetDateTime(
+      conditionBuilder.setCreatedBeforeOffsetDateTime(
           odtDateCodec.nullable().decode(condition.getCreatedBefore()));
     }
     if (condition.hasIsLive()) {

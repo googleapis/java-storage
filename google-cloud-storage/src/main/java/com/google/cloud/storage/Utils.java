@@ -70,6 +70,8 @@ final class Utils {
             return Instant.ofEpochMilli(milli).atOffset(offset);
           });
 
+  static final Codec<OffsetDateTime, DateTime> nullableDateTimeCodec = dateTimeCodec.nullable();
+
   private Utils() {}
 
   /**
@@ -105,7 +107,10 @@ final class Utils {
   @InternalApi
   static <T1, T2> void ifNonNull(@Nullable T1 t, Function<T1, T2> map, Consumer<T2> c) {
     if (t != null) {
-      c.accept(map.apply(t));
+      T2 apply = map.apply(t);
+      if (apply != null) {
+        c.accept(apply);
+      }
     }
   }
 

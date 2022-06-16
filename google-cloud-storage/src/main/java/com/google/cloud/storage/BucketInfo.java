@@ -21,6 +21,7 @@ import static com.google.cloud.storage.BackwardCompatibilityUtils.millisUtcCodec
 import static com.google.cloud.storage.BackwardCompatibilityUtils.nullableDurationMillisCodec;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
@@ -32,16 +33,22 @@ import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Streams;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Google Storage bucket metadata;
@@ -50,6 +57,17 @@ import java.util.logging.Logger;
  *     Terminology</a>
  */
 public class BucketInfo implements Serializable {
+
+  // this class reference (LifecycleRule.DeleteLifecycleAction) must be long form.
+  // if it is not long form, and instead an import it creates a cycle of serializable classes
+  // which breaks the compiler.
+  //
+  // The error message looks like the following:
+  //     java: cannot find symbol
+  //       symbol:   class Serializable
+  //       location: class com.google.cloud.storage.BucketInfo
+  private static final Predicate<LifecycleRule> IS_DELETE_LIFECYCLE_RULE =
+      r -> r.getAction().getActionType().equals(LifecycleRule.DeleteLifecycleAction.TYPE);
 
   private static final long serialVersionUID = -4712013629621638459L;
   private final String generatedId;
@@ -60,7 +78,6 @@ public class BucketInfo implements Serializable {
   private final Boolean versioningEnabled;
   private final String indexPage;
   private final String notFoundPage;
-  private final List<DeleteRule> deleteRules;
   /**
    * The getter for this property never returns null, however null awareness is critical for
    * encoding to properly determine how to process rules conversion.
@@ -159,14 +176,18 @@ public class BucketInfo implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof IamConfiguration)) {
         return false;
       }
-      IamConfiguration other = (IamConfiguration) o;
+      IamConfiguration that = (IamConfiguration) o;
       return Objects.equals(
-          Conversions.apiary().iamConfiguration().encode(this),
-          Conversions.apiary().iamConfiguration().encode(other));
+              isUniformBucketLevelAccessEnabled, that.isUniformBucketLevelAccessEnabled)
+          && Objects.equals(
+              uniformBucketLevelAccessLockedTime, that.uniformBucketLevelAccessLockedTime)
+          && publicAccessPrevention == that.publicAccessPrevention;
     }
 
     @Override
@@ -316,14 +337,15 @@ public class BucketInfo implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Logging)) {
         return false;
       }
-      Logging other = (Logging) o;
-      return Objects.equals(
-          Conversions.apiary().logging().encode(this),
-          Conversions.apiary().logging().encode(other));
+      Logging logging = (Logging) o;
+      return Objects.equals(logBucket, logging.logBucket)
+          && Objects.equals(logObjectPrefix, logging.logObjectPrefix);
     }
 
     @Override
@@ -439,25 +461,16 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
+    public boolean equals(Object o) {
+      if (this == o) {
         return true;
       }
-      if (obj == null || getClass() != obj.getClass()) {
+      if (!(o instanceof LifecycleRule)) {
         return false;
       }
-      final LifecycleRule other = (LifecycleRule) obj;
-      return Objects.equals(
-          Conversions.apiary().lifecycleRule().encode(this),
-          Conversions.apiary().lifecycleRule().encode(other));
-    }
-
-    LifecycleAction getLifecycleAction() {
-      return lifecycleAction;
-    }
-
-    LifecycleCondition getLifecycleCondition() {
-      return lifecycleCondition;
+      LifecycleRule that = (LifecycleRule) o;
+      return Objects.equals(lifecycleAction, that.lifecycleAction)
+          && Objects.equals(lifecycleCondition, that.lifecycleCondition);
     }
 
     /**
@@ -493,7 +506,7 @@ public class BucketInfo implements Serializable {
       public Builder toBuilder() {
         return newBuilder()
             .setAge(this.age)
-            .setCreateBeforeOffsetDateTime(this.createdBefore)
+            .setCreatedBeforeOffsetDateTime(this.createdBefore)
             .setNumberOfNewerVersions(this.numberOfNewerVersions)
             .setIsLive(this.isLive)
             .setMatchesStorageClass(this.matchesStorageClass)
@@ -598,6 +611,40 @@ public class BucketInfo implements Serializable {
         return daysSinceCustomTime;
       }
 
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof LifecycleCondition)) {
+          return false;
+        }
+        LifecycleCondition that = (LifecycleCondition) o;
+        return Objects.equals(age, that.age)
+            && Objects.equals(createdBefore, that.createdBefore)
+            && Objects.equals(numberOfNewerVersions, that.numberOfNewerVersions)
+            && Objects.equals(isLive, that.isLive)
+            && Objects.equals(matchesStorageClass, that.matchesStorageClass)
+            && Objects.equals(daysSinceNoncurrentTime, that.daysSinceNoncurrentTime)
+            && Objects.equals(noncurrentTimeBefore, that.noncurrentTimeBefore)
+            && Objects.equals(customTimeBefore, that.customTimeBefore)
+            && Objects.equals(daysSinceCustomTime, that.daysSinceCustomTime);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(
+            age,
+            createdBefore,
+            numberOfNewerVersions,
+            isLive,
+            matchesStorageClass,
+            daysSinceNoncurrentTime,
+            noncurrentTimeBefore,
+            customTimeBefore,
+            daysSinceCustomTime);
+      }
+
       /** Builder for {@code LifecycleCondition}. */
       public static class Builder {
         private Integer age;
@@ -630,11 +677,11 @@ public class BucketInfo implements Serializable {
          * condition is satisfied when an object is created before midnight of the specified date in
          * UTC.
          *
-         * @deprecated Use {@link #setCreateBeforeOffsetDateTime(OffsetDateTime)}
+         * @deprecated Use {@link #setCreatedBeforeOffsetDateTime(OffsetDateTime)}
          */
         @Deprecated
         public Builder setCreatedBefore(DateTime createdBefore) {
-          return setCreateBeforeOffsetDateTime(
+          return setCreatedBeforeOffsetDateTime(
               Utils.dateTimeCodec.nullable().decode(createdBefore));
         }
 
@@ -644,7 +691,7 @@ public class BucketInfo implements Serializable {
          * condition is satisfied when an object is created before midnight of the specified date in
          * UTC.
          */
-        public Builder setCreateBeforeOffsetDateTime(OffsetDateTime createdBefore) {
+        public Builder setCreatedBeforeOffsetDateTime(OffsetDateTime createdBefore) {
           this.createdBefore = createdBefore;
           return this;
         }
@@ -777,6 +824,23 @@ public class BucketInfo implements Serializable {
         return MoreObjects.toStringHelper(this).add("actionType", getActionType()).toString();
       }
 
+      @Override
+      public boolean equals(Object o) {
+        if (this == o) {
+          return true;
+        }
+        if (!(o instanceof LifecycleAction)) {
+          return false;
+        }
+        LifecycleAction that = (LifecycleAction) o;
+        return Objects.equals(actionType, that.actionType);
+      }
+
+      @Override
+      public int hashCode() {
+        return Objects.hash(actionType);
+      }
+
       /**
        * Creates a new {@code DeleteLifecycleAction}. Blobs that meet the Condition associated with
        * this action will be deleted.
@@ -878,17 +942,15 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
+    public boolean equals(Object o) {
+      if (this == o) {
         return true;
       }
-      if (obj == null || getClass() != obj.getClass()) {
+      if (!(o instanceof DeleteRule)) {
         return false;
       }
-      final DeleteRule other = (DeleteRule) obj;
-      return Objects.equals(
-          Conversions.apiary().deleteRule().encode(this),
-          Conversions.apiary().deleteRule().encode(other));
+      DeleteRule that = (DeleteRule) o;
+      return type == that.type;
     }
   }
 
@@ -1256,8 +1318,7 @@ public class BucketInfo implements Serializable {
     private Boolean versioningEnabled;
     private String indexPage;
     private String notFoundPage;
-    private List<DeleteRule> deleteRules;
-    private List<LifecycleRule> lifecycleRules;
+    @Nullable private List<LifecycleRule> lifecycleRules;
     private Rpo rpo;
     private StorageClass storageClass;
     private String location;
@@ -1300,7 +1361,6 @@ public class BucketInfo implements Serializable {
       versioningEnabled = bucketInfo.versioningEnabled;
       indexPage = bucketInfo.indexPage;
       notFoundPage = bucketInfo.notFoundPage;
-      deleteRules = bucketInfo.deleteRules;
       lifecycleRules = bucketInfo.lifecycleRules;
       labels = bucketInfo.labels;
       requesterPays = bucketInfo.requesterPays;
@@ -1366,20 +1426,58 @@ public class BucketInfo implements Serializable {
     @Override
     @Deprecated
     public Builder setDeleteRules(Iterable<? extends DeleteRule> rules) {
-      this.deleteRules = rules != null ? ImmutableList.copyOf(rules) : null;
-      return this;
+      // if the provided rules are null or empty clear all current delete rules
+      if (rules == null) {
+        return clearDeleteLifecycleRules();
+      } else {
+        ArrayList<? extends DeleteRule> deleteRules = newArrayList(rules);
+        if (deleteRules.isEmpty()) {
+          if (lifecycleRules != null) {
+            return clearDeleteLifecycleRules();
+          } else {
+            lifecycleRules = ImmutableList.of();
+            return this;
+          }
+        } else {
+          // if the provided rules are non-empty, replace all existing delete rules
+
+          Stream<LifecycleRule> newDeleteRules =
+              deleteRules.stream().map(BackwardCompatibilityUtils.deleteRuleCodec::encode);
+
+          // if our current lifecycleRules are null, set to the newDeleteRules
+          if (lifecycleRules == null) {
+            return setLifecycleRules(newDeleteRules.collect(ImmutableList.toImmutableList()));
+          } else {
+            // if lifecycleRules is non-null, filter out existing delete rules, then add our new
+            // ones
+            ImmutableList<LifecycleRule> newLifecycleRules =
+                Streams.concat(
+                        lifecycleRules.stream().filter(IS_DELETE_LIFECYCLE_RULE.negate()),
+                        newDeleteRules)
+                    .collect(ImmutableList.toImmutableList());
+            return setLifecycleRules(newLifecycleRules);
+          }
+        }
+      }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Builder setLifecycleRules(Iterable<? extends LifecycleRule> rules) {
-      this.lifecycleRules =
-          rules != null ? ImmutableList.copyOf(rules) : ImmutableList.<LifecycleRule>of();
+      if (rules != null) {
+        if (rules instanceof ImmutableList) {
+          this.lifecycleRules = (ImmutableList<LifecycleRule>) rules;
+        } else {
+          this.lifecycleRules = ImmutableList.copyOf(rules);
+        }
+      } else {
+        this.lifecycleRules = ImmutableList.of();
+      }
       return this;
     }
 
     @Override
     public Builder deleteLifecycleRules() {
-      setDeleteRules(null);
       setLifecycleRules(null);
       return this;
     }
@@ -1547,6 +1645,18 @@ public class BucketInfo implements Serializable {
       checkNotNull(name);
       return new BucketInfo(this);
     }
+
+    private Builder clearDeleteLifecycleRules() {
+      if (lifecycleRules != null && !lifecycleRules.isEmpty()) {
+        ImmutableList<LifecycleRule> nonDeleteRules =
+            lifecycleRules.stream()
+                .filter(IS_DELETE_LIFECYCLE_RULE.negate())
+                .collect(ImmutableList.toImmutableList());
+        return setLifecycleRules(nonDeleteRules);
+      } else {
+        return this;
+      }
+    }
   }
 
   BucketInfo(BuilderImpl builder) {
@@ -1567,7 +1677,6 @@ public class BucketInfo implements Serializable {
     versioningEnabled = builder.versioningEnabled;
     indexPage = builder.indexPage;
     notFoundPage = builder.notFoundPage;
-    deleteRules = builder.deleteRules;
     lifecycleRules = builder.lifecycleRules;
     labels = builder.labels;
     requesterPays = builder.requesterPays;
@@ -1666,9 +1775,13 @@ public class BucketInfo implements Serializable {
    */
   @Deprecated
   public List<? extends DeleteRule> getDeleteRules() {
-    return deleteRules;
+    return getLifecycleRules().stream()
+        .filter(IS_DELETE_LIFECYCLE_RULE)
+        .map(BackwardCompatibilityUtils.deleteRuleCodec::decode)
+        .collect(ImmutableList.toImmutableList());
   }
 
+  @NonNull
   public List<? extends LifecycleRule> getLifecycleRules() {
     return lifecycleRules != null ? lifecycleRules : ImmutableList.<LifecycleRule>of();
   }
@@ -1900,22 +2013,74 @@ public class BucketInfo implements Serializable {
 
   @Override
   public int hashCode() {
-    return Objects.hash(name);
+    return Objects.hash(
+        generatedId,
+        name,
+        owner,
+        selfLink,
+        requesterPays,
+        versioningEnabled,
+        indexPage,
+        notFoundPage,
+        lifecycleRules,
+        etag,
+        createTime,
+        updateTime,
+        metageneration,
+        cors,
+        acl,
+        defaultAcl,
+        location,
+        rpo,
+        storageClass,
+        labels,
+        defaultKmsKeyName,
+        defaultEventBasedHold,
+        retentionEffectiveTime,
+        retentionPolicyIsLocked,
+        retentionPeriod,
+        iamConfiguration,
+        locationType,
+        logging);
   }
 
-  // TODO: This equals and hashCode are broken. They don't validate the same properties!!!
   @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (!(o.getClass().equals(BucketInfo.class))) {
+    if (!(o instanceof BucketInfo)) {
       return false;
     }
     BucketInfo that = (BucketInfo) o;
-    return Objects.equals(
-        Conversions.apiary().bucketInfo().encode(this),
-        Conversions.apiary().bucketInfo().encode(that));
+    return Objects.equals(generatedId, that.generatedId)
+        && Objects.equals(name, that.name)
+        && Objects.equals(owner, that.owner)
+        && Objects.equals(selfLink, that.selfLink)
+        && Objects.equals(requesterPays, that.requesterPays)
+        && Objects.equals(versioningEnabled, that.versioningEnabled)
+        && Objects.equals(indexPage, that.indexPage)
+        && Objects.equals(notFoundPage, that.notFoundPage)
+        && Objects.equals(lifecycleRules, that.lifecycleRules)
+        && Objects.equals(etag, that.etag)
+        && Objects.equals(createTime, that.createTime)
+        && Objects.equals(updateTime, that.updateTime)
+        && Objects.equals(metageneration, that.metageneration)
+        && Objects.equals(cors, that.cors)
+        && Objects.equals(acl, that.acl)
+        && Objects.equals(defaultAcl, that.defaultAcl)
+        && Objects.equals(location, that.location)
+        && Objects.equals(rpo, that.rpo)
+        && Objects.equals(storageClass, that.storageClass)
+        && Objects.equals(labels, that.labels)
+        && Objects.equals(defaultKmsKeyName, that.defaultKmsKeyName)
+        && Objects.equals(defaultEventBasedHold, that.defaultEventBasedHold)
+        && Objects.equals(retentionEffectiveTime, that.retentionEffectiveTime)
+        && Objects.equals(retentionPolicyIsLocked, that.retentionPolicyIsLocked)
+        && Objects.equals(retentionPeriod, that.retentionPeriod)
+        && Objects.equals(iamConfiguration, that.iamConfiguration)
+        && Objects.equals(locationType, that.locationType)
+        && Objects.equals(logging, that.logging);
   }
 
   @Override

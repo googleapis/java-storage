@@ -965,10 +965,7 @@ public class Blob extends BlobInfo {
       return false;
     }
     Blob other = (Blob) obj;
-    return Objects.equals(
-            Conversions.apiary().blobInfo().encode(this),
-            Conversions.apiary().blobInfo().encode(other))
-        && Objects.equals(options, other.options);
+    return super.equals(other) && Objects.equals(options, other.options);
   }
 
   @Override
