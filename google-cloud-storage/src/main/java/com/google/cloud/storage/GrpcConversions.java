@@ -34,6 +34,7 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
+import com.google.storage.v2.BucketName;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
@@ -177,7 +178,8 @@ final class GrpcConversions {
   }
 
   private BucketInfo bucketInfoDecode(Bucket from) {
-    BucketInfo.Builder to = BucketInfo.newBuilder(from.getName());
+    BucketInfo.Builder to = BucketInfo.newBuilder(BucketName.parse(from.getName()).getBucket());
+    to.setProject(from.getProject());
     to.setGeneratedId(from.getBucketId());
     if (from.hasRetentionPolicy()) {
       Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
@@ -225,7 +227,8 @@ final class GrpcConversions {
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket.Builder to = Bucket.newBuilder();
-    to.setName(from.getName());
+    to.setProject(from.getProject());
+    to.setName(BucketName.format(from.getProject(), from.getName()));
     to.setBucketId(from.getGeneratedId());
     if (from.getRetentionPeriodDuration() != null) {
       Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
@@ -294,18 +297,35 @@ final class GrpcConversions {
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
     Bucket.Logging.Builder to = Bucket.Logging.newBuilder();
-    if (from.getLogBucket() != null || from.getLogObjectPrefix() != null) {
-      to.setLogBucket(from.getLogBucket());
+    if (from.getLogObjectPrefix() != null) {
       to.setLogObjectPrefix(from.getLogObjectPrefix());
+    }
+    if (from.getLogBucket() != null) {
+      // TODO: Remove unformatted bucket name support when logging bucket only supports formatted
+      // "projects/project/buckets/bucket"
+      if (from.getLogBucketProject().isEmpty()) {
+        to.setLogBucket(from.getLogBucket());
+      } else {
+        to.setLogBucket(BucketName.format(from.getLogBucketProject(), from.getLogBucket()));
+      }
     }
     return to.build();
   }
 
   private BucketInfo.Logging loggingDecode(Bucket.Logging from) {
-    return BucketInfo.Logging.newBuilder()
-        .setLogBucket(from.getLogBucket())
-        .setLogObjectPrefix(from.getLogObjectPrefix())
-        .build();
+    BucketInfo.Logging.Builder loggingBuilder =
+        BucketInfo.Logging.newBuilder().setLogObjectPrefix(from.getLogObjectPrefix());
+    if (BucketName.isParsableFrom(from.getLogBucket())) {
+      BucketName bucketName = BucketName.parse(from.getLogBucket());
+      loggingBuilder.setLogBucket(bucketName.getBucket());
+      loggingBuilder.setLogBucketProject(bucketName.getProject());
+    } else {
+      // TODO: Remove unformatted bucket name support when logging bucket only supports formatted
+      // "projects/project/buckets/bucket"
+      loggingBuilder.setLogBucket(from.getLogBucket());
+      loggingBuilder.setLogBucketProject("");
+    }
+    return loggingBuilder.build();
   }
 
   private Bucket.Cors corsEncode(Cors from) {

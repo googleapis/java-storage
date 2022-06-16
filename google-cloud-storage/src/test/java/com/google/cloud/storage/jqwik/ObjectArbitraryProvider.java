@@ -72,7 +72,7 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                 (t1, t2, t3) ->
                     Object.newBuilder()
                         .setName(t1.get1())
-                        .setBucket(t1.get2().get())
+                        .setBucket(t1.get2().toString())
                         .setGeneration(t1.get3())
                         .setMetageneration(t1.get4())
                         .setStorageClass(t1.get5())

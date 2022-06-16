@@ -71,7 +71,7 @@ public class BucketInfo implements Serializable {
 
   private static final long serialVersionUID = -4712013629621638459L;
   private final String generatedId;
-  private final String name;
+  private final BucketWithProject bucketWithProject;
   private final Acl.Entity owner;
   private final String selfLink;
   private final Boolean requesterPays;
@@ -332,8 +332,8 @@ public class BucketInfo implements Serializable {
   public static class Logging implements Serializable {
 
     private static final long serialVersionUID = -708892101216778492L;
-    private String logBucket;
-    private String logObjectPrefix;
+    private final BucketWithProject logBucketWithProject;
+    private final String logObjectPrefix;
 
     @Override
     public boolean equals(Object o) {
@@ -344,13 +344,13 @@ public class BucketInfo implements Serializable {
         return false;
       }
       Logging logging = (Logging) o;
-      return Objects.equals(logBucket, logging.logBucket)
+      return Objects.equals(logBucketWithProject, logging.logBucketWithProject)
           && Objects.equals(logObjectPrefix, logging.logObjectPrefix);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(logBucket, logObjectPrefix);
+      return Objects.hash(logBucketWithProject, logObjectPrefix);
     }
 
     public static Builder newBuilder() {
@@ -359,13 +359,17 @@ public class BucketInfo implements Serializable {
 
     public Builder toBuilder() {
       Builder builder = new Builder();
-      builder.logBucket = logBucket;
+      builder.logBucketWithProject = new BucketWithProject(logBucketWithProject);
       builder.logObjectPrefix = logObjectPrefix;
       return builder;
     }
 
+    String getLogBucketProject() {
+      return logBucketWithProject.getProject();
+    }
+
     public String getLogBucket() {
-      return logBucket;
+      return logBucketWithProject.getBucketName();
     }
 
     public String getLogObjectPrefix() {
@@ -373,17 +377,26 @@ public class BucketInfo implements Serializable {
     }
 
     private Logging(Builder builder) {
-      this.logBucket = builder.logBucket;
+      this.logBucketWithProject = builder.logBucketWithProject;
       this.logObjectPrefix = builder.logObjectPrefix;
     }
 
     public static class Builder {
-      private String logBucket;
+      private BucketWithProject logBucketWithProject;
       private String logObjectPrefix;
+
+      public Builder() {
+        logBucketWithProject = new BucketWithProject();
+      }
+
+      Builder setLogBucketProject(String project) {
+        this.logBucketWithProject.setProject(project);
+        return this;
+      }
 
       /** The destination bucket where the current bucket's logs should be placed. */
       public Builder setLogBucket(String logBucket) {
-        this.logBucket = logBucket;
+        this.logBucketWithProject.setBucketName(logBucket);
         return this;
       }
 
@@ -1123,6 +1136,8 @@ public class BucketInfo implements Serializable {
   public abstract static class Builder {
     Builder() {}
 
+    abstract Builder setProject(String project);
+
     /** Sets the bucket's name. */
     public abstract Builder setName(String name);
 
@@ -1311,7 +1326,7 @@ public class BucketInfo implements Serializable {
   static final class BuilderImpl extends Builder {
 
     private String generatedId;
-    private String name;
+    private BucketWithProject bucketWithProject;
     private Acl.Entity owner;
     private String selfLink;
     private Boolean requesterPays;
@@ -1340,12 +1355,12 @@ public class BucketInfo implements Serializable {
     private Logging logging;
 
     BuilderImpl(String name) {
-      this.name = name;
+      this.bucketWithProject = new BucketWithProject(name);
     }
 
     BuilderImpl(BucketInfo bucketInfo) {
       generatedId = bucketInfo.generatedId;
-      name = bucketInfo.name;
+      bucketWithProject = bucketInfo.bucketWithProject;
       etag = bucketInfo.etag;
       createTime = bucketInfo.createTime;
       updateTime = bucketInfo.updateTime;
@@ -1376,7 +1391,13 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setName(String name) {
-      this.name = checkNotNull(name);
+      this.bucketWithProject.setBucketName(checkNotNull(name));
+      return this;
+    }
+
+    @Override
+    Builder setProject(String project) {
+      this.bucketWithProject.setProject(project);
       return this;
     }
 
@@ -1642,7 +1663,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     public BucketInfo build() {
-      checkNotNull(name);
+      checkNotNull(bucketWithProject.getBucketName());
       return new BucketInfo(this);
     }
 
@@ -1661,7 +1682,7 @@ public class BucketInfo implements Serializable {
 
   BucketInfo(BuilderImpl builder) {
     generatedId = builder.generatedId;
-    name = builder.name;
+    bucketWithProject = builder.bucketWithProject;
     etag = builder.etag;
     createTime = builder.createTime;
     updateTime = builder.updateTime;
@@ -1690,6 +1711,10 @@ public class BucketInfo implements Serializable {
     logging = builder.logging;
   }
 
+  String getProject() {
+    return bucketWithProject.getProject();
+  }
+
   /** Returns the service-generated id for the bucket. */
   public String getGeneratedId() {
     return generatedId;
@@ -1697,7 +1722,7 @@ public class BucketInfo implements Serializable {
 
   /** Returns the bucket's name. */
   public String getName() {
-    return name;
+    return bucketWithProject.getBucketName();
   }
 
   /** Returns the bucket's owner. This is always the project team's owner group. */
@@ -2015,7 +2040,7 @@ public class BucketInfo implements Serializable {
   public int hashCode() {
     return Objects.hash(
         generatedId,
-        name,
+        bucketWithProject,
         owner,
         selfLink,
         requesterPays,
@@ -2054,7 +2079,7 @@ public class BucketInfo implements Serializable {
     }
     BucketInfo that = (BucketInfo) o;
     return Objects.equals(generatedId, that.generatedId)
-        && Objects.equals(name, that.name)
+        && Objects.equals(bucketWithProject, that.bucketWithProject)
         && Objects.equals(owner, that.owner)
         && Objects.equals(selfLink, that.selfLink)
         && Objects.equals(requesterPays, that.requesterPays)
@@ -2085,7 +2110,9 @@ public class BucketInfo implements Serializable {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this).add("name", name).toString();
+    return MoreObjects.toStringHelper(this)
+        .add("name", bucketWithProject.getBucketName())
+        .toString();
   }
 
   /**
@@ -2104,5 +2131,53 @@ public class BucketInfo implements Serializable {
   /** Returns a {@code BucketInfo} builder where the bucket's name is set to the provided name. */
   public static Builder newBuilder(String name) {
     return new BuilderImpl(name);
+  }
+
+  private static class BucketWithProject implements Serializable {
+    private static final long serialVersionUID = 3620131016523045533L;
+    private String project = "_";
+    private String bucketName;
+
+    BucketWithProject() {}
+
+    BucketWithProject(String bucketName) {
+      this.bucketName = bucketName;
+    }
+
+    BucketWithProject(BucketWithProject bucketWithProject) {
+      this.project = bucketWithProject.project;
+      this.bucketName = bucketWithProject.bucketName;
+    }
+
+    void setProject(String project) {
+      this.project = project;
+    }
+
+    void setBucketName(String bucketName) {
+      this.bucketName = bucketName;
+    }
+
+    String getProject() {
+      return this.project;
+    }
+
+    String getBucketName() {
+      return this.bucketName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      BucketWithProject other = (BucketWithProject) o;
+      return other.project.equals(this.project) && other.bucketName.equals(this.bucketName);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(project, bucketName);
+    }
   }
 }
