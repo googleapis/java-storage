@@ -37,7 +37,9 @@ abstract class BaseConvertablePropertyTest<ModelT, ProtoT extends Message> {
   final void edgeCases() {
     TypeUsage baseTypeUsage = findBaseTypeUsage(this.getClass());
     TypeUsage protoTType = baseTypeUsage.getTypeArgument(1);
-    report(protoTType);
+    if (!CIUtils.isRunningOnGitHubActions() || CIUtils.isJobTypeIntegration()) {
+      report(protoTType);
+    }
   }
 
   /**
