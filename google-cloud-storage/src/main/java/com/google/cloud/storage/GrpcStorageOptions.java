@@ -21,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiClock;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
+import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.HeaderProvider;
@@ -294,6 +295,7 @@ public final class GrpcStorageOptions extends StorageOptions {
           int p = uri.getPort() > 0 ? uri.getPort() : uri.getScheme().equals("http") ? 80 : 443;
           String hp = String.format("%s:%d", h, p);
           StorageSettings.Builder builder = StorageSettings.newBuilder().setEndpoint(hp);
+          builder.setCredentialsProvider(FixedCredentialsProvider.create(options.getCredentials()));
           if (!"storage.googleapis.com:443".equals(hp)) { // TODO: make this more formal
             options =
                 options
