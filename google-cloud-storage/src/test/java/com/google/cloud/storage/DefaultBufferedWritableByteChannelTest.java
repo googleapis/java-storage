@@ -139,11 +139,11 @@ public final class DefaultBufferedWritableByteChannelTest {
    * writes:  |----|--------|--|---------|
    *                   10
    * flush 1: |---------|
-   *                     12
+   *            2        12
    * flush 2:   |---------|
-   *                               22
+   *                     12        22
    * flush 3:             |---------|
-   *                                    27
+   *                              19    27
    * flush 4:                     |------|
    * </pre>
    */
@@ -196,11 +196,11 @@ public final class DefaultBufferedWritableByteChannelTest {
    * writes:  |--|--|--|--|
    *             3
    * flush 1: |--|
-   *                6
+   *             3  6
    * flush 2:    |--|
-   *                   10
+   *               5   10
    * flush 3:      |----|
-   *                     12
+   *                   10 12
    * flush 4:           |-|
    * </pre>
    */
@@ -268,28 +268,32 @@ public final class DefaultBufferedWritableByteChannelTest {
    */
   @Example
   void writeOpsOfGeneratesAccurately_1() {
-    byte[] bytes = DataGenerator.base64Characters().genBytes(105);
+    int dataSize = 105;
+    int bufferSize = 15;
+    int writeSize = 7;
+
+    byte[] bytes = DataGenerator.base64Characters().genBytes(dataSize);
     ImmutableList<ByteBuffer> writes =
         ImmutableList.of(
-            ByteBuffer.wrap(bytes, 0, 7),
-            ByteBuffer.wrap(bytes, 7, 7),
-            ByteBuffer.wrap(bytes, 14, 7),
-            ByteBuffer.wrap(bytes, 21, 7),
-            ByteBuffer.wrap(bytes, 28, 7),
-            ByteBuffer.wrap(bytes, 35, 7),
-            ByteBuffer.wrap(bytes, 42, 7),
-            ByteBuffer.wrap(bytes, 49, 7),
-            ByteBuffer.wrap(bytes, 56, 7),
-            ByteBuffer.wrap(bytes, 63, 7),
-            ByteBuffer.wrap(bytes, 70, 7),
-            ByteBuffer.wrap(bytes, 77, 7),
-            ByteBuffer.wrap(bytes, 84, 7),
-            ByteBuffer.wrap(bytes, 91, 7),
-            ByteBuffer.wrap(bytes, 98, 7));
+            ByteBuffer.wrap(bytes, 0, writeSize),
+            ByteBuffer.wrap(bytes, 7, writeSize),
+            ByteBuffer.wrap(bytes, 14, writeSize),
+            ByteBuffer.wrap(bytes, 21, writeSize),
+            ByteBuffer.wrap(bytes, 28, writeSize),
+            ByteBuffer.wrap(bytes, 35, writeSize),
+            ByteBuffer.wrap(bytes, 42, writeSize),
+            ByteBuffer.wrap(bytes, 49, writeSize),
+            ByteBuffer.wrap(bytes, 56, writeSize),
+            ByteBuffer.wrap(bytes, 63, writeSize),
+            ByteBuffer.wrap(bytes, 70, writeSize),
+            ByteBuffer.wrap(bytes, 77, writeSize),
+            ByteBuffer.wrap(bytes, 84, writeSize),
+            ByteBuffer.wrap(bytes, 91, writeSize),
+            ByteBuffer.wrap(bytes, 98, writeSize));
     ImmutableList<Long> flushes = ImmutableList.of(15L, 30L, 45L, 60L, 75L, 90L, 105L);
     String z = "[0x00000007 * 0x0000000f]";
-    WriteOps expected = new WriteOps(bytes, 15, 7, writes, flushes, z);
-    assertThat(WriteOps.of(105, 15, 7)).isEqualTo(expected);
+    WriteOps expected = new WriteOps(bytes, bufferSize, writeSize, writes, flushes, z);
+    assertThat(WriteOps.of(dataSize, bufferSize, writeSize)).isEqualTo(expected);
   }
 
   /**
@@ -306,20 +310,23 @@ public final class DefaultBufferedWritableByteChannelTest {
    */
   @Example
   void writeOpsOfGeneratesAccurately_2() {
-    byte[] bytes = DataGenerator.base64Characters().genBytes(61);
+    int dataSize = 61;
+    int bufferSize = 3;
+    int writeSize = 16;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(dataSize);
     ImmutableList<ByteBuffer> writes =
         ImmutableList.of(
-            ByteBuffer.wrap(bytes, 0, 16),
-            ByteBuffer.wrap(bytes, 16, 16),
-            ByteBuffer.wrap(bytes, 32, 16),
+            ByteBuffer.wrap(bytes, 0, writeSize),
+            ByteBuffer.wrap(bytes, 16, writeSize),
+            ByteBuffer.wrap(bytes, 32, writeSize),
             ByteBuffer.wrap(bytes, 48, 13));
     ImmutableList<Long> flushes =
         ImmutableList.of(
             3L, 6L, 9L, 12L, 15L, 18L, 21L, 24L, 27L, 30L, 33L, 36L, 39L, 42L, 45L, 48L, 51L, 54L,
             57L, 60L, 61L);
     String z = "[0x00000010 * 0x00000003, 0x0000000d]";
-    WriteOps expected = new WriteOps(bytes, 3, 16, writes, flushes, z);
-    WriteOps actual = WriteOps.of(61, 3, 16);
+    WriteOps expected = new WriteOps(bytes, bufferSize, writeSize, writes, flushes, z);
+    WriteOps actual = WriteOps.of(dataSize, bufferSize, writeSize);
     assertThat(actual).isEqualTo(expected);
   }
 
