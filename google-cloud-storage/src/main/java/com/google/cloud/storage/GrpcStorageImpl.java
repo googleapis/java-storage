@@ -354,7 +354,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           Decoder.identity());
       return true;
     } catch (ApiException e) {
-      // TODO: Convert into StorageException? It's strange because we return false on a failure.
+      // TODO: We should throw a StorageException instead of ApiException when making the
+      // deleteBucketCallable().call(req)
       return false;
     }
   }
