@@ -43,6 +43,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CreateBucketRequest;
+import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetObjectRequest;
@@ -333,7 +334,28 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(String bucket, BucketSourceOption... options) {
-    return todo();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    DeleteBucketRequest.Builder bucketRequestBuilder =
+        DeleteBucketRequest.newBuilder()
+            .setName(BucketName.format(this.getOptions().getProjectId(), bucket));
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        bucketRequestBuilder::setIfMetagenerationNotMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        bucketRequestBuilder::setIfMetagenerationNotMatch);
+    DeleteBucketRequest req = bucketRequestBuilder.build();
+    try {
+      Retrying.run(
+          getOptions(),
+          retryAlgorithmManager.getFor(req),
+          () -> grpcStorageStub.deleteBucketCallable().call(req),
+          Decoder.identity());
+      return true;
+    } catch (Exception e) {
+      // TODO: What's the appropriate exception to catch here?
+      return false;
+    }
   }
 
   @Override
