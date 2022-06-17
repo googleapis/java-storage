@@ -78,11 +78,13 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
 
@@ -404,7 +406,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public StorageBatch batch() {
-    return todo();
+    return throwHttpJsonOnly("batch()");
   }
 
   @Override
@@ -472,12 +474,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public WriteChannel writer(URL signedURL) {
-    return todo();
+    return throwHttpJsonOnly(fmtMethodName("writer", URL.class));
   }
 
   @Override
   public URL signUrl(BlobInfo blobInfo, long duration, TimeUnit unit, SignUrlOption... options) {
-    return todo();
+    return throwHttpJsonOnly(
+        fmtMethodName("signUrl", BlobInfo.class, long.class, TimeUnit.class, SignUrlOption.class));
   }
 
   @Override
@@ -488,7 +491,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       PostFieldsV4 fields,
       PostConditionsV4 conditions,
       PostPolicyV4Option... options) {
-    return todo();
+    return throwHttpJsonOnly(
+        fmtMethodName(
+            "generateSignedPostPolicyV4",
+            BlobInfo.class,
+            long.class,
+            TimeUnit.class,
+            PostFieldsV4.class,
+            PostConditionsV4.class,
+            PostPolicyV4Option.class));
   }
 
   @Override
@@ -498,7 +509,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       TimeUnit unit,
       PostFieldsV4 fields,
       PostPolicyV4Option... options) {
-    return todo();
+    return throwHttpJsonOnly(
+        fmtMethodName(
+            "generateSignedPostPolicyV4",
+            BlobInfo.class,
+            long.class,
+            TimeUnit.class,
+            PostFieldsV4.class,
+            PostPolicyV4Option.class));
   }
 
   @Override
@@ -508,13 +526,26 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       TimeUnit unit,
       PostConditionsV4 conditions,
       PostPolicyV4Option... options) {
-    return todo();
+    return throwHttpJsonOnly(
+        fmtMethodName(
+            "generateSignedPostPolicyV4",
+            BlobInfo.class,
+            long.class,
+            TimeUnit.class,
+            PostConditionsV4.class,
+            PostPolicyV4Option.class));
   }
 
   @Override
   public PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options) {
-    return todo();
+    return throwHttpJsonOnly(
+        fmtMethodName(
+            "generateSignedPostPolicyV4",
+            BlobInfo.class,
+            long.class,
+            TimeUnit.class,
+            PostPolicyV4Option.class));
   }
 
   @Override
@@ -860,5 +891,20 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         return translator.decode(next);
       }
     }
+  }
+
+  private <T> T throwHttpJsonOnly(String methodName) {
+    String message =
+        String.format(
+            "%s#%s is only supported for HTTP_JSON transport. Please use StorageOptions.http() to construct a compatible instance.",
+            Storage.class.getName(), methodName);
+    throw new UnsupportedOperationException(message);
+  }
+
+  private static String fmtMethodName(String name, Class<?>... args) {
+    return name
+        + "("
+        + Arrays.stream(args).map(Class::getName).collect(Collectors.joining(", "))
+        + ")";
   }
 }

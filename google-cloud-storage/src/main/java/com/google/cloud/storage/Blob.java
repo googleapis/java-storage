@@ -29,6 +29,7 @@ import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.SignUrlOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.io.BaseEncoding;
 import java.io.IOException;
@@ -225,6 +226,7 @@ public class Blob extends BlobInfo {
    * @throws StorageException upon failure
    * @see Storage#downloadTo(BlobId, Path, Storage.BlobSourceOption...)
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public void downloadTo(Path path, BlobSourceOption... options) {
     storage.downloadTo(this.getBlobId(), path, toSourceOptions(this, options));
   }
@@ -237,6 +239,7 @@ public class Blob extends BlobInfo {
    * @throws StorageException upon failure
    * @see Storage#downloadTo(BlobId, OutputStream, Storage.BlobSourceOption...)
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public void downloadTo(OutputStream outputStream, BlobSourceOption... options) {
     storage.downloadTo(this.getBlobId(), outputStream, toSourceOptions(this, options));
   }
@@ -250,6 +253,7 @@ public class Blob extends BlobInfo {
    * @param path destination
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public void downloadTo(Path path) {
     downloadTo(path, new BlobSourceOption[0]);
   }
@@ -536,6 +540,7 @@ public class Blob extends BlobInfo {
    * @return true if this blob exists, false otherwise
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean exists(BlobSourceOption... options) {
     int length = options.length;
     Storage.BlobGetOption[] getOptions = Arrays.copyOf(toGetOptions(this, options), length + 1);
@@ -556,6 +561,7 @@ public class Blob extends BlobInfo {
    * @param options blob read options
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public byte[] getContent(BlobSourceOption... options) {
     return storage.readAllBytes(getBlobId(), toSourceOptions(this, options));
   }
@@ -592,6 +598,7 @@ public class Blob extends BlobInfo {
    * @return a {@code Blob} object with latest information or {@code null} if no longer exists.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob reload(BlobSourceOption... options) {
     // BlobId with generation unset is needed to retrieve the latest version of the Blob
     BlobId idWithoutGeneration = BlobId.of(getBucket(), getName());
@@ -621,6 +628,7 @@ public class Blob extends BlobInfo {
    * @see <a
    *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
+  @TransportCompatibility({Transport.HTTP})
   public Blob update(BlobTargetOption... options) {
     return storage.update(this, options);
   }
@@ -644,6 +652,7 @@ public class Blob extends BlobInfo {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public boolean delete(BlobSourceOption... options) {
     return storage.delete(getBlobId(), toSourceOptions(this, options));
   }
@@ -667,6 +676,7 @@ public class Blob extends BlobInfo {
    *     blob or to complete the copy if more than one RPC request is needed
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public CopyWriter copyTo(BlobId targetBlob, BlobSourceOption... options) {
     CopyRequest copyRequest =
         CopyRequest.newBuilder()
@@ -695,6 +705,7 @@ public class Blob extends BlobInfo {
    *     blob or to complete the copy if more than one RPC request is needed
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public CopyWriter copyTo(String targetBucket, BlobSourceOption... options) {
     return copyTo(targetBucket, getName(), options);
   }
@@ -729,6 +740,7 @@ public class Blob extends BlobInfo {
    *     blob or to complete the copy if more than one RPC request is needed
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public CopyWriter copyTo(String targetBucket, String targetBlob, BlobSourceOption... options) {
     return copyTo(BlobId.of(targetBucket, targetBlob), options);
   }
@@ -765,6 +777,7 @@ public class Blob extends BlobInfo {
    * @param options blob read options
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public ReadChannel reader(BlobSourceOption... options) {
     return storage.reader(getBlobId(), toSourceOptions(this, options));
   }
@@ -789,6 +802,7 @@ public class Blob extends BlobInfo {
    * @param options target blob options
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public WriteChannel writer(BlobWriteOption... options) {
     return storage.writer(this, options);
   }
@@ -854,6 +868,7 @@ public class Blob extends BlobInfo {
    * @throws SigningException if the attempt to sign the URL failed
    * @see <a href="https://cloud.google.com/storage/docs/access-control#Signed-URLs">Signed-URLs</a>
    */
+  @TransportCompatibility(Transport.HTTP)
   public URL signUrl(long duration, TimeUnit unit, SignUrlOption... options) {
     return storage.signUrl(this, duration, unit, options);
   }
@@ -869,6 +884,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl getAcl(Entity entity) {
     return storage.getAcl(getBlobId(), entity);
   }
@@ -890,6 +906,7 @@ public class Blob extends BlobInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public boolean deleteAcl(Entity entity) {
     return storage.deleteAcl(getBlobId(), entity);
   }
@@ -905,6 +922,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl createAcl(Acl acl) {
     return storage.createAcl(getBlobId(), acl);
   }
@@ -920,6 +938,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl updateAcl(Acl acl) {
     return storage.updateAcl(getBlobId(), acl);
   }
@@ -938,6 +957,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public List<Acl> listAcls() {
     return storage.listAcls(getBlobId());
   }

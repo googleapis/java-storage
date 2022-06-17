@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.BetaApi;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceDefaults;
 import com.google.cloud.ServiceOptions;
@@ -23,6 +24,7 @@ import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageDefaults;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageFactory;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 
 public abstract class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
@@ -95,23 +97,29 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   public abstract boolean equals(Object obj);
 
   /** Returns a default {@code StorageOptions} instance. */
+  @TransportCompatibility(Transport.HTTP)
   public static StorageOptions getDefaultInstance() {
     return HttpStorageOptions.newBuilder().build();
   }
 
   /** Returns a unauthenticated {@code StorageOptions} instance. */
+  @TransportCompatibility(Transport.HTTP)
   public static StorageOptions getUnauthenticatedInstance() {
     return HttpStorageOptions.newBuilder().setCredentials(NoCredentials.getInstance()).build();
   }
 
+  @TransportCompatibility(Transport.HTTP)
   public static StorageOptions.Builder newBuilder() {
     return http();
   }
 
+  @TransportCompatibility(Transport.GRPC)
   public static HttpStorageOptions.Builder http() {
     return HttpStorageOptions.newBuilder();
   }
 
+  @BetaApi
+  @TransportCompatibility(Transport.GRPC)
   public static GrpcStorageOptions.Builder grpc() {
     return GrpcStorageOptions.newBuilder();
   }
