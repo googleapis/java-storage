@@ -17,4 +17,15 @@
     <method>* *CommonRequestParams*(*)</method>
   </difference>
 
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/*OrBuilder</className>
+    <method>* *Etag*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/*OrBuilder</className>
+    <method>* *CustomPlacementConfig*(*)</method>
+  </difference>
+
 </differences>
