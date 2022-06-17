@@ -18,6 +18,7 @@ package com.google.cloud.storage.conformance.retry;
 
 import static org.junit.Assert.assertNotNull;
 
+import com.google.cloud.storage.CIUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharStreams;
 import java.io.IOException;
@@ -64,7 +65,7 @@ final class GracefulConformanceEnforcement implements TestRule {
           if (!testNamesWhichCanFail.contains(testName)) {
             throw t;
           } else {
-            if (isRunningInCI()) {
+            if (CIUtils.isRunningInCI()) {
               throw new AssumptionViolatedException(
                   String.format(
                       "Test %s is allowed to fail, downgrading failure to ignored.", testName),
@@ -76,11 +77,6 @@ final class GracefulConformanceEnforcement implements TestRule {
         }
       }
     };
-  }
-
-  private static boolean isRunningInCI() {
-    return "test".equals(System.getenv("JOB_TYPE"))
-        || "integration".equals(System.getenv("JOB_TYPE"));
   }
 
   private static Set<String> loadTestNamesWhichCanFail() {
