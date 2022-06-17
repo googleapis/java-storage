@@ -168,14 +168,25 @@ public final class DefaultBufferedWritableByteChannelTest {
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
         BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(buffer, adapter)) {
 
-      c.write(data1);
+      c.write(data1); // write 5 bytes, which should enqueue in full
+      // before the next write, limit the number of bytes the underlying channel will consume to 2.
       adapter.nextWriteMaxConsumptionLimit = 2L;
+      // write 9 bytes, which should trigger a flush - limited to 2 bytes, leaving 3 bytes in the
+      // buffer and not consuming any of the 9 bytes. Since 3 + 9 is still larger than our buffer
+      // attempt another flush of 10 bytes which will all be consumed. Enqueue the remaining 2
+      // bytes from data2.
       c.write(data2);
 
+      // write 3 bytes, which should enqueue in full, leaving the buffer with 5 bytes enqueued
       c.write(data3);
+      // before the next write, limit the number of bytes the underlying channel will consume to 7.
       adapter.nextWriteMaxConsumptionLimit = 7L;
+      // write 10 bytes, which should trigger a flush - limited to 7 bytes, consuming all of the
+      // buffer, but only consuming 2 bytes written data. The remaining 8 bytes should be
+      // enqueued in full.
       c.write(data4);
 
+      // close the channel, causing a flush of the 8 outstanding bytes in buffer.
       c.close();
       assertThrows(ClosedChannelException.class, () -> c.write(null));
 
@@ -225,17 +236,20 @@ public final class DefaultBufferedWritableByteChannelTest {
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
         BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(buffer, adapter)) {
 
-      c.write(data1);
-      c.flush();
+      c.write(data1); // write 3 bytes, which should enqueue in full
+      c.flush(); // flush all enqueued bytes
 
-      c.write(data2);
+      c.write(data2); // write 3 bytes, which should enqueue in full
+      // before we call flush, limit how many bytes the underlying channel will consume to 2.
+      // This should leave 1 byte in the buffer
       adapter.nextWriteMaxConsumptionLimit = 2L;
-      c.flush();
-      c.write(data3);
+      c.flush(); // attempt to flush all enqueued bytes, however only 2 of the 3 will be consumed
+      c.write(data3); // write 3 bytes, which should enqueue in full
+      // after this write, our buffer should contain 4 bytes of its 5 byte capacity
+      // on the next write, 5 bytes should be flushed. 4 from the buffer, 1 from the written data
+      c.write(data4); // 1 of the 3 bytes will be flushed, leaving 2 bytes in the buffer
 
-      c.write(data4);
-
-      c.close();
+      c.close(); // close the channel, which should flush the 2 outstanding buffered bytes
       assertThrows(ClosedChannelException.class, () -> c.write(null));
 
       assertWithMessage("Unexpected total flushed length")
