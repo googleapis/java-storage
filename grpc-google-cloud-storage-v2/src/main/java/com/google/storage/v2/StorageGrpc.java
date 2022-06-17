@@ -1579,19 +1579,46 @@ public final class StorageGrpc {
      * preconditions. Additionally, the final message must set 'finish_write' to
      * true, or else it is an error.
      * For a resumable write, the client should instead call
-     * `StartResumableWrite()` and provide that method an `WriteObjectSpec.`
+     * `StartResumableWrite()`, populating a `WriteObjectSpec` into that request.
      * They should then attach the returned `upload_id` to the first message of
-     * each following call to `Create`. If there is an error or the connection is
-     * broken during the resumable `Create()`, the client should check the status
-     * of the `Create()` by calling `QueryWriteStatus()` and continue writing from
-     * the returned `persisted_size`. This may be less than the amount of data the
-     * client previously sent.
+     * each following call to `WriteObject`. If the stream is closed before
+     * finishing the upload (either explicitly by the client or due to a network
+     * error or an error response from the server), the client should do as
+     * follows:
+     *   - Check the result Status of the stream, to determine if writing can be
+     *     resumed on this stream or must be restarted from scratch (by calling
+     *     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,
+     *     INTERNAL, and UNAVAILABLE. For each case, the client should use binary
+     *     exponential backoff before retrying.  Additionally, writes can be
+     *     resumed after RESOURCE_EXHAUSTED errors, but only after taking
+     *     appropriate measures, which may include reducing aggregate send rate
+     *     across clients and/or requesting a quota increase for your project.
+     *   - If the call to `WriteObject` returns `ABORTED`, that indicates
+     *     concurrent attempts to update the resumable write, caused either by
+     *     multiple racing clients or by a single client where the previous
+     *     request was timed out on the client side but nonetheless reached the
+     *     server. In this case the client should take steps to prevent further
+     *     concurrent writes (e.g., increase the timeouts, stop using more than
+     *     one process to perform the upload, etc.), and then should follow the
+     *     steps below for resuming the upload.
+     *   - For resumable errors, the client should call `QueryWriteStatus()` and
+     *     then continue writing from the returned `persisted_size`. This may be
+     *     less than the amount of data the client previously sent. Note also that
+     *     it is acceptable to send data starting at an offset earlier than the
+     *     returned `persisted_size`; in this case, the service will skip data at
+     *     offsets that were already persisted (without checking that it matches
+     *     the previously written data), and write only the data starting from the
+     *     persisted offset. This behavior can make client-side handling simpler
+     *     in some cases.
      * The service will not view the object as complete until the client has
      * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
      * requests on a stream after sending a request with `finish_write` set to
      * `true` will cause an error. The client **should** check the response it
      * receives to determine how much data the service was able to commit and
      * whether the service views the object as complete.
+     * Attempting to resume an already finalized object will result in an OK
+     * status, with a WriteObjectResponse containing the finalized object's
+     * metadata.
      * </pre>
      */
     public io.grpc.stub.StreamObserver<com.google.storage.v2.WriteObjectRequest> writeObject(
@@ -2277,19 +2304,46 @@ public final class StorageGrpc {
      * preconditions. Additionally, the final message must set 'finish_write' to
      * true, or else it is an error.
      * For a resumable write, the client should instead call
-     * `StartResumableWrite()` and provide that method an `WriteObjectSpec.`
+     * `StartResumableWrite()`, populating a `WriteObjectSpec` into that request.
      * They should then attach the returned `upload_id` to the first message of
-     * each following call to `Create`. If there is an error or the connection is
-     * broken during the resumable `Create()`, the client should check the status
-     * of the `Create()` by calling `QueryWriteStatus()` and continue writing from
-     * the returned `persisted_size`. This may be less than the amount of data the
-     * client previously sent.
+     * each following call to `WriteObject`. If the stream is closed before
+     * finishing the upload (either explicitly by the client or due to a network
+     * error or an error response from the server), the client should do as
+     * follows:
+     *   - Check the result Status of the stream, to determine if writing can be
+     *     resumed on this stream or must be restarted from scratch (by calling
+     *     `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED,
+     *     INTERNAL, and UNAVAILABLE. For each case, the client should use binary
+     *     exponential backoff before retrying.  Additionally, writes can be
+     *     resumed after RESOURCE_EXHAUSTED errors, but only after taking
+     *     appropriate measures, which may include reducing aggregate send rate
+     *     across clients and/or requesting a quota increase for your project.
+     *   - If the call to `WriteObject` returns `ABORTED`, that indicates
+     *     concurrent attempts to update the resumable write, caused either by
+     *     multiple racing clients or by a single client where the previous
+     *     request was timed out on the client side but nonetheless reached the
+     *     server. In this case the client should take steps to prevent further
+     *     concurrent writes (e.g., increase the timeouts, stop using more than
+     *     one process to perform the upload, etc.), and then should follow the
+     *     steps below for resuming the upload.
+     *   - For resumable errors, the client should call `QueryWriteStatus()` and
+     *     then continue writing from the returned `persisted_size`. This may be
+     *     less than the amount of data the client previously sent. Note also that
+     *     it is acceptable to send data starting at an offset earlier than the
+     *     returned `persisted_size`; in this case, the service will skip data at
+     *     offsets that were already persisted (without checking that it matches
+     *     the previously written data), and write only the data starting from the
+     *     persisted offset. This behavior can make client-side handling simpler
+     *     in some cases.
      * The service will not view the object as complete until the client has
      * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
      * requests on a stream after sending a request with `finish_write` set to
      * `true` will cause an error. The client **should** check the response it
      * receives to determine how much data the service was able to commit and
      * whether the service views the object as complete.
+     * Attempting to resume an already finalized object will result in an OK
+     * status, with a WriteObjectResponse containing the finalized object's
+     * metadata.
      * </pre>
      */
     public io.grpc.stub.StreamObserver<com.google.storage.v2.WriteObjectRequest> writeObject(

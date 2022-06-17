@@ -85,6 +85,35 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
+   * The etag of the Notification.
+   * If included in the metadata of GetNotificationRequest, the operation will
+   * only be performed if the etag matches that of the Notification.
+   * </pre>
+   *
+   * <code>string etag = 7;</code>
+   *
+   * @return The etag.
+   */
+  java.lang.String getEtag();
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the Notification.
+   * If included in the metadata of GetNotificationRequest, the operation will
+   * only be performed if the etag matches that of the Notification.
+   * </pre>
+   *
+   * <code>string etag = 7;</code>
+   *
+   * @return The bytes for etag.
+   */
+  com.google.protobuf.ByteString getEtagBytes();
+
+  /**
+   *
+   *
+   * <pre>
    * Optional. If present, only send notifications about listed event types. If empty,
    * sent notifications for all event types.
    * </pre>

@@ -40,6 +40,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
   private Object() {
     name_ = "";
     bucket_ = "";
+    etag_ = "";
     storageClass_ = "";
     contentEncoding_ = "";
     contentDisposition_ = "";
@@ -336,6 +337,13 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
 
               break;
             }
+          case 218:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              etag_ = s;
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -493,6 +501,61 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
       bucket_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int ETAG_FIELD_NUMBER = 27;
+  private volatile java.lang.Object etag_;
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the object.
+   * If included in the metadata of an update or delete request message, the
+   * operation will only be performed if the etag matches that of the live
+   * object.
+   * </pre>
+   *
+   * <code>string etag = 27;</code>
+   *
+   * @return The etag.
+   */
+  @java.lang.Override
+  public java.lang.String getEtag() {
+    java.lang.Object ref = etag_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      etag_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the object.
+   * If included in the metadata of an update or delete request message, the
+   * operation will only be performed if the etag matches that of the live
+   * object.
+   * </pre>
+   *
+   * <code>string etag = 27;</code>
+   *
+   * @return The bytes for etag.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getEtagBytes() {
+    java.lang.Object ref = etag_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      etag_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -1789,6 +1852,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (customTime_ != null) {
       output.writeMessage(26, getCustomTime());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 27, etag_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -1885,6 +1951,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     if (customTime_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(26, getCustomTime());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(27, etag_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -1902,6 +1971,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
 
     if (!getName().equals(other.getName())) return false;
     if (!getBucket().equals(other.getBucket())) return false;
+    if (!getEtag().equals(other.getEtag())) return false;
     if (getGeneration() != other.getGeneration()) return false;
     if (getMetageneration() != other.getMetageneration()) return false;
     if (!getStorageClass().equals(other.getStorageClass())) return false;
@@ -1971,6 +2041,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     hash = (53 * hash) + getName().hashCode();
     hash = (37 * hash) + BUCKET_FIELD_NUMBER;
     hash = (53 * hash) + getBucket().hashCode();
+    hash = (37 * hash) + ETAG_FIELD_NUMBER;
+    hash = (53 * hash) + getEtag().hashCode();
     hash = (37 * hash) + GENERATION_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getGeneration());
     hash = (37 * hash) + METAGENERATION_FIELD_NUMBER;
@@ -2211,6 +2283,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
 
       bucket_ = "";
 
+      etag_ = "";
+
       generation_ = 0L;
 
       metageneration_ = 0L;
@@ -2327,6 +2401,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       int to_bitField0_ = 0;
       result.name_ = name_;
       result.bucket_ = bucket_;
+      result.etag_ = etag_;
       result.generation_ = generation_;
       result.metageneration_ = metageneration_;
       result.storageClass_ = storageClass_;
@@ -2455,6 +2530,10 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       }
       if (!other.getBucket().isEmpty()) {
         bucket_ = other.bucket_;
+        onChanged();
+      }
+      if (!other.getEtag().isEmpty()) {
+        etag_ = other.etag_;
         onChanged();
       }
       if (other.getGeneration() != 0L) {
@@ -2837,6 +2916,127 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
       checkByteStringIsUtf8(value);
 
       bucket_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object etag_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the object.
+     * If included in the metadata of an update or delete request message, the
+     * operation will only be performed if the etag matches that of the live
+     * object.
+     * </pre>
+     *
+     * <code>string etag = 27;</code>
+     *
+     * @return The etag.
+     */
+    public java.lang.String getEtag() {
+      java.lang.Object ref = etag_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        etag_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the object.
+     * If included in the metadata of an update or delete request message, the
+     * operation will only be performed if the etag matches that of the live
+     * object.
+     * </pre>
+     *
+     * <code>string etag = 27;</code>
+     *
+     * @return The bytes for etag.
+     */
+    public com.google.protobuf.ByteString getEtagBytes() {
+      java.lang.Object ref = etag_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        etag_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the object.
+     * If included in the metadata of an update or delete request message, the
+     * operation will only be performed if the etag matches that of the live
+     * object.
+     * </pre>
+     *
+     * <code>string etag = 27;</code>
+     *
+     * @param value The etag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEtag(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      etag_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the object.
+     * If included in the metadata of an update or delete request message, the
+     * operation will only be performed if the etag matches that of the live
+     * object.
+     * </pre>
+     *
+     * <code>string etag = 27;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearEtag() {
+
+      etag_ = getDefaultInstance().getEtag();
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the object.
+     * If included in the metadata of an update or delete request message, the
+     * operation will only be performed if the etag matches that of the live
+     * object.
+     * </pre>
+     *
+     * <code>string etag = 27;</code>
+     *
+     * @param value The bytes for etag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEtagBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      etag_ = value;
       onChanged();
       return this;
     }

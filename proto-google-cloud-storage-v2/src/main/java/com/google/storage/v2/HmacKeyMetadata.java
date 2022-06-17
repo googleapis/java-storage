@@ -43,6 +43,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
     project_ = "";
     serviceAccountEmail_ = "";
     state_ = "";
+    etag_ = "";
   }
 
   @java.lang.Override
@@ -137,6 +138,13 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
                 updateTime_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+          case 66:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              etag_ = s;
               break;
             }
           default:
@@ -512,6 +520,55 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
     return getUpdateTime();
   }
 
+  public static final int ETAG_FIELD_NUMBER = 8;
+  private volatile java.lang.Object etag_;
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the HMAC key.
+   * </pre>
+   *
+   * <code>string etag = 8;</code>
+   *
+   * @return The etag.
+   */
+  @java.lang.Override
+  public java.lang.String getEtag() {
+    java.lang.Object ref = etag_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      etag_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the HMAC key.
+   * </pre>
+   *
+   * <code>string etag = 8;</code>
+   *
+   * @return The bytes for etag.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getEtagBytes() {
+    java.lang.Object ref = etag_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      etag_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -547,6 +604,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
     if (updateTime_ != null) {
       output.writeMessage(7, getUpdateTime());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, etag_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -577,6 +637,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
     if (updateTime_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(7, getUpdateTime());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, etag_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -605,6 +668,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
     if (hasUpdateTime()) {
       if (!getUpdateTime().equals(other.getUpdateTime())) return false;
     }
+    if (!getEtag().equals(other.getEtag())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -634,6 +698,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
       hash = (37 * hash) + UPDATE_TIME_FIELD_NUMBER;
       hash = (53 * hash) + getUpdateTime().hashCode();
     }
+    hash = (37 * hash) + ETAG_FIELD_NUMBER;
+    hash = (53 * hash) + getEtag().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -800,6 +866,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
         updateTime_ = null;
         updateTimeBuilder_ = null;
       }
+      etag_ = "";
+
       return this;
     }
 
@@ -842,6 +910,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
       } else {
         result.updateTime_ = updateTimeBuilder_.build();
       }
+      result.etag_ = etag_;
       onBuilt();
       return result;
     }
@@ -916,6 +985,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
       }
       if (other.hasUpdateTime()) {
         mergeUpdateTime(other.getUpdateTime());
+      }
+      if (!other.getEtag().isEmpty()) {
+        etag_ = other.etag_;
+        onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1840,6 +1913,112 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
         updateTime_ = null;
       }
       return updateTimeBuilder_;
+    }
+
+    private java.lang.Object etag_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the HMAC key.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @return The etag.
+     */
+    public java.lang.String getEtag() {
+      java.lang.Object ref = etag_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        etag_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the HMAC key.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @return The bytes for etag.
+     */
+    public com.google.protobuf.ByteString getEtagBytes() {
+      java.lang.Object ref = etag_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        etag_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the HMAC key.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @param value The etag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEtag(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      etag_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the HMAC key.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearEtag() {
+
+      etag_ = getDefaultInstance().getEtag();
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the HMAC key.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @param value The bytes for etag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEtagBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      etag_ = value;
+      onChanged();
+      return this;
     }
 
     @java.lang.Override

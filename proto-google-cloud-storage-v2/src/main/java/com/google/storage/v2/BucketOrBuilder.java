@@ -81,6 +81,35 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
+   * The etag of the bucket.
+   * If included in the metadata of an UpdateBucketRequest, the operation will
+   * only be performed if the etag matches that of the bucket.
+   * </pre>
+   *
+   * <code>string etag = 29;</code>
+   *
+   * @return The etag.
+   */
+  java.lang.String getEtag();
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the bucket.
+   * If included in the metadata of an UpdateBucketRequest, the operation will
+   * only be performed if the etag matches that of the bucket.
+   * </pre>
+   *
+   * <code>string etag = 29;</code>
+   *
+   * @return The bytes for etag.
+   */
+  com.google.protobuf.ByteString getEtagBytes();
+
+  /**
+   *
+   *
+   * <pre>
    * Immutable. The project which owns this bucket.
    * </pre>
    *
@@ -970,6 +999,44 @@ public interface BucketOrBuilder
    * @return The satisfiesPzs.
    */
   boolean getSatisfiesPzs();
+
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   *
+   * @return Whether the customPlacementConfig field is set.
+   */
+  boolean hasCustomPlacementConfig();
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   *
+   * @return The customPlacementConfig.
+   */
+  com.google.storage.v2.Bucket.CustomPlacementConfig getCustomPlacementConfig();
+  /**
+   *
+   *
+   * <pre>
+   * Configuration that, if present, specifies the data placement for a Custom
+   * Dual Region.
+   * </pre>
+   *
+   * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
+   */
+  com.google.storage.v2.Bucket.CustomPlacementConfigOrBuilder getCustomPlacementConfigOrBuilder();
 
   /**
    *
