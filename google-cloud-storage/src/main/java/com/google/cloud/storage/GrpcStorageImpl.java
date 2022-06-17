@@ -41,6 +41,8 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.storage.v2.BucketName;
+import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetObjectRequest;
@@ -112,7 +114,28 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    return todo();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    com.google.storage.v2.Bucket bucket =
+        com.google.storage.v2.Bucket.newBuilder()
+            .setName(BucketName.format(this.getOptions().getProjectId(), bucketInfo.getName()))
+            .setProject(this.getOptions().getProjectId())
+            .build();
+    CreateBucketRequest.Builder bucketRequestBuilder =
+        CreateBucketRequest.newBuilder().setBucket(bucket);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
+        bucketRequestBuilder::setPredefinedAcl);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL),
+        bucketRequestBuilder::setPredefinedDefaultObjectAcl);
+    CreateBucketRequest req = bucketRequestBuilder.build();
+    // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
+    // projection=full
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> grpcStorageStub.createBucketCallable().call(req),
+        syntaxDecoders.bucket);
   }
 
   @Override
@@ -197,8 +220,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    UnaryCallable<GetBucketRequest, com.google.storage.v2.Bucket> bucketCallable =
-        grpcStorageStub.getBucketCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GetBucketRequest.Builder bucketRequestBuilder = GetBucketRequest.newBuilder().setName(bucket);
     ifNonNull(
