@@ -34,6 +34,7 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -1878,6 +1879,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a complete bucket
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Bucket create(BucketInfo bucketInfo, BucketTargetOption... options);
 
   /**
@@ -1896,6 +1898,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a {@code Blob} with complete information
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob create(BlobInfo blobInfo, BlobTargetOption... options);
 
   /**
@@ -1919,6 +1922,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/hashes-etags">Hashes and ETags</a>
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob create(BlobInfo blobInfo, byte[] content, BlobTargetOption... options);
 
   /**
@@ -1942,6 +1946,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/hashes-etags">Hashes and ETags</a>
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob create(
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options);
 
@@ -1985,6 +1990,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws StorageException upon failure
    */
   @Deprecated
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options);
 
   /**
@@ -2011,6 +2017,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws StorageException on server side error
    * @see #createFrom(BlobInfo, Path, int, BlobWriteOption...)
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options) throws IOException;
 
   /**
@@ -2044,6 +2051,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws IOException on I/O error
    * @throws StorageException on server side error
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException;
 
@@ -2071,6 +2079,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws StorageException on server side error
    * @see #createFrom(BlobInfo, InputStream, int, BlobWriteOption...)
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob createFrom(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException;
 
@@ -2095,6 +2104,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws IOException on I/O error
    * @throws StorageException on server side error
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob createFrom(
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException;
@@ -2117,6 +2127,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Bucket get(String bucket, BucketGetOption... options);
 
   /**
@@ -2140,6 +2151,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a {@code Bucket} object of the locked bucket
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Bucket lockRetentionPolicy(BucketInfo bucket, BucketTargetOption... options);
 
   /**
@@ -2161,6 +2173,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob get(String bucket, String blob, BlobGetOption... options);
 
   /**
@@ -2197,6 +2210,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob get(BlobId blob, BlobGetOption... options);
 
   /**
@@ -2213,6 +2227,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob get(BlobId blob);
 
   /**
@@ -2233,6 +2248,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Page<Bucket> list(BucketListOption... options);
 
   /**
@@ -2255,6 +2271,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Page<Blob> list(String bucket, BlobListOption... options);
 
   /**
@@ -2274,6 +2291,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the updated bucket
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Bucket update(BucketInfo bucketInfo, BucketTargetOption... options);
 
   /**
@@ -2313,6 +2331,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @see <a
    *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
+  @TransportCompatibility({Transport.HTTP})
   Blob update(BlobInfo blobInfo, BlobTargetOption... options);
 
   /**
@@ -2345,6 +2364,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @see <a
    *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
+  @TransportCompatibility({Transport.HTTP})
   Blob update(BlobInfo blobInfo);
 
   /**
@@ -2371,6 +2391,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if bucket was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean delete(String bucket, BucketSourceOption... options);
 
   /**
@@ -2395,6 +2416,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean delete(String bucket, String blob, BlobSourceOption... options);
 
   /**
@@ -2422,6 +2444,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean delete(BlobId blob, BlobSourceOption... options);
 
   /**
@@ -2444,6 +2467,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean delete(BlobId blob);
 
   /**
@@ -2472,6 +2496,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the composed blob
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Blob compose(ComposeRequest composeRequest);
 
   /**
@@ -2538,6 +2563,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/objects/rewrite">Rewrite</a>
    */
+  @TransportCompatibility({Transport.HTTP})
   CopyWriter copy(CopyRequest copyRequest);
 
   /**
@@ -2557,6 +2583,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the blob's content
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   byte[] readAllBytes(String bucket, String blob, BlobSourceOption... options);
 
   /**
@@ -2586,6 +2613,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the blob's content
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   byte[] readAllBytes(BlobId blob, BlobSourceOption... options);
 
   /**
@@ -2615,6 +2643,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * Blob blob = result.get(); // returns get result or throws StorageException
    * }</pre>
    */
+  @TransportCompatibility(Transport.HTTP)
   StorageBatch batch();
 
   /**
@@ -2639,6 +2668,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   ReadChannel reader(String bucket, String blob, BlobSourceOption... options);
 
   /**
@@ -2671,6 +2701,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   ReadChannel reader(BlobId blob, BlobSourceOption... options);
 
   /**
@@ -2690,6 +2721,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   void downloadTo(BlobId blob, Path path, BlobSourceOption... options);
 
   /**
@@ -2710,6 +2742,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param outputStream
    * @param options
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options);
 
   /**
@@ -2734,6 +2767,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   WriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options);
 
   /**
@@ -2758,6 +2792,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility(Transport.HTTP)
   WriteChannel writer(URL signedURL);
 
   /**
@@ -2870,6 +2905,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws SigningException if the attempt to sign the URL failed
    * @see <a href="https://cloud.google.com/storage/docs/access-control#Signed-URLs">Signed-URLs</a>
    */
+  @TransportCompatibility(Transport.HTTP)
   URL signUrl(BlobInfo blobInfo, long duration, TimeUnit unit, SignUrlOption... options);
 
   /**
@@ -2921,6 +2957,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *     href="https://cloud.google.com/storage/docs/xml-api/post-object#usage_and_examples">POST
    *     Object</a>
    */
+  @TransportCompatibility(Transport.HTTP)
   PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo,
       long duration,
@@ -2934,6 +2971,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * conditions. See full documentation for {@link #generateSignedPostPolicyV4(BlobInfo, long,
    * TimeUnit, PostPolicyV4.PostFieldsV4, PostPolicyV4.PostConditionsV4, PostPolicyV4Option...)}.
    */
+  @TransportCompatibility(Transport.HTTP)
   PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo,
       long duration,
@@ -2946,6 +2984,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * See full documentation for {@link #generateSignedPostPolicyV4(BlobInfo, long, TimeUnit,
    * PostPolicyV4.PostFieldsV4, PostPolicyV4.PostConditionsV4, PostPolicyV4Option...)}.
    */
+  @TransportCompatibility(Transport.HTTP)
   PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo,
       long duration,
@@ -2959,6 +2998,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * #generateSignedPostPolicyV4(BlobInfo, long, TimeUnit, PostPolicyV4.PostFieldsV4,
    * PostPolicyV4.PostConditionsV4, PostPolicyV4Option...)}.
    */
+  @TransportCompatibility(Transport.HTTP)
   PostPolicyV4 generateSignedPostPolicyV4(
       BlobInfo blobInfo, long duration, TimeUnit unit, PostPolicyV4Option... options);
 
@@ -2981,6 +3021,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *     been denied the corresponding item in the list is {@code null}.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Blob> get(BlobId... blobIds);
 
   /**
@@ -3003,6 +3044,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *     been denied the corresponding item in the list is {@code null}.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Blob> get(Iterable<BlobId> blobIds);
 
   /**
@@ -3029,6 +3071,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *     been denied the corresponding item in the list is {@code null}.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Blob> update(BlobInfo... blobInfos);
 
   /**
@@ -3056,6 +3099,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *     been denied the corresponding item in the list is {@code null}.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Blob> update(Iterable<BlobInfo> blobInfos);
 
   /**
@@ -3078,6 +3122,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *     was denied the corresponding item is {@code false}.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Boolean> delete(BlobId... blobIds);
 
   /**
@@ -3101,6 +3146,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *     was denied the corresponding item is {@code false}.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Boolean> delete(Iterable<BlobId> blobIds);
 
   /**
@@ -3129,9 +3175,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl getAcl(String bucket, Entity entity, BucketSourceOption... options);
 
   /** @see #getAcl(String, Entity, BucketSourceOption...) */
+  @TransportCompatibility({Transport.HTTP})
   Acl getAcl(String bucket, Entity entity);
 
   /**
@@ -3164,9 +3212,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean deleteAcl(String bucket, Entity entity, BucketSourceOption... options);
 
   /** @see #deleteAcl(String, Entity, BucketSourceOption...) */
+  @TransportCompatibility({Transport.HTTP})
   boolean deleteAcl(String bucket, Entity entity);
 
   /**
@@ -3192,9 +3242,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl createAcl(String bucket, Acl acl, BucketSourceOption... options);
 
   /** @see #createAcl(String, Acl, BucketSourceOption...) */
+  @TransportCompatibility({Transport.HTTP})
   Acl createAcl(String bucket, Acl acl);
 
   /**
@@ -3220,9 +3272,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl updateAcl(String bucket, Acl acl, BucketSourceOption... options);
 
   /** @see #updateAcl(String, Acl, BucketSourceOption...) */
+  @TransportCompatibility({Transport.HTTP})
   Acl updateAcl(String bucket, Acl acl);
 
   /**
@@ -3253,9 +3307,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options any number of BucketSourceOptions to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Acl> listAcls(String bucket, BucketSourceOption... options);
 
   /** @see #listAcls(String, BucketSourceOption...) */
+  @TransportCompatibility({Transport.HTTP})
   List<Acl> listAcls(String bucket);
 
   /**
@@ -3274,6 +3330,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl getDefaultAcl(String bucket, Entity entity);
 
   /**
@@ -3297,6 +3354,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean deleteDefaultAcl(String bucket, Entity entity);
 
   /**
@@ -3315,6 +3373,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl createDefaultAcl(String bucket, Acl acl);
 
   /**
@@ -3333,6 +3392,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl updateDefaultAcl(String bucket, Acl acl);
 
   /**
@@ -3353,6 +3413,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Acl> listDefaultAcls(String bucket);
 
   /**
@@ -3381,6 +3442,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl getAcl(BlobId blob, Entity entity);
 
   /**
@@ -3404,6 +3466,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean deleteAcl(BlobId blob, Entity entity);
 
   /**
@@ -3431,6 +3494,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl createAcl(BlobId blob, Acl acl);
 
   /**
@@ -3448,6 +3512,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Acl updateAcl(BlobId blob, Acl acl);
 
   /**
@@ -3468,6 +3533,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Acl> listAcls(BlobId blob);
 
   /**
@@ -3487,6 +3553,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   HmacKey createHmacKey(ServiceAccount serviceAccount, CreateHmacKeyOption... options);
 
   /**
@@ -3521,6 +3588,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options the options to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options);
 
   /**
@@ -3537,6 +3605,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   HmacKeyMetadata getHmacKey(String accessId, GetHmacKeyOption... options);
 
   /**
@@ -3556,6 +3625,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   void deleteHmacKey(HmacKeyMetadata hmacKeyMetadata, DeleteHmacKeyOption... options);
 
   /**
@@ -3572,6 +3642,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   HmacKeyMetadata updateHmacKeyState(
       final HmacKeyMetadata hmacKeyMetadata,
       final HmacKey.HmacKeyState state,
@@ -3596,6 +3667,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Policy getIamPolicy(String bucket, BucketSourceOption... options);
 
   /**
@@ -3623,6 +3695,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Policy setIamPolicy(String bucket, Policy policy, BucketSourceOption... options);
 
   /**
@@ -3647,6 +3720,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Boolean> testIamPermissions(
       String bucket, List<String> permissions, BucketSourceOption... options);
 
@@ -3664,6 +3738,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the service account associated with this project
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   ServiceAccount getServiceAccount(String projectId);
 
   /**
@@ -3687,6 +3762,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the created notification
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Notification createNotification(String bucket, NotificationInfo notificationInfo);
 
   /**
@@ -3705,6 +3781,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the {@code Notification} object with the given id or {@code null} if not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   Notification getNotification(String bucket, String notificationId);
 
   /**
@@ -3721,6 +3798,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a list of {@link Notification} objects added to the bucket.
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   List<Notification> listNotifications(String bucket);
 
   /**
@@ -3744,6 +3822,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the notification has been deleted, {@code false} if not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   boolean deleteNotification(String bucket, String notificationId);
 
   @Override

@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
+import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ClientContext;
@@ -30,6 +31,7 @@ import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
@@ -39,6 +41,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
+@BetaApi
+@TransportCompatibility(Transport.GRPC)
 public final class GrpcStorageOptions extends StorageOptions {
 
   private static final long serialVersionUID = 4165732727259088956L;
@@ -48,6 +52,7 @@ public final class GrpcStorageOptions extends StorageOptions {
 
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
 
+  @BetaApi
   public GrpcStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
     this.retryAlgorithmManager =
@@ -65,6 +70,7 @@ public final class GrpcStorageOptions extends StorageOptions {
     return retryAlgorithmManager;
   }
 
+  @BetaApi
   @Override
   public GrpcStorageOptions.Builder toBuilder() {
     return new GrpcStorageOptions.Builder(this);
@@ -80,18 +86,22 @@ public final class GrpcStorageOptions extends StorageOptions {
     return obj instanceof StorageOptions && baseEquals((StorageOptions) obj);
   }
 
+  @BetaApi
   public static GrpcStorageOptions.Builder newBuilder() {
     return new GrpcStorageOptions.Builder().setHost(DEFAULT_HOST);
   }
 
+  @BetaApi
   public static GrpcStorageOptions getDefaultInstance() {
     return newBuilder().build();
   }
 
+  @BetaApi
   public static GrpcStorageOptions.GrpcStorageDefaults defaults() {
     return GrpcStorageOptions.GrpcStorageDefaults.INSTANCE;
   }
 
+  @BetaApi
   public static class Builder extends StorageOptions.Builder {
 
     private StorageRetryStrategy storageRetryStrategy;
@@ -102,6 +112,7 @@ public final class GrpcStorageOptions extends StorageOptions {
       super(options);
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setTransportOptions(TransportOptions transportOptions) {
       if (!(transportOptions instanceof GrpcTransportOptions)) {
@@ -118,6 +129,7 @@ public final class GrpcStorageOptions extends StorageOptions {
      * @return the builder
      * @see StorageRetryStrategy#getDefaultStorageRetryStrategy()
      */
+    @BetaApi
     public GrpcStorageOptions.Builder setStorageRetryStrategy(
         StorageRetryStrategy storageRetryStrategy) {
       this.storageRetryStrategy =
@@ -130,6 +142,7 @@ public final class GrpcStorageOptions extends StorageOptions {
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setServiceFactory(
         ServiceFactory<Storage, StorageOptions> serviceFactory) {
@@ -137,36 +150,42 @@ public final class GrpcStorageOptions extends StorageOptions {
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setClock(ApiClock clock) {
       super.setClock(clock);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setProjectId(String projectId) {
       super.setProjectId(projectId);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setHost(String host) {
       super.setHost(host);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setCredentials(Credentials credentials) {
       super.setCredentials(credentials);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setRetrySettings(RetrySettings retrySettings) {
       super.setRetrySettings(retrySettings);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setServiceRpcFactory(
         ServiceRpcFactory<StorageOptions> serviceRpcFactory) {
@@ -174,30 +193,35 @@ public final class GrpcStorageOptions extends StorageOptions {
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setHeaderProvider(HeaderProvider headerProvider) {
       super.setHeaderProvider(headerProvider);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setClientLibToken(String clientLibToken) {
       super.setClientLibToken(clientLibToken);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions.Builder setQuotaProjectId(String quotaProjectId) {
       super.setQuotaProjectId(quotaProjectId);
       return this;
     }
 
+    @BetaApi
     @Override
     public GrpcStorageOptions build() {
       return new GrpcStorageOptions(this, defaults());
     }
   }
 
+  @BetaApi
   public static final class GrpcStorageDefaults extends StorageDefaults {
     static final GrpcStorageDefaults INSTANCE = new GrpcStorageOptions.GrpcStorageDefaults();
     static final StorageFactory STORAGE_FACTORY = new GrpcStorageFactory();
@@ -205,21 +229,25 @@ public final class GrpcStorageOptions extends StorageOptions {
 
     private GrpcStorageDefaults() {}
 
+    @BetaApi
     @Override
     public StorageFactory getDefaultServiceFactory() {
       return STORAGE_FACTORY;
     }
 
+    @BetaApi
     @Override
     public StorageRpcFactory getDefaultRpcFactory() {
       return STORAGE_RPC_FACTORY;
     }
 
+    @BetaApi
     @Override
     public GrpcTransportOptions getDefaultTransportOptions() {
       return GrpcTransportOptions.newBuilder().build();
     }
 
+    @BetaApi
     public StorageRetryStrategy getStorageRetryStrategy() {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }

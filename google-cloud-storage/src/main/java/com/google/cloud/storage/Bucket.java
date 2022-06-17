@@ -27,6 +27,7 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -766,6 +767,7 @@ public class Bucket extends BucketInfo {
    * @return true if this bucket exists, false otherwise
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean exists(BucketSourceOption... options) {
     int length = options.length;
     Storage.BucketGetOption[] getOptions = Arrays.copyOf(toGetOptions(this, options), length + 1);
@@ -790,6 +792,7 @@ public class Bucket extends BucketInfo {
    * @return a {@code Bucket} object with latest information or {@code null} if not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Bucket reload(BucketSourceOption... options) {
     return storage.get(getName(), toGetOptions(this, options));
   }
@@ -811,6 +814,7 @@ public class Bucket extends BucketInfo {
    * @return a {@code Bucket} object with updated information
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Bucket update(BucketTargetOption... options) {
     return storage.update(this, options);
   }
@@ -834,6 +838,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if bucket was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public boolean delete(BucketSourceOption... options) {
     return storage.delete(getName(), toSourceOptions(this, options));
   }
@@ -855,6 +860,7 @@ public class Bucket extends BucketInfo {
    * @param options options for listing blobs
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Page<Blob> list(BlobListOption... options) {
     return storage.list(getName(), options);
   }
@@ -875,6 +881,7 @@ public class Bucket extends BucketInfo {
    * @param options blob search options
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob get(String blob, BlobGetOption... options) {
     return storage.get(BlobId.of(getName(), blob), options);
   }
@@ -901,6 +908,7 @@ public class Bucket extends BucketInfo {
    * @return an immutable list of {@code Blob} objects
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public List<Blob> get(String blobName1, String blobName2, String... blobNames) {
     List<BlobId> blobIds = Lists.newArrayListWithCapacity(blobNames.length + 2);
     blobIds.add(BlobId.of(getName(), blobName1));
@@ -934,6 +942,7 @@ public class Bucket extends BucketInfo {
    * @return an immutable list of {@code Blob} objects
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public List<Blob> get(Iterable<String> blobNames) {
     ImmutableList.Builder<BlobId> builder = ImmutableList.builder();
     for (String blobName : blobNames) {
@@ -962,6 +971,7 @@ public class Bucket extends BucketInfo {
    * @return a complete blob information
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob create(String blob, byte[] content, String contentType, BlobTargetOption... options) {
     BlobInfo blobInfo =
         BlobInfo.newBuilder(BlobId.of(getName(), blob)).setContentType(contentType).build();
@@ -990,6 +1000,7 @@ public class Bucket extends BucketInfo {
    * @return a complete blob information
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob create(
       String blob, InputStream content, String contentType, BlobWriteOption... options) {
     BlobInfo blobInfo =
@@ -1018,6 +1029,7 @@ public class Bucket extends BucketInfo {
    * @return a complete blob information
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob create(String blob, byte[] content, BlobTargetOption... options) {
     BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(getName(), blob)).build();
     Tuple<BlobInfo, Storage.BlobTargetOption[]> target =
@@ -1044,6 +1056,7 @@ public class Bucket extends BucketInfo {
    * @return a complete blob information
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob create(String blob, InputStream content, BlobWriteOption... options) {
     BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(getName(), blob)).build();
     Tuple<BlobInfo, Storage.BlobWriteOption[]> write =
@@ -1062,6 +1075,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl getAcl(Entity entity) {
     return storage.getAcl(getName(), entity);
   }
@@ -1083,6 +1097,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public boolean deleteAcl(Entity entity) {
     return storage.deleteAcl(getName(), entity);
   }
@@ -1098,6 +1113,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl createAcl(Acl acl) {
     return storage.createAcl(getName(), acl);
   }
@@ -1113,6 +1129,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl updateAcl(Acl acl) {
     return storage.updateAcl(getName(), acl);
   }
@@ -1131,6 +1148,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public List<Acl> listAcls() {
     return storage.listAcls(getName());
   }
@@ -1150,6 +1168,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl getDefaultAcl(Entity entity) {
     return storage.getDefaultAcl(getName(), entity);
   }
@@ -1174,6 +1193,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public boolean deleteDefaultAcl(Entity entity) {
     return storage.deleteDefaultAcl(getName(), entity);
   }
@@ -1192,6 +1212,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl createDefaultAcl(Acl acl) {
     return storage.createDefaultAcl(getName(), acl);
   }
@@ -1210,6 +1231,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Acl updateDefaultAcl(Acl acl) {
     return storage.updateDefaultAcl(getName(), acl);
   }
@@ -1231,6 +1253,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public List<Acl> listDefaultAcls() {
     return storage.listDefaultAcls(getName());
   }
@@ -1256,6 +1279,7 @@ public class Bucket extends BucketInfo {
    * @return a {@code Bucket} object of the locked bucket
    * @throws StorageException upon failure
    */
+  @TransportCompatibility({Transport.HTTP})
   public Bucket lockRetentionPolicy(BucketTargetOption... options) {
     return storage.lockRetentionPolicy(this, options);
   }
