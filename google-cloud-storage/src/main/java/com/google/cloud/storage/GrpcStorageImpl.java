@@ -25,6 +25,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
+import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.BaseService;
@@ -352,8 +353,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           () -> grpcStorageStub.deleteBucketCallable().call(req),
           Decoder.identity());
       return true;
-    } catch (Exception e) {
-      // TODO: What's the appropriate exception to catch here?
+    } catch (ApiException e) {
+      // TODO: Convert into StorageException? It's strange because we return false on a failure.
       return false;
     }
   }
