@@ -23,6 +23,5 @@ import java.nio.channels.WritableByteChannel;
 interface UnbufferedWritableByteChannelSession<ResultT>
     extends WritableByteChannelSession<UnbufferedWritableByteChannel, ResultT> {
 
-  interface UnbufferedWritableByteChannel
-      extends WritableByteChannel, GatheringByteChannel {}
+  interface UnbufferedWritableByteChannel extends WritableByteChannel, GatheringByteChannel {}
 }

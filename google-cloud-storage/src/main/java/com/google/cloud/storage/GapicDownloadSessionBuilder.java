@@ -94,7 +94,8 @@ final class GapicDownloadSessionBuilder {
 
       public BufferedReadableByteChannelSession<Object> build() {
         return new ChannelSession.BufferedReadSession<>(
-            ApiFutures.immediateFuture(obj), f.andThen(StorageByteChannels.readable()::createSynchronized));
+            ApiFutures.immediateFuture(obj),
+            f.andThen(StorageByteChannels.readable()::createSynchronized));
       }
     }
 
@@ -116,7 +117,8 @@ final class GapicDownloadSessionBuilder {
 
       public UnbufferedReadableByteChannelSession<Object> build() {
         return new ChannelSession.UnbufferedReadSession<>(
-            ApiFutures.immediateFuture(obj), f.andThen(StorageByteChannels.readable()::createSynchronized));
+            ApiFutures.immediateFuture(obj),
+            f.andThen(StorageByteChannels.readable()::createSynchronized));
       }
     }
   }

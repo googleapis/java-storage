@@ -23,6 +23,5 @@ import java.nio.channels.ScatteringByteChannel;
 interface UnbufferedReadableByteChannelSession<ResultT>
     extends ReadableByteChannelSession<UnbufferedReadableByteChannel, ResultT> {
 
-  interface UnbufferedReadableByteChannel
-      extends ReadableByteChannel, ScatteringByteChannel {}
+  interface UnbufferedReadableByteChannel extends ReadableByteChannel, ScatteringByteChannel {}
 }
