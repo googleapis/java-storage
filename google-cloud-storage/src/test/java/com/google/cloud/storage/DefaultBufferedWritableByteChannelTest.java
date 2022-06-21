@@ -498,11 +498,6 @@ public final class DefaultBufferedWritableByteChannelTest {
     }
 
     @Override
-    public boolean isComplete() {
-      return c.isOpen();
-    }
-
-    @Override
     public int write(ByteBuffer src) throws IOException {
       return Math.toIntExact(write(new ByteBuffer[] {src}, 0, 1));
     }

@@ -115,7 +115,7 @@ final class GapicResumableUploadSessionBuilder {
       }
 
       public BufferedWritableByteChannelSession<WriteObjectResponse> build() {
-        return new DefaultBufferedWritableByteChannelSession<>(
+        return new ChannelSession.BufferedWriteSession<>(
             requireNonNull(uploadIdFuture, "uploadIdFuture must be non null"),
             f.andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -144,7 +144,7 @@ final class GapicResumableUploadSessionBuilder {
       }
 
       public UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
-        return new DefaultUnbufferedWriteableByteChannelSession<>(
+        return new ChannelSession.UnbufferedWriteSession<>(
             requireNonNull(uploadIdFuture, "uploadIdFuture must be non null"),
             f.andThen(StorageByteChannels.writable()::createSynchronized));
       }

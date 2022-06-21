@@ -18,8 +18,9 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ApiExceptions;
+import java.nio.channels.WritableByteChannel;
 
-interface WritableByteChannelSession<WBC extends CompletableWritableByteChannel, ResultT> {
+interface WritableByteChannelSession<WBC extends WritableByteChannel, ResultT> {
 
   default WBC open() {
     return ApiExceptions.callAndTranslateApiException(openAsync());
