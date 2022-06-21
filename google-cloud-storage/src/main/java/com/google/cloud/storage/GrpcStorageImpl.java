@@ -46,6 +46,7 @@ import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
+import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
@@ -364,17 +365,45 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(String bucket, String blob, BlobSourceOption... options) {
-    return todo();
+    return delete(BlobId.of(bucket, blob), options);
   }
 
   @Override
   public boolean delete(BlobId blob, BlobSourceOption... options) {
-    return todo();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    DeleteObjectRequest.Builder objectRequestBuilder =
+        DeleteObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        objectRequestBuilder::setIfMetagenerationNotMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        objectRequestBuilder::setIfMetagenerationNotMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
+        objectRequestBuilder::setIfGenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
+        objectRequestBuilder::setIfGenerationNotMatch);
+    ifNonNull(blob.getGeneration(), objectRequestBuilder::setGeneration);
+    DeleteObjectRequest req = objectRequestBuilder.build();
+    try {
+      Retrying.run(
+          getOptions(),
+          retryAlgorithmManager.getFor(req),
+          () -> grpcStorageStub.deleteObjectCallable().call(req),
+          Decoder.identity());
+      return true;
+    } catch (ApiException e) {
+      // TODO: We should throw a StorageException instead of ApiException when making the
+      // deleteObjectCallable().call(req)
+      return false;
+    }
   }
 
   @Override
   public boolean delete(BlobId blob) {
-    return todo();
+    return delete(blob);
   }
 
   @Override
