@@ -184,11 +184,6 @@ public final class DefaultBufferedReadableByteChannelTest {
     }
 
     @Override
-    public boolean isComplete() {
-      return c.isOpen();
-    }
-
-    @Override
     public int read(ByteBuffer dst) throws IOException {
       return Math.toIntExact(read(new ByteBuffer[] {dst}, 0, 1));
     }

@@ -17,11 +17,11 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 
 interface UnbufferedReadableByteChannelSession<ResultT>
     extends ReadableByteChannelSession<UnbufferedReadableByteChannel, ResultT> {
 
-  interface UnbufferedReadableByteChannel
-      extends CompletableReadableByteChannel, ScatteringByteChannel {}
+  interface UnbufferedReadableByteChannel extends ReadableByteChannel, ScatteringByteChannel {}
 }

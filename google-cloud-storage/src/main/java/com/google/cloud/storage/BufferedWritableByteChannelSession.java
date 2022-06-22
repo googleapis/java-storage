@@ -18,11 +18,12 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import java.io.IOException;
+import java.nio.channels.WritableByteChannel;
 
 interface BufferedWritableByteChannelSession<ResultT>
     extends WritableByteChannelSession<BufferedWritableByteChannel, ResultT> {
 
-  interface BufferedWritableByteChannel extends CompletableWritableByteChannel {
+  interface BufferedWritableByteChannel extends WritableByteChannel {
     void flush() throws IOException;
   }
 }

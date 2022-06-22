@@ -64,11 +64,6 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
     this.channel = channel;
   }
 
-  @Override
-  public boolean isComplete() {
-    return channel.isComplete();
-  }
-
   @SuppressWarnings("UnnecessaryLocalVariable")
   @Override
   public int write(ByteBuffer src) throws IOException {

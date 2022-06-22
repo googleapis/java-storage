@@ -18,10 +18,10 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import java.nio.channels.GatheringByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 interface UnbufferedWritableByteChannelSession<ResultT>
     extends WritableByteChannelSession<UnbufferedWritableByteChannel, ResultT> {
 
-  interface UnbufferedWritableByteChannel
-      extends CompletableWritableByteChannel, GatheringByteChannel {}
+  interface UnbufferedWritableByteChannel extends WritableByteChannel, GatheringByteChannel {}
 }

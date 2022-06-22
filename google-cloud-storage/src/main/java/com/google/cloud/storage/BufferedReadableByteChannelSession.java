@@ -17,9 +17,10 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
+import java.nio.channels.ReadableByteChannel;
 
 interface BufferedReadableByteChannelSession<ResultT>
     extends ReadableByteChannelSession<BufferedReadableByteChannel, ResultT> {
 
-  interface BufferedReadableByteChannel extends CompletableReadableByteChannel {}
+  interface BufferedReadableByteChannel extends ReadableByteChannel {}
 }

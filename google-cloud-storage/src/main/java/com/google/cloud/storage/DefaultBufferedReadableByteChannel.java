@@ -37,11 +37,6 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
   }
 
   @Override
-  public boolean isComplete() {
-    return channel.isComplete();
-  }
-
-  @Override
   public int read(ByteBuffer dst) throws IOException {
     if (retEOF) {
       retEOF = false;

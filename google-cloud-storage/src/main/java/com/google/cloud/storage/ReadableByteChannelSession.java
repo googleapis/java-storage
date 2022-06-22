@@ -18,8 +18,9 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ApiExceptions;
+import java.nio.channels.ReadableByteChannel;
 
-interface ReadableByteChannelSession<RBC extends CompletableReadableByteChannel, ResultT> {
+interface ReadableByteChannelSession<RBC extends ReadableByteChannel, ResultT> {
 
   default RBC open() {
     return ApiExceptions.callAndTranslateApiException(openAsync());

@@ -152,11 +152,6 @@ final class GapicUnbufferedReadableByteChannel
   }
 
   @Override
-  public boolean isComplete() {
-    return complete;
-  }
-
-  @Override
   public void close() throws IOException {
     open = false;
     if (responseIterator != null) {

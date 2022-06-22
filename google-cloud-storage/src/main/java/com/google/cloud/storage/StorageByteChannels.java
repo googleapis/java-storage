@@ -73,11 +73,6 @@ final class StorageByteChannels {
     }
 
     @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
-    }
-
-    @Override
     public synchronized int read(ByteBuffer dst) throws IOException {
       return delegate.read(dst);
     }
@@ -100,11 +95,6 @@ final class StorageByteChannels {
 
     public SynchronizedBufferedWritableByteChannel(BufferedWritableByteChannel delegate) {
       this.delegate = delegate;
-    }
-
-    @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
     }
 
     @Override
@@ -135,11 +125,6 @@ final class StorageByteChannels {
 
     private SynchronizedUnbufferedReadableByteChannel(UnbufferedReadableByteChannel delegate) {
       this.delegate = delegate;
-    }
-
-    @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
     }
 
     @Override
@@ -175,11 +160,6 @@ final class StorageByteChannels {
 
     private SynchronizedUnbufferedWritableByteChannel(UnbufferedWritableByteChannel delegate) {
       this.delegate = delegate;
-    }
-
-    @Override
-    public boolean isComplete() {
-      return delegate.isComplete();
     }
 
     @Override
