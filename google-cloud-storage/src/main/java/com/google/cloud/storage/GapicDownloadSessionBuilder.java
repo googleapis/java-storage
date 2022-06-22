@@ -62,8 +62,14 @@ final class GapicDownloadSessionBuilder {
       return this;
     }
 
+    public BufferedReadableByteChannelSessionBuilder buffered(int capacity) {
+      return new BufferedReadableByteChannelSessionBuilder(
+          BufferHandle.allocate(capacity), getF(read, hasher));
+    }
+
     public BufferedReadableByteChannelSessionBuilder buffered(ByteBuffer buffer) {
-      return new BufferedReadableByteChannelSessionBuilder(buffer, getF(read, hasher));
+      return new BufferedReadableByteChannelSessionBuilder(
+          BufferHandle.handleOf(buffer), getF(read, hasher));
     }
 
     public UnbufferedReadableByteChannelSessionBuilder unbuffered() {
@@ -82,7 +88,7 @@ final class GapicDownloadSessionBuilder {
       private Object obj;
 
       private BufferedReadableByteChannelSessionBuilder(
-          ByteBuffer buffer,
+          BufferHandle buffer,
           BiFunction<Object, SettableApiFuture<Object>, UnbufferedReadableByteChannel> f) {
         this.f = f.andThen(c -> new DefaultBufferedReadableByteChannel(buffer, c));
       }

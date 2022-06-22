@@ -54,7 +54,7 @@ public final class DefaultBufferedReadableByteChannelTest {
     byte[] bytes = DataGenerator.base64Characters().genBytes(61);
 
     ByteBuffer buf = ByteBuffer.allocate(16);
-    ByteBuffer buffer = ByteBuffer.allocate(3);
+    BufferHandle buffer = BufferHandle.allocate(3);
     try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         UnbufferedReadableByteChannelAdapter adapter =
             new UnbufferedReadableByteChannelAdapter(Channels.newChannel(bais));
@@ -83,7 +83,7 @@ public final class DefaultBufferedReadableByteChannelTest {
     byte[] bytes = readOps.bytes;
 
     ByteBuffer buf = ByteBuffer.allocate(readOps.readSize);
-    ByteBuffer buffer = ByteBuffer.allocate(readOps.bufferSize);
+    BufferHandle buffer = BufferHandle.allocate(readOps.bufferSize);
     try (ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         UnbufferedReadableByteChannelAdapter adapter =
             new UnbufferedReadableByteChannelAdapter(Channels.newChannel(bais));

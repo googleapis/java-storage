@@ -55,12 +55,12 @@ import java.nio.channels.ClosedChannelException;
  */
 final class DefaultBufferedWritableByteChannel implements BufferedWritableByteChannel {
 
-  private final ByteBuffer buffer;
+  private final BufferHandle handle;
 
   private final UnbufferedWritableByteChannel channel;
 
-  DefaultBufferedWritableByteChannel(ByteBuffer buffer, UnbufferedWritableByteChannel channel) {
-    this.buffer = buffer;
+  DefaultBufferedWritableByteChannel(BufferHandle handle, UnbufferedWritableByteChannel channel) {
+    this.handle = handle;
     this.channel = channel;
   }
 
@@ -76,14 +76,14 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
       int srcRemaining = src.remaining();
       int srcPosition = src.position();
 
-      int capacity = buffer.capacity();
-      int bufferRemaining = buffer.remaining();
+      int capacity = handle.capacity();
+      int bufferRemaining = handle.remaining();
       int bufferPending = capacity - bufferRemaining;
 
-      boolean enqueuedBytes = buffer.hasRemaining();
-      if (enqueuedBytes && srcRemaining < bufferRemaining) {
+      boolean enqueuedBytes = enqueuedBytes();
+      if (srcRemaining < bufferRemaining) {
         // srcRemaining is smaller than the remaining space in our buffer, enqueue it in full
-        buffer.put(src);
+        handle.get().put(src);
         bytesConsumed += srcRemaining;
         break;
       } else if (enqueuedBytes) {
@@ -105,6 +105,7 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
           buf = slice;
         }
 
+        ByteBuffer buffer = handle.get();
         Buffers.flip(buffer);
         ByteBuffer[] srcs = {buffer, buf};
         long write = channel.write(srcs);
@@ -131,13 +132,13 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
           }
         }
       } else {
-        // no enqueued data, see if we can simply write the provided src or a slice of it
-        // since our buffer is empty
+        // no enqueued data and src is at least as large as our buffer, see if we can simply write
+        // the provided src or a slice of it since our buffer is empty
         if (bufferRemaining == srcRemaining) {
           // the capacity of buffer and the bytes remaining in src are the same, directly
           // write src
           bytesConsumed += channel.write(src);
-        } else if (bufferRemaining <= srcRemaining) {
+        } else {
           // the src provided is larger than our buffer. rather than copying into the buffer, simply
           // write a slice
           ByteBuffer slice = src.slice();
@@ -145,10 +146,6 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
           int write = channel.write(slice);
           Buffers.position(src, srcPosition + write);
           bytesConsumed += write;
-        } else {
-          // srcRemaining is smaller than the remaining space in our buffer, enqueue it in full
-          buffer.put(src);
-          bytesConsumed += srcRemaining;
         }
       }
     }
@@ -169,7 +166,8 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
 
   @Override
   public void flush() throws IOException {
-    if (buffer.hasRemaining()) {
+    if (enqueuedBytes()) {
+      ByteBuffer buffer = handle.get();
       Buffers.flip(buffer);
       channel.write(buffer);
       if (buffer.hasRemaining()) {
@@ -178,5 +176,9 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
         Buffers.clear(buffer);
       }
     }
+  }
+
+  private boolean enqueuedBytes() {
+    return handle.position() > 0;
   }
 }

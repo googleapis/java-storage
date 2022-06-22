@@ -56,10 +56,11 @@ public final class DefaultBufferedWritableByteChannelTest {
   @Property
   void bufferingEagerlyFlushesWhenFull(@ForAll("WriteOps") WriteOps writeOps) throws IOException {
     ByteBuffer buffer = ByteBuffer.allocate(writeOps.bufferSize);
+    AuditingBufferHandle handle = new AuditingBufferHandle(BufferHandle.handleOf(buffer));
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CountingWritableByteChannelAdapter adapter =
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
-        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(buffer, adapter)) {
+        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
 
       List<Integer> actualWriteSizes = new ArrayList<>();
 
@@ -149,8 +150,6 @@ public final class DefaultBufferedWritableByteChannelTest {
    */
   @Example
   void partialFlushOfEnqueuedBytesFlushesMultipleTimes() throws IOException {
-    ByteBuffer buffer = ByteBuffer.allocate(10);
-
     ByteBuffer data1 = DataGenerator.base64Characters().genByteBuffer(5);
     ByteBuffer data2 = DataGenerator.base64Characters().genByteBuffer(9);
     ByteBuffer data3 = DataGenerator.base64Characters().genByteBuffer(3);
@@ -163,10 +162,11 @@ public final class DefaultBufferedWritableByteChannelTest {
         buffers.stream().reduce(ByteBuffer.allocate(allDataSize), ByteBuffer::put).array();
     buffers.forEach(b -> b.position(0));
 
+    AuditingBufferHandle handle = new AuditingBufferHandle(BufferHandle.allocate(10));
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CountingWritableByteChannelAdapter adapter =
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
-        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(buffer, adapter)) {
+        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
 
       c.write(data1); // write 5 bytes, which should enqueue in full
       // before the next write, limit the number of bytes the underlying channel will consume to 2.
@@ -217,8 +217,6 @@ public final class DefaultBufferedWritableByteChannelTest {
    */
   @Example
   void manualFlushingIsAccurate() throws IOException {
-    ByteBuffer buffer = ByteBuffer.allocate(5);
-
     ByteBuffer data1 = DataGenerator.base64Characters().genByteBuffer(3);
     ByteBuffer data2 = DataGenerator.base64Characters().genByteBuffer(3);
     ByteBuffer data3 = DataGenerator.base64Characters().genByteBuffer(3);
@@ -231,10 +229,11 @@ public final class DefaultBufferedWritableByteChannelTest {
         buffers.stream().reduce(ByteBuffer.allocate(allDataSize), ByteBuffer::put).array();
     buffers.forEach(b -> b.position(0));
 
+    AuditingBufferHandle handle = new AuditingBufferHandle(BufferHandle.allocate(5));
     try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CountingWritableByteChannelAdapter adapter =
             new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
-        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(buffer, adapter)) {
+        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
 
       c.write(data1); // write 3 bytes, which should enqueue in full
       c.flush(); // flush all enqueued bytes
@@ -344,6 +343,43 @@ public final class DefaultBufferedWritableByteChannelTest {
     assertThat(actual).isEqualTo(expected);
   }
 
+  @Property
+  void bufferAllocationShouldOnlyHappenWhenNeeded(@ForAll("BufferSizes") WriteOps writeOps)
+      throws IOException {
+    AuditingBufferHandle handle =
+        new AuditingBufferHandle(BufferHandle.allocate(writeOps.bufferSize));
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CountingWritableByteChannelAdapter adapter =
+            new CountingWritableByteChannelAdapter(Channels.newChannel(baos));
+        BufferedWritableByteChannel c = new DefaultBufferedWritableByteChannel(handle, adapter)) {
+
+      for (ByteBuffer buf : writeOps.writes) {
+        c.write(buf);
+      }
+    }
+
+    // if our write size is evenly divisible by our buffer size AND our buffer size is smaller
+    // than the total data size we expect to never allocate a buffer
+    if (writeOps.writeSize % writeOps.bufferSize == 0
+        && writeOps.bufferSize <= writeOps.bytes.length) {
+      assertThat(handle.getCallCount).isEqualTo(0);
+    } else {
+      assertThat(handle.getCallCount).isGreaterThan(0);
+    }
+  }
+
+  @Provide("BufferSizes")
+  static Arbitrary<WriteOps> arbitraryBufferSizes() {
+    return Arbitraries.of(
+        // expect no allocation
+        WriteOps.of(32, 4, 16),
+        WriteOps.of(32, 16, 16),
+        WriteOps.of(32, 32, 32),
+        // expect allocation
+        WriteOps.of(32, 33, 32),
+        WriteOps.of(32, 64, 4));
+  }
+
   private static final class WriteOps {
     private final byte[] bytes;
     private final int bufferSize;
@@ -397,7 +433,13 @@ public final class DefaultBufferedWritableByteChannelTest {
 
     @Override
     public String toString() {
-      return "WriteOps{"
+      return "[WriteOps.of("
+          + fmt(bytes.length)
+          + ", "
+          + fmt(bufferSize)
+          + ", "
+          + fmt(writeSize)
+          + ")] WriteOps{"
           + "bytes.length="
           + fmt(bytes.length)
           + ", bufferSize="
@@ -560,6 +602,37 @@ public final class DefaultBufferedWritableByteChannelTest {
         totalBytesWritten += bytesWritten;
         writeEndPoints.add(totalBytesWritten);
       }
+    }
+  }
+
+  private static final class AuditingBufferHandle extends BufferHandle {
+    private final BufferHandle delegate;
+
+    private int getCallCount = 0;
+
+    AuditingBufferHandle(BufferHandle delegate) {
+      this.delegate = delegate;
+    }
+
+    @Override
+    public int remaining() {
+      return delegate.remaining();
+    }
+
+    @Override
+    public int capacity() {
+      return delegate.capacity();
+    }
+
+    @Override
+    public int position() {
+      return delegate.position();
+    }
+
+    @Override
+    public ByteBuffer get() {
+      getCallCount++;
+      return delegate.get();
     }
   }
 }
