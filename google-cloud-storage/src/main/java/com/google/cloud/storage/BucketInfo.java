@@ -25,7 +25,6 @@ import com.google.api.client.util.Data;
 import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
 import com.google.api.services.storage.model.Bucket;
-import com.google.api.services.storage.model.Bucket.CustomPlacementConfig;
 import com.google.api.services.storage.model.Bucket.Encryption;
 import com.google.api.services.storage.model.Bucket.Lifecycle;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
@@ -330,9 +329,7 @@ public class BucketInfo implements Serializable {
     }
   }
 
-  /**
-   * The bucket's custom placement configuration for Custom Dual Regions.
-   */
+  /** The bucket's custom placement configuration for Custom Dual Regions. */
   public static class CustomPlacementConfig implements Serializable {
 
     private static final long serialVersionUID = -3172255903331692127L;
@@ -353,7 +350,9 @@ public class BucketInfo implements Serializable {
       return Objects.hashCode(dataLocations);
     }
 
-    public static Builder newBuilder() {return new Builder();}
+    public static Builder newBuilder() {
+      return new Builder();
+    }
 
     public Builder toBuilder() {
       Builder builder = new Builder();
@@ -366,20 +365,16 @@ public class BucketInfo implements Serializable {
     }
 
     Bucket.CustomPlacementConfig toPb() {
-      Bucket.CustomPlacementConfig customPlacementConfig;
-      if(dataLocations != null) {
+      Bucket.CustomPlacementConfig customPlacementConfig = null;
+      if (dataLocations != null) {
         customPlacementConfig = new Bucket.CustomPlacementConfig();
         customPlacementConfig.setDataLocations(dataLocations);
-      } else {
-        customPlacementConfig = Data.nullOf(Bucket.CustomPlacementConfig.class);
       }
       return customPlacementConfig;
     }
 
     static CustomPlacementConfig fromPb(Bucket.CustomPlacementConfig customPlacementConfig) {
-      return newBuilder()
-          .setDataLocations(customPlacementConfig.getDataLocations())
-          .build();
+      return newBuilder().setDataLocations(customPlacementConfig.getDataLocations()).build();
     }
 
     private CustomPlacementConfig(Builder builder) {
@@ -389,9 +384,7 @@ public class BucketInfo implements Serializable {
     public static class Builder {
       private List<String> dataLocations;
 
-      /**
-       * A list of regions for custom placement configurations.
-       */
+      /** A list of regions for custom placement configurations. */
       public Builder setDataLocations(List<String> dataLocations) {
         this.dataLocations = dataLocations != null ? ImmutableList.copyOf(dataLocations) : null;
         return this;
@@ -1436,6 +1429,8 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setLogging(Logging logging);
 
+    public abstract Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig);
+
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
   }
@@ -1471,6 +1466,7 @@ public class BucketInfo implements Serializable {
     private IamConfiguration iamConfiguration;
     private String locationType;
     private Logging logging;
+    private CustomPlacementConfig customPlacementConfig;
 
     BuilderImpl(String name) {
       this.name = name;
@@ -1506,6 +1502,7 @@ public class BucketInfo implements Serializable {
       iamConfiguration = bucketInfo.iamConfiguration;
       locationType = bucketInfo.locationType;
       logging = bucketInfo.logging;
+      customPlacementConfig = bucketInfo.customPlacementConfig;
     }
 
     @Override
@@ -1702,6 +1699,12 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig) {
+      this.customPlacementConfig = customPlacementConfig != null ? customPlacementConfig : null;
+      return this;
+    }
+
+    @Override
     Builder setLocationType(String locationType) {
       this.locationType = locationType;
       return this;
@@ -1744,6 +1747,7 @@ public class BucketInfo implements Serializable {
     iamConfiguration = builder.iamConfiguration;
     locationType = builder.locationType;
     logging = builder.logging;
+    customPlacementConfig = builder.customPlacementConfig;
   }
 
   /** Returns the service-generated id for the bucket. */
@@ -2020,6 +2024,11 @@ public class BucketInfo implements Serializable {
     return logging;
   }
 
+  /** Returns the Custom Placement Configuration */
+  public CustomPlacementConfig getCustomPlacementConfig() {
+    return customPlacementConfig;
+  }
+
   /** Returns a builder for the current bucket. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -2193,6 +2202,9 @@ public class BucketInfo implements Serializable {
     if (logging != null) {
       bucketPb.setLogging(logging.toPb());
     }
+    if (customPlacementConfig != null) {
+      bucketPb.setCustomPlacementConfig(customPlacementConfig.toPb());
+    }
     return bucketPb;
   }
 
@@ -2332,6 +2344,10 @@ public class BucketInfo implements Serializable {
     Bucket.Logging logging = bucketPb.getLogging();
     if (logging != null) {
       builder.setLogging(Logging.fromPb(logging));
+    }
+    Bucket.CustomPlacementConfig customPlacementConfig = bucketPb.getCustomPlacementConfig();
+    if (customPlacementConfig != null) {
+      builder.setCustomPlacementConfig(CustomPlacementConfig.fromPb(customPlacementConfig));
     }
     return builder.build();
   }
