@@ -18,9 +18,8 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthUnknown;
@@ -29,6 +28,7 @@ import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -41,12 +41,10 @@ final class GapicUnbufferedReadableByteChannel
     implements UnbufferedReadableByteChannel, ScatteringByteChannel {
 
   private final SettableApiFuture<Object> result;
-  // TODO: keep the stream open and continue reading from it
-  // refer to gcsio about draining as to not leak resources
-  // more from gcsio
   private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
-  private final Object obj;
+  private final ReadObjectRequest req;
   private final Hasher hasher;
+  private final LazyServerStreamIterator iter;
 
   private boolean open = true;
   private boolean complete = false;
@@ -54,29 +52,26 @@ final class GapicUnbufferedReadableByteChannel
   private long blobLimit = Long.MAX_VALUE;
   private long totalSize = Long.MAX_VALUE; // initial sentinel value, will be updated upon responses
 
-  private ServerStream<ReadObjectResponse> serverStream;
-  private Iterator<ReadObjectResponse> responseIterator;
+  private Object metadata;
+
   private ByteBuffer leftovers;
 
   GapicUnbufferedReadableByteChannel(
-      SettableApiFuture<Object> result, // TODO: track and set this
+      SettableApiFuture<Object> result,
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       Object obj,
       Hasher hasher) {
     this.result = result;
     this.read = read;
-    this.obj = obj;
-    ReadObjectRequest req =
+    this.req =
         ReadObjectRequest.newBuilder()
             .setBucket(obj.getBucket())
             .setObject(obj.getName())
             .setGeneration(obj.getGeneration())
             .setReadOffset(blobOffset)
             .build();
-    ApiCallContext ctx = GrpcCallContext.createDefault();
-    serverStream = this.read.call(req, ctx);
-    responseIterator = serverStream.iterator();
     this.hasher = hasher;
+    this.iter = new LazyServerStreamIterator();
   }
 
   @Override
@@ -92,7 +87,12 @@ final class GapicUnbufferedReadableByteChannel
   @Override
   public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
     if (complete && open) {
-      close();
+      if (blobOffset != totalSize) {
+        throw closeWithError(
+            String.format("Mismatch size. Expected %d but was %d", totalSize, blobOffset));
+      } else {
+        close();
+      }
       return -1;
     }
     if (!open) {
@@ -112,14 +112,24 @@ final class GapicUnbufferedReadableByteChannel
         continue;
       }
 
-      if (responseIterator.hasNext()) {
-        ReadObjectResponse resp = responseIterator.next();
+      if (iter.hasNext()) {
+        ReadObjectResponse resp = iter.next();
         if (resp.hasMetadata()) {
-          Object metadata = resp.getMetadata();
-          result.set(metadata);
+          Object respMetadata = resp.getMetadata();
+          if (metadata == null) {
+            metadata = respMetadata;
+          } else if (metadata.getMetageneration() != respMetadata.getMetageneration()) {
+            throw closeWithError(
+                String.format(
+                    "Mismatch Metageneration between subsequent reads. Expected %d but received %d",
+                    metadata.getMetageneration(), respMetadata.getMetageneration()));
+          }
+
+          if (!result.isDone()) {
+            result.set(metadata);
+          }
+
           totalSize = metadata.getSize();
-        } else if (resp.hasContentRange()) {
-          totalSize = resp.getContentRange().getCompleteLength();
         }
         ChecksummedData checksummedData = resp.getChecksummedData();
         ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
@@ -154,18 +164,19 @@ final class GapicUnbufferedReadableByteChannel
   @Override
   public void close() throws IOException {
     open = false;
-    if (responseIterator != null) {
-      responseIterator = null;
-    }
-    if (serverStream != null) {
-      serverStream.cancel();
-      serverStream = null;
-    }
+    iter.close();
   }
 
   private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {
     long copiedBytes = Buffers.copy(content, dsts, offset, length);
     c.advance(copiedBytes);
+  }
+
+  private IOException closeWithError(String message) throws IOException {
+    close();
+    StorageException cause =
+        new StorageException(HttpStatusCodes.STATUS_CODE_PRECONDITION_FAILED, message);
+    throw new IOException(message, cause);
   }
 
   /**
@@ -177,8 +188,8 @@ final class GapicUnbufferedReadableByteChannel
     private long offset;
     private final long limit;
 
-    public ReadCursor(long beginning, long limit) {
-      checkArgument(0 <= beginning && beginning <= limit);
+    private ReadCursor(long beginning, long limit) {
+      checkArgument(0 <= beginning && beginning <= limit, "0 <= %d <= %d", beginning, limit);
       this.limit = limit;
       this.beginning = beginning;
       this.offset = beginning;
@@ -199,7 +210,63 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     public String toString() {
-      return String.format("Cursor{begin=%d, offset=%d, capacity=%d}", beginning, offset, limit);
+      return String.format("Cursor{begin=%d, offset=%d, limit=%d}", beginning, offset, limit);
+    }
+  }
+
+  private final class LazyServerStreamIterator implements Iterator<ReadObjectResponse>, Closeable {
+    private ServerStream<ReadObjectResponse> serverStream;
+    private Iterator<ReadObjectResponse> responseIterator;
+
+    private volatile boolean streamInitialized = false;
+
+    @Override
+    public boolean hasNext() {
+      checkOpen();
+      return responseIterator.hasNext();
+    }
+
+    @Override
+    public ReadObjectResponse next() {
+      checkOpen();
+      return responseIterator.next();
+    }
+
+    @Override
+    public void close() {
+      if (serverStream != null) {
+        // todo: do we need to "drain" anything?
+        serverStream.cancel();
+      }
+    }
+
+    private void checkOpen() {
+      if (!streamInitialized) {
+        synchronized (this) {
+          if (!streamInitialized) {
+            if (serverStream == null) {
+              ReadObjectRequest request = req;
+
+              boolean setOffset = blobOffset > 0 && blobOffset != req.getReadOffset();
+              boolean setLimit = blobLimit < Long.MAX_VALUE && blobLimit != req.getReadLimit();
+              if (setOffset || setLimit) {
+                ReadObjectRequest.Builder b = request.toBuilder();
+                if (setOffset) {
+                  b.setReadOffset(blobOffset);
+                }
+                if (setLimit) {
+                  b.setReadLimit(blobLimit);
+                }
+                request = b.build();
+              }
+
+              serverStream = read.call(request);
+            }
+            responseIterator = serverStream.iterator();
+            streamInitialized = true;
+          }
+        }
+      }
     }
   }
 }
