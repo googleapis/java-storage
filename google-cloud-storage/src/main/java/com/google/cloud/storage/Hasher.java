@@ -31,7 +31,7 @@ interface Hasher {
 
   Crc32cLengthKnown hash(ByteBuffer b);
 
-  void validate(Crc32cValue<?> expected, ByteBuffer b) throws IOException;
+  void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException;
 
   static Hasher noop() {
     return NoOpHasher.INSTANCE;
@@ -53,7 +53,7 @@ interface Hasher {
     }
 
     @Override
-    public void validate(Crc32cValue<?> expected, ByteBuffer b) {}
+    public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) {}
   }
 
   @Immutable
@@ -69,11 +69,11 @@ interface Hasher {
     }
 
     @Override
-    public void validate(Crc32cValue<?> expected, ByteBuffer b) throws IOException {
+    public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException {
       Crc32cLengthKnown actual = hash(b);
       if (actual.getValue() != expected.getValue()) {
         throw new IOException(
-            String.format("Miss-match checksum value. expected %s actual %s", expected, actual));
+            String.format("Mismatch checksum value. Expected %s actual %s", expected, actual));
       }
     }
   }

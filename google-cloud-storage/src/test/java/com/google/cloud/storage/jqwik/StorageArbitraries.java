@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage.jqwik;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
@@ -39,6 +41,7 @@ import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.Tuple;
+import net.jqwik.api.arbitraries.CharacterArbitrary;
 import net.jqwik.api.arbitraries.ListArbitrary;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.time.api.DateTimes;
@@ -85,56 +88,24 @@ public final class StorageArbitraries {
     return Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
   }
 
-  public static Arbitrary<ProjectID> projectID() {
-    return Arbitraries.oneOf(
-        Combinators.combine(
-                // must start with a letter
-                Arbitraries.chars().range('a', 'z'),
-                // can only contain numbers, lowercase letters, and hyphens, and must be 6-30 chars
-                Arbitraries.strings()
-                    .withCharRange('a', 'z')
-                    .numeric()
-                    .withChars('-')
-                    .ofMinLength(4)
-                    .ofMaxLength(28),
-                // must not end with a hyphen
-                Arbitraries.chars().range('a', 'z').numeric())
-            .as(
-                (first, mid, last) -> {
-                  final StringBuilder sb = new StringBuilder();
-                  sb.append(first).append(mid).append(last);
-                  return new ProjectID(sb.toString());
-                }));
+  public static CharacterArbitrary alnum() {
+    return Arbitraries.chars().alpha().numeric();
   }
 
-  /**
-   * Generated bucket name based on the rules outlined in <a target="_blank" rel="noopener
-   * noreferrer"
-   * href="https://cloud.google.com/storage/docs/naming-buckets#requirements">https://cloud.google.com/storage/docs/naming-buckets#requirements</a>
-   */
-  public static Arbitrary<BucketName> bucketName() {
+  public static Arbitrary<ProjectID> projectID() {
     return Combinators.combine(
-            Arbitraries.oneOf(
-                projectID(),
-                // Global buckets have prefix of projects/_
-                Arbitraries.of(new ProjectID("_"))),
-            Arbitraries.oneOf(Arbitraries.chars().alpha(), Arbitraries.chars().numeric()),
-            Arbitraries.oneOf(
-                    Arbitraries.chars().alpha(),
-                    Arbitraries.chars().numeric(),
-                    Arbitraries.chars().with('-', '_'))
-                .list()
-                .ofMinSize(1)
-                .ofMaxSize(61),
-            Arbitraries.oneOf(Arbitraries.chars().alpha(), Arbitraries.chars().numeric()))
-        .as(
-            (p, first, mid, last) -> {
-              final StringBuilder sb = new StringBuilder();
-              sb.append(first);
-              mid.forEach(sb::append);
-              sb.append(last);
-              return BucketName.of(p.get(), sb.toString());
-            });
+            // must start with a letter
+            Arbitraries.chars().range('a', 'z'),
+            // can only contain numbers, lowercase letters, and hyphens, and must be 6-30 chars
+            Arbitraries.strings()
+                .withCharRange('a', 'z')
+                .numeric()
+                .withChars('-')
+                .ofMinLength(4)
+                .ofMaxLength(28),
+            // must not end with a hyphen
+            Arbitraries.chars().range('a', 'z').numeric())
+        .as((first, mid, last) -> new ProjectID(first + mid + last));
   }
 
   public static Buckets buckets() {
@@ -145,6 +116,30 @@ public final class StorageArbitraries {
     private static final Buckets INSTANCE = new Buckets();
 
     private Buckets() {}
+
+    /**
+     * Generated bucket name based on the rules outlined in <a target="_blank" rel="noopener
+     * noreferrer"
+     * href="https://cloud.google.com/storage/docs/naming-buckets#requirements">https://cloud.google.com/storage/docs/naming-buckets#requirements</a>
+     */
+    Arbitrary<BucketName> name() {
+      return Combinators.combine(
+              Arbitraries.oneOf(
+                  projectID(),
+                  // Global buckets have prefix of projects/_
+                  Arbitraries.of(new ProjectID("_"))),
+              alnum(),
+              alnum().with('-', '_').list().ofMinSize(1).ofMaxSize(61),
+              alnum())
+          .as(
+              (p, first, mid, last) -> {
+                final StringBuilder sb = new StringBuilder();
+                sb.append(first);
+                mid.forEach(sb::append);
+                sb.append(last);
+                return BucketName.of(p.get(), sb.toString());
+              });
+    }
 
     public Arbitrary<Bucket.Lifecycle.Rule.Action> actions() {
       return Combinators.combine(Arbitraries.of("Delete", "SetStorageClass"), storageClass())
@@ -226,7 +221,7 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Bucket.Logging> logging() {
-      Arbitrary<BucketName> loggingBucketName = StorageArbitraries.bucketName();
+      Arbitrary<BucketName> loggingBucketName = name();
       Arbitrary<String> loggingPrefix = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(10);
       return Combinators.combine(loggingBucketName, loggingPrefix, bool())
           .as(
@@ -385,6 +380,24 @@ public final class StorageArbitraries {
 
     private Objects() {}
 
+    /**
+     * Generated object name based on the rules outlined in <a target="_blank" rel="noopener
+     * noreferrer"
+     * href="https://cloud.google.com/storage/docs/naming-objects#objectnames">https://cloud.google.com/storage/docs/naming-objects#objectnames</a>
+     */
+    public Arbitrary<String> name() {
+      return Arbitraries.strings()
+          .all()
+          .excludeChars('#', '[', ']', '*', '?')
+          .excludeChars(enumerate(0x7f, 0x84))
+          .excludeChars(enumerate(0x86, 0x9f))
+          .ofMinLength(1)
+          .ofMaxLength(1024)
+          .filter(s -> !s.equals("."))
+          .filter(s -> !s.equals(".."))
+          .filter(s -> !s.startsWith(".well-known/acme-challenge/"));
+    }
+
     public Arbitrary<String> storageClass() {
       // TODO: return each of the real values and edge cases (including invalid values)
       return Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
@@ -419,5 +432,15 @@ public final class StorageArbitraries {
                       .setKeySha256Bytes(key)
                       .build());
     }
+  }
+
+  private static char[] enumerate(int lower, int upperInclusive) {
+    checkArgument(lower <= upperInclusive, "lower <= upperInclusive");
+    int length = upperInclusive - lower + 1;
+    char[] chars = new char[length];
+    for (int i = 0; i < length; i++) {
+      chars[i] = (char) (i + lower);
+    }
+    return chars;
   }
 }

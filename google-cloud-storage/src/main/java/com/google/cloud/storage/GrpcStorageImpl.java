@@ -30,7 +30,6 @@ import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Conversions.Decoder;
@@ -38,11 +37,16 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.protobuf.ByteString;
 import com.google.storage.v2.BucketName;
+import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
@@ -54,6 +58,7 @@ import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StorageClient.ListBucketsPage;
 import com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
@@ -80,6 +85,7 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -423,8 +429,20 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
+
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    UnbufferedReadableByteChannelSession<Object> session =
+        ResumableMedia.gapic()
+            .read()
+            .byteChannel(grpcStorageStub.readObjectCallable())
+            .unbuffered()
+            .setReadObjectRequest(readObjectRequest)
+            .build();
+
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    try (ReadChannel r = reader(blob, options);
+    try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(baos)) {
       ByteStreams.copy(r, w);
     } catch (IOException e) {
@@ -445,27 +463,56 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Object pb = codecs.blobId().encode(blob);
-    return new GrpcBlobReadChannel(grpcStorageStub.readObjectCallable(), () -> pb);
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ReadObjectRequest request = getReadObjectRequest(blob, optionsMap);
+    return new GrpcBlobReadChannel(grpcStorageStub.readObjectCallable(), request);
   }
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
-    try (WritableByteChannel out = Files.newByteChannel(path, WRITE_OPS);
-        GrpcBlobReadChannel in = reader(blob, options)) {
-      ByteStreams.copy(in, out);
+
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+
+    // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
+
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    UnbufferedReadableByteChannelSession<Object> session =
+        ResumableMedia.gapic()
+            .read()
+            .byteChannel(grpcStorageStub.readObjectCallable())
+            .unbuffered()
+            .setReadObjectRequest(readObjectRequest)
+            .build();
+
+    try (UnbufferedReadableByteChannel r = session.open();
+        WritableByteChannel w = Files.newByteChannel(path, WRITE_OPS)) {
+      ByteStreams.copy(r, w);
     } catch (IOException e) {
-      throw new StorageException(e);
+      throw StorageException.coalesce(e);
     }
   }
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    try (WritableByteChannel out = Channels.newChannel(outputStream);
-        GrpcBlobReadChannel in = reader(blob, options)) {
-      ByteStreams.copy(in, out);
+
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+
+    // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
+
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    UnbufferedReadableByteChannelSession<Object> session =
+        ResumableMedia.gapic()
+            .read()
+            .byteChannel(grpcStorageStub.readObjectCallable())
+            .unbuffered()
+            .setReadObjectRequest(readObjectRequest)
+            .build();
+
+    try (UnbufferedReadableByteChannel r = session.open();
+        WritableByteChannel w = Channels.newChannel(outputStream)) {
+      ByteStreams.copy(r, w);
     } catch (IOException e) {
-      throw new StorageException(e);
+      throw StorageException.coalesce(e);
     }
   }
 
@@ -935,5 +982,46 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         + "("
         + Arrays.stream(args).map(Class::getName).collect(Collectors.joining(", "))
         + ")";
+  }
+
+  private ReadObjectRequest getReadObjectRequest(
+      BlobId blob, Map<StorageRpc.Option, ?> optionsMap) {
+    Object object = codecs.blobId().encode(blob);
+
+    ReadObjectRequest.Builder builder =
+        ReadObjectRequest.newBuilder().setBucket(object.getBucket()).setObject(object.getName());
+
+    long generation = object.getGeneration();
+    if (generation > 0) {
+      builder.setGeneration(generation);
+    }
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        builder::setIfMetagenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        builder::setIfMetagenerationNotMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
+        builder::setIfGenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
+        builder::setIfGenerationNotMatch);
+    String userProject = (String) optionsMap.get(StorageRpc.Option.USER_PROJECT);
+    if (userProject != null) {
+      // TODO: user project
+      // ReadObjectRequest does not have a user_project field
+    }
+    String key = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
+    if (key != null) {
+      CommonObjectRequestParams.Builder paramsBuilder = CommonObjectRequestParams.newBuilder();
+      paramsBuilder.setEncryptionAlgorithm("AES256");
+      paramsBuilder.setEncryptionKeyBytes(ByteString.copyFromUtf8(key));
+      byte[] keyBytes = Base64.getDecoder().decode(key);
+      HashCode keySha256 = Hashing.sha256().hashBytes(keyBytes);
+      paramsBuilder.setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()));
+      builder.setCommonObjectRequestParams(paramsBuilder.build());
+    }
+    return builder.build();
   }
 }
