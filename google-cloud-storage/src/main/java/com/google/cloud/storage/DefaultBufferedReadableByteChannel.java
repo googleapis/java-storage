@@ -24,15 +24,15 @@ import java.nio.channels.ClosedChannelException;
 
 final class DefaultBufferedReadableByteChannel implements BufferedReadableByteChannel {
 
-  private final ByteBuffer buffer;
+  private final BufferHandle handle;
 
   private final UnbufferedReadableByteChannel channel;
 
   private boolean flipped = false;
   private boolean retEOF = false;
 
-  DefaultBufferedReadableByteChannel(ByteBuffer buffer, UnbufferedReadableByteChannel channel) {
-    this.buffer = buffer;
+  DefaultBufferedReadableByteChannel(BufferHandle handle, UnbufferedReadableByteChannel channel) {
+    this.handle = handle;
     this.channel = channel;
   }
 
@@ -48,13 +48,14 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
     int bytesConsumed = 0;
 
     while (dst.hasRemaining()) {
-      int bufferRemaining = buffer.remaining();
+      int bufferRemaining = handle.remaining();
 
       int dstRemaining = dst.remaining();
       int dstPosition = dst.position();
 
       final int tmpBytesCopied;
       if (enqueuedBytes()) {
+        ByteBuffer buffer = handle.get();
         if (!flipped) {
           buffer.flip();
           flipped = true;
@@ -96,6 +97,7 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
           // create a slice of our buffer such that
           // dst.remaning() + bufSlice.remaning() == buffer.capacity
 
+          ByteBuffer buffer = handle.get();
           ByteBuffer slice = buffer.slice();
           int sliceCapacity = buffer.capacity() - dstRemaining;
           Buffers.limit(slice, sliceCapacity);
@@ -140,6 +142,6 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
   }
 
   private boolean enqueuedBytes() {
-    return buffer.position() > 0;
+    return handle.position() > 0;
   }
 }

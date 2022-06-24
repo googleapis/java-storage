@@ -72,7 +72,14 @@ final class GapicResumableUploadSessionBuilder {
 
     public BufferedWritableByteChannelSessionBuilder buffered(ByteBuffer buffer) {
       return new BufferedWritableByteChannelSessionBuilder(
-          buffer, getF(write, byteStringStrategy, hasher));
+          BufferHandle.handleOf(buffer), getF(write, byteStringStrategy, hasher));
+    }
+
+    public BufferedWritableByteChannelSessionBuilder bufferedAndAligned(
+        int alignmentMultiple, int capacity) {
+      return new BufferedWritableByteChannelSessionBuilder(
+          BufferHandle.allocateAligned(alignmentMultiple, capacity),
+          getF(write, byteStringStrategy, hasher));
     }
 
     public UnbufferedWritableByteChannelSessionBuilder unbuffered() {
@@ -99,7 +106,7 @@ final class GapicResumableUploadSessionBuilder {
       private ApiFuture<ResumableWrite> uploadIdFuture;
 
       private BufferedWritableByteChannelSessionBuilder(
-          ByteBuffer buffer,
+          BufferHandle buffer,
           BiFunction<
                   ResumableWrite,
                   SettableApiFuture<WriteObjectResponse>,
