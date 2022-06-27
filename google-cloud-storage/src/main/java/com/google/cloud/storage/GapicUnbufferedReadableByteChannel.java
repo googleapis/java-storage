@@ -87,12 +87,7 @@ final class GapicUnbufferedReadableByteChannel
   @Override
   public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
     if (complete && open) {
-      if (blobOffset != totalSize) {
-        throw closeWithError(
-            String.format("Mismatch size. Expected %d but was %d", totalSize, blobOffset));
-      } else {
-        close();
-      }
+      close();
       return -1;
     }
     if (!open) {
