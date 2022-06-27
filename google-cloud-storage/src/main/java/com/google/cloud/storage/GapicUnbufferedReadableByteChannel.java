@@ -222,13 +222,13 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     public boolean hasNext() {
-      checkOpen();
+      ensureOpen();
       return responseIterator.hasNext();
     }
 
     @Override
     public ReadObjectResponse next() {
-      checkOpen();
+      ensureOpen();
       return responseIterator.next();
     }
 
@@ -240,7 +240,7 @@ final class GapicUnbufferedReadableByteChannel
       }
     }
 
-    private void checkOpen() {
+    private void ensureOpen() {
       if (!streamInitialized) {
         synchronized (this) {
           if (!streamInitialized) {
