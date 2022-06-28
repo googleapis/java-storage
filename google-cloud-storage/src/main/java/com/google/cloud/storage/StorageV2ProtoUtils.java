@@ -18,10 +18,11 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.protobuf.Message;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageOrBuilder;
+import com.google.protobuf.util.JsonFormat;
+import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.storage.v2.ReadObjectRequest;
-import java.util.regex.Pattern;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -29,7 +30,8 @@ final class StorageV2ProtoUtils {
 
   private static final String VALIDATION_TEMPLATE = "0 <= offset <= limit (0 <= %s <= %s)";
 
-  private static final Pattern PROTO_TO_STRING_NEW_LINES = Pattern.compile(" *\\n *");
+  private static final Printer PROTO_PRINTER =
+      JsonFormat.printer().omittingInsignificantWhitespace().preservingProtoFieldNames();
 
   private StorageV2ProtoUtils() {}
 
@@ -77,19 +79,10 @@ final class StorageV2ProtoUtils {
 
   @NonNull
   static String fmtProto(@NonNull final MessageOrBuilder msg) {
-    final Message message = resolve(msg);
-    return "{ "
-        + PROTO_TO_STRING_NEW_LINES.matcher(message.toString()).replaceAll(" ").trim()
-        + " }";
-  }
-
-  static Message resolve(@NonNull MessageOrBuilder msg) {
-    final Message message;
-    if (msg instanceof Message) {
-      message = (Message) msg;
-    } else {
-      message = ((Message.Builder) msg).build();
+    try {
+      return PROTO_PRINTER.print(msg);
+    } catch (InvalidProtocolBufferException e) {
+      throw new RuntimeException(e);
     }
-    return message;
   }
 }
