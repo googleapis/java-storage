@@ -16,14 +16,16 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
 import static com.google.cloud.storage.Utils.todo;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
@@ -36,26 +38,31 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   private final LazyReadChannel lazyReadChannel;
 
+  private Long position;
+  private Long limit;
   private int chunkSize = 16 * 1024 * 1024;
 
   GrpcBlobReadChannel(
-      ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read, Supplier<Object> start) {
+      ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
+      ReadObjectRequest request) {
     this.lazyReadChannel =
         new LazyReadChannel(
             Suppliers.memoize(
-                () ->
-                    ResumableMedia.gapic()
-                        .read()
-                        .byteChannel(read)
-                        .setHasher(Hasher.noop())
-                        .buffered(ByteBuffer.allocate(chunkSize))
-                        .setObject(start.get())
-                        .build()));
+                () -> {
+                  ReadObjectRequest req = seekReadObjectRequest(request, position, limit);
+                  return ResumableMedia.gapic()
+                      .read()
+                      .byteChannel(read)
+                      .setHasher(Hasher.noop())
+                      .buffered(ByteBuffer.allocate(chunkSize))
+                      .setReadObjectRequest(req)
+                      .build();
+                }));
   }
 
   @Override
   public void setChunkSize(int chunkSize) {
-    Preconditions.checkState(!isOpen(), "Unable to change chunkSize after write");
+    checkState(!isOpen(), "Unable to change chunkSize after read");
     this.chunkSize = chunkSize;
   }
 
@@ -78,7 +85,9 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   @Override
   public void seek(long position) throws IOException {
-    todo();
+    checkArgument(position >= 0, "position must be >= 0");
+    checkState(!isOpen(), "Unable to change position after read");
+    this.position = position;
   }
 
   @Override
@@ -88,12 +97,15 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   @Override
   public ReadChannel limit(long limit) {
-    return todo();
+    checkArgument(limit >= 0, "limit must be >= 0");
+    checkState(!isOpen(), "Unable to change limit after read");
+    this.limit = limit;
+    return this;
   }
 
   @Override
   public long limit() {
-    return todo();
+    return limit != null ? limit : Long.MAX_VALUE;
   }
 
   @Override

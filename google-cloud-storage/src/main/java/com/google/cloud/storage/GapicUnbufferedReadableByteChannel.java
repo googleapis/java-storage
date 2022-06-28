@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.client.http.HttpStatusCodes;
@@ -59,17 +60,11 @@ final class GapicUnbufferedReadableByteChannel
   GapicUnbufferedReadableByteChannel(
       SettableApiFuture<Object> result,
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
-      Object obj,
+      ReadObjectRequest req,
       Hasher hasher) {
     this.result = result;
     this.read = read;
-    this.req =
-        ReadObjectRequest.newBuilder()
-            .setBucket(obj.getBucket())
-            .setObject(obj.getName())
-            .setGeneration(obj.getGeneration())
-            .setReadOffset(blobOffset)
-            .build();
+    this.req = req;
     this.hasher = hasher;
     this.iter = new LazyServerStreamIterator();
   }
@@ -130,7 +125,7 @@ final class GapicUnbufferedReadableByteChannel
         ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
         Crc32cLengthUnknown expected = Crc32cValue.of(checksummedData.getCrc32C());
         try {
-          hasher.validate(expected, content.duplicate());
+          hasher.validate(expected, content::duplicate);
         } catch (IOException e) {
           close();
           throw e;
@@ -240,21 +235,7 @@ final class GapicUnbufferedReadableByteChannel
         synchronized (this) {
           if (!streamInitialized) {
             if (serverStream == null) {
-              ReadObjectRequest request = req;
-
-              boolean setOffset = blobOffset > 0 && blobOffset != req.getReadOffset();
-              boolean setLimit = blobLimit < Long.MAX_VALUE && blobLimit != req.getReadLimit();
-              if (setOffset || setLimit) {
-                ReadObjectRequest.Builder b = request.toBuilder();
-                if (setOffset) {
-                  b.setReadOffset(blobOffset);
-                }
-                if (setLimit) {
-                  b.setReadLimit(blobLimit);
-                }
-                request = b.build();
-              }
-
+              ReadObjectRequest request = seekReadObjectRequest(req, blobOffset, blobLimit);
               serverStream = read.call(request);
             }
             responseIterator = serverStream.iterator();

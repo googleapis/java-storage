@@ -35,13 +35,12 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
 
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-    Arbitrary<String> objectName = StorageArbitraries.randomString();
     Arbitrary<Integer> size = Arbitraries.integers().greaterOrEqual(0);
     Arbitrary<Object> objectArbitrary =
         Combinators.combine(
                 Combinators.combine(
-                        objectName,
-                        StorageArbitraries.bucketName(),
+                        StorageArbitraries.objects().name(),
+                        StorageArbitraries.buckets().name(),
                         StorageArbitraries.generation(),
                         StorageArbitraries.metageneration(),
                         StorageArbitraries.objects().storageClass(),

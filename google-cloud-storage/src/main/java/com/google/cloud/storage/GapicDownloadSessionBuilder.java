@@ -76,7 +76,8 @@ final class GapicDownloadSessionBuilder {
       return new UnbufferedReadableByteChannelSessionBuilder(getF(read, hasher));
     }
 
-    private static BiFunction<Object, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
+    private static BiFunction<
+            ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
         getF(ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read, Hasher hasher) {
       return (object, resultFuture) ->
           new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher);
@@ -84,46 +85,52 @@ final class GapicDownloadSessionBuilder {
 
     public static final class BufferedReadableByteChannelSessionBuilder {
 
-      private BiFunction<Object, SettableApiFuture<Object>, BufferedReadableByteChannel> f;
-      private Object obj;
+      private BiFunction<ReadObjectRequest, SettableApiFuture<Object>, BufferedReadableByteChannel>
+          f;
+      private ReadObjectRequest request;
 
       private BufferedReadableByteChannelSessionBuilder(
           BufferHandle buffer,
-          BiFunction<Object, SettableApiFuture<Object>, UnbufferedReadableByteChannel> f) {
+          BiFunction<ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
+              f) {
         this.f = f.andThen(c -> new DefaultBufferedReadableByteChannel(buffer, c));
       }
 
-      public BufferedReadableByteChannelSessionBuilder setObject(Object obj) {
-        this.obj = requireNonNull(obj, "obj must be non null");
+      public BufferedReadableByteChannelSessionBuilder setReadObjectRequest(
+          ReadObjectRequest request) {
+        this.request = requireNonNull(request, "request must be non null");
         return this;
       }
 
       public BufferedReadableByteChannelSession<Object> build() {
         return new ChannelSession.BufferedReadSession<>(
-            ApiFutures.immediateFuture(obj),
+            ApiFutures.immediateFuture(request),
             f.andThen(StorageByteChannels.readable()::createSynchronized));
       }
     }
 
     public static final class UnbufferedReadableByteChannelSessionBuilder {
 
-      // TODO: object -> ReadObjectRequest
-      private BiFunction<Object, SettableApiFuture<Object>, UnbufferedReadableByteChannel> f;
-      private Object obj;
+      private BiFunction<
+              ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
+          f;
+      private ReadObjectRequest request;
 
       private UnbufferedReadableByteChannelSessionBuilder(
-          BiFunction<Object, SettableApiFuture<Object>, UnbufferedReadableByteChannel> f) {
+          BiFunction<ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
+              f) {
         this.f = f;
       }
 
-      public UnbufferedReadableByteChannelSessionBuilder setObject(Object obj) {
-        this.obj = requireNonNull(obj, "obj must be non null");
+      public UnbufferedReadableByteChannelSessionBuilder setReadObjectRequest(
+          ReadObjectRequest request) {
+        this.request = requireNonNull(request, "request must be non null");
         return this;
       }
 
       public UnbufferedReadableByteChannelSession<Object> build() {
         return new ChannelSession.UnbufferedReadSession<>(
-            ApiFutures.immediateFuture(obj),
+            ApiFutures.immediateFuture(request),
             f.andThen(StorageByteChannels.readable()::createSynchronized));
       }
     }

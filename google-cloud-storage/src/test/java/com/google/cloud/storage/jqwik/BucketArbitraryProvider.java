@@ -37,8 +37,8 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
     Arbitrary<Bucket> as =
         Combinators.combine(
                 Combinators.combine(
-                        StorageArbitraries.bucketName(),
-                        StorageArbitraries.bucketName(),
+                        StorageArbitraries.buckets().name(),
+                        StorageArbitraries.buckets().name(),
                         StorageArbitraries.buckets().storageClass(),
                         StorageArbitraries.buckets().location(),
                         StorageArbitraries.buckets().locationType(),
