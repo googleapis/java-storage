@@ -329,7 +329,10 @@ public class BucketInfo implements Serializable {
     }
   }
 
-  /** The bucket's custom placement configuration for Custom Dual Regions. */
+  /**
+   * The bucket's custom placement configuration for Custom Dual Regions. If using `location` is
+   * also required.
+   */
   public static class CustomPlacementConfig implements Serializable {
 
     private static final long serialVersionUID = -3172255903331692127L;
@@ -1871,7 +1874,8 @@ public class BucketInfo implements Serializable {
 
   /**
    * Returns the bucket's location. Data for blobs in the bucket resides in physical storage within
-   * this region or regions.
+   * this region or regions. If specifying more than one region `customPlacementConfig` should be
+   * set in conjunction.
    *
    * @see <a href="https://cloud.google.com/storage/docs/bucket-locations">Bucket Locations</a>
    */
