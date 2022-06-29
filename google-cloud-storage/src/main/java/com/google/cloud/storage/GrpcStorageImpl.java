@@ -66,6 +66,7 @@ import com.google.storage.v2.StorageClient.ListHmacKeysPage;
 import com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
 import com.google.storage.v2.StorageClient.ListObjectsPage;
 import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
+import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
 import com.google.storage.v2.stub.GrpcStorageStub;
@@ -334,12 +335,39 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
-    return todo();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    Object object = codecs.blobInfo().encode(blobInfo);
+    UpdateObjectRequest.Builder updateRequestBuilder =
+        UpdateObjectRequest.newBuilder().setObject(object);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
+        updateRequestBuilder::setIfGenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
+        updateRequestBuilder::setIfGenerationNotMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        updateRequestBuilder::setIfMetagenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        updateRequestBuilder::setIfMetagenerationNotMatch);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
+        updateRequestBuilder::setPredefinedAcl);
+    // TODO: Fields update mask
+    UnaryCallable<UpdateObjectRequest, com.google.storage.v2.Object> unaryCallable =
+        grpcStorageStub.updateObjectCallable();
+    UpdateObjectRequest req = updateRequestBuilder.build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> unaryCallable.call(req),
+        syntaxDecoders.blob);
   }
 
   @Override
   public Blob update(BlobInfo blobInfo) {
-    return todo();
+    return update(blobInfo, new BlobTargetOption[0]);
   }
 
   @Override
