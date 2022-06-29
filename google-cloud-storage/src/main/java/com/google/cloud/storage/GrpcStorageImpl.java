@@ -355,13 +355,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
         updateRequestBuilder::setPredefinedAcl);
     // TODO: Fields update mask
-    UnaryCallable<UpdateObjectRequest, com.google.storage.v2.Object> unaryCallable =
-        grpcStorageStub.updateObjectCallable();
     UpdateObjectRequest req = updateRequestBuilder.build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> unaryCallable.call(req),
+        () -> grpcStorageStub.updateObjectCallable().call(req),
         syntaxDecoders.blob);
   }
 
