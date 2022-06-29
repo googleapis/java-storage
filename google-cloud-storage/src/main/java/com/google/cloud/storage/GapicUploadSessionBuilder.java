@@ -25,7 +25,6 @@ import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
-import com.google.storage.v2.WriteObjectSpec;
 
 final class GapicUploadSessionBuilder {
 
@@ -42,9 +41,12 @@ final class GapicUploadSessionBuilder {
 
   ApiFuture<ResumableWrite> resumableWrite(
       UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
-      WriteObjectSpec spec) {
+      WriteObjectRequest writeObjectRequest) {
     StartResumableWriteRequest req =
-        StartResumableWriteRequest.newBuilder().setWriteObjectSpec(spec).build();
+        StartResumableWriteRequest.newBuilder()
+            .setCommonObjectRequestParams(writeObjectRequest.getCommonObjectRequestParams())
+            .setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec())
+            .build();
     return ApiFutures.transform(
         x.futureCall(req), (resp) -> new ResumableWrite(req, resp), MoreExecutors.directExecutor());
   }

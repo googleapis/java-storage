@@ -173,11 +173,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(content, "content must be non null");
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
     try {
       WriteObjectRequest req =
-          WriteObjectRequest.newBuilder()
-              .setWriteObjectSpec(spec)
+          getWriteObjectRequestBuilder(blobInfo, optionsMap)
               .setWriteOffset(offset) // TODO: is this correct?
               .build();
 
@@ -227,7 +225,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     BlobTargetOption[] translate = translate(options);
     // TODO: Why does optionMap not accept BlobWriteOption?
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
-    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
+    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
 
     GapicWritableByteChannelSessionBuilder channelSessionBuilder =
         ResumableMedia.gapic()
@@ -240,14 +238,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     long size = Files.size(path);
     if (size < bufferSize) {
       // ignore the bufferSize argument if the file is smaller than it
-      WriteObjectRequest req = WriteObjectRequest.newBuilder().setWriteObjectSpec(spec).build();
       session =
           channelSessionBuilder.direct().buffered(Buffers.allocate(size)).setRequest(req).build();
     } else {
       ApiFuture<ResumableWrite> start =
           ResumableMedia.gapic()
               .write()
-              .resumableWrite(grpcStorageStub.startResumableWriteCallable(), spec);
+              .resumableWrite(grpcStorageStub.startResumableWriteCallable(), req);
       session =
           channelSessionBuilder
               .resumable()
@@ -280,12 +277,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     BlobTargetOption[] translate = translate(options);
     // TODO: Why does optionMap not accept BlobWriteOption?
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
-    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
+    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
 
     ApiFuture<ResumableWrite> start =
         ResumableMedia.gapic()
             .write()
-            .resumableWrite(grpcStorageStub.startResumableWriteCallable(), spec);
+            .resumableWrite(grpcStorageStub.startResumableWriteCallable(), req);
 
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
@@ -602,13 +599,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     BlobTargetOption[] translate = translate(options);
     // TODO: Why does optionMap not accept BlobWriteOption?
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
-    WriteObjectSpec spec = getWriteObjectSpec(blobInfo, optionsMap);
+    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
     return new GrpcBlobWriteChannel(
         grpcStorageStub.writeObjectCallable(),
         () ->
             ResumableMedia.gapic()
                 .write()
-                .resumableWrite(grpcStorageStub.startResumableWriteCallable(), spec));
+                .resumableWrite(grpcStorageStub.startResumableWriteCallable(), req));
   }
 
   @Override
@@ -1059,13 +1056,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         builder::setIfGenerationNotMatch);
     String key = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
     if (key != null) {
-      CommonObjectRequestParams.Builder paramsBuilder = CommonObjectRequestParams.newBuilder();
-      paramsBuilder.setEncryptionAlgorithm("AES256");
-      paramsBuilder.setEncryptionKeyBytes(ByteString.copyFromUtf8(key));
-      byte[] keyBytes = Base64.getDecoder().decode(key);
-      HashCode keySha256 = Hashing.sha256().hashBytes(keyBytes);
-      paramsBuilder.setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()));
-      builder.setCommonObjectRequestParams(paramsBuilder.build());
+      builder.setCommonObjectRequestParams(commonRequestParams(key));
     }
     return builder.build();
   }
@@ -1086,23 +1077,66 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     }
   }
 
-  private WriteObjectSpec getWriteObjectSpec(BlobInfo info, Map<StorageRpc.Option, ?> optionsMap) {
+  private WriteObjectRequest.Builder getWriteObjectRequestBuilder(
+      BlobInfo info, Map<StorageRpc.Option, ?> optionsMap) {
     Object object = codecs.blobInfo().encode(info);
-    // TODO: map options
-    return WriteObjectSpec.newBuilder()
-        .setResource(
-            object
-                .toBuilder()
-                // required if the data is changing
-                .clearChecksums()
-                // trimmed to shave payload size
-                .clearAcl()
-                .clearGeneration()
-                .clearMetageneration()
-                .clearSize()
-                .clearCreateTime()
-                .clearUpdateTime()
-                .build())
+    Object.Builder objectBuilder =
+        object
+            .toBuilder()
+            // required if the data is changing
+            .clearChecksums()
+            // trimmed to shave payload size
+            .clearAcl()
+            .clearGeneration()
+            .clearMetageneration()
+            .clearSize()
+            .clearCreateTime()
+            .clearUpdateTime();
+    WriteObjectSpec.Builder specBuilder = WriteObjectSpec.newBuilder().setResource(objectBuilder);
+
+    WriteObjectRequest.Builder requestBuilder =
+        WriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
+
+    // TODO: Projection: Do we care?
+
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL), specBuilder::setPredefinedAcl);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        specBuilder::setIfMetagenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        specBuilder::setIfMetagenerationNotMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
+        specBuilder::setIfGenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
+        specBuilder::setIfGenerationNotMatch);
+    String userProject = (String) optionsMap.get(StorageRpc.Option.USER_PROJECT);
+    if (userProject != null) {
+      // TODO: user project
+    }
+    String encryptionKey = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
+    if (encryptionKey != null) {
+      requestBuilder.setCommonObjectRequestParams(commonRequestParams(encryptionKey));
+    }
+    String key = (String) optionsMap.get(StorageRpc.Option.KMS_KEY_NAME);
+    if (key != null) {
+      objectBuilder.setKmsKey(key);
+    }
+
+    return requestBuilder;
+  }
+
+  private CommonObjectRequestParams commonRequestParams(String key) {
+    byte[] keyBytes = Base64.getDecoder().decode(key);
+    HashCode keySha256 = Hashing.sha256().hashBytes(keyBytes);
+
+    return CommonObjectRequestParams.newBuilder()
+        .setEncryptionAlgorithm("AES256")
+        .setEncryptionKeyBytes(ByteString.copyFromUtf8(key))
+        .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()))
         .build();
   }
 }

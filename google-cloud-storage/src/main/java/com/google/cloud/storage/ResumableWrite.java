@@ -35,7 +35,12 @@ final class ResumableWrite implements WriteObjectRequestBuilderFactory {
   public ResumableWrite(StartResumableWriteRequest req, StartResumableWriteResponse res) {
     this.req = req;
     this.res = res;
-    this.writeRequest = WriteObjectRequest.newBuilder().setUploadId(res.getUploadId()).build();
+    this.writeRequest =
+        WriteObjectRequest.newBuilder()
+            .setUploadId(res.getUploadId())
+            .setCommonObjectRequestParams(req.getCommonObjectRequestParams())
+            // REVIEW: how does kms come into play here?
+            .build();
   }
 
   public StartResumableWriteRequest getReq() {
