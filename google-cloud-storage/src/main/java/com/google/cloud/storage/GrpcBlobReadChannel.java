@@ -54,7 +54,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
                       .read()
                       .byteChannel(read)
                       .setHasher(Hasher.noop())
-                      .buffered(ByteBuffer.allocate(chunkSize))
+                      .buffered(Buffers.allocate(chunkSize))
                       .setReadObjectRequest(req)
                       .build();
                 }));
