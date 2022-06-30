@@ -179,7 +179,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
           ResumableMedia.gapic()
               .write()
-              .byteChannel(grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+              .byteChannel(
+                  grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
               .setByteStringStrategy(ByteStringStrategy.noCopy())
               .setHasher(Hasher.enabled())
               .direct()
@@ -228,7 +229,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GapicWritableByteChannelSessionBuilder channelSessionBuilder =
         ResumableMedia.gapic()
             .write()
-            .byteChannel(grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+            .byteChannel(
+                grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
             .setHasher(Hasher.enabled())
             .setByteStringStrategy(ByteStringStrategy.noCopy());
 
@@ -242,7 +244,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       ApiFuture<ResumableWrite> start =
           ResumableMedia.gapic()
               .write()
-              .resumableWrite(grpcStorageStub.startResumableWriteCallable().withDefaultCallContext(grpcCallContext), req);
+              .resumableWrite(
+                  grpcStorageStub
+                      .startResumableWriteCallable()
+                      .withDefaultCallContext(grpcCallContext),
+                  req);
       session =
           channelSessionBuilder
               .resumable()
@@ -281,12 +287,17 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ApiFuture<ResumableWrite> start =
         ResumableMedia.gapic()
             .write()
-            .resumableWrite(grpcStorageStub.startResumableWriteCallable().withDefaultCallContext(grpcCallContext), req);
+            .resumableWrite(
+                grpcStorageStub
+                    .startResumableWriteCallable()
+                    .withDefaultCallContext(grpcCallContext),
+                req);
 
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
-            .byteChannel(grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+            .byteChannel(
+                grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
             .setHasher(Hasher.enabled())
             .setByteStringStrategy(ByteStringStrategy.noCopy())
             .resumable()
@@ -605,7 +616,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         () ->
             ResumableMedia.gapic()
                 .write()
-                .resumableWrite(grpcStorageStub.startResumableWriteCallable().withDefaultCallContext(grpcCallContext), req));
+                .resumableWrite(
+                    grpcStorageStub
+                        .startResumableWriteCallable()
+                        .withDefaultCallContext(grpcCallContext),
+                    req));
   }
 
   @Override
