@@ -173,16 +173,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(content, "content must be non null");
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
     try {
-      WriteObjectRequest req =
-          getWriteObjectRequestBuilder(blobInfo, optionsMap)
-              .setWriteOffset(offset) // TODO: is this correct?
-              .build();
-
       UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
           ResumableMedia.gapic()
               .write()
-              .byteChannel(grpcStorageStub.writeObjectCallable())
+              .byteChannel(grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
               .setByteStringStrategy(ByteStringStrategy.noCopy())
               .setHasher(Hasher.enabled())
               .direct()
@@ -225,12 +222,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     BlobTargetOption[] translate = translate(options);
     // TODO: Why does optionMap not accept BlobWriteOption?
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
 
     GapicWritableByteChannelSessionBuilder channelSessionBuilder =
         ResumableMedia.gapic()
             .write()
-            .byteChannel(grpcStorageStub.writeObjectCallable())
+            .byteChannel(grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
             .setHasher(Hasher.enabled())
             .setByteStringStrategy(ByteStringStrategy.noCopy());
 
@@ -244,7 +242,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       ApiFuture<ResumableWrite> start =
           ResumableMedia.gapic()
               .write()
-              .resumableWrite(grpcStorageStub.startResumableWriteCallable(), req);
+              .resumableWrite(grpcStorageStub.startResumableWriteCallable().withDefaultCallContext(grpcCallContext), req);
       session =
           channelSessionBuilder
               .resumable()
@@ -277,17 +275,18 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     BlobTargetOption[] translate = translate(options);
     // TODO: Why does optionMap not accept BlobWriteOption?
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
 
     ApiFuture<ResumableWrite> start =
         ResumableMedia.gapic()
             .write()
-            .resumableWrite(grpcStorageStub.startResumableWriteCallable(), req);
+            .resumableWrite(grpcStorageStub.startResumableWriteCallable().withDefaultCallContext(grpcCallContext), req);
 
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
-            .byteChannel(grpcStorageStub.writeObjectCallable())
+            .byteChannel(grpcStorageStub.writeObjectCallable().withDefaultCallContext(grpcCallContext))
             .setHasher(Hasher.enabled())
             .setByteStringStrategy(ByteStringStrategy.noCopy())
             .resumable()
@@ -599,13 +598,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     BlobTargetOption[] translate = translate(options);
     // TODO: Why does optionMap not accept BlobWriteOption?
     Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
     return new GrpcBlobWriteChannel(
         grpcStorageStub.writeObjectCallable(),
         () ->
             ResumableMedia.gapic()
                 .write()
-                .resumableWrite(grpcStorageStub.startResumableWriteCallable(), req));
+                .resumableWrite(grpcStorageStub.startResumableWriteCallable().withDefaultCallContext(grpcCallContext), req));
   }
 
   @Override
