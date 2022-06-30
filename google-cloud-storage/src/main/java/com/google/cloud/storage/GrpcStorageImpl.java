@@ -23,6 +23,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.rpc.ApiException;
@@ -39,6 +40,8 @@ import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
@@ -92,6 +95,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
 
@@ -126,6 +130,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     com.google.storage.v2.Bucket bucket =
         com.google.storage.v2.Bucket.newBuilder()
             .setName(BucketName.format(this.getOptions().getProjectId(), bucketInfo.getName()))
@@ -145,7 +150,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> grpcStorageStub.createBucketCallable().call(req),
+        () -> grpcStorageStub.createBucketCallable().call(req, grpcCallContext),
         syntaxDecoders.bucket);
   }
 
@@ -232,6 +237,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     GetBucketRequest.Builder bucketRequestBuilder = GetBucketRequest.newBuilder().setName(bucket);
     ifNonNull(
         (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
@@ -245,7 +251,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> grpcStorageStub.getBucketCallable().call(req),
+        () -> grpcStorageStub.getBucketCallable().call(req, grpcCallContext),
         syntaxDecoders.bucket);
   }
 
@@ -261,9 +267,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    UnaryCallable<GetObjectRequest, com.google.storage.v2.Object> unaryCallable =
-        grpcStorageStub.getObjectCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     GetObjectRequest.Builder getObjectRequestBuilder =
         GetObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
     ifNonNull(
@@ -277,7 +282,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> grpcStorageStub.getObjectCallable().call(req),
+        () -> grpcStorageStub.getObjectCallable().call(req, grpcCallContext),
         syntaxDecoders.blob);
   }
 
@@ -291,6 +296,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse> listBucketsCallable =
         grpcStorageStub.listBucketsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
     if (projectId == null) {
       projectId = this.getOptions().getProjectId();
@@ -301,8 +307,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
     // TODO(sydmunro): StorageRpc.Option.Fields
-    // TODO(sydmunro): User Project
-    ListBucketsPagedResponse call = listBucketsCallable.call(builder.build());
+    ListBucketsPagedResponse call = listBucketsCallable.call(builder.build(), grpcCallContext);
     ListBucketsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.bucket);
   }
@@ -312,6 +317,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsCallable =
         grpcStorageStub.listObjectsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     ListObjectsRequest.Builder builder = ListObjectsRequest.newBuilder().setParent(bucket);
     ifNonNull(
         (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
@@ -322,7 +328,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         (String) optionsMap.get(StorageRpc.Option.START_OFF_SET), builder::setLexicographicStart);
     ifNonNull((String) optionsMap.get(StorageRpc.Option.END_OFF_SET), builder::setLexicographicEnd);
     // TODO(sydmunro) StorageRpc.Option.Fields
-    ListObjectsPagedResponse call = listObjectsCallable.call(builder.build());
+    ListObjectsPagedResponse call = listObjectsCallable.call(builder.build(), grpcCallContext);
     ListObjectsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.blob);
   }
@@ -345,6 +351,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public boolean delete(String bucket, BucketSourceOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     DeleteBucketRequest.Builder bucketRequestBuilder =
         DeleteBucketRequest.newBuilder()
             .setName(BucketName.format(this.getOptions().getProjectId(), bucket));
@@ -359,12 +366,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(req),
-          () -> grpcStorageStub.deleteBucketCallable().call(req),
+          () -> grpcStorageStub.deleteBucketCallable().call(req, grpcCallContext),
           Decoder.identity());
       return true;
     } catch (ApiException e) {
       // TODO: We should throw a StorageException instead of ApiException when making the
-      // deleteBucketCallable().call(req)
       return false;
     }
   }
@@ -377,6 +383,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public boolean delete(BlobId blob, BlobSourceOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     DeleteObjectRequest.Builder objectRequestBuilder =
         DeleteObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
     ifNonNull(
@@ -397,12 +404,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(req),
-          () -> grpcStorageStub.deleteObjectCallable().call(req),
+          () -> grpcStorageStub.deleteObjectCallable().call(req, grpcCallContext),
           Decoder.identity());
       return true;
     } catch (ApiException e) {
       // TODO: We should throw a StorageException instead of ApiException when making the
-      // deleteObjectCallable().call(req)
       return false;
     }
   }
@@ -764,6 +770,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysCallable =
         grpcStorageStub.listHmacKeysPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
     if (projectId == null) {
       projectId = this.getOptions().getProjectId();
@@ -777,7 +784,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
     ifNonNull(
         (Boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
-    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build());
+    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build(), grpcCallContext);
     ListHmacKeysPage page = call.getPage();
     return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
   }
@@ -789,6 +796,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public void deleteHmacKey(HmacKeyMetadata hmacKeyMetadata, DeleteHmacKeyOption... options) {
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     DeleteHmacKeyRequest req =
         DeleteHmacKeyRequest.newBuilder()
             .setAccessId(hmacKeyMetadata.getAccessId())
@@ -798,7 +807,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         getOptions(),
         retryAlgorithmManager.getFor(req),
         () -> {
-          grpcStorageStub.deleteHmacKeyCallable().call(req);
+          grpcStorageStub.deleteHmacKeyCallable().call(req, grpcCallContext);
           return null;
         },
         Decoder.identity());
@@ -1007,11 +1016,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
         builder::setIfGenerationNotMatch);
-    String userProject = (String) optionsMap.get(StorageRpc.Option.USER_PROJECT);
-    if (userProject != null) {
-      // TODO: user project
-      // ReadObjectRequest does not have a user_project field
-    }
     String key = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
     if (key != null) {
       CommonObjectRequestParams.Builder paramsBuilder = CommonObjectRequestParams.newBuilder();
@@ -1023,5 +1027,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       builder.setCommonObjectRequestParams(paramsBuilder.build());
     }
     return builder.build();
+  }
+
+  private static final class GrpcRequestMetadataSupport {
+    @NonNull
+    static GrpcCallContext create(Map<StorageRpc.Option, ?> optionsMap) {
+      // GrpcCallContext is immutable, any modification we perform needs to be assigned back to
+      // our variable otherwise it will effectively be lost.
+      GrpcCallContext ctx = GrpcCallContext.createDefault();
+      String userProject = (String) optionsMap.get(StorageRpc.Option.USER_PROJECT);
+      if (userProject != null) {
+        ctx =
+            ctx.withExtraHeaders(
+                ImmutableMap.of("X-Goog-User-Project", ImmutableList.of(userProject)));
+      }
+      return ctx;
+    }
   }
 }
