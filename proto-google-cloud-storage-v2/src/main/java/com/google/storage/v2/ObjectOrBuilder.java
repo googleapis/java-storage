@@ -93,6 +93,37 @@ public interface ObjectOrBuilder
    *
    *
    * <pre>
+   * The etag of the object.
+   * If included in the metadata of an update or delete request message, the
+   * operation will only be performed if the etag matches that of the live
+   * object.
+   * </pre>
+   *
+   * <code>string etag = 27;</code>
+   *
+   * @return The etag.
+   */
+  java.lang.String getEtag();
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the object.
+   * If included in the metadata of an update or delete request message, the
+   * operation will only be performed if the etag matches that of the live
+   * object.
+   * </pre>
+   *
+   * <code>string etag = 27;</code>
+   *
+   * @return The bytes for etag.
+   */
+  com.google.protobuf.ByteString getEtagBytes();
+
+  /**
+   *
+   *
+   * <pre>
    * Immutable. The content generation of this object. Used for object versioning.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].

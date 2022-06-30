@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.9.0](https://github.com/googleapis/java-storage/compare/v2.8.1...v2.9.0) (2022-06-27)
+
+
+### Features
+
+* Enable REST transport for most of Java and Go clients ([#1469](https://github.com/googleapis/java-storage/issues/1469)) ([cfb6fd8](https://github.com/googleapis/java-storage/commit/cfb6fd8c1f13cb2115e5ff7ea7af41a9e27986b1))
+
+
+### Documentation
+
+* Clarified how clients should work with resumable uploads ([#1457](https://github.com/googleapis/java-storage/issues/1457)) ([15baa27](https://github.com/googleapis/java-storage/commit/15baa27c97aacca115981f5c14d942a8ddd6cb1f))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.13.0 ([#1468](https://github.com/googleapis/java-storage/issues/1468)) ([1a817fe](https://github.com/googleapis/java-storage/commit/1a817fef87e626e74dab47eaff33c1d9d3c56bb5))
+* update dependency org.graalvm.buildtools:junit-platform-native to v0.9.12 ([#1463](https://github.com/googleapis/java-storage/issues/1463)) ([d42c570](https://github.com/googleapis/java-storage/commit/d42c5704e4fe7341dfdd0562fa0bdbcd4bc99c7e))
+* update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.12 ([#1464](https://github.com/googleapis/java-storage/issues/1464)) ([2f35a4f](https://github.com/googleapis/java-storage/commit/2f35a4f597870a4506119946510ba82fbb7f9449))
+* update kms.version to v0.96.3 ([#1471](https://github.com/googleapis/java-storage/issues/1471)) ([ceb7fa6](https://github.com/googleapis/java-storage/commit/ceb7fa665c35f6b00aebaa665246597b9ee4632a))
+
 ## [2.8.1](https://github.com/googleapis/java-storage/compare/v2.8.0...v2.8.1) (2022-06-13)
 
 
