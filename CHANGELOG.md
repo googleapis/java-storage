@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.2](https://github.com/googleapis/java-storage/compare/v2.9.1...v2.9.2) (2022-07-06)
+
+
+### Dependencies
+
+* update kms.version to v0.97.0 ([#1488](https://github.com/googleapis/java-storage/issues/1488)) ([852cafe](https://github.com/googleapis/java-storage/commit/852cafe7db018a6fd666c3490c96eeca34c4a1ed))
+
 ## [2.9.1](https://github.com/googleapis/java-storage/compare/v2.9.0...v2.9.1) (2022-07-06)
 
 
