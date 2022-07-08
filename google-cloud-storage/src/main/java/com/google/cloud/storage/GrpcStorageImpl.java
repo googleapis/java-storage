@@ -48,6 +48,7 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.FieldMask;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CommonObjectRequestParams;
@@ -444,14 +445,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
         updateRequestBuilder::setPredefinedAcl);
-    updateRequestBuilder.setUpdateMask(
-        FieldMask.newBuilder()
-            .addAllPaths(
-                object.getAllFields().entrySet().stream()
-                    .filter(x -> x.getValue() != null)
-                    .map(e -> e.getKey().getName())
-                    .collect(Collectors.toList()))
-            .build());
+    updateRequestBuilder.setUpdateMask(fieldMaskGenerator(object.getAllFields()));
     UpdateObjectRequest req = updateRequestBuilder.build();
     return Retrying.run(
         getOptions(),
@@ -1187,6 +1181,17 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .setEncryptionAlgorithm("AES256")
         .setEncryptionKeyBytes(ByteString.copyFromUtf8(key))
         .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()))
+        .build();
+  }
+
+  private FieldMask fieldMaskGenerator(
+      Map<FieldDescriptor, java.lang.Object> fieldDescriptorObjectMap) {
+    return FieldMask.newBuilder()
+        .addAllPaths(
+            fieldDescriptorObjectMap.entrySet().stream()
+                .filter(x -> x.getValue() != null)
+                .map(e -> e.getKey().getName())
+                .collect(Collectors.toList()))
         .build();
   }
 }
