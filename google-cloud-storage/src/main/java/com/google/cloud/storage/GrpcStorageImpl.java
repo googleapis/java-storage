@@ -48,6 +48,7 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.FieldMask;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.CreateBucketRequest;
@@ -424,6 +425,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     Object object = codecs.blobInfo().encode(blobInfo);
     UpdateObjectRequest.Builder updateRequestBuilder =
         UpdateObjectRequest.newBuilder().setObject(object);
@@ -442,12 +444,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
         updateRequestBuilder::setPredefinedAcl);
-    // TODO: Fields update mask
+    updateRequestBuilder.setUpdateMask(
+        FieldMask.newBuilder()
+            .addAllPaths(
+                object.getAllFields().entrySet().stream()
+                    .filter(x -> x.getValue() != null)
+                    .map(e -> e.getKey().getName())
+                    .collect(Collectors.toList()))
+            .build());
     UpdateObjectRequest req = updateRequestBuilder.build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> grpcStorageStub.updateObjectCallable().call(req),
+        () -> grpcStorageStub.updateObjectCallable().call(req, grpcCallContext),
         syntaxDecoders.blob);
   }
 
