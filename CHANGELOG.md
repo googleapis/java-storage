@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.9.3](https://github.com/googleapis/java-storage/compare/v2.9.2...v2.9.3) (2022-07-08)
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220705-1.32.1 ([#1494](https://github.com/googleapis/java-storage/issues/1494)) ([5612f0f](https://github.com/googleapis/java-storage/commit/5612f0f929582c9e720d67683f9441d96080fb14))
+
 ## [2.9.2](https://github.com/googleapis/java-storage/compare/v2.9.1...v2.9.2) (2022-07-06)
 
 
