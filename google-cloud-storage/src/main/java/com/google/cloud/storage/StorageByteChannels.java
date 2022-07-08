@@ -83,7 +83,7 @@ final class StorageByteChannels {
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
       delegate.close();
     }
   }
@@ -108,7 +108,7 @@ final class StorageByteChannels {
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
       delegate.close();
     }
 
@@ -148,7 +148,7 @@ final class StorageByteChannels {
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
       delegate.close();
     }
   }
@@ -183,7 +183,7 @@ final class StorageByteChannels {
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
       delegate.close();
     }
   }

@@ -40,39 +40,12 @@ abstract class BufferHandle implements Supplier<ByteBuffer> {
 
   abstract int position();
 
-  static BufferHandle allocateAligned(int alignmentMultiple, int size) {
-    int actualSize = alignSize(alignmentMultiple, size);
-    return allocate(actualSize);
-  }
-
   static BufferHandle allocate(int capacity) {
-    return new LazyBufferHandle(capacity, ByteBuffer::allocate);
+    return new LazyBufferHandle(capacity, Buffers::allocate);
   }
 
   static BufferHandle handleOf(ByteBuffer buf) {
     return new EagerBufferHandle(buf);
-  }
-
-  /**
-   * Give {@code size} "snap" it to the next {@code alignmentMultiple} that is >= {@code size}.
-   *
-   * <p>i.e. Given 344k size, 256k alignmentMultiple expect 512k
-   */
-  private static int alignSize(int alignmentMultiple, int size) {
-    int actualSize = size;
-    if (size < alignmentMultiple) {
-      actualSize = alignmentMultiple;
-    } else if (size % alignmentMultiple != 0) {
-      // TODO: this mod will cause two divisions to happen
-      //   * try and measure how expensive two divisions is compared to one
-      //   * also measure the case where size is a multiple, and how much the
-      //     following calculation costs
-
-      // add almost another full alignmentMultiple to the size
-      // then integer divide it before multiplying it by the alignmentMultiple
-      actualSize = (size + alignmentMultiple - 1) / alignmentMultiple * alignmentMultiple;
-    } // else size is already aligned
-    return actualSize;
   }
 
   static final class LazyBufferHandle extends BufferHandle {

@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 
 /**
  * Utility methods for working with ByteBuffers
@@ -77,11 +78,7 @@ final class Buffers {
       if (bufRemaining == 0) {
         continue;
       } else if (bufRemaining < contentRemaining) {
-        ByteBuffer sub = content.duplicate();
-        int newLimit = sub.position() + bufRemaining;
-        sub.limit(newLimit);
-        buf.put(sub);
-        Buffers.position(content, newLimit);
+        sliceAndConsume(content, bufRemaining, buf::put);
       } else {
         buf.put(content);
       }
@@ -89,5 +86,46 @@ final class Buffers {
       total += written;
     }
     return total;
+  }
+
+  /**
+   * Slice the provided source with a limit of {@code limit}, consume the slice with {@code c} then
+   * increment position of {@code src} to reflect the consumed bytes.
+   */
+  static void sliceAndConsume(ByteBuffer src, int limit, Consumer<ByteBuffer> c) {
+    ByteBuffer slice = src.slice();
+    slice.limit(limit);
+    c.accept(slice);
+    Buffers.position(src, src.position() + limit);
+  }
+
+  static ByteBuffer allocate(long l) {
+    return ByteBuffer.allocate(Math.toIntExact(l));
+  }
+
+  static ByteBuffer allocate(int i) {
+    return ByteBuffer.allocate(i);
+  }
+
+  /**
+   * Give {@code size} "snap" it to the next {@code alignmentMultiple} that is >= {@code size}.
+   *
+   * <p>i.e. Given 344k size, 256k alignmentMultiple expect 512k
+   */
+  static ByteBuffer allocateAligned(int size, int alignmentMultiple) {
+    int actualSize = size;
+    if (size < alignmentMultiple) {
+      actualSize = alignmentMultiple;
+    } else if (size % alignmentMultiple != 0) {
+      // TODO: this mod will cause two divisions to happen
+      //   * try and measure how expensive two divisions is compared to one
+      //   * also measure the case where size is a multiple, and how much the following calculation
+      //     costs
+
+      // add almost another full alignmentMultiple to the size
+      // then integer divide it before multiplying it by the alignmentMultiple
+      actualSize = (size + alignmentMultiple - 1) / alignmentMultiple * alignmentMultiple;
+    } // else size is already aligned
+    return allocate(actualSize);
   }
 }

@@ -20,12 +20,12 @@ import static com.google.common.truth.Truth.assertThat;
 
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
-import net.jqwik.api.Example;
+import org.junit.Test;
 
 public final class BuffersTest {
 
-  @Example
-  void copy() {
+  @Test
+  public void copy() {
     SecureRandom rand = new SecureRandom();
     ByteBuffer content = DataGenerator.rand(rand).genByteBuffer(2048);
 
@@ -47,5 +47,29 @@ public final class BuffersTest {
       copy += read;
     }
     assertThat(copy).isEqualTo(2048);
+  }
+
+  @Test
+  public void allocateAligned_nonDivisible_capacityGtAlignment() {
+    ByteBuffer b1 = Buffers.allocateAligned(3, 2);
+    assertThat(b1.capacity()).isEqualTo(4);
+  }
+
+  @Test
+  public void allocateAligned_nonDivisible_capacityLtAlignment() {
+    ByteBuffer b1 = Buffers.allocateAligned(1, 2);
+    assertThat(b1.capacity()).isEqualTo(2);
+  }
+
+  @Test
+  public void allocateAligned_evenlyDivisible_capacityLtAlignment() {
+    ByteBuffer b1 = Buffers.allocateAligned(2, 4);
+    assertThat(b1.capacity()).isEqualTo(4);
+  }
+
+  @Test
+  public void allocateAligned_evenlyDivisible_capacityGtAlignment() {
+    ByteBuffer b1 = Buffers.allocateAligned(8, 4);
+    assertThat(b1.capacity()).isEqualTo(8);
   }
 }

@@ -54,7 +54,7 @@ final class GapicDownloadSessionBuilder {
     }
 
     public BufferedReadableByteChannelSessionBuilder buffered() {
-      return buffered(ByteBuffer.allocate(16 * 1024 * 1024));
+      return buffered(Buffers.allocate(16 * 1024 * 1024));
     }
 
     public ReadableByteChannelSessionBuilder setHasher(Hasher hasher) {

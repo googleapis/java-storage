@@ -2391,7 +2391,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if bucket was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean delete(String bucket, BucketSourceOption... options);
 
   /**
@@ -2416,7 +2416,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean delete(String bucket, String blob, BlobSourceOption... options);
 
   /**
@@ -2444,7 +2444,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean delete(BlobId blob, BlobSourceOption... options);
 
   /**
@@ -2467,7 +2467,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean delete(BlobId blob);
 
   /**

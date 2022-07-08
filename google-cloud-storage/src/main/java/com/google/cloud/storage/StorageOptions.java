@@ -113,7 +113,7 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
     return http();
   }
 
-  @TransportCompatibility(Transport.GRPC)
+  @TransportCompatibility(Transport.HTTP)
   public static HttpStorageOptions.Builder http() {
     return HttpStorageOptions.newBuilder();
   }

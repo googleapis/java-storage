@@ -38,17 +38,18 @@ import java.nio.channels.ClosedChannelException;
  *       underlying channel
  *   <li>If we do not have any bytes in our buffer and {@code src} is larger than the size of our
  *       buffer, take a slice of {@code src} the same size as our buffer and {@link
- *       UnbufferedWritableByteChannel#write(ByteBuffer[]) write([buffer, slice])} before enqueuing
- *       any outstanding bytes which are smaller than our buffer.
+ *       UnbufferedWritableByteChannel#write(ByteBuffer[]) write(slice)} before enqueuing any
+ *       outstanding bytes which are smaller than our buffer.
  *   <li>If we do not have any bytes in our buffer and {@code src} is smaller than the size of our
  *       buffer, enqueue it in full
  *   <li>If we do have enqueued bytes and {@code src} is the size of our remaining buffer space
  *       {@link UnbufferedWritableByteChannel#write(ByteBuffer[]) write([buffer, src])} to the
  *       underlying channel
  *   <li>If we do have enqueued bytes and {@code src} is larger than the size of our remaining
- *       buffer space, take a slice of {@code src} the same size as our buffer and {@link
- *       UnbufferedWritableByteChannel#write(ByteBuffer[]) write([buffer, slice])} to the underlying
- *       channel before enqueuing any outstanding bytes which are smaller than our buffer.
+ *       buffer space, take a slice of {@code src} the same size as the remaining space in our
+ *       buffer and {@link UnbufferedWritableByteChannel#write(ByteBuffer[]) write([buffer, slice])}
+ *       to the underlying channel before enqueuing any outstanding bytes which are smaller than our
+ *       buffer.
  *   <li>If we do have enqueued bytes and {@code src} is smaller than our remaining buffer space,
  *       enqueue it in full
  * </ol>

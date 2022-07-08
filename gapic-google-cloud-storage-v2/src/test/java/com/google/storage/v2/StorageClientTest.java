@@ -175,6 +175,7 @@ public class StorageClientTest {
         Bucket.newBuilder()
             .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
             .setBucketId("bucketId-1603305307")
+            .setEtag("etag3123477")
             .setProject(ProjectName.of("[PROJECT]").toString())
             .setMetageneration(1048558813)
             .setLocation("location1901043637")
@@ -198,6 +199,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
+            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -238,6 +240,7 @@ public class StorageClientTest {
         Bucket.newBuilder()
             .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
             .setBucketId("bucketId-1603305307")
+            .setEtag("etag3123477")
             .setProject(ProjectName.of("[PROJECT]").toString())
             .setMetageneration(1048558813)
             .setLocation("location1901043637")
@@ -261,6 +264,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
+            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -301,6 +305,7 @@ public class StorageClientTest {
         Bucket.newBuilder()
             .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
             .setBucketId("bucketId-1603305307")
+            .setEtag("etag3123477")
             .setProject(ProjectName.of("[PROJECT]").toString())
             .setMetageneration(1048558813)
             .setLocation("location1901043637")
@@ -324,6 +329,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
+            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -370,6 +376,7 @@ public class StorageClientTest {
         Bucket.newBuilder()
             .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
             .setBucketId("bucketId-1603305307")
+            .setEtag("etag3123477")
             .setProject(ProjectName.of("[PROJECT]").toString())
             .setMetageneration(1048558813)
             .setLocation("location1901043637")
@@ -393,6 +400,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
+            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -527,6 +535,7 @@ public class StorageClientTest {
         Bucket.newBuilder()
             .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
             .setBucketId("bucketId-1603305307")
+            .setEtag("etag3123477")
             .setProject(ProjectName.of("[PROJECT]").toString())
             .setMetageneration(1048558813)
             .setLocation("location1901043637")
@@ -550,6 +559,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
+            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -591,6 +601,7 @@ public class StorageClientTest {
         Bucket.newBuilder()
             .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
             .setBucketId("bucketId-1603305307")
+            .setEtag("etag3123477")
             .setProject(ProjectName.of("[PROJECT]").toString())
             .setMetageneration(1048558813)
             .setLocation("location1901043637")
@@ -614,6 +625,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
+            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -909,6 +921,7 @@ public class StorageClientTest {
         Bucket.newBuilder()
             .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
             .setBucketId("bucketId-1603305307")
+            .setEtag("etag3123477")
             .setProject(ProjectName.of("[PROJECT]").toString())
             .setMetageneration(1048558813)
             .setLocation("location1901043637")
@@ -932,6 +945,7 @@ public class StorageClientTest {
             .setRetentionPolicy(Bucket.RetentionPolicy.newBuilder().build())
             .setIamConfig(Bucket.IamConfig.newBuilder().build())
             .setSatisfiesPzs(true)
+            .setCustomPlacementConfig(Bucket.CustomPlacementConfig.newBuilder().build())
             .setAutoclass(Bucket.Autoclass.newBuilder().build())
             .build();
     mockStorage.addResponse(expectedResponse);
@@ -1043,6 +1057,7 @@ public class StorageClientTest {
         Notification.newBuilder()
             .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
             .setTopic("topic110546223")
+            .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
             .putAllCustomAttributes(new HashMap<String, String>())
             .setObjectNamePrefix("objectNamePrefix-1978236516")
@@ -1086,6 +1101,7 @@ public class StorageClientTest {
         Notification.newBuilder()
             .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
             .setTopic("topic110546223")
+            .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
             .putAllCustomAttributes(new HashMap<String, String>())
             .setObjectNamePrefix("objectNamePrefix-1978236516")
@@ -1129,6 +1145,7 @@ public class StorageClientTest {
         Notification.newBuilder()
             .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
             .setTopic("topic110546223")
+            .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
             .putAllCustomAttributes(new HashMap<String, String>())
             .setObjectNamePrefix("objectNamePrefix-1978236516")
@@ -1175,6 +1192,7 @@ public class StorageClientTest {
         Notification.newBuilder()
             .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
             .setTopic("topic110546223")
+            .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
             .putAllCustomAttributes(new HashMap<String, String>())
             .setObjectNamePrefix("objectNamePrefix-1978236516")
@@ -1309,6 +1327,7 @@ public class StorageClientTest {
         Object.newBuilder()
             .setName("name3373707")
             .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+            .setEtag("etag3123477")
             .setGeneration(305703192)
             .setMetageneration(1048558813)
             .setStorageClass("storageClass871353277")
@@ -1482,6 +1501,7 @@ public class StorageClientTest {
         Object.newBuilder()
             .setName("name3373707")
             .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+            .setEtag("etag3123477")
             .setGeneration(305703192)
             .setMetageneration(1048558813)
             .setStorageClass("storageClass871353277")
@@ -1550,6 +1570,7 @@ public class StorageClientTest {
         Object.newBuilder()
             .setName("name3373707")
             .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+            .setEtag("etag3123477")
             .setGeneration(305703192)
             .setMetageneration(1048558813)
             .setStorageClass("storageClass871353277")
@@ -1692,6 +1713,7 @@ public class StorageClientTest {
         Object.newBuilder()
             .setName("name3373707")
             .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+            .setEtag("etag3123477")
             .setGeneration(305703192)
             .setMetageneration(1048558813)
             .setStorageClass("storageClass871353277")
@@ -2352,6 +2374,7 @@ public class StorageClientTest {
             .setState("state109757585")
             .setCreateTime(Timestamp.newBuilder().build())
             .setUpdateTime(Timestamp.newBuilder().build())
+            .setEtag("etag3123477")
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -2399,6 +2422,7 @@ public class StorageClientTest {
             .setState("state109757585")
             .setCreateTime(Timestamp.newBuilder().build())
             .setUpdateTime(Timestamp.newBuilder().build())
+            .setEtag("etag3123477")
             .build();
     mockStorage.addResponse(expectedResponse);
 
@@ -2534,6 +2558,7 @@ public class StorageClientTest {
             .setState("state109757585")
             .setCreateTime(Timestamp.newBuilder().build())
             .setUpdateTime(Timestamp.newBuilder().build())
+            .setEtag("etag3123477")
             .build();
     mockStorage.addResponse(expectedResponse);
 
