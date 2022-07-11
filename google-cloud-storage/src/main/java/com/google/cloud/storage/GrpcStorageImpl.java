@@ -445,7 +445,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
         updateRequestBuilder::setPredefinedAcl);
-    updateRequestBuilder.setUpdateMask(fieldMaskGenerator(object.getAllFields()));
+    updateRequestBuilder.setUpdateMask(fieldMaskGenerator(object));
     UpdateObjectRequest req = updateRequestBuilder.build();
     return Retrying.run(
         getOptions(),
