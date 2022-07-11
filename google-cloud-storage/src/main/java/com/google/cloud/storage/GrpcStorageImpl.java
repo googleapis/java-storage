@@ -421,14 +421,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     UpdateBucketRequest.Builder bucketRequestBuilder =
         UpdateBucketRequest.newBuilder().setBucket(bucket);
-    bucketRequestBuilder.setUpdateMask(
-        FieldMask.newBuilder()
-            .addAllPaths(
-                bucket.getAllFields().entrySet().stream()
-                    .filter(x -> x.getValue() != null)
-                    .map(e -> e.getKey().getName())
-                    .collect(Collectors.toList()))
-            .build());
+    bucketRequestBuilder.setUpdateMask(fieldMaskGenerator(bucket));
     ifNonNull(
         (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
         bucketRequestBuilder::setPredefinedAcl);
