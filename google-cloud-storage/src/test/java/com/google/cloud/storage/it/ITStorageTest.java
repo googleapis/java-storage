@@ -3556,8 +3556,8 @@ public class ITStorageTest {
   public void testBucketCustomPlacmentConfigDualRegion() {
     String bucketName = RemoteStorageHelper.generateBucketName();
     List<String> locations = new ArrayList<>();
-    locations.add("US-EAST-1");
-    locations.add("US-WEST-1");
+    locations.add("US-EAST1");
+    locations.add("US-WEST1");
     CustomPlacementConfig customPlacementConfig =
         CustomPlacementConfig.newBuilder().setDataLocations(locations).build();
     Bucket bucket =
