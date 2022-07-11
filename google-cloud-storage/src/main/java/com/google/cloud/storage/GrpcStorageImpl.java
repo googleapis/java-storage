@@ -1184,11 +1184,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .build();
   }
 
-  private FieldMask fieldMaskGenerator(
-      Map<FieldDescriptor, java.lang.Object> fieldDescriptorObjectMap) {
+  private FieldMask fieldMaskGenerator(Message message) {
     return FieldMask.newBuilder()
         .addAllPaths(
-            fieldDescriptorObjectMap.entrySet().stream()
+            message.getAllFields().entrySet().stream()
                 .filter(x -> x.getValue() != null)
                 .map(e -> e.getKey().getName())
                 .collect(Collectors.toList()))
