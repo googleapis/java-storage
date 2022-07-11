@@ -528,6 +528,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
         composeObjectReqBuilder::setIfMetagenerationMatch);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
+        composeObjectReqBuilder::setDestinationPredefinedAcl);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.KMS_KEY_NAME),
+        composeObjectReqBuilder::setKmsKey);
     ComposeObjectRequest req = composeObjectReqBuilder.build();
     return Retrying.run(
         getOptions(),
