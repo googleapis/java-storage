@@ -3566,8 +3566,8 @@ public class ITStorageTest {
                 .setCustomPlacementConfig(customPlacementConfig)
                 .setLocation("us")
                 .build());
-    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST-1"));
-    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST-1"));
+    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST1"));
+    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST1"));
     assertTrue(bucket.getLocation().equals("us"));
   }
 
