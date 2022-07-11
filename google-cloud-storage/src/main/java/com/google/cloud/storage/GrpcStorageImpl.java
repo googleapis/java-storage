@@ -48,6 +48,8 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.FieldMask;
+import com.google.protobuf.Message;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.CreateBucketRequest;
@@ -68,6 +70,7 @@ import com.google.storage.v2.StorageClient.ListHmacKeysPage;
 import com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
 import com.google.storage.v2.StorageClient.ListObjectsPage;
 import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
+import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
@@ -422,12 +425,38 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
-    return todo();
+    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Object object = codecs.blobInfo().encode(blobInfo);
+    UpdateObjectRequest.Builder updateRequestBuilder =
+        UpdateObjectRequest.newBuilder().setObject(object);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
+        updateRequestBuilder::setIfGenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
+        updateRequestBuilder::setIfGenerationNotMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        updateRequestBuilder::setIfMetagenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
+        updateRequestBuilder::setIfMetagenerationNotMatch);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
+        updateRequestBuilder::setPredefinedAcl);
+    updateRequestBuilder.setUpdateMask(fieldMaskGenerator(object));
+    UpdateObjectRequest req = updateRequestBuilder.build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> grpcStorageStub.updateObjectCallable().call(req, grpcCallContext),
+        syntaxDecoders.blob);
   }
 
   @Override
   public Blob update(BlobInfo blobInfo) {
-    return todo();
+    return update(blobInfo, new BlobTargetOption[0]);
   }
 
   @Override
@@ -1152,6 +1181,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .setEncryptionAlgorithm("AES256")
         .setEncryptionKeyBytes(ByteString.copyFromUtf8(key))
         .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()))
+        .build();
+  }
+
+  private FieldMask fieldMaskGenerator(Message message) {
+    return FieldMask.newBuilder()
+        .addAllPaths(
+            message.getAllFields().entrySet().stream()
+                .filter(x -> x.getValue() != null)
+                .map(e -> e.getKey().getName())
+                .collect(Collectors.toList()))
         .build();
   }
 }
