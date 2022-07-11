@@ -91,6 +91,7 @@ public class BucketInfo implements Serializable {
   private final List<Cors> cors;
   private final List<Acl> acl;
   private final List<Acl> defaultAcl;
+  private final String location;
   private final Rpo rpo;
   private final StorageClass storageClass;
   private final Map<String, String> labels;
@@ -102,6 +103,7 @@ public class BucketInfo implements Serializable {
   private final IamConfiguration iamConfiguration;
   private final String locationType;
   private final Logging logging;
+  private final CustomPlacementConfig customPlacementConfig;
 
   private static final Logger log = Logger.getLogger(BucketInfo.class.getName());
 
@@ -393,73 +395,6 @@ public class BucketInfo implements Serializable {
 
       public CustomPlacementConfig build() {
         return new CustomPlacementConfig(this);
-      }
-    }
-  }
-
-  public static class LocationConfig implements Serializable {
-    private static final long serialVersionUID = 5901211261729627043L;
-    private String location;
-    private CustomPlacementConfig customPlacementConfig;
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-
-      return Objects.equals(
-              this.customPlacementConfig.toPb(), ((LocationConfig) o).customPlacementConfig.toPb())
-          && this.location.equals(((LocationConfig) o).location);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(location, customPlacementConfig);
-    }
-
-    public static LocationConfig.Builder newBuilder() {
-      return new LocationConfig.Builder();
-    }
-
-    public LocationConfig.Builder toBuilder() {
-      LocationConfig.Builder builder = new LocationConfig.Builder();
-      builder.location = location;
-      builder.customPlacementConfig = customPlacementConfig;
-      return builder;
-    }
-
-    public String getLocation() {
-      return location;
-    }
-
-    public CustomPlacementConfig getCustomPlacementConfig() {
-      return customPlacementConfig;
-    }
-
-    private LocationConfig(LocationConfig.Builder builder) {
-      this.customPlacementConfig = builder.customPlacementConfig;
-      this.location = builder.location;
-    }
-
-    public static class Builder {
-      private String location;
-      private CustomPlacementConfig customPlacementConfig;
-
-      public LocationConfig.Builder setLocation(String location) {
-        this.location = location;
-        return this;
-      }
-
-      public LocationConfig.Builder setCustomPlacementConfig(
-          CustomPlacementConfig customPlacementConfig) {
-        this.customPlacementConfig = customPlacementConfig;
-        return this;
-      }
-
-      public LocationConfig build() {
-        return new LocationConfig(this);
       }
     }
   }
