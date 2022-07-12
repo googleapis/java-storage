@@ -692,6 +692,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    public Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig) {
+      infoBuilder.setCustomPlacementConfig(customPlacementConfig);
+      return this;
+    }
+
+    @Override
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }
