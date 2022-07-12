@@ -512,13 +512,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ComposeObjectRequest.Builder composeObjectReqBuilder = ComposeObjectRequest.newBuilder();
     final List<SourceObject> sources =
         Lists.newArrayListWithCapacity(composeRequest.getSourceBlobs().size());
-    for (ComposeRequest.SourceBlob sourceBlob : composeRequest.getSourceBlobs()) {
-      sources.add(
-          SourceObject.newBuilder()
-              .setName(sourceBlob.getName())
-              .setGeneration(sourceBlob.getGeneration())
-              .build());
-    }
+    composeRequest.getSourceBlobs().stream()
+        .map(
+            src ->
+                SourceObject.newBuilder()
+                    .setName(src.getName())
+                    .setGeneration(src.getGeneration())
+                    .build())
+        .forEach(composeObjectReqBuilder::addSourceObjects);
     composeObjectReqBuilder.addAllSourceObjects(sources);
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
     composeObjectReqBuilder.setDestination(target);
@@ -534,6 +535,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ifNonNull(
         (String) optionsMap.get(StorageRpc.Option.KMS_KEY_NAME),
         composeObjectReqBuilder::setKmsKey);
+    String encryptionKey = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
+    if (encryptionKey != null) {
+      composeObjectReqBuilder.setCommonObjectRequestParams(commonRequestParams(encryptionKey));
+    }
     ComposeObjectRequest req = composeObjectReqBuilder.build();
     return Retrying.run(
         getOptions(),
