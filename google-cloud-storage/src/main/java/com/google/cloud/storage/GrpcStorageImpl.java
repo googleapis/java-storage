@@ -66,6 +66,7 @@ import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.StorageClient.ListBucketsPage;
 import com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
@@ -142,6 +143,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     CreateBucketRequest.Builder builder =
         CreateBucketRequest.newBuilder().setBucket(codecs.bucketInfo().encode(bucketInfo));
+    builder.setBucketId(builder.getBucket().getBucketId());
+    builder.setParent(ProjectName.format(getOptions().getProjectId()));
     ZOpt.applyAll(
         optionsMap,
         ZOpt.PREDEFINED_ACL.consumeVia(builder::setPredefinedAcl),
@@ -377,7 +380,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     String projectId =
         firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
-    ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder().setParent(projectId);
+    ListBucketsRequest.Builder builder =
+        ListBucketsRequest.newBuilder().setParent(ProjectName.format(projectId));
     ZOpt.applyAll(
         optionsMap,
         ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),

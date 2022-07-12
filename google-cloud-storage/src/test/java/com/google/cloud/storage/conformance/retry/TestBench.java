@@ -29,9 +29,13 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
+import com.google.cloud.NoCredentials;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -48,6 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -68,6 +73,7 @@ public final class TestBench implements TestRule {
 
   private final boolean ignorePullError;
   private final String baseUri;
+  private final String gRPCBaseUri;
   private final String dockerImageName;
   private final String dockerImageTag;
   private final CleanupStrategy cleanupStrategy;
@@ -79,12 +85,14 @@ public final class TestBench implements TestRule {
   private TestBench(
       boolean ignorePullError,
       String baseUri,
+      String gRPCBaseUri,
       String dockerImageName,
       String dockerImageTag,
       CleanupStrategy cleanupStrategy,
       String containerName) {
     this.ignorePullError = ignorePullError;
     this.baseUri = baseUri;
+    this.gRPCBaseUri = gRPCBaseUri;
     this.dockerImageName = dockerImageName;
     this.dockerImageTag = dockerImageTag;
     this.cleanupStrategy = cleanupStrategy;
@@ -105,6 +113,10 @@ public final class TestBench implements TestRule {
 
   public String getBaseUri() {
     return baseUri;
+  }
+
+  public String getGRPCBaseUri() {
+    return gRPCBaseUri;
   }
 
   public RetryTestResource createRetryTest(RetryTestResource retryTestResource) throws IOException {
@@ -149,6 +161,14 @@ public final class TestBench implements TestRule {
     return b.build();
   }
 
+  private boolean startGRPCServer(int gRPCPort) throws IOException {
+    GenericUrl url = new GenericUrl(baseUri + "/start_grpc?port=9090");
+    HttpRequest req = requestFactory.buildGetRequest(url);
+    HttpResponse resp = req.execute();
+    resp.disconnect();
+    return resp.getStatusCode() == 200;
+  }
+
   @Override
   public Statement apply(final Statement base, Description description) {
     return new Statement() {
@@ -163,7 +183,8 @@ public final class TestBench implements TestRule {
         File errFile = errPath.toFile();
         LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
         LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
-        String dockerImage = String.format("%s:%s", dockerImageName, dockerImageTag);
+        String dockerImage =
+            dockerImageName; // String.format("%s:%s", dockerImageName, dockerImageTag);
         // First try and pull the docker image, this validates docker is available and running
         // on the host, as well as gives time for the image to be downloaded independently of
         // trying to start the container. (Below, when we first start the container we then attempt
@@ -189,20 +210,26 @@ public final class TestBench implements TestRule {
         }
 
         int port = URI.create(baseUri).getPort();
+        int gRPCPort = URI.create(gRPCBaseUri).getPort();
+        final List<String> command =
+            ImmutableList.of(
+                "docker",
+                "run",
+                "-i",
+                "--rm",
+                "--publish",
+                port + ":9000",
+                "--publish",
+                gRPCPort + ":9090",
+                String.format("--name=%s", fullContainerName),
+                dockerImage);
         final Process process =
             new ProcessBuilder()
-                .command(
-                    "docker",
-                    "run",
-                    "-i",
-                    "--rm",
-                    "--publish",
-                    port + ":9000",
-                    String.format("--name=%s", fullContainerName),
-                    dockerImage)
+                .command(command)
                 .redirectOutput(outFile)
                 .redirectError(errFile)
                 .start();
+        LOGGER.log(Level.INFO, command.toString());
         boolean success = false;
         try {
           // wait a small amount of time for the server to come up before probing
@@ -229,14 +256,43 @@ public final class TestBench implements TestRule {
             LOGGER.info(
                 "Test Server already has retry tests in it, is it running outside the tests?");
           }
+          // Start gRPC Service
+          if (!startGRPCServer(gRPCPort)) {
+            throw new IllegalStateException(
+                "Failed to start server within a reasonable amount of time. Host url(gRPC): "
+                    + gRPCBaseUri);
+          }
+          // wait a small amount of time for the gRPC server to come up before probing
+          Thread.sleep(500);
+          try (Storage storage =
+              StorageOptions.grpc()
+                  .setHost(gRPCBaseUri)
+                  .setCredentials(NoCredentials.getInstance())
+                  .build()
+                  .getService()) {
+            runWithRetries(
+                storage::list,
+                RetrySettings.newBuilder()
+                    .setTotalTimeout(Duration.ofSeconds(30))
+                    .setInitialRetryDelay(Duration.ofMillis(500))
+                    .setRetryDelayMultiplier(1.5)
+                    .setMaxRetryDelay(Duration.ofSeconds(5))
+                    .build(),
+                new BasicResultRetryAlgorithm<com.google.api.gax.paging.Page<Bucket>>() {
+                  @Override
+                  public boolean shouldRetry(
+                      Throwable previousThrowable,
+                      com.google.api.gax.paging.Page<Bucket> previousResponse) {
+                    return previousThrowable instanceof SocketException;
+                  }
+                },
+                NanoClock.getDefaultClock());
+          }
           base.evaluate();
           success = true;
         } catch (RetryHelperException e) {
           dumpServerLogs(outFile, errFile);
-          throw new IllegalStateException(
-              "Failed to connect to server within a reasonable amount of time. Host url: "
-                  + baseUri,
-              e.getCause());
+          throw new IllegalStateException(e.getMessage(), e.getCause());
         } finally {
           process.destroy();
           // wait for the server to shutdown
@@ -334,7 +390,8 @@ public final class TestBench implements TestRule {
   }
 
   public static final class Builder {
-    private static final String DEFAULT_BASE_URI = "http://localhost:9000";
+    private static final String DEFAULT_BASE_URI = "http://localhost:9008";
+    private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
     private static final String DEFAULT_IMAGE_TAG = "v0.15.0";
@@ -342,6 +399,7 @@ public final class TestBench implements TestRule {
 
     private boolean ignorePullError;
     private String baseUri;
+    private String gRPCBaseUri;
     private String dockerImageName;
     private String dockerImageTag;
     private CleanupStrategy cleanupStrategy;
@@ -351,6 +409,7 @@ public final class TestBench implements TestRule {
       this(
           false,
           DEFAULT_BASE_URI,
+          DEFAULT_GRPC_BASE_URI,
           DEFAULT_IMAGE_NAME,
           DEFAULT_IMAGE_TAG,
           CleanupStrategy.ALWAYS,
@@ -360,12 +419,14 @@ public final class TestBench implements TestRule {
     private Builder(
         boolean ignorePullError,
         String baseUri,
+        String gRPCBaseUri,
         String dockerImageName,
         String dockerImageTag,
         CleanupStrategy cleanupStrategy,
         String containerName) {
       this.ignorePullError = ignorePullError;
       this.baseUri = baseUri;
+      this.gRPCBaseUri = gRPCBaseUri;
       this.dockerImageName = dockerImageName;
       this.dockerImageTag = dockerImageTag;
       this.cleanupStrategy = cleanupStrategy;
@@ -384,6 +445,11 @@ public final class TestBench implements TestRule {
 
     public Builder setBaseUri(String baseUri) {
       this.baseUri = requireNonNull(baseUri, "host must be non null");
+      return this;
+    }
+
+    public Builder setGRPCBaseUri(String gRPCBaseUri) {
+      this.gRPCBaseUri = requireNonNull(gRPCBaseUri, "gRPC host must be non null");
       return this;
     }
 
@@ -406,6 +472,7 @@ public final class TestBench implements TestRule {
       return new TestBench(
           ignorePullError,
           baseUri,
+          gRPCBaseUri,
           dockerImageName,
           dockerImageTag,
           cleanupStrategy,
