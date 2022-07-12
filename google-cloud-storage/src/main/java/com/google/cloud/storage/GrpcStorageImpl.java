@@ -45,7 +45,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
@@ -510,8 +509,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         StorageImpl.optionMap(Iterables.toArray(composeRequest.getTargetOptions(), Option.class));
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     ComposeObjectRequest.Builder composeObjectReqBuilder = ComposeObjectRequest.newBuilder();
-    final List<SourceObject> sources =
-        Lists.newArrayListWithCapacity(composeRequest.getSourceBlobs().size());
     composeRequest.getSourceBlobs().stream()
         .map(
             src ->
@@ -520,7 +517,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                     .setGeneration(src.getGeneration())
                     .build())
         .forEach(composeObjectReqBuilder::addSourceObjects);
-    composeObjectReqBuilder.addAllSourceObjects(sources);
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
     composeObjectReqBuilder.setDestination(target);
     ifNonNull(
