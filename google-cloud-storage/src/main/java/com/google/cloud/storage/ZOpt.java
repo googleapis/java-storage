@@ -91,6 +91,10 @@ final class ZOpt<T> {
     this.key = key;
   }
 
+  StorageRpc.Option getKey() {
+    return key;
+  }
+
   /**
    * This method is only ever called from package private scope, as such the Map of option values
    * has prior type checked values which are later erased. Here we suppress the unchecked warning

@@ -20,8 +20,13 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -98,5 +103,34 @@ public final class ZOptTest {
     assertThat(ref1.get()).isEqualTo("acl");
     assertThat(ref2.get()).isEqualTo(0L);
     assertThat(ref3.get()).isTrue();
+  }
+
+  @Test
+  public void validateCoverageOfAllStorageRpcOptions() {
+    Comparator<StorageRpc.Option> comp = Comparator.comparingInt(Enum::ordinal);
+
+    ImmutableList<StorageRpc.Option> expected =
+        Arrays.stream(StorageRpc.Option.values())
+            .sorted(comp)
+            .collect(ImmutableList.toImmutableList());
+
+    ImmutableList<StorageRpc.Option> actual =
+        Arrays.stream(ZOpt.class.getDeclaredFields())
+            .filter(m -> Modifier.isStatic(m.getModifiers()))
+            .filter(f -> f.getDeclaringClass().equals(ZOpt.class))
+            .map(ZOptTest::unsafeGet)
+            .map(ZOpt::getKey)
+            .sorted(comp)
+            .collect(ImmutableList.toImmutableList());
+
+    assertThat(actual).containsExactlyElementsIn(expected);
+  }
+
+  private static ZOpt<?> unsafeGet(Field f) {
+    try {
+      return (ZOpt<?>) f.get(null);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
