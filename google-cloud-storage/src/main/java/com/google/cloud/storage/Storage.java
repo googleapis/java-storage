@@ -2493,7 +2493,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * Blob blob = storage.compose(request);
    * }</pre>
    *
-   * @return the d blob
+   * @return the composed blob
    * @throws StorageException upon failure
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
