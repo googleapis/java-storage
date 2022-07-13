@@ -137,15 +137,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    CreateBucketRequest.Builder bucketRequestBuilder =
+    CreateBucketRequest.Builder builder =
         CreateBucketRequest.newBuilder().setBucket(codecs.bucketInfo().encode(bucketInfo));
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
-        bucketRequestBuilder::setPredefinedAcl);
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL),
-        bucketRequestBuilder::setPredefinedDefaultObjectAcl);
-    CreateBucketRequest req = bucketRequestBuilder.build();
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.PREDEFINED_ACL.consumeVia(builder::setPredefinedAcl),
+        ZOpt.PREDEFINED_DEFAULT_OBJECT_ACL.consumeVia(builder::setPredefinedDefaultObjectAcl));
+    CreateBucketRequest req = builder.build();
     // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
     // projection=full
     return Retrying.run(
@@ -319,14 +317,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Bucket get(String bucket, BucketGetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    GetBucketRequest.Builder bucketRequestBuilder = GetBucketRequest.newBuilder().setName(bucket);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        bucketRequestBuilder::setIfMetagenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        bucketRequestBuilder::setIfMetagenerationNotMatch);
-    GetBucketRequest req = bucketRequestBuilder.build();
+    GetBucketRequest.Builder builder = GetBucketRequest.newBuilder().setName(bucket);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
+    GetBucketRequest req = builder.build();
     // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
     // projection=full
     return Retrying.run(
@@ -350,16 +346,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Blob get(BlobId blob, BlobGetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    GetObjectRequest.Builder getObjectRequestBuilder =
+    GetObjectRequest.Builder builder =
         GetObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        getObjectRequestBuilder::setIfMetagenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        getObjectRequestBuilder::setIfMetagenerationNotMatch);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
     // TODO(sydmunro) StorageRpc.Option.Fields
-    GetObjectRequest req = getObjectRequestBuilder.build();
+    GetObjectRequest req = builder.build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -378,15 +372,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         grpcStorageStub.listBucketsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
-    if (projectId == null) {
-      projectId = this.getOptions().getProjectId();
-    }
+    String projectId =
+        firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
     ListBucketsRequest.Builder builder = ListBucketsRequest.newBuilder().setParent(projectId);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
+        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
+        ZOpt.PREFIX.consumeVia(builder::setPrefix));
     // TODO(sydmunro): StorageRpc.Option.Fields
     ListBucketsPagedResponse call = listBucketsCallable.call(builder.build(), grpcCallContext);
     ListBucketsPage page = call.getPage();
@@ -400,14 +393,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     ListObjectsRequest.Builder builder = ListObjectsRequest.newBuilder().setParent(bucket);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.PREFIX), builder::setPrefix);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.DELIMITER), builder::setDelimiter);
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.START_OFF_SET), builder::setLexicographicStart);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.END_OFF_SET), builder::setLexicographicEnd);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
+        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
+        ZOpt.PREFIX.consumeVia(builder::setPrefix),
+        ZOpt.DELIMITER.consumeVia(builder::setDelimiter),
+        ZOpt.START_OFF_SET.consumeVia(builder::setLexicographicStart),
+        ZOpt.END_OFF_SET.consumeVia(builder::setLexicographicEnd));
     // TODO(sydmunro) StorageRpc.Option.Fields
     ListObjectsPagedResponse call = listObjectsCallable.call(builder.build(), grpcCallContext);
     ListObjectsPage page = call.getPage();
@@ -419,19 +412,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
-    UpdateBucketRequest.Builder bucketRequestBuilder =
-        UpdateBucketRequest.newBuilder().setBucket(bucket);
-    bucketRequestBuilder.setUpdateMask(fieldMaskGenerator(bucket));
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
-        bucketRequestBuilder::setPredefinedAcl);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        bucketRequestBuilder::setIfMetagenerationNotMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        bucketRequestBuilder::setIfMetagenerationNotMatch);
-    UpdateBucketRequest req = bucketRequestBuilder.build();
+    UpdateBucketRequest.Builder builder = UpdateBucketRequest.newBuilder().setBucket(bucket);
+    builder.setUpdateMask(fieldMaskGenerator(bucket));
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.PREDEFINED_ACL.consumeVia(builder::setPredefinedAcl),
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
+    UpdateBucketRequest req = builder.build();
 
     return Retrying.run(
         getOptions(),
@@ -445,25 +433,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     Object object = codecs.blobInfo().encode(blobInfo);
-    UpdateObjectRequest.Builder updateRequestBuilder =
-        UpdateObjectRequest.newBuilder().setObject(object);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
-        updateRequestBuilder::setIfGenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
-        updateRequestBuilder::setIfGenerationNotMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        updateRequestBuilder::setIfMetagenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        updateRequestBuilder::setIfMetagenerationNotMatch);
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
-        updateRequestBuilder::setPredefinedAcl);
-    updateRequestBuilder.setUpdateMask(fieldMaskGenerator(object));
-    UpdateObjectRequest req = updateRequestBuilder.build();
+    UpdateObjectRequest.Builder builder = UpdateObjectRequest.newBuilder().setObject(object);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.PREDEFINED_ACL.consumeVia(builder::setPredefinedAcl),
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch),
+        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
+        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(builder::setIfGenerationNotMatch));
+    builder.setUpdateMask(fieldMaskGenerator(object));
+    UpdateObjectRequest req = builder.build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -480,16 +459,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public boolean delete(String bucket, BucketSourceOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    DeleteBucketRequest.Builder bucketRequestBuilder =
+    DeleteBucketRequest.Builder builder =
         DeleteBucketRequest.newBuilder()
             .setName(BucketName.format(this.getOptions().getProjectId(), bucket));
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        bucketRequestBuilder::setIfMetagenerationNotMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        bucketRequestBuilder::setIfMetagenerationNotMatch);
-    DeleteBucketRequest req = bucketRequestBuilder.build();
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
+    DeleteBucketRequest req = builder.build();
     try {
       Retrying.run(
           getOptions(),
@@ -512,22 +489,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public boolean delete(BlobId blob, BlobSourceOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    DeleteObjectRequest.Builder objectRequestBuilder =
+    DeleteObjectRequest.Builder builder =
         DeleteObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        objectRequestBuilder::setIfMetagenerationNotMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        objectRequestBuilder::setIfMetagenerationNotMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
-        objectRequestBuilder::setIfGenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
-        objectRequestBuilder::setIfGenerationNotMatch);
-    ifNonNull(blob.getGeneration(), objectRequestBuilder::setGeneration);
-    DeleteObjectRequest req = objectRequestBuilder.build();
+    ifNonNull(blob.getGeneration(), builder::setGeneration);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch),
+        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
+        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(builder::setIfGenerationNotMatch));
+    DeleteObjectRequest req = builder.build();
     try {
       Retrying.run(
           getOptions(),
@@ -886,19 +857,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         grpcStorageStub.listHmacKeysPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    String projectId = (String) optionsMap.get(StorageRpc.Option.PROJECT_ID);
-    if (projectId == null) {
-      projectId = this.getOptions().getProjectId();
-    }
+    String projectId =
+        firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
     ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder().setProject(projectId);
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL),
-        builder::setServiceAccountEmail);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.MAX_RESULTS), Long::intValue, builder::setPageSize);
-    ifNonNull((String) optionsMap.get(StorageRpc.Option.PAGE_TOKEN), builder::setPageToken);
-    ifNonNull(
-        (Boolean) optionsMap.get(StorageRpc.Option.SHOW_DELETED_KEYS), builder::setShowDeletedKeys);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.SERVICE_ACCOUNT_EMAIL.consumeVia(builder::setServiceAccountEmail),
+        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
+        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
+        ZOpt.SHOW_DELETED_KEYS.consumeVia(builder::setShowDeletedKeys));
     ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build(), grpcCallContext);
     ListHmacKeysPage page = call.getPage();
     return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
@@ -1103,22 +1070,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     if (generation > 0) {
       builder.setGeneration(generation);
     }
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        builder::setIfMetagenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        builder::setIfMetagenerationNotMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
-        builder::setIfGenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
-        builder::setIfGenerationNotMatch);
-    String key = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
-    if (key != null) {
-      builder.setCommonObjectRequestParams(commonRequestParams(key));
-    }
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch),
+        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
+        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(builder::setIfGenerationNotMatch),
+        ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
+            this::commonRequestParams, builder::setCommonObjectRequestParams));
     return builder.build();
   }
 
@@ -1128,7 +1087,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       // GrpcCallContext is immutable, any modification we perform needs to be assigned back to
       // our variable otherwise it will effectively be lost.
       GrpcCallContext ctx = GrpcCallContext.createDefault();
-      String userProject = (String) optionsMap.get(StorageRpc.Option.USER_PROJECT);
+      String userProject = ZOpt.USER_PROJECT.get(optionsMap);
       if (userProject != null) {
         ctx =
             ctx.withExtraHeaders(
@@ -1159,33 +1118,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         WriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
 
     // TODO: Projection: Do we care?
-
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL), specBuilder::setPredefinedAcl);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        specBuilder::setIfMetagenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH),
-        specBuilder::setIfMetagenerationNotMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
-        specBuilder::setIfGenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_NOT_MATCH),
-        specBuilder::setIfGenerationNotMatch);
-    String userProject = (String) optionsMap.get(StorageRpc.Option.USER_PROJECT);
-    if (userProject != null) {
-      // TODO: user project
-    }
-    String encryptionKey = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
-    if (encryptionKey != null) {
-      requestBuilder.setCommonObjectRequestParams(commonRequestParams(encryptionKey));
-    }
-    String key = (String) optionsMap.get(StorageRpc.Option.KMS_KEY_NAME);
-    if (key != null) {
-      objectBuilder.setKmsKey(key);
-    }
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.PREDEFINED_ACL.consumeVia(specBuilder::setPredefinedAcl),
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(specBuilder::setIfMetagenerationMatch),
+        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(specBuilder::setIfMetagenerationNotMatch),
+        ZOpt.IF_GENERATION_MATCH.consumeVia(specBuilder::setIfGenerationMatch),
+        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(specBuilder::setIfGenerationNotMatch),
+        ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
+            this::commonRequestParams, requestBuilder::setCommonObjectRequestParams),
+        ZOpt.KMS_KEY_NAME.consumeVia(objectBuilder::setKmsKey));
 
     return requestBuilder;
   }
