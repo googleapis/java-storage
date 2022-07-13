@@ -116,8 +116,9 @@ public final class ZOptTest {
 
     ImmutableList<StorageRpc.Option> actual =
         Arrays.stream(ZOpt.class.getDeclaredFields())
-            .filter(m -> Modifier.isStatic(m.getModifiers()))
-            .filter(f -> f.getDeclaringClass().equals(ZOpt.class))
+            .filter(f -> Modifier.isStatic(f.getModifiers()))
+            .filter(f -> !Modifier.isPrivate(f.getModifiers()))
+            .filter(f -> f.getType().equals(ZOpt.class))
             .map(ZOptTest::unsafeGet)
             .map(ZOpt::getKey)
             .sorted(comp)
@@ -130,7 +131,7 @@ public final class ZOptTest {
     try {
       return (ZOpt<?>) f.get(null);
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException("error attempting to access field: " + f, e);
     }
   }
 }
