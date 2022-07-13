@@ -31,7 +31,7 @@ public interface UpdateObjectRequestOrBuilder
    * The object's bucket and name fields are used to identify the object to
    * update. If present, the object's generation field selects a specific
    * revision of this object whose metadata should be updated. Otherwise,
-   * assumes the current, live version of the object.
+   * assumes the live version of the object.
    * </pre>
    *
    * <code>.google.storage.v2.Object object = 1;</code>
@@ -47,7 +47,7 @@ public interface UpdateObjectRequestOrBuilder
    * The object's bucket and name fields are used to identify the object to
    * update. If present, the object's generation field selects a specific
    * revision of this object whose metadata should be updated. Otherwise,
-   * assumes the current, live version of the object.
+   * assumes the live version of the object.
    * </pre>
    *
    * <code>.google.storage.v2.Object object = 1;</code>
@@ -63,7 +63,7 @@ public interface UpdateObjectRequestOrBuilder
    * The object's bucket and name fields are used to identify the object to
    * update. If present, the object's generation field selects a specific
    * revision of this object whose metadata should be updated. Otherwise,
-   * assumes the current, live version of the object.
+   * assumes the live version of the object.
    * </pre>
    *
    * <code>.google.storage.v2.Object object = 1;</code>
@@ -103,7 +103,7 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the object's current generation
+   * Makes the operation conditional on whether the object's live generation
    * does not match the given value. If no live object exists, the precondition
    * fails. Setting to 0 makes the operation succeed only if there is a live
    * version of the object.
@@ -118,7 +118,7 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the object's current generation
+   * Makes the operation conditional on whether the object's live generation
    * does not match the given value. If no live object exists, the precondition
    * fails. Setting to 0 makes the operation succeed only if there is a live
    * version of the object.

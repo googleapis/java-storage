@@ -155,6 +155,37 @@ public interface ObjectAccessControlOrBuilder
    *
    *
    * <pre>
+   * The etag of the ObjectAccessControl.
+   * If included in the metadata of an update or delete request message, the
+   * operation will only be performed if the etag matches that of the live
+   * object's ObjectAccessControl.
+   * </pre>
+   *
+   * <code>string etag = 8;</code>
+   *
+   * @return The etag.
+   */
+  java.lang.String getEtag();
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the ObjectAccessControl.
+   * If included in the metadata of an update or delete request message, the
+   * operation will only be performed if the etag matches that of the live
+   * object's ObjectAccessControl.
+   * </pre>
+   *
+   * <code>string etag = 8;</code>
+   *
+   * @return The bytes for etag.
+   */
+  com.google.protobuf.ByteString getEtagBytes();
+
+  /**
+   *
+   *
+   * <pre>
    * The email address associated with the entity, if any.
    * </pre>
    *

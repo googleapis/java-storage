@@ -65,7 +65,9 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
@@ -118,7 +120,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -126,7 +127,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,7 +146,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -566,6 +565,29 @@ public class ITStorageTest {
   }
 
   @Test
+  public void testGetBucketAbortMPULifecycle() {
+    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
+    storage.create(
+        BucketInfo.newBuilder(lifecycleTestBucketName)
+            .setLocation("us")
+            .setLifecycleRules(
+                ImmutableList.of(
+                    new LifecycleRule(
+                        LifecycleAction.newAbortIncompleteMPUploadAction(),
+                        LifecycleCondition.newBuilder().setAge(1).build())))
+            .build());
+    Bucket remoteBucket =
+        storage.get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
+    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
+    try {
+      assertEquals(AbortIncompleteMPUAction.TYPE, lifecycleRule.getAction().getActionType());
+      assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
+    } finally {
+      storage.delete(lifecycleTestBucketName);
+    }
+  }
+
+  @Test
   public void testClearBucketDefaultKmsKeyName() throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
     Bucket remoteBucket =
@@ -880,39 +902,6 @@ public class ITStorageTest {
     } catch (StorageException e) {
       assertThat(e.getMessage()).contains("Invalid argument");
     }
-  }
-
-  @Test
-  public void testGetBlobRawInput() throws IOException {
-    Path file = File.createTempFile("temp", ".txt").toPath();
-    Files.write(file, "hello world".getBytes());
-
-    File gzippedFile = File.createTempFile("temp", ".gz");
-
-    GZIPOutputStream gzipOutputStream = new GZIPOutputStream(new FileOutputStream(gzippedFile));
-    Files.copy(file, gzipOutputStream);
-    gzipOutputStream.close();
-
-    String blobName = "zipped_blob";
-    BlobId blobId = BlobId.of(BUCKET, blobName);
-    BlobInfo blobInfo =
-        BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
-
-    storage.createFrom(blobInfo, gzippedFile.toPath());
-
-    Path rawInputGzippedFile = File.createTempFile("rawinputgzippedfile", ".txt").toPath();
-
-    storage.downloadTo(
-        blobId, rawInputGzippedFile, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
-
-    assertArrayEquals(
-        Files.readAllBytes(gzippedFile.toPath()), Files.readAllBytes(rawInputGzippedFile));
-
-    Path unzippedFile = File.createTempFile("unzippedfile", ".txt").toPath();
-    storage.downloadTo(
-        blobId, unzippedFile, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
-
-    assertArrayEquals("hello world".getBytes(), Files.readAllBytes(unzippedFile));
   }
 
   @Test(timeout = 5000)
@@ -3564,13 +3553,22 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketLocationDualRegion() {
+  public void testBucketCustomPlacmentConfigDualRegion() {
     String bucketName = RemoteStorageHelper.generateBucketName();
-    String dualRegionLocation = "US-EAST1+US-WEST1";
+    List<String> locations = new ArrayList<>();
+    locations.add("US-EAST1");
+    locations.add("US-WEST1");
+    CustomPlacementConfig customPlacementConfig =
+        CustomPlacementConfig.newBuilder().setDataLocations(locations).build();
     Bucket bucket =
-        storage.create(BucketInfo.newBuilder(bucketName).setLocation(dualRegionLocation).build());
-    assertEquals(bucket.getLocation(), dualRegionLocation);
-    assertEquals(bucket.getLocationType(), "dual-region");
+        storage.create(
+            BucketInfo.newBuilder(bucketName)
+                .setCustomPlacementConfig(customPlacementConfig)
+                .setLocation("us")
+                .build());
+    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST1"));
+    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST1"));
+    assertTrue(bucket.getLocation().equalsIgnoreCase("us"));
   }
 
   @Test
@@ -3673,25 +3671,6 @@ public class ITStorageTest {
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
-  }
-
-  @Test
-  public void testUploadFromDownloadTo() throws Exception {
-    String blobName = "test-uploadFrom-downloadTo-blob";
-    BlobId blobId = BlobId.of(BUCKET, blobName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-
-    Path tempFileFrom = Files.createTempFile("ITStorageTest_", ".tmp");
-    Files.write(tempFileFrom, BLOB_BYTE_CONTENT);
-    Blob blob = storage.createFrom(blobInfo, tempFileFrom);
-    assertEquals(BUCKET, blob.getBucket());
-    assertEquals(blobName, blob.getName());
-    assertEquals(BLOB_BYTE_CONTENT.length, (long) blob.getSize());
-
-    Path tempFileTo = Files.createTempFile("ITStorageTest_", ".tmp");
-    storage.downloadTo(blobId, tempFileTo);
-    byte[] readBytes = Files.readAllBytes(tempFileTo);
-    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 
   @Test

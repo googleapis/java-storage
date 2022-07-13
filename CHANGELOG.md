@@ -1,5 +1,112 @@
 # Changelog
 
+## [2.9.3](https://github.com/googleapis/java-storage/compare/v2.9.2...v2.9.3) (2022-07-08)
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220705-1.32.1 ([#1494](https://github.com/googleapis/java-storage/issues/1494)) ([5612f0f](https://github.com/googleapis/java-storage/commit/5612f0f929582c9e720d67683f9441d96080fb14))
+
+## [2.9.2](https://github.com/googleapis/java-storage/compare/v2.9.1...v2.9.2) (2022-07-06)
+
+
+### Dependencies
+
+* update kms.version to v0.97.0 ([#1488](https://github.com/googleapis/java-storage/issues/1488)) ([852cafe](https://github.com/googleapis/java-storage/commit/852cafe7db018a6fd666c3490c96eeca34c4a1ed))
+
+## [2.9.1](https://github.com/googleapis/java-storage/compare/v2.9.0...v2.9.1) (2022-07-06)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-pubsub to v1.120.0 ([#1487](https://github.com/googleapis/java-storage/issues/1487)) ([5a8f6e5](https://github.com/googleapis/java-storage/commit/5a8f6e5f29e4dfb2dc03cad8c77e4b504bc83019))
+
+## [2.9.0](https://github.com/googleapis/java-storage/compare/v2.8.1...v2.9.0) (2022-06-27)
+
+
+### Features
+
+* Enable REST transport for most of Java and Go clients ([#1469](https://github.com/googleapis/java-storage/issues/1469)) ([cfb6fd8](https://github.com/googleapis/java-storage/commit/cfb6fd8c1f13cb2115e5ff7ea7af41a9e27986b1))
+
+
+### Documentation
+
+* Clarified how clients should work with resumable uploads ([#1457](https://github.com/googleapis/java-storage/issues/1457)) ([15baa27](https://github.com/googleapis/java-storage/commit/15baa27c97aacca115981f5c14d942a8ddd6cb1f))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.13.0 ([#1468](https://github.com/googleapis/java-storage/issues/1468)) ([1a817fe](https://github.com/googleapis/java-storage/commit/1a817fef87e626e74dab47eaff33c1d9d3c56bb5))
+* update dependency org.graalvm.buildtools:junit-platform-native to v0.9.12 ([#1463](https://github.com/googleapis/java-storage/issues/1463)) ([d42c570](https://github.com/googleapis/java-storage/commit/d42c5704e4fe7341dfdd0562fa0bdbcd4bc99c7e))
+* update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.12 ([#1464](https://github.com/googleapis/java-storage/issues/1464)) ([2f35a4f](https://github.com/googleapis/java-storage/commit/2f35a4f597870a4506119946510ba82fbb7f9449))
+* update kms.version to v0.96.3 ([#1471](https://github.com/googleapis/java-storage/issues/1471)) ([ceb7fa6](https://github.com/googleapis/java-storage/commit/ceb7fa665c35f6b00aebaa665246597b9ee4632a))
+
+## [2.8.1](https://github.com/googleapis/java-storage/compare/v2.8.0...v2.8.1) (2022-06-13)
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220608-1.32.1 ([#1448](https://github.com/googleapis/java-storage/issues/1448)) ([96676cd](https://github.com/googleapis/java-storage/commit/96676cd830aca27c23c08e02e8cc7c58dece686c))
+
+## [2.8.0](https://github.com/googleapis/java-storage/compare/v2.7.2...v2.8.0) (2022-06-08)
+
+
+### Features
+
+* Prefix/Suffix Matches Lifecycle Condition ([#1389](https://github.com/googleapis/java-storage/issues/1389)) ([20c8848](https://github.com/googleapis/java-storage/commit/20c88489d80d716da28f78fed628b54345f32ca4))
+* Support AbortIncompleteMultipartUpload LifecycleAction ([#1347](https://github.com/googleapis/java-storage/issues/1347)) ([7c3aba2](https://github.com/googleapis/java-storage/commit/7c3aba2f0a26ac550e4f37f9287ed6b041d75919))
+
+
+### Bug Fixes
+
+* update request method of HttpStorageRpc to properly configure offset on requests ([#1434](https://github.com/googleapis/java-storage/issues/1434)) ([72dc0df](https://github.com/googleapis/java-storage/commit/72dc0dff20d76875401dac721c0268c32e475e39))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220604-1.32.1 ([#1438](https://github.com/googleapis/java-storage/issues/1438)) ([df8fcd9](https://github.com/googleapis/java-storage/commit/df8fcd9925ef06c91ebebe0a3a7b5aedeb15ec4d))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.119.0 ([#1426](https://github.com/googleapis/java-storage/issues/1426)) ([93ba28c](https://github.com/googleapis/java-storage/commit/93ba28cff16d428e0222078dc60dbf49fda7632a))
+
+### [2.7.2](https://github.com/googleapis/java-storage/compare/v2.7.1...v2.7.2) (2022-05-27)
+
+
+### Dependencies
+
+* update kms.version to v0.96.1 ([#1418](https://github.com/googleapis/java-storage/issues/1418)) ([d2f325b](https://github.com/googleapis/java-storage/commit/d2f325b3d31ac5da367873be1fb530fb6356036a))
+
+### [2.7.1](https://github.com/googleapis/java-storage/compare/v2.7.0...v2.7.1) (2022-05-24)
+
+
+### Dependencies
+
+* update kms.version to v0.96.0 ([#1408](https://github.com/googleapis/java-storage/issues/1408)) ([7501ffc](https://github.com/googleapis/java-storage/commit/7501ffc97d5a7943d3852ea26133b6c62cbbff1f))
+
+## [2.7.0](https://github.com/googleapis/java-storage/compare/v2.6.1...v2.7.0) (2022-05-24)
+
+
+### Features
+
+* add build scripts for native image testing in Java 17 ([#1440](https://github.com/googleapis/java-storage/issues/1440)) ([#1400](https://github.com/googleapis/java-storage/issues/1400)) ([274a373](https://github.com/googleapis/java-storage/commit/274a3733b72d2aa1e2916edf40a72c013aaf1711))
+* add Storage#downloadTo ([#1354](https://github.com/googleapis/java-storage/issues/1354)) ([5a565a7](https://github.com/googleapis/java-storage/commit/5a565a74cd6aaa85ed81a8cea026477512fbd5da))
+* change GCS gRPC API to get user billing project from gRPC metadata instead of CommonRequestParams, and remove latter ([#1396](https://github.com/googleapis/java-storage/issues/1396)) ([8a7755c](https://github.com/googleapis/java-storage/commit/8a7755cc8352b3ab21c252885fb86576474d7f09))
+
+
+### Documentation
+
+* add new storage_download_byte_range samples ([#1325](https://github.com/googleapis/java-storage/issues/1325)) ([cef3d13](https://github.com/googleapis/java-storage/commit/cef3d138fd11762437ac59adee6a198139acb7f5))
+* **sample:** removing unnecessary native-image-support dependency ([#1373](https://github.com/googleapis/java-storage/issues/1373)) ([3a246ef](https://github.com/googleapis/java-storage/commit/3a246ef4f0a75e52734df52772d34547632ab85f))
+
+
+### Dependencies
+
+* update dependency com.google.apis:google-api-services-storage to v1-rev20220509-1.32.1 ([#1386](https://github.com/googleapis/java-storage/issues/1386)) ([4e93c8e](https://github.com/googleapis/java-storage/commit/4e93c8e6f3c8259968a3dd35a15e752a81491af2))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.116.4 ([#1360](https://github.com/googleapis/java-storage/issues/1360)) ([66c7ffe](https://github.com/googleapis/java-storage/commit/66c7ffe112242915165286a972c44fc2568b67c8))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.117.0 ([#1382](https://github.com/googleapis/java-storage/issues/1382)) ([0cd01a0](https://github.com/googleapis/java-storage/commit/0cd01a0eb498a994c330cc985c21b3248ecba8fa))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.118.0 ([#1397](https://github.com/googleapis/java-storage/issues/1397)) ([fc0c187](https://github.com/googleapis/java-storage/commit/fc0c187096058f84a2f73704b29457c5c6d744fe))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.11.0 ([#1398](https://github.com/googleapis/java-storage/issues/1398)) ([8834423](https://github.com/googleapis/java-storage/commit/8834423f8772310b1a99aa393095e319a4169307))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v2.12.0 ([#1402](https://github.com/googleapis/java-storage/issues/1402)) ([32cded4](https://github.com/googleapis/java-storage/commit/32cded493442ed5e7b524cd2478e97f00fd90c3c))
+* update kms.version to v0.95.4 ([#1361](https://github.com/googleapis/java-storage/issues/1361)) ([2f42ba2](https://github.com/googleapis/java-storage/commit/2f42ba296bf5ace92159ee02885eaf0e4d9c9864))
+
 ### [2.6.1](https://github.com/googleapis/java-storage/compare/v2.6.0...v2.6.1) (2022-04-15)
 
 

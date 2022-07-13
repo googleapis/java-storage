@@ -334,7 +334,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the object's current generation
+   * Makes the operation conditional on whether the object's live generation
    * does not match the given value. If no live object exists, the precondition
    * fails. Setting to 0 makes the operation succeed only if there is a live
    * version of the object.
@@ -349,7 +349,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the object's current generation
+   * Makes the operation conditional on whether the object's live generation
    * does not match the given value. If no live object exists, the precondition
    * fails. Setting to 0 makes the operation succeed only if there is a live
    * version of the object.
@@ -419,7 +419,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the source object's current
+   * Makes the operation conditional on whether the source object's live
    * generation matches the given value.
    * </pre>
    *
@@ -432,7 +432,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the source object's current
+   * Makes the operation conditional on whether the source object's live
    * generation matches the given value.
    * </pre>
    *
@@ -446,7 +446,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the source object's current
+   * Makes the operation conditional on whether the source object's live
    * generation does not match the given value.
    * </pre>
    *
@@ -459,7 +459,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the source object's current
+   * Makes the operation conditional on whether the source object's live
    * generation does not match the given value.
    * </pre>
    *
