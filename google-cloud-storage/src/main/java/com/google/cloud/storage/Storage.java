@@ -2331,7 +2331,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @see <a
    *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob update(BlobInfo blobInfo, BlobTargetOption... options);
 
   /**
@@ -2364,7 +2364,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @see <a
    *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob update(BlobInfo blobInfo);
 
   /**
@@ -2496,7 +2496,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the composed blob
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Blob compose(ComposeRequest composeRequest);
 
   /**

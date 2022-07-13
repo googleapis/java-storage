@@ -44,6 +44,7 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
@@ -52,6 +53,8 @@ import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CommonObjectRequestParams;
+import com.google.storage.v2.ComposeObjectRequest;
+import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
@@ -519,7 +522,42 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob compose(ComposeRequest composeRequest) {
-    return todo();
+    final Map<StorageRpc.Option, ?> optionsMap =
+        StorageImpl.optionMap(Iterables.toArray(composeRequest.getTargetOptions(), Option.class));
+    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    ComposeObjectRequest.Builder composeObjectReqBuilder = ComposeObjectRequest.newBuilder();
+    composeRequest.getSourceBlobs().stream()
+        .map(
+            src ->
+                SourceObject.newBuilder()
+                    .setName(src.getName())
+                    .setGeneration(src.getGeneration())
+                    .build())
+        .forEach(composeObjectReqBuilder::addSourceObjects);
+    final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
+    composeObjectReqBuilder.setDestination(target);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
+        composeObjectReqBuilder::setIfGenerationMatch);
+    ifNonNull(
+        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
+        composeObjectReqBuilder::setIfMetagenerationMatch);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
+        composeObjectReqBuilder::setDestinationPredefinedAcl);
+    ifNonNull(
+        (String) optionsMap.get(StorageRpc.Option.KMS_KEY_NAME),
+        composeObjectReqBuilder::setKmsKey);
+    String encryptionKey = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
+    if (encryptionKey != null) {
+      composeObjectReqBuilder.setCommonObjectRequestParams(commonRequestParams(encryptionKey));
+    }
+    ComposeObjectRequest req = composeObjectReqBuilder.build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> grpcStorageStub.composeObjectCallable().call(req, grpcCallContext),
+        syntaxDecoders.blob);
   }
 
   @Override
