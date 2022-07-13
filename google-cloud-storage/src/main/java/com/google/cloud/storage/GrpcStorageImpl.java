@@ -525,7 +525,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     final Map<StorageRpc.Option, ?> optionsMap =
         StorageImpl.optionMap(Iterables.toArray(composeRequest.getTargetOptions(), Option.class));
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    ComposeObjectRequest.Builder composeObjectReqBuilder = ComposeObjectRequest.newBuilder();
+    ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();
     composeRequest.getSourceBlobs().stream()
         .map(
             src ->
@@ -533,26 +533,18 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                     .setName(src.getName())
                     .setGeneration(src.getGeneration())
                     .build())
-        .forEach(composeObjectReqBuilder::addSourceObjects);
+        .forEach(builder::addSourceObjects);
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
-    composeObjectReqBuilder.setDestination(target);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_GENERATION_MATCH),
-        composeObjectReqBuilder::setIfGenerationMatch);
-    ifNonNull(
-        (Long) optionsMap.get(StorageRpc.Option.IF_METAGENERATION_MATCH),
-        composeObjectReqBuilder::setIfMetagenerationMatch);
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.PREDEFINED_ACL),
-        composeObjectReqBuilder::setDestinationPredefinedAcl);
-    ifNonNull(
-        (String) optionsMap.get(StorageRpc.Option.KMS_KEY_NAME),
-        composeObjectReqBuilder::setKmsKey);
-    String encryptionKey = (String) optionsMap.get(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
-    if (encryptionKey != null) {
-      composeObjectReqBuilder.setCommonObjectRequestParams(commonRequestParams(encryptionKey));
-    }
-    ComposeObjectRequest req = composeObjectReqBuilder.build();
+    builder.setDestination(target);
+    ZOpt.applyAll(
+        optionsMap,
+        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
+        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
+        ZOpt.PREDEFINED_ACL.consumeVia(builder::setDestinationPredefinedAcl),
+        ZOpt.KMS_KEY_NAME.consumeVia(builder::setKmsKey),
+        ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
+            this::commonRequestParams, builder::setCommonObjectRequestParams));
+    ComposeObjectRequest req = builder.build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
