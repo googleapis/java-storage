@@ -205,7 +205,7 @@ final class GrpcConversions {
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
     ifNonNull(from.getVersioning(), Bucket.Versioning::getEnabled, to::setVersioningEnabled);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
-    ifNonNull(from.getLabels(), to::setLabels);
+    ifNonNull(from.getLabelsMap(), to::setLabels);
     if (from.hasWebsite()) {
       to.setIndexPage(from.getWebsite().getMainPageSuffix());
       to.setNotFoundPage(from.getWebsite().getNotFoundPage());
