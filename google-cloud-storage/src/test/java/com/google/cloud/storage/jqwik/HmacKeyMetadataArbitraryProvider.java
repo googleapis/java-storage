@@ -19,19 +19,23 @@ import com.google.cloud.storage.HmacKey;
 import com.google.storage.v2.HmacKeyMetadata;
 import java.util.Collections;
 import java.util.Set;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.web.api.Web;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
+@ParametersAreNonnullByDefault
 public class HmacKeyMetadataArbitraryProvider implements ArbitraryProvider {
   @Override
   public boolean canProvideFor(TypeUsage targetType) {
     return targetType.isOfType(HmacKeyMetadata.class);
   }
 
+  @NonNull
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 

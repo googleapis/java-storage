@@ -19,12 +19,15 @@ package com.google.cloud.storage.jqwik;
 import com.google.storage.v2.ServiceAccount;
 import java.util.Collections;
 import java.util.Set;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.web.api.EmailArbitrary;
 import net.jqwik.web.api.Web;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
+@ParametersAreNonnullByDefault
 public final class ServiceAccountArbitraryProvider implements ArbitraryProvider {
 
   @Override
@@ -32,6 +35,7 @@ public final class ServiceAccountArbitraryProvider implements ArbitraryProvider 
     return targetType.isOfType(ServiceAccount.class);
   }
 
+  @NonNull
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
     EmailArbitrary emails = Web.emails();

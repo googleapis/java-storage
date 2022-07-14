@@ -19,12 +19,15 @@ package com.google.cloud.storage.jqwik;
 import com.google.storage.v2.Bucket;
 import java.util.Collections;
 import java.util.Set;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.Tuple;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
+@ParametersAreNonnullByDefault
 public final class BucketArbitraryProvider implements ArbitraryProvider {
 
   @Override
@@ -32,6 +35,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
     return targetType.isOfType(Bucket.class);
   }
 
+  @NonNull
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
     Arbitrary<Bucket> as =
