@@ -43,32 +43,38 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().name(),
                         StorageArbitraries.generation(),
                         StorageArbitraries.metageneration(),
-                        StorageArbitraries.objects().storageClass(),
+                        StorageArbitraries.storageClass(),
                         size,
-                        StorageArbitraries.randomString(),
-                        StorageArbitraries.randomString())
+                        StorageArbitraries.httpHeaders().contentEncoding(),
+                        StorageArbitraries.httpHeaders().contentDisposition())
                     .as(Tuple::of),
                 Combinators.combine(
-                        StorageArbitraries.randomString(),
-                        StorageArbitraries.randomString(),
-                        StorageArbitraries.timestamp(),
-                        StorageArbitraries.randomString(),
-                        StorageArbitraries.timestamp(),
-                        Arbitraries.integers().greaterOrEqual(0),
+                        StorageArbitraries.httpHeaders().cacheControl(),
+                        StorageArbitraries.httpHeaders().contentLanguage(),
+                        StorageArbitraries.timestamp(), // dtime
+                        StorageArbitraries.httpHeaders().contentType(),
+                        StorageArbitraries.timestamp(), // ctime
+                        // componentCount is populated if the object is made from compose
+                        Arbitraries.integers().greaterOrEqual(0).injectNull(0.85),
                         StorageArbitraries.objects().objectChecksumsArbitrary())
                     .as(Tuple::of),
                 Combinators.combine(
-                        StorageArbitraries.timestamp(),
+                        StorageArbitraries.timestamp(), // utime
                         StorageArbitraries.randomString(),
-                        StorageArbitraries.timestamp(),
+                        StorageArbitraries.timestamp(), // UpdateStorageClassTime
                         StorageArbitraries.bool(),
-                        StorageArbitraries.timestamp(),
+                        StorageArbitraries.timestamp(), // RetentionExpireTime
                         StorageArbitraries.bool(),
                         StorageArbitraries.objects().customerEncryptionArbitrary(),
-                        StorageArbitraries.timestamp())
+                        StorageArbitraries.httpHeaders().customTime())
+                    .as(Tuple::of),
+                Combinators.combine(
+                        StorageArbitraries.objects().customMetadata(),
+                        StorageArbitraries.owner(),
+                        StorageArbitraries.objects().objectAccessControl())
                     .as(Tuple::of))
             .as(
-                (t1, t2, t3) ->
+                (t1, t2, t3, t4) ->
                     Object.newBuilder()
                         .setName(t1.get1())
                         .setBucket(t1.get2().toString())
@@ -79,7 +85,7 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                         .setContentEncoding(t1.get7())
                         .setContentDisposition(t1.get8())
                         .setCacheControl(t2.get1())
-                        // TODO: Object ACLs
+                        .addAllAcl(t4.get3())
                         .setContentLanguage(t2.get2())
                         .setDeleteTime(t2.get3())
                         .setContentType(t2.get4())
@@ -91,9 +97,9 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                         .setUpdateStorageClassTime(t3.get3())
                         .setTemporaryHold(t3.get4())
                         .setRetentionExpireTime(t3.get5())
-                        // TODO: User Metadata
+                        .putAllMetadata(t4.get1())
                         .setEventBasedHold(t3.get6())
-                        // TODO: Owner
+                        .setOwner(t4.get2())
                         .setCustomerEncryption(t3.get7())
                         .setCustomTime(t3.get8())
                         .build());

@@ -178,7 +178,13 @@ final class GrpcConversions {
   }
 
   private BucketInfo bucketInfoDecode(Bucket from) {
-    BucketInfo.Builder to = BucketInfo.newBuilder(BucketName.parse(from.getName()).getBucket());
+    BucketName bucketName = BucketName.parse(from.getName());
+    // `name` above is a read-only value from gcs, which enforces non-emptiness.
+    //   BucketName.parse will return null of name is empty. Since name can't be empty
+    //   we don't need to explicitly check for null, as the only other failure condition
+    //   would be a parse exception.
+    //noinspection ConstantConditions
+    BucketInfo.Builder to = BucketInfo.newBuilder(bucketName.getBucket());
     to.setProject(from.getProject());
     to.setGeneratedId(from.getBucketId());
     if (from.hasRetentionPolicy()) {

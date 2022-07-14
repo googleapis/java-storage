@@ -39,7 +39,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                 Combinators.combine(
                         StorageArbitraries.buckets().name(),
                         StorageArbitraries.buckets().name(),
-                        StorageArbitraries.buckets().storageClass(),
+                        StorageArbitraries.storageClass(),
                         StorageArbitraries.buckets().location(),
                         StorageArbitraries.buckets().locationType(),
                         StorageArbitraries.metageneration(),
@@ -60,7 +60,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().logging(),
                         StorageArbitraries.buckets().cors(),
                         StorageArbitraries.buckets().objectAccessControl(),
-                        StorageArbitraries.buckets().owner(),
+                        StorageArbitraries.owner(),
                         StorageArbitraries.buckets().iamConfig())
                     .as(Tuple::of))
             .as(
