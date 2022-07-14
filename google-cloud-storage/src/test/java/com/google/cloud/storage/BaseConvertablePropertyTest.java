@@ -57,7 +57,8 @@ abstract class BaseConvertablePropertyTest<ModelT, ProtoT extends Message> {
     assertThat(p).isEqualTo(proto);
   }
 
-  private static TypeUsage findBaseTypeUsage(Class<? extends BaseConvertablePropertyTest> c) {
+  private static TypeUsage findBaseTypeUsage(
+      @SuppressWarnings("rawtypes") Class<? extends BaseConvertablePropertyTest> c) {
     TypeUsage curr = TypeUsage.of(c);
     while (curr.getRawType() != BaseConvertablePropertyTest.class) {
       Optional<TypeUsage> superclass = curr.getSuperclass();
