@@ -16,6 +16,9 @@
 
 package com.google.cloud.storage.jqwik;
 
+import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.ifNonNull;
+
+import com.google.storage.v2.BucketName;
 import com.google.storage.v2.Object;
 import java.util.Collections;
 import java.util.Set;
@@ -39,7 +42,7 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
   @NonNull
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-    Arbitrary<Integer> size = Arbitraries.integers().greaterOrEqual(0);
+    Arbitrary<Long> size = Arbitraries.longs().greaterOrEqual(0);
     Arbitrary<Object> objectArbitrary =
         Combinators.combine(
                 Combinators.combine(
@@ -64,7 +67,7 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                     .as(Tuple::of),
                 Combinators.combine(
                         StorageArbitraries.timestamp(), // utime
-                        StorageArbitraries.randomString(),
+                        StorageArbitraries.kmsKey(),
                         StorageArbitraries.timestamp(), // UpdateStorageClassTime
                         StorageArbitraries.bool(),
                         StorageArbitraries.timestamp(), // RetentionExpireTime
@@ -78,35 +81,36 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.objects().objectAccessControl())
                     .as(Tuple::of))
             .as(
-                (t1, t2, t3, t4) ->
-                    Object.newBuilder()
-                        .setName(t1.get1())
-                        .setBucket(t1.get2().toString())
-                        .setGeneration(t1.get3())
-                        .setMetageneration(t1.get4())
-                        .setStorageClass(t1.get5())
-                        .setSize(t1.get6())
-                        .setContentEncoding(t1.get7())
-                        .setContentDisposition(t1.get8())
-                        .setCacheControl(t2.get1())
-                        .addAllAcl(t4.get3())
-                        .setContentLanguage(t2.get2())
-                        .setDeleteTime(t2.get3())
-                        .setContentType(t2.get4())
-                        .setCreateTime(t2.get5())
-                        .setComponentCount(t2.get6())
-                        .setChecksums(t2.get7())
-                        .setUpdateTime(t3.get1())
-                        .setKmsKey(t3.get2())
-                        .setUpdateStorageClassTime(t3.get3())
-                        .setTemporaryHold(t3.get4())
-                        .setRetentionExpireTime(t3.get5())
-                        .putAllMetadata(t4.get1())
-                        .setEventBasedHold(t3.get6())
-                        .setOwner(t4.get2())
-                        .setCustomerEncryption(t3.get7())
-                        .setCustomTime(t3.get8())
-                        .build());
+                (t1, t2, t3, t4) -> {
+                  Object.Builder b = Object.newBuilder();
+                  ifNonNull(t1.get1(), b::setName);
+                  ifNonNull(t1.get2(), BucketName::toString, b::setBucket);
+                  ifNonNull(t1.get3(), b::setGeneration);
+                  ifNonNull(t1.get4(), b::setMetageneration);
+                  ifNonNull(t1.get5(), b::setStorageClass);
+                  ifNonNull(t1.get6(), b::setSize);
+                  ifNonNull(t1.get7(), b::setContentEncoding);
+                  ifNonNull(t1.get8(), b::setContentDisposition);
+                  ifNonNull(t2.get1(), b::setCacheControl);
+                  ifNonNull(t4.get3(), b::addAllAcl);
+                  ifNonNull(t2.get2(), b::setContentLanguage);
+                  ifNonNull(t2.get3(), b::setDeleteTime);
+                  ifNonNull(t2.get4(), b::setContentType);
+                  ifNonNull(t2.get5(), b::setCreateTime);
+                  ifNonNull(t2.get6(), b::setComponentCount);
+                  ifNonNull(t2.get7(), b::setChecksums);
+                  ifNonNull(t3.get1(), b::setUpdateTime);
+                  ifNonNull(t3.get2(), b::setKmsKey);
+                  ifNonNull(t3.get3(), b::setUpdateStorageClassTime);
+                  ifNonNull(t3.get4(), b::setTemporaryHold);
+                  ifNonNull(t3.get5(), b::setRetentionExpireTime);
+                  ifNonNull(t4.get1(), b::putAllMetadata);
+                  ifNonNull(t3.get6(), b::setEventBasedHold);
+                  // ifNonNull(t4.get2(), b::setOwner); // TODO
+                  ifNonNull(t3.get7(), b::setCustomerEncryption);
+                  ifNonNull(t3.get8(), b::setCustomTime);
+                  return b.build();
+                });
     return Collections.singleton(objectArbitrary);
   }
 }

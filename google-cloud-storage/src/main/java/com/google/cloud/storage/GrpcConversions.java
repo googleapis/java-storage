@@ -751,7 +751,7 @@ final class GrpcConversions {
     // TODO(sydmunro): Add Selflink when available
     // TODO(sydmunro): Add etag when available
     // TODO(sydmunro): Add Owner
-    // TODO(sydmunro): Add user metadata
+    ifNonNull(from.getMetadata(), toBuilder::putAllMetadata);
     // TODO(sydmunro): Object ACL
     return toBuilder.build();
   }
@@ -766,36 +766,51 @@ final class GrpcConversions {
     ifNonNull(from.getContentDisposition(), toBuilder::setContentDisposition);
     ifNonNull(from.getContentLanguage(), toBuilder::setContentLanguage);
     ifNonNull(from.getComponentCount(), toBuilder::setComponentCount);
-    if (from.getChecksums() != null) {
-      if (from.getChecksums().hasCrc32C()) {
-        toBuilder.setCrc32c(crc32cCodec.encode(from.getChecksums().getCrc32C()));
+    if (from.hasChecksums()) {
+      ObjectChecksums checksums = from.getChecksums();
+      if (checksums.hasCrc32C()) {
+        toBuilder.setCrc32c(crc32cCodec.encode(checksums.getCrc32C()));
       }
-      if (from.getChecksums().getMd5Hash() != null) {
+      if (!checksums.getMd5Hash().equals(ByteString.empty())) {
         toBuilder.setMd5(
-            BaseEncoding.base64().encode(from.getChecksums().getMd5Hash().toByteArray()));
+            BaseEncoding.base64().encode(checksums.getMd5Hash().toByteArray()));
       }
     }
     ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);
-    ifNonNull(from.getDeleteTime(), timestampCodec::decode, toBuilder::setDeleteTimeOffsetDateTime);
-    ifNonNull(from.getUpdateTime(), timestampCodec::decode, toBuilder::setUpdateTimeOffsetDateTime);
-    ifNonNull(from.getCreateTime(), timestampCodec::decode, toBuilder::setCreateTimeOffsetDateTime);
-    ifNonNull(from.getCustomTime(), timestampCodec::decode, toBuilder::setCustomTimeOffsetDateTime);
-    ifNonNull(
-        from.getCustomerEncryption(),
-        customerEncryptionCodec::decode,
-        toBuilder::setCustomerEncryption);
+    if (from.hasDeleteTime()) {
+      toBuilder.setDeleteTimeOffsetDateTime(timestampCodec.decode(from.getDeleteTime()));
+    }
+    if (from.hasUpdateTime()) {
+      toBuilder.setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()));
+    }
+    if (from.hasCreateTime()) {
+      toBuilder.setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()));
+    }
+    if (from.hasCustomTime()) {
+      toBuilder.setCustomTimeOffsetDateTime(timestampCodec.decode(from.getCustomTime()));
+    }
+    if (from.hasCustomerEncryption()) {
+      toBuilder.setCustomerEncryption(customerEncryptionCodec.decode(from.getCustomerEncryption()));
+    }
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, toBuilder::setStorageClass);
-    ifNonNull(
-        from.getUpdateStorageClassTime(),
-        timestampCodec::decode,
-        toBuilder::setTimeStorageClassUpdatedOffsetDateTime);
-    ifNonNull(from.getKmsKey(), toBuilder::setKmsKeyName);
-    ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
+    if (from.hasUpdateStorageClassTime()) {
+      toBuilder.setTimeStorageClassUpdatedOffsetDateTime(
+          timestampCodec.decode(from.getUpdateStorageClassTime()));
+    }
+    if (!from.getKmsKey().isEmpty()) {
+      toBuilder.setKmsKeyName(from.getKmsKey());
+    }
+    if (from.hasEventBasedHold()) {
+      toBuilder.setEventBasedHold(from.getEventBasedHold());
+    }
     ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
-    ifNonNull(
-        from.getRetentionExpireTime(),
-        timestampCodec::decode,
-        toBuilder::setRetentionExpirationTimeOffsetDateTime);
+    if (from.hasRetentionExpireTime()) {
+      toBuilder.setRetentionExpirationTimeOffsetDateTime(
+          timestampCodec.decode(from.getRetentionExpireTime()));
+    }
+    if (!from.getMetadataMap().isEmpty()) {
+      toBuilder.setMetadata(from.getMetadataMap());
+    }
     return toBuilder.build();
   }
 
