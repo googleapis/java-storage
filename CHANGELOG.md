@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.10.0](https://github.com/googleapis/java-storage/compare/v2.9.3...v2.10.0) (2022-07-13)
+
+
+### Features
+
+* Custom Placement Config Dual Region Support ([#1470](https://github.com/googleapis/java-storage/issues/1470)) ([36440fc](https://github.com/googleapis/java-storage/commit/36440fc587976acc78f4dae480214b80ad3fc477))
+
+
+### Bug Fixes
+
+* enable longpaths support for windows test ([#1485](https://github.com/googleapis/java-storage/issues/1485)) ([#1506](https://github.com/googleapis/java-storage/issues/1506)) ([e36e809](https://github.com/googleapis/java-storage/commit/e36e80934644ccd5e873754c625367f24e5fc7f3))
+
+
+### Documentation
+
+* **sample:** upgrade maven-surefire and remove junit-platform-native ([#1476](https://github.com/googleapis/java-storage/issues/1476)) ([9b222e4](https://github.com/googleapis/java-storage/commit/9b222e483937bd0639123899442c1e863683718a))
+
+
+### Dependencies
+
+* update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.13 ([#1501](https://github.com/googleapis/java-storage/issues/1501)) ([36e3898](https://github.com/googleapis/java-storage/commit/36e389857ea3f86350af5763c829e5f1caaaa3ec))
+
 ## [2.9.3](https://github.com/googleapis/java-storage/compare/v2.9.2...v2.9.3) (2022-07-08)
 
 
