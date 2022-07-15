@@ -536,8 +536,8 @@ final class GrpcConversions {
     return rule.hasAction()
         && rule.getAction().getType().equals(BucketInfo.LifecycleRule.DeleteLifecycleAction.TYPE)
         && rule.getCondition().getAllFields().keySet().size() == 1
-        && !rule.getCondition().getAllFields().keySet().stream()
-            .noneMatch(SUPPORTED_CONDITIONS_DELETE_RULE::contains);
+        && rule.getCondition().getAllFields().keySet().stream()
+            .anyMatch(SUPPORTED_CONDITIONS_DELETE_RULE::contains);
   }
 
   @SuppressWarnings("deprecation")
