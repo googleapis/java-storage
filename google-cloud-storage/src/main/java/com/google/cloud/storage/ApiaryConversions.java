@@ -74,10 +74,8 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 @InternalApi
@@ -346,7 +344,7 @@ final class ApiaryConversions {
       if (lifecycleRules.isEmpty()) {
         lifecycle.setRule(Collections.emptyList());
       } else {
-        Set<Rule> rules = new HashSet<>();
+        List<Rule> rules = new ArrayList<>();
         ifNonNull(lifecycleRules, r -> r.stream().map(lifecycleRule()::encode).forEach(rules::add));
         if (!rules.isEmpty()) {
           lifecycle.setRule(ImmutableList.copyOf(rules));
