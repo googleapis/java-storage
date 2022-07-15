@@ -57,7 +57,7 @@ public final class StorageArbitraries {
   public static Arbitrary<Timestamp> timestamp() {
     return Combinators.combine(
             DateTimes.offsetDateTimes().offsetBetween(ZoneOffset.UTC, ZoneOffset.UTC),
-            Arbitraries.integers().between(0, 999_999_999))
+            millisecondsAsNanos())
         .as(
             (odt, nanos) ->
                 Timestamp.newBuilder().setSeconds(odt.toEpochSecond()).setNanos(nanos).build());
@@ -547,5 +547,16 @@ public final class StorageArbitraries {
       chars[i] = (char) (i + lower);
     }
     return chars;
+  }
+
+  /**
+   * gRPC has nanosecond level precision for timestamps, whereas JSON is limited to millisecond
+   * precision due to RPC3339 format.
+   *
+   * <p>Define an arbitrary, which will always produce a nanosecond value that is in the range of
+   * milliseconds.
+   */
+  private static Arbitrary<Integer> millisecondsAsNanos() {
+    return Arbitraries.integers().between(0, 999).map(i -> i * 1_000_000);
   }
 }
