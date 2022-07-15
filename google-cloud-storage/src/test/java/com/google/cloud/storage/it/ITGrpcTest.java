@@ -21,19 +21,15 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.conformance.retry.TestBench;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
-import java.util.logging.Logger;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 public final class ITGrpcTest {
-  private static final Logger LOGGER = Logger.getLogger(ITGrpcTest.class.getName());
-
   @ClassRule
   public static final TestBench TEST_BENCH =
       TestBench.newBuilder().setContainerName("it-grpc").build();
@@ -47,8 +43,6 @@ public final class ITGrpcTest {
                   .setCredentials(NoCredentials.getInstance())
                   .setProjectId("test-project-id")
                   .build());
-
-  private Storage storage;
 
   @Test
   public void testCreateBucket() {
