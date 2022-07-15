@@ -54,7 +54,7 @@ abstract class BaseConvertablePropertyTest<ModelT, ProtoT extends Message> {
     ModelT model = codec.decode(p);
     ProtoT proto = codec.encode(model);
 
-    assertThat(p).isEqualTo(proto);
+    assertThat(proto).isEqualTo(p);
   }
 
   private static TypeUsage findBaseTypeUsage(
