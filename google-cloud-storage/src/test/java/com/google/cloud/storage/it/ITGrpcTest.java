@@ -36,7 +36,9 @@ import org.junit.Test;
 public final class ITGrpcTest {
   private static final Logger LOGGER = Logger.getLogger(ITGrpcTest.class.getName());
 
-  @ClassRule public static final TestBench TEST_BENCH = TestBench.newBuilder().build();
+  @ClassRule
+  public static final TestBench TEST_BENCH =
+      TestBench.newBuilder().setContainerName("it-grpc").build();
 
   @Rule
   public final StorageFixture storageFixture =
