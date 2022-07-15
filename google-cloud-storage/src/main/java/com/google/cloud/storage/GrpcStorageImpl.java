@@ -141,9 +141,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    CreateBucketRequest.Builder builder =
-        CreateBucketRequest.newBuilder().setBucket(codecs.bucketInfo().encode(bucketInfo));
-    builder.setBucketId(builder.getBucket().getBucketId());
+    com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
+    CreateBucketRequest.Builder builder = CreateBucketRequest.newBuilder().setBucket(bucket);
+    builder.setBucketId(bucket.getBucketId());
     builder.setParent(ProjectName.format(getOptions().getProjectId()));
     ZOpt.applyAll(
         optionsMap,
