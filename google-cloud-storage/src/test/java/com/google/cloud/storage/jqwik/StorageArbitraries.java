@@ -152,7 +152,7 @@ public final class StorageArbitraries {
     Arbitrary<BucketName> name() {
       return Combinators.combine(
               Arbitraries.oneOf(
-                  projectID(),
+                  // projectID(), TODO: reinclude this once we support non-global scoped buckets
                   // Global buckets have prefix of projects/_
                   Arbitraries.of(new ProjectID("_"))),
               alnum(),
