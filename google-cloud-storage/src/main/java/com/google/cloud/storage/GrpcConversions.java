@@ -233,25 +233,25 @@ final class GrpcConversions {
     }
     if (from.hasLifecycle()) {
       to.setLifecycleRules(
-          toImmutableListOf(lifecycleRule()::decode).apply(from.getLifecycle().getRuleList()));
+          toImmutableListOf(lifecycleRuleCodec::decode).apply(from.getLifecycle().getRuleList()));
     }
     List<Bucket.Cors> corsList = from.getCorsList();
     if (!corsList.isEmpty()) {
-      to.setCors(toImmutableListOf(cors()::decode).apply(corsList));
+      to.setCors(toImmutableListOf(corsCodec::decode).apply(corsList));
     }
     if (from.hasLogging()) {
       to.setLogging(loggingCodec.decode(from.getLogging()));
     }
     if (from.hasOwner()) {
-      to.setOwner(entity().decode(from.getOwner().getEntity()));
+      to.setOwner(entityCodec.decode(from.getOwner().getEntity()));
     }
 
     List<ObjectAccessControl> defaultObjectAclList = from.getDefaultObjectAclList();
     if (!defaultObjectAclList.isEmpty()) {
-      to.setDefaultAcl(toImmutableListOf(objectAcl()::decode).apply(defaultObjectAclList));
+      to.setDefaultAcl(toImmutableListOf(objectAclCodec::decode).apply(defaultObjectAclList));
     }
     if (from.hasIamConfig()) {
-      to.setIamConfiguration(iamConfiguration().decode(from.getIamConfig()));
+      to.setIamConfiguration(iamConfigurationCodec.decode(from.getIamConfig()));
     }
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is available
@@ -315,21 +315,23 @@ final class GrpcConversions {
       if (!lifecycleRules.isEmpty()) {
         ImmutableSet<Bucket.Lifecycle.Rule> set =
             from.getLifecycleRules().stream()
-                .map(lifecycleRule()::encode)
+                .map(lifecycleRuleCodec::encode)
                 .collect(ImmutableSet.toImmutableSet());
         lifecycleBuilder.addAllRule(ImmutableList.copyOf(set));
       }
       to.setLifecycle(lifecycleBuilder.build());
     }
-    ifNonNull(from.getLogging(), logging()::encode, to::setLogging);
-    ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::addAllCors);
+    ifNonNull(from.getLogging(), loggingCodec::encode, to::setLogging);
+    ifNonNull(from.getCors(), toImmutableListOf(corsCodec::encode), to::addAllCors);
     ifNonNull(
         from.getOwner(),
         lift(entity()::encode).andThen(o -> Owner.newBuilder().setEntity(o).build()),
         to::setOwner);
     ifNonNull(
-        from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::addAllDefaultObjectAcl);
-    ifNonNull(from.getIamConfiguration(), iamConfiguration()::encode, to::setIamConfig);
+        from.getDefaultAcl(),
+        toImmutableListOf(objectAclCodec::encode),
+        to::addAllDefaultObjectAcl);
+    ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is avialable
     return to.build();
