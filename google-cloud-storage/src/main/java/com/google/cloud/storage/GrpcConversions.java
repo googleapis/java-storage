@@ -23,6 +23,7 @@ import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
+import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -46,6 +47,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
@@ -203,29 +205,55 @@ final class GrpcConversions {
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
-    ifNonNull(from.getBilling(), Billing::getRequesterPays, to::setRequesterPays);
-    ifNonNull(from.getCreateTime(), timestampCodec::decode, to::setCreateTimeOffsetDateTime);
-    ifNonNull(from.getUpdateTime(), timestampCodec::decode, to::setUpdateTimeOffsetDateTime);
-    ifNonNull(from.getEncryption(), Bucket.Encryption::getDefaultKmsKey, to::setDefaultKmsKeyName);
+    if (from.hasBilling()) {
+      Billing billing = from.getBilling();
+      to.setRequesterPays(billing.getRequesterPays());
+    }
+    if (from.hasCreateTime()) {
+      to.setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()));
+    }
+    if (from.hasUpdateTime()) {
+      to.setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()));
+    }
+    if (from.hasEncryption()) {
+      to.setDefaultKmsKeyName(from.getEncryption().getDefaultKmsKey());
+    }
     ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
-    ifNonNull(from.getVersioning(), Bucket.Versioning::getEnabled, to::setVersioningEnabled);
+    if (from.hasVersioning()) {
+      to.setVersioningEnabled(from.getVersioning().getEnabled());
+    }
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
-    ifNonNull(from.getLabelsMap(), to::setLabels);
+    Map<String, String> labelsMap = from.getLabelsMap();
+    if (!labelsMap.isEmpty()) {
+      to.setLabels(labelsMap);
+    }
     if (from.hasWebsite()) {
       to.setIndexPage(from.getWebsite().getMainPageSuffix());
       to.setNotFoundPage(from.getWebsite().getNotFoundPage());
     }
-    ifNonNull(
-        from.getLifecycle(),
-        lift(Bucket.Lifecycle::getRuleList).andThen(toImmutableListOf(lifecycleRule()::decode)),
-        to::setLifecycleRules);
-    ifNonNull(from.getCorsList(), toImmutableListOf(cors()::decode), to::setCors);
-    ifNonNull(from.getLogging(), loggingCodec::decode, to::setLogging);
-    ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
-    ifNonNull(
-        from.getDefaultObjectAclList(), toImmutableListOf(objectAcl()::decode), to::setDefaultAcl);
-    ifNonNull(from.getIamConfig(), iamConfiguration()::decode, to::setIamConfiguration);
+    if (from.hasLifecycle()) {
+      to.setLifecycleRules(
+          toImmutableListOf(lifecycleRule()::decode).apply(from.getLifecycle().getRuleList()));
+    }
+    List<Bucket.Cors> corsList = from.getCorsList();
+    if (!corsList.isEmpty()) {
+      to.setCors(toImmutableListOf(cors()::decode).apply(corsList));
+    }
+    if (from.hasLogging()) {
+      to.setLogging(loggingCodec.decode(from.getLogging()));
+    }
+    if (from.hasOwner()) {
+      to.setOwner(entity().decode(from.getOwner().getEntity()));
+    }
+
+    List<ObjectAccessControl> defaultObjectAclList = from.getDefaultObjectAclList();
+    if (!defaultObjectAclList.isEmpty()) {
+      to.setDefaultAcl(toImmutableListOf(objectAcl()::decode).apply(defaultObjectAclList));
+    }
+    if (from.hasIamConfig()) {
+      to.setIamConfiguration(iamConfiguration().decode(from.getIamConfig()));
+    }
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is available
     return to.build();
@@ -254,27 +282,47 @@ final class GrpcConversions {
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
-    Bucket.Billing.Builder billingBuilder = Billing.newBuilder();
-    ifNonNull(from.requesterPays(), billingBuilder::setRequesterPays);
-    to.setBilling(billingBuilder.build());
+    if (from.requesterPays() != null) {
+      Bucket.Billing.Builder billingBuilder = Billing.newBuilder();
+      ifNonNull(from.requesterPays(), billingBuilder::setRequesterPays);
+      to.setBilling(billingBuilder.build());
+    }
     ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, to::setCreateTime);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, to::setUpdateTime);
-    Bucket.Encryption.Builder encryptionBuilder = Bucket.Encryption.newBuilder();
-    ifNonNull(from.getDefaultKmsKeyName(), encryptionBuilder::setDefaultKmsKey);
-    to.setEncryption(encryptionBuilder.build());
-    Bucket.Website.Builder websiteBuilder = Bucket.Website.newBuilder();
-    ifNonNull(from.getIndexPage(), websiteBuilder::setMainPageSuffix);
-    ifNonNull(from.getNotFoundPage(), websiteBuilder::setNotFoundPage);
-    to.setWebsite(websiteBuilder.build());
+    if (from.getDefaultKmsKeyName() != null) {
+      Bucket.Encryption.Builder encryptionBuilder = Bucket.Encryption.newBuilder();
+      ifNonNull(from.getDefaultKmsKeyName(), encryptionBuilder::setDefaultKmsKey);
+      to.setEncryption(encryptionBuilder.build());
+    }
+    if (from.getIndexPage() != null || from.getNotFoundPage() != null) {
+      Bucket.Website.Builder websiteBuilder = Bucket.Website.newBuilder();
+      ifNonNull(from.getIndexPage(), websiteBuilder::setMainPageSuffix);
+      ifNonNull(from.getNotFoundPage(), websiteBuilder::setNotFoundPage);
+      to.setWebsite(websiteBuilder.build());
+    }
     ifNonNull(from.getRpo(), Rpo::toString, to::setRpo);
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
-    Bucket.Versioning.Builder versioningBuilder = Bucket.Versioning.newBuilder();
-    ifNonNull(from.versioningEnabled(), versioningBuilder::setEnabled);
-    to.setVersioning(versioningBuilder.build());
+    if (from.versioningEnabled() != null) {
+      Bucket.Versioning.Builder versioningBuilder = Bucket.Versioning.newBuilder();
+      ifNonNull(from.versioningEnabled(), versioningBuilder::setEnabled);
+      to.setVersioning(versioningBuilder.build());
+    }
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::putAllLabels);
-    to.setLifecycle(buildLifecyclePolicy(from));
-    ifNonNull(from.getLogging(), loggingCodec::encode, to::setLogging);
+    // Do not use, #getLifecycleRules, it can not return null, which is important to our logic here
+    List<? extends LifecycleRule> lifecycleRules = from.lifecycleRules;
+    if (lifecycleRules != null) {
+      Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
+      if (!lifecycleRules.isEmpty()) {
+        ImmutableSet<Bucket.Lifecycle.Rule> set =
+            from.getLifecycleRules().stream()
+                .map(lifecycleRule()::encode)
+                .collect(ImmutableSet.toImmutableSet());
+        lifecycleBuilder.addAllRule(ImmutableList.copyOf(set));
+      }
+      to.setLifecycle(lifecycleBuilder.build());
+    }
+    ifNonNull(from.getLogging(), logging()::encode, to::setLogging);
     ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::addAllCors);
     ifNonNull(
         from.getOwner(),
@@ -286,19 +334,6 @@ final class GrpcConversions {
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is avialable
     return to.build();
-  }
-
-  private Bucket.Lifecycle buildLifecyclePolicy(BucketInfo from) {
-    // Handle duplicate rules introduced by deleteRules using a backing ImmutableSet
-    Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
-    ImmutableSet.Builder<Bucket.Lifecycle.Rule> rules = new ImmutableSet.Builder<>();
-    if (from.getLifecycleRules() != null) {
-      rules.addAll(
-          from.getLifecycleRules().stream()
-              .map(lifecycleRule()::encode)
-              .collect(ImmutableSet.toImmutableSet()));
-    }
-    return lifecycleBuilder.addAllRule(rules.build()).build();
   }
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
@@ -772,8 +807,7 @@ final class GrpcConversions {
         toBuilder.setCrc32c(crc32cCodec.encode(checksums.getCrc32C()));
       }
       if (!checksums.getMd5Hash().equals(ByteString.empty())) {
-        toBuilder.setMd5(
-            BaseEncoding.base64().encode(checksums.getMd5Hash().toByteArray()));
+        toBuilder.setMd5(BaseEncoding.base64().encode(checksums.getMd5Hash().toByteArray()));
       }
     }
     ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);

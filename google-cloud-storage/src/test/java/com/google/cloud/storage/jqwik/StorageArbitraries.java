@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.jqwik;
 
+import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.ifNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.hash.Hashing;
@@ -240,10 +241,24 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Website> website() {
-      Arbitrary<String> indexPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-      Arbitrary<String> notFoundPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
+      // TODO: create a "URLEncodedString we can use here
+      Arbitrary<String> indexPage =
+          Arbitraries.strings().all().ofMinLength(1).ofMaxLength(25).injectNull(0.75);
+      Arbitrary<String> notFoundPage =
+          Arbitraries.strings().all().ofMinLength(1).ofMaxLength(25).injectNull(0.75);
       return Combinators.combine(indexPage, notFoundPage)
-          .as((i, n) -> Website.newBuilder().setMainPageSuffix(i).setNotFoundPage(n).build());
+          .as(
+              (i, n) -> {
+                //noinspection ConstantConditions
+                if (i == null && n == null) {
+                  return null;
+                } else {
+                  Website.Builder b = Website.newBuilder();
+                  ifNonNull(i, b::setMainPageSuffix);
+                  ifNonNull(n, b::setNotFoundPage);
+                  return b.build();
+                }
+              });
     }
 
     public Arbitrary<Bucket.Logging> logging() {
@@ -290,11 +305,13 @@ public final class StorageArbitraries {
     }
 
     public ListArbitrary<ObjectAccessControl> objectAccessControl() {
-      Arbitrary<String> entity = alphaString().ofMinLength(1).ofMaxLength(1024);
-      Arbitrary<String> role = alphaString().ofMinLength(1).ofMaxLength(1024);
+      Arbitrary<String> entity = alphaString().ofMinLength(1).ofMaxLength(25);
+      Arbitrary<String> role = alphaString().ofMinLength(1).ofMaxLength(25);
       return Combinators.combine(entity, role)
           .as((e, r) -> ObjectAccessControl.newBuilder().setEntity(e).setRole(r).build())
-          .list();
+          .list()
+          .ofMinSize(0)
+          .ofMaxSize(10);
     }
 
     public Arbitrary<Bucket.IamConfig.UniformBucketLevelAccess> uniformBucketLevelAccess() {
@@ -312,8 +329,6 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Bucket.IamConfig> iamConfig() {
-      Arbitrary<Bucket.IamConfig.UniformBucketLevelAccess> uniformBucketLevelAccess =
-          uniformBucketLevelAccess();
       Arbitrary<String> pap = Arbitraries.of("enforced", "inherited");
       return Combinators.combine(pap, uniformBucketLevelAccess())
           .as(
@@ -364,6 +379,10 @@ public final class StorageArbitraries {
 
     public Arbitrary<String> locationType() {
       return Arbitraries.of("region", "dual-region", "multi-region");
+    }
+
+    public Arbitrary<Map<String, String>> labels() {
+      return objects().customMetadata();
     }
   }
 
@@ -423,7 +442,7 @@ public final class StorageArbitraries {
                       .build());
     }
 
-    public Arbitrary<CustomerEncryption> customerEncryptionArbitrary() {
+    public Arbitrary<CustomerEncryption> customerEncryption() {
       return Combinators.combine(
               Arbitraries.strings().ofMinLength(1).ofMaxLength(1024),
               Arbitraries.strings()

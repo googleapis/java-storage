@@ -72,7 +72,7 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.bool(),
                         StorageArbitraries.timestamp(), // RetentionExpireTime
                         StorageArbitraries.bool(),
-                        StorageArbitraries.objects().customerEncryptionArbitrary(),
+                        StorageArbitraries.objects().customerEncryption().injectNull(0.90),
                         StorageArbitraries.httpHeaders().customTime())
                     .as(Tuple::of),
                 Combinators.combine(
