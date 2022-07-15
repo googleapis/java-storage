@@ -16,14 +16,20 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
 import static net.jqwik.api.providers.TypeUsage.of;
 
+import com.google.protobuf.Message;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
+import net.jqwik.api.EdgeCases;
 import net.jqwik.api.Example;
 import net.jqwik.api.providers.TypeUsage;
+import net.jqwik.engine.support.JqwikStringSupport;
 
 public class JqwikTest {
   @Example
@@ -46,6 +52,21 @@ public class JqwikTest {
   }
 
   public static void report(TypeUsage t, Arbitrary<?> objectArbitrary) {
-    System.out.printf("%-25s = %s%n", t, objectArbitrary.edgeCases());
+    EdgeCases<?> cases = objectArbitrary.edgeCases();
+    // inspired from net.jqwik.engine.properties.arbitraries.EdgeCasesSupport$1#toString()
+    String formattedCases =
+        StreamSupport.stream(cases.spliterator(), false)
+            .map(
+                s -> {
+                  Object value = s.value();
+                  if (value instanceof Message) {
+                    Message m = (Message) value;
+                    return fmtProto(m);
+                  } else {
+                    return JqwikStringSupport.displayString(value);
+                  }
+                })
+            .collect(Collectors.joining(",\n  ", "[\n  ", "]"));
+    System.out.printf("%-25s = EdgeCases%s%n", t, formattedCases);
   }
 }

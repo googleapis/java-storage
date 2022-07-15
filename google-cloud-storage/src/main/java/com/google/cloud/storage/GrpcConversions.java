@@ -23,6 +23,7 @@ import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
+import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -46,6 +47,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
@@ -178,7 +180,13 @@ final class GrpcConversions {
   }
 
   private BucketInfo bucketInfoDecode(Bucket from) {
-    BucketInfo.Builder to = BucketInfo.newBuilder(BucketName.parse(from.getName()).getBucket());
+    BucketName bucketName = BucketName.parse(from.getName());
+    // `name` above is a read-only value from gcs, which enforces non-emptiness.
+    //   BucketName.parse will return null of name is empty. Since name can't be empty
+    //   we don't need to explicitly check for null, as the only other failure condition
+    //   would be a parse exception.
+    //noinspection ConstantConditions
+    BucketInfo.Builder to = BucketInfo.newBuilder(bucketName.getBucket());
     to.setProject(from.getProject());
     to.setGeneratedId(from.getBucketId());
     if (from.hasRetentionPolicy()) {
@@ -193,33 +201,58 @@ final class GrpcConversions {
           timestampCodec::decode,
           to::setRetentionEffectiveTimeOffsetDateTime);
     }
-    ifNonNull(from.getBucketId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
-    ifNonNull(from.getBilling(), Billing::getRequesterPays, to::setRequesterPays);
-    ifNonNull(from.getCreateTime(), timestampCodec::decode, to::setCreateTimeOffsetDateTime);
-    ifNonNull(from.getUpdateTime(), timestampCodec::decode, to::setUpdateTimeOffsetDateTime);
-    ifNonNull(from.getEncryption(), Bucket.Encryption::getDefaultKmsKey, to::setDefaultKmsKeyName);
+    if (from.hasBilling()) {
+      Billing billing = from.getBilling();
+      to.setRequesterPays(billing.getRequesterPays());
+    }
+    if (from.hasCreateTime()) {
+      to.setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()));
+    }
+    if (from.hasUpdateTime()) {
+      to.setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()));
+    }
+    if (from.hasEncryption()) {
+      to.setDefaultKmsKeyName(from.getEncryption().getDefaultKmsKey());
+    }
     ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
-    ifNonNull(from.getVersioning(), Bucket.Versioning::getEnabled, to::setVersioningEnabled);
+    if (from.hasVersioning()) {
+      to.setVersioningEnabled(from.getVersioning().getEnabled());
+    }
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
-    ifNonNull(from.getLabels(), to::setLabels);
+    Map<String, String> labelsMap = from.getLabelsMap();
+    if (!labelsMap.isEmpty()) {
+      to.setLabels(labelsMap);
+    }
     if (from.hasWebsite()) {
       to.setIndexPage(from.getWebsite().getMainPageSuffix());
       to.setNotFoundPage(from.getWebsite().getNotFoundPage());
     }
-    ifNonNull(
-        from.getLifecycle(),
-        lift(Bucket.Lifecycle::getRuleList).andThen(toImmutableListOf(lifecycleRule()::decode)),
-        to::setLifecycleRules);
-    ifNonNull(from.getCorsList(), toImmutableListOf(cors()::decode), to::setCors);
-    ifNonNull(from.getLogging(), loggingCodec::decode, to::setLogging);
-    ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
-    ifNonNull(
-        from.getDefaultObjectAclList(), toImmutableListOf(objectAcl()::decode), to::setDefaultAcl);
-    ifNonNull(from.getIamConfig(), iamConfiguration()::decode, to::setIamConfiguration);
+    if (from.hasLifecycle()) {
+      to.setLifecycleRules(
+          toImmutableListOf(lifecycleRuleCodec::decode).apply(from.getLifecycle().getRuleList()));
+    }
+    List<Bucket.Cors> corsList = from.getCorsList();
+    if (!corsList.isEmpty()) {
+      to.setCors(toImmutableListOf(corsCodec::decode).apply(corsList));
+    }
+    if (from.hasLogging()) {
+      to.setLogging(loggingCodec.decode(from.getLogging()));
+    }
+    if (from.hasOwner()) {
+      to.setOwner(entityCodec.decode(from.getOwner().getEntity()));
+    }
+
+    List<ObjectAccessControl> defaultObjectAclList = from.getDefaultObjectAclList();
+    if (!defaultObjectAclList.isEmpty()) {
+      to.setDefaultAcl(toImmutableListOf(objectAclCodec::decode).apply(defaultObjectAclList));
+    }
+    if (from.hasIamConfig()) {
+      to.setIamConfiguration(iamConfigurationCodec.decode(from.getIamConfig()));
+    }
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is available
     return to.build();
@@ -248,51 +281,60 @@ final class GrpcConversions {
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
-    Bucket.Billing.Builder billingBuilder = Billing.newBuilder();
-    ifNonNull(from.requesterPays(), billingBuilder::setRequesterPays);
-    to.setBilling(billingBuilder.build());
+    if (from.requesterPays() != null) {
+      Bucket.Billing.Builder billingBuilder = Billing.newBuilder();
+      ifNonNull(from.requesterPays(), billingBuilder::setRequesterPays);
+      to.setBilling(billingBuilder.build());
+    }
     ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, to::setCreateTime);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, to::setUpdateTime);
-    Bucket.Encryption.Builder encryptionBuilder = Bucket.Encryption.newBuilder();
-    ifNonNull(from.getDefaultKmsKeyName(), encryptionBuilder::setDefaultKmsKey);
-    to.setEncryption(encryptionBuilder.build());
-    Bucket.Website.Builder websiteBuilder = Bucket.Website.newBuilder();
-    ifNonNull(from.getIndexPage(), websiteBuilder::setMainPageSuffix);
-    ifNonNull(from.getNotFoundPage(), websiteBuilder::setNotFoundPage);
-    to.setWebsite(websiteBuilder.build());
+    if (from.getDefaultKmsKeyName() != null) {
+      Bucket.Encryption.Builder encryptionBuilder = Bucket.Encryption.newBuilder();
+      ifNonNull(from.getDefaultKmsKeyName(), encryptionBuilder::setDefaultKmsKey);
+      to.setEncryption(encryptionBuilder.build());
+    }
+    if (from.getIndexPage() != null || from.getNotFoundPage() != null) {
+      Bucket.Website.Builder websiteBuilder = Bucket.Website.newBuilder();
+      ifNonNull(from.getIndexPage(), websiteBuilder::setMainPageSuffix);
+      ifNonNull(from.getNotFoundPage(), websiteBuilder::setNotFoundPage);
+      to.setWebsite(websiteBuilder.build());
+    }
     ifNonNull(from.getRpo(), Rpo::toString, to::setRpo);
     ifNonNull(from.getStorageClass(), StorageClass::toString, to::setStorageClass);
-    Bucket.Versioning.Builder versioningBuilder = Bucket.Versioning.newBuilder();
-    ifNonNull(from.versioningEnabled(), versioningBuilder::setEnabled);
-    to.setVersioning(versioningBuilder.build());
+    if (from.versioningEnabled() != null) {
+      Bucket.Versioning.Builder versioningBuilder = Bucket.Versioning.newBuilder();
+      ifNonNull(from.versioningEnabled(), versioningBuilder::setEnabled);
+      to.setVersioning(versioningBuilder.build());
+    }
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), to::putAllLabels);
-    to.setLifecycle(buildLifecyclePolicy(from));
+    // Do not use, #getLifecycleRules, it can not return null, which is important to our logic here
+    List<? extends LifecycleRule> lifecycleRules = from.lifecycleRules;
+    if (lifecycleRules != null) {
+      Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
+      if (!lifecycleRules.isEmpty()) {
+        ImmutableSet<Bucket.Lifecycle.Rule> set =
+            from.getLifecycleRules().stream()
+                .map(lifecycleRuleCodec::encode)
+                .collect(ImmutableSet.toImmutableSet());
+        lifecycleBuilder.addAllRule(ImmutableList.copyOf(set));
+      }
+      to.setLifecycle(lifecycleBuilder.build());
+    }
     ifNonNull(from.getLogging(), loggingCodec::encode, to::setLogging);
-    ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::addAllCors);
+    ifNonNull(from.getCors(), toImmutableListOf(corsCodec::encode), to::addAllCors);
     ifNonNull(
         from.getOwner(),
         lift(entity()::encode).andThen(o -> Owner.newBuilder().setEntity(o).build()),
         to::setOwner);
     ifNonNull(
-        from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::addAllDefaultObjectAcl);
-    ifNonNull(from.getIamConfiguration(), iamConfiguration()::encode, to::setIamConfig);
+        from.getDefaultAcl(),
+        toImmutableListOf(objectAclCodec::encode),
+        to::addAllDefaultObjectAcl);
+    ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is avialable
     return to.build();
-  }
-
-  private Bucket.Lifecycle buildLifecyclePolicy(BucketInfo from) {
-    // Handle duplicate rules introduced by deleteRules using a backing ImmutableSet
-    Bucket.Lifecycle.Builder lifecycleBuilder = Bucket.Lifecycle.newBuilder();
-    ImmutableSet.Builder<Bucket.Lifecycle.Rule> rules = new ImmutableSet.Builder<>();
-    if (from.getLifecycleRules() != null) {
-      rules.addAll(
-          from.getLifecycleRules().stream()
-              .map(lifecycleRule()::encode)
-              .collect(ImmutableSet.toImmutableSet()));
-    }
-    return lifecycleBuilder.addAllRule(rules.build()).build();
   }
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
@@ -494,8 +536,8 @@ final class GrpcConversions {
     return rule.hasAction()
         && rule.getAction().getType().equals(BucketInfo.LifecycleRule.DeleteLifecycleAction.TYPE)
         && rule.getCondition().getAllFields().keySet().size() == 1
-        && !rule.getCondition().getAllFields().keySet().stream()
-            .noneMatch(SUPPORTED_CONDITIONS_DELETE_RULE::contains);
+        && rule.getCondition().getAllFields().keySet().stream()
+            .anyMatch(SUPPORTED_CONDITIONS_DELETE_RULE::contains);
   }
 
   @SuppressWarnings("deprecation")
@@ -745,7 +787,7 @@ final class GrpcConversions {
     // TODO(sydmunro): Add Selflink when available
     // TODO(sydmunro): Add etag when available
     // TODO(sydmunro): Add Owner
-    // TODO(sydmunro): Add user metadata
+    ifNonNull(from.getMetadata(), toBuilder::putAllMetadata);
     // TODO(sydmunro): Object ACL
     return toBuilder.build();
   }
@@ -760,36 +802,50 @@ final class GrpcConversions {
     ifNonNull(from.getContentDisposition(), toBuilder::setContentDisposition);
     ifNonNull(from.getContentLanguage(), toBuilder::setContentLanguage);
     ifNonNull(from.getComponentCount(), toBuilder::setComponentCount);
-    if (from.getChecksums() != null) {
-      if (from.getChecksums().hasCrc32C()) {
-        toBuilder.setCrc32c(crc32cCodec.encode(from.getChecksums().getCrc32C()));
+    if (from.hasChecksums()) {
+      ObjectChecksums checksums = from.getChecksums();
+      if (checksums.hasCrc32C()) {
+        toBuilder.setCrc32c(crc32cCodec.encode(checksums.getCrc32C()));
       }
-      if (from.getChecksums().getMd5Hash() != null) {
-        toBuilder.setMd5(
-            BaseEncoding.base64().encode(from.getChecksums().getMd5Hash().toByteArray()));
+      if (!checksums.getMd5Hash().equals(ByteString.empty())) {
+        toBuilder.setMd5(BaseEncoding.base64().encode(checksums.getMd5Hash().toByteArray()));
       }
     }
     ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);
-    ifNonNull(from.getDeleteTime(), timestampCodec::decode, toBuilder::setDeleteTimeOffsetDateTime);
-    ifNonNull(from.getUpdateTime(), timestampCodec::decode, toBuilder::setUpdateTimeOffsetDateTime);
-    ifNonNull(from.getCreateTime(), timestampCodec::decode, toBuilder::setCreateTimeOffsetDateTime);
-    ifNonNull(from.getCustomTime(), timestampCodec::decode, toBuilder::setCustomTimeOffsetDateTime);
-    ifNonNull(
-        from.getCustomerEncryption(),
-        customerEncryptionCodec::decode,
-        toBuilder::setCustomerEncryption);
+    if (from.hasDeleteTime()) {
+      toBuilder.setDeleteTimeOffsetDateTime(timestampCodec.decode(from.getDeleteTime()));
+    }
+    if (from.hasUpdateTime()) {
+      toBuilder.setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()));
+    }
+    if (from.hasCreateTime()) {
+      toBuilder.setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()));
+    }
+    if (from.hasCustomTime()) {
+      toBuilder.setCustomTimeOffsetDateTime(timestampCodec.decode(from.getCustomTime()));
+    }
+    if (from.hasCustomerEncryption()) {
+      toBuilder.setCustomerEncryption(customerEncryptionCodec.decode(from.getCustomerEncryption()));
+    }
     ifNonNull(from.getStorageClass(), StorageClass::valueOf, toBuilder::setStorageClass);
-    ifNonNull(
-        from.getUpdateStorageClassTime(),
-        timestampCodec::decode,
-        toBuilder::setTimeStorageClassUpdatedOffsetDateTime);
-    ifNonNull(from.getKmsKey(), toBuilder::setKmsKeyName);
-    ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
+    if (from.hasUpdateStorageClassTime()) {
+      toBuilder.setTimeStorageClassUpdatedOffsetDateTime(
+          timestampCodec.decode(from.getUpdateStorageClassTime()));
+    }
+    if (!from.getKmsKey().isEmpty()) {
+      toBuilder.setKmsKeyName(from.getKmsKey());
+    }
+    if (from.hasEventBasedHold()) {
+      toBuilder.setEventBasedHold(from.getEventBasedHold());
+    }
     ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
-    ifNonNull(
-        from.getRetentionExpireTime(),
-        timestampCodec::decode,
-        toBuilder::setRetentionExpirationTimeOffsetDateTime);
+    if (from.hasRetentionExpireTime()) {
+      toBuilder.setRetentionExpirationTimeOffsetDateTime(
+          timestampCodec.decode(from.getRetentionExpireTime()));
+    }
+    if (!from.getMetadataMap().isEmpty()) {
+      toBuilder.setMetadata(from.getMetadataMap());
+    }
     return toBuilder.build();
   }
 

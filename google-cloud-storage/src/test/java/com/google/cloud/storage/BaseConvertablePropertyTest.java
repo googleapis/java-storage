@@ -54,10 +54,11 @@ abstract class BaseConvertablePropertyTest<ModelT, ProtoT extends Message> {
     ModelT model = codec.decode(p);
     ProtoT proto = codec.encode(model);
 
-    assertThat(p).isEqualTo(proto);
+    assertThat(proto).isEqualTo(p);
   }
 
-  private static TypeUsage findBaseTypeUsage(Class<? extends BaseConvertablePropertyTest> c) {
+  private static TypeUsage findBaseTypeUsage(
+      @SuppressWarnings("rawtypes") Class<? extends BaseConvertablePropertyTest> c) {
     TypeUsage curr = TypeUsage.of(c);
     while (curr.getRawType() != BaseConvertablePropertyTest.class) {
       Optional<TypeUsage> superclass = curr.getSuperclass();

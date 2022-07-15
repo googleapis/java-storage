@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.jqwik;
 
+import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.ifNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.hash.Hashing;
@@ -37,12 +38,15 @@ import com.google.type.Date;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Map;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.Tuple;
 import net.jqwik.api.arbitraries.CharacterArbitrary;
 import net.jqwik.api.arbitraries.ListArbitrary;
+import net.jqwik.api.arbitraries.LongArbitrary;
+import net.jqwik.api.arbitraries.StringArbitrary;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.time.api.DateTimes;
 
@@ -63,33 +67,36 @@ public final class StorageArbitraries {
     return DateTimes.offsetDateTimes()
         .offsetBetween(ZoneOffset.UTC, ZoneOffset.UTC)
         .map(
-            odt -> {
-              return Date.newBuilder()
-                  .setYear(odt.getYear())
-                  .setMonth(odt.getMonthValue())
-                  .setDay(odt.getDayOfMonth())
-                  .build();
-            });
+            odt ->
+                Date.newBuilder()
+                    .setYear(odt.getYear())
+                    .setMonth(odt.getMonthValue())
+                    .setDay(odt.getDayOfMonth())
+                    .build());
   }
 
   public static Arbitrary<Boolean> bool() {
     return Arbitraries.defaultFor(TypeUsage.of(Boolean.class));
   }
 
-  public static Arbitrary<Long> metageneration() {
+  public static LongArbitrary metageneration() {
     return Arbitraries.longs().greaterOrEqual(0);
   }
 
-  public static Arbitrary<Long> generation() {
+  public static LongArbitrary generation() {
     return Arbitraries.longs().greaterOrEqual(0);
   }
 
-  public static Arbitrary<String> randomString() {
+  public static StringArbitrary randomString() {
     return Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
   }
 
   public static CharacterArbitrary alnum() {
     return Arbitraries.chars().alpha().numeric();
+  }
+
+  public static StringArbitrary alphaString() {
+    return Arbitraries.strings().alpha();
   }
 
   public static Arbitrary<ProjectID> projectID() {
@@ -108,8 +115,28 @@ public final class StorageArbitraries {
         .as((first, mid, last) -> new ProjectID(first + mid + last));
   }
 
+  public static Arbitrary<String> kmsKey() {
+    return Arbitraries.of("kms-key1", "kms-key2").injectNull(0.75);
+  }
+
   public static Buckets buckets() {
     return Buckets.INSTANCE;
+  }
+
+  public static Arbitrary<String> storageClass() {
+    return Arbitraries.of(
+        "STANDARD",
+        "NEARLINE",
+        "COLDLINE",
+        "ARCHIVE",
+        "MULTI_REGIONAL",
+        "REGIONAL",
+        "DURABLE_REDUCED_AVAILABILITY");
+  }
+
+  public static Arbitrary<Owner> owner() {
+    Arbitrary<String> entity = alphaString().ofMinLength(1).ofMaxLength(1024);
+    return entity.map(e -> Owner.newBuilder().setEntity(e).build());
   }
 
   public static final class Buckets {
@@ -214,10 +241,24 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Website> website() {
-      Arbitrary<String> indexPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
-      Arbitrary<String> notFoundPage = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(1024);
+      // TODO: create a "URLEncodedString we can use here
+      Arbitrary<String> indexPage =
+          Arbitraries.strings().all().ofMinLength(1).ofMaxLength(25).injectNull(0.75);
+      Arbitrary<String> notFoundPage =
+          Arbitraries.strings().all().ofMinLength(1).ofMaxLength(25).injectNull(0.75);
       return Combinators.combine(indexPage, notFoundPage)
-          .as((i, n) -> Website.newBuilder().setMainPageSuffix(i).setNotFoundPage(n).build());
+          .as(
+              (i, n) -> {
+                //noinspection ConstantConditions
+                if (i == null && n == null) {
+                  return null;
+                } else {
+                  Website.Builder b = Website.newBuilder();
+                  ifNonNull(i, b::setMainPageSuffix);
+                  ifNonNull(n, b::setNotFoundPage);
+                  return b.build();
+                }
+              });
     }
 
     public Arbitrary<Bucket.Logging> logging() {
@@ -247,14 +288,13 @@ public final class StorageArbitraries {
       ListArbitrary<String> origins = Arbitraries.of("*", "google.com").list().uniqueElements();
       return Combinators.combine(methods, responseHeaders, origins, maxAgeSeconds)
           .as(
-              (m, r, o, a) -> {
-                return Bucket.Cors.newBuilder()
-                    .addAllMethod(m)
-                    .addAllResponseHeader(r)
-                    .addAllOrigin(o)
-                    .setMaxAgeSeconds(a)
-                    .build();
-              })
+              (m, r, o, a) ->
+                  Bucket.Cors.newBuilder()
+                      .addAllMethod(m)
+                      .addAllResponseHeader(r)
+                      .addAllOrigin(o)
+                      .setMaxAgeSeconds(a)
+                      .build())
           .list()
           .ofMinSize(0)
           .ofMaxSize(10);
@@ -265,16 +305,13 @@ public final class StorageArbitraries {
     }
 
     public ListArbitrary<ObjectAccessControl> objectAccessControl() {
-      Arbitrary<String> entity = Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(1024);
-      Arbitrary<String> role = Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(1024);
+      Arbitrary<String> entity = alphaString().ofMinLength(1).ofMaxLength(25);
+      Arbitrary<String> role = alphaString().ofMinLength(1).ofMaxLength(25);
       return Combinators.combine(entity, role)
           .as((e, r) -> ObjectAccessControl.newBuilder().setEntity(e).setRole(r).build())
-          .list();
-    }
-
-    public Arbitrary<Owner> owner() {
-      Arbitrary<String> entity = Arbitraries.strings().alpha().ofMinLength(1).ofMaxLength(1024);
-      return entity.map(e -> Owner.newBuilder().setEntity(e).build());
+          .list()
+          .ofMinSize(0)
+          .ofMaxSize(10);
     }
 
     public Arbitrary<Bucket.IamConfig.UniformBucketLevelAccess> uniformBucketLevelAccess() {
@@ -292,8 +329,6 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Bucket.IamConfig> iamConfig() {
-      Arbitrary<Bucket.IamConfig.UniformBucketLevelAccess> uniformBucketLevelAccess =
-          uniformBucketLevelAccess();
       Arbitrary<String> pap = Arbitraries.of("enforced", "inherited");
       return Combinators.combine(pap, uniformBucketLevelAccess())
           .as(
@@ -333,17 +368,6 @@ public final class StorageArbitraries {
       return bool().map(b -> Versioning.newBuilder().setEnabled(b).build());
     }
 
-    public Arbitrary<String> storageClass() {
-      return Arbitraries.of(
-          "STANDARD",
-          "NEARLINE",
-          "COLDLINE",
-          "ARCHIVE",
-          "MULTI_REGIONAL",
-          "REGIONAL",
-          "DURABLE_REDUCED_AVAILABILITY");
-    }
-
     public Arbitrary<String> rpo() {
       return Arbitraries.of("DEFAULT", "ASYNC_TURBO");
     }
@@ -355,6 +379,10 @@ public final class StorageArbitraries {
 
     public Arbitrary<String> locationType() {
       return Arbitraries.of("region", "dual-region", "multi-region");
+    }
+
+    public Arbitrary<Map<String, String>> labels() {
+      return objects().customMetadata();
     }
   }
 
@@ -398,11 +426,6 @@ public final class StorageArbitraries {
           .filter(s -> !s.startsWith(".well-known/acme-challenge/"));
     }
 
-    public Arbitrary<String> storageClass() {
-      // TODO: return each of the real values and edge cases (including invalid values)
-      return Arbitraries.strings().all().ofMinLength(1).ofLength(1024);
-    }
-
     public Arbitrary<ObjectChecksums> objectChecksumsArbitrary() {
       return Combinators.combine(
               Arbitraries.integers().greaterOrEqual(1),
@@ -419,7 +442,7 @@ public final class StorageArbitraries {
                       .build());
     }
 
-    public Arbitrary<CustomerEncryption> customerEncryptionArbitrary() {
+    public Arbitrary<CustomerEncryption> customerEncryption() {
       return Combinators.combine(
               Arbitraries.strings().ofMinLength(1).ofMaxLength(1024),
               Arbitraries.strings()
@@ -431,6 +454,88 @@ public final class StorageArbitraries {
                       .setEncryptionAlgorithm(algorithm)
                       .setKeySha256Bytes(key)
                       .build());
+    }
+
+    /**
+     * Custom metadata from <a target="_blank" rel="noopener noreferrer"
+     * href="https://cloud.google.com/storage/docs/metadata">https://cloud.google.com/storage/docs/metadata</a>
+     */
+    public Arbitrary<Map<String, String>> customMetadata() {
+      // TODO: are we going to need to care about non-url encoded characters?
+      //   Not for grpc itself, but possibly for compatibility tests.
+      return Arbitraries.maps(
+              alphaString().ofMinLength(1).ofMaxLength(32),
+              alphaString().ofMinLength(1).ofMaxLength(128))
+          .ofMinSize(0)
+          .ofMaxSize(15)
+          .injectNull(0.5);
+    }
+
+    public ListArbitrary<ObjectAccessControl> objectAccessControl() {
+      return Arbitraries.of(ObjectAccessControl.getDefaultInstance())
+          .list()
+          .ofMaxSize(0) /*.ofMinSize(0).ofMaxSize(10)*/;
+    }
+  }
+
+  public static HttpHeaders httpHeaders() {
+    return HttpHeaders.INSTANCE;
+  }
+
+  /**
+   * Fixed-key metadata from <a target="_blank" rel="noopener noreferrer"
+   * href="https://cloud.google.com/storage/docs/metadata">https://cloud.google.com/storage/docs/metadata</a>
+   */
+  public static final class HttpHeaders {
+    private static final HttpHeaders INSTANCE = new HttpHeaders();
+
+    public Arbitrary<String> cacheControl() {
+      return Combinators.combine(
+              Arbitraries.of("public", "private", "no-cache", "no-store"),
+              // bound to 10K to ease exhaustion processing
+              Arbitraries.integers().between(0, 10_000).injectNull(0.5),
+              Arbitraries.of("no-transform").injectNull(0.5))
+          .as(
+              (visibility, maxAge, transform) -> {
+                //noinspection ConstantConditions
+                if (maxAge == null && transform == null) {
+                  return visibility;
+                } else {
+                  //noinspection ConstantConditions
+                  if (maxAge != null) {
+                    return String.format("%s, max-age=%d", visibility, maxAge);
+                  } else if (transform != null) {
+                    return String.format("%s, %s", visibility, transform);
+                  } else {
+                    return String.format("%s, max-age=%d, %s", visibility, maxAge, transform);
+                  }
+                }
+              });
+    }
+
+    public Arbitrary<String> contentDisposition() {
+      return Arbitraries.of("inline", "attachment;filename=blob.bin").injectNull(0.75);
+    }
+
+    public Arbitrary<String> contentEncoding() {
+      return Arbitraries.of("gzip").injectNull(0.5);
+    }
+
+    public Arbitrary<String> contentLanguage() {
+      return Arbitraries.of("en", "es", "zh").injectNull(0.75);
+    }
+
+    public Arbitrary<String> contentType() {
+      return Arbitraries.of(
+              "text/plain",
+              "application/json",
+              "application/octet-stream",
+              "application/x-www-form-urlencoded")
+          .injectNull(0.33);
+    }
+
+    public Arbitrary<Timestamp> customTime() {
+      return timestamp().injectNull(0.75);
     }
   }
 

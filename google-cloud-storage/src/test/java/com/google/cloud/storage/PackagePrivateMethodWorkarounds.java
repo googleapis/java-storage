@@ -20,7 +20,9 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 /**
  * Several classes in the High Level Model for storage include package-local constructors and
@@ -66,5 +68,13 @@ public final class PackagePrivateMethodWorkarounds {
 
   public static <T> T todo() {
     return Utils.todo();
+  }
+
+  public static <T> void ifNonNull(@Nullable T t, Consumer<T> c) {
+    Utils.ifNonNull(t, c);
+  }
+
+  public static <T1, T2> void ifNonNull(@Nullable T1 t, Function<T1, T2> map, Consumer<T2> c) {
+    Utils.ifNonNull(t, map, c);
   }
 }

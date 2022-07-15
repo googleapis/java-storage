@@ -16,15 +16,21 @@
 
 package com.google.cloud.storage.jqwik;
 
+import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.ifNonNull;
+
 import com.google.storage.v2.Bucket;
+import com.google.storage.v2.BucketName;
 import java.util.Collections;
 import java.util.Set;
+import javax.annotation.ParametersAreNonnullByDefault;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.Tuple;
 import net.jqwik.api.providers.ArbitraryProvider;
 import net.jqwik.api.providers.TypeUsage;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
+@ParametersAreNonnullByDefault
 public final class BucketArbitraryProvider implements ArbitraryProvider {
 
   @Override
@@ -32,6 +38,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
     return targetType.isOfType(Bucket.class);
   }
 
+  @NonNull
   @Override
   public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
     Arbitrary<Bucket> as =
@@ -39,56 +46,59 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                 Combinators.combine(
                         StorageArbitraries.buckets().name(),
                         StorageArbitraries.buckets().name(),
-                        StorageArbitraries.buckets().storageClass(),
+                        StorageArbitraries.storageClass(),
                         StorageArbitraries.buckets().location(),
                         StorageArbitraries.buckets().locationType(),
                         StorageArbitraries.metageneration(),
-                        StorageArbitraries.buckets().versioning(),
-                        StorageArbitraries.timestamp())
+                        StorageArbitraries.buckets().versioning().injectNull(0.25),
+                        StorageArbitraries.timestamp()) // ctime
                     .as(Tuple::of),
                 Combinators.combine(
-                        StorageArbitraries.timestamp(),
-                        StorageArbitraries.buckets().website(),
+                        StorageArbitraries.timestamp(), // utime
+                        StorageArbitraries.buckets().website().injectNull(0.75),
                         StorageArbitraries.bool(),
                         StorageArbitraries.buckets().rpo(),
-                        StorageArbitraries.buckets().billing(),
-                        StorageArbitraries.buckets().encryption(),
-                        StorageArbitraries.buckets().retentionPolicy(),
-                        StorageArbitraries.buckets().lifecycle())
+                        StorageArbitraries.buckets().billing().injectNull(0.01),
+                        StorageArbitraries.buckets().encryption().injectNull(0.9),
+                        StorageArbitraries.buckets().retentionPolicy().injectNull(0.5),
+                        StorageArbitraries.buckets().lifecycle().injectNull(0.5))
                     .as(Tuple::of),
                 Combinators.combine(
-                        StorageArbitraries.buckets().logging(),
+                        StorageArbitraries.buckets().logging().injectNull(0.5),
                         StorageArbitraries.buckets().cors(),
-                        StorageArbitraries.buckets().objectAccessControl(),
-                        StorageArbitraries.buckets().owner(),
-                        StorageArbitraries.buckets().iamConfig())
+                        StorageArbitraries.buckets().objectAccessControl().injectNull(0.5),
+                        StorageArbitraries.owner().injectNull(0.01),
+                        StorageArbitraries.buckets().iamConfig().injectNull(0.5),
+                        StorageArbitraries.buckets().labels())
                     .as(Tuple::of))
             .as(
-                (t1, t2, t3) ->
-                    Bucket.newBuilder()
-                        .setBucketId(t1.get1().getBucket())
-                        .setName(t1.get2().toString())
-                        .setProject(t1.get2().getProject())
-                        .setStorageClass(t1.get3())
-                        .setLocation(t1.get4())
-                        .setLocationType(t1.get5())
-                        .setMetageneration(t1.get6())
-                        .setVersioning(t1.get7())
-                        .setCreateTime(t1.get8())
-                        .setUpdateTime(t2.get1())
-                        .setWebsite(t2.get2())
-                        .setDefaultEventBasedHold(t2.get3())
-                        .setRpo(t2.get4())
-                        .setBilling(t2.get5())
-                        .setEncryption(t2.get6())
-                        .setRetentionPolicy(t2.get7())
-                        .setLifecycle(t2.get8())
-                        .setLogging(t3.get1())
-                        .addAllCors(t3.get2())
-                        .addAllDefaultObjectAcl(t3.get3())
-                        .setOwner(t3.get4())
-                        .setIamConfig(t3.get5())
-                        .build());
+                (t1, t2, t3) -> {
+                  Bucket.Builder b = Bucket.newBuilder();
+                  ifNonNull(t1.get1(), BucketName::getBucket, b::setBucketId);
+                  ifNonNull(t1.get2(), BucketName::toString, b::setName);
+                  ifNonNull(t1.get2(), BucketName::getProject, b::setProject);
+                  ifNonNull(t1.get3(), b::setStorageClass);
+                  ifNonNull(t1.get4(), b::setLocation);
+                  ifNonNull(t1.get5(), b::setLocationType);
+                  ifNonNull(t1.get6(), b::setMetageneration);
+                  ifNonNull(t1.get7(), b::setVersioning);
+                  ifNonNull(t1.get8(), b::setCreateTime);
+                  ifNonNull(t2.get1(), b::setUpdateTime);
+                  ifNonNull(t2.get2(), b::setWebsite);
+                  ifNonNull(t2.get3(), b::setDefaultEventBasedHold);
+                  ifNonNull(t2.get4(), b::setRpo);
+                  ifNonNull(t2.get5(), b::setBilling);
+                  ifNonNull(t2.get6(), b::setEncryption);
+                  ifNonNull(t2.get7(), b::setRetentionPolicy);
+                  ifNonNull(t2.get8(), b::setLifecycle);
+                  ifNonNull(t3.get1(), b::setLogging);
+                  ifNonNull(t3.get2(), b::addAllCors);
+                  ifNonNull(t3.get3(), b::addAllDefaultObjectAcl);
+                  ifNonNull(t3.get4(), b::setOwner);
+                  ifNonNull(t3.get5(), b::setIamConfig);
+                  ifNonNull(t3.get6(), b::putAllLabels);
+                  return b.build();
+                });
     return Collections.singleton(as);
   }
 }
