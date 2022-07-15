@@ -16,13 +16,8 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.Conversions.Codec;
+import com.google.api.services.storage.model.StorageObject;
 import com.google.storage.v2.Object;
 
-final class BlobInfoPropertyTest extends BaseConvertablePropertyTest<BlobInfo, Object> {
-
-  @Override
-  Codec<BlobInfo, Object> codec() {
-    return Conversions.grpc().blobInfo();
-  }
-}
+final class BlobInfoPropertyTest
+    extends BaseConvertablePropertyTest<BlobInfo, Object, StorageObject> {}

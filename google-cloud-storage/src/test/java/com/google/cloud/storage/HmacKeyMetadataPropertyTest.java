@@ -15,14 +15,10 @@
  */
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.Conversions.Codec;
 import com.google.storage.v2.HmacKeyMetadata;
 
 public class HmacKeyMetadataPropertyTest
-    extends BaseConvertablePropertyTest<HmacKey.HmacKeyMetadata, HmacKeyMetadata> {
-
-  @Override
-  Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> codec() {
-    return Conversions.grpc().hmacKeyMetadata();
-  }
-}
+    extends BaseConvertablePropertyTest<
+        HmacKey.HmacKeyMetadata,
+        HmacKeyMetadata,
+        com.google.api.services.storage.model.HmacKeyMetadata> {}

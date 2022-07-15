@@ -18,10 +18,6 @@ package com.google.cloud.storage;
 
 import com.google.storage.v2.Bucket;
 
-final class BucketInfoPropertyTest extends BaseConvertablePropertyTest<BucketInfo, Bucket> {
-
-  @Override
-  Conversions.Codec<BucketInfo, Bucket> codec() {
-    return Conversions.grpc().bucketInfo();
-  }
-}
+final class BucketInfoPropertyTest
+    extends BaseConvertablePropertyTest<
+        BucketInfo, Bucket, com.google.api.services.storage.model.Bucket> {}

@@ -16,12 +16,8 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.Conversions.Codec;
-
 final class ServiceAccountPropertyTest
-    extends BaseConvertablePropertyTest<ServiceAccount, com.google.storage.v2.ServiceAccount> {
-  @Override
-  Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> codec() {
-    return Conversions.grpc().serviceAccount();
-  }
-}
+    extends BaseConvertablePropertyTest<
+        ServiceAccount,
+        com.google.storage.v2.ServiceAccount,
+        com.google.api.services.storage.model.ServiceAccount> {}
