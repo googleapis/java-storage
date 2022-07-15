@@ -29,13 +29,9 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.NoCredentials;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -261,32 +257,6 @@ public final class TestBench implements TestRule {
             throw new IllegalStateException(
                 "Failed to start server within a reasonable amount of time. Host url(gRPC): "
                     + gRPCBaseUri);
-          }
-          // wait a small amount of time for the gRPC server to come up before probing
-          Thread.sleep(500);
-          try (Storage storage =
-              StorageOptions.grpc()
-                  .setHost(gRPCBaseUri)
-                  .setCredentials(NoCredentials.getInstance())
-                  .build()
-                  .getService()) {
-            runWithRetries(
-                storage::list,
-                RetrySettings.newBuilder()
-                    .setTotalTimeout(Duration.ofSeconds(30))
-                    .setInitialRetryDelay(Duration.ofMillis(500))
-                    .setRetryDelayMultiplier(1.5)
-                    .setMaxRetryDelay(Duration.ofSeconds(5))
-                    .build(),
-                new BasicResultRetryAlgorithm<com.google.api.gax.paging.Page<Bucket>>() {
-                  @Override
-                  public boolean shouldRetry(
-                      Throwable previousThrowable,
-                      com.google.api.gax.paging.Page<Bucket> previousResponse) {
-                    return previousThrowable instanceof SocketException;
-                  }
-                },
-                NanoClock.getDefaultClock());
           }
           base.evaluate();
           success = true;
