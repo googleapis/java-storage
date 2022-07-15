@@ -53,21 +53,21 @@ public final class ITGrpcTest {
   @Before
   public void setUp() throws Exception {
     LOGGER.fine("Running setup...");
-    storage = storageFixture.getInstance();
+    // ...set up additional stuff.
     LOGGER.fine("Running setup complete");
   }
 
   @After
   public void tearDown() throws Exception {
     LOGGER.fine("Running teardown...");
-    storage.close();
+    // ...tear down stuff.
     LOGGER.fine("Running teardown complete");
   }
 
   @Test
   public void testCreateBucket() {
     final String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket bucket = storage.create(BucketInfo.of(bucketName));
+    Bucket bucket = storageFixture.getInstance().create(BucketInfo.of(bucketName));
     assertThat(bucket.getName()).isEqualTo(bucketName);
   }
 }
