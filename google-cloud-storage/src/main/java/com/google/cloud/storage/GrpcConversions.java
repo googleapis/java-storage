@@ -201,7 +201,6 @@ final class GrpcConversions {
           timestampCodec::decode,
           to::setRetentionEffectiveTimeOffsetDateTime);
     }
-    ifNonNull(from.getBucketId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
