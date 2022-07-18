@@ -551,7 +551,7 @@ public final class StorageArbitraries {
 
   /**
    * gRPC has nanosecond level precision for timestamps, whereas JSON is limited to millisecond
-   * precision due to RPC3339 format.
+   * precision due to limitations in {@link com.google.api.client.util.DateTime}.
    *
    * <p>Define an arbitrary, which will always produce a nanosecond value that is in the range of
    * milliseconds.
