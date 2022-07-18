@@ -179,8 +179,7 @@ public final class TestBench implements TestRule {
         File errFile = errPath.toFile();
         LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
         LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
-        String dockerImage =
-            dockerImageName; // String.format("%s:%s", dockerImageName, dockerImageTag);
+        String dockerImage = String.format("%s:%s", dockerImageName, dockerImageTag);
         // First try and pull the docker image, this validates docker is available and running
         // on the host, as well as gives time for the image to be downloaded independently of
         // trying to start the container. (Below, when we first start the container we then attempt
@@ -364,7 +363,7 @@ public final class TestBench implements TestRule {
     private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
-    private static final String DEFAULT_IMAGE_TAG = "v0.15.0";
+    private static final String DEFAULT_IMAGE_TAG = "v0.26.0";
     private static final String DEFAULT_CONTAINER_NAME = "default";
 
     private boolean ignorePullError;
