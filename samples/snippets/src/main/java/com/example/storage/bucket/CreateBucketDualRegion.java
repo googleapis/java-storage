@@ -44,6 +44,9 @@ public class CreateBucketDualRegion {
     // The second region the dual region bucket is to be created in.
     // String secondRegion = "US-WEST1";
 
+    // See this documentation for other valid locations and regions:
+    // https://cloud.google.com/storage/docs/locations
+
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
