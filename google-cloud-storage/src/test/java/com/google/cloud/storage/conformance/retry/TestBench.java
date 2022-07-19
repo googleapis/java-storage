@@ -262,9 +262,9 @@ public final class TestBench implements TestRule {
         } catch (RetryHelperException e) {
           dumpServerLogs(outFile, errFile);
           throw new IllegalStateException(
-                  "Failed to connect to server within a reasonable amount of time. Host url: "
-                          + baseUri,
-                  e.getCause());
+              "Failed to connect to server within a reasonable amount of time. Host url: "
+                  + baseUri,
+              e.getCause());
         } finally {
           process.destroy();
           // wait for the server to shutdown
