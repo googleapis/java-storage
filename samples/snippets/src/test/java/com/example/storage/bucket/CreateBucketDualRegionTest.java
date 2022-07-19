@@ -31,7 +31,8 @@ public class CreateBucketDualRegionTest extends TestBase {
   public void testCreateBucketDualRegion() {
     assertNotNull("Unable to determine Project ID", PROJECT_ID);
     String newBucket = RemoteStorageHelper.generateBucketName();
-    CreateBucketDualRegion.createBucketDualRegion(PROJECT_ID, newBucket, "US", "US-EAST1", "US-WEST1");
+    CreateBucketDualRegion.createBucketDualRegion(
+        PROJECT_ID, newBucket, "US", "US-EAST1", "US-WEST1");
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("US-WEST1");
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("US-EAST1");
     assertThat(stdOut.getCapturedOutputAsUtf8String()).contains("Created bucket");

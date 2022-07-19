@@ -28,7 +28,11 @@ import java.util.Arrays;
 public class CreateBucketDualRegion {
 
   public static void createBucketDualRegion(
-      String projectId, String bucketName, String location, String firstRegion, String secondRegion) {
+      String projectId,
+      String bucketName,
+      String location,
+      String firstRegion,
+      String secondRegion) {
     // The ID of your GCP project.
     // String projectId = "your-project-id";
 
@@ -47,24 +51,28 @@ public class CreateBucketDualRegion {
     // See this documentation for other valid locations and regions:
     // https://cloud.google.com/storage/docs/locations
 
-
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-    CustomPlacementConfig config = CustomPlacementConfig.newBuilder()
-        .setDataLocations(Arrays.asList(firstRegion, secondRegion))
-        .build();
+    CustomPlacementConfig config =
+        CustomPlacementConfig.newBuilder()
+            .setDataLocations(Arrays.asList(firstRegion, secondRegion))
+            .build();
 
-    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName)
-        .setLocation(location)
-        .setCustomPlacementConfig(config)
-        .build();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setLocation(location)
+            .setCustomPlacementConfig(config)
+            .build();
 
-    Bucket bucket =
-        storage.create(bucketInfo);
+    Bucket bucket = storage.create(bucketInfo);
 
     System.out.println(
-        "Created bucket " + bucket.getName() + " in location " + bucket.getLocation()
-            + " with regions " + bucket.getCustomPlacementConfig().getDataLocations().toString());
+        "Created bucket "
+            + bucket.getName()
+            + " in location "
+            + bucket.getLocation()
+            + " with regions "
+            + bucket.getCustomPlacementConfig().getDataLocations().toString());
   }
 }
 // [END storage_create_bucket_dual_region]
