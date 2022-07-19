@@ -22,6 +22,7 @@ import static com.google.cloud.storage.BackwardCompatibilityUtils.nullableDurati
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Objects.requireNonNull;
 
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Data;
@@ -71,6 +72,7 @@ public class BucketInfo implements Serializable {
 
   private static final long serialVersionUID = -4712013629621638459L;
   private final String generatedId;
+  private final String project;
   private final BucketWithProject bucketWithProject;
   private final Acl.Entity owner;
   private final String selfLink;
@@ -424,8 +426,8 @@ public class BucketInfo implements Serializable {
       return builder;
     }
 
-    String getLogBucketProject() {
-      return logBucketWithProject.getProject();
+    BucketWithProject getLogBucketWithProject() {
+      return logBucketWithProject;
     }
 
     public String getLogBucket() {
@@ -446,17 +448,22 @@ public class BucketInfo implements Serializable {
       private String logObjectPrefix;
 
       public Builder() {
-        logBucketWithProject = new BucketWithProject();
+        logBucketWithProject = BucketWithProject.EMPTY;
       }
 
-      Builder setLogBucketProject(String project) {
-        this.logBucketWithProject.setProject(project);
+      Builder(BucketWithProject logBucketWithProject) {
+        this.logBucketWithProject = logBucketWithProject;
+      }
+
+      Builder setLogBucketWithProject(BucketWithProject logBucketWithProject) {
+        requireNonNull(logBucketWithProject, "logBucketWithProject must be non null");
+        this.logBucketWithProject = logBucketWithProject;
         return this;
       }
 
       /** The destination bucket where the current bucket's logs should be placed. */
       public Builder setLogBucket(String logBucket) {
-        this.logBucketWithProject.setBucketName(logBucket);
+        this.logBucketWithProject = logBucketWithProject.withBucketName(logBucket);
         return this;
       }
 
@@ -1444,6 +1451,7 @@ public class BucketInfo implements Serializable {
   static final class BuilderImpl extends Builder {
 
     private String generatedId;
+    private String project;
     private BucketWithProject bucketWithProject;
     private Acl.Entity owner;
     private String selfLink;
@@ -1474,11 +1482,16 @@ public class BucketInfo implements Serializable {
     private CustomPlacementConfig customPlacementConfig;
 
     BuilderImpl(String name) {
-      this.bucketWithProject = new BucketWithProject(name);
+      this(new BucketWithProject(name));
+    }
+
+    BuilderImpl(BucketWithProject bwp) {
+      this.bucketWithProject = bwp;
     }
 
     BuilderImpl(BucketInfo bucketInfo) {
       generatedId = bucketInfo.generatedId;
+      project = bucketInfo.project;
       bucketWithProject = bucketInfo.bucketWithProject;
       etag = bucketInfo.etag;
       createTime = bucketInfo.createTime;
@@ -1511,13 +1524,13 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setName(String name) {
-      this.bucketWithProject.setBucketName(checkNotNull(name));
+      bucketWithProject = bucketWithProject.withBucketName(name);
       return this;
     }
 
     @Override
     Builder setProject(String project) {
-      this.bucketWithProject.setProject(project);
+      this.project = project;
       return this;
     }
 
@@ -1808,6 +1821,7 @@ public class BucketInfo implements Serializable {
 
   BucketInfo(BuilderImpl builder) {
     generatedId = builder.generatedId;
+    project = builder.project;
     bucketWithProject = builder.bucketWithProject;
     etag = builder.etag;
     createTime = builder.createTime;
@@ -1839,7 +1853,12 @@ public class BucketInfo implements Serializable {
   }
 
   String getProject() {
-    return bucketWithProject.getProject();
+    return project;
+  }
+
+  /** Preferable to using existing {@link #getName} */
+  BucketWithProject getBucketWithProject() {
+    return bucketWithProject;
   }
 
   /** Returns the service-generated id for the bucket. */
@@ -2241,11 +2260,78 @@ public class BucketInfo implements Serializable {
         && Objects.equals(logging, that.logging);
   }
 
+  // TODO: revert
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("name", bucketWithProject.getBucketName())
-        .toString();
+    return "BucketInfo{"
+        + "generatedId='"
+        + generatedId
+        + '\''
+        + ", project='"
+        + project
+        + '\''
+        + ", bucketWithProject="
+        + bucketWithProject
+        + ", owner="
+        + owner
+        + ", selfLink='"
+        + selfLink
+        + '\''
+        + ", requesterPays="
+        + requesterPays
+        + ", versioningEnabled="
+        + versioningEnabled
+        + ", indexPage='"
+        + indexPage
+        + '\''
+        + ", notFoundPage='"
+        + notFoundPage
+        + '\''
+        + ", lifecycleRules="
+        + lifecycleRules
+        + ", etag='"
+        + etag
+        + '\''
+        + ", createTime="
+        + createTime
+        + ", updateTime="
+        + updateTime
+        + ", metageneration="
+        + metageneration
+        + ", cors="
+        + cors
+        + ", acl="
+        + acl
+        + ", defaultAcl="
+        + defaultAcl
+        + ", location='"
+        + location
+        + '\''
+        + ", rpo="
+        + rpo
+        + ", storageClass="
+        + storageClass
+        + ", labels="
+        + labels
+        + ", defaultKmsKeyName='"
+        + defaultKmsKeyName
+        + '\''
+        + ", defaultEventBasedHold="
+        + defaultEventBasedHold
+        + ", retentionEffectiveTime="
+        + retentionEffectiveTime
+        + ", retentionPolicyIsLocked="
+        + retentionPolicyIsLocked
+        + ", retentionPeriod="
+        + retentionPeriod
+        + ", iamConfiguration="
+        + iamConfiguration
+        + ", locationType='"
+        + locationType
+        + '\''
+        + ", logging="
+        + logging
+        + '}';
   }
 
   /**
@@ -2266,30 +2352,35 @@ public class BucketInfo implements Serializable {
     return new BuilderImpl(name);
   }
 
-  private static class BucketWithProject implements Serializable {
+  static final class BucketWithProject implements Serializable {
+    private static final BucketWithProject EMPTY = new BucketWithProject(null, null);
     private static final long serialVersionUID = 3620131016523045533L;
-    private String project = "_";
-    private String bucketName;
-
-    BucketWithProject() {}
+    @Nullable private final String project;
+    private final String bucketName;
 
     BucketWithProject(String bucketName) {
-      this.bucketName = bucketName;
+      this(null, bucketName);
     }
 
     BucketWithProject(BucketWithProject bucketWithProject) {
-      this.project = bucketWithProject.project;
-      this.bucketName = bucketWithProject.bucketName;
+      this(bucketWithProject.project, bucketWithProject.bucketName);
     }
 
-    void setProject(String project) {
+    BucketWithProject(@Nullable String project, String bucketName) {
       this.project = project;
-    }
-
-    void setBucketName(String bucketName) {
       this.bucketName = bucketName;
     }
 
+    BucketWithProject withProject(@Nullable String project) {
+      return new BucketWithProject(project, this.bucketName);
+    }
+
+    BucketWithProject withBucketName(String bucketName) {
+      requireNonNull(bucketName, "bucketName must be non null");
+      return new BucketWithProject(this.project, bucketName);
+    }
+
+    @Nullable
     String getProject() {
       return this.project;
     }
@@ -2300,12 +2391,14 @@ public class BucketInfo implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof BucketWithProject)) {
         return false;
       }
-      BucketWithProject other = (BucketWithProject) o;
-      return other.project.equals(this.project) && other.bucketName.equals(this.bucketName);
+      BucketWithProject that = (BucketWithProject) o;
+      return Objects.equals(project, that.project) && bucketName.equals(that.bucketName);
     }
 
     @Override

@@ -76,7 +76,6 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                   Bucket.Builder b = Bucket.newBuilder();
                   ifNonNull(t1.get1(), BucketName::getBucket, b::setBucketId);
                   ifNonNull(t1.get2(), BucketName::toString, b::setName);
-                  ifNonNull(t1.get2(), BucketName::getProject, b::setProject);
                   ifNonNull(t1.get3(), b::setStorageClass);
                   ifNonNull(t1.get4(), b::setLocation);
                   ifNonNull(t1.get5(), b::setLocationType);

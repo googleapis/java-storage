@@ -18,9 +18,11 @@ package com.google.cloud.storage;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.core.InternalApi;
+import com.google.cloud.storage.BucketInfo.BucketWithProject;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.storage.v2.BucketName;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -71,6 +73,23 @@ final class Utils {
           });
 
   static final Codec<OffsetDateTime, DateTime> nullableDateTimeCodec = dateTimeCodec.nullable();
+  static final Codec<BucketWithProject, String> bucketWithProjectCodec =
+      Codec.of(
+          bwp -> {
+            String project = "_";
+            if (bwp.getProject() != null) {
+              project = bwp.getProject();
+            }
+            return BucketName.of(project, bwp.getBucketName()).toString();
+          },
+          s -> {
+            if (!s.isEmpty() && BucketName.isParsableFrom(s)) {
+              BucketName bn = BucketName.parse(s);
+              return new BucketWithProject(bn.getProject(), bn.getBucket());
+            } else {
+              return new BucketWithProject(null, s);
+            }
+          });
 
   private Utils() {}
 
