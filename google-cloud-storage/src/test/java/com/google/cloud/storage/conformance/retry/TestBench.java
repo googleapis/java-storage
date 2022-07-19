@@ -48,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -68,6 +69,7 @@ public final class TestBench implements TestRule {
 
   private final boolean ignorePullError;
   private final String baseUri;
+  private final String gRPCBaseUri;
   private final String dockerImageName;
   private final String dockerImageTag;
   private final CleanupStrategy cleanupStrategy;
@@ -79,12 +81,14 @@ public final class TestBench implements TestRule {
   private TestBench(
       boolean ignorePullError,
       String baseUri,
+      String gRPCBaseUri,
       String dockerImageName,
       String dockerImageTag,
       CleanupStrategy cleanupStrategy,
       String containerName) {
     this.ignorePullError = ignorePullError;
     this.baseUri = baseUri;
+    this.gRPCBaseUri = gRPCBaseUri;
     this.dockerImageName = dockerImageName;
     this.dockerImageTag = dockerImageTag;
     this.cleanupStrategy = cleanupStrategy;
@@ -105,6 +109,10 @@ public final class TestBench implements TestRule {
 
   public String getBaseUri() {
     return baseUri;
+  }
+
+  public String getGRPCBaseUri() {
+    return gRPCBaseUri;
   }
 
   public RetryTestResource createRetryTest(RetryTestResource retryTestResource) throws IOException {
@@ -149,6 +157,14 @@ public final class TestBench implements TestRule {
     return b.build();
   }
 
+  private boolean startGRPCServer(int gRPCPort) throws IOException {
+    GenericUrl url = new GenericUrl(baseUri + "/start_grpc?port=9090");
+    HttpRequest req = requestFactory.buildGetRequest(url);
+    HttpResponse resp = req.execute();
+    resp.disconnect();
+    return resp.getStatusCode() == 200;
+  }
+
   @Override
   public Statement apply(final Statement base, Description description) {
     return new Statement() {
@@ -189,20 +205,26 @@ public final class TestBench implements TestRule {
         }
 
         int port = URI.create(baseUri).getPort();
+        int gRPCPort = URI.create(gRPCBaseUri).getPort();
+        final List<String> command =
+            ImmutableList.of(
+                "docker",
+                "run",
+                "-i",
+                "--rm",
+                "--publish",
+                port + ":9000",
+                "--publish",
+                gRPCPort + ":9090",
+                String.format("--name=%s", fullContainerName),
+                dockerImage);
         final Process process =
             new ProcessBuilder()
-                .command(
-                    "docker",
-                    "run",
-                    "-i",
-                    "--rm",
-                    "--publish",
-                    port + ":9000",
-                    String.format("--name=%s", fullContainerName),
-                    dockerImage)
+                .command(command)
                 .redirectOutput(outFile)
                 .redirectError(errFile)
                 .start();
+        LOGGER.log(Level.INFO, command.toString());
         boolean success = false;
         try {
           // wait a small amount of time for the server to come up before probing
@@ -228,6 +250,12 @@ public final class TestBench implements TestRule {
           if (!existingResources.isEmpty()) {
             LOGGER.info(
                 "Test Server already has retry tests in it, is it running outside the tests?");
+          }
+          // Start gRPC Service
+          if (!startGRPCServer(gRPCPort)) {
+            throw new IllegalStateException(
+                "Failed to start server within a reasonable amount of time. Host url(gRPC): "
+                    + gRPCBaseUri);
           }
           base.evaluate();
           success = true;
@@ -335,6 +363,7 @@ public final class TestBench implements TestRule {
 
   public static final class Builder {
     private static final String DEFAULT_BASE_URI = "http://localhost:9000";
+    private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
     private static final String DEFAULT_IMAGE_TAG = "v0.15.0";
@@ -342,6 +371,7 @@ public final class TestBench implements TestRule {
 
     private boolean ignorePullError;
     private String baseUri;
+    private String gRPCBaseUri;
     private String dockerImageName;
     private String dockerImageTag;
     private CleanupStrategy cleanupStrategy;
@@ -351,6 +381,7 @@ public final class TestBench implements TestRule {
       this(
           false,
           DEFAULT_BASE_URI,
+          DEFAULT_GRPC_BASE_URI,
           DEFAULT_IMAGE_NAME,
           DEFAULT_IMAGE_TAG,
           CleanupStrategy.ALWAYS,
@@ -360,12 +391,14 @@ public final class TestBench implements TestRule {
     private Builder(
         boolean ignorePullError,
         String baseUri,
+        String gRPCBaseUri,
         String dockerImageName,
         String dockerImageTag,
         CleanupStrategy cleanupStrategy,
         String containerName) {
       this.ignorePullError = ignorePullError;
       this.baseUri = baseUri;
+      this.gRPCBaseUri = gRPCBaseUri;
       this.dockerImageName = dockerImageName;
       this.dockerImageTag = dockerImageTag;
       this.cleanupStrategy = cleanupStrategy;
@@ -384,6 +417,11 @@ public final class TestBench implements TestRule {
 
     public Builder setBaseUri(String baseUri) {
       this.baseUri = requireNonNull(baseUri, "host must be non null");
+      return this;
+    }
+
+    public Builder setGRPCBaseUri(String gRPCBaseUri) {
+      this.gRPCBaseUri = requireNonNull(gRPCBaseUri, "gRPC host must be non null");
       return this;
     }
 
@@ -406,6 +444,7 @@ public final class TestBench implements TestRule {
       return new TestBench(
           ignorePullError,
           baseUri,
+          gRPCBaseUri,
           dockerImageName,
           dockerImageTag,
           cleanupStrategy,
