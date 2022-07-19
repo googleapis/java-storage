@@ -6,7 +6,10 @@
 
 # The @googleapis/cloud-storage-dpe is the default owner for changes in this repo
 *                       @googleapis/yoshi-java @googleapis/cloud-storage-dpe
+
+# for handwritten libraries, keep codeowner_team in .repo-metadata.json as owner
 **/*.java               @googleapis/cloud-storage-dpe
+
 
 # The java-samples-reviewers team is the default owner for samples changes
 samples/**/*.java       @googleapis/java-samples-reviewers
