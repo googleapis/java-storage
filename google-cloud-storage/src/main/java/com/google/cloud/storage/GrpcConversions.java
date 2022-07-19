@@ -229,11 +229,8 @@ final class GrpcConversions {
     Bucket.Builder to = Bucket.newBuilder();
     to.setProject(from.getProject());
     to.setName(BucketName.format(from.getProject(), from.getName()));
-    if (from.getGeneratedId() != null) {
-      to.setBucketId(from.getGeneratedId());
-    } else {
-      to.setBucketId(from.getName());
-    }
+    // TODO: We need to clean up bucketId handling
+    ifNonNull(from.getGeneratedId(), to::setBucketId);
     if (from.getRetentionPeriodDuration() != null) {
       Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
       ifNonNull(

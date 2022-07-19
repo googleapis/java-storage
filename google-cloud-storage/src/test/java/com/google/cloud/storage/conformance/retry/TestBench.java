@@ -261,7 +261,10 @@ public final class TestBench implements TestRule {
           success = true;
         } catch (RetryHelperException e) {
           dumpServerLogs(outFile, errFile);
-          throw new IllegalStateException(e.getMessage(), e.getCause());
+          throw new IllegalStateException(
+                  "Failed to connect to server within a reasonable amount of time. Host url: "
+                          + baseUri,
+                  e.getCause());
         } finally {
           process.destroy();
           // wait for the server to shutdown
@@ -359,7 +362,7 @@ public final class TestBench implements TestRule {
   }
 
   public static final class Builder {
-    private static final String DEFAULT_BASE_URI = "http://localhost:9008";
+    private static final String DEFAULT_BASE_URI = "http://localhost:9000";
     private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";

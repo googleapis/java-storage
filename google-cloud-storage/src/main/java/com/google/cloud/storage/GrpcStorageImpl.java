@@ -143,7 +143,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     CreateBucketRequest.Builder builder = CreateBucketRequest.newBuilder().setBucket(bucket);
-    builder.setBucketId(bucket.getBucketId());
+    builder.setBucketId(bucketInfo.getName());
     builder.setParent(ProjectName.format(getOptions().getProjectId()));
     ZOpt.applyAll(
         optionsMap,
