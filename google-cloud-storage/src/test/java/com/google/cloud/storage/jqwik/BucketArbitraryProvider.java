@@ -97,6 +97,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                   ifNonNull(t3.get4(), b::setOwner);
                   ifNonNull(t3.get5(), b::setIamConfig);
                   ifNonNull(t3.get6(), b::putAllLabels);
+                  // TODO: add CustomPlacementConfig
                   return b.build();
                 });
     return Collections.singleton(as);

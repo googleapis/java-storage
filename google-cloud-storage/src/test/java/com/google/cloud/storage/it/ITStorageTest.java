@@ -65,6 +65,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
@@ -3556,13 +3557,22 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketLocationDualRegion() {
+  public void testBucketCustomPlacmentConfigDualRegion() {
     String bucketName = RemoteStorageHelper.generateBucketName();
-    String dualRegionLocation = "US-EAST1+US-WEST1";
+    List<String> locations = new ArrayList<>();
+    locations.add("US-EAST1");
+    locations.add("US-WEST1");
+    CustomPlacementConfig customPlacementConfig =
+        CustomPlacementConfig.newBuilder().setDataLocations(locations).build();
     Bucket bucket =
-        storage.create(BucketInfo.newBuilder(bucketName).setLocation(dualRegionLocation).build());
-    assertEquals(bucket.getLocation(), dualRegionLocation);
-    assertEquals(bucket.getLocationType(), "dual-region");
+        storage.create(
+            BucketInfo.newBuilder(bucketName)
+                .setCustomPlacementConfig(customPlacementConfig)
+                .setLocation("us")
+                .build());
+    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST1"));
+    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST1"));
+    assertTrue(bucket.getLocation().equalsIgnoreCase("us"));
   }
 
   @Test

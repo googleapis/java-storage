@@ -176,7 +176,9 @@ public final class DeleteHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Required. The project id the HMAC key lies in.
+   * Required. The project that owns the HMAC key, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -201,7 +203,9 @@ public final class DeleteHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Required. The project id the HMAC key lies in.
+   * Required. The project that owns the HMAC key, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -666,7 +670,9 @@ public final class DeleteHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Required. The project id the HMAC key lies in.
+     * Required. The project that owns the HMAC key, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -690,7 +696,9 @@ public final class DeleteHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Required. The project id the HMAC key lies in.
+     * Required. The project that owns the HMAC key, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -714,7 +722,9 @@ public final class DeleteHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Required. The project id the HMAC key lies in.
+     * Required. The project that owns the HMAC key, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -737,7 +747,9 @@ public final class DeleteHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Required. The project id the HMAC key lies in.
+     * Required. The project that owns the HMAC key, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -756,7 +768,9 @@ public final class DeleteHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Required. The project id the HMAC key lies in.
+     * Required. The project that owns the HMAC key, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>

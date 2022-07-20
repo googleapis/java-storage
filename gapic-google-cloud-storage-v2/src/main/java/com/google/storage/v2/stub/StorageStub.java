@@ -32,6 +32,8 @@ import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.protobuf.Empty;
 import com.google.storage.v2.Bucket;
+import com.google.storage.v2.CancelResumableWriteRequest;
+import com.google.storage.v2.CancelResumableWriteResponse;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
@@ -153,6 +155,11 @@ public abstract class StorageStub implements BackgroundResource {
 
   public UnaryCallable<DeleteObjectRequest, Empty> deleteObjectCallable() {
     throw new UnsupportedOperationException("Not implemented: deleteObjectCallable()");
+  }
+
+  public UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteCallable() {
+    throw new UnsupportedOperationException("Not implemented: cancelResumableWriteCallable()");
   }
 
   public UnaryCallable<GetObjectRequest, Object> getObjectCallable() {

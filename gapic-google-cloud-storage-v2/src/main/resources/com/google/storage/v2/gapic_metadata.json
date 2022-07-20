@@ -10,6 +10,9 @@
         "grpc": {
           "libraryClient": "StorageClient",
           "rpcs": {
+            "CancelResumableWrite": {
+              "methods": ["cancelResumableWrite", "cancelResumableWrite", "cancelResumableWriteCallable"]
+            },
             "ComposeObject": {
               "methods": ["composeObject", "composeObjectCallable"]
             },

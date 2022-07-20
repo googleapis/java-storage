@@ -27,9 +27,9 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the destination object. Nearly any sequence of unicode
-   * characters is valid. See
-   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Immutable. The name of the destination object.
+   * See the
+   * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
    * Example: `test.txt`
    * The `name` field by itself does not uniquely identify a Cloud Storage
    * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -45,9 +45,9 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the destination object. Nearly any sequence of unicode
-   * characters is valid. See
-   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Immutable. The name of the destination object.
+   * See the
+   * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
    * Example: `test.txt`
    * The `name` field by itself does not uniquely identify a Cloud Storage
    * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -64,7 +64,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the bucket containing The name of the destination object.
+   * Immutable. The name of the bucket containing the destination object.
    * </pre>
    *
    * <code>
@@ -78,7 +78,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the bucket containing The name of the destination object.
+   * Immutable. The name of the bucket containing the destination object.
    * </pre>
    *
    * <code>

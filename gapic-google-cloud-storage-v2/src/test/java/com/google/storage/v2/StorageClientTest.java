@@ -1496,6 +1496,43 @@ public class StorageClientTest {
   }
 
   @Test
+  public void cancelResumableWriteTest() throws Exception {
+    CancelResumableWriteResponse expectedResponse =
+        CancelResumableWriteResponse.newBuilder().build();
+    mockStorage.addResponse(expectedResponse);
+
+    String uploadId = "uploadId1563990780";
+
+    CancelResumableWriteResponse actualResponse = client.cancelResumableWrite(uploadId);
+    Assert.assertEquals(expectedResponse, actualResponse);
+
+    List<AbstractMessage> actualRequests = mockStorage.getRequests();
+    Assert.assertEquals(1, actualRequests.size());
+    CancelResumableWriteRequest actualRequest =
+        ((CancelResumableWriteRequest) actualRequests.get(0));
+
+    Assert.assertEquals(uploadId, actualRequest.getUploadId());
+    Assert.assertTrue(
+        channelProvider.isHeaderSent(
+            ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
+            GaxGrpcProperties.getDefaultApiClientHeaderPattern()));
+  }
+
+  @Test
+  public void cancelResumableWriteExceptionTest() throws Exception {
+    StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
+    mockStorage.addException(exception);
+
+    try {
+      String uploadId = "uploadId1563990780";
+      client.cancelResumableWrite(uploadId);
+      Assert.fail("No exception raised");
+    } catch (InvalidArgumentException e) {
+      // Expected exception.
+    }
+  }
+
+  @Test
   public void getObjectTest() throws Exception {
     Object expectedResponse =
         Object.newBuilder()

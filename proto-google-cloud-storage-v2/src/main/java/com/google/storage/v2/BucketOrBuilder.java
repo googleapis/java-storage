@@ -110,7 +110,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Immutable. The project which owns this bucket.
+   * Immutable. The project which owns this bucket, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -124,7 +126,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Immutable. The project which owns this bucket.
+   * Immutable. The project which owns this bucket, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>

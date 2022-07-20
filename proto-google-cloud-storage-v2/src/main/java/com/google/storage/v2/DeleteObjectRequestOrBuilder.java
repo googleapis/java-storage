@@ -77,35 +77,6 @@ public interface DeleteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The resumable upload_id of the object to delete (when deleting an
-   * in-progress resumable write). This should be copied from the `upload_id`
-   * field of `StartResumableWriteResponse`.
-   * </pre>
-   *
-   * <code>string upload_id = 3;</code>
-   *
-   * @return The uploadId.
-   */
-  java.lang.String getUploadId();
-  /**
-   *
-   *
-   * <pre>
-   * The resumable upload_id of the object to delete (when deleting an
-   * in-progress resumable write). This should be copied from the `upload_id`
-   * field of `StartResumableWriteResponse`.
-   * </pre>
-   *
-   * <code>string upload_id = 3;</code>
-   *
-   * @return The bytes for uploadId.
-   */
-  com.google.protobuf.ByteString getUploadIdBytes();
-
-  /**
-   *
-   *
-   * <pre>
    * If present, permanently deletes a specific revision of this object (as
    * opposed to the latest version, the default).
    * </pre>

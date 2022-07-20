@@ -145,7 +145,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. The project id to list HMAC keys for.
+   * Required. The project to list HMAC keys for, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -170,7 +172,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. The project id to list HMAC keys for.
+   * Required. The project to list HMAC keys for, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -709,7 +713,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project id to list HMAC keys for.
+     * Required. The project to list HMAC keys for, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -733,7 +739,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project id to list HMAC keys for.
+     * Required. The project to list HMAC keys for, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -757,7 +765,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project id to list HMAC keys for.
+     * Required. The project to list HMAC keys for, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -780,7 +790,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project id to list HMAC keys for.
+     * Required. The project to list HMAC keys for, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -799,7 +811,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. The project id to list HMAC keys for.
+     * Required. The project to list HMAC keys for, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>

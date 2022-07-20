@@ -1212,6 +1212,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The modification time of the object metadata.
+   * Set initially to object creation time and then updated whenever any
+   * metadata of the object changes. This includes changes made by a requester,
+   * such as modifying custom metadata, as well as changes made by Cloud Storage
+   * on behalf of a requester, such as changing the storage class based on an
+   * Object Lifecycle Configuration.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -1230,6 +1235,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The modification time of the object metadata.
+   * Set initially to object creation time and then updated whenever any
+   * metadata of the object changes. This includes changes made by a requester,
+   * such as modifying custom metadata, as well as changes made by Cloud Storage
+   * on behalf of a requester, such as changing the storage class based on an
+   * Object Lifecycle Configuration.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -1248,6 +1258,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The modification time of the object metadata.
+   * Set initially to object creation time and then updated whenever any
+   * metadata of the object changes. This includes changes made by a requester,
+   * such as modifying custom metadata, as well as changes made by Cloud Storage
+   * on behalf of a requester, such as changing the storage class based on an
+   * Object Lifecycle Configuration.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -5014,6 +5029,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5032,6 +5052,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5056,6 +5081,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5082,6 +5112,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5105,6 +5140,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5133,6 +5173,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5157,6 +5202,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5175,6 +5225,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5197,6 +5252,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the object metadata.
+     * Set initially to object creation time and then updated whenever any
+     * metadata of the object changes. This includes changes made by a requester,
+     * such as modifying custom metadata, as well as changes made by Cloud Storage
+     * on behalf of a requester, such as changing the storage class based on an
+     * Object Lifecycle Configuration.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>

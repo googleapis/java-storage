@@ -23,6 +23,9 @@ package com.google.storage.v2;
  *
  * <pre>
  * Request object to update an HMAC key state.
+ * HmacKeyMetadata.state is required and the only writable field in
+ * UpdateHmacKey operation. Specifying fields other than state will result in an
+ * error.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.UpdateHmacKeyRequest}
@@ -203,6 +206,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Update mask for hmac_key.
+   * Not specifying any fields will mean only the `state` field is updated to
+   * the value specified in `hmac_key`.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -218,6 +223,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Update mask for hmac_key.
+   * Not specifying any fields will mean only the `state` field is updated to
+   * the value specified in `hmac_key`.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -233,6 +240,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Update mask for hmac_key.
+   * Not specifying any fields will mean only the `state` field is updated to
+   * the value specified in `hmac_key`.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -425,6 +434,9 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Request object to update an HMAC key state.
+   * HmacKeyMetadata.state is required and the only writable field in
+   * UpdateHmacKey operation. Specifying fields other than state will result in an
+   * error.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.UpdateHmacKeyRequest}
@@ -839,6 +851,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -853,6 +867,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -873,6 +889,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -895,6 +913,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -914,6 +934,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -938,6 +960,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -958,6 +982,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -972,6 +998,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -990,6 +1018,8 @@ public final class UpdateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Update mask for hmac_key.
+     * Not specifying any fields will mean only the `state` field is updated to
+     * the value specified in `hmac_key`.
      * </pre>
      *
      * <code>.google.protobuf.FieldMask update_mask = 3;</code>

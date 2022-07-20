@@ -51,6 +51,7 @@ import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
+import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
@@ -117,6 +118,9 @@ final class ApiaryConversions {
 
   private final Codec<NotificationInfo, com.google.api.services.storage.model.Notification>
       notificationInfoCodec = Codec.of(this::notificationEncode, this::notificationDecode);
+  private final Codec<CustomPlacementConfig, Bucket.CustomPlacementConfig>
+      customPlacementConfigCodec =
+          Codec.of(this::customPlacementConfigEncode, this::customPlacementConfigDecode);
 
   private ApiaryConversions() {}
 
@@ -182,6 +186,10 @@ final class ApiaryConversions {
 
   Codec<LifecycleCondition, Rule.Condition> lifecycleCondition() {
     return lifecycleConditionCodec;
+  }
+
+  Codec<CustomPlacementConfig, Bucket.CustomPlacementConfig> customPlacementConfig() {
+    return customPlacementConfigCodec;
   }
 
   private StorageObject blobInfoEncode(BlobInfo from) {
@@ -369,6 +377,10 @@ final class ApiaryConversions {
     }
     ifNonNull(from.getIamConfiguration(), this::iamConfigEncode, to::setIamConfiguration);
     ifNonNull(from.getLogging(), this::loggingEncode, to::setLogging);
+    ifNonNull(
+        from.getCustomPlacementConfig(),
+        this::customPlacementConfigEncode,
+        to::setCustomPlacementConfig);
     return to;
   }
 
@@ -417,6 +429,10 @@ final class ApiaryConversions {
     ifNonNull(retentionPolicy, RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
     ifNonNull(from.getIamConfiguration(), this::iamConfigDecode, to::setIamConfiguration);
     ifNonNull(from.getLogging(), this::loggingDecode, to::setLogging);
+    ifNonNull(
+        from.getCustomPlacementConfig(),
+        this::customPlacementConfigDecode,
+        to::setCustomPlacementConfig);
 
     return to.build();
   }
@@ -775,5 +791,18 @@ final class ApiaryConversions {
       builder.setEventTypes(eventTypes);
     }
     return builder.build();
+  }
+
+  private Bucket.CustomPlacementConfig customPlacementConfigEncode(CustomPlacementConfig from) {
+    Bucket.CustomPlacementConfig to = null;
+    if (from.getDataLocations() != null) {
+      to = new Bucket.CustomPlacementConfig();
+      to.setDataLocations(from.getDataLocations());
+    }
+    return to;
+  }
+
+  private CustomPlacementConfig customPlacementConfigDecode(Bucket.CustomPlacementConfig from) {
+    return CustomPlacementConfig.newBuilder().setDataLocations(from.getDataLocations()).build();
   }
 }

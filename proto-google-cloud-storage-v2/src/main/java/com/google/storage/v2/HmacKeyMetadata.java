@@ -189,10 +189,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+   * Immutable. Resource name ID of the key in the format
+   * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The id.
    */
@@ -212,10 +214,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+   * Immutable. Resource name ID of the key in the format
+   * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The bytes for id.
    */
@@ -238,10 +242,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Globally unique id for keys.
+   * Immutable. Globally unique id for keys.
    * </pre>
    *
-   * <code>string access_id = 2;</code>
+   * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The accessId.
    */
@@ -261,10 +265,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Globally unique id for keys.
+   * Immutable. Globally unique id for keys.
    * </pre>
    *
-   * <code>string access_id = 2;</code>
+   * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The bytes for accessId.
    */
@@ -287,10 +291,14 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The project ID that the hmac key is contained in.
+   * Immutable. Identifies the project that owns the service account of the specified HMAC
+   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+   * be the project ID or project number.
    * </pre>
    *
-   * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The project.
    */
@@ -310,10 +318,14 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The project ID that the hmac key is contained in.
+   * Immutable. Identifies the project that owns the service account of the specified HMAC
+   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+   * be the project ID or project number.
    * </pre>
    *
-   * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for project.
    */
@@ -336,10 +348,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Email of the service account the key authenticates as.
+   * Output only. Email of the service account the key authenticates as.
    * </pre>
    *
-   * <code>string service_account_email = 4;</code>
+   * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
    *
    * @return The serviceAccountEmail.
    */
@@ -359,10 +371,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Email of the service account the key authenticates as.
+   * Output only. Email of the service account the key authenticates as.
    * </pre>
    *
-   * <code>string service_account_email = 4;</code>
+   * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
    *
    * @return The bytes for serviceAccountEmail.
    */
@@ -386,6 +398,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
    * <code>string state = 5;</code>
@@ -409,6 +422,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
    * <code>string state = 5;</code>
@@ -434,10 +448,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The creation time of the HMAC key.
+   * Output only. The creation time of the HMAC key.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp create_time = 6;</code>
+   * <code>.google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return Whether the createTime field is set.
    */
@@ -449,10 +464,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The creation time of the HMAC key.
+   * Output only. The creation time of the HMAC key.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp create_time = 6;</code>
+   * <code>.google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return The createTime.
    */
@@ -464,10 +480,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The creation time of the HMAC key.
+   * Output only. The creation time of the HMAC key.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp create_time = 6;</code>
+   * <code>.google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    */
   @java.lang.Override
   public com.google.protobuf.TimestampOrBuilder getCreateTimeOrBuilder() {
@@ -480,10 +497,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata.
+   * Output only. The last modification time of the HMAC key metadata.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp update_time = 7;</code>
+   * <code>.google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return Whether the updateTime field is set.
    */
@@ -495,10 +513,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata.
+   * Output only. The last modification time of the HMAC key metadata.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp update_time = 7;</code>
+   * <code>.google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return The updateTime.
    */
@@ -510,10 +529,11 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata.
+   * Output only. The last modification time of the HMAC key metadata.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp update_time = 7;</code>
+   * <code>.google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    */
   @java.lang.Override
   public com.google.protobuf.TimestampOrBuilder getUpdateTimeOrBuilder() {
@@ -1024,10 +1044,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+     * Immutable. Resource name ID of the key in the format
+     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @return The id.
      */
@@ -1046,10 +1068,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+     * Immutable. Resource name ID of the key in the format
+     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @return The bytes for id.
      */
@@ -1068,10 +1092,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+     * Immutable. Resource name ID of the key in the format
+     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @param value The id to set.
      * @return This builder for chaining.
@@ -1089,10 +1115,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+     * Immutable. Resource name ID of the key in the format
+     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @return This builder for chaining.
      */
@@ -1106,10 +1134,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+     * Immutable. Resource name ID of the key in the format
+     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
-     * <code>string id = 1;</code>
+     * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @param value The bytes for id to set.
      * @return This builder for chaining.
@@ -1130,10 +1160,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Globally unique id for keys.
+     * Immutable. Globally unique id for keys.
      * </pre>
      *
-     * <code>string access_id = 2;</code>
+     * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @return The accessId.
      */
@@ -1152,10 +1182,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Globally unique id for keys.
+     * Immutable. Globally unique id for keys.
      * </pre>
      *
-     * <code>string access_id = 2;</code>
+     * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @return The bytes for accessId.
      */
@@ -1174,10 +1204,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Globally unique id for keys.
+     * Immutable. Globally unique id for keys.
      * </pre>
      *
-     * <code>string access_id = 2;</code>
+     * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @param value The accessId to set.
      * @return This builder for chaining.
@@ -1195,10 +1225,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Globally unique id for keys.
+     * Immutable. Globally unique id for keys.
      * </pre>
      *
-     * <code>string access_id = 2;</code>
+     * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @return This builder for chaining.
      */
@@ -1212,10 +1242,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Globally unique id for keys.
+     * Immutable. Globally unique id for keys.
      * </pre>
      *
-     * <code>string access_id = 2;</code>
+     * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
      *
      * @param value The bytes for accessId to set.
      * @return This builder for chaining.
@@ -1236,10 +1266,14 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The project ID that the hmac key is contained in.
+     * Immutable. Identifies the project that owns the service account of the specified HMAC
+     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+     * be the project ID or project number.
      * </pre>
      *
-     * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The project.
      */
@@ -1258,10 +1292,14 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The project ID that the hmac key is contained in.
+     * Immutable. Identifies the project that owns the service account of the specified HMAC
+     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+     * be the project ID or project number.
      * </pre>
      *
-     * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for project.
      */
@@ -1280,10 +1318,14 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The project ID that the hmac key is contained in.
+     * Immutable. Identifies the project that owns the service account of the specified HMAC
+     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+     * be the project ID or project number.
      * </pre>
      *
-     * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The project to set.
      * @return This builder for chaining.
@@ -1301,10 +1343,14 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The project ID that the hmac key is contained in.
+     * Immutable. Identifies the project that owns the service account of the specified HMAC
+     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+     * be the project ID or project number.
      * </pre>
      *
-     * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -1318,10 +1364,14 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The project ID that the hmac key is contained in.
+     * Immutable. Identifies the project that owns the service account of the specified HMAC
+     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+     * be the project ID or project number.
      * </pre>
      *
-     * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+     * <code>
+     * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The bytes for project to set.
      * @return This builder for chaining.
@@ -1342,10 +1392,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Email of the service account the key authenticates as.
+     * Output only. Email of the service account the key authenticates as.
      * </pre>
      *
-     * <code>string service_account_email = 4;</code>
+     * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
      *
      * @return The serviceAccountEmail.
      */
@@ -1364,10 +1414,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Email of the service account the key authenticates as.
+     * Output only. Email of the service account the key authenticates as.
      * </pre>
      *
-     * <code>string service_account_email = 4;</code>
+     * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
      *
      * @return The bytes for serviceAccountEmail.
      */
@@ -1386,10 +1436,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Email of the service account the key authenticates as.
+     * Output only. Email of the service account the key authenticates as.
      * </pre>
      *
-     * <code>string service_account_email = 4;</code>
+     * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
      *
      * @param value The serviceAccountEmail to set.
      * @return This builder for chaining.
@@ -1407,10 +1457,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Email of the service account the key authenticates as.
+     * Output only. Email of the service account the key authenticates as.
      * </pre>
      *
-     * <code>string service_account_email = 4;</code>
+     * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
      *
      * @return This builder for chaining.
      */
@@ -1424,10 +1474,10 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Email of the service account the key authenticates as.
+     * Output only. Email of the service account the key authenticates as.
      * </pre>
      *
-     * <code>string service_account_email = 4;</code>
+     * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
      *
      * @param value The bytes for serviceAccountEmail to set.
      * @return This builder for chaining.
@@ -1449,6 +1499,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
      * <code>string state = 5;</code>
@@ -1471,6 +1522,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
      * <code>string state = 5;</code>
@@ -1493,6 +1545,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
      * <code>string state = 5;</code>
@@ -1514,6 +1567,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
      * <code>string state = 5;</code>
@@ -1531,6 +1585,7 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+     * Writable, can be updated by UpdateHmacKey operation.
      * </pre>
      *
      * <code>string state = 5;</code>
@@ -1559,10 +1614,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      *
      * @return Whether the createTime field is set.
      */
@@ -1573,10 +1630,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      *
      * @return The createTime.
      */
@@ -1593,10 +1652,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder setCreateTime(com.google.protobuf.Timestamp value) {
       if (createTimeBuilder_ == null) {
@@ -1615,10 +1676,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder setCreateTime(com.google.protobuf.Timestamp.Builder builderForValue) {
       if (createTimeBuilder_ == null) {
@@ -1634,10 +1697,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder mergeCreateTime(com.google.protobuf.Timestamp value) {
       if (createTimeBuilder_ == null) {
@@ -1658,10 +1723,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder clearCreateTime() {
       if (createTimeBuilder_ == null) {
@@ -1678,10 +1745,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public com.google.protobuf.Timestamp.Builder getCreateTimeBuilder() {
 
@@ -1692,10 +1761,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public com.google.protobuf.TimestampOrBuilder getCreateTimeOrBuilder() {
       if (createTimeBuilder_ != null) {
@@ -1710,10 +1781,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The creation time of the HMAC key.
+     * Output only. The creation time of the HMAC key.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp create_time = 6;</code>
+     * <code>
+     * .google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.Timestamp,
@@ -1742,10 +1815,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      *
      * @return Whether the updateTime field is set.
      */
@@ -1756,10 +1831,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      *
      * @return The updateTime.
      */
@@ -1776,10 +1853,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder setUpdateTime(com.google.protobuf.Timestamp value) {
       if (updateTimeBuilder_ == null) {
@@ -1798,10 +1877,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder setUpdateTime(com.google.protobuf.Timestamp.Builder builderForValue) {
       if (updateTimeBuilder_ == null) {
@@ -1817,10 +1898,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder mergeUpdateTime(com.google.protobuf.Timestamp value) {
       if (updateTimeBuilder_ == null) {
@@ -1841,10 +1924,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public Builder clearUpdateTime() {
       if (updateTimeBuilder_ == null) {
@@ -1861,10 +1946,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public com.google.protobuf.Timestamp.Builder getUpdateTimeBuilder() {
 
@@ -1875,10 +1962,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     public com.google.protobuf.TimestampOrBuilder getUpdateTimeOrBuilder() {
       if (updateTimeBuilder_ != null) {
@@ -1893,10 +1982,12 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The last modification time of the HMAC key metadata.
+     * Output only. The last modification time of the HMAC key metadata.
      * </pre>
      *
-     * <code>.google.protobuf.Timestamp update_time = 7;</code>
+     * <code>
+     * .google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.Timestamp,

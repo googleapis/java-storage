@@ -23,6 +23,7 @@ import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
+import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
@@ -253,6 +254,13 @@ final class GrpcConversions {
     if (from.hasIamConfig()) {
       to.setIamConfiguration(iamConfigurationCodec.decode(from.getIamConfig()));
     }
+    if (from.hasCustomPlacementConfig()) {
+      Bucket.CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
+      to.setCustomPlacementConfig(
+          CustomPlacementConfig.newBuilder()
+              .setDataLocations(customPlacementConfig.getDataLocationsList())
+              .build());
+    }
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is available
     return to.build();
@@ -333,6 +341,13 @@ final class GrpcConversions {
         toImmutableListOf(objectAclCodec::encode),
         to::addAllDefaultObjectAcl);
     ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
+    CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
+    if (customPlacementConfig != null && customPlacementConfig.getDataLocations() != null) {
+      to.setCustomPlacementConfig(
+          Bucket.CustomPlacementConfig.newBuilder()
+              .addAllDataLocations(customPlacementConfig.getDataLocations())
+              .build());
+    }
     // TODO(frankyn): Add SelfLink when the field is available
     // TODO(frankyn): Add Etag when support is avialable
     return to.build();

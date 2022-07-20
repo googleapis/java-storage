@@ -20,18 +20,27 @@ package com.example.storage.bucket;
 
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import java.util.Arrays;
 
 public class CreateBucketDualRegion {
 
   public static void createBucketDualRegion(
-      String projectId, String bucketName, String firstRegion, String secondRegion) {
-    // The ID of your GCP project
+      String projectId,
+      String bucketName,
+      String location,
+      String firstRegion,
+      String secondRegion) {
+    // The ID of your GCP project.
     // String projectId = "your-project-id";
 
-    // The ID to give your GCS bucket
+    // The ID to give your GCS bucket.
     // String bucketName = "your-unique-bucket-name";
+
+    // The location your dual regions will be located in.
+    // String location = "US";
 
     // One of the regions the dual region bucket is to be created in.
     // String firstRegion = "US-EAST1";
@@ -39,16 +48,31 @@ public class CreateBucketDualRegion {
     // The second region the dual region bucket is to be created in.
     // String secondRegion = "US-WEST1";
 
-    // Construct the dual region ie. "US-EAST1+US-WEST1"
-    String dualRegion = firstRegion + "+" + secondRegion;
+    // See this documentation for other valid locations and regions:
+    // https://cloud.google.com/storage/docs/locations
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
-    Bucket bucket =
-        storage.create(BucketInfo.newBuilder(bucketName).setLocation(dualRegion).build());
+    CustomPlacementConfig config =
+        CustomPlacementConfig.newBuilder()
+            .setDataLocations(Arrays.asList(firstRegion, secondRegion))
+            .build();
+
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setLocation(location)
+            .setCustomPlacementConfig(config)
+            .build();
+
+    Bucket bucket = storage.create(bucketInfo);
 
     System.out.println(
-        "Created bucket " + bucket.getName() + " in location " + bucket.getLocation());
+        "Created bucket "
+            + bucket.getName()
+            + " in location "
+            + bucket.getLocation()
+            + " with regions "
+            + bucket.getCustomPlacementConfig().getDataLocations().toString());
   }
 }
 // [END storage_create_bucket_dual_region]
