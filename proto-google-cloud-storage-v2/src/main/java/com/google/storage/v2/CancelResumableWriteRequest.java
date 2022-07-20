@@ -22,29 +22,30 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for GetServiceAccount.
+ * Message for canceling an in-progress resumable upload.
+ * `upload_id` **must** be set.
  * </pre>
  *
- * Protobuf type {@code google.storage.v2.GetServiceAccountRequest}
+ * Protobuf type {@code google.storage.v2.CancelResumableWriteRequest}
  */
-public final class GetServiceAccountRequest extends com.google.protobuf.GeneratedMessageV3
+public final class CancelResumableWriteRequest extends com.google.protobuf.GeneratedMessageV3
     implements
-    // @@protoc_insertion_point(message_implements:google.storage.v2.GetServiceAccountRequest)
-    GetServiceAccountRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:google.storage.v2.CancelResumableWriteRequest)
+    CancelResumableWriteRequestOrBuilder {
   private static final long serialVersionUID = 0L;
-  // Use GetServiceAccountRequest.newBuilder() to construct.
-  private GetServiceAccountRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use CancelResumableWriteRequest.newBuilder() to construct.
+  private CancelResumableWriteRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
 
-  private GetServiceAccountRequest() {
-    project_ = "";
+  private CancelResumableWriteRequest() {
+    uploadId_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-    return new GetServiceAccountRequest();
+    return new CancelResumableWriteRequest();
   }
 
   @java.lang.Override
@@ -52,7 +53,7 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     return this.unknownFields;
   }
 
-  private GetServiceAccountRequest(
+  private CancelResumableWriteRequest(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
@@ -74,7 +75,7 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
             {
               java.lang.String s = input.readStringRequireUtf8();
 
-              project_ = s;
+              uploadId_ = s;
               break;
             }
           default:
@@ -100,44 +101,42 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_GetServiceAccountRequest_descriptor;
+        .internal_static_google_storage_v2_CancelResumableWriteRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_GetServiceAccountRequest_fieldAccessorTable
+        .internal_static_google_storage_v2_CancelResumableWriteRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.google.storage.v2.GetServiceAccountRequest.class,
-            com.google.storage.v2.GetServiceAccountRequest.Builder.class);
+            com.google.storage.v2.CancelResumableWriteRequest.class,
+            com.google.storage.v2.CancelResumableWriteRequest.Builder.class);
   }
 
-  public static final int PROJECT_FIELD_NUMBER = 1;
-  private volatile java.lang.Object project_;
+  public static final int UPLOAD_ID_FIELD_NUMBER = 1;
+  private volatile java.lang.Object uploadId_;
   /**
    *
    *
    * <pre>
-   * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * Required. The upload_id of the resumable upload to cancel. This should be copied
+   * from the `upload_id` field of `StartResumableWriteResponse`.
    * </pre>
    *
-   * <code>
-   * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-   * </code>
+   * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
-   * @return The project.
+   * @return The uploadId.
    */
   @java.lang.Override
-  public java.lang.String getProject() {
-    java.lang.Object ref = project_;
+  public java.lang.String getUploadId() {
+    java.lang.Object ref = uploadId_;
     if (ref instanceof java.lang.String) {
       return (java.lang.String) ref;
     } else {
       com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
       java.lang.String s = bs.toStringUtf8();
-      project_ = s;
+      uploadId_ = s;
       return s;
     }
   }
@@ -145,23 +144,21 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * Required. The upload_id of the resumable upload to cancel. This should be copied
+   * from the `upload_id` field of `StartResumableWriteResponse`.
    * </pre>
    *
-   * <code>
-   * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-   * </code>
+   * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
-   * @return The bytes for project.
+   * @return The bytes for uploadId.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString getProjectBytes() {
-    java.lang.Object ref = project_;
+  public com.google.protobuf.ByteString getUploadIdBytes() {
+    java.lang.Object ref = uploadId_;
     if (ref instanceof java.lang.String) {
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      project_ = b;
+      uploadId_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -182,8 +179,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
 
   @java.lang.Override
   public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(project_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, project_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uploadId_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uploadId_);
     }
     unknownFields.writeTo(output);
   }
@@ -194,8 +191,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     if (size != -1) return size;
 
     size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(project_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, project_);
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uploadId_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uploadId_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -207,13 +204,13 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof com.google.storage.v2.GetServiceAccountRequest)) {
+    if (!(obj instanceof com.google.storage.v2.CancelResumableWriteRequest)) {
       return super.equals(obj);
     }
-    com.google.storage.v2.GetServiceAccountRequest other =
-        (com.google.storage.v2.GetServiceAccountRequest) obj;
+    com.google.storage.v2.CancelResumableWriteRequest other =
+        (com.google.storage.v2.CancelResumableWriteRequest) obj;
 
-    if (!getProject().equals(other.getProject())) return false;
+    if (!getUploadId().equals(other.getUploadId())) return false;
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -225,78 +222,78 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     }
     int hash = 41;
     hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + PROJECT_FIELD_NUMBER;
-    hash = (53 * hash) + getProject().hashCode();
+    hash = (37 * hash) + UPLOAD_ID_FIELD_NUMBER;
+    hash = (53 * hash) + getUploadId().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(java.nio.ByteBuffer data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
+      java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
       java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(byte[] data)
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
       byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(java.io.InputStream input)
-      throws java.io.IOException {
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
+      java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseDelimitedFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseDelimitedFrom(
       java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseDelimitedFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseDelimitedFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
       com.google.protobuf.CodedInputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest parseFrom(
+  public static com.google.storage.v2.CancelResumableWriteRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -313,7 +310,7 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     return DEFAULT_INSTANCE.toBuilder();
   }
 
-  public static Builder newBuilder(com.google.storage.v2.GetServiceAccountRequest prototype) {
+  public static Builder newBuilder(com.google.storage.v2.CancelResumableWriteRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
 
@@ -331,31 +328,32 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Request message for GetServiceAccount.
+   * Message for canceling an in-progress resumable upload.
+   * `upload_id` **must** be set.
    * </pre>
    *
-   * Protobuf type {@code google.storage.v2.GetServiceAccountRequest}
+   * Protobuf type {@code google.storage.v2.CancelResumableWriteRequest}
    */
   public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:google.storage.v2.GetServiceAccountRequest)
-      com.google.storage.v2.GetServiceAccountRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:google.storage.v2.CancelResumableWriteRequest)
+      com.google.storage.v2.CancelResumableWriteRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetServiceAccountRequest_descriptor;
+          .internal_static_google_storage_v2_CancelResumableWriteRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetServiceAccountRequest_fieldAccessorTable
+          .internal_static_google_storage_v2_CancelResumableWriteRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.GetServiceAccountRequest.class,
-              com.google.storage.v2.GetServiceAccountRequest.Builder.class);
+              com.google.storage.v2.CancelResumableWriteRequest.class,
+              com.google.storage.v2.CancelResumableWriteRequest.Builder.class);
     }
 
-    // Construct using com.google.storage.v2.GetServiceAccountRequest.newBuilder()
+    // Construct using com.google.storage.v2.CancelResumableWriteRequest.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -372,7 +370,7 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      project_ = "";
+      uploadId_ = "";
 
       return this;
     }
@@ -380,17 +378,17 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetServiceAccountRequest_descriptor;
+          .internal_static_google_storage_v2_CancelResumableWriteRequest_descriptor;
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetServiceAccountRequest getDefaultInstanceForType() {
-      return com.google.storage.v2.GetServiceAccountRequest.getDefaultInstance();
+    public com.google.storage.v2.CancelResumableWriteRequest getDefaultInstanceForType() {
+      return com.google.storage.v2.CancelResumableWriteRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetServiceAccountRequest build() {
-      com.google.storage.v2.GetServiceAccountRequest result = buildPartial();
+    public com.google.storage.v2.CancelResumableWriteRequest build() {
+      com.google.storage.v2.CancelResumableWriteRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -398,10 +396,10 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetServiceAccountRequest buildPartial() {
-      com.google.storage.v2.GetServiceAccountRequest result =
-          new com.google.storage.v2.GetServiceAccountRequest(this);
-      result.project_ = project_;
+    public com.google.storage.v2.CancelResumableWriteRequest buildPartial() {
+      com.google.storage.v2.CancelResumableWriteRequest result =
+          new com.google.storage.v2.CancelResumableWriteRequest(this);
+      result.uploadId_ = uploadId_;
       onBuilt();
       return result;
     }
@@ -441,18 +439,19 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
 
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.google.storage.v2.GetServiceAccountRequest) {
-        return mergeFrom((com.google.storage.v2.GetServiceAccountRequest) other);
+      if (other instanceof com.google.storage.v2.CancelResumableWriteRequest) {
+        return mergeFrom((com.google.storage.v2.CancelResumableWriteRequest) other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.google.storage.v2.GetServiceAccountRequest other) {
-      if (other == com.google.storage.v2.GetServiceAccountRequest.getDefaultInstance()) return this;
-      if (!other.getProject().isEmpty()) {
-        project_ = other.project_;
+    public Builder mergeFrom(com.google.storage.v2.CancelResumableWriteRequest other) {
+      if (other == com.google.storage.v2.CancelResumableWriteRequest.getDefaultInstance())
+        return this;
+      if (!other.getUploadId().isEmpty()) {
+        uploadId_ = other.uploadId_;
         onChanged();
       }
       this.mergeUnknownFields(other.unknownFields);
@@ -470,11 +469,12 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.google.storage.v2.GetServiceAccountRequest parsedMessage = null;
+      com.google.storage.v2.CancelResumableWriteRequest parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.google.storage.v2.GetServiceAccountRequest) e.getUnfinishedMessage();
+        parsedMessage =
+            (com.google.storage.v2.CancelResumableWriteRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
         if (parsedMessage != null) {
@@ -484,27 +484,25 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
       return this;
     }
 
-    private java.lang.Object project_ = "";
+    private java.lang.Object uploadId_ = "";
     /**
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. The upload_id of the resumable upload to cancel. This should be copied
+     * from the `upload_id` field of `StartResumableWriteResponse`.
      * </pre>
      *
-     * <code>
-     * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-     * </code>
+     * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
-     * @return The project.
+     * @return The uploadId.
      */
-    public java.lang.String getProject() {
-      java.lang.Object ref = project_;
+    public java.lang.String getUploadId() {
+      java.lang.Object ref = uploadId_;
       if (!(ref instanceof java.lang.String)) {
         com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        project_ = s;
+        uploadId_ = s;
         return s;
       } else {
         return (java.lang.String) ref;
@@ -514,22 +512,20 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. The upload_id of the resumable upload to cancel. This should be copied
+     * from the `upload_id` field of `StartResumableWriteResponse`.
      * </pre>
      *
-     * <code>
-     * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-     * </code>
+     * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
-     * @return The bytes for project.
+     * @return The bytes for uploadId.
      */
-    public com.google.protobuf.ByteString getProjectBytes() {
-      java.lang.Object ref = project_;
+    public com.google.protobuf.ByteString getUploadIdBytes() {
+      java.lang.Object ref = uploadId_;
       if (ref instanceof String) {
         com.google.protobuf.ByteString b =
             com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        project_ = b;
+        uploadId_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
@@ -539,23 +535,21 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. The upload_id of the resumable upload to cancel. This should be copied
+     * from the `upload_id` field of `StartResumableWriteResponse`.
      * </pre>
      *
-     * <code>
-     * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-     * </code>
+     * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
-     * @param value The project to set.
+     * @param value The uploadId to set.
      * @return This builder for chaining.
      */
-    public Builder setProject(java.lang.String value) {
+    public Builder setUploadId(java.lang.String value) {
       if (value == null) {
         throw new NullPointerException();
       }
 
-      project_ = value;
+      uploadId_ = value;
       onChanged();
       return this;
     }
@@ -563,19 +557,17 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. The upload_id of the resumable upload to cancel. This should be copied
+     * from the `upload_id` field of `StartResumableWriteResponse`.
      * </pre>
      *
-     * <code>
-     * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-     * </code>
+     * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return This builder for chaining.
      */
-    public Builder clearProject() {
+    public Builder clearUploadId() {
 
-      project_ = getDefaultInstance().getProject();
+      uploadId_ = getDefaultInstance().getUploadId();
       onChanged();
       return this;
     }
@@ -583,24 +575,22 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. The upload_id of the resumable upload to cancel. This should be copied
+     * from the `upload_id` field of `StartResumableWriteResponse`.
      * </pre>
      *
-     * <code>
-     * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-     * </code>
+     * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
-     * @param value The bytes for project to set.
+     * @param value The bytes for uploadId to set.
      * @return This builder for chaining.
      */
-    public Builder setProjectBytes(com.google.protobuf.ByteString value) {
+    public Builder setUploadIdBytes(com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
 
-      project_ = value;
+      uploadId_ = value;
       onChanged();
       return this;
     }
@@ -616,42 +606,42 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
       return super.mergeUnknownFields(unknownFields);
     }
 
-    // @@protoc_insertion_point(builder_scope:google.storage.v2.GetServiceAccountRequest)
+    // @@protoc_insertion_point(builder_scope:google.storage.v2.CancelResumableWriteRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:google.storage.v2.GetServiceAccountRequest)
-  private static final com.google.storage.v2.GetServiceAccountRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:google.storage.v2.CancelResumableWriteRequest)
+  private static final com.google.storage.v2.CancelResumableWriteRequest DEFAULT_INSTANCE;
 
   static {
-    DEFAULT_INSTANCE = new com.google.storage.v2.GetServiceAccountRequest();
+    DEFAULT_INSTANCE = new com.google.storage.v2.CancelResumableWriteRequest();
   }
 
-  public static com.google.storage.v2.GetServiceAccountRequest getDefaultInstance() {
+  public static com.google.storage.v2.CancelResumableWriteRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<GetServiceAccountRequest> PARSER =
-      new com.google.protobuf.AbstractParser<GetServiceAccountRequest>() {
+  private static final com.google.protobuf.Parser<CancelResumableWriteRequest> PARSER =
+      new com.google.protobuf.AbstractParser<CancelResumableWriteRequest>() {
         @java.lang.Override
-        public GetServiceAccountRequest parsePartialFrom(
+        public CancelResumableWriteRequest parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-          return new GetServiceAccountRequest(input, extensionRegistry);
+          return new CancelResumableWriteRequest(input, extensionRegistry);
         }
       };
 
-  public static com.google.protobuf.Parser<GetServiceAccountRequest> parser() {
+  public static com.google.protobuf.Parser<CancelResumableWriteRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<GetServiceAccountRequest> getParserForType() {
+  public com.google.protobuf.Parser<CancelResumableWriteRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.storage.v2.GetServiceAccountRequest getDefaultInstanceForType() {
+  public com.google.storage.v2.CancelResumableWriteRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 }

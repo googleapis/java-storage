@@ -23,7 +23,7 @@ package com.google.storage.v2;
  *
  * <pre>
  * Message for deleting an object.
- * Either `bucket` and `object` *or* `upload_id` **must** be set (but not both).
+ * `bucket` and `object` **must** be set.
  * </pre>
  *
  * Protobuf type {@code google.storage.v2.DeleteObjectRequest}
@@ -41,7 +41,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   private DeleteObjectRequest() {
     bucket_ = "";
     object_ = "";
-    uploadId_ = "";
   }
 
   @java.lang.Override
@@ -86,13 +85,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
               java.lang.String s = input.readStringRequireUtf8();
 
               object_ = s;
-              break;
-            }
-          case 26:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              uploadId_ = s;
               break;
             }
           case 32:
@@ -269,59 +261,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
       object_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int UPLOAD_ID_FIELD_NUMBER = 3;
-  private volatile java.lang.Object uploadId_;
-  /**
-   *
-   *
-   * <pre>
-   * The resumable upload_id of the object to delete (when deleting an
-   * in-progress resumable write). This should be copied from the `upload_id`
-   * field of `StartResumableWriteResponse`.
-   * </pre>
-   *
-   * <code>string upload_id = 3;</code>
-   *
-   * @return The uploadId.
-   */
-  @java.lang.Override
-  public java.lang.String getUploadId() {
-    java.lang.Object ref = uploadId_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      uploadId_ = s;
-      return s;
-    }
-  }
-  /**
-   *
-   *
-   * <pre>
-   * The resumable upload_id of the object to delete (when deleting an
-   * in-progress resumable write). This should be copied from the `upload_id`
-   * field of `StartResumableWriteResponse`.
-   * </pre>
-   *
-   * <code>string upload_id = 3;</code>
-   *
-   * @return The bytes for uploadId.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString getUploadIdBytes() {
-    java.lang.Object ref = uploadId_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      uploadId_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -562,9 +501,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(object_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, object_);
     }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uploadId_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, uploadId_);
-    }
     if (generation_ != 0L) {
       output.writeInt64(4, generation_);
     }
@@ -597,9 +533,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(object_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, object_);
-    }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uploadId_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, uploadId_);
     }
     if (generation_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, generation_);
@@ -639,7 +572,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
     if (!getBucket().equals(other.getBucket())) return false;
     if (!getObject().equals(other.getObject())) return false;
-    if (!getUploadId().equals(other.getUploadId())) return false;
     if (getGeneration() != other.getGeneration()) return false;
     if (hasIfGenerationMatch() != other.hasIfGenerationMatch()) return false;
     if (hasIfGenerationMatch()) {
@@ -677,8 +609,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     hash = (53 * hash) + getBucket().hashCode();
     hash = (37 * hash) + OBJECT_FIELD_NUMBER;
     hash = (53 * hash) + getObject().hashCode();
-    hash = (37 * hash) + UPLOAD_ID_FIELD_NUMBER;
-    hash = (53 * hash) + getUploadId().hashCode();
     hash = (37 * hash) + GENERATION_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getGeneration());
     if (hasIfGenerationMatch()) {
@@ -806,7 +736,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Message for deleting an object.
-   * Either `bucket` and `object` *or* `upload_id` **must** be set (but not both).
+   * `bucket` and `object` **must** be set.
    * </pre>
    *
    * Protobuf type {@code google.storage.v2.DeleteObjectRequest}
@@ -850,8 +780,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       bucket_ = "";
 
       object_ = "";
-
-      uploadId_ = "";
 
       generation_ = 0L;
 
@@ -900,7 +828,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       int to_bitField0_ = 0;
       result.bucket_ = bucket_;
       result.object_ = object_;
-      result.uploadId_ = uploadId_;
       result.generation_ = generation_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.ifGenerationMatch_ = ifGenerationMatch_;
@@ -979,10 +906,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       }
       if (!other.getObject().isEmpty()) {
         object_ = other.object_;
-        onChanged();
-      }
-      if (!other.getUploadId().isEmpty()) {
-        uploadId_ = other.uploadId_;
         onChanged();
       }
       if (other.getGeneration() != 0L) {
@@ -1242,122 +1165,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       checkByteStringIsUtf8(value);
 
       object_ = value;
-      onChanged();
-      return this;
-    }
-
-    private java.lang.Object uploadId_ = "";
-    /**
-     *
-     *
-     * <pre>
-     * The resumable upload_id of the object to delete (when deleting an
-     * in-progress resumable write). This should be copied from the `upload_id`
-     * field of `StartResumableWriteResponse`.
-     * </pre>
-     *
-     * <code>string upload_id = 3;</code>
-     *
-     * @return The uploadId.
-     */
-    public java.lang.String getUploadId() {
-      java.lang.Object ref = uploadId_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        uploadId_ = s;
-        return s;
-      } else {
-        return (java.lang.String) ref;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * The resumable upload_id of the object to delete (when deleting an
-     * in-progress resumable write). This should be copied from the `upload_id`
-     * field of `StartResumableWriteResponse`.
-     * </pre>
-     *
-     * <code>string upload_id = 3;</code>
-     *
-     * @return The bytes for uploadId.
-     */
-    public com.google.protobuf.ByteString getUploadIdBytes() {
-      java.lang.Object ref = uploadId_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        uploadId_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * The resumable upload_id of the object to delete (when deleting an
-     * in-progress resumable write). This should be copied from the `upload_id`
-     * field of `StartResumableWriteResponse`.
-     * </pre>
-     *
-     * <code>string upload_id = 3;</code>
-     *
-     * @param value The uploadId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setUploadId(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-
-      uploadId_ = value;
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * The resumable upload_id of the object to delete (when deleting an
-     * in-progress resumable write). This should be copied from the `upload_id`
-     * field of `StartResumableWriteResponse`.
-     * </pre>
-     *
-     * <code>string upload_id = 3;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearUploadId() {
-
-      uploadId_ = getDefaultInstance().getUploadId();
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * The resumable upload_id of the object to delete (when deleting an
-     * in-progress resumable write). This should be copied from the `upload_id`
-     * field of `StartResumableWriteResponse`.
-     * </pre>
-     *
-     * <code>string upload_id = 3;</code>
-     *
-     * @param value The bytes for uploadId to set.
-     * @return This builder for chaining.
-     */
-    public Builder setUploadIdBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      uploadId_ = value;
       onChanged();
       return this;
     }

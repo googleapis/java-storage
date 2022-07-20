@@ -27,7 +27,9 @@ public interface CreateHmacKeyRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project that the HMAC-owning service account lives in.
+   * Required. The project that the HMAC-owning service account lives in, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -41,7 +43,9 @@ public interface CreateHmacKeyRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project that the HMAC-owning service account lives in.
+   * Required. The project that the HMAC-owning service account lives in, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>

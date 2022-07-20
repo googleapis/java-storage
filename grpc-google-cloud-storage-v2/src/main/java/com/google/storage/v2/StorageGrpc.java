@@ -664,6 +664,54 @@ public final class StorageGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
+          com.google.storage.v2.CancelResumableWriteRequest,
+          com.google.storage.v2.CancelResumableWriteResponse>
+      getCancelResumableWriteMethod;
+
+  @io.grpc.stub.annotations.RpcMethod(
+      fullMethodName = SERVICE_NAME + '/' + "CancelResumableWrite",
+      requestType = com.google.storage.v2.CancelResumableWriteRequest.class,
+      responseType = com.google.storage.v2.CancelResumableWriteResponse.class,
+      methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
+  public static io.grpc.MethodDescriptor<
+          com.google.storage.v2.CancelResumableWriteRequest,
+          com.google.storage.v2.CancelResumableWriteResponse>
+      getCancelResumableWriteMethod() {
+    io.grpc.MethodDescriptor<
+            com.google.storage.v2.CancelResumableWriteRequest,
+            com.google.storage.v2.CancelResumableWriteResponse>
+        getCancelResumableWriteMethod;
+    if ((getCancelResumableWriteMethod = StorageGrpc.getCancelResumableWriteMethod) == null) {
+      synchronized (StorageGrpc.class) {
+        if ((getCancelResumableWriteMethod = StorageGrpc.getCancelResumableWriteMethod) == null) {
+          StorageGrpc.getCancelResumableWriteMethod =
+              getCancelResumableWriteMethod =
+                  io.grpc.MethodDescriptor
+                      .<com.google.storage.v2.CancelResumableWriteRequest,
+                          com.google.storage.v2.CancelResumableWriteResponse>
+                          newBuilder()
+                      .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
+                      .setFullMethodName(
+                          generateFullMethodName(SERVICE_NAME, "CancelResumableWrite"))
+                      .setSampledToLocalTracing(true)
+                      .setRequestMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.v2.CancelResumableWriteRequest
+                                  .getDefaultInstance()))
+                      .setResponseMarshaller(
+                          io.grpc.protobuf.ProtoUtils.marshaller(
+                              com.google.storage.v2.CancelResumableWriteResponse
+                                  .getDefaultInstance()))
+                      .setSchemaDescriptor(
+                          new StorageMethodDescriptorSupplier("CancelResumableWrite"))
+                      .build();
+        }
+      }
+    }
+    return getCancelResumableWriteMethod;
+  }
+
+  private static volatile io.grpc.MethodDescriptor<
           com.google.storage.v2.GetObjectRequest, com.google.storage.v2.Object>
       getGetObjectMethod;
 
@@ -1381,7 +1429,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or object.
      * </pre>
      */
     public void getIamPolicy(
@@ -1395,7 +1443,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or object.
      * </pre>
      */
     public void setIamPolicy(
@@ -1409,7 +1457,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Tests a set of permissions on the given bucket to see which, if
+     * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
      * </pre>
      */
@@ -1515,8 +1563,7 @@ public final class StorageGrpc {
      *
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
-     * is not enabled for the bucket, or if the `generation` parameter
-     * is used.
+     * is not enabled for the bucket, or if the `generation` parameter is used.
      * </pre>
      */
     public void deleteObject(
@@ -1524,6 +1571,21 @@ public final class StorageGrpc {
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
           getDeleteObjectMethod(), responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Cancels an in-progress resumable upload.
+     * </pre>
+     */
+    public void cancelResumableWrite(
+        com.google.storage.v2.CancelResumableWriteRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.CancelResumableWriteResponse>
+            responseObserver) {
+      io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
+          getCancelResumableWriteMethod(), responseObserver);
     }
 
     /**
@@ -1877,6 +1939,13 @@ public final class StorageGrpc {
                       com.google.storage.v2.DeleteObjectRequest, com.google.protobuf.Empty>(
                       this, METHODID_DELETE_OBJECT)))
           .addMethod(
+              getCancelResumableWriteMethod(),
+              io.grpc.stub.ServerCalls.asyncUnaryCall(
+                  new MethodHandlers<
+                      com.google.storage.v2.CancelResumableWriteRequest,
+                      com.google.storage.v2.CancelResumableWriteResponse>(
+                      this, METHODID_CANCEL_RESUMABLE_WRITE)))
+          .addMethod(
               getGetObjectMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
@@ -2082,7 +2151,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or object.
      * </pre>
      */
     public void getIamPolicy(
@@ -2098,7 +2167,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or object.
      * </pre>
      */
     public void setIamPolicy(
@@ -2114,7 +2183,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Tests a set of permissions on the given bucket to see which, if
+     * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
      * </pre>
      */
@@ -2234,8 +2303,7 @@ public final class StorageGrpc {
      *
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
-     * is not enabled for the bucket, or if the `generation` parameter
-     * is used.
+     * is not enabled for the bucket, or if the `generation` parameter is used.
      * </pre>
      */
     public void deleteObject(
@@ -2243,6 +2311,23 @@ public final class StorageGrpc {
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteObjectMethod(), getCallOptions()),
+          request,
+          responseObserver);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Cancels an in-progress resumable upload.
+     * </pre>
+     */
+    public void cancelResumableWrite(
+        com.google.storage.v2.CancelResumableWriteRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.CancelResumableWriteResponse>
+            responseObserver) {
+      io.grpc.stub.ClientCalls.asyncUnaryCall(
+          getChannel().newCall(getCancelResumableWriteMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -2629,7 +2714,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or object.
      * </pre>
      */
     public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
@@ -2641,7 +2726,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or object.
      * </pre>
      */
     public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
@@ -2653,7 +2738,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Tests a set of permissions on the given bucket to see which, if
+     * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
      * </pre>
      */
@@ -2750,14 +2835,26 @@ public final class StorageGrpc {
      *
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
-     * is not enabled for the bucket, or if the `generation` parameter
-     * is used.
+     * is not enabled for the bucket, or if the `generation` parameter is used.
      * </pre>
      */
     public com.google.protobuf.Empty deleteObject(
         com.google.storage.v2.DeleteObjectRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteObjectMethod(), getCallOptions(), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Cancels an in-progress resumable upload.
+     * </pre>
+     */
+    public com.google.storage.v2.CancelResumableWriteResponse cancelResumableWrite(
+        com.google.storage.v2.CancelResumableWriteRequest request) {
+      return io.grpc.stub.ClientCalls.blockingUnaryCall(
+          getChannel(), getCancelResumableWriteMethod(), getCallOptions(), request);
     }
 
     /**
@@ -3048,7 +3145,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Gets the IAM policy for a specified bucket.
+     * Gets the IAM policy for a specified bucket or object.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
@@ -3061,7 +3158,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Updates an IAM policy for the specified bucket.
+     * Updates an IAM policy for the specified bucket or object.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
@@ -3074,7 +3171,7 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Tests a set of permissions on the given bucket to see which, if
+     * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
      * </pre>
      */
@@ -3173,14 +3270,27 @@ public final class StorageGrpc {
      *
      * <pre>
      * Deletes an object and its metadata. Deletions are permanent if versioning
-     * is not enabled for the bucket, or if the `generation` parameter
-     * is used.
+     * is not enabled for the bucket, or if the `generation` parameter is used.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty>
         deleteObject(com.google.storage.v2.DeleteObjectRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteObjectMethod(), getCallOptions()), request);
+    }
+
+    /**
+     *
+     *
+     * <pre>
+     * Cancels an in-progress resumable upload.
+     * </pre>
+     */
+    public com.google.common.util.concurrent.ListenableFuture<
+            com.google.storage.v2.CancelResumableWriteResponse>
+        cancelResumableWrite(com.google.storage.v2.CancelResumableWriteRequest request) {
+      return io.grpc.stub.ClientCalls.futureUnaryCall(
+          getChannel().newCall(getCancelResumableWriteMethod(), getCallOptions()), request);
     }
 
     /**
@@ -3374,20 +3484,21 @@ public final class StorageGrpc {
   private static final int METHODID_LIST_NOTIFICATIONS = 12;
   private static final int METHODID_COMPOSE_OBJECT = 13;
   private static final int METHODID_DELETE_OBJECT = 14;
-  private static final int METHODID_GET_OBJECT = 15;
-  private static final int METHODID_READ_OBJECT = 16;
-  private static final int METHODID_UPDATE_OBJECT = 17;
-  private static final int METHODID_LIST_OBJECTS = 18;
-  private static final int METHODID_REWRITE_OBJECT = 19;
-  private static final int METHODID_START_RESUMABLE_WRITE = 20;
-  private static final int METHODID_QUERY_WRITE_STATUS = 21;
-  private static final int METHODID_GET_SERVICE_ACCOUNT = 22;
-  private static final int METHODID_CREATE_HMAC_KEY = 23;
-  private static final int METHODID_DELETE_HMAC_KEY = 24;
-  private static final int METHODID_GET_HMAC_KEY = 25;
-  private static final int METHODID_LIST_HMAC_KEYS = 26;
-  private static final int METHODID_UPDATE_HMAC_KEY = 27;
-  private static final int METHODID_WRITE_OBJECT = 28;
+  private static final int METHODID_CANCEL_RESUMABLE_WRITE = 15;
+  private static final int METHODID_GET_OBJECT = 16;
+  private static final int METHODID_READ_OBJECT = 17;
+  private static final int METHODID_UPDATE_OBJECT = 18;
+  private static final int METHODID_LIST_OBJECTS = 19;
+  private static final int METHODID_REWRITE_OBJECT = 20;
+  private static final int METHODID_START_RESUMABLE_WRITE = 21;
+  private static final int METHODID_QUERY_WRITE_STATUS = 22;
+  private static final int METHODID_GET_SERVICE_ACCOUNT = 23;
+  private static final int METHODID_CREATE_HMAC_KEY = 24;
+  private static final int METHODID_DELETE_HMAC_KEY = 25;
+  private static final int METHODID_GET_HMAC_KEY = 26;
+  private static final int METHODID_LIST_HMAC_KEYS = 27;
+  private static final int METHODID_UPDATE_HMAC_KEY = 28;
+  private static final int METHODID_WRITE_OBJECT = 29;
 
   private static final class MethodHandlers<Req, Resp>
       implements io.grpc.stub.ServerCalls.UnaryMethod<Req, Resp>,
@@ -3483,6 +3594,12 @@ public final class StorageGrpc {
           serviceImpl.deleteObject(
               (com.google.storage.v2.DeleteObjectRequest) request,
               (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
+          break;
+        case METHODID_CANCEL_RESUMABLE_WRITE:
+          serviceImpl.cancelResumableWrite(
+              (com.google.storage.v2.CancelResumableWriteRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.v2.CancelResumableWriteResponse>)
+                  responseObserver);
           break;
         case METHODID_GET_OBJECT:
           serviceImpl.getObject(
@@ -3640,6 +3757,7 @@ public final class StorageGrpc {
                       .addMethod(getListNotificationsMethod())
                       .addMethod(getComposeObjectMethod())
                       .addMethod(getDeleteObjectMethod())
+                      .addMethod(getCancelResumableWriteMethod())
                       .addMethod(getGetObjectMethod())
                       .addMethod(getReadObjectMethod())
                       .addMethod(getUpdateObjectMethod())

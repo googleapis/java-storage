@@ -162,6 +162,12 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     return ((StorageStubSettings) getStubSettings()).deleteObjectSettings();
   }
 
+  /** Returns the object with the settings used for calls to cancelResumableWrite. */
+  public UnaryCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteSettings() {
+    return ((StorageStubSettings) getStubSettings()).cancelResumableWriteSettings();
+  }
+
   /** Returns the object with the settings used for calls to getObject. */
   public UnaryCallSettings<GetObjectRequest, Object> getObjectSettings() {
     return ((StorageStubSettings) getStubSettings()).getObjectSettings();
@@ -432,6 +438,12 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     /** Returns the builder for the settings used for calls to deleteObject. */
     public UnaryCallSettings.Builder<DeleteObjectRequest, Empty> deleteObjectSettings() {
       return getStubSettingsBuilder().deleteObjectSettings();
+    }
+
+    /** Returns the builder for the settings used for calls to cancelResumableWrite. */
+    public UnaryCallSettings.Builder<CancelResumableWriteRequest, CancelResumableWriteResponse>
+        cancelResumableWriteSettings() {
+      return getStubSettingsBuilder().cancelResumableWriteSettings();
     }
 
     /** Returns the builder for the settings used for calls to getObject. */

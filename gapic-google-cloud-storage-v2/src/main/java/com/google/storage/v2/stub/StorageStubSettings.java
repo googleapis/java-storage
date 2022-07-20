@@ -59,6 +59,8 @@ import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.protobuf.Empty;
 import com.google.storage.v2.Bucket;
+import com.google.storage.v2.CancelResumableWriteRequest;
+import com.google.storage.v2.CancelResumableWriteResponse;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
@@ -170,6 +172,8 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       listNotificationsSettings;
   private final UnaryCallSettings<ComposeObjectRequest, Object> composeObjectSettings;
   private final UnaryCallSettings<DeleteObjectRequest, Empty> deleteObjectSettings;
+  private final UnaryCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteSettings;
   private final UnaryCallSettings<GetObjectRequest, Object> getObjectSettings;
   private final ServerStreamingCallSettings<ReadObjectRequest, ReadObjectResponse>
       readObjectSettings;
@@ -494,6 +498,12 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     return deleteObjectSettings;
   }
 
+  /** Returns the object with the settings used for calls to cancelResumableWrite. */
+  public UnaryCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteSettings() {
+    return cancelResumableWriteSettings;
+  }
+
   /** Returns the object with the settings used for calls to getObject. */
   public UnaryCallSettings<GetObjectRequest, Object> getObjectSettings() {
     return getObjectSettings;
@@ -687,6 +697,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     listNotificationsSettings = settingsBuilder.listNotificationsSettings().build();
     composeObjectSettings = settingsBuilder.composeObjectSettings().build();
     deleteObjectSettings = settingsBuilder.deleteObjectSettings().build();
+    cancelResumableWriteSettings = settingsBuilder.cancelResumableWriteSettings().build();
     getObjectSettings = settingsBuilder.getObjectSettings().build();
     readObjectSettings = settingsBuilder.readObjectSettings().build();
     updateObjectSettings = settingsBuilder.updateObjectSettings().build();
@@ -730,6 +741,9 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
         listNotificationsSettings;
     private final UnaryCallSettings.Builder<ComposeObjectRequest, Object> composeObjectSettings;
     private final UnaryCallSettings.Builder<DeleteObjectRequest, Empty> deleteObjectSettings;
+    private final UnaryCallSettings.Builder<
+            CancelResumableWriteRequest, CancelResumableWriteResponse>
+        cancelResumableWriteSettings;
     private final UnaryCallSettings.Builder<GetObjectRequest, Object> getObjectSettings;
     private final ServerStreamingCallSettings.Builder<ReadObjectRequest, ReadObjectResponse>
         readObjectSettings;
@@ -811,6 +825,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       listNotificationsSettings = PagedCallSettings.newBuilder(LIST_NOTIFICATIONS_PAGE_STR_FACT);
       composeObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       deleteObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
+      cancelResumableWriteSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       getObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
       readObjectSettings = ServerStreamingCallSettings.newBuilder();
       updateObjectSettings = UnaryCallSettings.newUnaryCallSettingsBuilder();
@@ -843,6 +858,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               listNotificationsSettings,
               composeObjectSettings,
               deleteObjectSettings,
+              cancelResumableWriteSettings,
               getObjectSettings,
               updateObjectSettings,
               listObjectsSettings,
@@ -876,6 +892,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       listNotificationsSettings = settings.listNotificationsSettings.toBuilder();
       composeObjectSettings = settings.composeObjectSettings.toBuilder();
       deleteObjectSettings = settings.deleteObjectSettings.toBuilder();
+      cancelResumableWriteSettings = settings.cancelResumableWriteSettings.toBuilder();
       getObjectSettings = settings.getObjectSettings.toBuilder();
       readObjectSettings = settings.readObjectSettings.toBuilder();
       updateObjectSettings = settings.updateObjectSettings.toBuilder();
@@ -908,6 +925,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
               listNotificationsSettings,
               composeObjectSettings,
               deleteObjectSettings,
+              cancelResumableWriteSettings,
               getObjectSettings,
               updateObjectSettings,
               listObjectsSettings,
@@ -1021,6 +1039,11 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
 
       builder
           .deleteObjectSettings()
+          .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
+          .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
+
+      builder
+          .cancelResumableWriteSettings()
           .setRetryableCodes(RETRYABLE_CODE_DEFINITIONS.get("retry_policy_0_codes"))
           .setRetrySettings(RETRY_PARAM_DEFINITIONS.get("retry_policy_0_params"));
 
@@ -1189,6 +1212,12 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
     /** Returns the builder for the settings used for calls to deleteObject. */
     public UnaryCallSettings.Builder<DeleteObjectRequest, Empty> deleteObjectSettings() {
       return deleteObjectSettings;
+    }
+
+    /** Returns the builder for the settings used for calls to cancelResumableWrite. */
+    public UnaryCallSettings.Builder<CancelResumableWriteRequest, CancelResumableWriteResponse>
+        cancelResumableWriteSettings() {
+      return cancelResumableWriteSettings;
     }
 
     /** Returns the builder for the settings used for calls to getObject. */

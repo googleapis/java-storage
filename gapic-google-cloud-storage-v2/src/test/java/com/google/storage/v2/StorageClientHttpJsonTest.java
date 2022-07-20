@@ -152,6 +152,12 @@ public class StorageClientHttpJsonTest {
   }
 
   @Test
+  public void cancelResumableWriteUnsupportedMethodTest() throws Exception {
+    // The cancelResumableWrite() method is not supported in REST transport.
+    // This empty test is generated for technical reasons.
+  }
+
+  @Test
   public void getObjectUnsupportedMethodTest() throws Exception {
     // The getObject() method is not supported in REST transport.
     // This empty test is generated for technical reasons.

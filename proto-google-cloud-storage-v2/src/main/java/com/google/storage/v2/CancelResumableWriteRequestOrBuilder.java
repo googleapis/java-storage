@@ -18,39 +18,35 @@
 
 package com.google.storage.v2;
 
-public interface GetServiceAccountRequestOrBuilder
+public interface CancelResumableWriteRequestOrBuilder
     extends
-    // @@protoc_insertion_point(interface_extends:google.storage.v2.GetServiceAccountRequest)
+    // @@protoc_insertion_point(interface_extends:google.storage.v2.CancelResumableWriteRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
    *
    *
    * <pre>
-   * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * Required. The upload_id of the resumable upload to cancel. This should be copied
+   * from the `upload_id` field of `StartResumableWriteResponse`.
    * </pre>
    *
-   * <code>
-   * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-   * </code>
+   * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
-   * @return The project.
+   * @return The uploadId.
    */
-  java.lang.String getProject();
+  java.lang.String getUploadId();
   /**
    *
    *
    * <pre>
-   * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * Required. The upload_id of the resumable upload to cancel. This should be copied
+   * from the `upload_id` field of `StartResumableWriteResponse`.
    * </pre>
    *
-   * <code>
-   * string project = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
-   * </code>
+   * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
-   * @return The bytes for project.
+   * @return The bytes for uploadId.
    */
-  com.google.protobuf.ByteString getProjectBytes();
+  com.google.protobuf.ByteString getUploadIdBytes();
 }

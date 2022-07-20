@@ -78,6 +78,8 @@ public interface UpdateHmacKeyRequestOrBuilder
    *
    * <pre>
    * Update mask for hmac_key.
+   * Not specifying any fields will mean only the `state` field is updated to
+   * the value specified in `hmac_key`.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -90,6 +92,8 @@ public interface UpdateHmacKeyRequestOrBuilder
    *
    * <pre>
    * Update mask for hmac_key.
+   * Not specifying any fields will mean only the `state` field is updated to
+   * the value specified in `hmac_key`.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 3;</code>
@@ -102,6 +106,8 @@ public interface UpdateHmacKeyRequestOrBuilder
    *
    * <pre>
    * Update mask for hmac_key.
+   * Not specifying any fields will mean only the `state` field is updated to
+   * the value specified in `hmac_key`.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 3;</code>

@@ -27,10 +27,12 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+   * Immutable. Resource name ID of the key in the format
+   * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The id.
    */
@@ -39,10 +41,12 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Resource name ID of the key in the format &lt;projectId&gt;/&lt;accessId&gt;.
+   * Immutable. Resource name ID of the key in the format
+   * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
-   * <code>string id = 1;</code>
+   * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The bytes for id.
    */
@@ -52,10 +56,10 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Globally unique id for keys.
+   * Immutable. Globally unique id for keys.
    * </pre>
    *
-   * <code>string access_id = 2;</code>
+   * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The accessId.
    */
@@ -64,10 +68,10 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Globally unique id for keys.
+   * Immutable. Globally unique id for keys.
    * </pre>
    *
-   * <code>string access_id = 2;</code>
+   * <code>string access_id = 2 [(.google.api.field_behavior) = IMMUTABLE];</code>
    *
    * @return The bytes for accessId.
    */
@@ -77,10 +81,14 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The project ID that the hmac key is contained in.
+   * Immutable. Identifies the project that owns the service account of the specified HMAC
+   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+   * be the project ID or project number.
    * </pre>
    *
-   * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The project.
    */
@@ -89,10 +97,14 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The project ID that the hmac key is contained in.
+   * Immutable. Identifies the project that owns the service account of the specified HMAC
+   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
+   * be the project ID or project number.
    * </pre>
    *
-   * <code>string project = 3 [(.google.api.resource_reference) = { ... }</code>
+   * <code>
+   * string project = 3 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for project.
    */
@@ -102,10 +114,10 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Email of the service account the key authenticates as.
+   * Output only. Email of the service account the key authenticates as.
    * </pre>
    *
-   * <code>string service_account_email = 4;</code>
+   * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
    *
    * @return The serviceAccountEmail.
    */
@@ -114,10 +126,10 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Email of the service account the key authenticates as.
+   * Output only. Email of the service account the key authenticates as.
    * </pre>
    *
-   * <code>string service_account_email = 4;</code>
+   * <code>string service_account_email = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
    *
    * @return The bytes for serviceAccountEmail.
    */
@@ -128,6 +140,7 @@ public interface HmacKeyMetadataOrBuilder
    *
    * <pre>
    * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
    * <code>string state = 5;</code>
@@ -140,6 +153,7 @@ public interface HmacKeyMetadataOrBuilder
    *
    * <pre>
    * State of the key. One of ACTIVE, INACTIVE, or DELETED.
+   * Writable, can be updated by UpdateHmacKey operation.
    * </pre>
    *
    * <code>string state = 5;</code>
@@ -152,10 +166,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The creation time of the HMAC key.
+   * Output only. The creation time of the HMAC key.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp create_time = 6;</code>
+   * <code>.google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return Whether the createTime field is set.
    */
@@ -164,10 +179,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The creation time of the HMAC key.
+   * Output only. The creation time of the HMAC key.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp create_time = 6;</code>
+   * <code>.google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return The createTime.
    */
@@ -176,10 +192,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The creation time of the HMAC key.
+   * Output only. The creation time of the HMAC key.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp create_time = 6;</code>
+   * <code>.google.protobuf.Timestamp create_time = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    */
   com.google.protobuf.TimestampOrBuilder getCreateTimeOrBuilder();
 
@@ -187,10 +204,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata.
+   * Output only. The last modification time of the HMAC key metadata.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp update_time = 7;</code>
+   * <code>.google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return Whether the updateTime field is set.
    */
@@ -199,10 +217,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata.
+   * Output only. The last modification time of the HMAC key metadata.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp update_time = 7;</code>
+   * <code>.google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    *
    * @return The updateTime.
    */
@@ -211,10 +230,11 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * The last modification time of the HMAC key metadata.
+   * Output only. The last modification time of the HMAC key metadata.
    * </pre>
    *
-   * <code>.google.protobuf.Timestamp update_time = 7;</code>
+   * <code>.google.protobuf.Timestamp update_time = 7 [(.google.api.field_behavior) = OUTPUT_ONLY];
+   * </code>
    */
   com.google.protobuf.TimestampOrBuilder getUpdateTimeOrBuilder();
 

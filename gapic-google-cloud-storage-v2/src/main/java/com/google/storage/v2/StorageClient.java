@@ -771,7 +771,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket.
+   * Gets the IAM policy for a specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -799,7 +799,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket.
+   * Gets the IAM policy for a specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -824,7 +824,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket.
+   * Gets the IAM policy for a specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -852,7 +852,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket.
+   * Gets the IAM policy for a specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -879,7 +879,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket.
+   * Updates an IAM policy for the specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -912,7 +912,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket.
+   * Updates an IAM policy for the specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -942,7 +942,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket.
+   * Updates an IAM policy for the specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -971,7 +971,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket.
+   * Updates an IAM policy for the specified bucket or object.
    *
    * <p>Sample code:
    *
@@ -999,7 +999,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket to see which, if any, are held by the caller.
+   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
+   * caller.
    *
    * <p>Sample code:
    *
@@ -1033,7 +1034,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket to see which, if any, are held by the caller.
+   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
+   * caller.
    *
    * <p>Sample code:
    *
@@ -1067,7 +1069,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket to see which, if any, are held by the caller.
+   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
+   * caller.
    *
    * <p>Sample code:
    *
@@ -1095,7 +1098,8 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Tests a set of permissions on the given bucket to see which, if any, are held by the caller.
+   * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
+   * caller.
    *
    * <p>Sample code:
    *
@@ -1820,7 +1824,6 @@ public class StorageClient implements BackgroundResource {
    *       DeleteObjectRequest.newBuilder()
    *           .setBucket("bucket-1378203158")
    *           .setObject("object-1023368385")
-   *           .setUploadId("uploadId1563990780")
    *           .setGeneration(305703192)
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
@@ -1854,7 +1857,6 @@ public class StorageClient implements BackgroundResource {
    *       DeleteObjectRequest.newBuilder()
    *           .setBucket("bucket-1378203158")
    *           .setObject("object-1023368385")
-   *           .setUploadId("uploadId1563990780")
    *           .setGeneration(305703192)
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
@@ -1870,6 +1872,79 @@ public class StorageClient implements BackgroundResource {
    */
   public final UnaryCallable<DeleteObjectRequest, Empty> deleteObjectCallable() {
     return stub.deleteObjectCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Cancels an in-progress resumable upload.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String uploadId = "uploadId1563990780";
+   *   CancelResumableWriteResponse response = storageClient.cancelResumableWrite(uploadId);
+   * }
+   * }</pre>
+   *
+   * @param uploadId Required. The upload_id of the resumable upload to cancel. This should be
+   *     copied from the `upload_id` field of `StartResumableWriteResponse`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final CancelResumableWriteResponse cancelResumableWrite(String uploadId) {
+    CancelResumableWriteRequest request =
+        CancelResumableWriteRequest.newBuilder().setUploadId(uploadId).build();
+    return cancelResumableWrite(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Cancels an in-progress resumable upload.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   CancelResumableWriteRequest request =
+   *       CancelResumableWriteRequest.newBuilder().setUploadId("uploadId1563990780").build();
+   *   CancelResumableWriteResponse response = storageClient.cancelResumableWrite(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final CancelResumableWriteResponse cancelResumableWrite(
+      CancelResumableWriteRequest request) {
+    return cancelResumableWriteCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Cancels an in-progress resumable upload.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated for illustrative purposes only.
+   * // It may require modifications to work in your environment.
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   CancelResumableWriteRequest request =
+   *       CancelResumableWriteRequest.newBuilder().setUploadId("uploadId1563990780").build();
+   *   ApiFuture<CancelResumableWriteResponse> future =
+   *       storageClient.cancelResumableWriteCallable().futureCall(request);
+   *   // Do something.
+   *   CancelResumableWriteResponse response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteCallable() {
+    return stub.cancelResumableWriteCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2653,7 +2728,8 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. Project ID.
+   * @param project Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
+   *     &lt;projectIdentifier&gt; can be the project ID or project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount getServiceAccount(ProjectName project) {
@@ -2679,7 +2755,8 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. Project ID.
+   * @param project Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
+   *     &lt;projectIdentifier&gt; can be the project ID or project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount getServiceAccount(String project) {
@@ -2754,7 +2831,9 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. The project that the HMAC-owning service account lives in.
+   * @param project Required. The project that the HMAC-owning service account lives in, in the
+   *     format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+   *     project ID or project number.
    * @param serviceAccountEmail Required. The service account to create the HMAC for.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
@@ -2784,7 +2863,9 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. The project that the HMAC-owning service account lives in.
+   * @param project Required. The project that the HMAC-owning service account lives in, in the
+   *     format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+   *     project ID or project number.
    * @param serviceAccountEmail Required. The service account to create the HMAC for.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
@@ -2866,7 +2947,9 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
-   * @param project Required. The project id the HMAC key lies in.
+   * @param project Required. The project that owns the HMAC key, in the format of
+   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
+   *     project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteHmacKey(String accessId, ProjectName project) {
@@ -2895,7 +2978,9 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
-   * @param project Required. The project id the HMAC key lies in.
+   * @param project Required. The project that owns the HMAC key, in the format of
+   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
+   *     project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteHmacKey(String accessId, String project) {
@@ -2972,7 +3057,9 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
-   * @param project Required. The project id the HMAC key lies in.
+   * @param project Required. The project the HMAC key lies in, in the format of
+   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
+   *     project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final HmacKeyMetadata getHmacKey(String accessId, ProjectName project) {
@@ -3001,7 +3088,9 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
-   * @param project Required. The project id the HMAC key lies in.
+   * @param project Required. The project the HMAC key lies in, in the format of
+   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
+   *     project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final HmacKeyMetadata getHmacKey(String accessId, String project) {
@@ -3078,7 +3167,9 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. The project id to list HMAC keys for.
+   * @param project Required. The project to list HMAC keys for, in the format of
+   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
+   *     project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListHmacKeysPagedResponse listHmacKeys(ProjectName project) {
@@ -3106,7 +3197,9 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. The project id to list HMAC keys for.
+   * @param project Required. The project to list HMAC keys for, in the format of
+   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
+   *     project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListHmacKeysPagedResponse listHmacKeys(String project) {
@@ -3233,7 +3326,8 @@ public class StorageClient implements BackgroundResource {
    * @param hmacKey Required. The HMAC key to update. If present, the hmac_key's `id` field will be
    *     used to identify the key. Otherwise, the hmac_key's access_id and project fields will be
    *     used to identify the key.
-   * @param updateMask Update mask for hmac_key.
+   * @param updateMask Update mask for hmac_key. Not specifying any fields will mean only the
+   *     `state` field is updated to the value specified in `hmac_key`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final HmacKeyMetadata updateHmacKey(HmacKeyMetadata hmacKey, FieldMask updateMask) {

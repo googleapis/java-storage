@@ -374,6 +374,28 @@ public class MockStorageImpl extends StorageImplBase {
   }
 
   @Override
+  public void cancelResumableWrite(
+      CancelResumableWriteRequest request,
+      StreamObserver<CancelResumableWriteResponse> responseObserver) {
+    java.lang.Object response = responses.poll();
+    if (response instanceof CancelResumableWriteResponse) {
+      requests.add(request);
+      responseObserver.onNext(((CancelResumableWriteResponse) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method CancelResumableWrite, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  CancelResumableWriteResponse.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
   public void getObject(GetObjectRequest request, StreamObserver<Object> responseObserver) {
     java.lang.Object response = responses.poll();
     if (response instanceof Object) {

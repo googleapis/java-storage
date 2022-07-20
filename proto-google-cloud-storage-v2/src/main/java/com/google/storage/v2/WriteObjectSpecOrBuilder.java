@@ -200,4 +200,41 @@ public interface WriteObjectSpecOrBuilder
    * @return The ifMetagenerationNotMatch.
    */
   long getIfMetagenerationNotMatch();
+
+  /**
+   *
+   *
+   * <pre>
+   * The expected final object size being uploaded.
+   * If this value is set, closing the stream after writing fewer or more than
+   * `object_size` bytes will result in an OUT_OF_RANGE error.
+   * This situation is considered a client error, and if such an error occurs
+   * you must start the upload over from scratch, this time sending the correct
+   * number of bytes.
+   * The `object_size` value is ignored for one-shot (non-resumable) writes.
+   * </pre>
+   *
+   * <code>optional int64 object_size = 8;</code>
+   *
+   * @return Whether the objectSize field is set.
+   */
+  boolean hasObjectSize();
+  /**
+   *
+   *
+   * <pre>
+   * The expected final object size being uploaded.
+   * If this value is set, closing the stream after writing fewer or more than
+   * `object_size` bytes will result in an OUT_OF_RANGE error.
+   * This situation is considered a client error, and if such an error occurs
+   * you must start the upload over from scratch, this time sending the correct
+   * number of bytes.
+   * The `object_size` value is ignored for one-shot (non-resumable) writes.
+   * </pre>
+   *
+   * <code>optional int64 object_size = 8;</code>
+   *
+   * @return The objectSize.
+   */
+  long getObjectSize();
 }

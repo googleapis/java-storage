@@ -117,6 +117,12 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
               predefinedAcl_ = s;
               break;
             }
+          case 64:
+            {
+              bitField0_ |= 0x00000010;
+              objectSize_ = input.readInt64();
+              break;
+            }
           default:
             {
               if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
@@ -399,6 +405,51 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     return ifMetagenerationNotMatch_;
   }
 
+  public static final int OBJECT_SIZE_FIELD_NUMBER = 8;
+  private long objectSize_;
+  /**
+   *
+   *
+   * <pre>
+   * The expected final object size being uploaded.
+   * If this value is set, closing the stream after writing fewer or more than
+   * `object_size` bytes will result in an OUT_OF_RANGE error.
+   * This situation is considered a client error, and if such an error occurs
+   * you must start the upload over from scratch, this time sending the correct
+   * number of bytes.
+   * The `object_size` value is ignored for one-shot (non-resumable) writes.
+   * </pre>
+   *
+   * <code>optional int64 object_size = 8;</code>
+   *
+   * @return Whether the objectSize field is set.
+   */
+  @java.lang.Override
+  public boolean hasObjectSize() {
+    return ((bitField0_ & 0x00000010) != 0);
+  }
+  /**
+   *
+   *
+   * <pre>
+   * The expected final object size being uploaded.
+   * If this value is set, closing the stream after writing fewer or more than
+   * `object_size` bytes will result in an OUT_OF_RANGE error.
+   * This situation is considered a client error, and if such an error occurs
+   * you must start the upload over from scratch, this time sending the correct
+   * number of bytes.
+   * The `object_size` value is ignored for one-shot (non-resumable) writes.
+   * </pre>
+   *
+   * <code>optional int64 object_size = 8;</code>
+   *
+   * @return The objectSize.
+   */
+  @java.lang.Override
+  public long getObjectSize() {
+    return objectSize_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -431,6 +482,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedAcl_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 7, predefinedAcl_);
     }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      output.writeInt64(8, objectSize_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -457,6 +511,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(predefinedAcl_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(7, predefinedAcl_);
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeInt64Size(8, objectSize_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -494,6 +551,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     if (hasIfMetagenerationNotMatch()) {
       if (getIfMetagenerationNotMatch() != other.getIfMetagenerationNotMatch()) return false;
     }
+    if (hasObjectSize() != other.hasObjectSize()) return false;
+    if (hasObjectSize()) {
+      if (getObjectSize() != other.getObjectSize()) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -526,6 +587,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     if (hasIfMetagenerationNotMatch()) {
       hash = (37 * hash) + IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfMetagenerationNotMatch());
+    }
+    if (hasObjectSize()) {
+      hash = (37 * hash) + OBJECT_SIZE_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getObjectSize());
     }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
@@ -687,6 +752,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
+      objectSize_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -737,6 +804,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       if (((from_bitField0_ & 0x00000008) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000008;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.objectSize_ = objectSize_;
+        to_bitField0_ |= 0x00000010;
       }
       result.bitField0_ = to_bitField0_;
       onBuilt();
@@ -806,6 +877,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       }
       if (other.hasIfMetagenerationNotMatch()) {
         setIfMetagenerationNotMatch(other.getIfMetagenerationNotMatch());
+      }
+      if (other.hasObjectSize()) {
+        setObjectSize(other.getObjectSize());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -1425,6 +1499,97 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public Builder clearIfMetagenerationNotMatch() {
       bitField0_ = (bitField0_ & ~0x00000008);
       ifMetagenerationNotMatch_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private long objectSize_;
+    /**
+     *
+     *
+     * <pre>
+     * The expected final object size being uploaded.
+     * If this value is set, closing the stream after writing fewer or more than
+     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * This situation is considered a client error, and if such an error occurs
+     * you must start the upload over from scratch, this time sending the correct
+     * number of bytes.
+     * The `object_size` value is ignored for one-shot (non-resumable) writes.
+     * </pre>
+     *
+     * <code>optional int64 object_size = 8;</code>
+     *
+     * @return Whether the objectSize field is set.
+     */
+    @java.lang.Override
+    public boolean hasObjectSize() {
+      return ((bitField0_ & 0x00000010) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The expected final object size being uploaded.
+     * If this value is set, closing the stream after writing fewer or more than
+     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * This situation is considered a client error, and if such an error occurs
+     * you must start the upload over from scratch, this time sending the correct
+     * number of bytes.
+     * The `object_size` value is ignored for one-shot (non-resumable) writes.
+     * </pre>
+     *
+     * <code>optional int64 object_size = 8;</code>
+     *
+     * @return The objectSize.
+     */
+    @java.lang.Override
+    public long getObjectSize() {
+      return objectSize_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The expected final object size being uploaded.
+     * If this value is set, closing the stream after writing fewer or more than
+     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * This situation is considered a client error, and if such an error occurs
+     * you must start the upload over from scratch, this time sending the correct
+     * number of bytes.
+     * The `object_size` value is ignored for one-shot (non-resumable) writes.
+     * </pre>
+     *
+     * <code>optional int64 object_size = 8;</code>
+     *
+     * @param value The objectSize to set.
+     * @return This builder for chaining.
+     */
+    public Builder setObjectSize(long value) {
+      bitField0_ |= 0x00000010;
+      objectSize_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The expected final object size being uploaded.
+     * If this value is set, closing the stream after writing fewer or more than
+     * `object_size` bytes will result in an OUT_OF_RANGE error.
+     * This situation is considered a client error, and if such an error occurs
+     * you must start the upload over from scratch, this time sending the correct
+     * number of bytes.
+     * The `object_size` value is ignored for one-shot (non-resumable) writes.
+     * </pre>
+     *
+     * <code>optional int64 object_size = 8;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearObjectSize() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      objectSize_ = 0L;
       onChanged();
       return this;
     }

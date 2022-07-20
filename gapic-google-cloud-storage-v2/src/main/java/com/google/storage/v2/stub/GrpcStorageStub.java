@@ -27,8 +27,10 @@ import com.google.api.gax.grpc.GrpcCallSettings;
 import com.google.api.gax.grpc.GrpcStubCallableFactory;
 import com.google.api.gax.rpc.ClientContext;
 import com.google.api.gax.rpc.ClientStreamingCallable;
+import com.google.api.gax.rpc.RequestParamsBuilder;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.api.pathtemplate.PathTemplate;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.Policy;
 import com.google.iam.v1.SetIamPolicyRequest;
@@ -37,6 +39,8 @@ import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.longrunning.stub.GrpcOperationsStub;
 import com.google.protobuf.Empty;
 import com.google.storage.v2.Bucket;
+import com.google.storage.v2.CancelResumableWriteRequest;
+import com.google.storage.v2.CancelResumableWriteResponse;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
@@ -229,6 +233,17 @@ public class GrpcStorageStub extends StorageStub {
           .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
           .build();
 
+  private static final MethodDescriptor<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteMethodDescriptor =
+          MethodDescriptor.<CancelResumableWriteRequest, CancelResumableWriteResponse>newBuilder()
+              .setType(MethodDescriptor.MethodType.UNARY)
+              .setFullMethodName("google.storage.v2.Storage/CancelResumableWrite")
+              .setRequestMarshaller(
+                  ProtoUtils.marshaller(CancelResumableWriteRequest.getDefaultInstance()))
+              .setResponseMarshaller(
+                  ProtoUtils.marshaller(CancelResumableWriteResponse.getDefaultInstance()))
+              .build();
+
   private static final MethodDescriptor<GetObjectRequest, Object> getObjectMethodDescriptor =
       MethodDescriptor.<GetObjectRequest, Object>newBuilder()
           .setType(MethodDescriptor.MethodType.UNARY)
@@ -386,6 +401,8 @@ public class GrpcStorageStub extends StorageStub {
       listNotificationsPagedCallable;
   private final UnaryCallable<ComposeObjectRequest, Object> composeObjectCallable;
   private final UnaryCallable<DeleteObjectRequest, Empty> deleteObjectCallable;
+  private final UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteCallable;
   private final UnaryCallable<GetObjectRequest, Object> getObjectCallable;
   private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> readObjectCallable;
   private final UnaryCallable<UpdateObjectRequest, Object> updateObjectCallable;
@@ -411,6 +428,59 @@ public class GrpcStorageStub extends StorageStub {
   private final BackgroundResource backgroundResources;
   private final GrpcOperationsStub operationsStub;
   private final GrpcStubCallableFactory callableFactory;
+
+  private static final PathTemplate DELETE_BUCKET_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate GET_BUCKET_0_PATH_TEMPLATE = PathTemplate.create("{bucket=**}");
+  private static final PathTemplate LOCK_BUCKET_RETENTION_POLICY_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate GET_IAM_POLICY_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate GET_IAM_POLICY_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
+  private static final PathTemplate SET_IAM_POLICY_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate SET_IAM_POLICY_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
+  private static final PathTemplate TEST_IAM_PERMISSIONS_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate TEST_IAM_PERMISSIONS_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
+  private static final PathTemplate UPDATE_BUCKET_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate DELETE_NOTIFICATION_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate GET_NOTIFICATION_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate CREATE_NOTIFICATION_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate LIST_NOTIFICATIONS_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate COMPOSE_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate DELETE_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate CANCEL_RESUMABLE_WRITE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate GET_OBJECT_0_PATH_TEMPLATE = PathTemplate.create("{bucket=**}");
+  private static final PathTemplate READ_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate UPDATE_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate WRITE_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate WRITE_OBJECT_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate LIST_OBJECTS_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate REWRITE_OBJECT_0_PATH_TEMPLATE =
+      PathTemplate.create("{source_bucket=**}");
+  private static final PathTemplate REWRITE_OBJECT_1_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate START_RESUMABLE_WRITE_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=**}");
+  private static final PathTemplate QUERY_WRITE_STATUS_0_PATH_TEMPLATE =
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
 
   public static final GrpcStorageStub create(StorageStubSettings settings) throws IOException {
     return new GrpcStorageStub(settings, ClientContext.create(settings));
@@ -450,10 +520,22 @@ public class GrpcStorageStub extends StorageStub {
     GrpcCallSettings<DeleteBucketRequest, Empty> deleteBucketTransportSettings =
         GrpcCallSettings.<DeleteBucketRequest, Empty>newBuilder()
             .setMethodDescriptor(deleteBucketMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", DELETE_BUCKET_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<GetBucketRequest, Bucket> getBucketTransportSettings =
         GrpcCallSettings.<GetBucketRequest, Bucket>newBuilder()
             .setMethodDescriptor(getBucketMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", GET_BUCKET_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<CreateBucketRequest, Bucket> createBucketTransportSettings =
         GrpcCallSettings.<CreateBucketRequest, Bucket>newBuilder()
@@ -467,82 +549,245 @@ public class GrpcStorageStub extends StorageStub {
         lockBucketRetentionPolicyTransportSettings =
             GrpcCallSettings.<LockBucketRetentionPolicyRequest, Bucket>newBuilder()
                 .setMethodDescriptor(lockBucketRetentionPolicyMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getBucket(),
+                          "bucket",
+                          LOCK_BUCKET_RETENTION_POLICY_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
                 .build();
     GrpcCallSettings<GetIamPolicyRequest, Policy> getIamPolicyTransportSettings =
         GrpcCallSettings.<GetIamPolicyRequest, Policy>newBuilder()
             .setMethodDescriptor(getIamPolicyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getResource(), "bucket", GET_IAM_POLICY_0_PATH_TEMPLATE);
+                  builder.add(request.getResource(), "bucket", GET_IAM_POLICY_1_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<SetIamPolicyRequest, Policy> setIamPolicyTransportSettings =
         GrpcCallSettings.<SetIamPolicyRequest, Policy>newBuilder()
             .setMethodDescriptor(setIamPolicyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getResource(), "bucket", SET_IAM_POLICY_0_PATH_TEMPLATE);
+                  builder.add(request.getResource(), "bucket", SET_IAM_POLICY_1_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<TestIamPermissionsRequest, TestIamPermissionsResponse>
         testIamPermissionsTransportSettings =
             GrpcCallSettings.<TestIamPermissionsRequest, TestIamPermissionsResponse>newBuilder()
                 .setMethodDescriptor(testIamPermissionsMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getResource(), "bucket", TEST_IAM_PERMISSIONS_0_PATH_TEMPLATE);
+                      builder.add(
+                          request.getResource(), "bucket", TEST_IAM_PERMISSIONS_1_PATH_TEMPLATE);
+                      return builder.build();
+                    })
                 .build();
     GrpcCallSettings<UpdateBucketRequest, Bucket> updateBucketTransportSettings =
         GrpcCallSettings.<UpdateBucketRequest, Bucket>newBuilder()
             .setMethodDescriptor(updateBucketMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  if (request.getBucket() != null) {
+                    builder.add(
+                        request.getBucket().getName(), "bucket", UPDATE_BUCKET_0_PATH_TEMPLATE);
+                  }
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<DeleteNotificationRequest, Empty> deleteNotificationTransportSettings =
         GrpcCallSettings.<DeleteNotificationRequest, Empty>newBuilder()
             .setMethodDescriptor(deleteNotificationMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", DELETE_NOTIFICATION_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<GetNotificationRequest, Notification> getNotificationTransportSettings =
         GrpcCallSettings.<GetNotificationRequest, Notification>newBuilder()
             .setMethodDescriptor(getNotificationMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", GET_NOTIFICATION_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<CreateNotificationRequest, Notification> createNotificationTransportSettings =
         GrpcCallSettings.<CreateNotificationRequest, Notification>newBuilder()
             .setMethodDescriptor(createNotificationMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getParent(), "bucket", CREATE_NOTIFICATION_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<ListNotificationsRequest, ListNotificationsResponse>
         listNotificationsTransportSettings =
             GrpcCallSettings.<ListNotificationsRequest, ListNotificationsResponse>newBuilder()
                 .setMethodDescriptor(listNotificationsMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getParent(), "bucket", LIST_NOTIFICATIONS_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
                 .build();
     GrpcCallSettings<ComposeObjectRequest, Object> composeObjectTransportSettings =
         GrpcCallSettings.<ComposeObjectRequest, Object>newBuilder()
             .setMethodDescriptor(composeObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  if (request.getDestination() != null) {
+                    builder.add(
+                        request.getDestination().getBucket(),
+                        "bucket",
+                        COMPOSE_OBJECT_0_PATH_TEMPLATE);
+                  }
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<DeleteObjectRequest, Empty> deleteObjectTransportSettings =
         GrpcCallSettings.<DeleteObjectRequest, Empty>newBuilder()
             .setMethodDescriptor(deleteObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getBucket(), "bucket", DELETE_OBJECT_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
+    GrpcCallSettings<CancelResumableWriteRequest, CancelResumableWriteResponse>
+        cancelResumableWriteTransportSettings =
+            GrpcCallSettings.<CancelResumableWriteRequest, CancelResumableWriteResponse>newBuilder()
+                .setMethodDescriptor(cancelResumableWriteMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getUploadId(), "bucket", CANCEL_RESUMABLE_WRITE_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
+                .build();
     GrpcCallSettings<GetObjectRequest, Object> getObjectTransportSettings =
         GrpcCallSettings.<GetObjectRequest, Object>newBuilder()
             .setMethodDescriptor(getObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getBucket(), "bucket", GET_OBJECT_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<ReadObjectRequest, ReadObjectResponse> readObjectTransportSettings =
         GrpcCallSettings.<ReadObjectRequest, ReadObjectResponse>newBuilder()
             .setMethodDescriptor(readObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getBucket(), "bucket", READ_OBJECT_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<UpdateObjectRequest, Object> updateObjectTransportSettings =
         GrpcCallSettings.<UpdateObjectRequest, Object>newBuilder()
             .setMethodDescriptor(updateObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  if (request.getObject() != null) {
+                    builder.add(
+                        request.getObject().getBucket(), "bucket", UPDATE_OBJECT_0_PATH_TEMPLATE);
+                  }
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<WriteObjectRequest, WriteObjectResponse> writeObjectTransportSettings =
         GrpcCallSettings.<WriteObjectRequest, WriteObjectResponse>newBuilder()
             .setMethodDescriptor(writeObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  if (request.getWriteObjectSpec() != null
+                      && request.getWriteObjectSpec().getResource() != null) {
+                    builder.add(
+                        request.getWriteObjectSpec().getResource().getBucket(),
+                        "bucket",
+                        WRITE_OBJECT_0_PATH_TEMPLATE);
+                  }
+                  builder.add(request.getUploadId(), "bucket", WRITE_OBJECT_1_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<ListObjectsRequest, ListObjectsResponse> listObjectsTransportSettings =
         GrpcCallSettings.<ListObjectsRequest, ListObjectsResponse>newBuilder()
             .setMethodDescriptor(listObjectsMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getParent(), "bucket", LIST_OBJECTS_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<RewriteObjectRequest, RewriteResponse> rewriteObjectTransportSettings =
         GrpcCallSettings.<RewriteObjectRequest, RewriteResponse>newBuilder()
             .setMethodDescriptor(rewriteObjectMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(
+                      request.getSourceBucket(), "source_bucket", REWRITE_OBJECT_0_PATH_TEMPLATE);
+                  builder.add(
+                      request.getDestinationBucket(), "bucket", REWRITE_OBJECT_1_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<StartResumableWriteRequest, StartResumableWriteResponse>
         startResumableWriteTransportSettings =
             GrpcCallSettings.<StartResumableWriteRequest, StartResumableWriteResponse>newBuilder()
                 .setMethodDescriptor(startResumableWriteMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      if (request.getWriteObjectSpec() != null
+                          && request.getWriteObjectSpec().getResource() != null) {
+                        builder.add(
+                            request.getWriteObjectSpec().getResource().getBucket(),
+                            "bucket",
+                            START_RESUMABLE_WRITE_0_PATH_TEMPLATE);
+                      }
+                      return builder.build();
+                    })
                 .build();
     GrpcCallSettings<QueryWriteStatusRequest, QueryWriteStatusResponse>
         queryWriteStatusTransportSettings =
             GrpcCallSettings.<QueryWriteStatusRequest, QueryWriteStatusResponse>newBuilder()
                 .setMethodDescriptor(queryWriteStatusMethodDescriptor)
+                .setParamsExtractor(
+                    request -> {
+                      RequestParamsBuilder builder = RequestParamsBuilder.create();
+                      builder.add(
+                          request.getUploadId(), "bucket", QUERY_WRITE_STATUS_0_PATH_TEMPLATE);
+                      return builder.build();
+                    })
                 .build();
     GrpcCallSettings<GetServiceAccountRequest, ServiceAccount> getServiceAccountTransportSettings =
         GrpcCallSettings.<GetServiceAccountRequest, ServiceAccount>newBuilder()
@@ -632,6 +877,11 @@ public class GrpcStorageStub extends StorageStub {
     this.deleteObjectCallable =
         callableFactory.createUnaryCallable(
             deleteObjectTransportSettings, settings.deleteObjectSettings(), clientContext);
+    this.cancelResumableWriteCallable =
+        callableFactory.createUnaryCallable(
+            cancelResumableWriteTransportSettings,
+            settings.cancelResumableWriteSettings(),
+            clientContext);
     this.getObjectCallable =
         callableFactory.createUnaryCallable(
             getObjectTransportSettings, settings.getObjectSettings(), clientContext);
@@ -780,6 +1030,12 @@ public class GrpcStorageStub extends StorageStub {
   @Override
   public UnaryCallable<DeleteObjectRequest, Empty> deleteObjectCallable() {
     return deleteObjectCallable;
+  }
+
+  @Override
+  public UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
+      cancelResumableWriteCallable() {
+    return cancelResumableWriteCallable;
   }
 
   @Override

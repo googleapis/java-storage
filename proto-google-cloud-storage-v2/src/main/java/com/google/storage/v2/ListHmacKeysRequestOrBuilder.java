@@ -27,7 +27,9 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project id to list HMAC keys for.
+   * Required. The project to list HMAC keys for, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -41,7 +43,9 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project id to list HMAC keys for.
+   * Required. The project to list HMAC keys for, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>

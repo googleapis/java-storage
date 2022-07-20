@@ -16828,7 +16828,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The project which owns this bucket.
+   * Immutable. The project which owns this bucket, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -16853,7 +16855,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The project which owns this bucket.
+   * Immutable. The project which owns this bucket, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -19559,7 +19563,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The project which owns this bucket.
+     * Immutable. The project which owns this bucket, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19583,7 +19589,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The project which owns this bucket.
+     * Immutable. The project which owns this bucket, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19607,7 +19615,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The project which owns this bucket.
+     * Immutable. The project which owns this bucket, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19630,7 +19640,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The project which owns this bucket.
+     * Immutable. The project which owns this bucket, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19649,7 +19661,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The project which owns this bucket.
+     * Immutable. The project which owns this bucket, in the format of
+     * "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>

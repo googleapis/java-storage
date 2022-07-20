@@ -52,7 +52,9 @@ public interface GetHmacKeyRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project id the HMAC key lies in.
+   * Required. The project the HMAC key lies in, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -66,7 +68,9 @@ public interface GetHmacKeyRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The project id the HMAC key lies in.
+   * Required. The project the HMAC key lies in, in the format of
+   * "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
