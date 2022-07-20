@@ -322,8 +322,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    * back from the end of the object to be returned. For example, if an object's
    * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
    * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-   * a negative offset whose magnitude is larger than the size of the object
-   * will result in an error.
+   * a negative offset with magnitude larger than the size of the object will
+   * return the entire object.
    * </pre>
    *
    * <code>int64 read_offset = 4;</code>
@@ -401,7 +401,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the object's current generation
+   * Makes the operation conditional on whether the object's live generation
    * does not match the given value. If no live object exists, the precondition
    * fails. Setting to 0 makes the operation succeed only if there is a live
    * version of the object.
@@ -419,7 +419,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * Makes the operation conditional on whether the object's current generation
+   * Makes the operation conditional on whether the object's live generation
    * does not match the given value. If no live object exists, the precondition
    * fails. Setting to 0 makes the operation succeed only if there is a live
    * version of the object.
@@ -1426,8 +1426,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * back from the end of the object to be returned. For example, if an object's
      * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
      * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset whose magnitude is larger than the size of the object
-     * will result in an error.
+     * a negative offset with magnitude larger than the size of the object will
+     * return the entire object.
      * </pre>
      *
      * <code>int64 read_offset = 4;</code>
@@ -1448,8 +1448,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * back from the end of the object to be returned. For example, if an object's
      * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
      * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset whose magnitude is larger than the size of the object
-     * will result in an error.
+     * a negative offset with magnitude larger than the size of the object will
+     * return the entire object.
      * </pre>
      *
      * <code>int64 read_offset = 4;</code>
@@ -1473,8 +1473,8 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      * back from the end of the object to be returned. For example, if an object's
      * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
      * `read_limit` = 3 would return bytes 10 through 12 of the object. Requesting
-     * a negative offset whose magnitude is larger than the size of the object
-     * will result in an error.
+     * a negative offset with magnitude larger than the size of the object will
+     * return the entire object.
      * </pre>
      *
      * <code>int64 read_offset = 4;</code>
@@ -1635,7 +1635,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * Makes the operation conditional on whether the object's current generation
+     * Makes the operation conditional on whether the object's live generation
      * does not match the given value. If no live object exists, the precondition
      * fails. Setting to 0 makes the operation succeed only if there is a live
      * version of the object.
@@ -1653,7 +1653,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * Makes the operation conditional on whether the object's current generation
+     * Makes the operation conditional on whether the object's live generation
      * does not match the given value. If no live object exists, the precondition
      * fails. Setting to 0 makes the operation succeed only if there is a live
      * version of the object.
@@ -1671,7 +1671,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * Makes the operation conditional on whether the object's current generation
+     * Makes the operation conditional on whether the object's live generation
      * does not match the given value. If no live object exists, the precondition
      * fails. Setting to 0 makes the operation succeed only if there is a live
      * version of the object.
@@ -1692,7 +1692,7 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * Makes the operation conditional on whether the object's current generation
+     * Makes the operation conditional on whether the object's live generation
      * does not match the given value. If no live object exists, the precondition
      * fails. Setting to 0 makes the operation succeed only if there is a live
      * version of the object.

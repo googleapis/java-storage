@@ -24,6 +24,7 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
 import com.google.common.base.Joiner;
+import com.google.common.base.Suppliers;
 import com.google.errorprone.annotations.Immutable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +38,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * An individual resolved test case correlating config from {@link
@@ -58,13 +61,16 @@ final class TestRetryConformance {
     BASE_ID = formatter.format(now).replaceAll("[:]", "").substring(0, 6);
   }
 
+  private static final int _512KiB = 512 * 1024;
+  private static final int _8MiB = 8 * 1024 * 1024;
+
   private final String projectId;
   private final String bucketName;
   private final String bucketName2;
   private final String userProject;
   private final String objectName;
 
-  private final byte[] helloWorldUtf8Bytes = "Hello, World!!!".getBytes(StandardCharsets.UTF_8);
+  private final Supplier<byte[]> lazyHelloWorldUtf8Bytes;
   private final Path helloWorldFilePath = resolvePathForResource();
   private final ServiceAccountCredentials serviceAccountCredentials =
       resolveServiceAccountCredentials();
@@ -126,6 +132,33 @@ final class TestRetryConformance {
         String.format(
             "%s_s%03d-%s-m%03d_obj1",
             BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
+    lazyHelloWorldUtf8Bytes =
+        Suppliers.memoize(
+            () -> {
+              // define a lazy supplier for bytes.
+              // Not all tests need data for an object, though some tests - resumable upload - needs
+              // more than 8MiB.
+              // We want to avoid allocating 8.1MiB for each test unnecessarily, especially since we
+              // instantiate all permuted test cases. ~1000 * 8.1MiB ~~ > 8GiB.
+              String helloWorld = "Hello, World!";
+              int baseDataSize;
+              switch (method.getName()) {
+                case "storage.objects.insert":
+                  baseDataSize = _8MiB + 1;
+                  break;
+                case "storage.objects.get":
+                  baseDataSize = _512KiB;
+                  break;
+                default:
+                  baseDataSize = helloWorld.length();
+                  break;
+              }
+              int endInclusive = (baseDataSize / helloWorld.length());
+              return IntStream.rangeClosed(1, endInclusive)
+                  .mapToObj(i -> helloWorld)
+                  .collect(Collectors.joining())
+                  .getBytes(StandardCharsets.UTF_8);
+            });
   }
 
   public String getProjectId() {
@@ -153,7 +186,7 @@ final class TestRetryConformance {
   }
 
   public byte[] getHelloWorldUtf8Bytes() {
-    return helloWorldUtf8Bytes;
+    return lazyHelloWorldUtf8Bytes.get();
   }
 
   public Path getHelloWorldFilePath() {

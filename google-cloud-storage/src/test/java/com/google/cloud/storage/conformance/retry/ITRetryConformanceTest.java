@@ -154,7 +154,7 @@ public class ITRetryConformanceTest {
                     .and(
                         (m, trc) ->
                             trc.getScenarioId()
-                                < 7) // Temporarily exclude resumable media scenarios
+                                != 7) // Temporarily exclude resumable upload scenarios
                 )
             .build();
 

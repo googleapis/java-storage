@@ -18,7 +18,6 @@ package com.google.storage.v2;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
@@ -120,6 +119,20 @@ import javax.annotation.Generated;
  * StorageClient storageClient = StorageClient.create(storageSettings);
  * }</pre>
  *
+ * <p>To use REST (HTTP1.1/JSON) transport (instead of gRPC) for sending and receiving requests over
+ * the wire:
+ *
+ * <pre>{@code
+ * // This snippet has been automatically generated for illustrative purposes only.
+ * // It may require modifications to work in your environment.
+ * StorageSettings storageSettings =
+ *     StorageSettings.newBuilder()
+ *         .setTransportChannelProvider(
+ *             StorageSettings.defaultHttpJsonTransportProviderBuilder().build())
+ *         .build();
+ * StorageClient storageClient = StorageClient.create(storageSettings);
+ * }</pre>
+ *
  * <p>Please refer to the GitHub repository's samples for more quickstart code snippets.
  */
 @Generated("by gapic-generator-java")
@@ -144,7 +157,6 @@ public class StorageClient implements BackgroundResource {
    * Constructs an instance of StorageClient, using the given stub for making calls. This is for
    * advanced usage - prefer using create(StorageSettings).
    */
-  @BetaApi("A restructuring of stub classes is planned, so this may break in the future")
   public static final StorageClient create(StorageStub stub) {
     return new StorageClient(stub);
   }
@@ -158,7 +170,6 @@ public class StorageClient implements BackgroundResource {
     this.stub = ((StorageStubSettings) settings.getStubSettings()).createStub();
   }
 
-  @BetaApi("A restructuring of stub classes is planned, so this may break in the future")
   protected StorageClient(StorageStub stub) {
     this.settings = null;
     this.stub = stub;
@@ -168,7 +179,6 @@ public class StorageClient implements BackgroundResource {
     return settings;
   }
 
-  @BetaApi("A restructuring of stub classes is planned, so this may break in the future")
   public StorageStub getStub() {
     return stub;
   }
@@ -639,7 +649,7 @@ public class StorageClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListBucketsResponse response = storageClient.listBucketsCallable().call(request);
-   *     for (Bucket element : response.getResponsesList()) {
+   *     for (Bucket element : response.getBucketsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1651,7 +1661,7 @@ public class StorageClient implements BackgroundResource {
    *   while (true) {
    *     ListNotificationsResponse response =
    *         storageClient.listNotificationsCallable().call(request);
-   *     for (Notification element : response.getResponsesList()) {
+   *     for (Notification element : response.getNotificationsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -2039,8 +2049,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param object The object to update. The object's bucket and name fields are used to identify
    *     the object to update. If present, the object's generation field selects a specific revision
-   *     of this object whose metadata should be updated. Otherwise, assumes the current, live
-   *     version of the object.
+   *     of this object whose metadata should be updated. Otherwise, assumes the live version of the
+   *     object.
    * @param updateMask List of fields to be updated.
    *     <p>To specify ALL fields, equivalent to the JSON API's "update" function, specify a single
    *     field with the value `&#42;`. Note: not recommended. If a new field is introduced at a
@@ -2129,18 +2139,38 @@ public class StorageClient implements BackgroundResource {
    * preconditions. Additionally, the final message must set 'finish_write' to true, or else it is
    * an error.
    *
-   * <p>For a resumable write, the client should instead call `StartResumableWrite()` and provide
-   * that method an `WriteObjectSpec.` They should then attach the returned `upload_id` to the first
-   * message of each following call to `Create`. If there is an error or the connection is broken
-   * during the resumable `Create()`, the client should check the status of the `Create()` by
-   * calling `QueryWriteStatus()` and continue writing from the returned `persisted_size`. This may
-   * be less than the amount of data the client previously sent.
+   * <p>For a resumable write, the client should instead call `StartResumableWrite()`, populating a
+   * `WriteObjectSpec` into that request. They should then attach the returned `upload_id` to the
+   * first message of each following call to `WriteObject`. If the stream is closed before finishing
+   * the upload (either explicitly by the client or due to a network error or an error response from
+   * the server), the client should do as follows: - Check the result Status of the stream, to
+   * determine if writing can be resumed on this stream or must be restarted from scratch (by
+   * calling `StartResumableWrite()`). The resumable errors are DEADLINE_EXCEEDED, INTERNAL, and
+   * UNAVAILABLE. For each case, the client should use binary exponential backoff before retrying.
+   * Additionally, writes can be resumed after RESOURCE_EXHAUSTED errors, but only after taking
+   * appropriate measures, which may include reducing aggregate send rate across clients and/or
+   * requesting a quota increase for your project. - If the call to `WriteObject` returns `ABORTED`,
+   * that indicates concurrent attempts to update the resumable write, caused either by multiple
+   * racing clients or by a single client where the previous request was timed out on the client
+   * side but nonetheless reached the server. In this case the client should take steps to prevent
+   * further concurrent writes (e.g., increase the timeouts, stop using more than one process to
+   * perform the upload, etc.), and then should follow the steps below for resuming the upload. -
+   * For resumable errors, the client should call `QueryWriteStatus()` and then continue writing
+   * from the returned `persisted_size`. This may be less than the amount of data the client
+   * previously sent. Note also that it is acceptable to send data starting at an offset earlier
+   * than the returned `persisted_size`; in this case, the service will skip data at offsets that
+   * were already persisted (without checking that it matches the previously written data), and
+   * write only the data starting from the persisted offset. This behavior can make client-side
+   * handling simpler in some cases.
    *
    * <p>The service will not view the object as complete until the client has sent a
    * `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after
    * sending a request with `finish_write` set to `true` will cause an error. The client
    * &#42;&#42;should&#42;&#42; check the response it receives to determine how much data the
    * service was able to commit and whether the service views the object as complete.
+   *
+   * <p>Attempting to resume an already finalized object will result in an OK status, with a
+   * WriteObjectResponse containing the finalized object's metadata.
    *
    * <p>Sample code:
    *
@@ -2333,7 +2363,7 @@ public class StorageClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListObjectsResponse response = storageClient.listObjectsCallable().call(request);
-   *     for (Object element : response.getResponsesList()) {
+   *     for (Object element : response.getObjectsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -3167,7 +3197,7 @@ public class StorageClient implements BackgroundResource {
    *           .build();
    *   while (true) {
    *     ListHmacKeysResponse response = storageClient.listHmacKeysCallable().call(request);
-   *     for (HmacKeyMetadata element : response.getResponsesList()) {
+   *     for (HmacKeyMetadata element : response.getHmacKeysList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();

@@ -58,7 +58,8 @@ public interface ListNotificationsRequestOrBuilder
    * <pre>
    * The maximum number of notifications to return. The service may return fewer
    * than this value.
-   * The maximum value is 100; values above 100 will be coerced to 100.
+   * The default value is 100. Specifying a value above 100 will result in a
+   * page_size of 100.
    * </pre>
    *
    * <code>int32 page_size = 2;</code>

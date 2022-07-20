@@ -103,6 +103,7 @@ public class BucketInfo implements Serializable {
   private final IamConfiguration iamConfiguration;
   private final String locationType;
   private final Logging logging;
+  private final CustomPlacementConfig customPlacementConfig;
 
   private static final Logger log = Logger.getLogger(BucketInfo.class.getName());
 
@@ -329,6 +330,76 @@ public class BucketInfo implements Serializable {
   }
 
   /**
+   * The bucket's custom placement configuration for Custom Dual Regions. If using `location` is
+   * also required.
+   */
+  public static class CustomPlacementConfig implements Serializable {
+
+    private static final long serialVersionUID = -3172255903331692127L;
+    private List<String> dataLocations;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      CustomPlacementConfig other = (CustomPlacementConfig) o;
+      return Objects.equals(toPb(), other.toPb());
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(dataLocations);
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Builder toBuilder() {
+      Builder builder = new Builder();
+      builder.dataLocations = dataLocations;
+      return builder;
+    }
+
+    public List<String> getDataLocations() {
+      return dataLocations;
+    }
+
+    Bucket.CustomPlacementConfig toPb() {
+      Bucket.CustomPlacementConfig customPlacementConfig = null;
+      if (dataLocations != null) {
+        customPlacementConfig = new Bucket.CustomPlacementConfig();
+        customPlacementConfig.setDataLocations(dataLocations);
+      }
+      return customPlacementConfig;
+    }
+
+    static CustomPlacementConfig fromPb(Bucket.CustomPlacementConfig customPlacementConfig) {
+      return newBuilder().setDataLocations(customPlacementConfig.getDataLocations()).build();
+    }
+
+    private CustomPlacementConfig(Builder builder) {
+      this.dataLocations = builder.dataLocations;
+    }
+
+    public static class Builder {
+      private List<String> dataLocations;
+
+      /** A list of regions for custom placement configurations. */
+      public Builder setDataLocations(List<String> dataLocations) {
+        this.dataLocations = dataLocations != null ? ImmutableList.copyOf(dataLocations) : null;
+        return this;
+      }
+
+      public CustomPlacementConfig build() {
+        return new CustomPlacementConfig(this);
+      }
+    }
+  }
+
+  /**
    * The bucket's logging configuration, which defines the destination bucket and optional name
    * prefix for the current bucket's logs.
    */
@@ -446,7 +517,9 @@ public class BucketInfo implements Serializable {
           && condition.getDaysSinceNoncurrentTime() == null
           && condition.getNoncurrentTimeBefore() == null
           && condition.getCustomTimeBefore() == null
-          && condition.getDaysSinceCustomTime() == null) {
+          && condition.getDaysSinceCustomTime() == null
+          && condition.getMatchesPrefix() == null
+          && condition.getMatchesSuffix() == null) {
         log.warning(
             "Creating a lifecycle condition with no supported conditions:\n"
                 + this
@@ -527,7 +600,9 @@ public class BucketInfo implements Serializable {
                   lifecycleCondition.getCustomTimeBefore() == null
                       ? null
                       : new DateTime(true, lifecycleCondition.getCustomTimeBefore().getValue(), 0))
-              .setDaysSinceCustomTime(lifecycleCondition.getDaysSinceCustomTime());
+              .setDaysSinceCustomTime(lifecycleCondition.getDaysSinceCustomTime())
+              .setMatchesPrefix(lifecycleCondition.getMatchesPrefix())
+              .setMatchesSuffix(lifecycleCondition.getMatchesSuffix());
 
       rule.setCondition(condition);
 
@@ -547,6 +622,9 @@ public class BucketInfo implements Serializable {
           lifecycleAction =
               LifecycleAction.newSetStorageClassAction(
                   StorageClass.valueOf(action.getStorageClass()));
+          break;
+        case AbortIncompleteMPUAction.TYPE:
+          lifecycleAction = LifecycleAction.newAbortIncompleteMPUploadAction();
           break;
         default:
           log.warning(
@@ -601,6 +679,8 @@ public class BucketInfo implements Serializable {
       private final DateTime noncurrentTimeBefore;
       private final DateTime customTimeBefore;
       private final Integer daysSinceCustomTime;
+      private final List<String> matchesPrefix;
+      private final List<String> matchesSuffix;
 
       private LifecycleCondition(Builder builder) {
         this.age = builder.age;
@@ -612,6 +692,8 @@ public class BucketInfo implements Serializable {
         this.noncurrentTimeBefore = builder.noncurrentTimeBefore;
         this.customTimeBefore = builder.customTimeBefore;
         this.daysSinceCustomTime = builder.daysSinceCustomTime;
+        this.matchesPrefix = builder.matchesPrefix;
+        this.matchesSuffix = builder.matchesSuffix;
       }
 
       public Builder toBuilder() {
@@ -624,7 +706,9 @@ public class BucketInfo implements Serializable {
             .setDaysSinceNoncurrentTime(this.daysSinceNoncurrentTime)
             .setNoncurrentTimeBefore(this.noncurrentTimeBefore)
             .setCustomTimeBefore(this.customTimeBefore)
-            .setDaysSinceCustomTime(this.daysSinceCustomTime);
+            .setDaysSinceCustomTime(this.daysSinceCustomTime)
+            .setMatchesPrefix(this.matchesPrefix)
+            .setMatchesSuffix(this.matchesSuffix);
       }
 
       public static Builder newBuilder() {
@@ -643,6 +727,8 @@ public class BucketInfo implements Serializable {
             .add("noncurrentTimeBefore", noncurrentTimeBefore)
             .add("customTimeBefore", customTimeBefore)
             .add("daysSinceCustomTime", daysSinceCustomTime)
+            .add("matchesPrefix", matchesPrefix)
+            .add("matchesSuffix", matchesSuffix)
             .toString();
       }
 
@@ -688,6 +774,14 @@ public class BucketInfo implements Serializable {
         return daysSinceCustomTime;
       }
 
+      public List<String> getMatchesPrefix() {
+        return matchesPrefix;
+      }
+
+      public List<String> getMatchesSuffix() {
+        return matchesSuffix;
+      }
+
       /** Builder for {@code LifecycleCondition}. */
       public static class Builder {
         private Integer age;
@@ -699,6 +793,8 @@ public class BucketInfo implements Serializable {
         private DateTime noncurrentTimeBefore;
         private DateTime customTimeBefore;
         private Integer daysSinceCustomTime;
+        private List<String> matchesPrefix;
+        private List<String> matchesSuffix;
 
         private Builder() {}
 
@@ -797,6 +893,24 @@ public class BucketInfo implements Serializable {
           return this;
         }
 
+        /**
+         * Sets the list of prefixes. If any prefix matches the beginning of the object’s name, this
+         * portion of the condition is satisfied for that object.
+         */
+        public Builder setMatchesPrefix(List<String> matchesPrefix) {
+          this.matchesPrefix = matchesPrefix != null ? ImmutableList.copyOf(matchesPrefix) : null;
+          return this;
+        }
+
+        /**
+         * Sets the list of suffixes. If any suffix matches the end of the object’s name, this
+         * portion of the condition is satisfied for that object.
+         */
+        public Builder setMatchesSuffix(List<String> matchesSuffix) {
+          this.matchesSuffix = matchesSuffix != null ? ImmutableList.copyOf(matchesSuffix) : null;
+          return this;
+        }
+
         /** Builds a {@code LifecycleCondition} object. * */
         public LifecycleCondition build() {
           return new LifecycleCondition(this);
@@ -846,6 +960,15 @@ public class BucketInfo implements Serializable {
       }
 
       /**
+       * Create a new {@code AbortIncompleteMPUAction}. An incomplete multipart upload will be
+       * aborted when the multipart upload meets the specified condition. Age is the only condition
+       * supported for this action. See: https://cloud.google.com/storage/docs/lifecycle##abort-mpu
+       */
+      public static LifecycleAction newAbortIncompleteMPUploadAction() {
+        return new AbortIncompleteMPUAction();
+      }
+
+      /**
        * Creates a new {@code LifecycleAction , with no specific supported action associated with it. This
        * is only intended as a "backup" for when the library doesn't recognize the type, and should
        * generally not be used, instead use the supported actions, and upgrade the library if necessary
@@ -886,6 +1009,15 @@ public class BucketInfo implements Serializable {
 
       public StorageClass getStorageClass() {
         return storageClass;
+      }
+    }
+
+    public static class AbortIncompleteMPUAction extends LifecycleAction {
+      public static final String TYPE = "AbortIncompleteMultipartUpload";
+      private static final long serialVersionUID = -1072182310389348060L;
+
+      private AbortIncompleteMPUAction() {
+        super(TYPE);
       }
     }
   }
@@ -1300,6 +1432,8 @@ public class BucketInfo implements Serializable {
 
     public abstract Builder setLogging(Logging logging);
 
+    public abstract Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig);
+
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
   }
@@ -1335,6 +1469,7 @@ public class BucketInfo implements Serializable {
     private IamConfiguration iamConfiguration;
     private String locationType;
     private Logging logging;
+    private CustomPlacementConfig customPlacementConfig;
 
     BuilderImpl(String name) {
       this.name = name;
@@ -1370,6 +1505,7 @@ public class BucketInfo implements Serializable {
       iamConfiguration = bucketInfo.iamConfiguration;
       locationType = bucketInfo.locationType;
       logging = bucketInfo.logging;
+      customPlacementConfig = bucketInfo.customPlacementConfig;
     }
 
     @Override
@@ -1566,6 +1702,12 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig) {
+      this.customPlacementConfig = customPlacementConfig != null ? customPlacementConfig : null;
+      return this;
+    }
+
+    @Override
     Builder setLocationType(String locationType) {
       this.locationType = locationType;
       return this;
@@ -1608,6 +1750,7 @@ public class BucketInfo implements Serializable {
     iamConfiguration = builder.iamConfiguration;
     locationType = builder.locationType;
     logging = builder.logging;
+    customPlacementConfig = builder.customPlacementConfig;
   }
 
   /** Returns the service-generated id for the bucket. */
@@ -1731,7 +1874,8 @@ public class BucketInfo implements Serializable {
 
   /**
    * Returns the bucket's location. Data for blobs in the bucket resides in physical storage within
-   * this region or regions.
+   * this region or regions. If specifying more than one region `customPlacementConfig` should be
+   * set in conjunction.
    *
    * @see <a href="https://cloud.google.com/storage/docs/bucket-locations">Bucket Locations</a>
    */
@@ -1882,6 +2026,11 @@ public class BucketInfo implements Serializable {
   /** Returns the Logging */
   public Logging getLogging() {
     return logging;
+  }
+
+  /** Returns the Custom Placement Configuration */
+  public CustomPlacementConfig getCustomPlacementConfig() {
+    return customPlacementConfig;
   }
 
   /** Returns a builder for the current bucket. */
@@ -2057,6 +2206,9 @@ public class BucketInfo implements Serializable {
     if (logging != null) {
       bucketPb.setLogging(logging.toPb());
     }
+    if (customPlacementConfig != null) {
+      bucketPb.setCustomPlacementConfig(customPlacementConfig.toPb());
+    }
     return bucketPb;
   }
 
@@ -2196,6 +2348,10 @@ public class BucketInfo implements Serializable {
     Bucket.Logging logging = bucketPb.getLogging();
     if (logging != null) {
       builder.setLogging(Logging.fromPb(logging));
+    }
+    Bucket.CustomPlacementConfig customPlacementConfig = bucketPb.getCustomPlacementConfig();
+    if (customPlacementConfig != null) {
+      builder.setCustomPlacementConfig(CustomPlacementConfig.fromPb(customPlacementConfig));
     }
     return builder.build();
   }

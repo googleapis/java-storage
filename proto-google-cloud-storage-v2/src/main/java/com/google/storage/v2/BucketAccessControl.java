@@ -42,6 +42,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     id_ = "";
     entity_ = "";
     entityId_ = "";
+    etag_ = "";
     email_ = "";
     domain_ = "";
   }
@@ -130,6 +131,13 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
                 projectTeam_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+          case 66:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              etag_ = s;
               break;
             }
           default:
@@ -392,6 +400,61 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     }
   }
 
+  public static final int ETAG_FIELD_NUMBER = 8;
+  private volatile java.lang.Object etag_;
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the BucketAccessControl.
+   * If included in the metadata of an update or delete request message, the
+   * operation operation will only be performed if the etag matches that of the
+   * bucket's BucketAccessControl.
+   * </pre>
+   *
+   * <code>string etag = 8;</code>
+   *
+   * @return The etag.
+   */
+  @java.lang.Override
+  public java.lang.String getEtag() {
+    java.lang.Object ref = etag_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      etag_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * The etag of the BucketAccessControl.
+   * If included in the metadata of an update or delete request message, the
+   * operation operation will only be performed if the etag matches that of the
+   * bucket's BucketAccessControl.
+   * </pre>
+   *
+   * <code>string etag = 8;</code>
+   *
+   * @return The bytes for etag.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getEtagBytes() {
+    java.lang.Object ref = etag_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      etag_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
   public static final int EMAIL_FIELD_NUMBER = 5;
   private volatile java.lang.Object email_;
   /**
@@ -573,6 +636,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     if (projectTeam_ != null) {
       output.writeMessage(7, getProjectTeam());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 8, etag_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -603,6 +669,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     if (projectTeam_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(7, getProjectTeam());
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, etag_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -623,6 +692,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     if (!getId().equals(other.getId())) return false;
     if (!getEntity().equals(other.getEntity())) return false;
     if (!getEntityId().equals(other.getEntityId())) return false;
+    if (!getEtag().equals(other.getEtag())) return false;
     if (!getEmail().equals(other.getEmail())) return false;
     if (!getDomain().equals(other.getDomain())) return false;
     if (hasProjectTeam() != other.hasProjectTeam()) return false;
@@ -648,6 +718,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     hash = (53 * hash) + getEntity().hashCode();
     hash = (37 * hash) + ENTITY_ID_FIELD_NUMBER;
     hash = (53 * hash) + getEntityId().hashCode();
+    hash = (37 * hash) + ETAG_FIELD_NUMBER;
+    hash = (53 * hash) + getEtag().hashCode();
     hash = (37 * hash) + EMAIL_FIELD_NUMBER;
     hash = (53 * hash) + getEmail().hashCode();
     hash = (37 * hash) + DOMAIN_FIELD_NUMBER;
@@ -809,6 +881,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
       entityId_ = "";
 
+      etag_ = "";
+
       email_ = "";
 
       domain_ = "";
@@ -850,6 +924,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       result.id_ = id_;
       result.entity_ = entity_;
       result.entityId_ = entityId_;
+      result.etag_ = etag_;
       result.email_ = email_;
       result.domain_ = domain_;
       if (projectTeamBuilder_ == null) {
@@ -920,6 +995,10 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       }
       if (!other.getEntityId().isEmpty()) {
         entityId_ = other.entityId_;
+        onChanged();
+      }
+      if (!other.getEtag().isEmpty()) {
+        etag_ = other.etag_;
         onChanged();
       }
       if (!other.getEmail().isEmpty()) {
@@ -1452,6 +1531,127 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       checkByteStringIsUtf8(value);
 
       entityId_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object etag_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the BucketAccessControl.
+     * If included in the metadata of an update or delete request message, the
+     * operation operation will only be performed if the etag matches that of the
+     * bucket's BucketAccessControl.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @return The etag.
+     */
+    public java.lang.String getEtag() {
+      java.lang.Object ref = etag_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        etag_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the BucketAccessControl.
+     * If included in the metadata of an update or delete request message, the
+     * operation operation will only be performed if the etag matches that of the
+     * bucket's BucketAccessControl.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @return The bytes for etag.
+     */
+    public com.google.protobuf.ByteString getEtagBytes() {
+      java.lang.Object ref = etag_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        etag_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the BucketAccessControl.
+     * If included in the metadata of an update or delete request message, the
+     * operation operation will only be performed if the etag matches that of the
+     * bucket's BucketAccessControl.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @param value The etag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEtag(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      etag_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the BucketAccessControl.
+     * If included in the metadata of an update or delete request message, the
+     * operation operation will only be performed if the etag matches that of the
+     * bucket's BucketAccessControl.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearEtag() {
+
+      etag_ = getDefaultInstance().getEtag();
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The etag of the BucketAccessControl.
+     * If included in the metadata of an update or delete request message, the
+     * operation operation will only be performed if the etag matches that of the
+     * bucket's BucketAccessControl.
+     * </pre>
+     *
+     * <code>string etag = 8;</code>
+     *
+     * @param value The bytes for etag to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEtagBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      etag_ = value;
       onChanged();
       return this;
     }
