@@ -16,9 +16,10 @@
 
 package com.google.cloud.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.api.client.util.DateTime;
 import com.google.api.core.InternalApi;
-import com.google.cloud.storage.BucketInfo.BucketWithProject;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -73,21 +74,49 @@ final class Utils {
           });
 
   static final Codec<OffsetDateTime, DateTime> nullableDateTimeCodec = dateTimeCodec.nullable();
-  static final Codec<BucketWithProject, String> bucketWithProjectCodec =
+
+  /**
+   * Define a Codec which encapsulates the logic necessary to handle encoding and decoding bucket
+   * names.
+   *
+   * <p>The "Model Type" in this case is the raw bucket name as would be read from {@link
+   * BucketInfo#getName()}. The "Proto Type" in this case is the OnePlatform formatted
+   * representation of the bucket name.
+   *
+   * <p>As of the time of writing this, project scoped buckets are not implemented by the backend
+   * service. While we need to be cognisant that they are on the horizon, we do not need to track
+   * any data related to this future feature. As such, this method attempts to make it easier to
+   * work with bucket names that require the OnePlatform format while still preventing any subtle
+   * bugs happening to customers if they happen to attempt to use project scoped bucket features in
+   * this library once the service does support it.
+   *
+   * <p>TODO: this will need to change once the project scoped buckets first class feature work is
+   * done.
+   */
+  static final Codec<String, String> bucketNameCodec =
       Codec.of(
-          bwp -> {
-            String project = "_";
-            if (bwp.getProject() != null) {
-              project = bwp.getProject();
-            }
-            return BucketName.of(project, bwp.getBucketName()).toString();
-          },
-          s -> {
-            if (!s.isEmpty() && BucketName.isParsableFrom(s)) {
-              BucketName bn = BucketName.parse(s);
-              return new BucketWithProject(bn.getProject(), bn.getBucket());
+          bucket -> {
+            requireNonNull(bucket, "bucket must be non null");
+            if (bucket.startsWith("projects/")) {
+              if (bucket.startsWith("projects/_")) {
+                return bucket;
+              } else {
+                throw new IllegalArgumentException(
+                    "Project scoped buckets are not supported by this version of the library. (bucket = "
+                        + bucket
+                        + ")");
+              }
             } else {
-              return new BucketWithProject(null, s);
+              return "projects/_/buckets/" + bucket;
+            }
+          },
+          resourceName -> {
+            requireNonNull(resourceName, "resourceName must be non null");
+            if (BucketName.isParsableFrom(resourceName)) {
+              BucketName parse = BucketName.parse(resourceName);
+              return parse.getBucket();
+            } else {
+              return resourceName;
             }
           });
 

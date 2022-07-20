@@ -19,7 +19,6 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.JqwikTest.report;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.api.client.json.GenericJson;
 import com.google.cloud.storage.Conversions.Codec;
@@ -129,8 +128,7 @@ abstract class BaseConvertablePropertyTest<
     try {
       return (Codec<ModelT, X>) method.invoke(instance);
     } catch (IllegalAccessException | InvocationTargetException e) {
-      fail(e);
-      return null;
+      throw new AssertionError("error attempting to resolve codec", e);
     }
   }
 

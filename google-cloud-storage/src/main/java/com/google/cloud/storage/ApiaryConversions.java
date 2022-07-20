@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.Utils.bucketWithProjectCodec;
 import static com.google.cloud.storage.Utils.dateTimeCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
@@ -51,7 +50,6 @@ import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
-import com.google.cloud.storage.BucketInfo.BucketWithProject;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
@@ -327,8 +325,7 @@ final class ApiaryConversions {
     ifNonNull(from.versioningEnabled(), b -> new Versioning().setEnabled(b), to::setVersioning);
     to.setEtag(from.getEtag());
     to.setId(from.getGeneratedId());
-    BucketWithProject bucketWithProject = from.getBucketWithProject();
-    to.setName(bucketWithProjectCodec.encode(bucketWithProject));
+    to.setName(from.getName());
     to.setSelfLink(from.getSelfLink());
 
     ifNonNull(from.requesterPays(), b -> new Bucket.Billing().setRequesterPays(b), to::setBilling);
@@ -386,8 +383,7 @@ final class ApiaryConversions {
 
   @SuppressWarnings("deprecation")
   private BucketInfo bucketInfoDecode(com.google.api.services.storage.model.Bucket from) {
-    BucketWithProject bucketWithProject = bucketWithProjectCodec.decode(from.getName());
-    BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketWithProject);
+    BucketInfo.Builder to = new BucketInfo.BuilderImpl(from.getName());
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::decode), to::setAcl);
     ifNonNull(from.getCors(), toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(
@@ -577,11 +573,10 @@ final class ApiaryConversions {
   }
 
   private Bucket.Logging loggingEncode(Logging from) {
-    BucketWithProject bucketWithProject = from.getLogBucketWithProject();
     Bucket.Logging to;
-    if (bucketWithProject != null || from.getLogObjectPrefix() != null) {
+    if (from.getLogBucket() != null || from.getLogObjectPrefix() != null) {
       to = new Bucket.Logging();
-      ifNonNull(bucketWithProject, bucketWithProjectCodec::encode, to::setLogBucket);
+      ifNonNull(from.getLogBucket(), to::setLogBucket);
       ifNonNull(from.getLogObjectPrefix(), to::setLogObjectPrefix);
     } else {
       to = Data.nullOf(Bucket.Logging.class);
@@ -590,8 +585,8 @@ final class ApiaryConversions {
   }
 
   private Logging loggingDecode(Bucket.Logging from) {
-    BucketWithProject bucketWithProject = bucketWithProjectCodec.decode(from.getLogBucket());
-    return new Logging.Builder(bucketWithProject)
+    return Logging.newBuilder()
+        .setLogBucket(from.getLogBucket())
         .setLogObjectPrefix(from.getLogObjectPrefix())
         .build();
   }

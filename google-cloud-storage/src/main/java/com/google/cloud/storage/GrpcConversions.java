@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.Utils.bucketWithProjectCodec;
+import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
@@ -24,7 +24,6 @@ import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
-import com.google.cloud.storage.BucketInfo.BucketWithProject;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.Conversions.Codec;
@@ -182,8 +181,7 @@ final class GrpcConversions {
   }
 
   private BucketInfo bucketInfoDecode(Bucket from) {
-    BucketWithProject bucketWithProject = bucketWithProjectCodec.decode(from.getName());
-    BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketWithProject);
+    BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketNameCodec.decode(from.getName()));
     to.setProject(from.getProject());
     to.setGeneratedId(from.getBucketId());
     if (from.hasRetentionPolicy()) {
@@ -264,8 +262,7 @@ final class GrpcConversions {
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket.Builder to = Bucket.newBuilder();
-    BucketWithProject bucketWithProject = from.getBucketWithProject();
-    to.setName(Utils.bucketWithProjectCodec.encode(bucketWithProject));
+    to.setName(bucketNameCodec.encode(from.getName()));
     // TODO: We need to clean up bucketId handling
     ifNonNull(from.getGeneratedId(), to::setBucketId);
     if (from.getRetentionPeriodDuration() != null) {
@@ -354,10 +351,7 @@ final class GrpcConversions {
     if (!from.getLogObjectPrefix().isEmpty()) {
       to.setLogObjectPrefix(from.getLogObjectPrefix());
     }
-    BucketWithProject bucketWithProject = from.getLogBucketWithProject();
-    if (bucketWithProject != null) {
-      to.setLogBucket(bucketWithProjectCodec.encode(bucketWithProject));
-    }
+    ifNonNull(from.getLogBucket(), bucketNameCodec::encode, to::setLogBucket);
     return to.build();
   }
 
@@ -368,7 +362,9 @@ final class GrpcConversions {
       to.setLogObjectPrefix(logObjectPrefix);
     }
     String logBucket = from.getLogBucket();
-    to.setLogBucketWithProject(bucketWithProjectCodec.decode(logBucket));
+    if (!logBucket.isEmpty()) {
+      to.setLogBucket(bucketNameCodec.decode(logBucket));
+    }
     return to.build();
   }
 
