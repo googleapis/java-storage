@@ -2234,9 +2234,7 @@ public class BucketInfo implements Serializable {
 
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("name", name)
-        .toString();
+    return MoreObjects.toStringHelper(this).add("name", name).toString();
   }
 
   /**
