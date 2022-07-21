@@ -50,7 +50,6 @@ import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
-import com.google.cloud.storage.BucketInfo.BuilderImpl;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
@@ -74,10 +73,8 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 @InternalApi
@@ -346,7 +343,7 @@ final class ApiaryConversions {
       if (lifecycleRules.isEmpty()) {
         lifecycle.setRule(Collections.emptyList());
       } else {
-        Set<Rule> rules = new HashSet<>();
+        List<Rule> rules = new ArrayList<>();
         ifNonNull(lifecycleRules, r -> r.stream().map(lifecycleRule()::encode).forEach(rules::add));
         if (!rules.isEmpty()) {
           lifecycle.setRule(ImmutableList.copyOf(rules));
@@ -386,7 +383,7 @@ final class ApiaryConversions {
 
   @SuppressWarnings("deprecation")
   private BucketInfo bucketInfoDecode(com.google.api.services.storage.model.Bucket from) {
-    BucketInfo.Builder to = new BuilderImpl(from.getName());
+    BucketInfo.Builder to = new BucketInfo.BuilderImpl(from.getName());
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::decode), to::setAcl);
     ifNonNull(from.getCors(), toImmutableListOf(cors()::decode), to::setCors);
     ifNonNull(
@@ -579,8 +576,8 @@ final class ApiaryConversions {
     Bucket.Logging to;
     if (from.getLogBucket() != null || from.getLogObjectPrefix() != null) {
       to = new Bucket.Logging();
-      to.setLogBucket(from.getLogBucket());
-      to.setLogObjectPrefix(from.getLogObjectPrefix());
+      ifNonNull(from.getLogBucket(), to::setLogBucket);
+      ifNonNull(from.getLogObjectPrefix(), to::setLogObjectPrefix);
     } else {
       to = Data.nullOf(Bucket.Logging.class);
     }

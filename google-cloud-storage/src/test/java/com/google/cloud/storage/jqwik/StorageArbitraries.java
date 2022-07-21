@@ -57,7 +57,7 @@ public final class StorageArbitraries {
   public static Arbitrary<Timestamp> timestamp() {
     return Combinators.combine(
             DateTimes.offsetDateTimes().offsetBetween(ZoneOffset.UTC, ZoneOffset.UTC),
-            Arbitraries.integers().between(0, 999_999_999))
+            millisecondsAsNanos())
         .as(
             (odt, nanos) ->
                 Timestamp.newBuilder().setSeconds(odt.toEpochSecond()).setNanos(nanos).build());
@@ -149,10 +149,10 @@ public final class StorageArbitraries {
      * noreferrer"
      * href="https://cloud.google.com/storage/docs/naming-buckets#requirements">https://cloud.google.com/storage/docs/naming-buckets#requirements</a>
      */
-    Arbitrary<BucketName> name() {
+    public Arbitrary<BucketName> name() {
       return Combinators.combine(
               Arbitraries.oneOf(
-                  projectID(),
+                  // projectID(), TODO: reinclude this once we support non-global scoped buckets
                   // Global buckets have prefix of projects/_
                   Arbitraries.of(new ProjectID("_"))),
               alnum(),
@@ -264,18 +264,13 @@ public final class StorageArbitraries {
     public Arbitrary<Bucket.Logging> logging() {
       Arbitrary<BucketName> loggingBucketName = name();
       Arbitrary<String> loggingPrefix = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(10);
-      return Combinators.combine(loggingBucketName, loggingPrefix, bool())
+      return Combinators.combine(loggingBucketName, loggingPrefix)
           .as(
-              (b, p, u) -> {
-                Bucket.Logging.Builder loggingBuilder =
-                    Bucket.Logging.newBuilder().setLogObjectPrefix(p);
-                if (u == Boolean.TRUE) {
-                  loggingBuilder.setLogBucket(b.toString());
-                } else {
-                  loggingBuilder.setLogBucket(b.getBucket());
-                }
-                return loggingBuilder.build();
-              });
+              (b, p) ->
+                  Bucket.Logging.newBuilder()
+                      .setLogObjectPrefix(p)
+                      .setLogBucket(b.toString())
+                      .build());
     }
 
     public ListArbitrary<Bucket.Cors> cors() {
@@ -547,5 +542,16 @@ public final class StorageArbitraries {
       chars[i] = (char) (i + lower);
     }
     return chars;
+  }
+
+  /**
+   * gRPC has nanosecond level precision for timestamps, whereas JSON is limited to millisecond
+   * precision due to limitations in {@link com.google.api.client.util.DateTime}.
+   *
+   * <p>Define an arbitrary, which will always produce a nanosecond value that is in the range of
+   * milliseconds.
+   */
+  private static Arbitrary<Integer> millisecondsAsNanos() {
+    return Arbitraries.integers().between(0, 999).map(i -> i * 1_000_000);
   }
 }

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
@@ -36,7 +37,6 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
-import com.google.storage.v2.BucketName;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
@@ -181,13 +181,7 @@ final class GrpcConversions {
   }
 
   private BucketInfo bucketInfoDecode(Bucket from) {
-    BucketName bucketName = BucketName.parse(from.getName());
-    // `name` above is a read-only value from gcs, which enforces non-emptiness.
-    //   BucketName.parse will return null of name is empty. Since name can't be empty
-    //   we don't need to explicitly check for null, as the only other failure condition
-    //   would be a parse exception.
-    //noinspection ConstantConditions
-    BucketInfo.Builder to = BucketInfo.newBuilder(bucketName.getBucket());
+    BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketNameCodec.decode(from.getName()));
     to.setProject(from.getProject());
     to.setGeneratedId(from.getBucketId());
     if (from.hasRetentionPolicy()) {
@@ -268,8 +262,7 @@ final class GrpcConversions {
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket.Builder to = Bucket.newBuilder();
-    to.setProject(from.getProject());
-    to.setName(BucketName.format(from.getProject(), from.getName()));
+    to.setName(bucketNameCodec.encode(from.getName()));
     // TODO: We need to clean up bucketId handling
     ifNonNull(from.getGeneratedId(), to::setBucketId);
     if (from.getRetentionPeriodDuration() != null) {
@@ -355,35 +348,24 @@ final class GrpcConversions {
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
     Bucket.Logging.Builder to = Bucket.Logging.newBuilder();
-    if (from.getLogObjectPrefix() != null) {
+    if (!from.getLogObjectPrefix().isEmpty()) {
       to.setLogObjectPrefix(from.getLogObjectPrefix());
     }
-    if (from.getLogBucket() != null) {
-      // TODO: Remove unformatted bucket name support when logging bucket only supports formatted
-      // "projects/project/buckets/bucket"
-      if (from.getLogBucketProject().isEmpty()) {
-        to.setLogBucket(from.getLogBucket());
-      } else {
-        to.setLogBucket(BucketName.format(from.getLogBucketProject(), from.getLogBucket()));
-      }
-    }
+    ifNonNull(from.getLogBucket(), bucketNameCodec::encode, to::setLogBucket);
     return to.build();
   }
 
   private BucketInfo.Logging loggingDecode(Bucket.Logging from) {
-    BucketInfo.Logging.Builder loggingBuilder =
-        BucketInfo.Logging.newBuilder().setLogObjectPrefix(from.getLogObjectPrefix());
-    if (BucketName.isParsableFrom(from.getLogBucket())) {
-      BucketName bucketName = BucketName.parse(from.getLogBucket());
-      loggingBuilder.setLogBucket(bucketName.getBucket());
-      loggingBuilder.setLogBucketProject(bucketName.getProject());
-    } else {
-      // TODO: Remove unformatted bucket name support when logging bucket only supports formatted
-      // "projects/project/buckets/bucket"
-      loggingBuilder.setLogBucket(from.getLogBucket());
-      loggingBuilder.setLogBucketProject("");
+    BucketInfo.Logging.Builder to = BucketInfo.Logging.newBuilder();
+    String logObjectPrefix = from.getLogObjectPrefix();
+    if (!logObjectPrefix.isEmpty()) {
+      to.setLogObjectPrefix(logObjectPrefix);
     }
-    return loggingBuilder.build();
+    String logBucket = from.getLogBucket();
+    if (!logBucket.isEmpty()) {
+      to.setLogBucket(bucketNameCodec.decode(logBucket));
+    }
+    return to.build();
   }
 
   private Bucket.Cors corsEncode(Cors from) {
