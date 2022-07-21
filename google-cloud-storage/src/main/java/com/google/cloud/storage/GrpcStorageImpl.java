@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.todo;
 import static com.google.common.base.MoreObjects.firstNonNull;
@@ -51,7 +52,6 @@ import com.google.common.io.ByteStreams;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
-import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
@@ -323,7 +323,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Bucket get(String bucket, BucketGetOption... options) {
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    GetBucketRequest.Builder builder = GetBucketRequest.newBuilder().setName(bucket);
+    GetBucketRequest.Builder builder =
+        GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
     ZOpt.applyAll(
         optionsMap,
         ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
@@ -399,7 +400,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         grpcStorageStub.listObjectsPagedCallable();
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    ListObjectsRequest.Builder builder = ListObjectsRequest.newBuilder().setParent(bucket);
+    ListObjectsRequest.Builder builder =
+        ListObjectsRequest.newBuilder().setParent(bucketNameCodec.encode(bucket));
     ZOpt.applyAll(
         optionsMap,
         ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
@@ -409,7 +411,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         ZOpt.START_OFF_SET.consumeVia(builder::setLexicographicStart),
         ZOpt.END_OFF_SET.consumeVia(builder::setLexicographicEnd));
     // TODO(sydmunro) StorageRpc.Option.Fields
-    ListObjectsPagedResponse call = listObjectsCallable.call(builder.build(), grpcCallContext);
+    ListObjectsRequest req = builder.build();
+    ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
     ListObjectsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.blob);
   }
@@ -467,8 +470,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     DeleteBucketRequest.Builder builder =
-        DeleteBucketRequest.newBuilder()
-            .setName(BucketName.format(this.getOptions().getProjectId(), bucket));
+        DeleteBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
     ZOpt.applyAll(
         optionsMap,
         ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),

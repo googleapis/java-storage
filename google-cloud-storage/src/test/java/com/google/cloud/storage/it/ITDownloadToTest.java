@@ -21,10 +21,9 @@ import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.storage.StorageFixture;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -34,35 +33,40 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.zip.GZIPOutputStream;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public final class ITDownloadToTest {
 
-  private static final String BUCKET = RemoteStorageHelper.generateBucketName();
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+
   private static final byte[] helloWorldTextBytes = "hello world".getBytes();
   private static final byte[] helloWorldGzipBytes = gzipBytes(helloWorldTextBytes);
 
-  private static Storage storage;
   private static BlobId blobId;
 
   @BeforeClass
   public static void beforeClass() {
-    BucketInfo bucketInfo = BucketInfo.of(BUCKET);
-    blobId = BlobId.of(BUCKET, "zipped_blob");
+    blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "zipped_blob");
 
     BlobInfo blobInfo =
         BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
 
-    storage = StorageOptions.newBuilder().build().getService();
-    storage.create(bucketInfo);
-    storage.create(blobInfo, helloWorldGzipBytes);
+    storageFixture.getInstance().create(blobInfo, helloWorldGzipBytes);
   }
 
   @Test
   public void downloadTo_returnRawInputStream_yes() throws IOException {
     Path helloWorldTxtGz = File.createTempFile("helloWorld", ".txt.gz").toPath();
-    storage.downloadTo(
-        blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
+    storageFixture
+        .getInstance()
+        .downloadTo(
+            blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
 
     byte[] actualTxtGzBytes = Files.readAllBytes(helloWorldTxtGz);
     if (Arrays.equals(actualTxtGzBytes, helloWorldTextBytes)) {
@@ -74,8 +78,10 @@ public final class ITDownloadToTest {
   @Test
   public void downloadTo_returnRawInputStream_no() throws IOException {
     Path helloWorldTxt = File.createTempFile("helloWorld", ".txt").toPath();
-    storage.downloadTo(
-        blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
+    storageFixture
+        .getInstance()
+        .downloadTo(
+            blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
     byte[] actualTxtBytes = Files.readAllBytes(helloWorldTxt);
     assertThat(actualTxtBytes).isEqualTo(helloWorldTextBytes);
   }
