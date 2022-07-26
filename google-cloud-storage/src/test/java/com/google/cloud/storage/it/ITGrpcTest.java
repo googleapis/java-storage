@@ -52,7 +52,7 @@ public final class ITGrpcTest {
   @ClassRule(order = 3)
   public static final BucketFixture bucketFixture =
       BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-gcs-grpc-team-%s")
+          .setBucketNameFmtString("java-storage-grpc-%s")
           .setCleanupStrategy(CleanupStrategy.ALWAYS)
           .setHandle(storageFixture::getInstance)
           .build();
