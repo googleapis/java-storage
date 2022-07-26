@@ -22,11 +22,10 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.IOException;
@@ -36,8 +35,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Random;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -54,7 +53,12 @@ public final class ITBlobReadChannelTest {
 
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
 
-  @Rule public final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
   private Storage storage;
   private String bucketName;
@@ -63,15 +67,9 @@ public final class ITBlobReadChannelTest {
   @Before
   public void setUp() throws Exception {
     storage = storageFixture.getInstance();
+    bucketName = bucketFixture.getBucketInfo().getName();
 
-    bucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(BucketInfo.of(bucketName));
     blobName = String.format("%s/src", testName.getMethodName());
-  }
-
-  @After
-  public void tearDown() throws Exception {
-    RemoteStorageHelper.forceDelete(storage, bucketName);
   }
 
   @Test
