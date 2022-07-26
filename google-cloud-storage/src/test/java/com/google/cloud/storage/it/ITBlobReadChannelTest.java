@@ -24,6 +24,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.DataGeneration;
+import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
 import com.google.common.io.ByteStreams;
 import java.io.File;
@@ -59,11 +60,13 @@ public final class ITBlobReadChannelTest {
   public static final BucketFixture bucketFixture =
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
+  private Storage storage;
   private String bucketName;
   private String blobName;
 
   @Before
   public void setUp() throws Exception {
+    storage = storageFixture.getInstance();
     bucketName = bucketFixture.getBucketInfo().getName();
 
     blobName = String.format("%s/src", testName.getMethodName());
@@ -110,8 +113,7 @@ public final class ITBlobReadChannelTest {
   public void testLimit_downloadToFile() throws IOException {
     BlobId blobId = BlobId.of(bucketName, blobName);
     ByteBuffer content = dataGeneration.randByteBuffer(108);
-    try (WriteChannel writer =
-        storageFixture.getInstance().writer(BlobInfo.newBuilder(blobId).build())) {
+    try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
       writer.write(content);
     }
 
@@ -124,7 +126,7 @@ public final class ITBlobReadChannelTest {
     duplicate.get(expectedBytes);
 
     try {
-      try (ReadChannel from = storageFixture.getInstance().reader(blobId);
+      try (ReadChannel from = storage.reader(blobId);
           FileChannel to = FileChannel.open(Paths.get(destFileName), StandardOpenOption.WRITE)) {
         from.seek(14);
         from.limit(37);
@@ -149,13 +151,13 @@ public final class ITBlobReadChannelTest {
     byte[] expectedSubContent = new byte[dup.remaining()];
     dup.get(expectedSubContent);
 
-    try (WriteChannel writer = storageFixture.getInstance().writer(src)) {
+    try (WriteChannel writer = storage.writer(src)) {
       writer.write(content);
     }
 
     ByteBuffer buffer = ByteBuffer.allocate(srcContentSize);
 
-    try (ReadChannel reader = storageFixture.getInstance().reader(src.getBlobId())) {
+    try (ReadChannel reader = storage.reader(src.getBlobId())) {
       reader.setChunkSize(chunkSize);
       reader.seek(rangeBegin);
       reader.limit(rangeEnd);

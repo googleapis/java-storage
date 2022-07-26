@@ -48,6 +48,7 @@ public final class ITDownloadToTest {
   private static final byte[] helloWorldTextBytes = "hello world".getBytes();
   private static final byte[] helloWorldGzipBytes = gzipBytes(helloWorldTextBytes);
 
+  private static Storage storage;
   private static BlobId blobId;
 
   @BeforeClass
@@ -56,17 +57,15 @@ public final class ITDownloadToTest {
 
     BlobInfo blobInfo =
         BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
-
-    storageFixture.getInstance().create(blobInfo, helloWorldGzipBytes);
+    storage = storageFixture.getInstance();
+    storage.create(blobInfo, helloWorldGzipBytes);
   }
 
   @Test
   public void downloadTo_returnRawInputStream_yes() throws IOException {
     Path helloWorldTxtGz = File.createTempFile("helloWorld", ".txt.gz").toPath();
-    storageFixture
-        .getInstance()
-        .downloadTo(
-            blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
+    storage.downloadTo(
+        blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
 
     byte[] actualTxtGzBytes = Files.readAllBytes(helloWorldTxtGz);
     if (Arrays.equals(actualTxtGzBytes, helloWorldTextBytes)) {
@@ -78,10 +77,8 @@ public final class ITDownloadToTest {
   @Test
   public void downloadTo_returnRawInputStream_no() throws IOException {
     Path helloWorldTxt = File.createTempFile("helloWorld", ".txt").toPath();
-    storageFixture
-        .getInstance()
-        .downloadTo(
-            blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
+    storage.downloadTo(
+        blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
     byte[] actualTxtBytes = Files.readAllBytes(helloWorldTxt);
     assertThat(actualTxtBytes).isEqualTo(helloWorldTextBytes);
   }
