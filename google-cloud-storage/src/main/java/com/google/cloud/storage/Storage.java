@@ -794,7 +794,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob's generation is taken from a source {@link BlobId} object. When this option is passed to
      * a {@link Storage} method and {@link BlobId#getGeneration()} is {@code null} or no {@link
      * BlobId} is provided an exception is thrown.
+     *
+     * @deprecated This option is invalid, and can never result in a valid response from the server.
+     *     use {@link #generationNotMatch(long)} instead.
      */
+    @Deprecated
     public static BlobSourceOption generationNotMatch() {
       return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH, null);
     }
@@ -903,7 +907,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob's generation is taken from a source {@link BlobId} object. When this option is passed to
      * a {@link Storage} method and {@link BlobId#getGeneration()} is {@code null} or no {@link
      * BlobId} is provided an exception is thrown.
+     *
+     * @deprecated This option is invalid, and can never result in a valid response from the server.
+     *     use {@link #generationNotMatch(long)} instead.
      */
+    @Deprecated
     public static BlobGetOption generationNotMatch() {
       return new BlobGetOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH, (Long) null);
     }

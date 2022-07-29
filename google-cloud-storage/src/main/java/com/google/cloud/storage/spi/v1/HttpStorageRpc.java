@@ -324,6 +324,7 @@ public class HttpStorageRpc implements StorageRpc {
           .setProjection(DEFAULT_PROJECTION)
           .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
           .setPredefinedDefaultObjectAcl(Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
+          .setUserProject(Option.USER_PROJECT.getString(options))
           .execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -1463,6 +1464,7 @@ public class HttpStorageRpc implements StorageRpc {
               .setPageToken(Option.PAGE_TOKEN.getString(options))
               .setMaxResults(Option.MAX_RESULTS.getLong(options))
               .setShowDeletedKeys(Option.SHOW_DELETED_KEYS.getBoolean(options))
+              .setUserProject(Option.USER_PROJECT.getString(options))
               .execute();
       return Tuple.<String, Iterable<HmacKeyMetadata>>of(
           hmacKeysMetadata.getNextPageToken(), hmacKeysMetadata.getItems());
