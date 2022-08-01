@@ -274,8 +274,7 @@ public class ITStorageTest {
             Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
     // Disable requester pays in case a test fails to clean up.
     if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
-      remoteBucket
-          .toBuilder()
+      remoteBucket.toBuilder()
           .setRequesterPays(false)
           .build()
           .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
@@ -702,20 +701,15 @@ public class ITStorageTest {
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 
-  @Test
-  public void testCreateBlobWithKmsKeyNameAndCustomerSuppliedKey() {
-    try {
-      String blobName = "test-create-with-kms-key-name-blob";
-      BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
-      storage.create(
-          blob,
-          BLOB_BYTE_CONTENT,
-          Storage.BlobTargetOption.encryptionKey(KEY),
-          Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
-      fail("StorageException was expected"); // can't supply both.
-    } catch (StorageException ex) {
-      // expected
-    }
+  @Test(expected = StorageException.class)
+  public void testCreateBlobWithKmsKeyNameAndCustomerSuppliedKeyFails() {
+    String blobName = "test-create-with-kms-key-name-blob";
+    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    storage.create(
+        blob,
+        BLOB_BYTE_CONTENT,
+        Storage.BlobTargetOption.encryptionKey(KEY),
+        Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
   }
 
   @Test
@@ -2629,8 +2623,7 @@ public class ITStorageTest {
     Policy updatedPolicy =
         storage.setIamPolicy(
             BUCKET_REQUESTER_PAYS,
-            currentPolicy
-                .toBuilder()
+            currentPolicy.toBuilder()
                 .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -2638,8 +2631,7 @@ public class ITStorageTest {
     Policy revertedPolicy =
         storage.setIamPolicy(
             BUCKET_REQUESTER_PAYS,
-            updatedPolicy
-                .toBuilder()
+            updatedPolicy.toBuilder()
                 .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -2691,8 +2683,7 @@ public class ITStorageTest {
     Policy updatedPolicy =
         storage.setIamPolicy(
             BUCKET,
-            currentPolicy
-                .toBuilder()
+            currentPolicy.toBuilder()
                 .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -2700,8 +2691,7 @@ public class ITStorageTest {
     Policy revertedPolicy =
         storage.setIamPolicy(
             BUCKET,
-            updatedPolicy
-                .toBuilder()
+            updatedPolicy.toBuilder()
                 .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -3248,8 +3238,7 @@ public class ITStorageTest {
 
       BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
           BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
-      bucket
-          .toBuilder()
+      bucket.toBuilder()
           .setAcl(null)
           .setDefaultAcl(null)
           .setIamConfiguration(bpoEnabledIamConfiguration)
@@ -3262,8 +3251,7 @@ public class ITStorageTest {
       assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
 
-      remoteBucket
-          .toBuilder()
+      remoteBucket.toBuilder()
           .setIamConfiguration(
               bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
           .build()
@@ -3302,13 +3290,11 @@ public class ITStorageTest {
                       ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
                   .build());
 
-      bucket
-          .toBuilder()
+      bucket.toBuilder()
           .setAcl(null)
           .setDefaultAcl(null)
           .setIamConfiguration(
-              ublaDisabledIamConfiguration
-                  .toBuilder()
+              ublaDisabledIamConfiguration.toBuilder()
                   .setIsUniformBucketLevelAccessEnabled(true)
                   .build())
           .build()
@@ -3444,12 +3430,9 @@ public class ITStorageTest {
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
       // Update PAP setting to ENFORCED and should not affect UBLA setting.
-      bucket
-          .toBuilder()
+      bucket.toBuilder()
           .setIamConfiguration(
-              bucket
-                  .getIamConfiguration()
-                  .toBuilder()
+              bucket.getIamConfiguration().toBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
                   .build())
           .build()
@@ -3463,12 +3446,9 @@ public class ITStorageTest {
 
       // Updating UBLA should not affect PAP setting.
       bucket =
-          bucket
-              .toBuilder()
+          bucket.toBuilder()
               .setIamConfiguration(
-                  bucket
-                      .getIamConfiguration()
-                      .toBuilder()
+                  bucket.getIamConfiguration().toBuilder()
                       .setIsUniformBucketLevelAccessEnabled(true)
                       .build())
               .build()
@@ -4051,17 +4031,5 @@ public class ITStorageTest {
     } finally {
       storage.delete(rpoBucket);
     }
-  }
-
-  private static String randString(Random rand, int length) {
-    final StringBuilder sb = new StringBuilder();
-    while (sb.length() < length) {
-      int i = rand.nextInt('z');
-      char c = (char) i;
-      if (Character.isLetter(c) || Character.isDigit(c)) {
-        sb.append(c);
-      }
-    }
-    return sb.toString();
   }
 }
