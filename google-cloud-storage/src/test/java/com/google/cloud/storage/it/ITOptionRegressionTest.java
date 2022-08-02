@@ -1027,11 +1027,14 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_CopyWriter() {
-    CopyRequest request = CopyRequest.newBuilder()
-        .setSource(o.getBlobId())
-        .setSourceOptions(Storage.BlobSourceOption.generationMatch())
-        .setTarget(BlobId.of(b.getName(), objectName(), 57L), Storage.BlobTargetOption.generationNotMatch())
-        .build();
+    CopyRequest request =
+        CopyRequest.newBuilder()
+            .setSource(o.getBlobId())
+            .setSourceOptions(Storage.BlobSourceOption.generationMatch())
+            .setTarget(
+                BlobId.of(b.getName(), objectName(), 57L),
+                Storage.BlobTargetOption.generationNotMatch())
+            .build();
     CopyWriter copy = s.copy(request);
     requestAuditing.assertQueryParam("ifGenerationNotMatch", "57");
     requestAuditing.assertQueryParam("ifSourceGenerationMatch", o.getGeneration().toString());
@@ -1043,12 +1046,13 @@ public final class ITOptionRegressionTest {
     Blob obj = b.create(objectName(), CONTENT.bytes, BlobTargetOption.doesNotExist());
     requestAuditing.clear();
     Blob updated = obj.toBuilder().setMd5(null).setCrc32c(null).build();
-    ComposeRequest request = ComposeRequest.newBuilder()
-        .addSource(o.getName())
-        .addSource(o.getName())
-        .setTarget(updated)
-        .setTargetOptions(Storage.BlobTargetOption.metagenerationMatch())
-        .build();
+    ComposeRequest request =
+        ComposeRequest.newBuilder()
+            .addSource(o.getName())
+            .addSource(o.getName())
+            .setTarget(updated)
+            .setTargetOptions(Storage.BlobTargetOption.metagenerationMatch())
+            .build();
 
     s.compose(request);
     requestAuditing.assertQueryParam("ifMetagenerationMatch", obj.getMetageneration().toString());
