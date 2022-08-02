@@ -29,6 +29,7 @@ import com.google.cloud.storage.Bucket.BlobTargetOption;
 import com.google.cloud.storage.Bucket.BlobWriteOption;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
@@ -42,6 +43,8 @@ import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
+import com.google.cloud.storage.Storage.ComposeRequest;
+import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.CreateHmacKeyOption;
 import com.google.cloud.storage.Storage.DeleteHmacKeyOption;
 import com.google.cloud.storage.Storage.GetHmacKeyOption;
@@ -1020,6 +1023,35 @@ public final class ITOptionRegressionTest {
   public void blob_BlobSourceOption_userProject_String() {
     o.getContent(Blob.BlobSourceOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
+  }
+
+  @Test
+  public void storage_CopyWriter() {
+    CopyRequest request = CopyRequest.newBuilder()
+        .setSource(o.getBlobId())
+        .setSourceOptions(Storage.BlobSourceOption.generationMatch())
+        .setTarget(BlobId.of(b.getName(), objectName(), 57L), Storage.BlobTargetOption.generationNotMatch())
+        .build();
+    CopyWriter copy = s.copy(request);
+    requestAuditing.assertQueryParam("ifGenerationNotMatch", "57");
+    requestAuditing.assertQueryParam("ifSourceGenerationMatch", o.getGeneration().toString());
+    copy.getResult();
+  }
+
+  @Test
+  public void storage_ComposeRequest() {
+    Blob obj = b.create(objectName(), CONTENT.bytes, BlobTargetOption.doesNotExist());
+    requestAuditing.clear();
+    Blob updated = obj.toBuilder().setMd5(null).setCrc32c(null).build();
+    ComposeRequest request = ComposeRequest.newBuilder()
+        .addSource(o.getName())
+        .addSource(o.getName())
+        .setTarget(updated)
+        .setTargetOptions(Storage.BlobTargetOption.metagenerationMatch())
+        .build();
+
+    s.compose(request);
+    requestAuditing.assertQueryParam("ifMetagenerationMatch", obj.getMetageneration().toString());
   }
 
   private static String bucketName() {
