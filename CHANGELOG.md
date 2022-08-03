@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.11.0](https://github.com/googleapis/java-storage/compare/v2.10.0...v2.11.0) (2022-08-03)
+
+
+### Features
+
+* introduce RPC CancelResumableWriteRequest ([#1518](https://github.com/googleapis/java-storage/issues/1518)) ([f8811c6](https://github.com/googleapis/java-storage/commit/f8811c654109516116bbbe142f4b27ec7f63b5fb))
+
+
+### Documentation
+
+* Refactor Custom Dual Region sample to work with API changes ([#1516](https://github.com/googleapis/java-storage/issues/1516)) ([a60cace](https://github.com/googleapis/java-storage/commit/a60caced9584855f12cdb7cac8ad7606ba32a60a))
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-pubsub to v1.120.5 ([#1527](https://github.com/googleapis/java-storage/issues/1527)) ([77072e3](https://github.com/googleapis/java-storage/commit/77072e3835bbeb802299fec1359c5f3ca13e3c8a))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.120.7 ([#1530](https://github.com/googleapis/java-storage/issues/1530)) ([8c2ebad](https://github.com/googleapis/java-storage/commit/8c2ebad79affb766d842615aa30cc2a3dbe7d0de))
+* update dependency com.google.cloud:google-cloud-pubsub to v1.120.8 ([#1534](https://github.com/googleapis/java-storage/issues/1534)) ([723b100](https://github.com/googleapis/java-storage/commit/723b10014cafae257fa75d9c0bfd3fb0c34b9943))
+* update dependency com.google.cloud:google-cloud-shared-dependencies to v3 ([#1526](https://github.com/googleapis/java-storage/issues/1526)) ([f7fc0d2](https://github.com/googleapis/java-storage/commit/f7fc0d2f301bd22e96a0b43f8657cc738f49f278))
+* update dependency org.junit.vintage:junit-vintage-engine to v5.9.0 ([#1524](https://github.com/googleapis/java-storage/issues/1524)) ([0e74093](https://github.com/googleapis/java-storage/commit/0e74093f3dffd829f8fb9f2525c1502e1910fbe6))
+
 ## [2.10.0](https://github.com/googleapis/java-storage/compare/v2.9.3...v2.10.0) (2022-07-13)
 
 
