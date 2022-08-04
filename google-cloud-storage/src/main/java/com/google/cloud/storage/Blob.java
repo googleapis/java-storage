@@ -140,7 +140,10 @@ public class Blob extends BlobInfo {
     /**
      * Returns an option for blob's generation mismatch. If this option is used the request will
      * fail if generation matches.
+     *
+     * @deprecated This option is invalid, and can never result in a valid response from the server.
      */
+    @Deprecated
     public static BlobSourceOption generationNotMatch() {
       return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH);
     }
