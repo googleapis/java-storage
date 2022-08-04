@@ -88,9 +88,6 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.StorageRoles;
-import com.google.cloud.storage.spi.StorageRpcFactory;
-import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.cloud.storage.spi.v1.StorageRpc.Option;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -99,8 +96,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
-import com.google.common.reflect.AbstractInvocationHandler;
-import com.google.common.reflect.Reflection;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.IAMPolicyGrpc;
@@ -116,7 +111,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.Key;
 import java.time.OffsetDateTime;
@@ -133,7 +127,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.StreamSupport;
@@ -147,12 +140,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.threeten.bp.Clock;
 import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
-import org.threeten.bp.ZoneId;
-import org.threeten.bp.ZoneOffset;
-import org.threeten.bp.format.DateTimeFormatter;
 
 public class ITStorageTest {
 
@@ -3696,114 +3685,6 @@ public class ITStorageTest {
     assertThat(numberOfBytes).isEqualTo(27);
     assertThat(blob.getKmsKeyName()).isNotNull();
     assertThat(storage.delete(BUCKET, blobName)).isTrue();
-  }
-
-  @Test
-  public void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent_multipleChunks()
-      throws IOException {
-    int _2MiB = 256 * 1024;
-    int contentSize = 292_617;
-
-    blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(_2MiB, contentSize);
-  }
-
-  @Test
-  public void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent_singleChunk()
-      throws IOException {
-    int _4MiB = 256 * 1024 * 2;
-    int contentSize = 292_617;
-
-    blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(_4MiB, contentSize);
-  }
-
-  private void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(
-      int chunkSize, int contentSize) throws IOException {
-    Instant now = Clock.systemUTC().instant();
-    DateTimeFormatter formatter =
-        DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
-    String nowString = formatter.format(now);
-
-    String blobPath = String.format("%s/%s/blob", testName.getMethodName(), nowString);
-    BlobId blobId = BlobId.of(BUCKET, blobPath);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
-
-    ByteBuffer contentGen1 = dataGeneration.randByteBuffer(contentSize);
-    ByteBuffer contentGen2 = dataGeneration.randByteBuffer(contentSize);
-    ByteBuffer contentGen2Expected = contentGen2.duplicate();
-    Storage storage = StorageOptions.getDefaultInstance().getService();
-    WriteChannel ww = storage.writer(blobInfo);
-    ww.setChunkSize(chunkSize);
-    ww.write(contentGen1);
-    ww.close();
-
-    Blob blobGen1 = storage.get(blobId);
-
-    final AtomicBoolean exceptionThrown = new AtomicBoolean(false);
-
-    Storage testStorage =
-        StorageOptions.http()
-            .setServiceRpcFactory(
-                new StorageRpcFactory() {
-                  /**
-                   * Here we're creating a proxy of StorageRpc where we can delegate all calls to
-                   * the normal implementation, except in the case of {@link
-                   * StorageRpc#writeWithResponse(String, byte[], int, long, int, boolean)} where
-                   * {@code lastChunk == true}. We allow the call to execute, but instead of
-                   * returning the result we throw an IOException to simulate a prematurely close
-                   * connection. This behavior is to ensure appropriate handling of a completed
-                   * upload where the ACK wasn't received. In particular, if an upload is initiated
-                   * against an object where an {@link Option#IF_GENERATION_MATCH} simply calling
-                   * get on an object can result in a 404 because the object that is created while
-                   * the BlobWriteChannel is executing will be a new generation.
-                   */
-                  @SuppressWarnings("UnstableApiUsage")
-                  @Override
-                  public StorageRpc create(final StorageOptions options) {
-                    return Reflection.newProxy(
-                        StorageRpc.class,
-                        new AbstractInvocationHandler() {
-                          final StorageRpc delegate =
-                              (StorageRpc) StorageOptions.getDefaultInstance().getRpc();
-
-                          @Override
-                          protected Object handleInvocation(
-                              Object proxy, Method method, Object[] args) throws Throwable {
-                            if ("writeWithResponse".equals(method.getName())) {
-                              Object result = method.invoke(delegate, args);
-                              boolean lastChunk = (boolean) args[5];
-                              // if we're on the lastChunk simulate a connection failure which
-                              // happens after the request was processed but before response could
-                              // be received by the client.
-                              if (lastChunk) {
-                                exceptionThrown.set(true);
-                                throw StorageException.translate(
-                                    new IOException("simulated Connection closed prematurely"));
-                              } else {
-                                return result;
-                              }
-                            }
-                            return method.invoke(delegate, args);
-                          }
-                        });
-                  }
-                })
-            .build()
-            .getService();
-
-    try (WriteChannel w = testStorage.writer(blobGen1, BlobWriteOption.generationMatch())) {
-      w.setChunkSize(chunkSize);
-
-      w.write(contentGen2);
-    }
-
-    assertTrue("Expected an exception to be thrown for the last chunk", exceptionThrown.get());
-
-    Blob blobGen2 = storage.get(blobId);
-    assertEquals(contentSize, (long) blobGen2.getSize());
-    assertNotEquals(blobInfo.getGeneration(), blobGen2.getGeneration());
-    ByteArrayOutputStream actualData = new ByteArrayOutputStream();
-    blobGen2.downloadTo(actualData);
-    assertEquals(contentGen2Expected, ByteBuffer.wrap(actualData.toByteArray()));
   }
 
   @Test
