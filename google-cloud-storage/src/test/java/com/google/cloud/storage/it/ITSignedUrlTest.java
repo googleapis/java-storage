@@ -59,8 +59,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 public class ITSignedUrlTest {
-  @ClassRule
-  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  @ClassRule public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
 
   private static Storage storage;
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
@@ -128,7 +127,6 @@ public class ITSignedUrlTest {
       }
     }
   }
-
 
   @Test
   public void testPostSignedUrl() throws IOException {
@@ -245,5 +243,4 @@ public class ITSignedUrlTest {
       assertTrue(storage.delete(BUCKET, blobName));
     }
   }
-
 }

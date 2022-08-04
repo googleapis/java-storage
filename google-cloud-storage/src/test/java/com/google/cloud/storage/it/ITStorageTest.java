@@ -260,7 +260,8 @@ public class ITStorageTest {
             Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
     // Disable requester pays in case a test fails to clean up.
     if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
-      remoteBucket.toBuilder()
+      remoteBucket
+          .toBuilder()
           .setRequesterPays(false)
           .build()
           .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
@@ -690,7 +691,8 @@ public class ITStorageTest {
         Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
   }
 
-  //Seems quite similar to the normal KMS test? I get the subtle difference but is it worth creating a new bucket?
+  // Seems quite similar to the normal KMS test? I get the subtle difference but is it worth
+  // creating a new bucket?
   // or could we move the kms stuff out and just create the bucket with a default key?
   @Test
   public void testCreateBlobWithDefaultKmsKeyName()
@@ -2039,8 +2041,6 @@ public class ITStorageTest {
     }
   }
 
-
-
   @Test
   public void testGetBlobs() {
     String sourceBlobName1 = "test-get-blobs-1";
@@ -2462,7 +2462,8 @@ public class ITStorageTest {
     Policy updatedPolicy =
         storage.setIamPolicy(
             BUCKET_REQUESTER_PAYS,
-            currentPolicy.toBuilder()
+            currentPolicy
+                .toBuilder()
                 .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -2470,7 +2471,8 @@ public class ITStorageTest {
     Policy revertedPolicy =
         storage.setIamPolicy(
             BUCKET_REQUESTER_PAYS,
-            updatedPolicy.toBuilder()
+            updatedPolicy
+                .toBuilder()
                 .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -2522,7 +2524,8 @@ public class ITStorageTest {
     Policy updatedPolicy =
         storage.setIamPolicy(
             BUCKET,
-            currentPolicy.toBuilder()
+            currentPolicy
+                .toBuilder()
                 .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -2530,7 +2533,8 @@ public class ITStorageTest {
     Policy revertedPolicy =
         storage.setIamPolicy(
             BUCKET,
-            updatedPolicy.toBuilder()
+            updatedPolicy
+                .toBuilder()
                 .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
                 .build(),
             bucketOptions);
@@ -3077,7 +3081,8 @@ public class ITStorageTest {
 
       BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
           BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
-      bucket.toBuilder()
+      bucket
+          .toBuilder()
           .setAcl(null)
           .setDefaultAcl(null)
           .setIamConfiguration(bpoEnabledIamConfiguration)
@@ -3090,7 +3095,8 @@ public class ITStorageTest {
       assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
 
-      remoteBucket.toBuilder()
+      remoteBucket
+          .toBuilder()
           .setIamConfiguration(
               bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
           .build()
@@ -3129,11 +3135,13 @@ public class ITStorageTest {
                       ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
                   .build());
 
-      bucket.toBuilder()
+      bucket
+          .toBuilder()
           .setAcl(null)
           .setDefaultAcl(null)
           .setIamConfiguration(
-              ublaDisabledIamConfiguration.toBuilder()
+              ublaDisabledIamConfiguration
+                  .toBuilder()
                   .setIsUniformBucketLevelAccessEnabled(true)
                   .build())
           .build()
@@ -3269,9 +3277,12 @@ public class ITStorageTest {
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
       // Update PAP setting to ENFORCED and should not affect UBLA setting.
-      bucket.toBuilder()
+      bucket
+          .toBuilder()
           .setIamConfiguration(
-              bucket.getIamConfiguration().toBuilder()
+              bucket
+                  .getIamConfiguration()
+                  .toBuilder()
                   .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
                   .build())
           .build()
@@ -3285,9 +3296,12 @@ public class ITStorageTest {
 
       // Updating UBLA should not affect PAP setting.
       bucket =
-          bucket.toBuilder()
+          bucket
+              .toBuilder()
               .setIamConfiguration(
-                  bucket.getIamConfiguration().toBuilder()
+                  bucket
+                      .getIamConfiguration()
+                      .toBuilder()
                       .setIsUniformBucketLevelAccessEnabled(true)
                       .build())
               .build()
@@ -3301,7 +3315,6 @@ public class ITStorageTest {
       RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
     }
   }
-
 
   @Test
   public void testBucketLocationType() throws ExecutionException, InterruptedException {
