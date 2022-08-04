@@ -28,6 +28,7 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
@@ -69,6 +70,7 @@ public class ITSignedUrlTest {
   @BeforeClass
   public static void beforeClass() throws IOException {
     storage = storageFixture.getInstance();
+    storage.create(BucketInfo.newBuilder(BUCKET).build());
   }
 
   @Test
