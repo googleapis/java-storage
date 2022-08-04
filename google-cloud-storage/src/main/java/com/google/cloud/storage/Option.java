@@ -16,53 +16,17 @@
 
 package com.google.cloud.storage;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.base.MoreObjects;
+import com.google.cloud.storage.UnifiedOpts.Opt;
 import java.io.Serializable;
-import java.util.Objects;
 
 /** Base class for Storage operation option. */
-public abstract class Option implements Serializable {
+@Deprecated
+public abstract class Option<O extends Opt> extends UnifiedOpts.OptionShim<O>
+    implements Serializable {
 
-  private static final long serialVersionUID = -73199088766477208L;
+  private static final long serialVersionUID = -3517676609070123326L;
 
-  private final StorageRpc.Option rpcOption;
-  private final Object value;
-
-  Option(StorageRpc.Option rpcOption, Object value) {
-    this.rpcOption = checkNotNull(rpcOption);
-    this.value = value;
-  }
-
-  StorageRpc.Option getRpcOption() {
-    return rpcOption;
-  }
-
-  Object getValue() {
-    return value;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof Option)) {
-      return false;
-    }
-    Option other = (Option) obj;
-    return Objects.equals(rpcOption, other.rpcOption) && Objects.equals(value, other.value);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(rpcOption, value);
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("name", rpcOption.value())
-        .add("value", value)
-        .toString();
+  Option(O opt) {
+    super(opt);
   }
 }
