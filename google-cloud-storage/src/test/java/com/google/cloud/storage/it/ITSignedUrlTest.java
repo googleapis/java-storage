@@ -28,14 +28,13 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.PostPolicyV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,17 +58,22 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 public class ITSignedUrlTest {
-  @ClassRule public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
   private static Storage storage;
-  private static final String BUCKET = RemoteStorageHelper.generateBucketName();
+  private static String bucketName;
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
 
   @BeforeClass
   public static void beforeClass() throws IOException {
     storage = storageFixture.getInstance();
-    storage.create(BucketInfo.newBuilder(BUCKET).build());
+    bucketName = bucketFixture.getBucketInfo().getName();
   }
 
   @Test
@@ -78,7 +82,7 @@ public class ITSignedUrlTest {
       assumeTrue(storage.getOptions().getCredentials() instanceof ServiceAccountSigner);
     }
     String blobName = "test-get-signed-url-blob/with/slashes/and?special=!#$&'()*+,:;=?@[]";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
     for (Storage.SignUrlOption urlStyle :
@@ -101,7 +105,7 @@ public class ITSignedUrlTest {
       assumeTrue(storage.getOptions().getCredentials() instanceof ServiceAccountSigner);
     }
     String blobName = "test-get-v2-with-generation-param";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
     for (Storage.SignUrlOption urlStyle :
@@ -116,8 +120,7 @@ public class ITSignedUrlTest {
               TimeUnit.HOURS,
               urlStyle,
               Storage.SignUrlOption.withV2Signature(),
-              Storage.SignUrlOption.withQueryParams(
-                  ImmutableMap.<String, String>of("generation", generationStr)));
+              Storage.SignUrlOption.withQueryParams(ImmutableMap.of("generation", generationStr)));
       // Finally, verify that the URL works and we can get the object as expected:
       URLConnection connection = url.openConnection();
       byte[] readBytes = new byte[BLOB_BYTE_CONTENT.length];
@@ -134,7 +137,7 @@ public class ITSignedUrlTest {
       assumeTrue(storage.getOptions().getCredentials() instanceof ServiceAccountSigner);
     }
     String blobName = "test-post-signed-url-blob";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     assertNotNull(storage.create(blob));
     for (Storage.SignUrlOption urlStyle :
         Arrays.asList(
@@ -147,7 +150,7 @@ public class ITSignedUrlTest {
       URLConnection connection = url.openConnection();
       connection.setDoOutput(true);
       connection.connect();
-      Blob remoteBlob = storage.get(BUCKET, blobName);
+      Blob remoteBlob = storage.get(bucketName, blobName);
       assertNotNull(remoteBlob);
       assertEquals(blob.getBucket(), remoteBlob.getBucket());
       assertEquals(blob.getName(), remoteBlob.getName());
@@ -161,7 +164,7 @@ public class ITSignedUrlTest {
     }
 
     String blobName = "test-get-signed-url-blob/with/slashes/and?special=!#$&'()*+,:;=?@[]";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
     for (Storage.SignUrlOption urlStyle :
@@ -187,7 +190,7 @@ public class ITSignedUrlTest {
 
     PostPolicyV4 policy =
         storage.generateSignedPostPolicyV4(
-            BlobInfo.newBuilder(BUCKET, "my-object").build(), 7, TimeUnit.DAYS, fields);
+            BlobInfo.newBuilder(bucketName, "my-object").build(), 7, TimeUnit.DAYS, fields);
 
     HttpClient client = HttpClientBuilder.create().build();
     HttpPost request = new HttpPost(policy.getUrl());
@@ -203,13 +206,13 @@ public class ITSignedUrlTest {
     request.setEntity(builder.build());
     client.execute(request);
 
-    assertEquals("hello world", new String(storage.get(BUCKET, "my-object").getContent()));
+    assertEquals("hello world", new String(storage.get(bucketName, "my-object").getContent()));
   }
 
   @Test
   public void testUploadUsingSignedURL() throws Exception {
     String blobName = "test-signed-url-upload";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     assertNotNull(storage.create(blob));
     Map<String, String> extensionHeaders = new HashMap<>();
     extensionHeaders.put("x-goog-resumable", "start");
@@ -232,7 +235,7 @@ public class ITSignedUrlTest {
       }
 
       int lengthOfDownLoadBytes = -1;
-      BlobId blobId = BlobId.of(BUCKET, blobName);
+      BlobId blobId = BlobId.of(bucketName, blobName);
       Blob blobToRead = storage.get(blobId);
       try (ReadChannel reader = blobToRead.reader()) {
         ByteBuffer bytes = ByteBuffer.allocate(64 * 1024);
@@ -240,7 +243,7 @@ public class ITSignedUrlTest {
       }
 
       assertEquals(bytesArrayToUpload.length, lengthOfDownLoadBytes);
-      assertTrue(storage.delete(BUCKET, blobName));
+      assertTrue(storage.delete(bucketName, blobName));
     }
   }
 }

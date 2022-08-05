@@ -97,7 +97,7 @@ public class ITKmsTest {
   }
 
   @AfterClass
-  public static void afterClass() throws ExecutionException, InterruptedException {
+  public static void afterClass() {
     if (kmsChannel != null) {
       try {
         kmsChannel.shutdownNow();
