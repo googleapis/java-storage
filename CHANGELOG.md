@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.3](https://github.com/googleapis/java-storage/compare/v2.11.2...v2.11.3) (2022-08-08)
+
+
+### Dependencies
+
+* update dependency com.google.cloud:google-cloud-pubsub to v1.120.11 ([#1551](https://github.com/googleapis/java-storage/issues/1551)) ([0fc2d33](https://github.com/googleapis/java-storage/commit/0fc2d336c536deb3efe95e770d47fc898af12323))
+
 ## [2.11.2](https://github.com/googleapis/java-storage/compare/v2.11.1...v2.11.2) (2022-08-04)
 
 
