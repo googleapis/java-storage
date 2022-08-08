@@ -67,6 +67,13 @@
         "^com.fasterxml.jackson.core"
       ],
       "groupName": "jackson dependencies"
+    },
+    {
+      "packagePatterns": [
+        "^com.google.cloud:google-cloud-pubsub"
+      ],
+      "semanticCommitType": "test",
+      "semanticCommitScope": "deps"
     }
   ],
   "semanticCommits": true,
