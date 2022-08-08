@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.example.storage.object.BatchSetObjectMetadata;
 import com.example.storage.object.ChangeObjectCsekToKms;
 import com.example.storage.object.ChangeObjectStorageClass;
 import com.example.storage.object.ComposeObject;
@@ -415,5 +416,19 @@ public class ITObjectSnippets {
     String blobName = "kms-encrypted-blob";
     UploadKmsEncryptedObject.uploadKmsEncryptedObject(PROJECT_ID, BUCKET, blobName, KMS_KEY_NAME);
     assertNotNull(storage.get(BUCKET, blobName));
+  }
+
+  @Test
+  public void testBatchSetObjectMetadata() {
+    storage.create(BlobInfo.newBuilder(BUCKET, "b/1.txt").build());
+    storage.create(BlobInfo.newBuilder(BUCKET, "b/2.txt").build());
+
+    BatchSetObjectMetadata.batchSetObjectMetadata(PROJECT_ID, BUCKET, "b/");
+
+    Map<String, String> firstBlobMetadata = storage.get(BUCKET, "b/1.txt").getMetadata();
+    Map<String, String> secondBlobMetadata = storage.get(BUCKET, "b/2.txt").getMetadata();
+
+    assertEquals("value", firstBlobMetadata.get("keyToAddOrUpdate"));
+    assertEquals("value", secondBlobMetadata.get("keyToAddOrUpdate"));
   }
 }
