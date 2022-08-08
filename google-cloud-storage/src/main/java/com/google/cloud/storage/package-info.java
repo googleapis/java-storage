@@ -17,8 +17,8 @@
 /**
  * A client for Cloud Storage - Unified object storage.
  *
- * <p>Here's a simple usage example the Java Storage client. This example
- * shows how to create a Storage object.
+ * <p>Here's a simple usage example the Java Storage client. This example shows how to create a
+ * Storage object.
  *
  * <pre>{@code
  * Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -42,7 +42,8 @@
  * }
  * }</pre>
  *
- * <p>For more detailed code examples, see the <a href="https://cloud.google.com/storage/docs/samples">sample library</a>.
+ * <p>For more detailed code examples, see the <a
+ * href="https://cloud.google.com/storage/docs/samples">sample library</a>.
  *
  * <p>When using google-cloud from outside of App/Compute Engine, you have to <a
  * href="https://github.com/googleapis/google-cloud-java#specifying-a-project-id">specify a project
