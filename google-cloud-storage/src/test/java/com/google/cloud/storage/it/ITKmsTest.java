@@ -122,22 +122,6 @@ public class ITKmsTest {
     storage = storageFixture.getInstance();
     bucketName = bucketFixture.getBucketInfo().getName();
     // Prepare KMS KeyRing for CMEK tests
-    prepareKmsKeys();
-  }
-
-  @AfterClass
-  public static void afterClass() {
-    if (kmsChannel != null) {
-      try {
-        kmsChannel.shutdownNow();
-      } catch (Exception e) {
-        log.log(Level.WARNING, "Error while trying to shutdown kms channel", e);
-      }
-      kmsChannel = null;
-    }
-  }
-
-  private static void prepareKmsKeys() throws IOException {
     // https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys
     String projectId = storage.getOptions().getProjectId();
     Credentials credentials = storage.getOptions().getCredentials();
@@ -157,6 +141,18 @@ public class ITKmsTest {
     kmsKeyTwoResourcePath =
         ensureKmsKeyExistsForTests(
             kmsStub, projectId, KMS_KEY_RING_LOCATION, KMS_KEY_RING_NAME, KMS_KEY_TWO_NAME);
+  }
+
+  @AfterClass
+  public static void afterClass() {
+    if (kmsChannel != null) {
+      try {
+        kmsChannel.shutdownNow();
+      } catch (Exception e) {
+        log.log(Level.WARNING, "Error while trying to shutdown kms channel", e);
+      }
+      kmsChannel = null;
+    }
   }
 
   private static String ensureKmsKeyRingExistsForTests(
