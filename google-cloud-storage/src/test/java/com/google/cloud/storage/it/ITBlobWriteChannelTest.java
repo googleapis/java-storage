@@ -33,6 +33,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGeneration;
+import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -104,6 +105,24 @@ public final class ITBlobWriteChannelTest {
     int cappedByteCount = 10;
 
     doJsonUnexpectedEOFTest(contentSize, cappedByteCount);
+  }
+
+  @Test
+  public void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent_multipleChunks()
+      throws IOException {
+    int _2MiB = 256 * 1024;
+    int contentSize = 292_617;
+
+    blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(_2MiB, contentSize);
+  }
+
+  @Test
+  public void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent_singleChunk()
+      throws IOException {
+    int _4MiB = 256 * 1024 * 2;
+    int contentSize = 292_617;
+
+    blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(_4MiB, contentSize);
   }
 
   private void doJsonUnexpectedEOFTest(int contentSize, int cappedByteCount) throws IOException {
@@ -199,24 +218,6 @@ public final class ITBlobWriteChannelTest {
     assertEquals(expected, actual);
   }
 
-  @Test
-  public void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent_multipleChunks()
-      throws IOException {
-    int _2MiB = 256 * 1024;
-    int contentSize = 292_617;
-
-    blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(_2MiB, contentSize);
-  }
-
-  @Test
-  public void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent_singleChunk()
-      throws IOException {
-    int _4MiB = 256 * 1024 * 2;
-    int contentSize = 292_617;
-
-    blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(_4MiB, contentSize);
-  }
-
   private void blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(
       int chunkSize, int contentSize) throws IOException {
     Instant now = Clock.systemUTC().instant();
@@ -231,7 +232,13 @@ public final class ITBlobWriteChannelTest {
     ByteBuffer contentGen1 = dataGeneration.randByteBuffer(contentSize);
     ByteBuffer contentGen2 = dataGeneration.randByteBuffer(contentSize);
     ByteBuffer contentGen2Expected = contentGen2.duplicate();
-    Storage storage = StorageOptions.getDefaultInstance().getService();
+    HttpStorageOptions baseStorageOptions =
+        StorageOptions.http()
+            .setCredentials(NoCredentials.getInstance())
+            .setHost(testBench.getBaseUri())
+            .setProjectId("test-project-id")
+            .build();
+    Storage storage = baseStorageOptions.getService();
     storage.create(bucketInfo);
     WriteChannel ww = storage.writer(blobInfo);
     ww.setChunkSize(chunkSize);
@@ -243,7 +250,8 @@ public final class ITBlobWriteChannelTest {
     final AtomicBoolean exceptionThrown = new AtomicBoolean(false);
 
     Storage testStorage =
-        StorageOptions.http()
+        baseStorageOptions
+            .toBuilder()
             .setServiceRpcFactory(
                 new StorageRpcFactory() {
                   /**
@@ -264,8 +272,7 @@ public final class ITBlobWriteChannelTest {
                     return Reflection.newProxy(
                         StorageRpc.class,
                         new AbstractInvocationHandler() {
-                          final StorageRpc delegate =
-                              (StorageRpc) StorageOptions.getDefaultInstance().getRpc();
+                          final StorageRpc delegate = (StorageRpc) baseStorageOptions.getRpc();
 
                           @Override
                           protected Object handleInvocation(

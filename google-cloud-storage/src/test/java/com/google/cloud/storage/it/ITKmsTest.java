@@ -23,10 +23,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.api.gax.paging.Page;
-import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.Credentials;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.kms.v1.CreateCryptoKeyRequest;
 import com.google.cloud.kms.v1.CreateKeyRingRequest;
@@ -42,8 +41,10 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
+import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
@@ -70,6 +71,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.Key;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -79,9 +81,20 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class ITKmsTest {
+
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+
+  private static final long seed = -7071346537822433445L;
+  @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(seed));
 
   private static String kmsKeyOneResourcePath;
   private static String kmsKeyTwoResourcePath;
@@ -93,11 +106,7 @@ public class ITKmsTest {
   private static Metadata.Key<String> requestParamsKey =
       Metadata.Key.of("x-goog-request-params", Metadata.ASCII_STRING_MARSHALLER);
   private static ManagedChannel kmsChannel;
-  @ClassRule public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
-  private static Storage storage;
   private static final Logger log = Logger.getLogger(ITKmsTest.class.getName());
-  // Probably replace this with bucket fixture.
-  private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
@@ -105,11 +114,15 @@ public class ITKmsTest {
       new SecretKeySpec(BaseEncoding.base64().decode(BASE64_KEY), "AES256");
   private static final String CONTENT_TYPE = "text/plain";
 
+  private static Storage storage;
+  private static String bucketName;
+
   @BeforeClass
   public static void setup() throws IOException {
+    storage = storageFixture.getInstance();
+    bucketName = bucketFixture.getBucketInfo().getName();
     // Prepare KMS KeyRing for CMEK tests
     prepareKmsKeys();
-    storage.create(BucketInfo.newBuilder(BUCKET).build());
   }
 
   @AfterClass
@@ -125,10 +138,9 @@ public class ITKmsTest {
   }
 
   private static void prepareKmsKeys() throws IOException {
-    storage = storageFixture.getInstance();
     // https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys
     String projectId = storage.getOptions().getProjectId();
-    GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+    Credentials credentials = storage.getOptions().getCredentials();
     kmsChannel = ManagedChannelBuilder.forTarget("cloudkms.googleapis.com:443").build();
     KeyManagementServiceBlockingStub kmsStub =
         KeyManagementServiceGrpc.newBlockingStub(kmsChannel)
@@ -174,8 +186,10 @@ public class ITKmsTest {
                 .setKeyRingId(keyRingName)
                 .build();
         requestParamsHeader.put(requestParamsKey, "parent=" + keyRingParent);
+        ClientInterceptor headersInterceptor =
+            MetadataUtils.newAttachHeadersInterceptor(requestParamsHeader);
         KeyManagementServiceBlockingStub stubForCreateKeyRing =
-            MetadataUtils.attachHeaders(kmsStub, requestParamsHeader);
+            kmsStub.withInterceptors(headersInterceptor);
         stubForCreateKeyRing.createKeyRing(createKeyRingRequest);
       } else {
         throw ex;
@@ -206,7 +220,9 @@ public class ITKmsTest {
             .setPolicy(policy)
             .build();
     requestParamsHeader.put(requestParamsKey, "parent=" + kmsKeyRingResourcePath);
-    iamStub = MetadataUtils.attachHeaders(iamStub, requestParamsHeader);
+    ClientInterceptor headersInterceptor =
+        MetadataUtils.newAttachHeadersInterceptor(requestParamsHeader);
+    iamStub = iamStub.withInterceptors(headersInterceptor);
     try {
       iamStub.setIamPolicy(setIamPolicyRequest);
     } catch (StatusRuntimeException e) {
@@ -230,8 +246,10 @@ public class ITKmsTest {
       requestParamsHeader.put(requestParamsKey, "name=" + kmsKeyResourcePath);
       GetCryptoKeyRequest getCryptoKeyRequest =
           GetCryptoKeyRequest.newBuilder().setName(kmsKeyResourcePath).build();
+      ClientInterceptor headersInterceptor =
+          MetadataUtils.newAttachHeadersInterceptor(requestParamsHeader);
       KeyManagementServiceGrpc.KeyManagementServiceBlockingStub stubForGetCryptoKey =
-          MetadataUtils.attachHeaders(kmsStub, requestParamsHeader);
+          kmsStub.withInterceptors(headersInterceptor);
       stubForGetCryptoKey.getCryptoKey(getCryptoKeyRequest);
     } catch (StatusRuntimeException ex) {
       if (ex.getStatus().getCode() == Status.Code.NOT_FOUND) {
@@ -246,8 +264,10 @@ public class ITKmsTest {
                 .build();
 
         requestParamsHeader.put(requestParamsKey, "parent=" + kmsKeyRingResourcePath);
+        ClientInterceptor headersInterceptor =
+            MetadataUtils.newAttachHeadersInterceptor(requestParamsHeader);
         KeyManagementServiceGrpc.KeyManagementServiceBlockingStub stubForCreateCryptoKey =
-            MetadataUtils.attachHeaders(kmsStub, requestParamsHeader);
+            kmsStub.withInterceptors(headersInterceptor);
         stubForCreateCryptoKey.createCryptoKey(createCryptoKeyRequest);
       } else {
         throw ex;
@@ -258,14 +278,13 @@ public class ITKmsTest {
 
   @Test
   public void testClearBucketDefaultKmsKeyName() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
+    String bucketName = dataGeneration.getBucketName();
     Bucket remoteBucket =
         storage.create(
             BucketInfo.newBuilder(bucketName)
                 .setDefaultKmsKeyName(kmsKeyOneResourcePath)
                 .setLocation(KMS_KEY_RING_LOCATION)
                 .build());
-
     try {
       assertEquals(kmsKeyOneResourcePath, remoteBucket.getDefaultKmsKeyName());
       Bucket updatedBucket = remoteBucket.toBuilder().setDefaultKmsKeyName(null).build().update();
@@ -298,7 +317,7 @@ public class ITKmsTest {
   @Test
   public void testCreateBlobWithKmsKeyName() {
     String blobName = "test-create-with-kms-key-name-blob";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob =
         storage.create(
             blob, BLOB_BYTE_CONTENT, Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
@@ -307,14 +326,14 @@ public class ITKmsTest {
     assertEquals(blob.getName(), remoteBlob.getName());
     assertNotNull(remoteBlob.getKmsKeyName());
     assertTrue(remoteBlob.getKmsKeyName().startsWith(kmsKeyOneResourcePath));
-    byte[] readBytes = storage.readAllBytes(BUCKET, blobName);
+    byte[] readBytes = storage.readAllBytes(bucketName, blobName);
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
   }
 
   @Test(expected = StorageException.class)
   public void testCreateBlobWithKmsKeyNameAndCustomerSuppliedKeyFails() {
     String blobName = "test-create-with-kms-key-name-blob";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     storage.create(
         blob,
         BLOB_BYTE_CONTENT,
@@ -322,9 +341,6 @@ public class ITKmsTest {
         Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
   }
 
-  // Seems quite similar to the normal KMS test? I get the subtle difference but is it worth
-  // creating a new bucket?
-  // or could we move the kms stuff out and just create the bucket with a default key?
   @Test
   public void testCreateBlobWithDefaultKmsKeyName()
       throws ExecutionException, InterruptedException {
@@ -356,7 +372,7 @@ public class ITKmsTest {
   @Test
   public void testGetBlobKmsKeyNameField() {
     String blobName = "test-get-selected-kms-key-name-field-blob";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).setContentType(CONTENT_TYPE).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).setContentType(CONTENT_TYPE).build();
     assertNotNull(storage.create(blob, Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath)));
     Blob remoteBlob =
         storage.get(blob.getBlobId(), Storage.BlobGetOption.fields(BlobField.KMS_KEY_NAME));
@@ -371,8 +387,10 @@ public class ITKmsTest {
       "test-list-blobs-selected-field-kms-key-name-blob1",
       "test-list-blobs-selected-field-kms-key-name-blob2"
     };
-    BlobInfo blob1 = BlobInfo.newBuilder(BUCKET, blobNames[0]).setContentType(CONTENT_TYPE).build();
-    BlobInfo blob2 = BlobInfo.newBuilder(BUCKET, blobNames[1]).setContentType(CONTENT_TYPE).build();
+    BlobInfo blob1 =
+        BlobInfo.newBuilder(bucketName, blobNames[0]).setContentType(CONTENT_TYPE).build();
+    BlobInfo blob2 =
+        BlobInfo.newBuilder(bucketName, blobNames[1]).setContentType(CONTENT_TYPE).build();
     Blob remoteBlob1 =
         storage.create(blob1, Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
     Blob remoteBlob2 =
@@ -381,7 +399,7 @@ public class ITKmsTest {
     assertNotNull(remoteBlob2);
     Page<Blob> page =
         storage.list(
-            BUCKET,
+            bucketName,
             Storage.BlobListOption.prefix("test-list-blobs-selected-field-kms-key-name-blob"),
             Storage.BlobListOption.fields(BlobField.KMS_KEY_NAME));
     // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
@@ -390,7 +408,7 @@ public class ITKmsTest {
       Thread.sleep(500);
       page =
           storage.list(
-              BUCKET,
+              bucketName,
               Storage.BlobListOption.prefix("test-list-blobs-selected-field-kms-key-name-blob"),
               Storage.BlobListOption.fields(BlobField.KMS_KEY_NAME));
     }
@@ -398,7 +416,7 @@ public class ITKmsTest {
     Iterator<Blob> iterator = page.iterateAll().iterator();
     while (iterator.hasNext()) {
       Blob remoteBlob = iterator.next();
-      assertEquals(BUCKET, remoteBlob.getBucket());
+      assertEquals(bucketName, remoteBlob.getBucket());
       assertTrue(blobSet.contains(remoteBlob.getName()));
       assertTrue(remoteBlob.getKmsKeyName().startsWith(kmsKeyOneResourcePath));
       assertNull(remoteBlob.getContentType());
@@ -408,7 +426,7 @@ public class ITKmsTest {
   @Test
   public void testRotateFromCustomerEncryptionToKmsKey() {
     String sourceBlobName = "test-copy-blob-encryption-key-source";
-    BlobId source = BlobId.of(BUCKET, sourceBlobName);
+    BlobId source = BlobId.of(bucketName, sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     Blob remoteBlob =
         storage.create(
@@ -418,7 +436,7 @@ public class ITKmsTest {
     assertNotNull(remoteBlob);
     String targetBlobName = "test-copy-blob-kms-key-target";
     BlobInfo target =
-        BlobInfo.newBuilder(BUCKET, targetBlobName)
+        BlobInfo.newBuilder(bucketName, targetBlobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
@@ -429,7 +447,7 @@ public class ITKmsTest {
             .setTarget(target, Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath))
             .build();
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(BUCKET, copyWriter.getResult().getBucket());
+    assertEquals(bucketName, copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertNotNull(copyWriter.getResult().getKmsKeyName());
@@ -437,13 +455,13 @@ public class ITKmsTest {
     assertArrayEquals(BLOB_BYTE_CONTENT, copyWriter.getResult().getContent());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
     assertTrue(copyWriter.isDone());
-    assertTrue(storage.delete(BUCKET, targetBlobName));
+    assertTrue(storage.delete(bucketName, targetBlobName));
   }
 
-  @Test
+  @Test(expected = StorageException.class)
   public void testRotateFromCustomerEncryptionToKmsKeyWithCustomerEncryption() {
     String sourceBlobName = "test-copy-blob-encryption-key-source";
-    BlobId source = BlobId.of(BUCKET, sourceBlobName);
+    BlobId source = BlobId.of(bucketName, sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     Blob remoteBlob =
         storage.create(
@@ -453,25 +471,20 @@ public class ITKmsTest {
     assertNotNull(remoteBlob);
     String targetBlobName = "test-copy-blob-kms-key-target";
     BlobInfo target =
-        BlobInfo.newBuilder(BUCKET, targetBlobName)
+        BlobInfo.newBuilder(bucketName, targetBlobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
-    try {
-      Storage.CopyRequest req =
-          Storage.CopyRequest.newBuilder()
-              .setSource(source)
-              .setSourceOptions(Storage.BlobSourceOption.decryptionKey(BASE64_KEY))
-              .setTarget(
-                  target,
-                  Storage.BlobTargetOption.encryptionKey(KEY),
-                  Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath))
-              .build();
-      storage.copy(req);
-      fail("StorageException was expected");
-    } catch (StorageException ex) {
-      // expected
-    }
+    Storage.CopyRequest req =
+        Storage.CopyRequest.newBuilder()
+            .setSource(source)
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(BASE64_KEY))
+            .setTarget(
+                target,
+                Storage.BlobTargetOption.encryptionKey(KEY),
+                Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath))
+            .build();
+    storage.copy(req);
   }
 
   @Test
@@ -508,7 +521,7 @@ public class ITKmsTest {
         assertTrue(bucket.getName().startsWith(bucketName));
         assertNotNull(bucket.getDefaultKmsKeyName());
         assertTrue(bucket.getDefaultKmsKeyName().startsWith(kmsKeyOneResourcePath));
-        assertNull(bucket.getCreateTime());
+        assertNull(bucket.getCreateTimeOffsetDateTime());
         assertNull(bucket.getSelfLink());
       }
     } finally {
@@ -520,18 +533,18 @@ public class ITKmsTest {
   public void testWriterWithKmsKeyName() throws IOException {
     // Write an empty object with a kmsKeyName.
     String blobName = "test-empty-blob";
-    BlobInfo blobInfo = BlobInfo.newBuilder(BUCKET, blobName).build();
+    BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob blob =
         storage.create(blobInfo, Storage.BlobTargetOption.kmsKeyName(kmsKeyOneResourcePath));
 
     // Create a writer using blob that already has metadata received from Storage API.
     int numberOfBytes;
+    byte[] content = BLOB_STRING_CONTENT.getBytes(UTF_8);
     try (WriteChannel writer = blob.writer()) {
-      byte[] content = BLOB_STRING_CONTENT.getBytes(UTF_8);
       numberOfBytes = writer.write(ByteBuffer.wrap(content, 0, content.length));
     }
-    assertThat(numberOfBytes).isEqualTo(27);
+    assertThat(numberOfBytes).isEqualTo(content.length);
     assertThat(blob.getKmsKeyName()).isNotNull();
-    assertThat(storage.delete(BUCKET, blobName)).isTrue();
+    assertThat(storage.delete(bucketName, blobName)).isTrue();
   }
 }
