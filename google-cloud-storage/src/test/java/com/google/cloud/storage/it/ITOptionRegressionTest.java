@@ -74,7 +74,7 @@ import org.junit.Test;
 public final class ITOptionRegressionTest {
   @ClassRule(order = 1)
   public static final TestBench TEST_BENCH =
-      TestBench.newBuilder().setContainerName("it-options").setDockerImageTag("v0.17.0").build();
+      TestBench.newBuilder().setContainerName("it-options").build();
 
   @ClassRule(order = 2)
   public static final StorageFixture storageFixture =
