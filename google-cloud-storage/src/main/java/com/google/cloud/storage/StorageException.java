@@ -18,12 +18,16 @@ package com.google.cloud.storage;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.core.InternalApi;
+import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * Storage service exception.
@@ -91,12 +95,29 @@ public final class StorageException extends BaseHttpServiceException {
    * created with an unknown status code.
    */
   static BaseServiceException coalesce(Throwable t) {
-    // TODO: handle com.google.cloud.grpc.BaseGrpcServiceException et. al.
     if (t instanceof BaseServiceException) {
       return (BaseServiceException) t;
     }
     if (t.getCause() instanceof BaseServiceException) {
       return (BaseServiceException) t.getCause();
+    }
+    if (t instanceof ApiException) {
+      ApiException apiEx = (ApiException) t;
+
+      // https://cloud.google.com/storage/docs/json_api/v1/status-codes
+      // https://cloud.google.com/apis/design/errors#http_mapping
+      // https://cloud.google.com/apis/design/errors#error_payloads
+      // TODO: flush this out more to wire through "error" and "details"
+      int httpStatusCode = 0;
+      StatusCode statusCode = apiEx.getStatusCode();
+      if (statusCode instanceof GrpcStatusCode) {
+        GrpcStatusCode gsc = (GrpcStatusCode) statusCode;
+        httpStatusCode =
+            BackwardCompatibilityUtils.grpcCodeToHttpStatusCode(gsc.getTransportCode());
+      }
+      String message = firstNonNull(() -> getCauseMessage(apiEx), apiEx::getMessage);
+
+      return new StorageException(httpStatusCode, message, apiEx.getReason(), apiEx);
     }
     return getStorageException(t);
   }
@@ -106,7 +127,7 @@ public final class StorageException extends BaseHttpServiceException {
    * defaults to idempotent always being {@code true}. Additionally, this method translates
    * transient issues Connection Closed Prematurely as a retryable error.
    *
-   * @returns {@code StorageException}
+   * @return {@code StorageException}
    */
   public static StorageException translate(IOException exception) {
     String message = exception.getMessage();
@@ -118,5 +139,21 @@ public final class StorageException extends BaseHttpServiceException {
       // default
       return new StorageException(exception);
     }
+  }
+
+  @SafeVarargs
+  private static <T> T firstNonNull(Supplier<T>... ss) {
+    for (Supplier<T> s : ss) {
+      T t = s.get();
+      if (t != null) {
+        return t;
+      }
+    }
+    throw new IllegalStateException("Unable to resolve non-null value");
+  }
+
+  private static String getCauseMessage(ApiException apiEx) {
+    Throwable cause = apiEx.getCause();
+    return cause == null ? null : cause.getMessage();
   }
 }
