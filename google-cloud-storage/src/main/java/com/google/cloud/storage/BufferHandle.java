@@ -54,7 +54,7 @@ abstract class BufferHandle implements Supplier<ByteBuffer> {
     private final Function<Integer, ByteBuffer> factory;
 
     // It is theoretically possible for this value to be null for any of the methods, while
-    // get is invoked. When ever reading this value, always read into a local variable and then
+    // get is invoked. Whenever reading this value, always read into a local variable and then
     // operate on that variable for the rest of the scope.
     private volatile ByteBuffer buf;
 
