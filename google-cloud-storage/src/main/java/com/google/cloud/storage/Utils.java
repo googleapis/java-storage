@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import javax.annotation.Nullable;
+import java.util.function.Supplier;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A collection of general utility functions providing convenience facilities.
@@ -190,5 +192,23 @@ final class Utils {
 
   static final <T1, T2> T2 todo(T1 t1) {
     throw new IllegalStateException("Not yet implemented");
+  }
+
+  /**
+   * Convenience method to resolve the first non-null {@code T} from an array of suppliers.
+   *
+   * Each supplier will have {@link Supplier#get()} called, and if non-null the value will be
+   * returned.
+   */
+  @NonNull
+  @SafeVarargs
+  static <T> T firstNonNull(Supplier<@Nullable T>... ss) {
+    for (Supplier<T> s : ss) {
+      T t = s.get();
+      if (t != null) {
+        return t;
+      }
+    }
+    throw new IllegalStateException("Unable to resolve non-null value");
   }
 }

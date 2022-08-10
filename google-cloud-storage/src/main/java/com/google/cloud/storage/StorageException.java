@@ -25,9 +25,11 @@ import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.common.collect.ImmutableSet;
+import io.grpc.StatusException;
+import io.grpc.StatusRuntimeException;
 import java.io.IOException;
 import java.util.Set;
-import java.util.function.Supplier;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Storage service exception.
@@ -107,7 +109,8 @@ public final class StorageException extends BaseHttpServiceException {
       // https://cloud.google.com/storage/docs/json_api/v1/status-codes
       // https://cloud.google.com/apis/design/errors#http_mapping
       // https://cloud.google.com/apis/design/errors#error_payloads
-      // TODO: flush this out more to wire through "error" and "details"
+      // TODO: flush this out more to wire through "error" and "details" when we're able to get real
+      //   errors from GCS
       int httpStatusCode = 0;
       StatusCode statusCode = apiEx.getStatusCode();
       if (statusCode instanceof GrpcStatusCode) {
@@ -115,8 +118,14 @@ public final class StorageException extends BaseHttpServiceException {
         httpStatusCode =
             BackwardCompatibilityUtils.grpcCodeToHttpStatusCode(gsc.getTransportCode());
       }
-      String message = firstNonNull(() -> getCauseMessage(apiEx), apiEx::getMessage);
+      // If there is a gRPC exception in our cause change pull it's error message up to be our
+      // message otherwise, create a generic error message with the status code.
+      String message = Utils.firstNonNull(() -> getStatusExceptionMessage(apiEx),
+          () -> String.format("Error: %s", statusCode.getCode().name()));
 
+      // It'd be better to use ExceptionData and BaseServiceException#<init>(ExceptionData) but,
+      // BaseHttpServiceException does not pass that through so we're stuck using this for now.
+      // TODO: When we can break the coupling to BaseHttpServiceException replace this
       return new StorageException(httpStatusCode, message, apiEx.getReason(), apiEx);
     }
     return getStorageException(t);
@@ -141,19 +150,12 @@ public final class StorageException extends BaseHttpServiceException {
     }
   }
 
-  @SafeVarargs
-  private static <T> T firstNonNull(Supplier<T>... ss) {
-    for (Supplier<T> s : ss) {
-      T t = s.get();
-      if (t != null) {
-        return t;
-      }
-    }
-    throw new IllegalStateException("Unable to resolve non-null value");
-  }
-
-  private static String getCauseMessage(ApiException apiEx) {
+  @Nullable
+  private static String getStatusExceptionMessage(ApiException apiEx) {
     Throwable cause = apiEx.getCause();
-    return cause == null ? null : cause.getMessage();
+    if (cause instanceof StatusRuntimeException || cause instanceof StatusException) {
+      return cause.getMessage();
+    }
+    return null;
   }
 }
