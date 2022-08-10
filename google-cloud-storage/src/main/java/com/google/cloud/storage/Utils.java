@@ -197,7 +197,7 @@ final class Utils {
   /**
    * Convenience method to resolve the first non-null {@code T} from an array of suppliers.
    *
-   * Each supplier will have {@link Supplier#get()} called, and if non-null the value will be
+   * <p>Each supplier will have {@link Supplier#get()} called, and if non-null the value will be
    * returned.
    */
   @NonNull
