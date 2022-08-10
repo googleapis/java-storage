@@ -42,10 +42,12 @@ import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
+import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
+import com.google.storage.v2.WriteObjectRequest;
 import java.io.Serializable;
 import java.net.FileNameMap;
 import java.net.URLConnection;
@@ -131,6 +133,10 @@ final class UnifiedOpts {
    * relationship) operations
    */
   interface ObjectSourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableObject {
+    default Mapper<ReadObjectRequest.Builder> readObject() {
+      return Mapper.identity();
+    }
+
     default Mapper<GetObjectRequest.Builder> getObject() {
       return Mapper.identity();
     }
@@ -146,6 +152,10 @@ final class UnifiedOpts {
    */
   interface ObjectTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableObject {
     default Mapper<BlobInfo.Builder> blobInfo() {
+      return Mapper.identity();
+    }
+
+    default Mapper<WriteObjectRequest.Builder> writeObject() {
       return Mapper.identity();
     }
 
@@ -517,6 +527,14 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> {
         customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
@@ -577,6 +595,14 @@ final class UnifiedOpts {
           b.put(
               StorageRpc.Option.CUSTOMER_SUPPLIED_KEY,
               BaseEncoding.base64().encode(val.getEncoded()));
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
     }
 
     @Override
@@ -663,6 +689,19 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfGenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setIfGenerationMatch(val);
     }
@@ -706,6 +745,19 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfGenerationNotMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setIfGenerationNotMatch(val);
     }
@@ -736,6 +788,14 @@ final class UnifiedOpts {
 
     private KmsKeyName(String val) {
       super(StorageRpc.Option.KMS_KEY_NAME, val);
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().getResourceBuilder().setKmsKey(val);
+        return b;
+      };
     }
 
     @Override
@@ -803,6 +863,19 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfMetagenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setIfMetagenerationMatch(val);
     }
@@ -857,6 +930,19 @@ final class UnifiedOpts {
 
     private MetagenerationNotMatch(long val) {
       super(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH, val);
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfMetagenerationNotMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfMetagenerationNotMatch(val);
     }
 
     @Override
@@ -949,6 +1035,14 @@ final class UnifiedOpts {
 
     private PredefinedAcl(String val) {
       super(StorageRpc.Option.PREDEFINED_ACL, val);
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setPredefinedAcl(val);
+        return b;
+      };
     }
 
     @Override
@@ -1160,6 +1254,14 @@ final class UnifiedOpts {
 
     private SetContentType(String val) {
       this.val = val;
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().getResourceBuilder().setContentType(val);
+        return b;
+      };
     }
 
     @Override
@@ -1780,8 +1882,16 @@ final class UnifiedOpts {
       return fuseMappers(BucketTargetOpt.class, BucketTargetOpt::deleteBucket);
     }
 
+    Mapper<WriteObjectRequest.Builder> writeObjectRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::writeObject);
+    }
+
     Mapper<GetObjectRequest.Builder> getObjectsRequest() {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::getObject);
+    }
+
+    Mapper<ReadObjectRequest.Builder> readObjectRequest() {
+      return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::readObject);
     }
 
     Mapper<ListObjectsRequest.Builder> listObjectsRequest() {

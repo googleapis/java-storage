@@ -52,16 +52,10 @@ import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
-import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
-import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
@@ -105,10 +99,8 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -184,10 +176,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(content, "content must be non null");
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     try {
       UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
           ResumableMedia.gapic()
@@ -234,10 +225,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     }
 
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
     GapicWritableByteChannelSessionBuilder channelSessionBuilder =
         ResumableMedia.gapic()
@@ -292,10 +282,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     requireNonNull(blobInfo, "blobInfo must be non null");
 
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
     ApiFuture<ResumableWrite> start =
         ResumableMedia.gapic()
@@ -540,11 +529,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     UnbufferedReadableByteChannelSession<Object> session =
         ResumableMedia.gapic()
             .read()
@@ -575,21 +561,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    ReadObjectRequest request = getReadObjectRequest(blob, optionsMap);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    ReadObjectRequest request = getReadObjectRequest(blob, opts);
     return new GrpcBlobReadChannel(grpcStorageStub.readObjectCallable(), request);
   }
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
 
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
 
     // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
 
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     UnbufferedReadableByteChannelSession<Object> session =
         ResumableMedia.gapic()
             .read()
@@ -609,12 +593,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
 
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
 
     // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
 
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     UnbufferedReadableByteChannelSession<Object> session =
         ResumableMedia.gapic()
             .read()
@@ -634,10 +617,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     return new GrpcBlobWriteChannel(
         grpcStorageStub.writeObjectCallable(),
         () ->
@@ -1060,8 +1042,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         + ")";
   }
 
-  private ReadObjectRequest getReadObjectRequest(
-      BlobId blob, Map<StorageRpc.Option, ?> optionsMap) {
+  private ReadObjectRequest getReadObjectRequest(BlobId blob, Opts<ObjectSourceOpt> opts) {
     Object object = codecs.blobId().encode(blob);
 
     ReadObjectRequest.Builder builder =
@@ -1071,19 +1052,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     if (generation > 0) {
       builder.setGeneration(generation);
     }
-    // ZOpt.applyAll(
-    //     optionsMap,
-    //     ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-    //     ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch),
-    //     ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
-    //     ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(builder::setIfGenerationNotMatch),
-    //     ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
-    //         this::commonRequestParams, builder::setCommonObjectRequestParams));
-    return builder.build();
+    return opts.readObjectRequest().apply(builder).build();
   }
 
-  private WriteObjectRequest.Builder getWriteObjectRequestBuilder(
-      BlobInfo info, Map<StorageRpc.Option, ?> optionsMap) {
+  private WriteObjectRequest getWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
         object
@@ -1091,7 +1063,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             // required if the data is changing
             .clearChecksums()
             // trimmed to shave payload size
-            .clearAcl()
             .clearGeneration()
             .clearMetageneration()
             .clearSize()
@@ -1102,30 +1073,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     WriteObjectRequest.Builder requestBuilder =
         WriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
 
-    // TODO: Projection: Do we care?
-    // ZOpt.applyAll(
-    //     optionsMap,
-    //     ZOpt.PREDEFINED_ACL.consumeVia(specBuilder::setPredefinedAcl),
-    //     ZOpt.IF_METAGENERATION_MATCH.consumeVia(specBuilder::setIfMetagenerationMatch),
-    //     ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(specBuilder::setIfMetagenerationNotMatch),
-    //     ZOpt.IF_GENERATION_MATCH.consumeVia(specBuilder::setIfGenerationMatch),
-    //     ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(specBuilder::setIfGenerationNotMatch),
-    //     ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
-    //         this::commonRequestParams, requestBuilder::setCommonObjectRequestParams),
-    //     ZOpt.KMS_KEY_NAME.consumeVia(objectBuilder::setKmsKey));
-
-    return requestBuilder;
-  }
-
-  private CommonObjectRequestParams commonRequestParams(String key) {
-    byte[] keyBytes = Base64.getDecoder().decode(key);
-    HashCode keySha256 = Hashing.sha256().hashBytes(keyBytes);
-
-    return CommonObjectRequestParams.newBuilder()
-        .setEncryptionAlgorithm("AES256")
-        .setEncryptionKeyBytes(ByteString.copyFromUtf8(key))
-        .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()))
-        .build();
+    return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
   private FieldMask fieldMaskGenerator(Message message) {
