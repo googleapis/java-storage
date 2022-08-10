@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.11.4](https://github.com/googleapis/java-storage/compare/v2.11.3...v2.11.4) (2022-08-10)
+
+
+### Documentation
+
+* Fix broken links in readme ([#1520](https://github.com/googleapis/java-storage/issues/1520)) ([840b08a](https://github.com/googleapis/java-storage/commit/840b08a03fa7c0535855140244c282f79403b458))
+
 ## [2.11.3](https://github.com/googleapis/java-storage/compare/v2.11.2...v2.11.3) (2022-08-08)
 
 
