@@ -52,26 +52,15 @@ final class ZOpt<T> {
   static final ZOpt<Long> IF_GENERATION_MATCH = new ZOpt<>(StorageRpc.Option.IF_GENERATION_MATCH);
   static final ZOpt<Long> IF_GENERATION_NOT_MATCH =
       new ZOpt<>(StorageRpc.Option.IF_GENERATION_NOT_MATCH);
-  static final ZOpt<Long> IF_SOURCE_METAGENERATION_MATCH =
-      new ZOpt<>(StorageRpc.Option.IF_SOURCE_METAGENERATION_MATCH);
-  static final ZOpt<Long> IF_SOURCE_METAGENERATION_NOT_MATCH =
-      new ZOpt<>(StorageRpc.Option.IF_SOURCE_METAGENERATION_NOT_MATCH);
-  static final ZOpt<Long> IF_SOURCE_GENERATION_MATCH =
-      new ZOpt<>(StorageRpc.Option.IF_SOURCE_GENERATION_MATCH);
-  static final ZOpt<Long> IF_SOURCE_GENERATION_NOT_MATCH =
-      new ZOpt<>(StorageRpc.Option.IF_SOURCE_GENERATION_NOT_MATCH);
   static final ZOpt<Boolean> IF_DISABLE_GZIP_CONTENT =
       new ZOpt<>(StorageRpc.Option.IF_DISABLE_GZIP_CONTENT);
   static final ZOpt<String> PREFIX = new ZOpt<>(StorageRpc.Option.PREFIX);
   static final ZOpt<String> PROJECT_ID = new ZOpt<>(StorageRpc.Option.PROJECT_ID);
-  static final ZOpt<String> PROJECTION = new ZOpt<>(StorageRpc.Option.PROJECTION);
   static final ZOpt<Long> MAX_RESULTS = new ZOpt<>(StorageRpc.Option.MAX_RESULTS);
   static final ZOpt<String> PAGE_TOKEN = new ZOpt<>(StorageRpc.Option.PAGE_TOKEN);
   static final ZOpt<String> DELIMITER = new ZOpt<>(StorageRpc.Option.DELIMITER);
   static final ZOpt<String> START_OFF_SET = new ZOpt<>(StorageRpc.Option.START_OFF_SET);
   static final ZOpt<String> END_OFF_SET = new ZOpt<>(StorageRpc.Option.END_OFF_SET);
-  static final ZOpt<Boolean> VERSIONS = new ZOpt<>(StorageRpc.Option.VERSIONS);
-  static final ZOpt<String> FIELDS = new ZOpt<>(StorageRpc.Option.FIELDS);
   static final ZOpt<String> CUSTOMER_SUPPLIED_KEY =
       new ZOpt<>(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
   static final ZOpt<String> USER_PROJECT = new ZOpt<>(StorageRpc.Option.USER_PROJECT);
@@ -79,11 +68,6 @@ final class ZOpt<T> {
   static final ZOpt<String> SERVICE_ACCOUNT_EMAIL =
       new ZOpt<>(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL);
   static final ZOpt<Boolean> SHOW_DELETED_KEYS = new ZOpt<>(StorageRpc.Option.SHOW_DELETED_KEYS);
-  static final ZOpt<Long> REQUESTED_POLICY_VERSION =
-      new ZOpt<>(StorageRpc.Option.REQUESTED_POLICY_VERSION);
-  static final ZOpt<String> DETECT_CONTENT_TYPE = new ZOpt<>(StorageRpc.Option.DETECT_CONTENT_TYPE);
-  static final ZOpt<Boolean> RETURN_RAW_INPUT_STREAM =
-      new ZOpt<>(StorageRpc.Option.RETURN_RAW_INPUT_STREAM);
 
   private final StorageRpc.Option key;
 
