@@ -26,6 +26,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
 import com.google.storage.v2.GetObjectRequest;
+import com.google.storage.v2.ListBucketsRequest;
+import com.google.storage.v2.ListHmacKeysRequest;
+import com.google.storage.v2.ListObjectsRequest;
 import java.io.Serializable;
 import java.net.FileNameMap;
 import java.net.URLConnection;
@@ -99,7 +102,9 @@ final class UnifiedOpts {
   }
 
   /** Base interface for those Opts which are applicable to Object List operations */
-  interface ObjectListOpt extends GrpcMetadataMapper, ListOpt, ApplicableObject {}
+  interface ObjectListOpt extends GrpcMetadataMapper, ListOpt, ApplicableObject {
+    Mapper<ListObjectsRequest.Builder> listObjects();
+  }
 
   /**
    * Base interface for those Opts which are applicable to Object Source (get/read/origin
@@ -120,7 +125,9 @@ final class UnifiedOpts {
   }
 
   /** Base interface for those Opts which are applicable to Bucket List operations */
-  interface BucketListOpt extends GrpcMetadataMapper, ListOpt, ApplicableBucket {}
+  interface BucketListOpt extends GrpcMetadataMapper, ListOpt, ApplicableBucket {
+    Mapper<ListBucketsRequest.Builder> listBuckets();
+  }
 
   /**
    * Base interface for those Opts which are applicable to Bucket Source (get/read/origin
@@ -135,7 +142,9 @@ final class UnifiedOpts {
   interface BucketTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableBucket {}
 
   /** Base interface for those Opts which are applicable to HmacKey List operations */
-  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {}
+  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {
+    Mapper<ListHmacKeysRequest.Builder> listHmacKeys();
+  }
 
   /**
    * Base interface for those Opts which are applicable to HmacKey Source (get/read/origin
@@ -436,6 +445,11 @@ final class UnifiedOpts {
     private Delimiter(String val) {
       super(StorageRpc.Option.DELIMITER, val);
     }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setDelimiter(val);
+    }
   }
 
   static final class DisableGzipContent extends RpcOptVal<@NonNull Boolean>
@@ -471,6 +485,11 @@ final class UnifiedOpts {
     private EndOffset(String val) {
       super(StorageRpc.Option.END_OFF_SET, val);
     }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setLexicographicEnd(val);
+    }
   }
 
   static final class Fields extends RpcOptVal<String>
@@ -483,6 +502,16 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
       return Mapper.identity();
     }
   }
@@ -639,6 +668,21 @@ final class UnifiedOpts {
     private PageSize(long val) {
       super(StorageRpc.Option.MAX_RESULTS, val);
     }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setPageSize(Math.toIntExact(val));
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setPageSize(Math.toIntExact(val));
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setPageSize(Math.toIntExact(val));
+    }
   }
 
   static final class PageToken extends RpcOptVal<String>
@@ -647,6 +691,21 @@ final class UnifiedOpts {
 
     private PageToken(String val) {
       super(StorageRpc.Option.PAGE_TOKEN, val);
+    }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setPageToken(val);
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setPageToken(val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setPageToken(val);
     }
   }
 
@@ -674,6 +733,16 @@ final class UnifiedOpts {
     private Prefix(String val) {
       super(StorageRpc.Option.PREFIX, val);
     }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setPrefix(val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setPrefix(val);
+    }
   }
 
   /**
@@ -687,6 +756,11 @@ final class UnifiedOpts {
 
     private ProjectId(String val) {
       super(StorageRpc.Option.PROJECT_ID, val);
+    }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return todo();
     }
   }
 
@@ -799,6 +873,11 @@ final class UnifiedOpts {
     private ServiceAccount(String val) {
       super(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL, val);
     }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setServiceAccountEmail(val);
+    }
   }
 
   static final class SetContentType implements ObjectTargetOpt {
@@ -843,6 +922,11 @@ final class UnifiedOpts {
     private ShowDeletedKeys(boolean val) {
       super(StorageRpc.Option.SHOW_DELETED_KEYS, val);
     }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setShowDeletedKeys(val);
+    }
   }
 
   /** @see EndOffset */
@@ -851,6 +935,11 @@ final class UnifiedOpts {
 
     private StartOffset(String val) {
       super(StorageRpc.Option.START_OFF_SET, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setLexicographicStart(val);
     }
   }
 
@@ -880,11 +969,31 @@ final class UnifiedOpts {
     public Mapper<GetObjectRequest.Builder> getObject() {
       return Mapper.identity();
     }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return Mapper.identity();
+    }
   }
 
   static final class VersionsFilter extends RpcOptVal<@NonNull Boolean> implements ObjectListOpt {
     private VersionsFilter(boolean val) {
       super(StorageRpc.Option.VERSIONS, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setVersions(val);
     }
   }
 
@@ -1386,6 +1495,18 @@ final class UnifiedOpts {
 
     Mapper<GetObjectRequest.Builder> getObjectRequest() {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::getObject);
+    }
+
+    Mapper<ListHmacKeysRequest.Builder> listHmacKeysRequest() {
+      return fuseMappers(HmacKeyListOpt.class, HmacKeyListOpt::listHmacKeys);
+    }
+
+    Mapper<ListBucketsRequest.Builder> listBucketsRequest() {
+      return fuseMappers(BucketListOpt.class, BucketListOpt::listBuckets);
+    }
+
+    Mapper<ListObjectsRequest.Builder> listObjectsRequest() {
+      return fuseMappers(ObjectListOpt.class, ObjectListOpt::listObjects);
     }
 
     Mapper<BlobInfo.Builder> blobInfoMapper() {

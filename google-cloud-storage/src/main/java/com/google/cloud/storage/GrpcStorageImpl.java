@@ -399,13 +399,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
     ListBucketsRequest.Builder builder =
         ListBucketsRequest.newBuilder().setParent(ProjectName.format(projectId));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
-        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
-        ZOpt.PREFIX.consumeVia(builder::setPrefix));
-    // TODO(sydmunro): StorageRpc.Option.Fields
-    ListBucketsPagedResponse call = listBucketsCallable.call(builder.build(), grpcCallContext);
+    ListBucketsRequest request = opts.listBucketsRequest().apply(builder).build();
+    ListBucketsPagedResponse call = listBucketsCallable.call(request, grpcCallContext);
     ListBucketsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.bucket);
   }
@@ -415,21 +410,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsCallable =
         grpcStorageStub.listObjectsPagedCallable();
     Opts<ObjectListOpt> opts = Opts.unwrap(options);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListObjectsRequest.Builder builder =
         ListObjectsRequest.newBuilder().setParent(bucketNameCodec.encode(bucket));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
-        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
-        ZOpt.PREFIX.consumeVia(builder::setPrefix),
-        ZOpt.DELIMITER.consumeVia(builder::setDelimiter),
-        ZOpt.START_OFF_SET.consumeVia(builder::setLexicographicStart),
-        ZOpt.END_OFF_SET.consumeVia(builder::setLexicographicEnd));
-    // TODO(sydmunro) StorageRpc.Option.Fields
-    ListObjectsRequest req = builder.build();
+    ListObjectsRequest req = opts.listObjectsRequest().apply(builder).build();
     ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
     ListObjectsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.blob);
@@ -930,13 +915,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     String projectId =
         firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
     ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder().setProject(projectId);
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.SERVICE_ACCOUNT_EMAIL.consumeVia(builder::setServiceAccountEmail),
-        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
-        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
-        ZOpt.SHOW_DELETED_KEYS.consumeVia(builder::setShowDeletedKeys));
-    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build(), grpcCallContext);
+    ListHmacKeysRequest request = opts.listHmacKeysRequest().apply(builder).build();
+    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(request, grpcCallContext);
     ListHmacKeysPage page = call.getPage();
     return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
   }
