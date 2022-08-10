@@ -52,8 +52,6 @@ final class ZOpt<T> {
   static final ZOpt<Long> IF_GENERATION_MATCH = new ZOpt<>(StorageRpc.Option.IF_GENERATION_MATCH);
   static final ZOpt<Long> IF_GENERATION_NOT_MATCH =
       new ZOpt<>(StorageRpc.Option.IF_GENERATION_NOT_MATCH);
-  static final ZOpt<Boolean> IF_DISABLE_GZIP_CONTENT =
-      new ZOpt<>(StorageRpc.Option.IF_DISABLE_GZIP_CONTENT);
   static final ZOpt<String> PREFIX = new ZOpt<>(StorageRpc.Option.PREFIX);
   static final ZOpt<String> PROJECT_ID = new ZOpt<>(StorageRpc.Option.PROJECT_ID);
   static final ZOpt<Long> MAX_RESULTS = new ZOpt<>(StorageRpc.Option.MAX_RESULTS);
