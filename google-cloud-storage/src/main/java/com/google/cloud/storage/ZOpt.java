@@ -63,7 +63,6 @@ final class ZOpt<T> {
   static final ZOpt<String> END_OFF_SET = new ZOpt<>(StorageRpc.Option.END_OFF_SET);
   static final ZOpt<String> CUSTOMER_SUPPLIED_KEY =
       new ZOpt<>(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY);
-  static final ZOpt<String> USER_PROJECT = new ZOpt<>(StorageRpc.Option.USER_PROJECT);
   static final ZOpt<String> KMS_KEY_NAME = new ZOpt<>(StorageRpc.Option.KMS_KEY_NAME);
   static final ZOpt<String> SERVICE_ACCOUNT_EMAIL =
       new ZOpt<>(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL);
