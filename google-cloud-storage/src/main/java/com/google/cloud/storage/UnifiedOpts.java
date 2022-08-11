@@ -427,6 +427,11 @@ final class UnifiedOpts {
     return new ServiceAccount(s.getEmail());
   }
 
+  @VisibleForTesting
+  static SetContentType setContentType(String s) {
+    return new SetContentType(s);
+  }
+
   static ShowDeletedKeys showDeletedKeys(boolean b) {
     return new ShowDeletedKeys(b);
   }
@@ -1955,6 +1960,10 @@ final class UnifiedOpts {
     private <R> Stream<R> filterTo(Class<R> c) {
       // TODO: figure out if there is need for an "isApplicableTo" predicate
       return opts.stream().filter(isInstanceOf(c)).map(x -> (R) x);
+    }
+
+    static <T extends Opt> Opts<T> from(T t) {
+      return new Opts<>(ImmutableList.of(t));
     }
 
     static <T extends Opt> Opts<T> from(T... ts) {
