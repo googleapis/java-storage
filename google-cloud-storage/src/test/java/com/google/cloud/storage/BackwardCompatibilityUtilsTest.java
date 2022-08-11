@@ -30,6 +30,8 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.cloud.storage.Conversions.Codec;
+import io.grpc.Status.Code;
+import java.util.EnumMap;
 import org.junit.Test;
 
 public final class BackwardCompatibilityUtilsTest {
@@ -90,6 +92,35 @@ public final class BackwardCompatibilityUtilsTest {
 
     assertThat(lifecycleRule.getAction()).isEqualTo(LifecycleAction.newDeleteAction());
     assertThat(lifecycleRule.getCondition().getAge()).isEqualTo(5);
+  }
+
+  @Test
+  public void grpcCodeToHttpStatusCode_expectedMapping() {
+    EnumMap<Code, Integer> expected = new EnumMap<>(Code.class);
+    expected.put(Code.OK, 200);
+    expected.put(Code.INVALID_ARGUMENT, 400);
+    expected.put(Code.OUT_OF_RANGE, 400);
+    expected.put(Code.UNAUTHENTICATED, 401);
+    expected.put(Code.PERMISSION_DENIED, 403);
+    expected.put(Code.NOT_FOUND, 404);
+    expected.put(Code.FAILED_PRECONDITION, 412);
+    expected.put(Code.ALREADY_EXISTS, 409);
+    expected.put(Code.RESOURCE_EXHAUSTED, 429);
+    expected.put(Code.INTERNAL, 500);
+    expected.put(Code.UNIMPLEMENTED, 501);
+    expected.put(Code.UNAVAILABLE, 503);
+    expected.put(Code.ABORTED, 0);
+    expected.put(Code.CANCELLED, 0);
+    expected.put(Code.UNKNOWN, 0);
+    expected.put(Code.DEADLINE_EXCEEDED, 0);
+    expected.put(Code.DATA_LOSS, 0);
+
+    EnumMap<Code, Integer> actual = new EnumMap<>(Code.class);
+    for (Code c : Code.values()) {
+      actual.put(c, BackwardCompatibilityUtils.grpcCodeToHttpStatusCode(c));
+    }
+
+    assertThat(actual).isEqualTo(expected);
   }
 
   private void verifyConversionRoundTrip(DeleteRule delRule) {
