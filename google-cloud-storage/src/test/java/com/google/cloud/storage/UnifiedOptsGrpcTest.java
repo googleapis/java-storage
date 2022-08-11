@@ -18,11 +18,40 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assume.assumeTrue;
 
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.cloud.storage.Storage.PredefinedAcl;
+import com.google.cloud.storage.UnifiedOpts.Mapper;
 import com.google.cloud.storage.UnifiedOpts.NoOpObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.hash.Hashing;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.GetPolicyOptions;
+import com.google.protobuf.ByteString;
+import com.google.storage.v2.CommonObjectRequestParams;
+import com.google.storage.v2.ComposeObjectRequest;
+import com.google.storage.v2.CreateBucketRequest;
+import com.google.storage.v2.DeleteBucketRequest;
+import com.google.storage.v2.DeleteHmacKeyRequest;
+import com.google.storage.v2.DeleteObjectRequest;
+import com.google.storage.v2.GetBucketRequest;
+import com.google.storage.v2.GetHmacKeyRequest;
+import com.google.storage.v2.GetObjectRequest;
+import com.google.storage.v2.ListBucketsRequest;
+import com.google.storage.v2.ListHmacKeysRequest;
+import com.google.storage.v2.ListObjectsRequest;
+import com.google.storage.v2.Object;
+import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.RewriteObjectRequest;
+import com.google.storage.v2.UpdateBucketRequest;
+import com.google.storage.v2.UpdateObjectRequest;
+import com.google.storage.v2.WriteObjectRequest;
+import com.google.storage.v2.WriteObjectSpec;
+import java.security.SecureRandom;
+import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -33,259 +62,1010 @@ public final class UnifiedOptsGrpcTest {
   @RunWith(Enclosed.class)
   public static final class Opt {
 
-    public static final class Crc32cMatchTest {
-
-      @Test
-      public void name() {
-        assumeTrue(false);
-      }
-    }
-
     public static final class DecryptionKeyTest {
+      @Test
+      public void readObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        ReadObjectRequest expected =
+            ReadObjectRequest.newBuilder().setCommonObjectRequestParams(rand).build();
+        ReadObjectRequest actual =
+            UnifiedOpts.decryptionKey(k).readObject().apply(ReadObjectRequest.newBuilder()).build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void getObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        GetObjectRequest expected =
+            GetObjectRequest.newBuilder().setCommonObjectRequestParams(rand).build();
+        GetObjectRequest actual =
+            UnifiedOpts.decryptionKey(k).getObject().apply(GetObjectRequest.newBuilder()).build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void rewriteObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder()
+                .setCopySourceEncryptionAlgorithm(rand.getEncryptionAlgorithm())
+                .setCopySourceEncryptionKeyBytes(rand.getEncryptionKeyBytes())
+                .setCopySourceEncryptionKeySha256Bytes(rand.getEncryptionKeySha256Bytes())
+                .build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.decryptionKey(k)
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class DelimiterTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
-      }
-    }
+      public void listObjects() {
+        ListObjectsRequest expected = ListObjectsRequest.newBuilder().setDelimiter("|~|").build();
 
-    public static final class DisableGzipContentTest {
-
-      @Test
-      public void name() {
-        assumeTrue(false);
+        ListObjectsRequest actual =
+            UnifiedOpts.delimiter("|~|")
+                .listObjects()
+                .apply(ListObjectsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class EncryptionKeyTest {
+      @Test
+      public void writeObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder().setCommonObjectRequestParams(rand).build();
+        WriteObjectRequest actual =
+            UnifiedOpts.encryptionKey(k)
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void updateObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        UpdateObjectRequest expected =
+            UpdateObjectRequest.newBuilder().setCommonObjectRequestParams(rand).build();
+        UpdateObjectRequest actual =
+            UnifiedOpts.encryptionKey(k)
+                .updateObject()
+                .apply(UpdateObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        DeleteObjectRequest expected =
+            DeleteObjectRequest.newBuilder().setCommonObjectRequestParams(rand).build();
+        DeleteObjectRequest actual =
+            UnifiedOpts.encryptionKey(k)
+                .deleteObject()
+                .apply(DeleteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void composeObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        ComposeObjectRequest expected =
+            ComposeObjectRequest.newBuilder().setCommonObjectRequestParams(rand).build();
+        ComposeObjectRequest actual =
+            UnifiedOpts.encryptionKey(k)
+                .composeObject()
+                .apply(ComposeObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void rewriteObject() {
+        CommonObjectRequestParams rand = randEncryption();
+        SecretKeySpec k =
+            new SecretKeySpec(
+                rand.getEncryptionKeyBytes().toByteArray(), rand.getEncryptionAlgorithm());
+
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setCommonObjectRequestParams(rand).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.encryptionKey(k)
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class EndOffsetTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
-      }
-    }
+      public void listObjects() {
+        ListObjectsRequest expected =
+            ListObjectsRequest.newBuilder().setLexicographicStart("start").build();
 
-    public static final class FieldsTest {
-
-      @Test
-      public void name() {
-        assumeTrue(false);
+        ListObjectsRequest actual =
+            UnifiedOpts.startOffset("start")
+                .listObjects()
+                .apply(ListObjectsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class GenerationMatchTest {
+      @Test
+      public void writeObject() {
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder()
+                .setWriteObjectSpec(WriteObjectSpec.newBuilder().setIfGenerationMatch(1L))
+                .build();
+        WriteObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void readObject() {
+        ReadObjectRequest expected =
+            ReadObjectRequest.newBuilder().setIfGenerationMatch(1L).build();
+        ReadObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .readObject()
+                .apply(ReadObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void getObject() {
+        GetObjectRequest expected = GetObjectRequest.newBuilder().setIfGenerationMatch(1L).build();
+        GetObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .getObject()
+                .apply(GetObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void updateObject() {
+        UpdateObjectRequest expected =
+            UpdateObjectRequest.newBuilder().setIfGenerationMatch(1L).build();
+        UpdateObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .updateObject()
+                .apply(UpdateObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteObject() {
+        DeleteObjectRequest expected =
+            DeleteObjectRequest.newBuilder().setIfGenerationMatch(1L).build();
+        DeleteObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .deleteObject()
+                .apply(DeleteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void composeObject() {
+        ComposeObjectRequest expected =
+            ComposeObjectRequest.newBuilder().setIfGenerationMatch(1L).build();
+        ComposeObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .composeObject()
+                .apply(ComposeObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class GenerationNotMatchTest {
+      @Test
+      public void writeObject() {
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder()
+                .setWriteObjectSpec(WriteObjectSpec.newBuilder().setIfGenerationNotMatch(1L))
+                .build();
+        WriteObjectRequest actual =
+            UnifiedOpts.generationNotMatch(1L)
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void readObject() {
+        ReadObjectRequest expected =
+            ReadObjectRequest.newBuilder().setIfGenerationNotMatch(1L).build();
+        ReadObjectRequest actual =
+            UnifiedOpts.generationNotMatch(1L)
+                .readObject()
+                .apply(ReadObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void getObject() {
+        GetObjectRequest expected =
+            GetObjectRequest.newBuilder().setIfGenerationNotMatch(1L).build();
+        GetObjectRequest actual =
+            UnifiedOpts.generationNotMatch(1L)
+                .getObject()
+                .apply(GetObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void updateObject() {
+        UpdateObjectRequest expected =
+            UpdateObjectRequest.newBuilder().setIfGenerationNotMatch(1L).build();
+        UpdateObjectRequest actual =
+            UnifiedOpts.generationNotMatch(1L)
+                .updateObject()
+                .apply(UpdateObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteObject() {
+        DeleteObjectRequest expected =
+            DeleteObjectRequest.newBuilder().setIfGenerationNotMatch(1L).build();
+        DeleteObjectRequest actual =
+            UnifiedOpts.generationNotMatch(1L)
+                .deleteObject()
+                .apply(DeleteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class KmsKeyNameTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void writeObject() {
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder()
+                .setWriteObjectSpec(
+                    WriteObjectSpec.newBuilder()
+                        .setResource(Object.newBuilder().setKmsKey("key").build())
+                        .build())
+                .build();
+
+        WriteObjectRequest actual =
+            UnifiedOpts.kmsKeyName("key")
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+
+        assertThat(actual).isEqualTo(expected);
       }
-    }
-
-    public static final class Md5MatchTest {
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void composeObject() {
+        ComposeObjectRequest expected = ComposeObjectRequest.newBuilder().setKmsKey("key").build();
+
+        ComposeObjectRequest actual =
+            UnifiedOpts.kmsKeyName("key")
+                .composeObject()
+                .apply(ComposeObjectRequest.newBuilder())
+                .build();
+
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class MetagenerationMatchTest {
+      @Test
+      public void writeObject() {
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder()
+                .setWriteObjectSpec(WriteObjectSpec.newBuilder().setIfMetagenerationMatch(1L))
+                .build();
+        WriteObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void readObject() {
+        ReadObjectRequest expected =
+            ReadObjectRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        ReadObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .readObject()
+                .apply(ReadObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void getObject() {
+        GetObjectRequest expected =
+            GetObjectRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        GetObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .getObject()
+                .apply(GetObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void updateObject() {
+        UpdateObjectRequest expected =
+            UpdateObjectRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        UpdateObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .updateObject()
+                .apply(UpdateObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteObject() {
+        DeleteObjectRequest expected =
+            DeleteObjectRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        DeleteObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .deleteObject()
+                .apply(DeleteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void composeObject() {
+        ComposeObjectRequest expected =
+            ComposeObjectRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        ComposeObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .composeObject()
+                .apply(ComposeObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void updateBucket() {
+        UpdateBucketRequest expected =
+            UpdateBucketRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        UpdateBucketRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .updateBucket()
+                .apply(UpdateBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteBucket() {
+        DeleteBucketRequest expected =
+            DeleteBucketRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        DeleteBucketRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .deleteBucket()
+                .apply(DeleteBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void getBucket() {
+        GetBucketRequest expected =
+            GetBucketRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        GetBucketRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .getBucket()
+                .apply(GetBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class MetagenerationNotMatchTest {
+      @Test
+      public void writeObject() {
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder()
+                .setWriteObjectSpec(WriteObjectSpec.newBuilder().setIfMetagenerationNotMatch(1L))
+                .build();
+        WriteObjectRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void readObject() {
+        ReadObjectRequest expected =
+            ReadObjectRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        ReadObjectRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .readObject()
+                .apply(ReadObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void getObject() {
+        GetObjectRequest expected =
+            GetObjectRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        GetObjectRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .getObject()
+                .apply(GetObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void updateObject() {
+        UpdateObjectRequest expected =
+            UpdateObjectRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        UpdateObjectRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .updateObject()
+                .apply(UpdateObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteObject() {
+        DeleteObjectRequest expected =
+            DeleteObjectRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        DeleteObjectRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .deleteObject()
+                .apply(DeleteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void updateBucket() {
+        UpdateBucketRequest expected =
+            UpdateBucketRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        UpdateBucketRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .updateBucket()
+                .apply(UpdateBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteBucket() {
+        DeleteBucketRequest expected =
+            DeleteBucketRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        DeleteBucketRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .deleteBucket()
+                .apply(DeleteBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void getBucket() {
+        GetBucketRequest expected =
+            GetBucketRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        GetBucketRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .getBucket()
+                .apply(GetBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class PageSizeTest {
+      @Test
+      public void listBuckets() {
+        ListBucketsRequest expected = ListBucketsRequest.newBuilder().setPageSize(5).build();
+
+        ListBucketsRequest actual =
+            UnifiedOpts.pageSize(5).listBuckets().apply(ListBucketsRequest.newBuilder()).build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listObjects() {
+        ListObjectsRequest expected = ListObjectsRequest.newBuilder().setPageSize(5).build();
+
+        ListObjectsRequest actual =
+            UnifiedOpts.pageSize(5).listObjects().apply(ListObjectsRequest.newBuilder()).build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void listHmacKeys() {
+        ListHmacKeysRequest expected = ListHmacKeysRequest.newBuilder().setPageSize(5).build();
+
+        ListHmacKeysRequest actual =
+            UnifiedOpts.pageSize(5).listHmacKeys().apply(ListHmacKeysRequest.newBuilder()).build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class PageTokenTest {
+      @Test
+      public void listBuckets() {
+        ListBucketsRequest expected =
+            ListBucketsRequest.newBuilder().setPageToken("pageToken").build();
+
+        ListBucketsRequest actual =
+            UnifiedOpts.pageToken("pageToken")
+                .listBuckets()
+                .apply(ListBucketsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listObjects() {
+        ListObjectsRequest expected =
+            ListObjectsRequest.newBuilder().setPageToken("pageToken").build();
+
+        ListObjectsRequest actual =
+            UnifiedOpts.pageToken("pageToken")
+                .listObjects()
+                .apply(ListObjectsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void listHmacKeys() {
+        ListHmacKeysRequest expected =
+            ListHmacKeysRequest.newBuilder().setPageToken("pageToken").build();
+
+        ListHmacKeysRequest actual =
+            UnifiedOpts.pageToken("pageToken")
+                .listHmacKeys()
+                .apply(ListHmacKeysRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class PredefinedAclTest {
+      @Test
+      public void writeObject() {
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder()
+                .setWriteObjectSpec(WriteObjectSpec.newBuilder().setPredefinedAcl("private"))
+                .build();
+        WriteObjectRequest actual =
+            UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE)
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void updateObject() {
+        UpdateObjectRequest expected =
+            UpdateObjectRequest.newBuilder().setPredefinedAcl("private").build();
+        UpdateObjectRequest actual =
+            UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE)
+                .updateObject()
+                .apply(UpdateObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void composeObject() {
+        ComposeObjectRequest expected =
+            ComposeObjectRequest.newBuilder().setDestinationPredefinedAcl("private").build();
+        ComposeObjectRequest actual =
+            UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE)
+                .composeObject()
+                .apply(ComposeObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void updateBucket() {
+        UpdateBucketRequest expected =
+            UpdateBucketRequest.newBuilder().setPredefinedAcl("private").build();
+        UpdateBucketRequest actual =
+            UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE)
+                .updateBucket()
+                .apply(UpdateBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void createBucket() {
+        CreateBucketRequest expected =
+            CreateBucketRequest.newBuilder().setPredefinedAcl("private").build();
+        CreateBucketRequest actual =
+            UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE)
+                .createBucket()
+                .apply(CreateBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class PredefinedDefaultObjectAclTest {
+      @Test
+      public void createBucket() {
+        CreateBucketRequest expected =
+            CreateBucketRequest.newBuilder().setPredefinedDefaultObjectAcl("private").build();
+        CreateBucketRequest actual =
+            UnifiedOpts.predefinedDefaultObjectAcl(PredefinedAcl.PRIVATE)
+                .createBucket()
+                .apply(CreateBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void updateBucket() {
+        UpdateBucketRequest expected =
+            UpdateBucketRequest.newBuilder().setPredefinedDefaultObjectAcl("private").build();
+        UpdateBucketRequest actual =
+            UnifiedOpts.predefinedDefaultObjectAcl(PredefinedAcl.PRIVATE)
+                .updateBucket()
+                .apply(UpdateBucketRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class PrefixTest {
+      @Test
+      public void listBuckets() {
+        ListBucketsRequest expected = ListBucketsRequest.newBuilder().setPrefix("prefix").build();
+
+        ListBucketsRequest actual =
+            UnifiedOpts.prefix("prefix")
+                .listBuckets()
+                .apply(ListBucketsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listObjects() {
+        ListObjectsRequest expected = ListObjectsRequest.newBuilder().setPrefix("prefix").build();
+
+        ListObjectsRequest actual =
+            UnifiedOpts.prefix("prefix")
+                .listObjects()
+                .apply(ListObjectsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class ProjectIdTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listHmacKeys_nonResource() {
+        ListHmacKeysRequest expected =
+            ListHmacKeysRequest.newBuilder().setProject("projects/proj").build();
+
+        ListHmacKeysRequest actual =
+            UnifiedOpts.projectId("proj")
+                .listHmacKeys()
+                .apply(ListHmacKeysRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
-    }
-
-    public static final class ProjectionTest {
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void getHmacKey_nonResource() {
+        GetHmacKeyRequest expected =
+            GetHmacKeyRequest.newBuilder().setProject("projects/proj").build();
+
+        GetHmacKeyRequest actual =
+            UnifiedOpts.projectId("proj")
+                .getHmacKey()
+                .apply(GetHmacKeyRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteHmacKey_nonResource() {
+        DeleteHmacKeyRequest expected =
+            DeleteHmacKeyRequest.newBuilder().setProject("projects/proj").build();
+
+        DeleteHmacKeyRequest actual =
+            UnifiedOpts.projectId("proj")
+                .deleteHmacKey()
+                .apply(DeleteHmacKeyRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void listHmacKeys_resource() {
+        ListHmacKeysRequest expected =
+            ListHmacKeysRequest.newBuilder().setProject("projects/proj").build();
+
+        ListHmacKeysRequest actual =
+            UnifiedOpts.projectId("projects/proj")
+                .listHmacKeys()
+                .apply(ListHmacKeysRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void getHmacKey_resource() {
+        GetHmacKeyRequest expected =
+            GetHmacKeyRequest.newBuilder().setProject("projects/proj").build();
+
+        GetHmacKeyRequest actual =
+            UnifiedOpts.projectId("projects/proj")
+                .getHmacKey()
+                .apply(GetHmacKeyRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void deleteHmacKey_resource() {
+        DeleteHmacKeyRequest expected =
+            DeleteHmacKeyRequest.newBuilder().setProject("projects/proj").build();
+
+        DeleteHmacKeyRequest actual =
+            UnifiedOpts.projectId("projects/proj")
+                .deleteHmacKey()
+                .apply(DeleteHmacKeyRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class SourceGenerationMatchTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfSourceGenerationMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .asSource()
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class SourceGenerationNotMatchTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfSourceGenerationNotMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.generationNotMatch(1L)
+                .asSource()
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class SourceMetagenerationMatchTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfSourceMetagenerationMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .asSource()
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class SourceMetagenerationNotMatchTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfSourceMetagenerationNotMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .asSource()
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class RequestedPolicyVersionTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
-      }
-    }
-
-    public static final class ReturnRawInputStreamTest {
-
-      @Test
-      public void name() {
-        assumeTrue(false);
+      public void getIamPolicy() {
+        GetIamPolicyRequest expected =
+            GetIamPolicyRequest.newBuilder()
+                .setOptions(GetPolicyOptions.newBuilder().setRequestedPolicyVersion(3).build())
+                .build();
+        GetIamPolicyRequest actual =
+            UnifiedOpts.requestedPolicyVersion(3)
+                .getIamPolicy()
+                .apply(GetIamPolicyRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class ServiceAccountTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listHmacKeys() {
+        ListHmacKeysRequest expected =
+            ListHmacKeysRequest.newBuilder().setServiceAccountEmail("x@y.z").build();
+
+        ListHmacKeysRequest actual =
+            UnifiedOpts.serviceAccount(ServiceAccount.of("x@y.z"))
+                .listHmacKeys()
+                .apply(ListHmacKeysRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class SetContentTypeTest {
+      @Test
+      public void writeObject() {
+        WriteObjectRequest expected =
+            WriteObjectRequest.newBuilder()
+                .setWriteObjectSpec(
+                    WriteObjectSpec.newBuilder()
+                        .setResource(Object.newBuilder().setContentType("text/plain").build())
+                        .build())
+                .build();
+
+        WriteObjectRequest actual =
+            UnifiedOpts.setContentType("text/plain")
+                .writeObject()
+                .apply(WriteObjectRequest.newBuilder())
+                .build();
+
+        assertThat(actual).isEqualTo(expected);
+      }
 
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void updateObject() {
+        UpdateObjectRequest expected =
+            UpdateObjectRequest.newBuilder()
+                .setObject(Object.newBuilder().setContentType("text/plain").build())
+                .build();
+
+        UpdateObjectRequest actual =
+            UnifiedOpts.setContentType("text/plain")
+                .updateObject()
+                .apply(UpdateObjectRequest.newBuilder())
+                .build();
+
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class ShowDeletedKeysTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listHmacKeys() {
+        ListHmacKeysRequest expected =
+            ListHmacKeysRequest.newBuilder().setShowDeletedKeys(true).build();
+
+        ListHmacKeysRequest actual =
+            UnifiedOpts.showDeletedKeys(true)
+                .listHmacKeys()
+                .apply(ListHmacKeysRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class StartOffsetTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listObjects() {
+        ListObjectsRequest expected =
+            ListObjectsRequest.newBuilder().setLexicographicStart("start").build();
+
+        ListObjectsRequest actual =
+            UnifiedOpts.startOffset("start")
+                .listObjects()
+                .apply(ListObjectsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class UserProjectTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void grpcCallContext() {
+        GrpcCallContext expected =
+            GrpcCallContext.createDefault()
+                .withExtraHeaders(
+                    ImmutableMap.of("X-Goog-User-Project", ImmutableList.of("user-project")));
+        GrpcCallContext actual =
+            UnifiedOpts.userProject("user-project")
+                .getGrpcMetadataMapper()
+                .apply(GrpcCallContext.createDefault());
+
+        assertThat(actual.getExtraHeaders()).isEqualTo(expected.getExtraHeaders());
+        assertThat(actual).isEqualTo(expected);
       }
     }
 
     public static final class VersionsFilterTest {
-
       @Test
-      public void name() {
-        assumeTrue(false);
+      public void listObjects() {
+        ListObjectsRequest expected = ListObjectsRequest.newBuilder().setVersions(true).build();
+
+        ListObjectsRequest actual =
+            UnifiedOpts.versionsFilter(true)
+                .listObjects()
+                .apply(ListObjectsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
       }
     }
   }
@@ -554,5 +1334,44 @@ public final class UnifiedOptsGrpcTest {
       assertThat(b2.build()).isEqualTo(expected);
       assertThat(b2).isSameInstanceAs(b1);
     }
+  }
+
+  public static final class SourceAndTargetOpt {
+    @Test
+    public void rewriteObject_decryptAndEncrypt() {
+      CommonObjectRequestParams source = randEncryption();
+      CommonObjectRequestParams dest = randEncryption();
+      SecretKeySpec keySource =
+          new SecretKeySpec(
+              source.getEncryptionKeyBytes().toByteArray(), source.getEncryptionAlgorithm());
+      SecretKeySpec keyDest =
+          new SecretKeySpec(
+              dest.getEncryptionKeyBytes().toByteArray(), dest.getEncryptionAlgorithm());
+
+      RewriteObjectRequest expected =
+          RewriteObjectRequest.newBuilder()
+              .setCopySourceEncryptionAlgorithm(source.getEncryptionAlgorithm())
+              .setCopySourceEncryptionKeyBytes(source.getEncryptionKeyBytes())
+              .setCopySourceEncryptionKeySha256Bytes(source.getEncryptionKeySha256Bytes())
+              .setCommonObjectRequestParams(dest)
+              .build();
+      Opts<UnifiedOpts.Opt> opts =
+          Opts.from(UnifiedOpts.decryptionKey(keySource), UnifiedOpts.encryptionKey(keyDest));
+      Mapper<RewriteObjectRequest.Builder> mapper = opts.rewriteObjectsRequest();
+
+      RewriteObjectRequest actual = mapper.apply(RewriteObjectRequest.newBuilder()).build();
+      assertThat(actual).isEqualTo(expected);
+    }
+  }
+
+  private static CommonObjectRequestParams randEncryption() {
+    byte[] bytes = new byte[32];
+    new SecureRandom().nextBytes(bytes);
+    return CommonObjectRequestParams.newBuilder()
+        .setEncryptionAlgorithm("AES256")
+        .setEncryptionKeyBytes(ByteString.copyFrom(bytes))
+        .setEncryptionKeySha256Bytes(
+            ByteString.copyFrom(Hashing.sha256().hashBytes(bytes).asBytes()))
+        .build();
   }
 }

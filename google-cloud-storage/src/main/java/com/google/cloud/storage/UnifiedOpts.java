@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
+import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
@@ -189,6 +190,10 @@ final class UnifiedOpts {
    */
   interface BucketSourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableBucket {
     default Mapper<GetBucketRequest.Builder> getBucket() {
+      return Mapper.identity();
+    }
+
+    default Mapper<GetIamPolicyRequest.Builder> getIamPolicy() {
       return Mapper.identity();
     }
   }
@@ -579,11 +584,6 @@ final class UnifiedOpts {
     private DisableGzipContent(boolean val) {
       super(StorageRpc.Option.IF_DISABLE_GZIP_CONTENT, val);
     }
-
-    @Override
-    public Mapper<UpdateObjectRequest.Builder> updateObject() {
-      return Mapper.identity();
-    }
   }
 
   /** @see DecryptionKey */
@@ -663,21 +663,6 @@ final class UnifiedOpts {
 
     private Fields(String val) {
       super(StorageRpc.Option.FIELDS, val);
-    }
-
-    @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
-      return Mapper.identity();
-    }
-
-    @Override
-    public Mapper<ListBucketsRequest.Builder> listBuckets() {
-      return Mapper.identity();
-    }
-
-    @Override
-    public Mapper<ListObjectsRequest.Builder> listObjects() {
-      return Mapper.identity();
     }
   }
 
@@ -824,11 +809,6 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<UpdateObjectRequest.Builder> updateObject() {
-      return Mapper.identity();
-    }
-
-    @Override
     public boolean equals(Object o) {
       if (this == o) {
         return true;
@@ -891,17 +871,7 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
-      return b -> b.setIfMetagenerationMatch(val);
-    }
-
-    @Override
     public Mapper<DeleteObjectRequest.Builder> deleteObject() {
-      return b -> b.setIfMetagenerationMatch(val);
-    }
-
-    @Override
-    public Mapper<GetBucketRequest.Builder> getBucket() {
       return b -> b.setIfMetagenerationMatch(val);
     }
 
@@ -913,6 +883,21 @@ final class UnifiedOpts {
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteBucketRequest.Builder> deleteBucket() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<GetBucketRequest.Builder> getBucket() {
+      return b -> b.setIfMetagenerationMatch(val);
     }
 
     @Override
@@ -961,23 +946,28 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
-      return b -> b.setIfMetagenerationNotMatch(val);
-    }
-
-    @Override
     public Mapper<DeleteObjectRequest.Builder> deleteObject() {
-      return b -> b.setIfMetagenerationNotMatch(val);
-    }
-
-    @Override
-    public Mapper<GetBucketRequest.Builder> getBucket() {
       return b -> b.setIfMetagenerationNotMatch(val);
     }
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteBucketRequest.Builder> deleteBucket() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<GetBucketRequest.Builder> getBucket() {
+      return b -> b.setIfMetagenerationNotMatch(val);
     }
 
     @Override
@@ -1056,6 +1046,11 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<ComposeObjectRequest.Builder> composeObject() {
+      return b -> b.setDestinationPredefinedAcl(val);
+    }
+
+    @Override
     public Mapper<UpdateBucketRequest.Builder> updateBucket() {
       return b -> b.setPredefinedAcl(val);
     }
@@ -1063,11 +1058,6 @@ final class UnifiedOpts {
     @Override
     public Mapper<CreateBucketRequest.Builder> createBucket() {
       return b -> b.setPredefinedAcl(val);
-    }
-
-    @Override
-    public Mapper<ComposeObjectRequest.Builder> composeObject() {
-      return b -> b.setDestinationPredefinedAcl(val);
     }
   }
 
@@ -1159,7 +1149,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfSourceGenerationMatch(val);
     }
   }
 
@@ -1177,7 +1167,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfSourceGenerationNotMatch(val);
     }
   }
 
@@ -1195,7 +1185,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfSourceMetagenerationMatch(val);
     }
   }
 
@@ -1213,7 +1203,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfSourceMetagenerationNotMatch(val);
     }
   }
 
@@ -1223,6 +1213,14 @@ final class UnifiedOpts {
 
     private RequestedPolicyVersion(Long val) {
       super(StorageRpc.Option.REQUESTED_POLICY_VERSION, val);
+    }
+
+    @Override
+    public Mapper<GetIamPolicyRequest.Builder> getIamPolicy() {
+      return b -> {
+        b.getOptionsBuilder().setRequestedPolicyVersion(Math.toIntExact(val));
+        return b;
+      };
     }
   }
 
@@ -1262,16 +1260,16 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<BlobInfo.Builder> blobInfo() {
+      return b -> b.setContentType(val);
+    }
+
+    @Override
     public Mapper<WriteObjectRequest.Builder> writeObject() {
       return b -> {
         b.getWriteObjectSpecBuilder().getResourceBuilder().setContentType(val);
         return b;
       };
-    }
-
-    @Override
-    public Mapper<BlobInfo.Builder> blobInfo() {
-      return b -> b.setContentType(val);
     }
 
     @Override
@@ -1916,7 +1914,24 @@ final class UnifiedOpts {
     }
 
     Mapper<RewriteObjectRequest.Builder> rewriteObjectsRequest() {
-      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::rewriteObject);
+      return opts.stream()
+          .filter(isInstanceOf(ObjectTargetOpt.class).or(isInstanceOf(ObjectSourceOpt.class)))
+          .map(
+              o -> {
+                // TODO: Do we need to formalize this type of dual relationship with it's own
+                // interface?
+                if (o instanceof ObjectTargetOpt) {
+                  ObjectTargetOpt oto = (ObjectTargetOpt) o;
+                  return oto.rewriteObject();
+                } else if (o instanceof ObjectSourceOpt) {
+                  ObjectSourceOpt oso = (ObjectSourceOpt) o;
+                  return oso.rewriteObject();
+                } else {
+                  // in practice this shouldn't happen because of the filter guard upstream
+                  throw new IllegalStateException("Unexpected type: %s" + o.getClass());
+                }
+              })
+          .reduce(Mapper.identity(), Mapper::andThen);
     }
 
     Mapper<CreateHmacKeyRequest.Builder> createHmacKeysRequest() {
@@ -1999,8 +2014,7 @@ final class UnifiedOpts {
   private static CommonObjectRequestParams.Builder customerSuppliedKey(
       CommonObjectRequestParams.Builder b, Key key) {
     HashCode keySha256 = Hashing.sha256().hashBytes(key.getEncoded());
-
-    return b.setEncryptionAlgorithm("AES256")
+    return b.setEncryptionAlgorithm(key.getAlgorithm())
         .setEncryptionKeyBytes(ByteString.copyFrom(key.getEncoded()))
         .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()));
   }
