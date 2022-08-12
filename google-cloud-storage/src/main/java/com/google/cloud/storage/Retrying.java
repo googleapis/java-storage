@@ -71,7 +71,7 @@ final class Retrying {
    *
    * @param <T> The result type of {@code c}
    * @param <U> The result type of any mapping that takes place via {@code f}
-   * @param options The {@link HttpStorageOptions} which {@link RetrySettings} and {@link ApiClock}
+   * @param deps The {@link RetryingDependencies} which {@link RetrySettings} and {@link ApiClock}
    *     will be resolved from.
    * @param algorithm The {@link ResultRetryAlgorithm} to use when determining if a retry is
    *     possible
@@ -83,15 +83,26 @@ final class Retrying {
    * @throws StorageException if {@code c} fails due to any retry exhaustion
    */
   static <T, U> U run(
-      GrpcStorageOptions options,
+      RetryingDependencies deps,
       ResultRetryAlgorithm<?> algorithm,
       Callable<T> c,
       Decoder<T, U> f) {
     try {
-      T result = runWithRetries(c, options.getRetrySettings(), algorithm, options.getClock());
+      T result = runWithRetries(c, deps.getRetrySettings(), algorithm, deps.getClock());
       return result == null ? null : f.decode(result);
     } catch (RetryHelperException e) {
       throw StorageException.coalesce(e.getCause());
     }
+  }
+
+  /**
+   * Rather than requiring a full set of {@link StorageOptions} to be passed specify what we
+   * actually need and have StorageOptions implement this interface.
+   */
+  interface RetryingDependencies {
+
+    RetrySettings getRetrySettings();
+
+    ApiClock getClock();
   }
 }

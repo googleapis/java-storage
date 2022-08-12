@@ -44,7 +44,8 @@ import java.util.Set;
 
 @BetaApi
 @TransportCompatibility(Transport.GRPC)
-public final class GrpcStorageOptions extends StorageOptions {
+public final class GrpcStorageOptions extends StorageOptions
+    implements Retrying.RetryingDependencies {
 
   private static final long serialVersionUID = 4165732727259088956L;
   private static final String GCS_SCOPE = "https://www.googleapis.com/auth/devstorage.full_control";

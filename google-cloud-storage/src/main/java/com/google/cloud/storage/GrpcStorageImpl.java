@@ -27,6 +27,7 @@ import com.google.api.core.ApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.UnaryCallable;
@@ -99,11 +100,19 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators.AbstractSpliterator;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
 
@@ -377,7 +386,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ListBucketsRequest request = opts.listBucketsRequest().apply(builder).build();
     ListBucketsPagedResponse call = listBucketsCallable.call(request, grpcCallContext);
     ListBucketsPage page = call.getPage();
-    return new TransformingPageDecorator<>(page, syntaxDecoders.bucket);
+    return new TransformingPageDecorator<>(
+        page, syntaxDecoders.bucket, getOptions(), retryAlgorithmManager.getFor(request));
   }
 
   @Override
@@ -392,7 +402,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ListObjectsRequest req = opts.listObjectsRequest().apply(builder).build();
     ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
     ListObjectsPage page = call.getPage();
-    return new TransformingPageDecorator<>(page, syntaxDecoders.blob);
+    return new TransformingPageDecorator<>(
+        page, syntaxDecoders.blob, getOptions(), retryAlgorithmManager.getFor(req));
   }
 
   @Override
@@ -858,7 +869,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ListHmacKeysRequest request = opts.listHmacKeysRequest().apply(builder).build();
     ListHmacKeysPagedResponse call = listHmacKeysCallable.call(request, grpcCallContext);
     ListHmacKeysPage page = call.getPage();
-    return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
+    return new TransformingPageDecorator<>(
+        page, codecs.hmacKeyMetadata(), getOptions(), retryAlgorithmManager.getFor(request));
   }
 
   @Override
@@ -969,10 +981,18 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
     private final PageT page;
     private final Decoder<ResourceT, ModelT> translator;
+    private final Retrying.RetryingDependencies deps;
+    private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
 
-    public TransformingPageDecorator(PageT page, Decoder<ResourceT, ModelT> translator) {
+    TransformingPageDecorator(
+        PageT page,
+        Decoder<ResourceT, ModelT> translator,
+        Retrying.RetryingDependencies deps,
+        ResultRetryAlgorithm<?> resultRetryAlgorithm) {
       this.page = page;
       this.translator = translator;
+      this.deps = deps;
+      this.resultRetryAlgorithm = resultRetryAlgorithm;
     }
 
     @Override
@@ -987,43 +1007,84 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
     @Override
     public Page<ModelT> getNextPage() {
-      return new TransformingPageDecorator<>(page.getNextPage(), translator);
+      return new TransformingPageDecorator<>(
+          page.getNextPage(), translator, deps, resultRetryAlgorithm);
     }
 
+    @SuppressWarnings({"Convert2MethodRef"})
     @Override
     public Iterable<ModelT> iterateAll() {
-      return () -> {
-        final Iterator<ResourceT> iter = page.iterateAll().iterator();
-        return new TransformingIterator(iter);
-      };
+      // iterateAll on AbstractPage isn't very friendly to decoration, as getNextPage isn't actually
+      // ever called. This means we aren't able to apply our retry wrapping there.
+      // Instead, what we do is create a stream which will attempt to call getNextPage repeatedly
+      // until we meet some condition of exhaustion. At that point we can apply our retry logic.
+      return () ->
+          streamIterate(
+                  page,
+                  p -> p != null && p.hasNextPage(),
+                  prev -> {
+                    // explicitly define this callable rather than using the method reference to
+                    // prevent a javac 1.8 exception
+                    // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8056984
+                    Callable<PageT> c = () -> prev.getNextPage();
+                    return Retrying.run(deps, resultRetryAlgorithm, c, Decoder.identity());
+                  })
+              .filter(Objects::nonNull)
+              .flatMap(p -> StreamSupport.stream(p.getValues().spliterator(), false))
+              .map(translator::decode)
+              .iterator();
     }
 
     @Override
     public Iterable<ModelT> getValues() {
-      return () -> {
-        final Iterator<ResourceT> inter = page.getValues().iterator();
-        return new TransformingIterator(inter);
-      };
+      return () ->
+          StreamSupport.stream(page.getValues().spliterator(), false)
+              .map(translator::decode)
+              .iterator();
     }
 
-    private class TransformingIterator implements Iterator<ModelT> {
+    private static <T> Stream<T> streamIterate(
+        T seed, Predicate<? super T> shouldComputeNext, UnaryOperator<T> computeNext) {
+      requireNonNull(seed, "seed must be non null");
+      requireNonNull(shouldComputeNext, "shouldComputeNext must be non null");
+      requireNonNull(computeNext, "computeNext must be non null");
+      Spliterator<T> spliterator =
+          new AbstractSpliterator<T>(Long.MAX_VALUE, 0) {
+            T prev;
+            boolean started = false;
+            boolean done = false;
 
-      private final Iterator<ResourceT> iter;
+            @Override
+            public boolean tryAdvance(Consumer<? super T> action) {
+              // if we haven't started, emit our seed and return
+              if (!started) {
+                started = true;
+                action.accept(seed);
+                prev = seed;
+                return true;
+              }
+              // if we've previously finished quickly return
+              if (done) {
+                return false;
+              }
+              // test whether we should try and compute the next value
+              if (shouldComputeNext.test(prev)) {
+                // compute the next value and figure out if we can use it
+                T next = computeNext.apply(prev);
+                if (next != null) {
+                  action.accept(next);
+                  prev = next;
+                  return true;
+                }
+              }
 
-      public TransformingIterator(Iterator<ResourceT> iter) {
-        this.iter = iter;
-      }
-
-      @Override
-      public boolean hasNext() {
-        return iter.hasNext();
-      }
-
-      @Override
-      public ModelT next() {
-        ResourceT next = iter.next();
-        return translator.decode(next);
-      }
+              // fallthrough, if we haven't taken an action by now consider the stream done and
+              // return
+              done = true;
+              return false;
+            }
+          };
+      return StreamSupport.stream(spliterator, false);
     }
   }
 
