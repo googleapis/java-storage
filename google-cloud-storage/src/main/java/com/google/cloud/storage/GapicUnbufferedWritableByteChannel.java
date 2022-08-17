@@ -98,7 +98,7 @@ final class GapicUnbufferedWritableByteChannel<
       long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
       ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
       if (crc32c != null) {
-        writeCtx.getCumulativeCrc32c().getAndAccumulate(crc32c, Crc32cValue::nullSafeConcat);
+        writeCtx.getCumulativeCrc32c().getAndAccumulate(crc32c, hasher::nullSafeConcat);
         checksummedData.setCrc32C(crc32c.getValue());
       }
       WriteObjectRequest.Builder builder =

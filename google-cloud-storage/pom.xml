@@ -106,6 +106,10 @@
     </dependency>
     <dependency>
       <groupId>com.google.api.grpc</groupId>
+      <artifactId>grpc-google-cloud-storage-v2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api.grpc</groupId>
       <artifactId>gapic-google-cloud-storage-v2</artifactId>
     </dependency>
 
@@ -249,8 +253,9 @@
               grpc-netty-shaded is a runtime dep, we pull it up to our level to raise its transitive dependencies priority
               that overlap with our pubsub test deps.
               -->
-            <usedDependencies>io.grpc:grpc-netty-shaded,io.grpc:grpc-xds</usedDependencies>
+            <usedDependencies>io.grpc:grpc-xds</usedDependencies>
             <ignoredDependencies>
+              <dependency>io.grpc:grpc-netty-shaded</dependency>
               <!--
               We depend on `net.jqwik:jqwik` which itself has no classes, but depends on each of the other jars.
               In order to not churn on which of the sub apis we happen to be using at this time, we're flagging

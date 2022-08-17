@@ -37,6 +37,10 @@ final class GapicDownloadSessionBuilder {
     return new GapicDownloadSessionBuilder();
   }
 
+  /**
+   * Any retry capability must be defined within the provided ServerStreamingCallable. The
+   * ultimately produced channel will not do any retries of its own.
+   */
   public ReadableByteChannelSessionBuilder byteChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read) {
     return new ReadableByteChannelSessionBuilder(read);

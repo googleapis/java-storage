@@ -21,9 +21,11 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiClock;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
+import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.api.gax.rpc.ClientContext;
+import com.google.api.gax.retrying.StreamResumptionStrategy;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
@@ -36,11 +38,16 @@ import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.ReadObjectResponse;
+import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageSettings;
-import com.google.storage.v2.stub.GrpcStorageStub;
+import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @BetaApi
 @TransportCompatibility(Transport.GRPC)
@@ -54,12 +61,12 @@ public final class GrpcStorageOptions extends StorageOptions {
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
 
   @BetaApi
-  public GrpcStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
+  public GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
     this.retryAlgorithmManager =
         new GrpcRetryAlgorithmManager(
             MoreObjects.firstNonNull(
-                builder.storageRetryStrategy, defaults().getStorageRetryStrategy()));
+                builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
   }
 
   @Override
@@ -67,8 +74,58 @@ public final class GrpcStorageOptions extends StorageOptions {
     return SCOPES;
   }
 
+  @InternalApi
   GrpcRetryAlgorithmManager getRetryAlgorithmManager() {
     return retryAlgorithmManager;
+  }
+
+  @InternalApi
+  StorageSettings getStorageSettings() throws IOException {
+    URI uri = URI.create(getHost());
+    String scheme = uri.getScheme();
+    int port = uri.getPort() > 0 ? uri.getPort() : scheme.equals("http") ? 80 : 443;
+    String endpoint = String.format("%s:%d", uri.getHost(), port);
+
+    CredentialsProvider credentialsProvider;
+    if (credentials instanceof NoCredentials) {
+      credentialsProvider = NoCredentialsProvider.create();
+    } else {
+      credentialsProvider = FixedCredentialsProvider.create(credentials);
+    }
+
+    StorageSettings.Builder builder =
+        StorageSettings.newBuilder()
+            .setEndpoint(endpoint)
+            .setCredentialsProvider(credentialsProvider);
+
+    if (scheme.equals("http")) {
+      builder.setTransportChannelProvider(
+          com.google.api.gax.grpc.InstantiatingGrpcChannelProvider.newBuilder()
+              .setEndpoint(endpoint)
+              .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
+              .build());
+    }
+    RetrySettings retrySettings = getRetrySettings();
+    RetrySettings attemptOnce = retrySettings.toBuilder().setMaxAttempts(1).build();
+    // all retries for unary methods are handled at a different level
+    builder.applyToAllUnaryMethods(
+        input -> {
+          input.setRetrySettings(attemptOnce);
+          return null;
+        });
+    // for ReadObject we are configuring the server stream handling to do its own retries, so wire
+    // things through. Retryable codes will be controlled closer to the use site as idempotency
+    // considerations need to be made.
+    builder
+        .readObjectSettings()
+        .setRetrySettings(retrySettings)
+        // even though we might want to default to the empty set for retryable codes, don't ever
+        // actually do this. Doing so prevents any retry capability from being wired into the stream
+        // pipeline, ever.
+        // For our use, we will always set it one way or the other to ensure it's appropriate
+        // DO NOT: .setRetryableCodes(Collections.emptySet())
+        .setResumptionStrategy(new ReadObjectResumptionStrategy());
+    return builder.build();
   }
 
   @BetaApi
@@ -290,41 +347,8 @@ public final class GrpcStorageOptions extends StorageOptions {
       if (options instanceof GrpcStorageOptions) {
         GrpcStorageOptions grpcStorageOptions = (GrpcStorageOptions) options;
         try {
-          URI uri = URI.create(options.getHost());
-          String h = uri.getHost();
-          int p = uri.getPort() > 0 ? uri.getPort() : uri.getScheme().equals("http") ? 80 : 443;
-          String hp = String.format("%s:%d", h, p);
-          StorageSettings.Builder builder = StorageSettings.newBuilder().setEndpoint(hp);
-          builder.setCredentialsProvider(FixedCredentialsProvider.create(options.getCredentials()));
-          if (!"storage.googleapis.com:443".equals(hp)) { // TODO: make this more formal
-            options =
-                options
-                    .toBuilder()
-                    .setProjectId(
-                        options.getProjectId() == null ? "local-project" : options.getProjectId())
-                    .setCredentials(NoCredentials.getInstance())
-                    .build();
-            builder
-                .setCredentialsProvider(com.google.api.gax.core.NoCredentialsProvider.create())
-                .setTransportChannelProvider(
-                    com.google.api.gax.grpc.InstantiatingGrpcChannelProvider.newBuilder()
-                        .setEndpoint(hp)
-                        .setChannelConfigurator(c -> c.usePlaintext())
-                        .build());
-          }
-          final StorageOptions finalOpts = options;
-          StorageSettings settings =
-              builder
-                  .applyToAllUnaryMethods(
-                      input -> {
-                        input.setRetrySettings(finalOpts.getRetrySettings());
-                        return null;
-                      })
-                  .build();
-          ClientContext clientContext = ClientContext.create(settings);
-          GrpcStorageStub grpcStorageStub = GrpcStorageStub.create(clientContext);
-
-          return new GrpcStorageImpl(grpcStorageOptions, grpcStorageStub);
+          StorageSettings storageSettings = grpcStorageOptions.getStorageSettings();
+          return new GrpcStorageImpl(grpcStorageOptions, StorageClient.create(storageSettings));
         } catch (IOException e) {
           throw new IllegalStateException(
               "Unable to instantiate gRPC com.google.cloud.storage.Storage client.", e);
@@ -368,6 +392,40 @@ public final class GrpcStorageOptions extends StorageOptions {
     @Override
     public ServiceRpc create(StorageOptions options) {
       throw new IllegalStateException("No supported for grpc");
+    }
+  }
+
+  // TODO: See if we can change gax to allow shifting this to callable.withContext so it doesn't
+  //   have to be set globally
+  private static class ReadObjectResumptionStrategy
+      implements StreamResumptionStrategy<ReadObjectRequest, ReadObjectResponse> {
+    private long readOffset = 0;
+
+    @NonNull
+    @Override
+    public StreamResumptionStrategy<ReadObjectRequest, ReadObjectResponse> createNew() {
+      return new ReadObjectResumptionStrategy();
+    }
+
+    @NonNull
+    @Override
+    public ReadObjectResponse processResponse(ReadObjectResponse response) {
+      readOffset += response.getChecksummedData().getContent().size();
+      return response;
+    }
+
+    @Nullable
+    @Override
+    public ReadObjectRequest getResumeRequest(ReadObjectRequest originalRequest) {
+      if (readOffset != 0) {
+        return originalRequest.toBuilder().setReadOffset(readOffset).build();
+      }
+      return originalRequest;
+    }
+
+    @Override
+    public boolean canResume() {
+      return true;
     }
   }
 }

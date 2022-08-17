@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.function.Supplier;
 import javax.annotation.concurrent.Immutable;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 interface Hasher {
 
@@ -32,6 +33,9 @@ interface Hasher {
   Crc32cLengthKnown hash(ByteBuffer b);
 
   void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException;
+
+  @Nullable
+  Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2);
 
   static Hasher noop() {
     return NoOpHasher.INSTANCE;
@@ -54,6 +58,11 @@ interface Hasher {
 
     @Override
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) {}
+
+    @Override
+    public @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
+      return null;
+    }
   }
 
   @Immutable
@@ -71,9 +80,21 @@ interface Hasher {
     @Override
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException {
       Crc32cLengthKnown actual = hash(b);
-      if (actual.getValue() != expected.getValue()) {
+      if (!actual.eqValue(expected)) {
         throw new IOException(
-            String.format("Mismatch checksum value. Expected %s actual %s", expected, actual));
+            String.format(
+                "Mismatch checksum value. Expected %s actual %s",
+                expected.debugString(), actual.debugString()));
+      }
+    }
+
+    @Override
+    @Nullable
+    public Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
+      if (r1 == null) {
+        return r2;
+      } else {
+        return r1.concat(r2);
       }
     }
   }
