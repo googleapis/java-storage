@@ -16,6 +16,9 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static org.junit.Assert.assertEquals;
+
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.cloud.BaseSerializationTest;
 import com.google.cloud.NoCredentials;
@@ -28,6 +31,7 @@ import com.google.common.collect.ImmutableMap;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import org.junit.Test;
 
 public class SerializationTest extends BaseSerializationTest {
 
@@ -110,5 +114,24 @@ public class SerializationTest extends BaseSerializationTest {
         new BlobWriteChannel(
             options, BlobInfo.newBuilder(BlobId.of("b", "n")).build(), "upload-id", algorithm);
     return new Restorable<?>[] {reader, writer};
+  }
+
+  /**
+   * Here we override the super classes implementation to remove the "assertNotSame".
+   *
+   * <p>We should not enforce that two instances are not the same. As long as they're equal and have
+   * the same hashCode that should be sufficient.
+   */
+  @Test
+  @Override
+  public void testSerializableObjects() throws Exception {
+    for (Serializable obj : firstNonNull(serializableObjects(), new Serializable[0])) {
+      Object copy = serializeAndDeserialize(obj);
+      assertEquals(obj, obj);
+      assertEquals(obj, copy);
+      assertEquals(obj.hashCode(), copy.hashCode());
+      assertEquals(obj.toString(), copy.toString());
+      assertEquals(copy, copy);
+    }
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,23 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.UnifiedOpts.Opt;
-import java.io.Serializable;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
-/** Base class for Storage operation option. */
-@Deprecated
-public abstract class Option<O extends Opt> extends UnifiedOpts.OptionShim<O>
-    implements Serializable {
+import com.google.cloud.storage.UnifiedOpts.Opts;
+import org.junit.Test;
 
-  private static final long serialVersionUID = -3517676609070123326L;
+public final class UnifiedOptsTest {
 
-  Option(O opt) {
-    super(opt);
+  @Test
+  public void opts_validation_uniqueKeys() {
+    IllegalArgumentException iae =
+        assertThrows(
+            IllegalArgumentException.class,
+            () ->
+                Opts.from(UnifiedOpts.generationMatch(1), UnifiedOpts.generationMatch(2))
+                    .getRpcOptions());
+
+    assertThat(iae).hasMessageThat().contains("GENERATION_MATCH");
   }
 }

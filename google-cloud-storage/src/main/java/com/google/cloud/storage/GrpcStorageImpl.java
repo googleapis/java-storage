@@ -41,11 +41,11 @@ import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
@@ -139,7 +139,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(bucketInfo).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     CreateBucketRequest.Builder builder = CreateBucketRequest.newBuilder().setBucket(bucket);
@@ -175,7 +176,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(content, "content must be non null");
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
     try {
@@ -223,9 +225,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       throw new StorageException(0, path + " is a directory");
     }
 
-    BlobTargetOption[] translate = translate(options);
-    // TODO: Why does optionMap not accept BlobWriteOption?
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
 
@@ -281,9 +282,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       throws IOException {
     requireNonNull(blobInfo, "blobInfo must be non null");
 
-    BlobTargetOption[] translate = translate(options);
-    // TODO: Why does optionMap not accept BlobWriteOption?
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
 
@@ -321,7 +321,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     GetBucketRequest.Builder builder =
         GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
@@ -351,7 +351,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     GetObjectRequest.Builder builder =
         GetObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
@@ -377,7 +378,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Page<Bucket> list(BucketListOption... options) {
     UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse> listBucketsCallable =
         grpcStorageStub.listBucketsPagedCallable();
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     String projectId =
         firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
@@ -398,7 +399,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Page<Blob> list(String bucket, BlobListOption... options) {
     UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsCallable =
         grpcStorageStub.listObjectsPagedCallable();
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     ListObjectsRequest.Builder builder =
         ListObjectsRequest.newBuilder().setParent(bucketNameCodec.encode(bucket));
@@ -419,7 +420,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(bucketInfo).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     UpdateBucketRequest.Builder builder = UpdateBucketRequest.newBuilder().setBucket(bucket);
@@ -440,7 +442,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     Object object = codecs.blobInfo().encode(blobInfo);
     UpdateObjectRequest.Builder builder = UpdateObjectRequest.newBuilder().setObject(object);
@@ -467,7 +470,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(String bucket, BucketSourceOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     DeleteBucketRequest.Builder builder =
         DeleteBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
@@ -496,7 +499,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(BlobId blob, BlobSourceOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     DeleteObjectRequest.Builder builder =
         DeleteObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
@@ -529,7 +533,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Blob compose(ComposeRequest composeRequest) {
     final Map<StorageRpc.Option, ?> optionsMap =
-        StorageImpl.optionMap(Iterables.toArray(composeRequest.getTargetOptions(), Option.class));
+        Opts.unwrap(composeRequest.getTargetOptions())
+            .resolveFrom(composeRequest.getTarget())
+            .getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();
     composeRequest.getSourceBlobs().stream()
@@ -571,7 +577,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
 
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
 
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
     UnbufferedReadableByteChannelSession<Object> session =
@@ -604,7 +611,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
     ReadObjectRequest request = getReadObjectRequest(blob, optionsMap);
     return new GrpcBlobReadChannel(grpcStorageStub.readObjectCallable(), request);
   }
@@ -612,7 +620,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
 
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
 
     // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
 
@@ -636,7 +645,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
 
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
 
     // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
 
@@ -659,9 +669,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    BlobTargetOption[] translate = translate(options);
-    // TODO: Why does optionMap not accept BlobWriteOption?
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap =
+        Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
     return new GrpcBlobWriteChannel(
@@ -891,7 +900,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
     UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysCallable =
         grpcStorageStub.listHmacKeysPagedCallable();
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     String projectId =
         firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
@@ -914,7 +923,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public void deleteHmacKey(HmacKeyMetadata hmacKeyMetadata, DeleteHmacKeyOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
     DeleteHmacKeyRequest req =
         DeleteHmacKeyRequest.newBuilder()
@@ -987,14 +996,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public GrpcStorageOptions getOptions() {
     return (GrpcStorageOptions) super.getOptions();
-  }
-
-  private BlobWriteOption[] translate(BlobTargetOption[] options) {
-    return todo();
-  }
-
-  private BlobTargetOption[] translate(BlobWriteOption[] options) {
-    return todo();
   }
 
   private Blob getBlob(ApiFuture<WriteObjectResponse> result) {
