@@ -54,7 +54,7 @@ public class HmacKeyMetadataArbitraryProvider implements ArbitraryProvider {
                 (accessId, projectID, state, createTime, updateTime, email) ->
                     HmacKeyMetadata.newBuilder()
                         .setAccessId(accessId)
-                        .setProject(projectID.get())
+                        .setProject("projects/" + projectID.get())
                         .setId(projectID.get() + "/" + accessId)
                         .setState(state.toString())
                         .setCreateTime(createTime)

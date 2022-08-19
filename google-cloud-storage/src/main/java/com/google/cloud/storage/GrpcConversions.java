@@ -20,6 +20,7 @@ import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
+import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.cloud.storage.Utils.todo;
 
@@ -678,12 +679,12 @@ final class GrpcConversions {
 
   private HmacKeyMetadata hmacKeyMetadataEncode(HmacKey.HmacKeyMetadata from) {
     HmacKeyMetadata.Builder to = HmacKeyMetadata.newBuilder();
-    to.setAccessId(from.getAccessId());
-    // TODO etag
-    to.setId(from.getId());
-    to.setProject(from.getProjectId());
+    ifNonNull(from.getEtag(), to::setEtag);
+    ifNonNull(from.getId(), to::setId);
+    ifNonNull(from.getAccessId(), to::setAccessId);
+    ifNonNull(from.getProjectId(), projectNameCodec::encode, to::setProject);
     ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
-    ifNonNull(from.getState(), java.lang.Object::toString, to::setState);
+    ifNonNull(from.getState(), Enum::name, to::setState);
     ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, to::setCreateTime);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, to::setUpdateTime);
     return to.build();
@@ -694,7 +695,7 @@ final class GrpcConversions {
         .setAccessId(from.getAccessId())
         .setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()))
         .setId(from.getId())
-        .setProjectId(from.getProject())
+        .setProjectId(projectNameCodec.decode(from.getProject()))
         .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
         .setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()))
         .build();

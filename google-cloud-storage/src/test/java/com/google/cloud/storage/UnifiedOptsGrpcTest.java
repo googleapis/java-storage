@@ -34,8 +34,8 @@ import com.google.protobuf.ByteString;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
+import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.DeleteBucketRequest;
-import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetHmacKeyRequest;
@@ -828,14 +828,14 @@ public final class UnifiedOptsGrpcTest {
       }
 
       @Test
-      public void deleteHmacKey_nonResource() {
-        DeleteHmacKeyRequest expected =
-            DeleteHmacKeyRequest.newBuilder().setProject("projects/proj").build();
+      public void createHmacKey_nonResource() {
+        CreateHmacKeyRequest expected =
+            CreateHmacKeyRequest.newBuilder().setProject("projects/proj").build();
 
-        DeleteHmacKeyRequest actual =
+        CreateHmacKeyRequest actual =
             UnifiedOpts.projectId("proj")
-                .deleteHmacKey()
-                .apply(DeleteHmacKeyRequest.newBuilder())
+                .createHmacKey()
+                .apply(CreateHmacKeyRequest.newBuilder())
                 .build();
         assertThat(actual).isEqualTo(expected);
       }
@@ -867,14 +867,40 @@ public final class UnifiedOptsGrpcTest {
       }
 
       @Test
-      public void deleteHmacKey_resource() {
-        DeleteHmacKeyRequest expected =
-            DeleteHmacKeyRequest.newBuilder().setProject("projects/proj").build();
+      public void createHmacKey_resource() {
+        CreateHmacKeyRequest expected =
+            CreateHmacKeyRequest.newBuilder().setProject("projects/proj").build();
 
-        DeleteHmacKeyRequest actual =
+        CreateHmacKeyRequest actual =
             UnifiedOpts.projectId("projects/proj")
-                .deleteHmacKey()
-                .apply(DeleteHmacKeyRequest.newBuilder())
+                .createHmacKey()
+                .apply(CreateHmacKeyRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void listBuckets_nonResource() {
+        ListBucketsRequest expected =
+            ListBucketsRequest.newBuilder().setParent("projects/proj").build();
+
+        ListBucketsRequest actual =
+            UnifiedOpts.projectId("proj")
+                .listBuckets()
+                .apply(ListBucketsRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void listBuckets_resource() {
+        ListBucketsRequest expected =
+            ListBucketsRequest.newBuilder().setParent("projects/proj").build();
+
+        ListBucketsRequest actual =
+            UnifiedOpts.projectId("projects/proj")
+                .listBuckets()
+                .apply(ListBucketsRequest.newBuilder())
                 .build();
         assertThat(actual).isEqualTo(expected);
       }

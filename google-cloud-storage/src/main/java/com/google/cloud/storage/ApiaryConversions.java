@@ -649,7 +649,7 @@ final class ApiaryConversions {
     to.setId(from.getId());
     to.setProjectId(from.getProjectId());
     ifNonNull(from.getServiceAccount(), ServiceAccount::getEmail, to::setServiceAccountEmail);
-    ifNonNull(from.getState(), Object::toString, to::setState);
+    ifNonNull(from.getState(), Enum::name, to::setState);
     ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     return to;

@@ -57,7 +57,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -1104,7 +1103,7 @@ final class UnifiedOpts {
    */
   @Deprecated
   static final class ProjectId extends RpcOptVal<String>
-      implements HmacKeySourceOpt, HmacKeyTargetOpt, HmacKeyListOpt {
+      implements HmacKeySourceOpt, HmacKeyTargetOpt, HmacKeyListOpt, BucketListOpt {
     private static final long serialVersionUID = 1471462503030451598L;
 
     private ProjectId(String val) {
@@ -1122,8 +1121,13 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<DeleteHmacKeyRequest.Builder> deleteHmacKey() {
+    public Mapper<CreateHmacKeyRequest.Builder> createHmacKey() {
       return b -> b.setProject(projectNameCodec.encode(val));
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setParent(projectNameCodec.encode(val));
     }
   }
 
@@ -1956,11 +1960,6 @@ final class UnifiedOpts {
 
     Mapper<BlobInfo.Builder> blobInfoMapper() {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::blobInfo);
-    }
-
-    @Deprecated
-    Optional<ProjectId> projectId() {
-      return filterTo(ProjectId.class).findFirst();
     }
 
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {
