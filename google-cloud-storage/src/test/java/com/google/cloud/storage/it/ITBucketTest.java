@@ -7,17 +7,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import com.google.cloud.Condition;
-import com.google.cloud.Identity;
 import com.google.cloud.Policy;
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Role;
-import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
@@ -33,44 +28,58 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageClass;
-import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageRoles;
+import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class ITBucketTest {
+
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+
+  private static final List<String> LOCATION_TYPES =
+      ImmutableList.of("multi-region", "region", "dual-region");
+
+  private static Storage storage;
+  private static String bucketName;
+
+  @BeforeClass
+  public static void setUp() {
+    storage = storageFixture.getInstance();
+    bucketName = bucketFixture.getBucketInfo().getName();
+  }
 
   @Test(timeout = 5000)
   public void testListBuckets() throws InterruptedException {
     Iterator<Bucket> bucketIterator =
         storage
-            .list(Storage.BucketListOption.prefix(BUCKET), Storage.BucketListOption.fields())
+            .list(Storage.BucketListOption.prefix(bucketName), Storage.BucketListOption.fields())
             .iterateAll()
             .iterator();
     while (!bucketIterator.hasNext()) {
       Thread.sleep(500);
       bucketIterator =
           storage
-              .list(Storage.BucketListOption.prefix(BUCKET), Storage.BucketListOption.fields())
+              .list(Storage.BucketListOption.prefix(bucketName), Storage.BucketListOption.fields())
               .iterateAll()
               .iterator();
     }
     while (bucketIterator.hasNext()) {
       Bucket remoteBucket = bucketIterator.next();
-      assertTrue(remoteBucket.getName().startsWith(BUCKET));
+      assertTrue(remoteBucket.getName().startsWith(bucketName));
       assertNull(remoteBucket.getCreateTime());
       assertNull(remoteBucket.getSelfLink());
     }
@@ -78,16 +87,16 @@ public class ITBucketTest {
 
   @Test
   public void testGetBucketSelectedFields() {
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
-    assertEquals(BUCKET, remoteBucket.getName());
+    Bucket remoteBucket = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.ID));
+    assertEquals(bucketName, remoteBucket.getName());
     assertNull(remoteBucket.getCreateTime());
     assertNotNull(remoteBucket.getGeneratedId());
   }
 
   @Test
   public void testGetBucketAllSelectedFields() {
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.values()));
-    assertEquals(BUCKET, remoteBucket.getName());
+    Bucket remoteBucket = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.values()));
+    assertEquals(bucketName, remoteBucket.getName());
     assertNotNull(remoteBucket.getCreateTime());
     assertNotNull(remoteBucket.getSelfLink());
   }
@@ -163,16 +172,12 @@ public class ITBucketTest {
   @Test
   public void testBucketLocationType() throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
-    long bucketMetageneration = 42;
     storage.create(
         BucketInfo.newBuilder(bucketName)
             .setLocation("us")
-            .setRetentionPeriod(RETENTION_PERIOD)
             .build());
-    Bucket bucket =
-        storage.get(
-            bucketName, Storage.BucketGetOption.metagenerationNotMatch(bucketMetageneration));
-    assertTrue(LOCATION_TYPES.contains(bucket.getLocationType()));
+    Bucket bucket = storage.get(bucketName);
+    assertEquals("multi-region", bucket.getLocationType());
 
     Bucket bucket1 =
         storage.lockRetentionPolicy(bucket, Storage.BucketTargetOption.metagenerationMatch());
@@ -182,7 +187,6 @@ public class ITBucketTest {
         storage.update(
             BucketInfo.newBuilder(bucketName)
                 .setLocation("asia")
-                .setRetentionPeriod(RETENTION_PERIOD)
                 .build());
     assertTrue(LOCATION_TYPES.contains(updatedBucket.getLocationType()));
 
@@ -433,7 +437,7 @@ public class ITBucketTest {
     assertNull(storage.get(BUCKET).getLabels());
   }
 
-  Test
+  @Test
   public void testUpdateBucketRequesterPays() {
     unsetRequesterPays();
     Bucket remoteBucket =

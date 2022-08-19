@@ -148,8 +148,6 @@ public class ITStorageTest {
   private static final boolean IS_VPC_TEST =
       System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC") != null
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
-  private static final List<String> LOCATION_TYPES =
-      ImmutableList.of("multi-region", "region", "dual-region");
   private static final LifecycleRule LIFECYCLE_RULE_1 =
       new LifecycleRule(
           LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
@@ -1677,32 +1675,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testUpdateBucketRequesterPays() {
-    unsetRequesterPays();
-    Bucket remoteBucket =
-        storage.get(
-            BUCKET_REQUESTER_PAYS,
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertTrue(updatedBucket.requesterPays());
-
-    String projectId = storage.getOptions().getProjectId();
-    Bucket.BlobTargetOption option = Bucket.BlobTargetOption.userProject(projectId);
-    String blobName = "test-create-empty-blob-requester-pays";
-    Blob remoteBlob = updatedBucket.create(blobName, BLOB_BYTE_CONTENT, option);
-    assertNotNull(remoteBlob);
-    byte[] readBytes =
-        storage.readAllBytes(
-            BUCKET_REQUESTER_PAYS, blobName, Storage.BlobSourceOption.userProject(projectId));
-    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
-    assertFalse(updatedBucket.requesterPays());
-  }
-
-  @Test
   public void testAttemptObjectDeleteWithRetentionPolicy()
       throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
@@ -1721,35 +1693,6 @@ public class ITStorageTest {
       // expected
     } finally {
       Thread.sleep(RETENTION_PERIOD_IN_MILLISECONDS);
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
-  public void testEnableDisableBucketDefaultEventBasedHold()
-      throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket remoteBucket =
-        storage.create(BucketInfo.newBuilder(bucketName).setDefaultEventBasedHold(true).build());
-    try {
-      assertTrue(remoteBucket.getDefaultEventBasedHold());
-      remoteBucket =
-          storage.get(
-              bucketName, Storage.BucketGetOption.fields(BucketField.DEFAULT_EVENT_BASED_HOLD));
-      assertTrue(remoteBucket.getDefaultEventBasedHold());
-      String blobName = "test-create-with-event-based-hold";
-      BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
-      Blob remoteBlob = storage.create(blobInfo);
-      assertTrue(remoteBlob.getEventBasedHold());
-      remoteBlob =
-          storage.get(
-              blobInfo.getBlobId(), Storage.BlobGetOption.fields(BlobField.EVENT_BASED_HOLD));
-      assertTrue(remoteBlob.getEventBasedHold());
-      remoteBlob = remoteBlob.toBuilder().setEventBasedHold(false).build().update();
-      assertFalse(remoteBlob.getEventBasedHold());
-      remoteBucket = remoteBucket.toBuilder().setDefaultEventBasedHold(false).build().update();
-      assertFalse(remoteBucket.getDefaultEventBasedHold());
-    } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
