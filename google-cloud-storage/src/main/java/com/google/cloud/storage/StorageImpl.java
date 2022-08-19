@@ -1319,6 +1319,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                 .collect(ImmutableList.toImmutableList()));
   }
 
+  @Override
   public HmacKey createHmacKey(
       final ServiceAccount serviceAccount, final CreateHmacKeyOption... options) {
     String pb = serviceAccount.getEmail();

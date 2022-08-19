@@ -24,6 +24,7 @@ import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.storage.v2.BucketName;
+import com.google.storage.v2.ProjectName;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -117,6 +118,30 @@ final class Utils {
             if (BucketName.isParsableFrom(resourceName)) {
               BucketName parse = BucketName.parse(resourceName);
               return parse.getBucket();
+            } else {
+              return resourceName;
+            }
+          });
+
+  /**
+   * Define a Codec which encapsulates the logic necessary to handle encoding and decoding project
+   * names.
+   */
+  static final Codec<String, String> projectNameCodec =
+      Codec.of(
+          project -> {
+            requireNonNull(project, "project must be non null");
+            if (project.startsWith("projects/")) {
+              return project;
+            } else {
+              return "projects/" + project;
+            }
+          },
+          resourceName -> {
+            requireNonNull(resourceName, "resourceName must be non null");
+            if (ProjectName.isParsableFrom(resourceName)) {
+              ProjectName parse = ProjectName.parse(resourceName);
+              return parse.getProject();
             } else {
               return resourceName;
             }

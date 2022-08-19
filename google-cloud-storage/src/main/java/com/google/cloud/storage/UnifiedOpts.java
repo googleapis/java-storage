@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.cloud.storage.Utils.todo;
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -24,8 +25,30 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.protobuf.ByteString;
+import com.google.storage.v2.CommonObjectRequestParams;
+import com.google.storage.v2.ComposeObjectRequest;
+import com.google.storage.v2.CreateBucketRequest;
+import com.google.storage.v2.CreateHmacKeyRequest;
+import com.google.storage.v2.DeleteBucketRequest;
+import com.google.storage.v2.DeleteHmacKeyRequest;
+import com.google.storage.v2.DeleteObjectRequest;
+import com.google.storage.v2.GetBucketRequest;
+import com.google.storage.v2.GetHmacKeyRequest;
 import com.google.storage.v2.GetObjectRequest;
+import com.google.storage.v2.ListBucketsRequest;
+import com.google.storage.v2.ListHmacKeysRequest;
+import com.google.storage.v2.ListObjectsRequest;
+import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.RewriteObjectRequest;
+import com.google.storage.v2.UpdateBucketRequest;
+import com.google.storage.v2.UpdateHmacKeyRequest;
+import com.google.storage.v2.UpdateObjectRequest;
+import com.google.storage.v2.WriteObjectRequest;
 import java.io.Serializable;
 import java.net.FileNameMap;
 import java.net.URLConnection;
@@ -34,6 +57,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -99,14 +123,28 @@ final class UnifiedOpts {
   }
 
   /** Base interface for those Opts which are applicable to Object List operations */
-  interface ObjectListOpt extends GrpcMetadataMapper, ListOpt, ApplicableObject {}
+  interface ObjectListOpt extends GrpcMetadataMapper, ListOpt, ApplicableObject {
+    default Mapper<ListObjectsRequest.Builder> listObjects() {
+      return Mapper.identity();
+    }
+  }
 
   /**
    * Base interface for those Opts which are applicable to Object Source (get/read/origin
    * relationship) operations
    */
   interface ObjectSourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableObject {
-    Mapper<GetObjectRequest.Builder> getObject();
+    default Mapper<ReadObjectRequest.Builder> readObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<GetObjectRequest.Builder> getObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
   }
 
   /**
@@ -117,37 +155,101 @@ final class UnifiedOpts {
     default Mapper<BlobInfo.Builder> blobInfo() {
       return Mapper.identity();
     }
+
+    default Mapper<WriteObjectRequest.Builder> writeObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<DeleteObjectRequest.Builder> deleteObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<ComposeObjectRequest.Builder> composeObject() {
+      return Mapper.identity();
+    }
+
+    default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
   }
 
   /** Base interface for those Opts which are applicable to Bucket List operations */
-  interface BucketListOpt extends GrpcMetadataMapper, ListOpt, ApplicableBucket {}
+  interface BucketListOpt extends GrpcMetadataMapper, ListOpt, ApplicableBucket {
+    default Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return Mapper.identity();
+    }
+  }
 
   /**
    * Base interface for those Opts which are applicable to Bucket Source (get/read/origin
    * relationship) operations
    */
-  interface BucketSourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableBucket {}
+  interface BucketSourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableBucket {
+    default Mapper<GetBucketRequest.Builder> getBucket() {
+      return Mapper.identity();
+    }
+
+    default Mapper<GetIamPolicyRequest.Builder> getIamPolicy() {
+      return Mapper.identity();
+    }
+  }
 
   /**
    * Base interface for those Opts which are applicable to Bucket Target (set/write/destination
    * relationship) operations
    */
-  interface BucketTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableBucket {}
+  interface BucketTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableBucket {
+    default Mapper<CreateBucketRequest.Builder> createBucket() {
+      return Mapper.identity();
+    }
+
+    default Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return Mapper.identity();
+    }
+
+    default Mapper<DeleteBucketRequest.Builder> deleteBucket() {
+      return Mapper.identity();
+    }
+  }
 
   /** Base interface for those Opts which are applicable to HmacKey List operations */
-  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {}
+  interface HmacKeyListOpt extends GrpcMetadataMapper, ListOpt, ApplicableHmacKey {
+    default Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return Mapper.identity();
+    }
+  }
 
   /**
    * Base interface for those Opts which are applicable to HmacKey Source (get/read/origin
    * relationship) operations
    */
-  interface HmacKeySourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableHmacKey {}
+  interface HmacKeySourceOpt extends GrpcMetadataMapper, SourceOpt, ApplicableHmacKey {
+    default Mapper<GetHmacKeyRequest.Builder> getHmacKey() {
+      return Mapper.identity();
+    }
+  }
 
   /**
    * Base interface for those Opts which are applicable to HmacKey Target (set/write/destination
    * relationship) operations
    */
-  interface HmacKeyTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableHmacKey {}
+  interface HmacKeyTargetOpt extends GrpcMetadataMapper, TargetOpt, ApplicableHmacKey {
+    default Mapper<CreateHmacKeyRequest.Builder> createHmacKey() {
+      return Mapper.identity();
+    }
+
+    default Mapper<UpdateHmacKeyRequest.Builder> updateHmacKey() {
+      return Mapper.identity();
+    }
+
+    default Mapper<DeleteHmacKeyRequest.Builder> deleteHmacKey() {
+      return Mapper.identity();
+    }
+  }
 
   /**
    * Some Options have a corresponding "SOURCE" version, this interface provide a construct for
@@ -181,6 +283,11 @@ final class UnifiedOpts {
 
     @Override
     default Mapper<GetObjectRequest.Builder> getObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    default Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return Mapper.identity();
     }
   }
@@ -325,6 +432,11 @@ final class UnifiedOpts {
     return new ServiceAccount(s.getEmail());
   }
 
+  @VisibleForTesting
+  static SetContentType setContentType(String s) {
+    return new SetContentType(s);
+  }
+
   static ShowDeletedKeys showDeletedKeys(boolean b) {
     return new ShowDeletedKeys(b);
   }
@@ -425,8 +537,30 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
-      return todo();
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> {
+        CommonObjectRequestParams.Builder builder =
+            customerSuppliedKey(CommonObjectRequestParams.newBuilder(), val);
+        return b.setCopySourceEncryptionAlgorithm(builder.getEncryptionAlgorithm())
+            .setCopySourceEncryptionKeyBytes(builder.getEncryptionKeyBytes())
+            .setCopySourceEncryptionKeySha256Bytes(builder.getEncryptionKeySha256Bytes());
+      };
     }
   }
 
@@ -435,6 +569,11 @@ final class UnifiedOpts {
 
     private Delimiter(String val) {
       super(StorageRpc.Option.DELIMITER, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setDelimiter(val);
     }
   }
 
@@ -462,6 +601,46 @@ final class UnifiedOpts {
               StorageRpc.Option.CUSTOMER_SUPPLIED_KEY,
               BaseEncoding.base64().encode(val.getEncoded()));
     }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<DeleteObjectRequest.Builder> deleteObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ComposeObjectRequest.Builder> composeObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> {
+        customerSuppliedKey(b.getCommonObjectRequestParamsBuilder(), val);
+        return b;
+      };
+    }
   }
 
   /** @see StartOffset */
@@ -471,6 +650,11 @@ final class UnifiedOpts {
     private EndOffset(String val) {
       super(StorageRpc.Option.END_OFF_SET, val);
     }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setLexicographicEnd(val);
+    }
   }
 
   static final class Fields extends RpcOptVal<String>
@@ -479,11 +663,6 @@ final class UnifiedOpts {
 
     private Fields(String val) {
       super(StorageRpc.Option.FIELDS, val);
-    }
-
-    @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
-      return Mapper.identity();
     }
   }
 
@@ -500,8 +679,41 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfGenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteObjectRequest.Builder> deleteObject() {
+      return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<ComposeObjectRequest.Builder> composeObject() {
+      return b -> b.setIfGenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
     }
 
     @Override
@@ -523,8 +735,36 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfGenerationNotMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
       return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteObjectRequest.Builder> deleteObject() {
+      return b -> b.setIfGenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
     }
 
     @Override
@@ -538,6 +778,19 @@ final class UnifiedOpts {
 
     private KmsKeyName(String val) {
       super(StorageRpc.Option.KMS_KEY_NAME, val);
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().getResourceBuilder().setKmsKey(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ComposeObjectRequest.Builder> composeObject() {
+      return b -> b.setKmsKey(val);
     }
   }
 
@@ -595,7 +848,55 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfMetagenerationMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteObjectRequest.Builder> deleteObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<ComposeObjectRequest.Builder> composeObject() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteBucketRequest.Builder> deleteBucket() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<GetBucketRequest.Builder> getBucket() {
       return b -> b.setIfMetagenerationMatch(val);
     }
 
@@ -622,7 +923,50 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setIfMetagenerationNotMatch(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
     public Mapper<GetObjectRequest.Builder> getObject() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteObjectRequest.Builder> deleteObject() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return Mapper.identity();
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<DeleteBucketRequest.Builder> deleteBucket() {
+      return b -> b.setIfMetagenerationNotMatch(val);
+    }
+
+    @Override
+    public Mapper<GetBucketRequest.Builder> getBucket() {
       return b -> b.setIfMetagenerationNotMatch(val);
     }
 
@@ -639,6 +983,21 @@ final class UnifiedOpts {
     private PageSize(long val) {
       super(StorageRpc.Option.MAX_RESULTS, val);
     }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setPageSize(Math.toIntExact(val));
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setPageSize(Math.toIntExact(val));
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setPageSize(Math.toIntExact(val));
+    }
   }
 
   static final class PageToken extends RpcOptVal<String>
@@ -647,6 +1006,21 @@ final class UnifiedOpts {
 
     private PageToken(String val) {
       super(StorageRpc.Option.PAGE_TOKEN, val);
+    }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setPageToken(val);
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setPageToken(val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setPageToken(val);
     }
   }
 
@@ -657,6 +1031,34 @@ final class UnifiedOpts {
     private PredefinedAcl(String val) {
       super(StorageRpc.Option.PREDEFINED_ACL, val);
     }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().setPredefinedAcl(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return b -> b.setPredefinedAcl(val);
+    }
+
+    @Override
+    public Mapper<ComposeObjectRequest.Builder> composeObject() {
+      return b -> b.setDestinationPredefinedAcl(val);
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return b -> b.setPredefinedAcl(val);
+    }
+
+    @Override
+    public Mapper<CreateBucketRequest.Builder> createBucket() {
+      return b -> b.setPredefinedAcl(val);
+    }
   }
 
   static final class PredefinedDefaultObjectAcl extends RpcOptVal<String>
@@ -666,6 +1068,16 @@ final class UnifiedOpts {
     private PredefinedDefaultObjectAcl(String val) {
       super(StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL, val);
     }
+
+    @Override
+    public Mapper<CreateBucketRequest.Builder> createBucket() {
+      return b -> b.setPredefinedDefaultObjectAcl(val);
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return b -> b.setPredefinedDefaultObjectAcl(val);
+    }
   }
 
   static final class Prefix extends RpcOptVal<String> implements BucketListOpt, ObjectListOpt {
@@ -673,6 +1085,16 @@ final class UnifiedOpts {
 
     private Prefix(String val) {
       super(StorageRpc.Option.PREFIX, val);
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setPrefix(val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setPrefix(val);
     }
   }
 
@@ -687,6 +1109,21 @@ final class UnifiedOpts {
 
     private ProjectId(String val) {
       super(StorageRpc.Option.PROJECT_ID, val);
+    }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setProject(projectNameCodec.encode(val));
+    }
+
+    @Override
+    public Mapper<GetHmacKeyRequest.Builder> getHmacKey() {
+      return b -> b.setProject(projectNameCodec.encode(val));
+    }
+
+    @Override
+    public Mapper<DeleteHmacKeyRequest.Builder> deleteHmacKey() {
+      return b -> b.setProject(projectNameCodec.encode(val));
     }
   }
 
@@ -711,8 +1148,8 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
-      return Mapper.identity();
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfSourceGenerationMatch(val);
     }
   }
 
@@ -729,8 +1166,8 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
-      return Mapper.identity();
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfSourceGenerationNotMatch(val);
     }
   }
 
@@ -747,8 +1184,8 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
-      return Mapper.identity();
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfSourceMetagenerationMatch(val);
     }
   }
 
@@ -765,8 +1202,8 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
-      return Mapper.identity();
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setIfSourceMetagenerationNotMatch(val);
     }
   }
 
@@ -776,6 +1213,14 @@ final class UnifiedOpts {
 
     private RequestedPolicyVersion(Long val) {
       super(StorageRpc.Option.REQUESTED_POLICY_VERSION, val);
+    }
+
+    @Override
+    public Mapper<GetIamPolicyRequest.Builder> getIamPolicy() {
+      return b -> {
+        b.getOptionsBuilder().setRequestedPolicyVersion(Math.toIntExact(val));
+        return b;
+      };
     }
   }
 
@@ -799,6 +1244,11 @@ final class UnifiedOpts {
     private ServiceAccount(String val) {
       super(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL, val);
     }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setServiceAccountEmail(val);
+    }
   }
 
   static final class SetContentType implements ObjectTargetOpt {
@@ -812,6 +1262,22 @@ final class UnifiedOpts {
     @Override
     public Mapper<BlobInfo.Builder> blobInfo() {
       return b -> b.setContentType(val);
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getWriteObjectSpecBuilder().getResourceBuilder().setContentType(val);
+        return b;
+      };
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return b -> {
+        b.getObjectBuilder().setContentType(val);
+        return b;
+      };
     }
 
     @Override
@@ -843,6 +1309,11 @@ final class UnifiedOpts {
     private ShowDeletedKeys(boolean val) {
       super(StorageRpc.Option.SHOW_DELETED_KEYS, val);
     }
+
+    @Override
+    public Mapper<ListHmacKeysRequest.Builder> listHmacKeys() {
+      return b -> b.setShowDeletedKeys(val);
+    }
   }
 
   /** @see EndOffset */
@@ -851,6 +1322,11 @@ final class UnifiedOpts {
 
     private StartOffset(String val) {
       super(StorageRpc.Option.START_OFF_SET, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setLexicographicStart(val);
     }
   }
 
@@ -877,7 +1353,7 @@ final class UnifiedOpts {
     }
 
     @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return Mapper.identity();
     }
   }
@@ -885,6 +1361,11 @@ final class UnifiedOpts {
   static final class VersionsFilter extends RpcOptVal<@NonNull Boolean> implements ObjectListOpt {
     private VersionsFilter(boolean val) {
       super(StorageRpc.Option.VERSIONS, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setVersions(val);
     }
   }
 
@@ -1384,12 +1865,102 @@ final class UnifiedOpts {
       return fuseMappers(GrpcMetadataMapper.class, GrpcMetadataMapper::getGrpcMetadataMapper);
     }
 
-    Mapper<GetObjectRequest.Builder> getObjectRequest() {
+    Mapper<CreateBucketRequest.Builder> createBucketsRequest() {
+      return fuseMappers(BucketTargetOpt.class, BucketTargetOpt::createBucket);
+    }
+
+    Mapper<GetBucketRequest.Builder> getBucketsRequest() {
+      return fuseMappers(BucketSourceOpt.class, BucketSourceOpt::getBucket);
+    }
+
+    Mapper<ListBucketsRequest.Builder> listBucketsRequest() {
+      return fuseMappers(BucketListOpt.class, BucketListOpt::listBuckets);
+    }
+
+    Mapper<UpdateBucketRequest.Builder> updateBucketsRequest() {
+      return fuseMappers(BucketTargetOpt.class, BucketTargetOpt::updateBucket);
+    }
+
+    Mapper<DeleteBucketRequest.Builder> deleteBucketsRequest() {
+      return fuseMappers(BucketTargetOpt.class, BucketTargetOpt::deleteBucket);
+    }
+
+    Mapper<WriteObjectRequest.Builder> writeObjectRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::writeObject);
+    }
+
+    Mapper<GetObjectRequest.Builder> getObjectsRequest() {
       return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::getObject);
+    }
+
+    Mapper<ReadObjectRequest.Builder> readObjectRequest() {
+      return fuseMappers(ObjectSourceOpt.class, ObjectSourceOpt::readObject);
+    }
+
+    Mapper<ListObjectsRequest.Builder> listObjectsRequest() {
+      return fuseMappers(ObjectListOpt.class, ObjectListOpt::listObjects);
+    }
+
+    Mapper<UpdateObjectRequest.Builder> updateObjectsRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::updateObject);
+    }
+
+    Mapper<DeleteObjectRequest.Builder> deleteObjectsRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::deleteObject);
+    }
+
+    Mapper<ComposeObjectRequest.Builder> composeObjectsRequest() {
+      return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::composeObject);
+    }
+
+    Mapper<RewriteObjectRequest.Builder> rewriteObjectsRequest() {
+      return opts.stream()
+          .filter(isInstanceOf(ObjectTargetOpt.class).or(isInstanceOf(ObjectSourceOpt.class)))
+          .map(
+              o -> {
+                // TODO: Do we need to formalize this type of dual relationship with it's own
+                // interface?
+                if (o instanceof ObjectTargetOpt) {
+                  ObjectTargetOpt oto = (ObjectTargetOpt) o;
+                  return oto.rewriteObject();
+                } else if (o instanceof ObjectSourceOpt) {
+                  ObjectSourceOpt oso = (ObjectSourceOpt) o;
+                  return oso.rewriteObject();
+                } else {
+                  // in practice this shouldn't happen because of the filter guard upstream
+                  throw new IllegalStateException("Unexpected type: %s" + o.getClass());
+                }
+              })
+          .reduce(Mapper.identity(), Mapper::andThen);
+    }
+
+    Mapper<CreateHmacKeyRequest.Builder> createHmacKeysRequest() {
+      return fuseMappers(HmacKeyTargetOpt.class, HmacKeyTargetOpt::createHmacKey);
+    }
+
+    Mapper<GetHmacKeyRequest.Builder> getHmacKeysRequest() {
+      return fuseMappers(HmacKeySourceOpt.class, HmacKeySourceOpt::getHmacKey);
+    }
+
+    Mapper<ListHmacKeysRequest.Builder> listHmacKeysRequest() {
+      return fuseMappers(HmacKeyListOpt.class, HmacKeyListOpt::listHmacKeys);
+    }
+
+    Mapper<UpdateHmacKeyRequest.Builder> updateHmacKeysRequest() {
+      return fuseMappers(HmacKeyTargetOpt.class, HmacKeyTargetOpt::updateHmacKey);
+    }
+
+    Mapper<DeleteHmacKeyRequest.Builder> deleteHmacKeysRequest() {
+      return fuseMappers(HmacKeyTargetOpt.class, HmacKeyTargetOpt::deleteHmacKey);
     }
 
     Mapper<BlobInfo.Builder> blobInfoMapper() {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::blobInfo);
+    }
+
+    @Deprecated
+    Optional<ProjectId> projectId() {
+      return filterTo(ProjectId.class).findFirst();
     }
 
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {
@@ -1404,6 +1975,10 @@ final class UnifiedOpts {
     private <R> Stream<R> filterTo(Class<R> c) {
       // TODO: figure out if there is need for an "isApplicableTo" predicate
       return opts.stream().filter(isInstanceOf(c)).map(x -> (R) x);
+    }
+
+    static <T extends Opt> Opts<T> from(T t) {
+      return new Opts<>(ImmutableList.of(t));
     }
 
     static <T extends Opt> Opts<T> from(T... ts) {
@@ -1434,5 +2009,13 @@ final class UnifiedOpts {
     private static <T> Predicate<T> isInstanceOf(Class<?> c) {
       return t -> c.isAssignableFrom(t.getClass());
     }
+  }
+
+  private static CommonObjectRequestParams.Builder customerSuppliedKey(
+      CommonObjectRequestParams.Builder b, Key key) {
+    HashCode keySha256 = Hashing.sha256().hashBytes(key.getEncoded());
+    return b.setEncryptionAlgorithm(key.getAlgorithm())
+        .setEncryptionKeyBytes(ByteString.copyFrom(key.getEncoded()))
+        .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()));
   }
 }
