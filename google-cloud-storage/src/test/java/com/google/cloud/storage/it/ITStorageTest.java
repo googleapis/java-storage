@@ -148,20 +148,6 @@ public class ITStorageTest {
   private static final boolean IS_VPC_TEST =
       System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC") != null
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
-  private static final LifecycleRule LIFECYCLE_RULE_1 =
-      new LifecycleRule(
-          LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
-          LifecycleCondition.newBuilder()
-              .setAge(1)
-              .setNumberOfNewerVersions(3)
-              .setIsLive(false)
-              .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-              .build());
-  private static final LifecycleRule LIFECYCLE_RULE_2 =
-      new LifecycleRule(
-          LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
-  private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
-      ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
   @ClassRule
   public static final StorageFixture storageFixture =
@@ -1801,19 +1787,6 @@ public class ITStorageTest {
     } finally {
       RemoteStorageHelper.forceDelete(storage, bpoBucket, 1, TimeUnit.MINUTES);
     }
-  }
-
-  private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
-    return storage.create(
-        Bucket.newBuilder(bucketName)
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
-                    .setPublicAccessPrevention(
-                        enforced
-                            ? BucketInfo.PublicAccessPrevention.ENFORCED
-                            : BucketInfo.PublicAccessPrevention.INHERITED)
-                    .build())
-            .build());
   }
 
   @Test

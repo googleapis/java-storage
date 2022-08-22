@@ -50,11 +50,23 @@ public class ITBucketTest {
   public static final BucketFixture bucketFixture =
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
-  private static final List<String> LOCATION_TYPES =
-      ImmutableList.of("multi-region", "region", "dual-region");
-
   private static Storage storage;
   private static String bucketName;
+  private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
+  private static final LifecycleRule LIFECYCLE_RULE_1 =
+      new LifecycleRule(
+          LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+          LifecycleCondition.newBuilder()
+              .setAge(1)
+              .setNumberOfNewerVersions(3)
+              .setIsLive(false)
+              .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+              .build());
+  private static final LifecycleRule LIFECYCLE_RULE_2 =
+      new LifecycleRule(
+          LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
+  private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
+      ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
   @BeforeClass
   public static void setUp() {
@@ -178,24 +190,6 @@ public class ITBucketTest {
             .build());
     Bucket bucket = storage.get(bucketName);
     assertEquals("multi-region", bucket.getLocationType());
-
-    Bucket bucket1 =
-        storage.lockRetentionPolicy(bucket, Storage.BucketTargetOption.metagenerationMatch());
-    assertTrue(LOCATION_TYPES.contains(bucket1.getLocationType()));
-
-    Bucket updatedBucket =
-        storage.update(
-            BucketInfo.newBuilder(bucketName)
-                .setLocation("asia")
-                .build());
-    assertTrue(LOCATION_TYPES.contains(updatedBucket.getLocationType()));
-
-    Iterator<Bucket> bucketIterator =
-        storage.list(Storage.BucketListOption.prefix(bucketName)).iterateAll().iterator();
-    while (bucketIterator.hasNext()) {
-      Bucket remoteBucket = bucketIterator.next();
-      assertTrue(LOCATION_TYPES.contains(remoteBucket.getLocationType()));
-    }
     RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
   }
 

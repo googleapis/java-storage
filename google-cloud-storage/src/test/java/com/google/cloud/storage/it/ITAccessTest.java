@@ -46,6 +46,9 @@ public class ITAccessTest {
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixture =
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+  
+  private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
+  private static final Long RETENTION_PERIOD = 5L;
 
   private static Storage storage;
   private static String bucketName;
@@ -738,6 +741,18 @@ public class ITAccessTest {
           .build()
           .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
     }
+  }
+  private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
+    return storage.create(
+        Bucket.newBuilder(bucketName)
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
+                    .setPublicAccessPrevention(
+                        enforced
+                            ? BucketInfo.PublicAccessPrevention.ENFORCED
+                            : BucketInfo.PublicAccessPrevention.INHERITED)
+                    .build())
+            .build());
   }
 
 }
