@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.google.cloud.storage.it;
 
 import static org.junit.Assert.assertEquals;
@@ -46,7 +62,7 @@ public class ITAccessTest {
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixture =
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
-  
+
   private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
   private static final Long RETENTION_PERIOD = 5L;
 
@@ -122,7 +138,8 @@ public class ITAccessTest {
     assertFalse(storage.deleteDefaultAcl(bucketName, User.ofAllAuthenticatedUsers()));
     Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
     assertNotNull(storage.createDefaultAcl(bucketName, acl));
-    Acl updatedAcl = storage.updateDefaultAcl(bucketName, acl.toBuilder().setRole(Role.OWNER).build());
+    Acl updatedAcl =
+        storage.updateDefaultAcl(bucketName, acl.toBuilder().setRole(Role.OWNER).build());
     assertEquals(Role.OWNER, updatedAcl.getRole());
     Set<Acl> acls = new HashSet<>();
     acls.addAll(storage.listDefaultAcls(bucketName));
@@ -340,7 +357,9 @@ public class ITAccessTest {
             .build());
     Policy updatedPolicy =
         storage.setIamPolicy(
-            bucketName, currentPolicy.toBuilder().setBindings(currentBindings).build(), bucketOptions);
+            bucketName,
+            currentPolicy.toBuilder().setBindings(currentBindings).build(),
+            bucketOptions);
     assertTrue(
         bindingsWithPublicRead.size() == updatedPolicy.getBindingsList().size()
             && bindingsWithPublicRead.containsAll(updatedPolicy.getBindingsList()));
@@ -359,7 +378,9 @@ public class ITAccessTest {
 
     Policy revertedPolicy =
         storage.setIamPolicy(
-            bucketName, updatedPolicy.toBuilder().setBindings(updatedBindings).build(), bucketOptions);
+            bucketName,
+            updatedPolicy.toBuilder().setBindings(updatedBindings).build(),
+            bucketOptions);
 
     assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindingsList());
     assertTrue(
@@ -742,6 +763,7 @@ public class ITAccessTest {
           .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
     }
   }
+
   private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
     return storage.create(
         Bucket.newBuilder(bucketName)
@@ -754,5 +776,4 @@ public class ITAccessTest {
                     .build())
             .build());
   }
-
 }

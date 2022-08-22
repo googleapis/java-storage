@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -15,28 +31,24 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
-import com.google.cloud.storage.BucketInfo.LifecycleRule;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.HttpMethod;
-import com.google.cloud.storage.Notification;
-import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
-import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
-import java.time.OffsetDateTime;
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -50,28 +62,28 @@ public class ITBucketTest {
   public static final BucketFixture bucketFixture =
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
+  @ClassRule(order = 3)
+  public static final BucketFixture requesterPaysFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+
   private static Storage storage;
   private static String bucketName;
-  private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
-  private static final LifecycleRule LIFECYCLE_RULE_1 =
-      new LifecycleRule(
-          LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
-          LifecycleCondition.newBuilder()
-              .setAge(1)
-              .setNumberOfNewerVersions(3)
-              .setIsLive(false)
-              .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-              .build());
-  private static final LifecycleRule LIFECYCLE_RULE_2 =
-      new LifecycleRule(
-          LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
-  private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
-      ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
+  private static String requesterPaysBucketName;
+
+  private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
+  private static final Map<String, String> BUCKET_LABELS = ImmutableMap.of("label1", "value1");
+  private static final Long RETENTION_PERIOD = 5L;
 
   @BeforeClass
-  public static void setUp() {
+  public static void setup() {
     storage = storageFixture.getInstance();
     bucketName = bucketFixture.getBucketInfo().getName();
+    requesterPaysBucketName = requesterPaysFixture.getBucketInfo().getName();
+  }
+
+  @AfterClass
+  public static void cleanup() {
+    unsetRequesterPays();
   }
 
   @Test(timeout = 5000)
@@ -107,90 +119,18 @@ public class ITBucketTest {
 
   @Test
   public void testGetBucketAllSelectedFields() {
-    Bucket remoteBucket = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.values()));
+    Bucket remoteBucket =
+        storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.values()));
     assertEquals(bucketName, remoteBucket.getName());
     assertNotNull(remoteBucket.getCreateTime());
     assertNotNull(remoteBucket.getSelfLink());
   }
 
   @Test
-  public void testGetBucketLifecycleRules() {
-    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(
-        BucketInfo.newBuilder(lifecycleTestBucketName)
-            .setLocation("us")
-            .setLifecycleRules(
-                ImmutableList.of(
-                    new LifecycleRule(
-                        LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
-                        LifecycleCondition.newBuilder()
-                            .setAge(1)
-                            .setNumberOfNewerVersions(3)
-                            .setIsLive(false)
-                            .setCreatedBeforeOffsetDateTime(OffsetDateTime.now())
-                            .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-                            .setDaysSinceNoncurrentTime(30)
-                            .setNoncurrentTimeBeforeOffsetDateTime(OffsetDateTime.now())
-                            .setCustomTimeBeforeOffsetDateTime(OffsetDateTime.now())
-                            .setDaysSinceCustomTime(30)
-                            .build())))
-            .build());
-    Bucket remoteBucket =
-        storage.get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
-    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
-    try {
-      assertTrue(
-          lifecycleRule
-              .getAction()
-              .getActionType()
-              .equals(LifecycleRule.SetStorageClassLifecycleAction.TYPE));
-      assertEquals(3, lifecycleRule.getCondition().getNumberOfNewerVersions().intValue());
-      assertNotNull(lifecycleRule.getCondition().getCreatedBeforeOffsetDateTime());
-      assertFalse(lifecycleRule.getCondition().getIsLive());
-      assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
-      assertEquals(1, lifecycleRule.getCondition().getMatchesStorageClass().size());
-      assertEquals(30, lifecycleRule.getCondition().getDaysSinceNoncurrentTime().intValue());
-      assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBeforeOffsetDateTime());
-      assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
-      assertNotNull(lifecycleRule.getCondition().getCustomTimeBeforeOffsetDateTime());
-    } finally {
-      storage.delete(lifecycleTestBucketName);
-    }
-  }
-
-  @Test
-  public void testGetBucketAbortMPULifecycle() {
-    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(
-        BucketInfo.newBuilder(lifecycleTestBucketName)
-            .setLocation("us")
-            .setLifecycleRules(
-                ImmutableList.of(
-                    new LifecycleRule(
-                        LifecycleAction.newAbortIncompleteMPUploadAction(),
-                        LifecycleCondition.newBuilder().setAge(1).build())))
-            .build());
-    Bucket remoteBucket =
-        storage.get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
-    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
-    try {
-      assertEquals(AbortIncompleteMPUAction.TYPE, lifecycleRule.getAction().getActionType());
-      assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
-    } finally {
-      storage.delete(lifecycleTestBucketName);
-    }
-  }
-
-  @Test
-  public void testBucketLocationType() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(
-        BucketInfo.newBuilder(bucketName)
-            .setLocation("us")
-            .build());
+  public void testBucketLocationType() {
+    storage.update(BucketInfo.newBuilder(bucketName).setLocation("us").build());
     Bucket bucket = storage.get(bucketName);
     assertEquals("multi-region", bucket.getLocationType());
-    RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
   }
 
   @Test
@@ -242,25 +182,6 @@ public class ITBucketTest {
   }
 
   @Test
-  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setLocation("us")
-                .setLifecycleRules(LIFECYCLE_RULES)
-                .build());
-    assertThat(bucket.getLifecycleRules()).isNotNull();
-    assertThat(bucket.getLifecycleRules()).hasSize(2);
-    try {
-      Bucket updatedBucket = bucket.toBuilder().deleteLifecycleRules().build().update();
-      assertThat(updatedBucket.getLifecycleRules()).hasSize(0);
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
   public void testRemoveBucketCORS() throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
     List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
@@ -301,53 +222,6 @@ public class ITBucketTest {
       updatedBucket = storage.get(bucketName);
       assertThat(updatedBucket.getCors()).isNull();
 
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
-  public void testNotification() throws InterruptedException, ExecutionException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
-    NotificationInfo notificationInfo =
-        NotificationInfo.newBuilder(TOPIC)
-            .setCustomAttributes(CUSTOM_ATTRIBUTES)
-            .setPayloadFormat(PAYLOAD_FORMAT)
-            .build();
-    try {
-      assertThat(storage.listNotifications(bucketName)).isEmpty();
-      Notification notification = storage.createNotification(bucketName, notificationInfo);
-      assertThat(notification.getNotificationId()).isNotNull();
-      assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
-      assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
-      assertThat(notification.getTopic().contains(TOPIC)).isTrue();
-
-      // Gets the notification with the specified id.
-      Notification actualNotification =
-          storage.getNotification(bucketName, notification.getNotificationId());
-      assertThat(actualNotification.getNotificationId())
-          .isEqualTo(notification.getNotificationId());
-      assertThat(actualNotification.getTopic().trim()).isEqualTo(notification.getTopic().trim());
-      assertThat(actualNotification.getEtag()).isEqualTo(notification.getEtag());
-      assertThat(actualNotification.getEventTypes()).isEqualTo(notification.getEventTypes());
-      assertThat(actualNotification.getPayloadFormat()).isEqualTo(notification.getPayloadFormat());
-      assertThat(actualNotification.getSelfLink()).isEqualTo(notification.getSelfLink());
-      assertThat(actualNotification.getCustomAttributes())
-          .isEqualTo(notification.getCustomAttributes());
-
-      // Retrieves the list of notifications associated with the bucket.
-      List<Notification> notifications = storage.listNotifications(bucketName);
-      assertThat(notifications.size()).isEqualTo(1);
-      assertThat(notifications.get(0).getNotificationId())
-          .isEqualTo(actualNotification.getNotificationId());
-
-      // Deletes the notification with the specified id.
-      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId())).isTrue();
-      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId()))
-          .isFalse();
-      assertThat(storage.getNotification(bucketName, notification.getNotificationId())).isNull();
-      assertThat(storage.listNotifications(bucketName)).isEmpty();
     } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
@@ -422,13 +296,13 @@ public class ITBucketTest {
   @Test
   public void testUpdateBucketLabel() {
     Bucket remoteBucket =
-        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+        storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertNull(remoteBucket.getLabels());
     remoteBucket = remoteBucket.toBuilder().setLabels(BUCKET_LABELS).build();
     Bucket updatedBucket = storage.update(remoteBucket);
     assertEquals(BUCKET_LABELS, updatedBucket.getLabels());
-    remoteBucket.toBuilder().setLabels(REMOVE_BUCKET_LABELS).build().update();
-    assertNull(storage.get(BUCKET).getLabels());
+    remoteBucket.toBuilder().setLabels(Collections.emptyMap()).build().update();
+    assertNull(storage.get(bucketName).getLabels());
   }
 
   @Test
@@ -436,7 +310,7 @@ public class ITBucketTest {
     unsetRequesterPays();
     Bucket remoteBucket =
         storage.get(
-            BUCKET_REQUESTER_PAYS,
+            requesterPaysBucketName,
             Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
@@ -450,7 +324,7 @@ public class ITBucketTest {
     assertNotNull(remoteBlob);
     byte[] readBytes =
         storage.readAllBytes(
-            BUCKET_REQUESTER_PAYS, blobName, Storage.BlobSourceOption.userProject(projectId));
+            requesterPaysBucketName, blobName, Storage.BlobSourceOption.userProject(projectId));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
     updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
@@ -486,4 +360,19 @@ public class ITBucketTest {
     }
   }
 
+  private static void unsetRequesterPays() {
+    Bucket remoteBucket =
+        storage.get(
+            requesterPaysBucketName,
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
+            Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
+    // Disable requester pays in case a test fails to clean up.
+    if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
+      remoteBucket
+          .toBuilder()
+          .setRequesterPays(false)
+          .build()
+          .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
+    }
+  }
 }

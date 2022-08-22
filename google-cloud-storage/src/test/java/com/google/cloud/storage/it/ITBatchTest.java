@@ -43,7 +43,6 @@ public class ITBatchTest {
     bucketName = bucketFixture.getBucketInfo().getName();
   }
 
-
   @Test
   public void testBatchRequest() {
     String sourceBlobName1 = "test-batch-request-blob-1";
@@ -200,5 +199,4 @@ public class ITBatchTest {
       assertThat(e.getMessage()).contains("Invalid argument");
     }
   }
-
 }

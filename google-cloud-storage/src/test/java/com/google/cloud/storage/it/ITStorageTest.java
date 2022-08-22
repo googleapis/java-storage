@@ -33,16 +33,11 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.gax.paging.Page;
 import com.google.auth.http.HttpTransportFactory;
-import com.google.cloud.Condition;
-import com.google.cloud.Identity;
-import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.ServiceOptions;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.http.HttpTransportOptions;
-import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
@@ -51,14 +46,10 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.BucketInfo.LifecycleRule;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
-import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
@@ -68,7 +59,6 @@ import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -77,19 +67,13 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
-import com.google.iam.v1.Binding;
-import com.google.iam.v1.GetIamPolicyRequest;
-import com.google.iam.v1.SetIamPolicyRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.Key;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -97,7 +81,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -119,7 +102,6 @@ import org.threeten.bp.Instant;
 public class ITStorageTest {
 
   private static Storage storage;
-  private static TopicAdminClient topicAdminClient;
   private static final Logger log = Logger.getLogger(ITStorageTest.class.getName());
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
@@ -133,7 +115,6 @@ public class ITStorageTest {
   private static final byte[] COMPRESSED_CONTENT =
       BaseEncoding.base64()
           .decode("H4sIAAAAAAAAAPNIzcnJV3DPz0/PSVVwzskvTVEILskvSkxPVQQA/LySchsAAAA=");
-  private static final Map<String, String> BUCKET_LABELS = ImmutableMap.of("label1", "value1");
   private static final Map<String, String> REMOVE_BUCKET_LABELS;
 
   static {
@@ -155,13 +136,6 @@ public class ITStorageTest {
 
   @Rule public final TestName testName = new TestName();
   @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
-  private static final String PROJECT = ServiceOptions.getDefaultProjectId();
-  private static final String ID = UUID.randomUUID().toString().substring(0, 8);
-  private static final String TOPIC =
-      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID).trim();
-  private static final Notification.PayloadFormat PAYLOAD_FORMAT =
-      Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
-  private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
 
   @BeforeClass
   public static void beforeClass() throws IOException {
@@ -170,17 +144,9 @@ public class ITStorageTest {
     storage.create(
         BucketInfo.newBuilder(BUCKET)
             .setLocation("us")
-            .setLifecycleRules(
-                ImmutableList.of(
-                    new LifecycleRule(
-                        LifecycleAction.newDeleteAction(),
-                        LifecycleCondition.newBuilder().setAge(1).build())))
             .build());
 
     storage.create(BucketInfo.newBuilder(BUCKET_REQUESTER_PAYS).build());
-
-    // Configure topic admin client for notification.
-    topicAdminClient = configureTopicAdminClient();
   }
 
   private static void unsetRequesterPays() {
@@ -202,17 +168,6 @@ public class ITStorageTest {
   @AfterClass
   public static void afterClass() throws ExecutionException, InterruptedException {
 
-    /* Delete the Pub/Sub topic */
-    if (topicAdminClient != null) {
-      try {
-        topicAdminClient.deleteTopic(TOPIC);
-        topicAdminClient.close();
-      } catch (Exception e) {
-        log.log(Level.WARNING, "Error while trying to delete topic and shutdown topic client", e);
-      }
-      topicAdminClient = null;
-    }
-
     if (storage != null) {
       // In beforeClass, we make buckets auto-delete blobs older than a day old.
       // Here, delete all buckets older than 2 days. They should already be empty and easy.
@@ -224,7 +179,6 @@ public class ITStorageTest {
       if (!wasDeleted && log.isLoggable(Level.WARNING)) {
         log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
       }
-      unsetRequesterPays();
       RemoteStorageHelper.forceDelete(storage, BUCKET_REQUESTER_PAYS, 5, TimeUnit.SECONDS);
     }
   }
@@ -237,23 +191,6 @@ public class ITStorageTest {
       manager.setMaxTotal(1);
       return new ApacheHttpTransport(HttpClients.createMinimal(manager));
     }
-  }
-
-  private static TopicAdminClient configureTopicAdminClient() throws IOException {
-    TopicAdminClient topicAdminClient = TopicAdminClient.create();
-    topicAdminClient.createTopic(TOPIC);
-    GetIamPolicyRequest getIamPolicyRequest =
-        GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
-    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
-    Binding binding =
-        Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
-    SetIamPolicyRequest setIamPolicyRequest =
-        SetIamPolicyRequest.newBuilder()
-            .setResource(TOPIC)
-            .setPolicy(policy.toBuilder().addBindings(binding).build())
-            .build();
-    topicAdminClient.setIamPolicy(setIamPolicyRequest);
-    return topicAdminClient;
   }
 
   @Test
@@ -1896,6 +1833,7 @@ public class ITStorageTest {
   public void testAutoContentTypeWriter() throws IOException {
     testAutoContentType("writer");
   }
+
   @Test
   public void testBlobTimeStorageClassUpdated() {
     String blobName = "test-blob-with-storage-class";
