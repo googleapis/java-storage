@@ -141,10 +141,7 @@ public class ITStorageTest {
   public static void beforeClass() throws IOException {
     storage = storageFixture.getInstance();
 
-    storage.create(
-        BucketInfo.newBuilder(BUCKET)
-            .setLocation("us")
-            .build());
+    storage.create(BucketInfo.newBuilder(BUCKET).setLocation("us").build());
 
     storage.create(BucketInfo.newBuilder(BUCKET_REQUESTER_PAYS).build());
   }

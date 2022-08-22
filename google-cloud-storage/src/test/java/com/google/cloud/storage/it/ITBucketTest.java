@@ -296,7 +296,8 @@ public class ITBucketTest {
   @Test
   public void testUpdateBucketLabel() {
     Bucket remoteBucket =
-        storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+        storage.get(
+            bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertNull(remoteBucket.getLabels());
     remoteBucket = remoteBucket.toBuilder().setLabels(BUCKET_LABELS).build();
     Bucket updatedBucket = storage.update(remoteBucket);

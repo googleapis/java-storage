@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
@@ -28,8 +27,7 @@ import org.junit.Test;
 
 public class ITBucketLifecycleTest {
 
-  @ClassRule
-  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  @ClassRule public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
 
   private static final LifecycleRule LIFECYCLE_RULE_1 =
       new LifecycleRule(
@@ -139,5 +137,4 @@ public class ITBucketLifecycleTest {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
-
 }
