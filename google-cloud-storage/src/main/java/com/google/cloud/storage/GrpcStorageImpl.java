@@ -565,19 +565,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
-    Set<StatusCode.Code> codes =
-        GrpcStorageImpl.resultRetryAlgorithmToCodes(
-            retryAlgorithmManager.getFor(readObjectRequest));
-    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
-    UnbufferedReadableByteChannelSession<Object> session =
-        ResumableMedia.gapic()
-            .read()
-            .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
-            .unbuffered()
-            .setReadObjectRequest(readObjectRequest)
-            .build();
+    UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try (UnbufferedReadableByteChannel r = session.open();
@@ -607,28 +595,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         GrpcStorageImpl.resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
     return new GrpcBlobReadChannel(
-        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext), request);
+        storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
+        request,
+        !opts.autoGzipDecompression());
   }
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
 
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-
-    // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
-
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
-    Set<StatusCode.Code> codes =
-        GrpcStorageImpl.resultRetryAlgorithmToCodes(
-            retryAlgorithmManager.getFor(readObjectRequest));
-    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
-    UnbufferedReadableByteChannelSession<Object> session =
-        ResumableMedia.gapic()
-            .read()
-            .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
-            .unbuffered()
-            .setReadObjectRequest(readObjectRequest)
-            .build();
+    UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
     try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Files.newByteChannel(path, WRITE_OPS)) {
@@ -641,22 +616,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
 
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-
-    // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
-
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
-    Set<StatusCode.Code> codes =
-        GrpcStorageImpl.resultRetryAlgorithmToCodes(
-            retryAlgorithmManager.getFor(readObjectRequest));
-    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
-    UnbufferedReadableByteChannelSession<Object> session =
-        ResumableMedia.gapic()
-            .read()
-            .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
-            .unbuffered()
-            .setReadObjectRequest(readObjectRequest)
-            .build();
+    UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
 
     try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(outputStream)) {
@@ -1225,6 +1185,23 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         WriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
 
     return opts.writeObjectRequest().apply(requestBuilder).build();
+  }
+
+  private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
+      BlobId blob, BlobSourceOption[] options) {
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
+    Set<StatusCode.Code> codes =
+        GrpcStorageImpl.resultRetryAlgorithmToCodes(
+            retryAlgorithmManager.getFor(readObjectRequest));
+    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
+    return ResumableMedia.gapic()
+        .read()
+        .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
+        .setAutoGzipDecompression(!opts.autoGzipDecompression())
+        .unbuffered()
+        .setReadObjectRequest(readObjectRequest)
+        .build();
   }
 
   private FieldMask fieldMaskGenerator(Message message) {

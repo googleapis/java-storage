@@ -1228,6 +1228,7 @@ final class UnifiedOpts {
     }
   }
 
+  @Deprecated
   static final class ReturnRawInputStream extends RpcOptVal<@NonNull Boolean>
       implements ObjectSourceOpt {
     private static final long serialVersionUID = 505293506385742781L;
@@ -1960,6 +1961,18 @@ final class UnifiedOpts {
 
     Mapper<BlobInfo.Builder> blobInfoMapper() {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::blobInfo);
+    }
+
+    /**
+     * Here for compatibility. This should NOT be an "Opt" instead an attribute of the channel
+     * builder. When {@link ReturnRawInputStream} is removed, this method should be removed as well.
+     *
+     * @see
+     *     GapicDownloadSessionBuilder.ReadableByteChannelSessionBuilder#setAutoGzipDecompression(boolean)
+     */
+    @Deprecated
+    boolean autoGzipDecompression() {
+      return filterTo(ReturnRawInputStream.class).findFirst().map(r -> r.val).orElse(false);
     }
 
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {

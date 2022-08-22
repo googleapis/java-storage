@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.client.http.HttpStatusCodes;
+import com.google.api.core.ApiFuture;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
@@ -180,6 +181,10 @@ final class GapicUnbufferedReadableByteChannel
     }
     open = false;
     iter.close();
+  }
+
+  ApiFuture<Object> getResult() {
+    return result;
   }
 
   private void copy(ReadCursor c, ByteBuffer content, ByteBuffer[] dsts, int offset, int length) {

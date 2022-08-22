@@ -24,14 +24,12 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
-import java.io.ByteArrayOutputStream;
+import com.google.cloud.storage.TestUtils;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.zip.GZIPOutputStream;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -46,7 +44,7 @@ public final class ITDownloadToTest {
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
   private static final byte[] helloWorldTextBytes = "hello world".getBytes();
-  private static final byte[] helloWorldGzipBytes = gzipBytes(helloWorldTextBytes);
+  private static final byte[] helloWorldGzipBytes = TestUtils.gzipBytes(helloWorldTextBytes);
 
   private static Storage storage;
   private static BlobId blobId;
@@ -81,15 +79,5 @@ public final class ITDownloadToTest {
         blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
     byte[] actualTxtBytes = Files.readAllBytes(helloWorldTxt);
     assertThat(actualTxtBytes).isEqualTo(helloWorldTextBytes);
-  }
-
-  private static byte[] gzipBytes(byte[] bytes) {
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    try (OutputStream out = new GZIPOutputStream(byteArrayOutputStream)) {
-      out.write(bytes);
-    } catch (IOException ignore) {
-    }
-
-    return byteArrayOutputStream.toByteArray();
   }
 }

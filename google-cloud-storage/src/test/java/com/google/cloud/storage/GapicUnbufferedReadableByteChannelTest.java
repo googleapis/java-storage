@@ -16,25 +16,18 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.apiException;
+import static com.google.cloud.storage.TestUtils.contextWithRetryForCodes;
+import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFutures;
-import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.grpc.GrpcStatusCode;
-import com.google.api.gax.rpc.ApiException;
-import com.google.api.gax.rpc.ApiExceptionFactory;
-import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.storage.ChannelSession.UnbufferedReadSession;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.Hashing;
-import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
-import com.google.rpc.DebugInfo;
-import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ContentRange;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectChecksums;
@@ -43,7 +36,6 @@ import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageGrpc;
 import io.grpc.Status.Code;
-import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -360,24 +352,5 @@ public final class GapicUnbufferedReadableByteChannelTest {
       assertThat(read2).isEqualTo(-1);
       assertThrows(ClosedChannelException.class, () -> c.read(buf));
     }
-  }
-
-  private static ChecksummedData getChecksummedData(ByteString content) {
-    int crc32c = Hashing.crc32c().hashBytes(content.asReadOnlyByteBuffer()).asInt();
-    return ChecksummedData.newBuilder().setContent(content).setCrc32C(crc32c).build();
-  }
-
-  private static ApiException apiException(Code code) {
-    StatusRuntimeException statusRuntimeException = code.toStatus().asRuntimeException();
-    DebugInfo debugInfo =
-        DebugInfo.newBuilder().setDetail("forced failure |~| " + code.name()).build();
-    ErrorDetails errorDetails =
-        ErrorDetails.builder().setRawErrorMessages(ImmutableList.of(Any.pack(debugInfo))).build();
-    return ApiExceptionFactory.createException(
-        statusRuntimeException, GrpcStatusCode.of(code), true, errorDetails);
-  }
-
-  private static GrpcCallContext contextWithRetryForCodes(StatusCode.Code... code) {
-    return GrpcCallContext.createDefault().withRetryableCodes(ImmutableSet.copyOf(code));
   }
 }
