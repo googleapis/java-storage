@@ -134,15 +134,19 @@ final class GapicUnbufferedReadableByteChannel
         }
         ChecksummedData checksummedData = resp.getChecksummedData();
         ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
-        Crc32cLengthKnown expected =
-            Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
-        cumulativeCrc32c = hasher.nullSafeConcat(cumulativeCrc32c, expected);
-        try {
-          hasher.validate(expected, content::duplicate);
-        } catch (IOException e) {
-          ioExceptionAlreadyThrown = true;
-          close();
-          throw e;
+        // very important to know whether a crc32c value is set. Without checking, protobuf will
+        // happily return 0, which is a valid crc32c value.
+        if (checksummedData.hasCrc32C()) {
+          Crc32cLengthKnown expected =
+              Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
+          cumulativeCrc32c = hasher.nullSafeConcat(cumulativeCrc32c, expected);
+          try {
+            hasher.validate(expected, content::duplicate);
+          } catch (IOException e) {
+            ioExceptionAlreadyThrown = true;
+            close();
+            throw e;
+          }
         }
         copy(c, content, dsts, offset, length);
         if (content.hasRemaining()) {

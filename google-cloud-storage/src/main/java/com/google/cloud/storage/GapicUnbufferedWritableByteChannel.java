@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.SettableApiFuture;
-import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChunkSegmenter.ChunkSegment;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
@@ -27,7 +26,6 @@ import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
-import com.google.storage.v2.ServiceConstants.Values;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
@@ -41,11 +39,9 @@ final class GapicUnbufferedWritableByteChannel<
     implements UnbufferedWritableByteChannel {
 
   private final SettableApiFuture<WriteObjectResponse> resultFuture;
-  private final ByteStringStrategy byteStringStrategy;
-  private final Hasher hasher;
-  private final WriteCtx<RequestFactoryT> writeCtx;
-  private final int perMessageLimit;
+  private final ChunkSegmenter chunkSegmenter;
 
+  private final WriteCtx<RequestFactoryT> writeCtx;
   private final Flusher flusher;
 
   private boolean open = true;
@@ -53,19 +49,15 @@ final class GapicUnbufferedWritableByteChannel<
 
   GapicUnbufferedWritableByteChannel(
       SettableApiFuture<WriteObjectResponse> resultFuture,
-      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+      ChunkSegmenter chunkSegmenter,
       RequestFactoryT requestFactory,
-      ByteStringStrategy byteStringStrategy,
-      Hasher hasher,
-      FlusherFactory flusher) {
+      FlusherFactory flusherFactory) {
     this.resultFuture = resultFuture;
-    this.byteStringStrategy = byteStringStrategy;
-    this.hasher = hasher;
+    this.chunkSegmenter = chunkSegmenter;
 
     this.writeCtx = new WriteCtx<>(requestFactory);
-    this.perMessageLimit = Values.MAX_WRITE_CHUNK_BYTES_VALUE;
     this.flusher =
-        flusher.newFlusher(write, writeCtx.getConfirmedBytes()::addAndGet, resultFuture::set);
+        flusherFactory.newFlusher(writeCtx.getConfirmedBytes()::addAndGet, resultFuture::set);
   }
 
   @Override
@@ -84,9 +76,7 @@ final class GapicUnbufferedWritableByteChannel<
       throw new ClosedChannelException();
     }
 
-    ChunkSegment[] data =
-        ChunkSegmenter.segmentBuffers(
-            srcs, hasher, byteStringStrategy, perMessageLimit, srcsOffset, srcLength);
+    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcLength);
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
@@ -98,7 +88,9 @@ final class GapicUnbufferedWritableByteChannel<
       long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
       ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
       if (crc32c != null) {
-        writeCtx.getCumulativeCrc32c().getAndAccumulate(crc32c, hasher::nullSafeConcat);
+        writeCtx
+            .getCumulativeCrc32c()
+            .getAndAccumulate(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
         checksummedData.setCrc32C(crc32c.getValue());
       }
       WriteObjectRequest.Builder builder =
@@ -106,7 +98,7 @@ final class GapicUnbufferedWritableByteChannel<
               .newRequestBuilder()
               .setWriteOffset(offset)
               .setChecksummedData(checksummedData.build());
-      if (contentSize < perMessageLimit) {
+      if (!datum.isOnlyFullBlocks()) {
         builder.setFinishWrite(true);
         if (crc32c != null) {
           builder.setObjectChecksums(

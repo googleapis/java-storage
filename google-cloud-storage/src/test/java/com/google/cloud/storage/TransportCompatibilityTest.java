@@ -31,12 +31,13 @@ public final class TransportCompatibilityTest {
 
   @Test
   public void verifyUnsupportedMethodsGenerateMeaningfulException() {
-    Storage s =
+    GrpcStorageOptions options =
         StorageOptions.grpc()
             .setProjectId("blank")
             .setCredentials(NoCredentials.getInstance())
-            .build()
-            .getService();
+            .build();
+    @SuppressWarnings("resource")
+    Storage s = new GrpcStorageImpl(options, null);
     ImmutableList<String> messages =
         Stream.<Supplier<?>>of(
                 s::batch,

@@ -26,6 +26,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.storage.ChannelSession.UnbufferedReadSession;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ContentRange;
@@ -40,13 +41,10 @@ import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.junit.Test;
 
 public final class GapicUnbufferedReadableByteChannelTest {
@@ -73,20 +71,24 @@ public final class GapicUnbufferedReadableByteChannelTest {
           .setContentRange(ContentRange.newBuilder().setStart(0).build())
           .setObjectChecksums(
               ObjectChecksums.newBuilder().setCrc32C(Hashing.crc32c().hashBytes(bytes).asInt()))
-          .setChecksummedData(getChecksummedData(data1))
+          .setChecksummedData(getChecksummedData(data1, Hasher.enabled()))
           .build();
   private final ReadObjectResponse resp2 =
-      ReadObjectResponse.newBuilder().setChecksummedData(getChecksummedData(data2)).build();
+      ReadObjectResponse.newBuilder()
+          .setChecksummedData(getChecksummedData(data2, Hasher.enabled()))
+          .build();
   private final ReadObjectResponse resp3 =
       ReadObjectResponse.newBuilder()
           .setMetadata(expectedResult)
           .setContentRange(ContentRange.newBuilder().setStart(20).build())
           .setObjectChecksums(
               ObjectChecksums.newBuilder().setCrc32C(Hashing.crc32c().hashBytes(bytes).asInt()))
-          .setChecksummedData(getChecksummedData(data3))
+          .setChecksummedData(getChecksummedData(data3, Hasher.enabled()))
           .build();
   private final ReadObjectResponse resp4 =
-      ReadObjectResponse.newBuilder().setChecksummedData(getChecksummedData(data4)).build();
+      ReadObjectResponse.newBuilder()
+          .setChecksummedData(getChecksummedData(data4, Hasher.enabled()))
+          .build();
 
   /** Define a Storage service that will always return an error during the first readObject */
   private final StorageGrpc.StorageImplBase fakeStorage =
@@ -155,11 +157,7 @@ public final class GapicUnbufferedReadableByteChannelTest {
                       start,
                       Hasher.noop()));
       byte[] actualBytes = new byte[40];
-      List<ByteBuffer> buffers =
-          IntStream.iterate(0, i -> i + 2)
-              .limit(actualBytes.length / 2)
-              .mapToObj(i -> ByteBuffer.wrap(actualBytes, i, 2))
-              .collect(Collectors.toList());
+      ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(actualBytes, 2);
       try (UnbufferedReadableByteChannel c = session.open()) {
         for (ByteBuffer buf : buffers) {
           c.read(buf);

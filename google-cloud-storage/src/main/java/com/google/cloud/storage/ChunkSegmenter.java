@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.ByteString;
 import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
@@ -28,6 +29,26 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * segments. Each resulting segment will then become an individual message.
  */
 final class ChunkSegmenter {
+  private final Hasher hasher;
+  private final ByteStringStrategy bss;
+  private final int maxSegmentSize;
+  private final int blockSize;
+
+  ChunkSegmenter(Hasher hasher, ByteStringStrategy bss, int maxSegmentSize) {
+    this(hasher, bss, maxSegmentSize, ByteSizeConstants._256KiB);
+  }
+
+  @VisibleForTesting
+  ChunkSegmenter(Hasher hasher, ByteStringStrategy bss, int maxSegmentSize, int blockSize) {
+    this.hasher = hasher;
+    this.bss = bss;
+    this.maxSegmentSize = maxSegmentSize;
+    this.blockSize = blockSize;
+  }
+
+  Hasher getHasher() {
+    return hasher;
+  }
 
   /**
    * Given {@code bbs}, yield N segments, where each segment is at most {@code maxSegmentSize}
@@ -47,20 +68,13 @@ final class ChunkSegmenter {
    *
    * Each segment will conditionally compute a crc32c value depending upon {@code hasher}.
    *
-   * @see #segmentBuffers(ByteBuffer[], Hasher, ByteStringStrategy, int, int, int)
+   * @see #segmentBuffers(ByteBuffer[], int, int)
    */
-  static ChunkSegment[] segmentBuffers(
-      ByteBuffer[] bbs, Hasher hasher, ByteStringStrategy bss, int maxSegmentSize) {
-    return segmentBuffers(bbs, hasher, bss, maxSegmentSize, 0, bbs.length);
+  ChunkSegment[] segmentBuffers(ByteBuffer[] bbs) {
+    return segmentBuffers(bbs, 0, bbs.length);
   }
 
-  static ChunkSegment[] segmentBuffers(
-      ByteBuffer[] bbs,
-      Hasher hasher,
-      ByteStringStrategy bss,
-      int maxSegmentSize,
-      int offset,
-      int length) {
+  ChunkSegment[] segmentBuffers(ByteBuffer[] bbs, int offset, int length) {
     Deque<ChunkSegment> data = new ArrayDeque<>();
 
     for (int i = offset; i < length; i++) {
@@ -71,13 +85,13 @@ final class ChunkSegmenter {
         ChunkSegment peekLast = data.peekLast();
         if (peekLast == null || peekLast.b.size() == maxSegmentSize) {
           int limit = Math.min(remaining, maxSegmentSize);
-          ChunkSegment datum = getData(buffer, hasher, bss, limit);
+          ChunkSegment datum = newSegment(buffer, limit);
           data.addLast(datum);
         } else {
           ChunkSegment chunkSoFar = data.pollLast();
           //noinspection ConstantConditions -- covered by peekLast check above
           int limit = Math.min(remaining, maxSegmentSize - chunkSoFar.b.size());
-          ChunkSegment datum = getData(buffer, hasher, bss, limit);
+          ChunkSegment datum = newSegment(buffer, limit);
           ChunkSegment plus = chunkSoFar.concat(datum);
           data.addLast(plus);
         }
@@ -87,8 +101,7 @@ final class ChunkSegmenter {
     return data.toArray(new ChunkSegment[0]);
   }
 
-  private static ChunkSegment getData(
-      ByteBuffer buffer, Hasher hasher, ByteStringStrategy bss, int limit) {
+  private ChunkSegment newSegment(ByteBuffer buffer, int limit) {
     final ByteBuffer slice = buffer.slice();
     slice.limit(limit);
 
@@ -99,12 +112,14 @@ final class ChunkSegmenter {
     return new ChunkSegment(byteString, hash);
   }
 
-  static final class ChunkSegment {
+  final class ChunkSegment {
     private final ByteString b;
     @Nullable private final Crc32cLengthKnown crc32c;
+    private final boolean onlyFullBlocks;
 
-    public ChunkSegment(ByteString b, @Nullable Crc32cLengthKnown crc32c) {
+    private ChunkSegment(ByteString b, @Nullable Crc32cLengthKnown crc32c) {
       this.b = b;
+      this.onlyFullBlocks = b.size() % blockSize == 0;
       this.crc32c = crc32c;
     }
 
@@ -113,7 +128,8 @@ final class ChunkSegmenter {
       if (crc32c != null && other.crc32c != null) {
         newCrc = crc32c.concat(other.crc32c);
       }
-      return new ChunkSegment(b.concat(other.b), newCrc);
+      ByteString concat = b.concat(other.b);
+      return new ChunkSegment(concat, newCrc);
     }
 
     public ByteString getB() {
@@ -123,6 +139,10 @@ final class ChunkSegmenter {
     @Nullable
     public Crc32cLengthKnown getCrc32c() {
       return crc32c;
+    }
+
+    public boolean isOnlyFullBlocks() {
+      return onlyFullBlocks;
     }
   }
 }

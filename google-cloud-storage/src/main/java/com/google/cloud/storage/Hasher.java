@@ -26,10 +26,12 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 interface Hasher {
 
+  @Nullable
   default Crc32cLengthKnown hash(Supplier<ByteBuffer> b) {
     return hash(b.get());
   }
 
+  @Nullable
   Crc32cLengthKnown hash(ByteBuffer b);
 
   void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException;
@@ -77,6 +79,7 @@ interface Hasher {
       return Crc32cValue.of(Hashing.crc32c().hashBytes(b).asInt(), remaining);
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) throws IOException {
       Crc32cLengthKnown actual = hash(b);
