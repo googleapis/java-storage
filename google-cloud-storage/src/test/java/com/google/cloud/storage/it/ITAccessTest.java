@@ -52,6 +52,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -69,7 +70,7 @@ public class ITAccessTest {
   private static Storage storage;
   private static String bucketName;
 
-  @ClassRule
+  @BeforeClass
   public static void setup() {
     storage = storageFixture.getInstance();
     bucketName = bucketFixture.getBucketInfo().getName();

@@ -38,7 +38,7 @@ public class ITBatchTest {
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
   @BeforeClass
-  public void setUp() {
+  public static void setUp() {
     storage = storageFixture.getInstance();
     bucketName = bucketFixture.getBucketInfo().getName();
   }

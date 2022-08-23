@@ -21,7 +21,6 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.BucketFixture;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.Storage;
@@ -106,7 +105,6 @@ public class ITNotificationTest {
 
   @Test
   public void testNotification() throws InterruptedException, ExecutionException {
-    storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
     NotificationInfo notificationInfo =
         NotificationInfo.newBuilder(TOPIC)
             .setCustomAttributes(CUSTOM_ATTRIBUTES)
