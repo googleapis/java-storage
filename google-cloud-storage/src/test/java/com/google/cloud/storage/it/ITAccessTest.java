@@ -64,16 +64,21 @@ public class ITAccessTest {
   public static final BucketFixture bucketFixture =
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
-  private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
+  @ClassRule(order = 3)
+  public static final BucketFixture requesterPaysFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+
   private static final Long RETENTION_PERIOD = 5L;
 
   private static Storage storage;
   private static String bucketName;
+  private static String requesterPaysBucketName;
 
   @BeforeClass
   public static void setup() {
     storage = storageFixture.getInstance();
     bucketName = bucketFixture.getBucketInfo().getName();
+    requesterPaysBucketName = requesterPaysFixture.getBucketInfo().getName();
   }
 
   @Test
@@ -87,7 +92,7 @@ public class ITAccessTest {
     if (requesterPays) {
       Bucket remoteBucket =
           storage.get(
-              BUCKET_REQUESTER_PAYS,
+              requesterPaysBucketName,
               Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
       assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
       remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
@@ -103,26 +108,26 @@ public class ITAccessTest {
             : new Storage.BucketSourceOption[] {};
 
     assertNull(
-        storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+        storage.getAcl(requesterPaysBucketName, User.ofAllAuthenticatedUsers(), bucketOptions));
     assertFalse(
-        storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+        storage.deleteAcl(requesterPaysBucketName, User.ofAllAuthenticatedUsers(), bucketOptions));
     Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(storage.createAcl(BUCKET_REQUESTER_PAYS, acl, bucketOptions));
+    assertNotNull(storage.createAcl(requesterPaysBucketName, acl, bucketOptions));
     Acl updatedAcl =
         storage.updateAcl(
-            BUCKET_REQUESTER_PAYS, acl.toBuilder().setRole(Role.WRITER).build(), bucketOptions);
+            requesterPaysBucketName, acl.toBuilder().setRole(Role.WRITER).build(), bucketOptions);
     assertEquals(Role.WRITER, updatedAcl.getRole());
     Set<Acl> acls = new HashSet<>();
-    acls.addAll(storage.listAcls(BUCKET_REQUESTER_PAYS, bucketOptions));
+    acls.addAll(storage.listAcls(requesterPaysBucketName, bucketOptions));
     assertTrue(acls.contains(updatedAcl));
     assertTrue(
-        storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+        storage.deleteAcl(requesterPaysBucketName, User.ofAllAuthenticatedUsers(), bucketOptions));
     assertNull(
-        storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
+        storage.getAcl(requesterPaysBucketName, User.ofAllAuthenticatedUsers(), bucketOptions));
     if (requesterPays) {
       Bucket remoteBucket =
           storage.get(
-              BUCKET_REQUESTER_PAYS,
+              requesterPaysBucketName,
               Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
               Storage.BucketGetOption.userProject(projectId));
       assertTrue(remoteBucket.requesterPays());
@@ -154,7 +159,7 @@ public class ITAccessTest {
     unsetRequesterPays();
     Bucket bucketDefault =
         storage.get(
-            BUCKET_REQUESTER_PAYS,
+            requesterPaysBucketName,
             Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertTrue(bucketDefault.requesterPays() == null || !bucketDefault.requesterPays());
 
@@ -184,13 +189,13 @@ public class ITAccessTest {
             (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
 
     // Validate getting policy.
-    Policy currentPolicy = storage.getIamPolicy(BUCKET_REQUESTER_PAYS, bucketOptions);
+    Policy currentPolicy = storage.getIamPolicy(requesterPaysBucketName, bucketOptions);
     assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
 
     // Validate updating policy.
     Policy updatedPolicy =
         storage.setIamPolicy(
-            BUCKET_REQUESTER_PAYS,
+            requesterPaysBucketName,
             currentPolicy
                 .toBuilder()
                 .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
@@ -199,7 +204,7 @@ public class ITAccessTest {
     assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
     Policy revertedPolicy =
         storage.setIamPolicy(
-            BUCKET_REQUESTER_PAYS,
+            requesterPaysBucketName,
             updatedPolicy
                 .toBuilder()
                 .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
@@ -212,7 +217,7 @@ public class ITAccessTest {
     assertEquals(
         expectedPermissions,
         storage.testIamPermissions(
-            BUCKET_REQUESTER_PAYS,
+            requesterPaysBucketName,
             ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
             bucketOptions));
     Bucket bucketFalse =
@@ -752,7 +757,7 @@ public class ITAccessTest {
   private static void unsetRequesterPays() {
     Bucket remoteBucket =
         storage.get(
-            BUCKET_REQUESTER_PAYS,
+            requesterPaysBucketName,
             Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
             Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
     // Disable requester pays in case a test fails to clean up.
