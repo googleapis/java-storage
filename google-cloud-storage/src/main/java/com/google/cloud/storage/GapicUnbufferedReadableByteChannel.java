@@ -16,17 +16,17 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.client.http.HttpStatusCodes;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.ServerStream;
 import com.google.api.gax.rpc.ServerStreamingCallable;
-import com.google.cloud.storage.Crc32cValue.Crc32cLengthUnknown;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import java.io.Closeable;
@@ -49,11 +49,12 @@ final class GapicUnbufferedReadableByteChannel
 
   private boolean open = true;
   private boolean complete = false;
-  private long blobOffset = 0;
-  private long blobLimit = Long.MAX_VALUE;
-  private long totalSize = Long.MAX_VALUE; // initial sentinel value, will be updated upon responses
+  private boolean ioExceptionAlreadyThrown = false;
+  private long blobOffset;
+  private Crc32cLengthKnown cumulativeCrc32c;
 
   private Object metadata;
+  private ObjectChecksums objectChecksums;
 
   private ByteBuffer leftovers;
 
@@ -66,6 +67,7 @@ final class GapicUnbufferedReadableByteChannel
     this.read = read;
     this.req = req;
     this.hasher = hasher;
+    this.blobOffset = req.getReadOffset();
     this.iter = new LazyServerStreamIterator();
   }
 
@@ -90,9 +92,7 @@ final class GapicUnbufferedReadableByteChannel
     }
 
     long totalBufferCapacity = Arrays.stream(dsts).mapToLong(Buffer::remaining).sum();
-    long toRead = Math.min(blobLimit, totalBufferCapacity);
-
-    ReadCursor c = new ReadCursor(blobOffset, blobOffset + toRead);
+    ReadCursor c = new ReadCursor(blobOffset, blobOffset + totalBufferCapacity);
     while (c.hasRemaining()) {
       if (leftovers != null) {
         copy(c, leftovers, dsts, offset, length);
@@ -108,25 +108,38 @@ final class GapicUnbufferedReadableByteChannel
           Object respMetadata = resp.getMetadata();
           if (metadata == null) {
             metadata = respMetadata;
-          } else if (metadata.getMetageneration() != respMetadata.getMetageneration()) {
+          } else if (metadata.getGeneration() != respMetadata.getGeneration()) {
             throw closeWithError(
                 String.format(
-                    "Mismatch Metageneration between subsequent reads. Expected %d but received %d",
-                    metadata.getMetageneration(), respMetadata.getMetageneration()));
+                    "Mismatch Generation between subsequent reads. Expected %d but received %d",
+                    metadata.getGeneration(), respMetadata.getGeneration()));
           }
 
           if (!result.isDone()) {
             result.set(metadata);
           }
-
-          totalSize = metadata.getSize();
+        }
+        if (resp.hasObjectChecksums()) {
+          ObjectChecksums checksums = resp.getObjectChecksums();
+          if (this.objectChecksums == null) {
+            this.objectChecksums = checksums;
+          } else if (!objectChecksums.equals(checksums)) {
+            throw closeWithError(
+                String.format(
+                    "Mismatch checksums between subsequent reads. Expected %s but received %s",
+                    Crc32cValue.fmtCrc32cValue(objectChecksums.getCrc32C()),
+                    Crc32cValue.fmtCrc32cValue(checksums.getCrc32C())));
+          }
         }
         ChecksummedData checksummedData = resp.getChecksummedData();
         ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
-        Crc32cLengthUnknown expected = Crc32cValue.of(checksummedData.getCrc32C());
+        Crc32cLengthKnown expected =
+            Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
+        cumulativeCrc32c = hasher.nullSafeConcat(cumulativeCrc32c, expected);
         try {
           hasher.validate(expected, content::duplicate);
         } catch (IOException e) {
+          ioExceptionAlreadyThrown = true;
           close();
           throw e;
         }
@@ -153,6 +166,18 @@ final class GapicUnbufferedReadableByteChannel
 
   @Override
   public void close() throws IOException {
+    if (!ioExceptionAlreadyThrown
+        && cumulativeCrc32c != null
+        && objectChecksums != null
+        && objectChecksums.hasCrc32C()) {
+      Crc32cLengthKnown expected = Crc32cValue.of(objectChecksums.getCrc32C(), metadata.getSize());
+      if (!expected.eqValue(cumulativeCrc32c)) {
+        throw new IOException(
+            String.format(
+                "Mismatch checksum value. Expected %s actual %s",
+                expected.debugString(), cumulativeCrc32c.debugString()));
+      }
+    }
     open = false;
     iter.close();
   }
@@ -163,6 +188,7 @@ final class GapicUnbufferedReadableByteChannel
   }
 
   private IOException closeWithError(String message) throws IOException {
+    ioExceptionAlreadyThrown = true;
     close();
     StorageException cause =
         new StorageException(HttpStatusCodes.STATUS_CODE_PRECONDITION_FAILED, message);
@@ -200,7 +226,7 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     public String toString() {
-      return String.format("Cursor{begin=%d, offset=%d, limit=%d}", beginning, offset, limit);
+      return String.format("ReadCursor{begin=%d, offset=%d, limit=%d}", beginning, offset, limit);
     }
   }
 
@@ -236,8 +262,7 @@ final class GapicUnbufferedReadableByteChannel
         synchronized (this) {
           if (!streamInitialized) {
             if (serverStream == null) {
-              ReadObjectRequest request = seekReadObjectRequest(req, blobOffset, blobLimit);
-              serverStream = read.call(request);
+              serverStream = read.call(req);
             }
             responseIterator = serverStream.iterator();
             streamInitialized = true;

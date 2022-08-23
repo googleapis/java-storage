@@ -49,6 +49,10 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
   public abstract String debugString();
 
+  public boolean eqValue(Crc32cValue<?> other) {
+    return this.getValue() == other.getValue();
+  }
+
   static Crc32cLengthUnknown of(int value) {
     return new Crc32cLengthUnknown(value);
   }
@@ -57,12 +61,8 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
     return new Crc32cLengthKnown(value, length);
   }
 
-  public static <Res extends Crc32cValue<Res>> Res nullSafeConcat(Res r1, Crc32cLengthKnown r2) {
-    if (r1 == null) {
-      return null;
-    } else {
-      return r1.concat(r2);
-    }
+  static String fmtCrc32cValue(int value1) {
+    return String.format("crc32c{0x%08x}", value1);
   }
 
   static final class Crc32cLengthUnknown extends Crc32cValue<Crc32cLengthUnknown> {
@@ -84,7 +84,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
     @Override
     public String toString() {
-      return String.format("crc32c{0x%08x}", value);
+      return Crc32cLengthKnown.fmtCrc32cValue(value);
     }
 
     @Override
@@ -128,7 +128,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
     @Override
     public String debugString() {
-      return String.format("crc32c{0x%08x}", value);
+      return fmtCrc32cValue(value);
     }
   }
 }
