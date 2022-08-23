@@ -23,7 +23,6 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.google.gson.Gson;
 import java.util.Arrays;
 
 public class CreateBucketDualRegion {
