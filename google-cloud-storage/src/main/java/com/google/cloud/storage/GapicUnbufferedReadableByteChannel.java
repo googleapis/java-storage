@@ -212,14 +212,12 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     public boolean hasNext() {
-      ensureOpen();
-      return responseIterator.hasNext();
+      return ensureResponseIteratorOpen().hasNext();
     }
 
     @Override
     public ReadObjectResponse next() {
-      ensureOpen();
-      return responseIterator.next();
+      return ensureResponseIteratorOpen().next();
     }
 
     @Override
@@ -230,8 +228,11 @@ final class GapicUnbufferedReadableByteChannel
       }
     }
 
-    private void ensureOpen() {
-      if (!streamInitialized) {
+    private Iterator<ReadObjectResponse> ensureResponseIteratorOpen() {
+      boolean initialized = streamInitialized;
+      if (initialized) {
+        return responseIterator;
+      } else {
         synchronized (this) {
           if (!streamInitialized) {
             if (serverStream == null) {
@@ -241,6 +242,7 @@ final class GapicUnbufferedReadableByteChannel
             responseIterator = serverStream.iterator();
             streamInitialized = true;
           }
+          return responseIterator;
         }
       }
     }

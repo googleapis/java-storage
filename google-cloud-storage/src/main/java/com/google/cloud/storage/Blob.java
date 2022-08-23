@@ -16,8 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.Blob.BlobSourceOption.toGetOptions;
-import static com.google.cloud.storage.Blob.BlobSourceOption.toSourceOptions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.auth.ServiceAccountSigner;
@@ -25,13 +23,14 @@ import com.google.auth.ServiceAccountSigner.SigningException;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
-import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.io.BaseEncoding;
+import com.google.cloud.storage.UnifiedOpts.ObjectOptExtractor;
+import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
@@ -75,58 +74,12 @@ public class Blob extends BlobInfo {
   private transient Storage storage;
 
   /** Class for specifying blob source options when {@code Blob} methods are used. */
-  public static class BlobSourceOption extends Option {
+  public static class BlobSourceOption extends Option<ObjectSourceOpt> {
 
     private static final long serialVersionUID = 214616862061934846L;
 
-    private BlobSourceOption(StorageRpc.Option rpcOption) {
-      super(rpcOption, null);
-    }
-
-    private BlobSourceOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
-    }
-
-    private Storage.BlobSourceOption toSourceOptions(BlobInfo blobInfo) {
-      switch (getRpcOption()) {
-        case IF_GENERATION_MATCH:
-          return Storage.BlobSourceOption.generationMatch(blobInfo.getGeneration());
-        case IF_GENERATION_NOT_MATCH:
-          return Storage.BlobSourceOption.generationNotMatch(blobInfo.getGeneration());
-        case IF_METAGENERATION_MATCH:
-          return Storage.BlobSourceOption.metagenerationMatch(blobInfo.getMetageneration());
-        case IF_METAGENERATION_NOT_MATCH:
-          return Storage.BlobSourceOption.metagenerationNotMatch(blobInfo.getMetageneration());
-        case CUSTOMER_SUPPLIED_KEY:
-          return Storage.BlobSourceOption.decryptionKey((String) getValue());
-        case USER_PROJECT:
-          return Storage.BlobSourceOption.userProject((String) getValue());
-        case RETURN_RAW_INPUT_STREAM:
-          return Storage.BlobSourceOption.shouldReturnRawInputStream((boolean) getValue());
-        default:
-          throw new AssertionError("Unexpected enum value");
-      }
-    }
-
-    private Storage.BlobGetOption toGetOption(BlobInfo blobInfo) {
-      switch (getRpcOption()) {
-        case IF_GENERATION_MATCH:
-          return Storage.BlobGetOption.generationMatch(blobInfo.getGeneration());
-        case IF_GENERATION_NOT_MATCH:
-          return Storage.BlobGetOption.generationNotMatch(blobInfo.getGeneration());
-        case IF_METAGENERATION_MATCH:
-          return Storage.BlobGetOption.metagenerationMatch(blobInfo.getMetageneration());
-        case IF_METAGENERATION_NOT_MATCH:
-          return Storage.BlobGetOption.metagenerationNotMatch(blobInfo.getMetageneration());
-        case USER_PROJECT:
-          return Storage.BlobGetOption.userProject((String) getValue());
-        case CUSTOMER_SUPPLIED_KEY:
-          return Storage.BlobGetOption.decryptionKey((String) getValue());
-        case RETURN_RAW_INPUT_STREAM:
-          return Storage.BlobGetOption.shouldReturnRawInputStream((boolean) getValue());
-        default:
-          throw new AssertionError("Unexpected enum value");
-      }
+    private BlobSourceOption(ObjectSourceOpt opt) {
+      super(opt);
     }
 
     /**
@@ -134,15 +87,18 @@ public class Blob extends BlobInfo {
      * if generation does not match.
      */
     public static BlobSourceOption generationMatch() {
-      return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_MATCH);
+      return new BlobSourceOption(UnifiedOpts.generationMatchExtractor());
     }
 
     /**
      * Returns an option for blob's generation mismatch. If this option is used the request will
      * fail if generation matches.
+     *
+     * @deprecated This option is invalid, and can never result in a valid response from the server.
      */
+    @Deprecated
     public static BlobSourceOption generationNotMatch() {
-      return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH);
+      return new BlobSourceOption(UnifiedOpts.generationNotMatchExtractor());
     }
 
     /**
@@ -150,7 +106,7 @@ public class Blob extends BlobInfo {
      * fail if metageneration does not match.
      */
     public static BlobSourceOption metagenerationMatch() {
-      return new BlobSourceOption(StorageRpc.Option.IF_METAGENERATION_MATCH);
+      return new BlobSourceOption(UnifiedOpts.metagenerationMatchExtractor());
     }
 
     /**
@@ -158,7 +114,7 @@ public class Blob extends BlobInfo {
      * fail if metageneration matches.
      */
     public static BlobSourceOption metagenerationNotMatch() {
-      return new BlobSourceOption(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH);
+      return new BlobSourceOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
 
     /**
@@ -166,8 +122,7 @@ public class Blob extends BlobInfo {
      * blob.
      */
     public static BlobSourceOption decryptionKey(Key key) {
-      String base64Key = BaseEncoding.base64().encode(key.getEncoded());
-      return new BlobSourceOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, base64Key);
+      return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
     /**
@@ -177,7 +132,7 @@ public class Blob extends BlobInfo {
      * @param key the AES256 encoded in base64
      */
     public static BlobSourceOption decryptionKey(String key) {
-      return new BlobSourceOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, key);
+      return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
     /**
@@ -185,7 +140,7 @@ public class Blob extends BlobInfo {
      * bucket has requester_pays flag enabled.
      */
     public static BlobSourceOption userProject(String userProject) {
-      return new BlobSourceOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BlobSourceOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -194,25 +149,36 @@ public class Blob extends BlobInfo {
      * true for ReadChannel.read().
      */
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
-      return new BlobSourceOption(
-          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
+      return new BlobSourceOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
     }
 
     static Storage.BlobSourceOption[] toSourceOptions(
         BlobInfo blobInfo, BlobSourceOption... options) {
       Storage.BlobSourceOption[] convertedOptions = new Storage.BlobSourceOption[options.length];
-      int index = 0;
-      for (BlobSourceOption option : options) {
-        convertedOptions[index++] = option.toSourceOptions(blobInfo);
+      for (int i = 0; i < options.length; i++) {
+        ObjectSourceOpt opt = options[i].getOpt();
+        if (opt instanceof ObjectOptExtractor) {
+          ObjectOptExtractor<ObjectSourceOpt> ex = (ObjectOptExtractor<ObjectSourceOpt>) opt;
+          ObjectSourceOpt objectSourceOpt = ex.extractFromBlobInfo(blobInfo);
+          convertedOptions[i] = new Storage.BlobSourceOption(objectSourceOpt);
+        } else {
+          convertedOptions[i] = new Storage.BlobSourceOption(opt);
+        }
       }
       return convertedOptions;
     }
 
     static Storage.BlobGetOption[] toGetOptions(BlobInfo blobInfo, BlobSourceOption... options) {
       Storage.BlobGetOption[] convertedOptions = new Storage.BlobGetOption[options.length];
-      int index = 0;
-      for (BlobSourceOption option : options) {
-        convertedOptions[index++] = option.toGetOption(blobInfo);
+      for (int i = 0; i < options.length; i++) {
+        ObjectSourceOpt opt = options[i].getOpt();
+        if (opt instanceof ObjectOptExtractor) {
+          ObjectOptExtractor<ObjectSourceOpt> ex = (ObjectOptExtractor<ObjectSourceOpt>) opt;
+          ObjectSourceOpt objectSourceOpt = ex.extractFromBlobInfo(blobInfo);
+          convertedOptions[i] = new BlobGetOption(objectSourceOpt);
+        } else {
+          convertedOptions[i] = new BlobGetOption(options[i].getOpt());
+        }
       }
       return convertedOptions;
     }
@@ -228,7 +194,9 @@ public class Blob extends BlobInfo {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public void downloadTo(Path path, BlobSourceOption... options) {
-    storage.downloadTo(this.getBlobId(), path, toSourceOptions(this, options));
+    // Don't use static imports of BlobSourceOption, it causes import resolution issues
+    // with the new UnifiedOpts shim interfaces
+    storage.downloadTo(this.getBlobId(), path, BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**
@@ -241,7 +209,10 @@ public class Blob extends BlobInfo {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public void downloadTo(OutputStream outputStream, BlobSourceOption... options) {
-    storage.downloadTo(this.getBlobId(), outputStream, toSourceOptions(this, options));
+    // Don't use static imports of BlobSourceOption, it causes import resolution issues
+    // with the new UnifiedOpts shim interfaces
+    storage.downloadTo(
+        this.getBlobId(), outputStream, BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**
@@ -543,7 +514,10 @@ public class Blob extends BlobInfo {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean exists(BlobSourceOption... options) {
     int length = options.length;
-    Storage.BlobGetOption[] getOptions = Arrays.copyOf(toGetOptions(this, options), length + 1);
+    // Don't use static imports of BlobSourceOption, it causes import resolution issues
+    // with the new UnifiedOpts shim interfaces
+    Storage.BlobGetOption[] getOptions =
+        Arrays.copyOf(BlobSourceOption.toGetOptions(this, options), length + 1);
     getOptions[length] = Storage.BlobGetOption.fields();
     return storage.get(getBlobId(), getOptions) != null;
   }
@@ -563,7 +537,9 @@ public class Blob extends BlobInfo {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public byte[] getContent(BlobSourceOption... options) {
-    return storage.readAllBytes(getBlobId(), toSourceOptions(this, options));
+    // Don't use static imports of BlobSourceOption, it causes import resolution issues
+    // with the new UnifiedOpts shim interfaces
+    return storage.readAllBytes(getBlobId(), BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**
@@ -602,7 +578,9 @@ public class Blob extends BlobInfo {
   public Blob reload(BlobSourceOption... options) {
     // BlobId with generation unset is needed to retrieve the latest version of the Blob
     BlobId idWithoutGeneration = BlobId.of(getBucket(), getName());
-    return storage.get(idWithoutGeneration, toGetOptions(this, options));
+    // Don't use static imports of BlobSourceOption, it causes import resolution issues
+    // with the new UnifiedOpts shim interfaces
+    return storage.get(idWithoutGeneration, BlobSourceOption.toGetOptions(this, options));
   }
 
   /**
@@ -654,7 +632,9 @@ public class Blob extends BlobInfo {
    */
   @TransportCompatibility({Transport.HTTP})
   public boolean delete(BlobSourceOption... options) {
-    return storage.delete(getBlobId(), toSourceOptions(this, options));
+    // Don't use static imports of BlobSourceOption, it causes import resolution issues
+    // with the new UnifiedOpts shim interfaces
+    return storage.delete(getBlobId(), BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**
@@ -681,7 +661,9 @@ public class Blob extends BlobInfo {
     CopyRequest copyRequest =
         CopyRequest.newBuilder()
             .setSource(getBucket(), getName())
-            .setSourceOptions(toSourceOptions(this, options))
+            // Don't use static imports of BlobSourceOption, it causes import resolution issues
+            // with the new UnifiedOpts shim interfaces
+            .setSourceOptions(BlobSourceOption.toSourceOptions(this, options))
             .setTarget(targetBlob)
             .build();
     return storage.copy(copyRequest);
@@ -779,7 +761,9 @@ public class Blob extends BlobInfo {
    */
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public ReadChannel reader(BlobSourceOption... options) {
-    return storage.reader(getBlobId(), toSourceOptions(this, options));
+    // Don't use static imports of BlobSourceOption, it causes import resolution issues
+    // with the new UnifiedOpts shim interfaces
+    return storage.reader(getBlobId(), BlobSourceOption.toSourceOptions(this, options));
   }
 
   /**

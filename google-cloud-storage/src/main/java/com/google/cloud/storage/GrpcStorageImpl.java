@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
+import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.cloud.storage.Utils.todo;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
@@ -41,18 +42,20 @@ import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
-import com.google.cloud.storage.spi.v1.StorageRpc;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
+import com.google.cloud.storage.UnifiedOpts.BucketSourceOpt;
+import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
+import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
+import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
+import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.UnifiedOpts.ProjectId;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 import com.google.common.io.ByteStreams;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
-import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
@@ -96,14 +99,11 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
 
@@ -122,12 +122,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final SyntaxDecoders syntaxDecoders;
 
+  private final transient ProjectId defaultProjectId;
+
   GrpcStorageImpl(GrpcStorageOptions options, GrpcStorageStub grpcStorageStub) {
     super(options);
     this.grpcStorageStub = grpcStorageStub;
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
+    this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
   }
 
   @Override
@@ -139,19 +142,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
-    CreateBucketRequest.Builder builder = CreateBucketRequest.newBuilder().setBucket(bucket);
-    builder.setBucketId(bucketInfo.getName());
-    builder.setParent(ProjectName.format(getOptions().getProjectId()));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.PREDEFINED_ACL.consumeVia(builder::setPredefinedAcl),
-        ZOpt.PREDEFINED_DEFAULT_OBJECT_ACL.consumeVia(builder::setPredefinedDefaultObjectAcl));
-    CreateBucketRequest req = builder.build();
-    // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
-    // projection=full
+    CreateBucketRequest.Builder builder =
+        CreateBucketRequest.newBuilder()
+            .setBucket(bucket)
+            .setBucketId(bucketInfo.getName())
+            .setParent(ProjectName.format(getOptions().getProjectId()));
+    CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -175,9 +175,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(content, "content must be non null");
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     try {
       UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
           ResumableMedia.gapic()
@@ -223,11 +224,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       throw new StorageException(0, path + " is a directory");
     }
 
-    BlobTargetOption[] translate = translate(options);
-    // TODO: Why does optionMap not accept BlobWriteOption?
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
     GapicWritableByteChannelSessionBuilder channelSessionBuilder =
         ResumableMedia.gapic()
@@ -281,11 +281,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       throws IOException {
     requireNonNull(blobInfo, "blobInfo must be non null");
 
-    BlobTargetOption[] translate = translate(options);
-    // TODO: Why does optionMap not accept BlobWriteOption?
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
     ApiFuture<ResumableWrite> start =
         ResumableMedia.gapic()
@@ -321,15 +320,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetBucketRequest.Builder builder =
         GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
-    GetBucketRequest req = builder.build();
+    GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
     // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
     // projection=full
     return Retrying.run(
@@ -351,16 +347,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetObjectRequest.Builder builder =
         GetObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
-    // TODO(sydmunro) StorageRpc.Option.Fields
-    GetObjectRequest req = builder.build();
+    GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -377,19 +369,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Page<Bucket> list(BucketListOption... options) {
     UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse> listBucketsCallable =
         grpcStorageStub.listBucketsPagedCallable();
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    String projectId =
-        firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
+    Opts<BucketListOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListBucketsRequest.Builder builder =
-        ListBucketsRequest.newBuilder().setParent(ProjectName.format(projectId));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
-        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
-        ZOpt.PREFIX.consumeVia(builder::setPrefix));
-    // TODO(sydmunro): StorageRpc.Option.Fields
-    ListBucketsPagedResponse call = listBucketsCallable.call(builder.build(), grpcCallContext);
+        ListBucketsRequest.newBuilder().setParent(projectNameCodec.encode(defaultProjectId.val));
+    ListBucketsRequest request = opts.listBucketsRequest().apply(builder).build();
+    ListBucketsPagedResponse call = listBucketsCallable.call(request, grpcCallContext);
     ListBucketsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.bucket);
   }
@@ -398,20 +384,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Page<Blob> list(String bucket, BlobListOption... options) {
     UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsCallable =
         grpcStorageStub.listObjectsPagedCallable();
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<ObjectListOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListObjectsRequest.Builder builder =
         ListObjectsRequest.newBuilder().setParent(bucketNameCodec.encode(bucket));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
-        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
-        ZOpt.PREFIX.consumeVia(builder::setPrefix),
-        ZOpt.DELIMITER.consumeVia(builder::setDelimiter),
-        ZOpt.START_OFF_SET.consumeVia(builder::setLexicographicStart),
-        ZOpt.END_OFF_SET.consumeVia(builder::setLexicographicEnd));
-    // TODO(sydmunro) StorageRpc.Option.Fields
-    ListObjectsRequest req = builder.build();
+    ListObjectsRequest req = opts.listObjectsRequest().apply(builder).build();
     ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
     ListObjectsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.blob);
@@ -419,17 +397,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     UpdateBucketRequest.Builder builder = UpdateBucketRequest.newBuilder().setBucket(bucket);
-    builder.setUpdateMask(fieldMaskGenerator(bucket));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.PREDEFINED_ACL.consumeVia(builder::setPredefinedAcl),
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
-    UpdateBucketRequest req = builder.build();
+    UpdateBucketRequest req =
+        opts.updateBucketsRequest()
+            .apply(builder)
+            .setUpdateMask(fieldMaskGenerator(bucket))
+            .build();
 
     return Retrying.run(
         getOptions(),
@@ -440,19 +417,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     Object object = codecs.blobInfo().encode(blobInfo);
     UpdateObjectRequest.Builder builder = UpdateObjectRequest.newBuilder().setObject(object);
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.PREDEFINED_ACL.consumeVia(builder::setPredefinedAcl),
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch),
-        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
-        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(builder::setIfGenerationNotMatch));
-    builder.setUpdateMask(fieldMaskGenerator(object));
-    UpdateObjectRequest req = builder.build();
+    UpdateObjectRequest req =
+        opts.updateObjectsRequest()
+            .apply(builder)
+            .setUpdateMask(fieldMaskGenerator(object))
+            .build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -467,15 +441,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(String bucket, BucketSourceOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteBucketRequest.Builder builder =
         DeleteBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch));
-    DeleteBucketRequest req = builder.build();
+    DeleteBucketRequest req = opts.deleteBucketsRequest().apply(builder).build();
     try {
       Retrying.run(
           getOptions(),
@@ -496,18 +467,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(BlobId blob, BlobSourceOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteObjectRequest.Builder builder =
         DeleteObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
     ifNonNull(blob.getGeneration(), builder::setGeneration);
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch),
-        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
-        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(builder::setIfGenerationNotMatch));
-    DeleteObjectRequest req = builder.build();
+    DeleteObjectRequest req = opts.deleteObjectsRequest().apply(builder).build();
     try {
       Retrying.run(
           getOptions(),
@@ -523,14 +489,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(BlobId blob) {
-    return delete(blob);
+    return delete(blob, new BlobSourceOption[0]);
   }
 
   @Override
   public Blob compose(ComposeRequest composeRequest) {
-    final Map<StorageRpc.Option, ?> optionsMap =
-        StorageImpl.optionMap(Iterables.toArray(composeRequest.getTargetOptions(), Option.class));
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<ObjectTargetOpt> opts =
+        Opts.unwrap(composeRequest.getTargetOptions()).resolveFrom(composeRequest.getTarget());
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();
     composeRequest.getSourceBlobs().stream()
         .map(
@@ -542,15 +509,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .forEach(builder::addSourceObjects);
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
     builder.setDestination(target);
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.PREDEFINED_ACL.consumeVia(builder::setDestinationPredefinedAcl),
-        ZOpt.KMS_KEY_NAME.consumeVia(builder::setKmsKey),
-        ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
-            this::commonRequestParams, builder::setCommonObjectRequestParams));
-    ComposeObjectRequest req = builder.build();
+    ComposeObjectRequest req = opts.composeObjectsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -570,10 +529,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     UnbufferedReadableByteChannelSession<Object> session =
         ResumableMedia.gapic()
             .read()
@@ -604,19 +561,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    ReadObjectRequest request = getReadObjectRequest(blob, optionsMap);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    ReadObjectRequest request = getReadObjectRequest(blob, opts);
     return new GrpcBlobReadChannel(grpcStorageStub.readObjectCallable(), request);
   }
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
 
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
 
     // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
 
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     UnbufferedReadableByteChannelSession<Object> session =
         ResumableMedia.gapic()
             .read()
@@ -636,11 +593,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
 
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
 
     // TODO: handle StorageRpc.Option.RETURN_RAW_INPUT_STREAM impacts
 
-    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, optionsMap);
+    ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     UnbufferedReadableByteChannelSession<Object> session =
         ResumableMedia.gapic()
             .read()
@@ -659,11 +616,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    BlobTargetOption[] translate = translate(options);
-    // TODO: Why does optionMap not accept BlobWriteOption?
-    Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(translate);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    WriteObjectRequest req = getWriteObjectRequestBuilder(blobInfo, optionsMap).build();
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     return new GrpcBlobWriteChannel(
         grpcStorageStub.writeObjectCallable(),
         () ->
@@ -891,18 +847,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
     UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysCallable =
         grpcStorageStub.listHmacKeysPagedCallable();
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
-    String projectId =
-        firstNonNull(ZOpt.PROJECT_ID.get(optionsMap), this.getOptions().getProjectId());
-    ListHmacKeysRequest.Builder builder = ListHmacKeysRequest.newBuilder().setProject(projectId);
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.SERVICE_ACCOUNT_EMAIL.consumeVia(builder::setServiceAccountEmail),
-        ZOpt.MAX_RESULTS.mapThenConsumeVia(Long::intValue, builder::setPageSize),
-        ZOpt.PAGE_TOKEN.consumeVia(builder::setPageToken),
-        ZOpt.SHOW_DELETED_KEYS.consumeVia(builder::setShowDeletedKeys));
-    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(builder.build(), grpcCallContext);
+    Opts<HmacKeyListOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+
+    ProjectId projectId = opts.projectId().orElse(defaultProjectId);
+
+    ListHmacKeysRequest.Builder builder =
+        projectId.listHmacKeys().apply(ListHmacKeysRequest.newBuilder());
+    ListHmacKeysRequest request = opts.listHmacKeysRequest().apply(builder).build();
+    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(request, grpcCallContext);
     ListHmacKeysPage page = call.getPage();
     return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
   }
@@ -914,8 +868,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public void deleteHmacKey(HmacKeyMetadata hmacKeyMetadata, DeleteHmacKeyOption... options) {
-    final Map<StorageRpc.Option, ?> optionsMap = StorageImpl.optionMap(options);
-    GrpcCallContext grpcCallContext = GrpcRequestMetadataSupport.create(optionsMap);
+    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteHmacKeyRequest req =
         DeleteHmacKeyRequest.newBuilder()
             .setAccessId(hmacKeyMetadata.getAccessId())
@@ -987,14 +942,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public GrpcStorageOptions getOptions() {
     return (GrpcStorageOptions) super.getOptions();
-  }
-
-  private BlobWriteOption[] translate(BlobTargetOption[] options) {
-    return todo();
-  }
-
-  private BlobTargetOption[] translate(BlobWriteOption[] options) {
-    return todo();
   }
 
   private Blob getBlob(ApiFuture<WriteObjectResponse> result) {
@@ -1095,8 +1042,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         + ")";
   }
 
-  private ReadObjectRequest getReadObjectRequest(
-      BlobId blob, Map<StorageRpc.Option, ?> optionsMap) {
+  private ReadObjectRequest getReadObjectRequest(BlobId blob, Opts<ObjectSourceOpt> opts) {
     Object object = codecs.blobId().encode(blob);
 
     ReadObjectRequest.Builder builder =
@@ -1106,35 +1052,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     if (generation > 0) {
       builder.setGeneration(generation);
     }
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(builder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(builder::setIfMetagenerationNotMatch),
-        ZOpt.IF_GENERATION_MATCH.consumeVia(builder::setIfGenerationMatch),
-        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(builder::setIfGenerationNotMatch),
-        ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
-            this::commonRequestParams, builder::setCommonObjectRequestParams));
-    return builder.build();
+    return opts.readObjectRequest().apply(builder).build();
   }
 
-  private static final class GrpcRequestMetadataSupport {
-    @NonNull
-    static GrpcCallContext create(Map<StorageRpc.Option, ?> optionsMap) {
-      // GrpcCallContext is immutable, any modification we perform needs to be assigned back to
-      // our variable otherwise it will effectively be lost.
-      GrpcCallContext ctx = GrpcCallContext.createDefault();
-      String userProject = ZOpt.USER_PROJECT.get(optionsMap);
-      if (userProject != null) {
-        ctx =
-            ctx.withExtraHeaders(
-                ImmutableMap.of("X-Goog-User-Project", ImmutableList.of(userProject)));
-      }
-      return ctx;
-    }
-  }
-
-  private WriteObjectRequest.Builder getWriteObjectRequestBuilder(
-      BlobInfo info, Map<StorageRpc.Option, ?> optionsMap) {
+  private WriteObjectRequest getWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
         object
@@ -1142,7 +1063,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             // required if the data is changing
             .clearChecksums()
             // trimmed to shave payload size
-            .clearAcl()
             .clearGeneration()
             .clearMetageneration()
             .clearSize()
@@ -1153,30 +1073,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     WriteObjectRequest.Builder requestBuilder =
         WriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
 
-    // TODO: Projection: Do we care?
-    ZOpt.applyAll(
-        optionsMap,
-        ZOpt.PREDEFINED_ACL.consumeVia(specBuilder::setPredefinedAcl),
-        ZOpt.IF_METAGENERATION_MATCH.consumeVia(specBuilder::setIfMetagenerationMatch),
-        ZOpt.IF_METAGENERATION_NOT_MATCH.consumeVia(specBuilder::setIfMetagenerationNotMatch),
-        ZOpt.IF_GENERATION_MATCH.consumeVia(specBuilder::setIfGenerationMatch),
-        ZOpt.IF_GENERATION_NOT_MATCH.consumeVia(specBuilder::setIfGenerationNotMatch),
-        ZOpt.CUSTOMER_SUPPLIED_KEY.mapThenConsumeVia(
-            this::commonRequestParams, requestBuilder::setCommonObjectRequestParams),
-        ZOpt.KMS_KEY_NAME.consumeVia(objectBuilder::setKmsKey));
-
-    return requestBuilder;
-  }
-
-  private CommonObjectRequestParams commonRequestParams(String key) {
-    byte[] keyBytes = Base64.getDecoder().decode(key);
-    HashCode keySha256 = Hashing.sha256().hashBytes(keyBytes);
-
-    return CommonObjectRequestParams.newBuilder()
-        .setEncryptionAlgorithm("AES256")
-        .setEncryptionKeyBytes(ByteString.copyFromUtf8(key))
-        .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()))
-        .build();
+    return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
   private FieldMask fieldMaskGenerator(Message message) {

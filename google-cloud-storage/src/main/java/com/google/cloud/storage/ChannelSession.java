@@ -24,17 +24,18 @@ import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReada
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import com.google.common.base.MoreObjects;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.function.BiFunction;
 
 class ChannelSession<StartT, ResultT, ChannelT> {
-  private final Object channelInitSyncObj = new Object();
+  private final Object channelInitSyncObj = new ChannelSessionInitLockObject();
 
   private final ApiFuture<StartT> startFuture;
   private final ApiFunction<StartT, ChannelT> f;
   private final SettableApiFuture<ResultT> resultFuture;
 
-  private volatile ApiFuture<ChannelT> channel;
+  private volatile ApiFuture<ChannelT> channelFuture;
 
   private ChannelSession(
       ApiFuture<StartT> startFuture, BiFunction<StartT, SettableApiFuture<ResultT>, ChannelT> f) {
@@ -44,14 +45,17 @@ class ChannelSession<StartT, ResultT, ChannelT> {
   }
 
   public ApiFuture<ChannelT> openAsync() {
-    if (channel == null) {
-      synchronized (channelInitSyncObj) {
-        if (channel == null) {
-          channel = ApiFutures.transform(startFuture, f, MoreExecutors.directExecutor());
-        }
-      }
+    ApiFuture<ChannelT> result = channelFuture;
+    if (result != null) {
+      return result;
     }
-    return channel;
+
+    synchronized (channelInitSyncObj) {
+      if (channelFuture == null) {
+        channelFuture = ApiFutures.transform(startFuture, f, MoreExecutors.directExecutor());
+      }
+      return channelFuture;
+    }
   }
 
   public ApiFuture<ResultT> getResult() {
@@ -99,6 +103,15 @@ class ChannelSession<StartT, ResultT, ChannelT> {
         ApiFuture<S> startFuture,
         BiFunction<S, SettableApiFuture<R>, BufferedWritableByteChannel> f) {
       super(startFuture, f);
+    }
+  }
+
+  private static final class ChannelSessionInitLockObject {
+    private ChannelSessionInitLockObject() {}
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).toString();
     }
   }
 }

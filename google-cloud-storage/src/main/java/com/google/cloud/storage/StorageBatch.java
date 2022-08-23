@@ -23,6 +23,7 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.spi.v1.RpcBatch;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
@@ -99,8 +100,8 @@ public class StorageBatch {
   public StorageBatchResult<Boolean> delete(BlobId blob, BlobSourceOption... options) {
     StorageBatchResult<Boolean> result = new StorageBatchResult<>();
     RpcBatch.Callback<Void> callback = createDeleteCallback(result);
-    Map<StorageRpc.Option, ?> optionMap = StorageImpl.optionMap(blob, options);
-    batch.addDelete(Conversions.apiary().blobId().encode(blob), callback, optionMap);
+    Map<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
+    batch.addDelete(Conversions.apiary().blobId().encode(blob), callback, optionsMap);
     return result;
   }
 
@@ -113,7 +114,8 @@ public class StorageBatch {
   public StorageBatchResult<Blob> update(BlobInfo blobInfo, BlobTargetOption... options) {
     StorageBatchResult<Blob> result = new StorageBatchResult<>();
     RpcBatch.Callback<StorageObject> callback = createUpdateCallback(this.options, result);
-    Map<StorageRpc.Option, ?> optionMap = StorageImpl.optionMap(blobInfo, options);
+    Map<StorageRpc.Option, ?> optionMap =
+        Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
     batch.addPatch(Conversions.apiary().blobInfo().encode(blobInfo), callback, optionMap);
     return result;
   }
@@ -139,8 +141,8 @@ public class StorageBatch {
   public StorageBatchResult<Blob> get(BlobId blob, BlobGetOption... options) {
     StorageBatchResult<Blob> result = new StorageBatchResult<>();
     RpcBatch.Callback<StorageObject> callback = createGetCallback(this.options, result);
-    Map<StorageRpc.Option, ?> optionMap = StorageImpl.optionMap(blob, options);
-    batch.addGet(Conversions.apiary().blobId().encode(blob), callback, optionMap);
+    Map<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
+    batch.addGet(Conversions.apiary().blobId().encode(blob), callback, optionsMap);
     return result;
   }
 

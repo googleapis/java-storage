@@ -37,7 +37,7 @@ import org.junit.Test;
 public final class ITGrpcTest {
   @ClassRule(order = 1)
   public static final TestBench TEST_BENCH =
-      TestBench.newBuilder().setContainerName("it-grpc").setDockerImageTag("v0.26.0").build();
+      TestBench.newBuilder().setContainerName("it-grpc").build();
 
   @ClassRule(order = 2)
   public static final StorageFixture storageFixture =

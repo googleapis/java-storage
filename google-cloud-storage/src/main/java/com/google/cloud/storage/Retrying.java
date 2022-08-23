@@ -91,7 +91,7 @@ final class Retrying {
       T result = runWithRetries(c, options.getRetrySettings(), algorithm, options.getClock());
       return result == null ? null : f.decode(result);
     } catch (RetryHelperException e) {
-      throw StorageException.coalesce(e);
+      throw StorageException.coalesce(e.getCause());
     }
   }
 }

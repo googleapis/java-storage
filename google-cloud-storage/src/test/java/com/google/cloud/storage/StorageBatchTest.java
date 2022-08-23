@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -49,9 +50,6 @@ public class StorageBatchTest {
   };
   private static final BlobSourceOption[] BLOB_SOURCE_OPTIONS = {
     BlobSourceOption.generationMatch(42L), BlobSourceOption.metagenerationMatch(42L)
-  };
-  private static final BlobTargetOption[] BLOB_TARGET_OPTIONS = {
-    BlobTargetOption.generationMatch(), BlobTargetOption.metagenerationMatch()
   };
   private static final GoogleJsonError GOOGLE_JSON_ERROR = new GoogleJsonError();
   private final HttpRetryAlgorithmManager retryAlgorithmManager =
@@ -130,10 +128,10 @@ public class StorageBatchTest {
     EasyMock.replay(batchMock);
     StorageBatchResult<Boolean> batchResult = storageBatch.delete(BLOB_ID, BLOB_SOURCE_OPTIONS);
     assertNotNull(callback.getValue());
-    assertEquals(2, capturedOptions.getValue().size());
-    for (BlobSourceOption option : BLOB_SOURCE_OPTIONS) {
-      assertEquals(option.getValue(), capturedOptions.getValue().get(option.getRpcOption()));
-    }
+    Map<StorageRpc.Option, Object> options = capturedOptions.getValue();
+    assertEquals(2, options.size());
+    assertThat(options).containsEntry(StorageRpc.Option.IF_GENERATION_MATCH, 42L);
+    assertThat(options).containsEntry(StorageRpc.Option.IF_METAGENERATION_MATCH, 42L);
     RpcBatch.Callback<Void> capturedCallback = callback.getValue();
     capturedCallback.onSuccess(null);
     assertTrue(batchResult.get());
@@ -183,11 +181,14 @@ public class StorageBatchTest {
         EasyMock.capture(capturedOptions));
     EasyMock.replay(batchMock, storage, optionsMock);
     StorageBatchResult<Blob> batchResult =
-        storageBatch.update(BLOB_INFO_COMPLETE, BLOB_TARGET_OPTIONS);
+        storageBatch.update(
+            BLOB_INFO_COMPLETE,
+            BlobTargetOption.generationMatch(),
+            BlobTargetOption.metagenerationMatch());
     assertNotNull(callback.getValue());
     assertEquals(2, capturedOptions.getValue().size());
-    assertEquals(42L, capturedOptions.getValue().get(BLOB_TARGET_OPTIONS[0].getRpcOption()));
-    assertEquals(42L, capturedOptions.getValue().get(BLOB_TARGET_OPTIONS[1].getRpcOption()));
+    assertEquals(42L, capturedOptions.getValue().get(StorageRpc.Option.IF_GENERATION_MATCH));
+    assertEquals(42L, capturedOptions.getValue().get(StorageRpc.Option.IF_METAGENERATION_MATCH));
     RpcBatch.Callback<StorageObject> capturedCallback = callback.getValue();
     capturedCallback.onSuccess(Conversions.apiary().blobInfo().encode(BLOB_INFO));
     assertEquals(new Blob(storage, new Blob.BuilderImpl(BLOB_INFO)), batchResult.get());
@@ -238,10 +239,10 @@ public class StorageBatchTest {
     EasyMock.replay(storage, batchMock, optionsMock);
     StorageBatchResult<Blob> batchResult = storageBatch.get(BLOB_ID, BLOB_GET_OPTIONS);
     assertNotNull(callback.getValue());
-    assertEquals(2, capturedOptions.getValue().size());
-    for (BlobGetOption option : BLOB_GET_OPTIONS) {
-      assertEquals(option.getValue(), capturedOptions.getValue().get(option.getRpcOption()));
-    }
+    Map<StorageRpc.Option, Object> options = capturedOptions.getValue();
+    assertEquals(2, options.size());
+    assertThat(options).containsEntry(StorageRpc.Option.IF_GENERATION_MATCH, 42L);
+    assertThat(options).containsEntry(StorageRpc.Option.IF_METAGENERATION_MATCH, 42L);
     RpcBatch.Callback<StorageObject> capturedCallback = callback.getValue();
     capturedCallback.onSuccess(Conversions.apiary().blobInfo().encode(BLOB_INFO));
     assertEquals(new Blob(storage, new Blob.BuilderImpl(BLOB_INFO)), batchResult.get());

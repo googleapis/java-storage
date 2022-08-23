@@ -726,11 +726,11 @@ final class GrpcConversions {
   }
 
   private Object blobIdEncode(BlobId from) {
-    return Object.newBuilder()
-        .setName(from.getName())
-        .setBucket(from.getBucket())
-        .setGeneration(from.getGeneration())
-        .build();
+    Object.Builder to = Object.newBuilder();
+    ifNonNull(from.getBucket(), bucketNameCodec::encode, to::setBucket);
+    ifNonNull(from.getName(), to::setName);
+    ifNonNull(from.getGeneration(), to::setGeneration);
+    return to.build();
   }
 
   private BlobId blobIdDecode(Object from) {
@@ -738,11 +738,10 @@ final class GrpcConversions {
   }
 
   private Object blobInfoEncode(BlobInfo from) {
-    Object.Builder toBuilder =
-        Object.newBuilder()
-            .setBucket(from.getBucket())
-            .setName(from.getName())
-            .setGeneration(from.getGeneration());
+    Object.Builder toBuilder = Object.newBuilder();
+    ifNonNull(from.getBucket(), bucketNameCodec::encode, toBuilder::setBucket);
+    ifNonNull(from.getName(), toBuilder::setName);
+    ifNonNull(from.getGeneration(), toBuilder::setGeneration);
     ifNonNull(from.getCacheControl(), toBuilder::setCacheControl);
     ifNonNull(from.getSize(), toBuilder::setSize);
     ifNonNull(from.getContentType(), toBuilder::setContentType);
@@ -761,7 +760,7 @@ final class GrpcConversions {
       }
       toBuilder.setChecksums(objectChecksums.build());
     }
-    toBuilder.setMetageneration(from.getMetageneration());
+    ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);
     ifNonNull(from.getDeleteTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setDeleteTime);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setUpdateTime);
     ifNonNull(from.getCreateTimeOffsetDateTime(), timestampCodec::encode, toBuilder::setCreateTime);

@@ -18,6 +18,8 @@ package com.google.cloud.storage;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.rpc.StatusCode;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.cloud.storage.BucketInfo.AgeDeleteRule;
 import com.google.cloud.storage.BucketInfo.CreatedBeforeDeleteRule;
@@ -29,6 +31,8 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.NumNewerVersionsDeleteRule;
 import com.google.cloud.storage.BucketInfo.RawDeleteRule;
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.common.annotations.VisibleForTesting;
+import io.grpc.Status.Code;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -73,6 +77,66 @@ final class BackwardCompatibilityUtils {
           BackwardCompatibilityUtils::deleteRuleDecode);
 
   private BackwardCompatibilityUtils() {}
+
+  /**
+   * When translating from gRPC Status Codes to the HTTP codes all of our middle ware expects, we
+   * must take care to translate in accordance with the expected retry semantics already outlined
+   * and validated for the JSON implementation. This is why we do not simply use {@link
+   * GrpcStatusCode#of(Code)}{@link GrpcStatusCode#getCode() .getCode}{@link
+   * StatusCode.Code#getHttpStatusCode() .getHttpStatusCode()} as it sometimes returns conflicting
+   * HTTP codes for our retry handling.
+   */
+  @VisibleForTesting
+  static int grpcCodeToHttpStatusCode(Code code) {
+    switch (code) {
+        // 200 Ok
+      case OK:
+        return 200;
+        // 400 Bad Request
+      case INVALID_ARGUMENT:
+      case OUT_OF_RANGE:
+        return 400;
+        // 401 Unauthorized
+      case UNAUTHENTICATED:
+        return 401;
+        // 403 Forbidden
+      case PERMISSION_DENIED:
+        return 403;
+        // 404 Not Found
+      case NOT_FOUND:
+        return 404;
+        // 408 Request Timeout
+        // TODO
+        // 412 Precondition Failed
+      case FAILED_PRECONDITION:
+        return 412;
+        // 409 Conflict
+      case ALREADY_EXISTS:
+        return 409;
+        // 429 Too Many Requests
+      case RESOURCE_EXHAUSTED:
+        return 429;
+        // 500 Internal Server Error
+      case INTERNAL:
+        return 500;
+        // 501 Not Implemented
+      case UNIMPLEMENTED:
+        return 501;
+        // 503 Service Unavailable
+      case UNAVAILABLE:
+        return 503;
+        // 504 Gateway Timeout
+        // TODO
+
+      case ABORTED: // ?
+      case CANCELLED: // ?
+      case UNKNOWN: // ?
+      case DEADLINE_EXCEEDED: // ?
+      case DATA_LOSS: // ?
+      default:
+        return 0;
+    }
+  }
 
   @SuppressWarnings("deprecation")
   private static LifecycleRule deleteRuleEncode(DeleteRule from) {

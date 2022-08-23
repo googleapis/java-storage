@@ -59,7 +59,8 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   @Override
   public void setChunkSize(int chunkSize) {
-    Preconditions.checkState(!isOpen(), "Unable to change chunkSize after write");
+    Preconditions.checkState(
+        !lazyWriteChannel.isOpened(), "Unable to change chunkSize after write");
     this.chunkSize = chunkSize;
   }
 
@@ -75,7 +76,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   @Override
   public boolean isOpen() {
-    return lazyWriteChannel.getChannel().isOpen();
+    return lazyWriteChannel.isOpened() && lazyWriteChannel.getChannel().isOpen();
   }
 
   @Override
@@ -93,14 +94,25 @@ final class GrpcBlobWriteChannel implements WriteChannel {
     private final Supplier<BufferedWritableByteChannelSession<WriteObjectResponse>> session;
     private final Supplier<BufferedWritableByteChannel> channel;
 
+    private boolean opened = false;
+
     public LazyWriteChannel(
         Supplier<BufferedWritableByteChannelSession<WriteObjectResponse>> session) {
       this.session = session;
-      this.channel = Suppliers.memoize(() -> session.get().open());
+      this.channel =
+          Suppliers.memoize(
+              () -> {
+                opened = true;
+                return session.get().open();
+              });
     }
 
     public BufferedWritableByteChannel getChannel() {
       return channel.get();
+    }
+
+    public boolean isOpened() {
+      return opened;
     }
   }
 }

@@ -20,6 +20,7 @@ import static com.google.cloud.RetryHelper.runWithRetries;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.callable;
 
+import com.google.api.core.InternalApi;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.BaseWriteChannel;
@@ -335,6 +336,13 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
     StateImpl(Builder builder) {
       super(builder);
       this.algorithmForWrite = builder.algorithmForWrite;
+    }
+
+    @InternalApi
+    Builder toBuilder(StorageOptions options) {
+      Builder builder = new Builder(options, entity, uploadId);
+      builder.setPosition(position).setBuffer(buffer).setIsOpen(isOpen).setChunkSize(chunkSize);
+      return builder;
     }
 
     static class Builder extends BaseWriteChannel.BaseState.Builder<StorageOptions, BlobInfo> {

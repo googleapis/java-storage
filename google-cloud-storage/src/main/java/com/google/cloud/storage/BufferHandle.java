@@ -53,6 +53,9 @@ abstract class BufferHandle implements Supplier<ByteBuffer> {
     private final int capacity;
     private final Function<Integer, ByteBuffer> factory;
 
+    // It is theoretically possible for this value to be null for any of the methods, while
+    // get is invoked. Whenever reading this value, always read into a local variable and then
+    // operate on that variable for the rest of the scope.
     private volatile ByteBuffer buf;
 
     @VisibleForTesting
@@ -63,29 +66,35 @@ abstract class BufferHandle implements Supplier<ByteBuffer> {
 
     @Override
     int remaining() {
-      return buf == null ? capacity() : buf.remaining();
+      ByteBuffer buffer = buf;
+      return buffer == null ? capacity : buffer.remaining();
     }
 
     @Override
     int capacity() {
-      return buf == null ? capacity : buf.capacity();
+      ByteBuffer buffer = buf;
+      return buffer == null ? capacity : buffer.capacity();
     }
 
     @Override
     int position() {
-      return buf == null ? 0 : buf.position();
+      ByteBuffer buffer = buf;
+      return buffer == null ? 0 : buffer.position();
     }
 
     @Override
     public ByteBuffer get() {
-      if (buf == null) {
+      ByteBuffer result = buf;
+      if (result != null) {
+        return result;
+      } else {
         synchronized (this) {
           if (buf == null) {
             buf = factory.apply(capacity);
           }
+          return buf;
         }
       }
-      return buf;
     }
   }
 

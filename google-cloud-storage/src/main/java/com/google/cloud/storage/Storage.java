@@ -28,18 +28,24 @@ import com.google.cloud.FieldSelector.Helper;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.Service;
-import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.TransportCompatibility.Transport;
-import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
+import com.google.cloud.storage.UnifiedOpts.BucketSourceOpt;
+import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
+import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
+import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
+import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
+import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.OptionShim;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -53,7 +59,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -189,27 +194,22 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   }
 
   /** Class for specifying bucket target options. */
-  class BucketTargetOption extends Option {
+  class BucketTargetOption extends Option<BucketTargetOpt> {
 
-    private static final long serialVersionUID = -5880204616982900975L;
+    private static final long serialVersionUID = 22594853046651193L;
 
-    private BucketTargetOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
-    }
-
-    private BucketTargetOption(StorageRpc.Option rpcOption) {
-      this(rpcOption, null);
+    private BucketTargetOption(BucketTargetOpt opt) {
+      super(opt);
     }
 
     /** Returns an option for specifying bucket's predefined ACL configuration. */
     public static BucketTargetOption predefinedAcl(PredefinedAcl acl) {
-      return new BucketTargetOption(StorageRpc.Option.PREDEFINED_ACL, acl.getEntry());
+      return new BucketTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
 
     /** Returns an option for specifying bucket's default ACL configuration for blobs. */
     public static BucketTargetOption predefinedDefaultObjectAcl(PredefinedAcl acl) {
-      return new BucketTargetOption(
-          StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL, acl.getEntry());
+      return new BucketTargetOption(UnifiedOpts.predefinedDefaultObjectAcl(acl));
     }
 
     /**
@@ -217,7 +217,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if metageneration does not match.
      */
     public static BucketTargetOption metagenerationMatch() {
-      return new BucketTargetOption(StorageRpc.Option.IF_METAGENERATION_MATCH);
+      return new BucketTargetOption(UnifiedOpts.metagenerationMatchExtractor());
     }
 
     /**
@@ -225,7 +225,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if metageneration matches.
      */
     public static BucketTargetOption metagenerationNotMatch() {
-      return new BucketTargetOption(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH);
+      return new BucketTargetOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
 
     /**
@@ -233,7 +233,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * `requester_pays` flag enabled to assign operation costs.
      */
     public static BucketTargetOption userProject(String userProject) {
-      return new BucketTargetOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BucketTargetOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -245,17 +245,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     patch</a>
      */
     public static BucketTargetOption projection(String projection) {
-      return new BucketTargetOption(StorageRpc.Option.PROJECTION, projection);
+      return new BucketTargetOption(UnifiedOpts.projection(projection));
     }
   }
 
   /** Class for specifying bucket source options. */
-  class BucketSourceOption extends Option {
+  class BucketSourceOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = 5185657617120212117L;
+    private static final long serialVersionUID = -162739527257621625L;
 
-    private BucketSourceOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
+    BucketSourceOption(BucketSourceOpt opt) {
+      super(opt);
     }
 
     /**
@@ -263,7 +263,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if bucket's metageneration does not match the provided value.
      */
     public static BucketSourceOption metagenerationMatch(long metageneration) {
-      return new BucketSourceOption(StorageRpc.Option.IF_METAGENERATION_MATCH, metageneration);
+      return new BucketSourceOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
 
     /**
@@ -271,7 +271,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if bucket's metageneration matches the provided value.
      */
     public static BucketSourceOption metagenerationNotMatch(long metageneration) {
-      return new BucketSourceOption(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH, metageneration);
+      return new BucketSourceOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
 
     /**
@@ -279,18 +279,19 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     public static BucketSourceOption userProject(String userProject) {
-      return new BucketSourceOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BucketSourceOption(UnifiedOpts.userProject(userProject));
     }
 
     public static BucketSourceOption requestedPolicyVersion(long version) {
-      return new BucketSourceOption(StorageRpc.Option.REQUESTED_POLICY_VERSION, version);
+      return new BucketSourceOption(UnifiedOpts.requestedPolicyVersion(version));
     }
   }
 
   /** Class for specifying listHmacKeys options */
-  class ListHmacKeysOption extends Option {
-    private ListHmacKeysOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
+  class ListHmacKeysOption extends Option<HmacKeyListOpt> {
+
+    private ListHmacKeysOption(HmacKeyListOpt opt) {
+      super(opt);
     }
 
     /**
@@ -298,18 +299,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * keys for all accounts will be listed.
      */
     public static ListHmacKeysOption serviceAccount(ServiceAccount serviceAccount) {
-      return new ListHmacKeysOption(
-          StorageRpc.Option.SERVICE_ACCOUNT_EMAIL, serviceAccount.getEmail());
+      return new ListHmacKeysOption(UnifiedOpts.serviceAccount(serviceAccount));
     }
 
     /** Returns an option for the maximum amount of HMAC keys returned per page. */
     public static ListHmacKeysOption maxResults(long pageSize) {
-      return new ListHmacKeysOption(StorageRpc.Option.MAX_RESULTS, pageSize);
+      return new ListHmacKeysOption(UnifiedOpts.pageSize(pageSize));
     }
 
     /** Returns an option to specify the page token from which to start listing HMAC keys. */
     public static ListHmacKeysOption pageToken(String pageToken) {
-      return new ListHmacKeysOption(StorageRpc.Option.PAGE_TOKEN, pageToken);
+      return new ListHmacKeysOption(UnifiedOpts.pageToken(pageToken));
     }
 
     /**
@@ -317,7 +317,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * by default.
      */
     public static ListHmacKeysOption showDeletedKeys(boolean showDeletedKeys) {
-      return new ListHmacKeysOption(StorageRpc.Option.SHOW_DELETED_KEYS, showDeletedKeys);
+      return new ListHmacKeysOption(UnifiedOpts.showDeletedKeys(showDeletedKeys));
     }
 
     /**
@@ -325,7 +325,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     public static ListHmacKeysOption userProject(String userProject) {
-      return new ListHmacKeysOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new ListHmacKeysOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -333,14 +333,15 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Application Default Credentials.
      */
     public static ListHmacKeysOption projectId(String projectId) {
-      return new ListHmacKeysOption(StorageRpc.Option.PROJECT_ID, projectId);
+      return new ListHmacKeysOption(UnifiedOpts.projectId(projectId));
     }
   }
 
   /** Class for specifying createHmacKey options */
-  class CreateHmacKeyOption extends Option {
-    private CreateHmacKeyOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
+  class CreateHmacKeyOption extends Option<HmacKeyTargetOpt> {
+
+    private CreateHmacKeyOption(HmacKeyTargetOpt opt) {
+      super(opt);
     }
 
     /**
@@ -348,7 +349,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     public static CreateHmacKeyOption userProject(String userProject) {
-      return new CreateHmacKeyOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new CreateHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -356,14 +357,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Application Default Credentials.
      */
     public static CreateHmacKeyOption projectId(String projectId) {
-      return new CreateHmacKeyOption(StorageRpc.Option.PROJECT_ID, projectId);
+      return new CreateHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
   }
 
   /** Class for specifying getHmacKey options */
-  class GetHmacKeyOption extends Option {
-    private GetHmacKeyOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
+  class GetHmacKeyOption extends Option<HmacKeySourceOpt> {
+    private GetHmacKeyOption(HmacKeySourceOpt opt) {
+      super(opt);
     }
 
     /**
@@ -371,7 +372,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     public static GetHmacKeyOption userProject(String userProject) {
-      return new GetHmacKeyOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new GetHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -379,14 +380,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Application Default Credentials.
      */
     public static GetHmacKeyOption projectId(String projectId) {
-      return new GetHmacKeyOption(StorageRpc.Option.PROJECT_ID, projectId);
+      return new GetHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
   }
 
   /** Class for specifying deleteHmacKey options */
-  class DeleteHmacKeyOption extends Option {
-    private DeleteHmacKeyOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
+  class DeleteHmacKeyOption extends Option<HmacKeyTargetOpt> {
+    private DeleteHmacKeyOption(HmacKeyTargetOpt opt) {
+      super(opt);
     }
 
     /**
@@ -394,14 +395,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     public static DeleteHmacKeyOption userProject(String userProject) {
-      return new DeleteHmacKeyOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new DeleteHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
   }
 
   /** Class for specifying updateHmacKey options */
-  class UpdateHmacKeyOption extends Option {
-    private UpdateHmacKeyOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
+  class UpdateHmacKeyOption extends Option<HmacKeyTargetOpt> {
+    private UpdateHmacKeyOption(HmacKeyTargetOpt opt) {
+      super(opt);
     }
 
     /**
@@ -409,21 +410,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     public static UpdateHmacKeyOption userProject(String userProject) {
-      return new UpdateHmacKeyOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new UpdateHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
   }
 
   /** Class for specifying bucket get options. */
-  class BucketGetOption extends Option {
+  class BucketGetOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = 1901844869484087395L;
+    private static final long serialVersionUID = 6162812462707653332L;
 
-    private BucketGetOption(StorageRpc.Option rpcOption, long metageneration) {
-      super(rpcOption, metageneration);
-    }
-
-    private BucketGetOption(StorageRpc.Option rpcOption, String value) {
-      super(rpcOption, value);
+    BucketGetOption(BucketSourceOpt opt) {
+      super(opt);
     }
 
     /**
@@ -431,7 +428,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if bucket's metageneration does not match the provided value.
      */
     public static BucketGetOption metagenerationMatch(long metageneration) {
-      return new BucketGetOption(StorageRpc.Option.IF_METAGENERATION_MATCH, metageneration);
+      return new BucketGetOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
 
     /**
@@ -439,7 +436,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if bucket's metageneration matches the provided value.
      */
     public static BucketGetOption metagenerationNotMatch(long metageneration) {
-      return new BucketGetOption(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH, metageneration);
+      return new BucketGetOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
 
     /**
@@ -447,7 +444,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     public static BucketGetOption userProject(String userProject) {
-      return new BucketGetOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BucketGetOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -457,34 +454,30 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BucketGetOption fields(BucketField... fields) {
-      return new BucketGetOption(
-          StorageRpc.Option.FIELDS, Helper.selector(BucketField.REQUIRED_FIELDS, fields));
+      String selector = Helper.selector(BucketField.REQUIRED_FIELDS, fields);
+      return new BucketGetOption(UnifiedOpts.fields(selector));
     }
   }
 
   /** Class for specifying blob target options. */
-  class BlobTargetOption extends Option {
+  class BlobTargetOption extends Option<ObjectTargetOpt> {
 
-    private static final long serialVersionUID = 214616862061934846L;
+    private static final long serialVersionUID = -389155232891981906L;
 
-    private BlobTargetOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
-    }
-
-    private BlobTargetOption(StorageRpc.Option rpcOption) {
-      this(rpcOption, null);
+    BlobTargetOption(ObjectTargetOpt opt) {
+      super(opt);
     }
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
     public static BlobTargetOption predefinedAcl(PredefinedAcl acl) {
-      return new BlobTargetOption(StorageRpc.Option.PREDEFINED_ACL, acl.getEntry());
+      return new BlobTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
 
     /**
      * Returns an option that causes an operation to succeed only if the target blob does not exist.
      */
     public static BlobTargetOption doesNotExist() {
-      return new BlobTargetOption(StorageRpc.Option.IF_GENERATION_MATCH, 0L);
+      return new BlobTargetOption(UnifiedOpts.doesNotExist());
     }
 
     /**
@@ -492,7 +485,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if generation does not match.
      */
     public static BlobTargetOption generationMatch() {
-      return new BlobTargetOption(StorageRpc.Option.IF_GENERATION_MATCH);
+      return new BlobTargetOption(UnifiedOpts.generationMatchExtractor());
     }
 
     /**
@@ -500,7 +493,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if generation matches.
      */
     public static BlobTargetOption generationNotMatch() {
-      return new BlobTargetOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH);
+      return new BlobTargetOption(UnifiedOpts.generationNotMatchExtractor());
     }
 
     /**
@@ -508,7 +501,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if metageneration does not match.
      */
     public static BlobTargetOption metagenerationMatch() {
-      return new BlobTargetOption(StorageRpc.Option.IF_METAGENERATION_MATCH);
+      return new BlobTargetOption(UnifiedOpts.metagenerationMatchExtractor());
     }
 
     /**
@@ -516,7 +509,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if metageneration matches.
      */
     public static BlobTargetOption metagenerationNotMatch() {
-      return new BlobTargetOption(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH);
+      return new BlobTargetOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
 
     /**
@@ -524,7 +517,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will create a blob with disableGzipContent; at present, this is only for upload.
      */
     public static BlobTargetOption disableGzipContent() {
-      return new BlobTargetOption(StorageRpc.Option.IF_DISABLE_GZIP_CONTENT, true);
+      return new BlobTargetOption(UnifiedOpts.disableGzipContent());
     }
 
     /**
@@ -533,7 +526,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * does not appear in a RPC call.
      */
     public static BlobTargetOption detectContentType() {
-      return new BlobTargetOption(StorageRpc.Option.DETECT_CONTENT_TYPE, true);
+      return new BlobTargetOption(UnifiedOpts.detectContentType());
     }
 
     /**
@@ -541,8 +534,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     public static BlobTargetOption encryptionKey(Key key) {
-      String base64Key = BaseEncoding.base64().encode(key.getEncoded());
-      return new BlobTargetOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, base64Key);
+      return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
 
     /**
@@ -550,7 +542,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     public static BlobTargetOption userProject(String userProject) {
-      return new BlobTargetOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BlobTargetOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -560,102 +552,34 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     public static BlobTargetOption encryptionKey(String key) {
-      return new BlobTargetOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, key);
+      return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
 
     /** Returns an option to set a customer-managed key for server-side encryption of the blob. */
     public static BlobTargetOption kmsKeyName(String kmsKeyName) {
-      return new BlobTargetOption(StorageRpc.Option.KMS_KEY_NAME, kmsKeyName);
-    }
-
-    static Tuple<BlobInfo, BlobTargetOption[]> convert(BlobInfo info, BlobWriteOption... options) {
-      BlobInfo.Builder infoBuilder = info.toBuilder().setCrc32c(null).setMd5(null);
-      List<BlobTargetOption> targetOptions = Lists.newArrayListWithCapacity(options.length);
-      for (BlobWriteOption option : options) {
-        switch (option.option) {
-          case IF_CRC32C_MATCH:
-            infoBuilder.setCrc32c(info.getCrc32c());
-            break;
-          case IF_MD5_MATCH:
-            infoBuilder.setMd5(info.getMd5());
-            break;
-          default:
-            targetOptions.add(option.toTargetOption());
-            break;
-        }
-      }
-      return Tuple.of(
-          infoBuilder.build(), targetOptions.toArray(new BlobTargetOption[targetOptions.size()]));
+      return new BlobTargetOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
   }
 
   /** Class for specifying blob write options. */
-  class BlobWriteOption implements Serializable {
+  class BlobWriteOption extends OptionShim<ObjectTargetOpt> implements Serializable {
 
-    private static final long serialVersionUID = -3880421670966224580L;
+    private static final long serialVersionUID = 1834774766750256808L;
 
-    private final Option option;
-    private final Object value;
-
-    enum Option {
-      PREDEFINED_ACL,
-      IF_GENERATION_MATCH,
-      IF_GENERATION_NOT_MATCH,
-      IF_METAGENERATION_MATCH,
-      IF_METAGENERATION_NOT_MATCH,
-      IF_MD5_MATCH,
-      IF_CRC32C_MATCH,
-      CUSTOMER_SUPPLIED_KEY,
-      KMS_KEY_NAME,
-      USER_PROJECT,
-      DETECT_CONTENT_TYPE,
-      IF_DISABLE_GZIP_CONTENT;
-
-      StorageRpc.Option toRpcOption() {
-        return StorageRpc.Option.valueOf(this.name());
-      }
-    }
-
-    BlobTargetOption toTargetOption() {
-      return new BlobTargetOption(this.option.toRpcOption(), this.value);
-    }
-
-    private BlobWriteOption(Option option, Object value) {
-      this.option = option;
-      this.value = value;
-    }
-
-    private BlobWriteOption(Option option) {
-      this(option, null);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(option, value);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (obj == null) {
-        return false;
-      }
-      if (!(obj instanceof BlobWriteOption)) {
-        return false;
-      }
-      final BlobWriteOption other = (BlobWriteOption) obj;
-      return this.option == other.option && Objects.equals(this.value, other.value);
+    BlobWriteOption(ObjectTargetOpt opt) {
+      super(opt);
     }
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
     public static BlobWriteOption predefinedAcl(PredefinedAcl acl) {
-      return new BlobWriteOption(Option.PREDEFINED_ACL, acl.getEntry());
+      return new BlobWriteOption(UnifiedOpts.predefinedAcl(acl));
     }
 
     /**
      * Returns an option that causes an operation to succeed only if the target blob does not exist.
      */
     public static BlobWriteOption doesNotExist() {
-      return new BlobWriteOption(Option.IF_GENERATION_MATCH, 0L);
+      return new BlobWriteOption(UnifiedOpts.doesNotExist());
     }
 
     /**
@@ -663,7 +587,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if generation does not match.
      */
     public static BlobWriteOption generationMatch() {
-      return new BlobWriteOption(Option.IF_GENERATION_MATCH);
+      return new BlobWriteOption(UnifiedOpts.generationMatchExtractor());
     }
 
     /**
@@ -671,7 +595,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if generation matches.
      */
     public static BlobWriteOption generationNotMatch() {
-      return new BlobWriteOption(Option.IF_GENERATION_NOT_MATCH);
+      return new BlobWriteOption(UnifiedOpts.generationNotMatchExtractor());
     }
 
     /**
@@ -679,7 +603,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if metageneration does not match.
      */
     public static BlobWriteOption metagenerationMatch() {
-      return new BlobWriteOption(Option.IF_METAGENERATION_MATCH);
+      return new BlobWriteOption(UnifiedOpts.metagenerationMatchExtractor());
     }
 
     /**
@@ -687,7 +611,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if metageneration matches.
      */
     public static BlobWriteOption metagenerationNotMatch() {
-      return new BlobWriteOption(Option.IF_METAGENERATION_NOT_MATCH);
+      return new BlobWriteOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
 
     /**
@@ -695,7 +619,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if blobs' data MD5 hash does not match.
      */
     public static BlobWriteOption md5Match() {
-      return new BlobWriteOption(Option.IF_MD5_MATCH, true);
+      return new BlobWriteOption(UnifiedOpts.md5MatchExtractor());
     }
 
     /**
@@ -703,7 +627,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if blobs' data CRC32C checksum does not match.
      */
     public static BlobWriteOption crc32cMatch() {
-      return new BlobWriteOption(Option.IF_CRC32C_MATCH, true);
+      return new BlobWriteOption(UnifiedOpts.crc32cMatchExtractor());
     }
 
     /**
@@ -711,8 +635,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     public static BlobWriteOption encryptionKey(Key key) {
-      String base64Key = BaseEncoding.base64().encode(key.getEncoded());
-      return new BlobWriteOption(Option.CUSTOMER_SUPPLIED_KEY, base64Key);
+      return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
 
     /**
@@ -722,7 +645,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     public static BlobWriteOption encryptionKey(String key) {
-      return new BlobWriteOption(Option.CUSTOMER_SUPPLIED_KEY, key);
+      return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
 
     /**
@@ -731,7 +654,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param kmsKeyName the KMS key resource id
      */
     public static BlobWriteOption kmsKeyName(String kmsKeyName) {
-      return new BlobWriteOption(Option.KMS_KEY_NAME, kmsKeyName);
+      return new BlobWriteOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
 
     /**
@@ -739,7 +662,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     public static BlobWriteOption userProject(String userProject) {
-      return new BlobWriteOption(Option.USER_PROJECT, userProject);
+      return new BlobWriteOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -747,7 +670,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * the bucket.
      */
     public static BlobWriteOption disableGzipContent() {
-      return new BlobWriteOption(Option.IF_DISABLE_GZIP_CONTENT, true);
+      return new BlobWriteOption(UnifiedOpts.disableGzipContent());
     }
 
     /**
@@ -756,17 +679,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * does not appear in a RPC call.
      */
     public static BlobWriteOption detectContentType() {
-      return new BlobWriteOption(Option.DETECT_CONTENT_TYPE, true);
+      return new BlobWriteOption(UnifiedOpts.detectContentType());
     }
   }
 
   /** Class for specifying blob source options. */
-  class BlobSourceOption extends Option {
+  class BlobSourceOption extends Option<ObjectSourceOpt> {
 
-    private static final long serialVersionUID = -3712768261070182991L;
+    private static final long serialVersionUID = 2131185332093994401L;
 
-    private BlobSourceOption(StorageRpc.Option rpcOption, Object value) {
-      super(rpcOption, value);
+    BlobSourceOption(ObjectSourceOpt opt) {
+      super(opt);
     }
 
     /**
@@ -777,7 +700,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * BlobId} is provided an exception is thrown.
      */
     public static BlobSourceOption generationMatch() {
-      return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_MATCH, null);
+      return new BlobSourceOption(UnifiedOpts.generationMatchExtractor());
     }
 
     /**
@@ -785,7 +708,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if blob's generation does not match the provided value.
      */
     public static BlobSourceOption generationMatch(long generation) {
-      return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_MATCH, generation);
+      return new BlobSourceOption(UnifiedOpts.generationMatch(generation));
     }
 
     /**
@@ -794,9 +717,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob's generation is taken from a source {@link BlobId} object. When this option is passed to
      * a {@link Storage} method and {@link BlobId#getGeneration()} is {@code null} or no {@link
      * BlobId} is provided an exception is thrown.
+     *
+     * @deprecated This option is invalid, and can never result in a valid response from the server.
+     *     use {@link #generationNotMatch(long)} instead.
      */
+    @Deprecated
     public static BlobSourceOption generationNotMatch() {
-      return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH, null);
+      return new BlobSourceOption(UnifiedOpts.generationNotMatchExtractor());
     }
 
     /**
@@ -804,7 +731,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if blob's generation matches the provided value.
      */
     public static BlobSourceOption generationNotMatch(long generation) {
-      return new BlobSourceOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH, generation);
+      return new BlobSourceOption(UnifiedOpts.generationNotMatch(generation));
     }
 
     /**
@@ -812,7 +739,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if blob's metageneration does not match the provided value.
      */
     public static BlobSourceOption metagenerationMatch(long metageneration) {
-      return new BlobSourceOption(StorageRpc.Option.IF_METAGENERATION_MATCH, metageneration);
+      return new BlobSourceOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
 
     /**
@@ -820,7 +747,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if blob's metageneration matches the provided value.
      */
     public static BlobSourceOption metagenerationNotMatch(long metageneration) {
-      return new BlobSourceOption(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH, metageneration);
+      return new BlobSourceOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
 
     /**
@@ -828,8 +755,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     public static BlobSourceOption decryptionKey(Key key) {
-      String base64Key = BaseEncoding.base64().encode(key.getEncoded());
-      return new BlobSourceOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, base64Key);
+      return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
     /**
@@ -839,7 +765,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     public static BlobSourceOption decryptionKey(String key) {
-      return new BlobSourceOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, key);
+      return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
     /**
@@ -847,7 +773,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     public static BlobSourceOption userProject(String userProject) {
-      return new BlobSourceOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BlobSourceOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -856,26 +782,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * true for ReadChannel.read().
      */
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
-      return new BlobSourceOption(
-          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
+      return new BlobSourceOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
     }
   }
 
   /** Class for specifying blob get options. */
-  class BlobGetOption extends Option {
+  class BlobGetOption extends Option<ObjectSourceOpt> {
 
-    private static final long serialVersionUID = 803817709703661480L;
+    private static final long serialVersionUID = 4464929616050835795L;
 
-    private BlobGetOption(StorageRpc.Option rpcOption, Long value) {
-      super(rpcOption, value);
-    }
-
-    private BlobGetOption(StorageRpc.Option rpcOption, String value) {
-      super(rpcOption, value);
-    }
-
-    private BlobGetOption(StorageRpc.Option rpcOption, boolean value) {
-      super(rpcOption, value);
+    BlobGetOption(ObjectSourceOpt opt) {
+      super(opt);
     }
 
     /**
@@ -886,7 +803,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * BlobId} is provided an exception is thrown.
      */
     public static BlobGetOption generationMatch() {
-      return new BlobGetOption(StorageRpc.Option.IF_GENERATION_MATCH, (Long) null);
+      return new BlobGetOption(UnifiedOpts.generationMatchExtractor());
     }
 
     /**
@@ -894,7 +811,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if blob's generation does not match the provided value.
      */
     public static BlobGetOption generationMatch(long generation) {
-      return new BlobGetOption(StorageRpc.Option.IF_GENERATION_MATCH, generation);
+      return new BlobGetOption(UnifiedOpts.generationMatch(generation));
     }
 
     /**
@@ -903,9 +820,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob's generation is taken from a source {@link BlobId} object. When this option is passed to
      * a {@link Storage} method and {@link BlobId#getGeneration()} is {@code null} or no {@link
      * BlobId} is provided an exception is thrown.
+     *
+     * @deprecated This option is invalid, and can never result in a valid response from the server.
+     *     use {@link #generationNotMatch(long)} instead.
      */
+    @Deprecated
     public static BlobGetOption generationNotMatch() {
-      return new BlobGetOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH, (Long) null);
+      return new BlobGetOption(UnifiedOpts.generationNotMatchExtractor());
     }
 
     /**
@@ -913,7 +834,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * will fail if blob's generation matches the provided value.
      */
     public static BlobGetOption generationNotMatch(long generation) {
-      return new BlobGetOption(StorageRpc.Option.IF_GENERATION_NOT_MATCH, generation);
+      return new BlobGetOption(UnifiedOpts.generationNotMatch(generation));
     }
 
     /**
@@ -921,7 +842,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if blob's metageneration does not match the provided value.
      */
     public static BlobGetOption metagenerationMatch(long metageneration) {
-      return new BlobGetOption(StorageRpc.Option.IF_METAGENERATION_MATCH, metageneration);
+      return new BlobGetOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
 
     /**
@@ -929,7 +850,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * fail if blob's metageneration matches the provided value.
      */
     public static BlobGetOption metagenerationNotMatch(long metageneration) {
-      return new BlobGetOption(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH, metageneration);
+      return new BlobGetOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
 
     /**
@@ -939,8 +860,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BlobGetOption fields(BlobField... fields) {
-      return new BlobGetOption(
-          StorageRpc.Option.FIELDS, Helper.selector(BlobField.REQUIRED_FIELDS, fields));
+      String selector = Helper.selector(BlobField.REQUIRED_FIELDS, fields);
+      return new BlobGetOption(UnifiedOpts.fields(selector));
     }
 
     /**
@@ -948,7 +869,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     public static BlobGetOption userProject(String userProject) {
-      return new BlobGetOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BlobGetOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -956,8 +877,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     public static BlobGetOption decryptionKey(Key key) {
-      String base64Key = BaseEncoding.base64().encode(key.getEncoded());
-      return new BlobGetOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, base64Key);
+      return new BlobGetOption(UnifiedOpts.decryptionKey(key));
     }
 
     /**
@@ -967,7 +887,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     public static BlobGetOption decryptionKey(String key) {
-      return new BlobGetOption(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, key);
+      return new BlobGetOption(UnifiedOpts.decryptionKey(key));
     }
 
     /**
@@ -976,28 +896,27 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * true for ReadChannel.read().
      */
     public static BlobGetOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
-      return new BlobGetOption(
-          StorageRpc.Option.RETURN_RAW_INPUT_STREAM, shouldReturnRawInputStream);
+      return new BlobGetOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
     }
   }
 
   /** Class for specifying bucket list options. */
-  class BucketListOption extends Option {
+  class BucketListOption extends Option<BucketListOpt> {
 
-    private static final long serialVersionUID = 8754017079673290353L;
+    private static final long serialVersionUID = 5717590216719591953L;
 
-    private BucketListOption(StorageRpc.Option option, Object value) {
-      super(option, value);
+    private BucketListOption(BucketListOpt opt) {
+      super(opt);
     }
 
     /** Returns an option to specify the maximum number of buckets returned per page. */
     public static BucketListOption pageSize(long pageSize) {
-      return new BucketListOption(StorageRpc.Option.MAX_RESULTS, pageSize);
+      return new BucketListOption(UnifiedOpts.pageSize(pageSize));
     }
 
     /** Returns an option to specify the page token from which to start listing buckets. */
     public static BucketListOption pageToken(String pageToken) {
-      return new BucketListOption(StorageRpc.Option.PAGE_TOKEN, pageToken);
+      return new BucketListOption(UnifiedOpts.pageToken(pageToken));
     }
 
     /**
@@ -1005,7 +924,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * prefix.
      */
     public static BucketListOption prefix(String prefix) {
-      return new BucketListOption(StorageRpc.Option.PREFIX, prefix);
+      return new BucketListOption(UnifiedOpts.prefix(prefix));
     }
 
     /**
@@ -1013,7 +932,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     public static BucketListOption userProject(String userProject) {
-      return new BucketListOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BucketListOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -1023,30 +942,29 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BucketListOption fields(BucketField... fields) {
-      return new BucketListOption(
-          StorageRpc.Option.FIELDS,
-          Helper.listSelector("items", BucketField.REQUIRED_FIELDS, fields));
+      String selector = Helper.listSelector("items", BucketField.REQUIRED_FIELDS, fields);
+      return new BucketListOption(UnifiedOpts.fields(selector));
     }
   }
 
   /** Class for specifying blob list options. */
-  class BlobListOption extends Option {
+  class BlobListOption extends Option<ObjectListOpt> {
 
     private static final String[] TOP_LEVEL_FIELDS = {"prefixes"};
-    private static final long serialVersionUID = 9083383524788661294L;
+    private static final long serialVersionUID = 5677832374576757707L;
 
-    private BlobListOption(StorageRpc.Option option, Object value) {
-      super(option, value);
+    private BlobListOption(ObjectListOpt opt) {
+      super(opt);
     }
 
     /** Returns an option to specify the maximum number of blobs returned per page. */
     public static BlobListOption pageSize(long pageSize) {
-      return new BlobListOption(StorageRpc.Option.MAX_RESULTS, pageSize);
+      return new BlobListOption(UnifiedOpts.pageSize(pageSize));
     }
 
     /** Returns an option to specify the page token from which to start listing blobs. */
     public static BlobListOption pageToken(String pageToken) {
-      return new BlobListOption(StorageRpc.Option.PAGE_TOKEN, pageToken);
+      return new BlobListOption(UnifiedOpts.pageToken(pageToken));
     }
 
     /**
@@ -1054,7 +972,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * prefix.
      */
     public static BlobListOption prefix(String prefix) {
-      return new BlobListOption(StorageRpc.Option.PREFIX, prefix);
+      return new BlobListOption(UnifiedOpts.prefix(prefix));
     }
 
     /**
@@ -1068,7 +986,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Duplicate directory blobs are omitted.
      */
     public static BlobListOption currentDirectory() {
-      return new BlobListOption(StorageRpc.Option.DELIMITER, true);
+      return new BlobListOption(UnifiedOpts.currentDirectory());
     }
 
     /**
@@ -1078,7 +996,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     as well.
      */
     public static BlobListOption delimiter(String delimiter) {
-      return new BlobListOption(StorageRpc.Option.DELIMITER, delimiter);
+      return new BlobListOption(UnifiedOpts.delimiter(delimiter));
     }
 
     /**
@@ -1089,7 +1007,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param startOffset startOffset to filter the results
      */
     public static BlobListOption startOffset(String startOffset) {
-      return new BlobListOption(StorageRpc.Option.START_OFF_SET, startOffset);
+      return new BlobListOption(UnifiedOpts.startOffset(startOffset));
     }
 
     /**
@@ -1100,7 +1018,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param endOffset endOffset to filter the results
      */
     public static BlobListOption endOffset(String endOffset) {
-      return new BlobListOption(StorageRpc.Option.END_OFF_SET, endOffset);
+      return new BlobListOption(UnifiedOpts.endOffset(endOffset));
     }
 
     /**
@@ -1110,7 +1028,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param userProject projectId of the billing user project.
      */
     public static BlobListOption userProject(String userProject) {
-      return new BlobListOption(StorageRpc.Option.USER_PROJECT, userProject);
+      return new BlobListOption(UnifiedOpts.userProject(userProject));
     }
 
     /**
@@ -1119,7 +1037,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @see <a href="https://cloud.google.com/storage/docs/object-versioning">Object Versioning</a>
      */
     public static BlobListOption versions(boolean versions) {
-      return new BlobListOption(StorageRpc.Option.VERSIONS, versions);
+      return new BlobListOption(UnifiedOpts.versionsFilter(versions));
     }
 
     /**
@@ -1129,9 +1047,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BlobListOption fields(BlobField... fields) {
-      return new BlobListOption(
-          StorageRpc.Option.FIELDS,
-          Helper.listSelector(TOP_LEVEL_FIELDS, "items", BlobField.REQUIRED_FIELDS, fields));
+      String selector =
+          Helper.listSelector(TOP_LEVEL_FIELDS, "items", BlobField.REQUIRED_FIELDS, fields);
+      return new BlobListOption(UnifiedOpts.fields(selector));
     }
   }
 
