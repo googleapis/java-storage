@@ -50,6 +50,7 @@ import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
 import com.google.cloud.storage.UnifiedOpts.BucketSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
+import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
@@ -57,16 +58,20 @@ import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
+import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
+import com.google.storage.v2.GetHmacKeyRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
@@ -83,6 +88,7 @@ import com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
 import com.google.storage.v2.StorageClient.ListObjectsPage;
 import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 import com.google.storage.v2.UpdateBucketRequest;
+import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
@@ -141,7 +147,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final SyntaxDecoders syntaxDecoders;
 
-  private final transient ProjectId defaultProjectId;
+  @Deprecated private final transient ProjectId defaultProjectId;
 
   GrpcStorageImpl(GrpcStorageOptions options, StorageClient storageClient) {
     super(options);
@@ -389,9 +395,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Opts<BucketListOpt> opts = Opts.unwrap(options);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    ListBucketsRequest.Builder builder =
-        ListBucketsRequest.newBuilder().setParent(projectNameCodec.encode(defaultProjectId.val));
-    ListBucketsRequest request = opts.listBucketsRequest().apply(builder).build();
+    ListBucketsRequest request =
+        defaultProjectId
+            .listBuckets()
+            .andThen(opts.listBucketsRequest())
+            .apply(ListBucketsRequest.newBuilder())
+            .build();
     ListBucketsPagedResponse call = listBucketsCallable.call(request, grpcCallContext);
     ListBucketsPage page = call.getPage();
     return new TransformingPageDecorator<>(page, syntaxDecoders.bucket);
@@ -873,7 +882,27 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public HmacKey createHmacKey(ServiceAccount serviceAccount, CreateHmacKeyOption... options) {
-    return todo();
+    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    CreateHmacKeyRequest request =
+        defaultProjectId
+            .createHmacKey()
+            .andThen(opts.createHmacKeysRequest())
+            .apply(CreateHmacKeyRequest.newBuilder())
+            .setServiceAccountEmail(serviceAccount.getEmail())
+            .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(request),
+        () -> grpcStorageStub.createHmacKeyCallable().call(request, grpcCallContext),
+        resp -> {
+          ByteString secretKeyBytes = resp.getSecretKeyBytes();
+          String b64SecretKey = BaseEncoding.base64().encode(secretKeyBytes.toByteArray());
+          return HmacKey.newBuilder(b64SecretKey)
+              .setMetadata(codecs.hmacKeyMetadata().decode(resp.getMetadata()))
+              .build();
+        });
   }
 
   @Override
@@ -884,11 +913,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
 
-    ProjectId projectId = opts.projectId().orElse(defaultProjectId);
-
-    ListHmacKeysRequest.Builder builder =
-        projectId.listHmacKeys().apply(ListHmacKeysRequest.newBuilder());
-    ListHmacKeysRequest request = opts.listHmacKeysRequest().apply(builder).build();
+    ListHmacKeysRequest request =
+        defaultProjectId
+            .listHmacKeys()
+            .andThen(opts.listHmacKeysRequest())
+            .apply(ListHmacKeysRequest.newBuilder())
+            .build();
     ListHmacKeysPagedResponse call = listHmacKeysCallable.call(request, grpcCallContext);
     ListHmacKeysPage page = call.getPage();
     return new TransformingPageDecorator<>(page, codecs.hmacKeyMetadata());
@@ -896,7 +926,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public HmacKeyMetadata getHmacKey(String accessId, GetHmacKeyOption... options) {
-    return todo();
+    Opts<HmacKeySourceOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    GetHmacKeyRequest request =
+        defaultProjectId
+            .getHmacKey()
+            .andThen(opts.getHmacKeysRequest())
+            .apply(GetHmacKeyRequest.newBuilder())
+            .setAccessId(accessId)
+            .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(request),
+        () -> grpcStorageStub.getHmacKeyCallable().call(request, grpcCallContext),
+        codecs.hmacKeyMetadata());
   }
 
   @Override
@@ -907,7 +951,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     DeleteHmacKeyRequest req =
         DeleteHmacKeyRequest.newBuilder()
             .setAccessId(hmacKeyMetadata.getAccessId())
-            .setProject(hmacKeyMetadata.getProjectId())
+            .setProject(projectNameCodec.encode(hmacKeyMetadata.getProjectId()))
             .build();
     Retrying.run(
         getOptions(),
@@ -922,7 +966,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public HmacKeyMetadata updateHmacKeyState(
       HmacKeyMetadata hmacKeyMetadata, HmacKeyState state, UpdateHmacKeyOption... options) {
-    return todo();
+    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    com.google.storage.v2.HmacKeyMetadata encode =
+        codecs.hmacKeyMetadata().encode(hmacKeyMetadata).toBuilder().setState(state.name()).build();
+
+    UpdateHmacKeyRequest.Builder builder =
+        opts.updateHmacKeysRequest().apply(UpdateHmacKeyRequest.newBuilder()).setHmacKey(encode);
+    UpdateHmacKeyRequest request =
+        builder.setUpdateMask(FieldMask.newBuilder().addPaths("state").build()).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(request),
+        () -> grpcStorageStub.updateHmacKeyCallable().call(request, grpcCallContext),
+        codecs.hmacKeyMetadata());
   }
 
   @Override
