@@ -895,7 +895,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(request),
-        () -> grpcStorageStub.createHmacKeyCallable().call(request, grpcCallContext),
+        () -> storageClient.createHmacKeyCallable().call(request, grpcCallContext),
         resp -> {
           ByteString secretKeyBytes = resp.getSecretKeyBytes();
           String b64SecretKey = BaseEncoding.base64().encode(secretKeyBytes.toByteArray());
@@ -939,7 +939,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(request),
-        () -> grpcStorageStub.getHmacKeyCallable().call(request, grpcCallContext),
+        () -> storageClient.getHmacKeyCallable().call(request, grpcCallContext),
         codecs.hmacKeyMetadata());
   }
 
@@ -979,7 +979,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(request),
-        () -> grpcStorageStub.updateHmacKeyCallable().call(request, grpcCallContext),
+        () -> storageClient.updateHmacKeyCallable().call(request, grpcCallContext),
         codecs.hmacKeyMetadata());
   }
 
