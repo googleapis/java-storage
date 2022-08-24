@@ -133,7 +133,7 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
 
   @Override
   public boolean isOpen() {
-    return channel.isOpen();
+    return !retEOF && channel.isOpen();
   }
 
   @Override

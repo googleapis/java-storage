@@ -35,6 +35,10 @@ final class FakeServer implements AutoCloseable {
     this.grpcStorageOptions = grpcStorageOptions;
   }
 
+  GrpcStorageOptions getGrpcStorageOptions() {
+    return grpcStorageOptions;
+  }
+
   StorageSettings storageSettings() throws IOException {
     return grpcStorageOptions.getStorageSettings();
   }

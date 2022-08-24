@@ -49,12 +49,14 @@ final class GapicDownloadSessionBuilder {
   public static final class ReadableByteChannelSessionBuilder {
 
     private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+    private boolean autoGzipDecompression;
     private Hasher hasher;
 
     private ReadableByteChannelSessionBuilder(
         ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read) {
       this.read = read;
       this.hasher = Hasher.noop();
+      this.autoGzipDecompression = false;
     }
 
     public BufferedReadableByteChannelSessionBuilder buffered() {
@@ -66,25 +68,37 @@ final class GapicDownloadSessionBuilder {
       return this;
     }
 
+    public ReadableByteChannelSessionBuilder setAutoGzipDecompression(
+        boolean autoGzipDecompression) {
+      this.autoGzipDecompression = autoGzipDecompression;
+      return this;
+    }
+
     public BufferedReadableByteChannelSessionBuilder buffered(int capacity) {
-      return new BufferedReadableByteChannelSessionBuilder(
-          BufferHandle.allocate(capacity), getF(read, hasher));
+      return new BufferedReadableByteChannelSessionBuilder(BufferHandle.allocate(capacity), getF());
     }
 
     public BufferedReadableByteChannelSessionBuilder buffered(ByteBuffer buffer) {
-      return new BufferedReadableByteChannelSessionBuilder(
-          BufferHandle.handleOf(buffer), getF(read, hasher));
+      return new BufferedReadableByteChannelSessionBuilder(BufferHandle.handleOf(buffer), getF());
     }
 
     public UnbufferedReadableByteChannelSessionBuilder unbuffered() {
-      return new UnbufferedReadableByteChannelSessionBuilder(getF(read, hasher));
+      return new UnbufferedReadableByteChannelSessionBuilder(getF());
     }
 
-    private static BiFunction<
-            ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
-        getF(ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read, Hasher hasher) {
-      return (object, resultFuture) ->
-          new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher);
+    private BiFunction<ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
+        getF() {
+      // for any non-final value, create a reference to the value at this point in time
+      Hasher hasher = this.hasher;
+      boolean autoGzipDecompression = this.autoGzipDecompression;
+      return (object, resultFuture) -> {
+        if (autoGzipDecompression) {
+          return new GzipReadableByteChannel(
+              new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher));
+        } else {
+          return new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher);
+        }
+      };
     }
 
     public static final class BufferedReadableByteChannelSessionBuilder {

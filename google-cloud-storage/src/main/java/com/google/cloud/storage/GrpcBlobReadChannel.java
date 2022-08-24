@@ -44,7 +44,8 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   GrpcBlobReadChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
-      ReadObjectRequest request) {
+      ReadObjectRequest request,
+      boolean autoGzipDecompression) {
     this.lazyReadChannel =
         new LazyReadChannel(
             Suppliers.memoize(
@@ -54,6 +55,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
                       .read()
                       .byteChannel(read)
                       .setHasher(Hasher.noop())
+                      .setAutoGzipDecompression(autoGzipDecompression)
                       .buffered(Buffers.allocate(chunkSize))
                       .setReadObjectRequest(req)
                       .build();

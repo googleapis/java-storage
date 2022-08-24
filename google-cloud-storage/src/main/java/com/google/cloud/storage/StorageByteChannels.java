@@ -22,6 +22,9 @@ import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedR
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.ScatteringByteChannel;
 
 final class StorageByteChannels {
 
@@ -45,6 +48,10 @@ final class StorageByteChannels {
     public UnbufferedReadableByteChannel createSynchronized(
         UnbufferedReadableByteChannel delegate) {
       return new SynchronizedUnbufferedReadableByteChannel(delegate);
+    }
+
+    public ScatteringByteChannel asScatteringByteChannel(ReadableByteChannel c) {
+      return new ScatteringByteChannelFacade(c);
     }
   }
 
@@ -185,6 +192,59 @@ final class StorageByteChannels {
     @Override
     public synchronized void close() throws IOException {
       delegate.close();
+    }
+  }
+
+  private static final class ScatteringByteChannelFacade implements ScatteringByteChannel {
+    private final ReadableByteChannel c;
+
+    private ScatteringByteChannelFacade(final ReadableByteChannel c) {
+      this.c = c;
+    }
+
+    @Override
+    public int read(ByteBuffer dst) throws IOException {
+      return Math.toIntExact(read(new ByteBuffer[] {dst}, 0, 1));
+    }
+
+    @Override
+    public long read(ByteBuffer[] dsts) throws IOException {
+      return read(dsts, 0, dsts.length);
+    }
+
+    @Override
+    public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
+      if (!c.isOpen()) {
+        throw new ClosedChannelException();
+      }
+
+      long totalBytesRead = 0;
+      for (int i = offset; i < length; i++) {
+        ByteBuffer dst = dsts[i];
+        if (dst.hasRemaining()) {
+          int read = c.read(dst);
+          if (read == -1) {
+            if (totalBytesRead == 0) {
+              c.close();
+              return -1;
+            } else {
+              break;
+            }
+          }
+          totalBytesRead += read;
+        }
+      }
+      return totalBytesRead;
+    }
+
+    @Override
+    public boolean isOpen() {
+      return c.isOpen();
+    }
+
+    @Override
+    public void close() throws IOException {
+      c.close();
     }
   }
 }
