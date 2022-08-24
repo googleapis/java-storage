@@ -45,6 +45,8 @@ public final class TestUtils {
     try (OutputStream out = new GZIPOutputStream(byteArrayOutputStream)) {
       out.write(bytes);
     } catch (IOException ignore) {
+      // GZIPOutputStream will only throw if the underlying stream throws.
+      // ByteArrayOutputStream does not throw on write
     }
 
     return byteArrayOutputStream.toByteArray();
