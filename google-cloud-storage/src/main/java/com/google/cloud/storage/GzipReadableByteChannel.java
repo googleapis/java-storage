@@ -57,9 +57,9 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
       // try to determine if the underlying data coming out of `source` is gzip
       byte[] first4 = new byte[4]; // 4 bytes = 32-bits
       final ByteBuffer wrap = ByteBuffer.wrap(first4);
-      // Step 1: initiate a read of the first 20 bytes of the object
+      // Step 1: initiate a read of the first 4 bytes of the object
       //   this will have minimal overhead as the messages coming from gcs are inherently windowed
-      //   if the object size is between 21 and 2MiB the remaining bytes will be held in the channel
+      //   if the object size is between 5 and 2MiB the remaining bytes will be held in the channel
       //   for later read.
       source.read(wrap);
       try {
@@ -74,11 +74,11 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
           // Create an InputStream facade of source
           InputStream sourceInputStream = Channels.newInputStream(source);
           // create a new InputStream with the first4 bytes prepended to source
-          SequenceInputStream first20AndSource =
+          SequenceInputStream first4AndSource =
               new SequenceInputStream(first4again, sourceInputStream);
           // add gzip decompression
           GZIPInputStream decompress =
-              new GZIPInputStream(new OptimisticAvailabilityInputStream(first20AndSource));
+              new GZIPInputStream(new OptimisticAvailabilityInputStream(first4AndSource));
           // create a channel from our GZIPInputStream
           ReadableByteChannel decompressedChannel = Channels.newChannel(decompress);
           // turn our ReadableByteChannel into a ScatteringByteChannel
