@@ -128,8 +128,8 @@ public class ITBucketTest {
 
   @Test
   public void testBucketLocationType() {
-    storage.update(BucketInfo.newBuilder(bucketName).setLocation("us").build());
-    Bucket bucket = storage.get(bucketName);
+    String bucketName = RemoteStorageHelper.generateBucketName();
+    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
     assertEquals("multi-region", bucket.getLocationType());
   }
 
