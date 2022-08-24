@@ -3471,7 +3471,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   HmacKey createHmacKey(ServiceAccount serviceAccount, CreateHmacKeyOption... options);
 
   /**
@@ -3523,7 +3523,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   HmacKeyMetadata getHmacKey(String accessId, GetHmacKeyOption... options);
 
   /**
@@ -3560,7 +3560,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   HmacKeyMetadata updateHmacKeyState(
       final HmacKeyMetadata hmacKeyMetadata,
       final HmacKey.HmacKeyState state,
