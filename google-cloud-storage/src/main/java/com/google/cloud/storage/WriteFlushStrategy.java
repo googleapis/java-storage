@@ -49,24 +49,24 @@ final class WriteFlushStrategy {
    * Create a {@link Flusher} which will "fsync" every time {@link Flusher#flush(List)} is called
    * along with {@link Flusher#close(WriteObjectRequest)}.
    */
-  static Flusher fsyncEveryFlush(
-      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-      LongConsumer committedTotalBytesCallback,
-      Consumer<WriteObjectResponse> onSuccessCallback) {
-    return new FsyncEveryFlusher(write, committedTotalBytesCallback, onSuccessCallback);
+  static FlusherFactory fsyncEveryFlush(
+      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
+    return (LongConsumer committedTotalBytesCallback,
+        Consumer<WriteObjectResponse> onSuccessCallback) ->
+        new FsyncEveryFlusher(write, committedTotalBytesCallback, onSuccessCallback);
   }
 
   /**
    * Create a {@link Flusher} which will "fsync" only on {@link Flusher#close(WriteObjectRequest)}.
    * Calls to {@link Flusher#flush(List)} will be sent but not synced.
    *
-   * @see FlusherFactory#newFlusher(ClientStreamingCallable, LongConsumer, Consumer)
+   * @see FlusherFactory#newFlusher(LongConsumer, Consumer)
    */
-  static Flusher fsyncOnClose(
-      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-      LongConsumer committedTotalBytesCallback,
-      Consumer<WriteObjectResponse> onSuccessCallback) {
-    return new FsyncOnClose(write, committedTotalBytesCallback, onSuccessCallback);
+  static FlusherFactory fsyncOnClose(
+      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
+    return (LongConsumer committedTotalBytesCallback,
+        Consumer<WriteObjectResponse> onSuccessCallback) ->
+        new FsyncOnClose(write, committedTotalBytesCallback, onSuccessCallback);
   }
 
   @FunctionalInterface
@@ -77,9 +77,7 @@ final class WriteFlushStrategy {
      * @param onSuccessCallback Callback to signal success, and provide the final response.
      */
     Flusher newFlusher(
-        ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
-        LongConsumer committedTotalBytesCallback,
-        Consumer<WriteObjectResponse> onSuccessCallback);
+        LongConsumer committedTotalBytesCallback, Consumer<WriteObjectResponse> onSuccessCallback);
   }
 
   interface Flusher {
@@ -201,9 +199,7 @@ final class WriteFlushStrategy {
       if (value.hasPersistedSize()) {
         sizeCallback.accept(value.getPersistedSize());
       } else if (value.hasResource()) {
-        // testbench_seems to return this even on finish
-      } else {
-        // serverState.confirmedBytes.set(serverState.totalSentBytes.get());
+        sizeCallback.accept(value.getResource().getSize());
       }
       last = value;
     }

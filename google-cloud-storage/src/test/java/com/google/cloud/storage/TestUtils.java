@@ -22,9 +22,9 @@ import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StatusCode;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.hash.Hashing;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.rpc.DebugInfo;
@@ -34,6 +34,11 @@ import io.grpc.StatusRuntimeException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.util.function.Function;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 
 public final class TestUtils {
@@ -53,14 +58,27 @@ public final class TestUtils {
   }
 
   public static ChecksummedData getChecksummedData(ByteString content) {
-    int crc32c = Hashing.crc32c().hashBytes(content.asReadOnlyByteBuffer()).asInt();
-    return ChecksummedData.newBuilder().setContent(content).setCrc32C(crc32c).build();
+    return ChecksummedData.newBuilder().setContent(content).build();
+  }
+
+  public static ChecksummedData getChecksummedData(ByteString content, Hasher hasher) {
+    ChecksummedData.Builder b = ChecksummedData.newBuilder().setContent(content);
+    Crc32cLengthKnown hash = hasher.hash(content.asReadOnlyByteBuffer());
+    if (hash != null) {
+      int crc32c = hash.getValue();
+      b.setCrc32C(crc32c);
+    }
+    return b.build();
   }
 
   public static ApiException apiException(Code code) {
+    return apiException(code, "");
+  }
+
+  public static ApiException apiException(Code code, String message) {
     StatusRuntimeException statusRuntimeException = code.toStatus().asRuntimeException();
     DebugInfo debugInfo =
-        DebugInfo.newBuilder().setDetail("forced failure |~| " + code.name()).build();
+        DebugInfo.newBuilder().setDetail("forced failure |~| " + code.name() + message).build();
     ErrorDetails errorDetails =
         ErrorDetails.builder().setRawErrorMessages(ImmutableList.of(Any.pack(debugInfo))).build();
     return ApiExceptionFactory.createException(
@@ -69,5 +87,25 @@ public final class TestUtils {
 
   public static GrpcCallContext contextWithRetryForCodes(StatusCode.Code... code) {
     return GrpcCallContext.createDefault().withRetryableCodes(ImmutableSet.copyOf(code));
+  }
+
+  public static ImmutableList<ByteBuffer> subDivide(byte[] bytes, int division) {
+    int length = bytes.length;
+    int fullDivisions = length / division;
+    int x = division * fullDivisions;
+    int remaining = length - x;
+
+    if ((fullDivisions == 1 && remaining == 0) || (fullDivisions == 0 && remaining == 1)) {
+      return ImmutableList.of(ByteBuffer.wrap(bytes));
+    } else {
+      return Stream.of(
+              IntStream.iterate(0, i -> i + division)
+                  .limit(fullDivisions)
+                  .mapToObj(i -> ByteBuffer.wrap(bytes, i, division)),
+              Stream.of(ByteBuffer.wrap(bytes, x, remaining)))
+          .flatMap(Function.identity())
+          .filter(Buffer::hasRemaining)
+          .collect(ImmutableList.toImmutableList());
+    }
   }
 }

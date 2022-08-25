@@ -88,7 +88,11 @@ public final class StorageException extends BaseHttpServiceException {
   }
 
   private static StorageException getStorageException(Throwable t) {
-    return new StorageException(UNKNOWN_CODE, t.getMessage(), t.getCause());
+    // unwrap a RetryHelperException if that is what is being translated
+    if (t instanceof RetryHelperException) {
+      return new StorageException(UNKNOWN_CODE, t.getMessage(), t.getCause());
+    }
+    return new StorageException(UNKNOWN_CODE, t.getMessage(), t);
   }
 
   /**

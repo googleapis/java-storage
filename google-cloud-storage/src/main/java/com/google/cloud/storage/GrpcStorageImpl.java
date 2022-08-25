@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteSizeConstants._15MiB;
+import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.projectNameCodec;
@@ -146,9 +148,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           .map(GrpcStorageImpl::statusCodeFor)
           .map(c -> ApiExceptionFactory.createException(null, c, false))
           .collect(Collectors.toSet());
-
-  static final int _256KiB = 256 * 1024;
-  static final int _15MiB = 15 * 1024 * 1024;
 
   private final StorageClient storageClient;
   private final GrpcConversions codecs;

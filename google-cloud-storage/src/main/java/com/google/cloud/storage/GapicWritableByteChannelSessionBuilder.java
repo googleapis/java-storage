@@ -27,6 +27,7 @@ import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
+import com.google.storage.v2.ServiceConstants.Values;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.nio.ByteBuffer;
@@ -35,7 +36,7 @@ import java.util.function.Function;
 
 final class GapicWritableByteChannelSessionBuilder {
 
-  private static final int DEFAULT_BUFFER_CAPACITY = 16 * 1024 * 1024;
+  private static final int DEFAULT_BUFFER_CAPACITY = ByteSizeConstants._16MiB;
   private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
   private Hasher hasher;
   private ByteStringStrategy byteStringStrategy;
@@ -124,7 +125,10 @@ final class GapicWritableByteChannelSessionBuilder {
     Hasher boundHasher = hasher;
     return (start, resultFuture) ->
         new GapicUnbufferedWritableByteChannel<>(
-            resultFuture, write, f.apply(start), boundStrategy, boundHasher, flusherFactory);
+            resultFuture,
+            new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
+            f.apply(start),
+            flusherFactory);
   }
 
   final class DirectUploadBuilder {
@@ -212,7 +216,8 @@ final class GapicWritableByteChannelSessionBuilder {
     UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
       return new UnbufferedWriteSession<>(
           ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-          bindFunction(WriteFlushStrategy::fsyncOnClose, WriteObjectRequestBuilderFactory::simple)
+          bindFunction(
+                  WriteFlushStrategy.fsyncOnClose(write), WriteObjectRequestBuilderFactory::simple)
               .andThen(StorageByteChannels.writable()::createSynchronized));
     }
   }
@@ -235,7 +240,8 @@ final class GapicWritableByteChannelSessionBuilder {
     BufferedWritableByteChannelSession<WriteObjectResponse> build() {
       return new BufferedWriteSession<>(
           ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-          bindFunction(WriteFlushStrategy::fsyncOnClose, WriteObjectRequestBuilderFactory::simple)
+          bindFunction(
+                  WriteFlushStrategy.fsyncOnClose(write), WriteObjectRequestBuilderFactory::simple)
               .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
               .andThen(StorageByteChannels.writable()::createSynchronized));
     }
@@ -257,7 +263,7 @@ final class GapicWritableByteChannelSessionBuilder {
     UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
       return new UnbufferedWriteSession<>(
           requireNonNull(start, "start must be non null"),
-          bindFunction(WriteFlushStrategy::fsyncEveryFlush, ResumableWrite::identity)
+          bindFunction(WriteFlushStrategy.fsyncEveryFlush(write), ResumableWrite::identity)
               .andThen(StorageByteChannels.writable()::createSynchronized));
     }
   }
@@ -284,7 +290,7 @@ final class GapicWritableByteChannelSessionBuilder {
     BufferedWritableByteChannelSession<WriteObjectResponse> build() {
       return new BufferedWriteSession<>(
           requireNonNull(start, "start must be non null"),
-          bindFunction(WriteFlushStrategy::fsyncEveryFlush, ResumableWrite::identity)
+          bindFunction(WriteFlushStrategy.fsyncEveryFlush(write), ResumableWrite::identity)
               .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
               .andThen(StorageByteChannels.writable()::createSynchronized));
     }

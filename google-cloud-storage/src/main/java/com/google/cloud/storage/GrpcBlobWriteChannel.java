@@ -16,8 +16,8 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.GrpcStorageImpl._15MiB;
-import static com.google.cloud.storage.GrpcStorageImpl._256KiB;
+import static com.google.cloud.storage.ByteSizeConstants._15MiB;
+import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.Utils.todo;
 
 import com.google.api.core.ApiFuture;

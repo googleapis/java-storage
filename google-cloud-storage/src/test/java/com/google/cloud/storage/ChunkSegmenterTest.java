@@ -41,8 +41,8 @@ final class ChunkSegmenterTest {
     System.out.println("td = " + td);
 
     ChunkSegment[] data =
-        ChunkSegmenter.segmentBuffers(
-            td.buffers, Hasher.noop(), ByteStringStrategy.noCopy(), td.chunkSize);
+        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), td.chunkSize)
+            .segmentBuffers(td.buffers);
 
     long dataTotalSize = Arrays.stream(data).mapToLong(d -> d.getB().size()).sum();
     Optional<Crc32cLengthKnown> reduce =
