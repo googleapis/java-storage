@@ -33,16 +33,11 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.gax.paging.Page;
 import com.google.auth.http.HttpTransportFactory;
-import com.google.cloud.Condition;
-import com.google.cloud.Identity;
-import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.ServiceOptions;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.http.HttpTransportOptions;
-import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
@@ -51,32 +46,19 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
-import com.google.cloud.storage.BucketInfo.LifecycleRule;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
-import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.CopyWriter;
-import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
-import com.google.cloud.storage.HttpMethod;
-import com.google.cloud.storage.Notification;
-import com.google.cloud.storage.NotificationInfo;
-import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.BucketField;
-import com.google.cloud.storage.StorageBatch;
-import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -85,19 +67,13 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
-import com.google.iam.v1.Binding;
-import com.google.iam.v1.GetIamPolicyRequest;
-import com.google.iam.v1.SetIamPolicyRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.Key;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -105,7 +81,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -127,14 +102,12 @@ import org.threeten.bp.Instant;
 public class ITStorageTest {
 
   private static Storage storage;
-  private static TopicAdminClient topicAdminClient;
   private static final Logger log = Logger.getLogger(ITStorageTest.class.getName());
   private static final String BUCKET = RemoteStorageHelper.generateBucketName();
   private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
   private static final String CONTENT_TYPE = "text/plain";
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
-  private static final int MAX_BATCH_SIZE = 100;
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
   private static final String OTHER_BASE64_KEY = "IcOIQGlliNr5pr3vJb63l+XMqc7NjXqjfw/deBoNxPA=";
   private static final Key KEY =
@@ -142,7 +115,6 @@ public class ITStorageTest {
   private static final byte[] COMPRESSED_CONTENT =
       BaseEncoding.base64()
           .decode("H4sIAAAAAAAAAPNIzcnJV3DPz0/PSVVwzskvTVEILskvSkxPVQQA/LySchsAAAA=");
-  private static final Map<String, String> BUCKET_LABELS = ImmutableMap.of("label1", "value1");
   private static final Map<String, String> REMOVE_BUCKET_LABELS;
 
   static {
@@ -157,22 +129,6 @@ public class ITStorageTest {
   private static final boolean IS_VPC_TEST =
       System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC") != null
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
-  private static final List<String> LOCATION_TYPES =
-      ImmutableList.of("multi-region", "region", "dual-region");
-  private static final LifecycleRule LIFECYCLE_RULE_1 =
-      new LifecycleRule(
-          LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
-          LifecycleCondition.newBuilder()
-              .setAge(1)
-              .setNumberOfNewerVersions(3)
-              .setIsLive(false)
-              .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-              .build());
-  private static final LifecycleRule LIFECYCLE_RULE_2 =
-      new LifecycleRule(
-          LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build());
-  private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
-      ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
   @ClassRule
   public static final StorageFixture storageFixture =
@@ -180,32 +136,14 @@ public class ITStorageTest {
 
   @Rule public final TestName testName = new TestName();
   @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
-  private static final String PROJECT = ServiceOptions.getDefaultProjectId();
-  private static final String ID = UUID.randomUUID().toString().substring(0, 8);
-  private static final String TOPIC =
-      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID).trim();
-  private static final Notification.PayloadFormat PAYLOAD_FORMAT =
-      Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
-  private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
 
   @BeforeClass
   public static void beforeClass() throws IOException {
     storage = storageFixture.getInstance();
 
-    storage.create(
-        BucketInfo.newBuilder(BUCKET)
-            .setLocation("us")
-            .setLifecycleRules(
-                ImmutableList.of(
-                    new LifecycleRule(
-                        LifecycleAction.newDeleteAction(),
-                        LifecycleCondition.newBuilder().setAge(1).build())))
-            .build());
+    storage.create(BucketInfo.newBuilder(BUCKET).setLocation("us").build());
 
     storage.create(BucketInfo.newBuilder(BUCKET_REQUESTER_PAYS).build());
-
-    // Configure topic admin client for notification.
-    topicAdminClient = configureTopicAdminClient();
   }
 
   private static void unsetRequesterPays() {
@@ -226,17 +164,6 @@ public class ITStorageTest {
 
   @AfterClass
   public static void afterClass() throws ExecutionException, InterruptedException {
-
-    /* Delete the Pub/Sub topic */
-    if (topicAdminClient != null) {
-      try {
-        topicAdminClient.deleteTopic(TOPIC);
-        topicAdminClient.close();
-      } catch (Exception e) {
-        log.log(Level.WARNING, "Error while trying to delete topic and shutdown topic client", e);
-      }
-      topicAdminClient = null;
-    }
 
     if (storage != null) {
       // In beforeClass, we make buckets auto-delete blobs older than a day old.
@@ -261,130 +188,6 @@ public class ITStorageTest {
       PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
       manager.setMaxTotal(1);
       return new ApacheHttpTransport(HttpClients.createMinimal(manager));
-    }
-  }
-
-  private static TopicAdminClient configureTopicAdminClient() throws IOException {
-    TopicAdminClient topicAdminClient = TopicAdminClient.create();
-    topicAdminClient.createTopic(TOPIC);
-    GetIamPolicyRequest getIamPolicyRequest =
-        GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
-    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
-    Binding binding =
-        Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
-    SetIamPolicyRequest setIamPolicyRequest =
-        SetIamPolicyRequest.newBuilder()
-            .setResource(TOPIC)
-            .setPolicy(policy.toBuilder().addBindings(binding).build())
-            .build();
-    topicAdminClient.setIamPolicy(setIamPolicyRequest);
-    return topicAdminClient;
-  }
-
-  @Test(timeout = 5000)
-  public void testListBuckets() throws InterruptedException {
-    Iterator<Bucket> bucketIterator =
-        storage
-            .list(Storage.BucketListOption.prefix(BUCKET), Storage.BucketListOption.fields())
-            .iterateAll()
-            .iterator();
-    while (!bucketIterator.hasNext()) {
-      Thread.sleep(500);
-      bucketIterator =
-          storage
-              .list(Storage.BucketListOption.prefix(BUCKET), Storage.BucketListOption.fields())
-              .iterateAll()
-              .iterator();
-    }
-    while (bucketIterator.hasNext()) {
-      Bucket remoteBucket = bucketIterator.next();
-      assertTrue(remoteBucket.getName().startsWith(BUCKET));
-      assertNull(remoteBucket.getCreateTime());
-      assertNull(remoteBucket.getSelfLink());
-    }
-  }
-
-  @Test
-  public void testGetBucketSelectedFields() {
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID));
-    assertEquals(BUCKET, remoteBucket.getName());
-    assertNull(remoteBucket.getCreateTime());
-    assertNotNull(remoteBucket.getGeneratedId());
-  }
-
-  @Test
-  public void testGetBucketAllSelectedFields() {
-    Bucket remoteBucket = storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.values()));
-    assertEquals(BUCKET, remoteBucket.getName());
-    assertNotNull(remoteBucket.getCreateTime());
-    assertNotNull(remoteBucket.getSelfLink());
-  }
-
-  @Test
-  public void testGetBucketLifecycleRules() {
-    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(
-        BucketInfo.newBuilder(lifecycleTestBucketName)
-            .setLocation("us")
-            .setLifecycleRules(
-                ImmutableList.of(
-                    new LifecycleRule(
-                        LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
-                        LifecycleCondition.newBuilder()
-                            .setAge(1)
-                            .setNumberOfNewerVersions(3)
-                            .setIsLive(false)
-                            .setCreatedBeforeOffsetDateTime(OffsetDateTime.now())
-                            .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-                            .setDaysSinceNoncurrentTime(30)
-                            .setNoncurrentTimeBeforeOffsetDateTime(OffsetDateTime.now())
-                            .setCustomTimeBeforeOffsetDateTime(OffsetDateTime.now())
-                            .setDaysSinceCustomTime(30)
-                            .build())))
-            .build());
-    Bucket remoteBucket =
-        storage.get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
-    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
-    try {
-      assertTrue(
-          lifecycleRule
-              .getAction()
-              .getActionType()
-              .equals(LifecycleRule.SetStorageClassLifecycleAction.TYPE));
-      assertEquals(3, lifecycleRule.getCondition().getNumberOfNewerVersions().intValue());
-      assertNotNull(lifecycleRule.getCondition().getCreatedBeforeOffsetDateTime());
-      assertFalse(lifecycleRule.getCondition().getIsLive());
-      assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
-      assertEquals(1, lifecycleRule.getCondition().getMatchesStorageClass().size());
-      assertEquals(30, lifecycleRule.getCondition().getDaysSinceNoncurrentTime().intValue());
-      assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBeforeOffsetDateTime());
-      assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
-      assertNotNull(lifecycleRule.getCondition().getCustomTimeBeforeOffsetDateTime());
-    } finally {
-      storage.delete(lifecycleTestBucketName);
-    }
-  }
-
-  @Test
-  public void testGetBucketAbortMPULifecycle() {
-    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(
-        BucketInfo.newBuilder(lifecycleTestBucketName)
-            .setLocation("us")
-            .setLifecycleRules(
-                ImmutableList.of(
-                    new LifecycleRule(
-                        LifecycleAction.newAbortIncompleteMPUploadAction(),
-                        LifecycleCondition.newBuilder().setAge(1).build())))
-            .build());
-    Bucket remoteBucket =
-        storage.get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
-    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
-    try {
-      assertEquals(AbortIncompleteMPUAction.TYPE, lifecycleRule.getAction().getActionType());
-      assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
-    } finally {
-      storage.delete(lifecycleTestBucketName);
     }
   }
 
@@ -1267,163 +1070,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBatchRequest() {
-    String sourceBlobName1 = "test-batch-request-blob-1";
-    String sourceBlobName2 = "test-batch-request-blob-2";
-    BlobInfo sourceBlob1 = BlobInfo.newBuilder(BUCKET, sourceBlobName1).build();
-    BlobInfo sourceBlob2 = BlobInfo.newBuilder(BUCKET, sourceBlobName2).build();
-    assertNotNull(storage.create(sourceBlob1));
-    assertNotNull(storage.create(sourceBlob2));
-
-    // Batch update request
-    BlobInfo updatedBlob1 = sourceBlob1.toBuilder().setContentType(CONTENT_TYPE).build();
-    BlobInfo updatedBlob2 = sourceBlob2.toBuilder().setContentType(CONTENT_TYPE).build();
-    StorageBatch updateBatch = storage.batch();
-    StorageBatchResult<Blob> updateResult1 = updateBatch.update(updatedBlob1);
-    StorageBatchResult<Blob> updateResult2 = updateBatch.update(updatedBlob2);
-    updateBatch.submit();
-    Blob remoteUpdatedBlob1 = updateResult1.get();
-    Blob remoteUpdatedBlob2 = updateResult2.get();
-    assertEquals(sourceBlob1.getBucket(), remoteUpdatedBlob1.getBucket());
-    assertEquals(sourceBlob1.getName(), remoteUpdatedBlob1.getName());
-    assertEquals(sourceBlob2.getBucket(), remoteUpdatedBlob2.getBucket());
-    assertEquals(sourceBlob2.getName(), remoteUpdatedBlob2.getName());
-    assertEquals(updatedBlob1.getContentType(), remoteUpdatedBlob1.getContentType());
-    assertEquals(updatedBlob2.getContentType(), remoteUpdatedBlob2.getContentType());
-
-    // Batch get request
-    StorageBatch getBatch = storage.batch();
-    StorageBatchResult<Blob> getResult1 = getBatch.get(BUCKET, sourceBlobName1);
-    StorageBatchResult<Blob> getResult2 = getBatch.get(BUCKET, sourceBlobName2);
-    getBatch.submit();
-    Blob remoteBlob1 = getResult1.get();
-    Blob remoteBlob2 = getResult2.get();
-    assertEquals(remoteUpdatedBlob1, remoteBlob1);
-    assertEquals(remoteUpdatedBlob2, remoteBlob2);
-
-    // Batch delete request
-    StorageBatch deleteBatch = storage.batch();
-    StorageBatchResult<Boolean> deleteResult1 = deleteBatch.delete(BUCKET, sourceBlobName1);
-    StorageBatchResult<Boolean> deleteResult2 = deleteBatch.delete(BUCKET, sourceBlobName2);
-    deleteBatch.submit();
-    assertTrue(deleteResult1.get());
-    assertTrue(deleteResult2.get());
-  }
-
-  @Test
-  public void testBatchRequestManyOperations() {
-    List<StorageBatchResult<Boolean>> deleteResults =
-        Lists.newArrayListWithCapacity(MAX_BATCH_SIZE);
-    List<StorageBatchResult<Blob>> getResults = Lists.newArrayListWithCapacity(MAX_BATCH_SIZE / 2);
-    List<StorageBatchResult<Blob>> updateResults =
-        Lists.newArrayListWithCapacity(MAX_BATCH_SIZE / 2);
-    StorageBatch batch = storage.batch();
-    for (int i = 0; i < MAX_BATCH_SIZE; i++) {
-      BlobId blobId = BlobId.of(BUCKET, "test-batch-request-many-operations-blob-" + i);
-      deleteResults.add(batch.delete(blobId));
-    }
-    for (int i = 0; i < MAX_BATCH_SIZE / 2; i++) {
-      BlobId blobId = BlobId.of(BUCKET, "test-batch-request-many-operations-blob-" + i);
-      getResults.add(batch.get(blobId));
-    }
-    for (int i = 0; i < MAX_BATCH_SIZE / 2; i++) {
-      BlobInfo blob =
-          BlobInfo.newBuilder(BlobId.of(BUCKET, "test-batch-request-many-operations-blob-" + i))
-              .build();
-      updateResults.add(batch.update(blob));
-    }
-
-    String sourceBlobName1 = "test-batch-request-many-operations-source-blob-1";
-    String sourceBlobName2 = "test-batch-request-many-operations-source-blob-2";
-    BlobInfo sourceBlob1 = BlobInfo.newBuilder(BUCKET, sourceBlobName1).build();
-    BlobInfo sourceBlob2 = BlobInfo.newBuilder(BUCKET, sourceBlobName2).build();
-    assertNotNull(storage.create(sourceBlob1));
-    assertNotNull(storage.create(sourceBlob2));
-    BlobInfo updatedBlob2 = sourceBlob2.toBuilder().setContentType(CONTENT_TYPE).build();
-
-    StorageBatchResult<Blob> getResult = batch.get(BUCKET, sourceBlobName1);
-    StorageBatchResult<Blob> updateResult = batch.update(updatedBlob2);
-
-    batch.submit();
-
-    // Check deletes
-    for (StorageBatchResult<Boolean> failedDeleteResult : deleteResults) {
-      assertFalse(failedDeleteResult.get());
-    }
-
-    // Check gets
-    for (StorageBatchResult<Blob> failedGetResult : getResults) {
-      assertNull(failedGetResult.get());
-    }
-    Blob remoteBlob1 = getResult.get();
-    assertEquals(sourceBlob1.getBucket(), remoteBlob1.getBucket());
-    assertEquals(sourceBlob1.getName(), remoteBlob1.getName());
-
-    // Check updates
-    for (StorageBatchResult<Blob> failedUpdateResult : updateResults) {
-      try {
-        failedUpdateResult.get();
-        fail("Expected StorageException");
-      } catch (StorageException ex) {
-        // expected
-      }
-    }
-    Blob remoteUpdatedBlob2 = updateResult.get();
-    assertEquals(sourceBlob2.getBucket(), remoteUpdatedBlob2.getBucket());
-    assertEquals(sourceBlob2.getName(), remoteUpdatedBlob2.getName());
-    assertEquals(updatedBlob2.getContentType(), remoteUpdatedBlob2.getContentType());
-  }
-
-  @Test
-  public void testBatchRequestFail() {
-    String blobName = "test-batch-request-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
-    Blob remoteBlob = storage.create(blob);
-    assertNotNull(remoteBlob);
-    BlobInfo updatedBlob = BlobInfo.newBuilder(BUCKET, blobName, -1L).build();
-    StorageBatch batch = storage.batch();
-    StorageBatchResult<Blob> updateResult =
-        batch.update(updatedBlob, Storage.BlobTargetOption.generationMatch());
-    StorageBatchResult<Boolean> deleteResult1 =
-        batch.delete(BUCKET, blobName, Storage.BlobSourceOption.generationMatch(-1L));
-    StorageBatchResult<Boolean> deleteResult2 = batch.delete(BlobId.of(BUCKET, blobName, -1L));
-    StorageBatchResult<Blob> getResult1 =
-        batch.get(BUCKET, blobName, Storage.BlobGetOption.generationMatch(-1L));
-    StorageBatchResult<Blob> getResult2 = batch.get(BlobId.of(BUCKET, blobName, -1L));
-    batch.submit();
-    try {
-      updateResult.get();
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    try {
-      deleteResult1.get();
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    try {
-      deleteResult2.get();
-      fail("Expected an 'Invalid argument' exception");
-    } catch (StorageException e) {
-      assertThat(e.getMessage()).contains("Invalid argument");
-    }
-    try {
-      getResult1.get();
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    try {
-      getResult2.get();
-      fail("Expected an 'Invalid argument' exception");
-    } catch (StorageException e) {
-      assertThat(e.getMessage()).contains("Invalid argument");
-    }
-  }
-
-  @Test
   public void testReadAndWriteChannels() throws IOException {
     String blobName = "test-read-and-write-channels-blob";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
@@ -1789,78 +1435,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketAcl() {
-    unsetRequesterPays();
-    testBucketAclRequesterPays(true);
-    testBucketAclRequesterPays(false);
-  }
-
-  private void testBucketAclRequesterPays(boolean requesterPays) {
-    if (requesterPays) {
-      Bucket remoteBucket =
-          storage.get(
-              BUCKET_REQUESTER_PAYS,
-              Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-      assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
-      remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-      Bucket updatedBucket = storage.update(remoteBucket);
-      assertTrue(updatedBucket.requesterPays());
-    }
-
-    String projectId = storage.getOptions().getProjectId();
-
-    Storage.BucketSourceOption[] bucketOptions =
-        requesterPays
-            ? new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)}
-            : new Storage.BucketSourceOption[] {};
-
-    assertNull(
-        storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
-    assertFalse(
-        storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
-    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(storage.createAcl(BUCKET_REQUESTER_PAYS, acl, bucketOptions));
-    Acl updatedAcl =
-        storage.updateAcl(
-            BUCKET_REQUESTER_PAYS, acl.toBuilder().setRole(Role.WRITER).build(), bucketOptions);
-    assertEquals(Role.WRITER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>();
-    acls.addAll(storage.listAcls(BUCKET_REQUESTER_PAYS, bucketOptions));
-    assertTrue(acls.contains(updatedAcl));
-    assertTrue(
-        storage.deleteAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
-    assertNull(
-        storage.getAcl(BUCKET_REQUESTER_PAYS, User.ofAllAuthenticatedUsers(), bucketOptions));
-    if (requesterPays) {
-      Bucket remoteBucket =
-          storage.get(
-              BUCKET_REQUESTER_PAYS,
-              Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
-              Storage.BucketGetOption.userProject(projectId));
-      assertTrue(remoteBucket.requesterPays());
-      remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-      Bucket updatedBucket =
-          storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
-      assertFalse(updatedBucket.requesterPays());
-    }
-  }
-
-  @Test
-  public void testBucketDefaultAcl() {
-    assertNull(storage.getDefaultAcl(BUCKET, User.ofAllAuthenticatedUsers()));
-    assertFalse(storage.deleteDefaultAcl(BUCKET, User.ofAllAuthenticatedUsers()));
-    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(storage.createDefaultAcl(BUCKET, acl));
-    Acl updatedAcl = storage.updateDefaultAcl(BUCKET, acl.toBuilder().setRole(Role.OWNER).build());
-    assertEquals(Role.OWNER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>();
-    acls.addAll(storage.listDefaultAcls(BUCKET));
-    assertTrue(acls.contains(updatedAcl));
-    assertTrue(storage.deleteDefaultAcl(BUCKET, User.ofAllAuthenticatedUsers()));
-    assertNull(storage.getDefaultAcl(BUCKET, User.ofAllAuthenticatedUsers()));
-  }
-
-  @Test
   public void testBlobAcl() {
     BlobId blobId = BlobId.of(BUCKET, "test-blob-acl");
     BlobInfo blob = BlobInfo.newBuilder(blobId).build();
@@ -2022,434 +1596,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBucketPolicyV1RequesterPays() throws ExecutionException, InterruptedException {
-    unsetRequesterPays();
-    Bucket bucketDefault =
-        storage.get(
-            BUCKET_REQUESTER_PAYS,
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertTrue(bucketDefault.requesterPays() == null || !bucketDefault.requesterPays());
-
-    Bucket bucketTrue = storage.update(bucketDefault.toBuilder().setRequesterPays(true).build());
-    assertTrue(bucketTrue.requesterPays());
-
-    String projectId = storage.getOptions().getProjectId();
-
-    Storage.BucketSourceOption[] bucketOptions =
-        new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)};
-    Identity projectOwner = Identity.projectOwner(projectId);
-    Identity projectEditor = Identity.projectEditor(projectId);
-    Identity projectViewer = Identity.projectViewer(projectId);
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            new HashSet<>(Collections.singleton(projectViewer)),
-            StorageRoles.legacyObjectReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
-
-    // Validate getting policy.
-    Policy currentPolicy = storage.getIamPolicy(BUCKET_REQUESTER_PAYS, bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
-
-    // Validate updating policy.
-    Policy updatedPolicy =
-        storage.setIamPolicy(
-            BUCKET_REQUESTER_PAYS,
-            currentPolicy
-                .toBuilder()
-                .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
-    Policy revertedPolicy =
-        storage.setIamPolicy(
-            BUCKET_REQUESTER_PAYS,
-            updatedPolicy
-                .toBuilder()
-                .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
-
-    // Validate testing permissions.
-    List<Boolean> expectedPermissions = ImmutableList.of(true, true);
-    assertEquals(
-        expectedPermissions,
-        storage.testIamPermissions(
-            BUCKET_REQUESTER_PAYS,
-            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-            bucketOptions));
-    Bucket bucketFalse =
-        storage.update(
-            bucketTrue.toBuilder().setRequesterPays(false).build(),
-            Storage.BucketTargetOption.userProject(projectId));
-    assertFalse(bucketFalse.requesterPays());
-  }
-
-  @Test
-  public void testBucketPolicyV1() {
-    String projectId = storage.getOptions().getProjectId();
-
-    Storage.BucketSourceOption[] bucketOptions = new Storage.BucketSourceOption[] {};
-    Identity projectOwner = Identity.projectOwner(projectId);
-    Identity projectEditor = Identity.projectEditor(projectId);
-    Identity projectViewer = Identity.projectViewer(projectId);
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
-    Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
-        ImmutableMap.of(
-            StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
-            StorageRoles.legacyBucketReader(),
-            new HashSet<>(Collections.singleton(projectViewer)),
-            StorageRoles.legacyObjectReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
-
-    // Validate getting policy.
-    Policy currentPolicy = storage.getIamPolicy(BUCKET, bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
-
-    // Validate updating policy.
-    Policy updatedPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            currentPolicy
-                .toBuilder()
-                .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
-    Policy revertedPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            updatedPolicy
-                .toBuilder()
-                .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
-                .build(),
-            bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindings());
-
-    // Validate testing permissions.
-    List<Boolean> expectedPermissions = ImmutableList.of(true, true);
-    assertEquals(
-        expectedPermissions,
-        storage.testIamPermissions(
-            BUCKET,
-            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-            bucketOptions));
-  }
-
-  @Test
-  public void testBucketPolicyV3() {
-    // Enable Uniform Bucket-Level Access
-    storage.update(
-        BucketInfo.newBuilder(BUCKET)
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
-                    .setIsUniformBucketLevelAccessEnabled(true)
-                    .build())
-            .build());
-    String projectId = storage.getOptions().getProjectId();
-
-    Storage.BucketSourceOption[] bucketOptions =
-        new Storage.BucketSourceOption[] {Storage.BucketSourceOption.requestedPolicyVersion(3)};
-    Identity projectOwner = Identity.projectOwner(projectId);
-    Identity projectEditor = Identity.projectEditor(projectId);
-    Identity projectViewer = Identity.projectViewer(projectId);
-    List<com.google.cloud.Binding> bindingsWithoutPublicRead =
-        ImmutableList.of(
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyBucketOwner().toString())
-                .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue()))
-                .build(),
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyBucketReader().toString())
-                .setMembers(ImmutableList.of(projectViewer.strValue()))
-                .build());
-    List<com.google.cloud.Binding> bindingsWithPublicRead =
-        ImmutableList.of(
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyBucketReader().toString())
-                .setMembers(ImmutableList.of(projectViewer.strValue()))
-                .build(),
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyBucketOwner().toString())
-                .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue()))
-                .build(),
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyObjectReader().toString())
-                .setMembers(ImmutableList.of("allUsers"))
-                .build());
-
-    List<com.google.cloud.Binding> bindingsWithConditionalPolicy =
-        ImmutableList.of(
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyBucketReader().toString())
-                .setMembers(ImmutableList.of(projectViewer.strValue()))
-                .build(),
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyBucketOwner().toString())
-                .setMembers(ImmutableList.of(projectEditor.strValue(), projectOwner.strValue()))
-                .build(),
-            com.google.cloud.Binding.newBuilder()
-                .setRole(StorageRoles.legacyObjectReader().toString())
-                .setMembers(
-                    ImmutableList.of(
-                        "serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com"))
-                .setCondition(
-                    Condition.newBuilder()
-                        .setTitle("Title")
-                        .setDescription("Description")
-                        .setExpression(
-                            "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")")
-                        .build())
-                .build());
-
-    // Validate getting policy.
-    Policy currentPolicy = storage.getIamPolicy(BUCKET, bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindingsList());
-
-    // Validate updating policy.
-    List<com.google.cloud.Binding> currentBindings = new ArrayList(currentPolicy.getBindingsList());
-    currentBindings.add(
-        com.google.cloud.Binding.newBuilder()
-            .setRole(StorageRoles.legacyObjectReader().getValue())
-            .addMembers(Identity.allUsers().strValue())
-            .build());
-    Policy updatedPolicy =
-        storage.setIamPolicy(
-            BUCKET, currentPolicy.toBuilder().setBindings(currentBindings).build(), bucketOptions);
-    assertTrue(
-        bindingsWithPublicRead.size() == updatedPolicy.getBindingsList().size()
-            && bindingsWithPublicRead.containsAll(updatedPolicy.getBindingsList()));
-
-    // Remove a member
-    List<com.google.cloud.Binding> updatedBindings = new ArrayList(updatedPolicy.getBindingsList());
-    for (int i = 0; i < updatedBindings.size(); i++) {
-      com.google.cloud.Binding binding = updatedBindings.get(i);
-      if (binding.getRole().equals(StorageRoles.legacyObjectReader().toString())) {
-        List<String> members = new ArrayList(binding.getMembers());
-        members.remove(Identity.allUsers().strValue());
-        updatedBindings.set(i, binding.toBuilder().setMembers(members).build());
-        break;
-      }
-    }
-
-    Policy revertedPolicy =
-        storage.setIamPolicy(
-            BUCKET, updatedPolicy.toBuilder().setBindings(updatedBindings).build(), bucketOptions);
-
-    assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindingsList());
-    assertTrue(
-        bindingsWithoutPublicRead.size() == revertedPolicy.getBindingsList().size()
-            && bindingsWithoutPublicRead.containsAll(revertedPolicy.getBindingsList()));
-
-    // Add Conditional Policy
-    List<com.google.cloud.Binding> conditionalBindings =
-        new ArrayList(revertedPolicy.getBindingsList());
-    conditionalBindings.add(
-        com.google.cloud.Binding.newBuilder()
-            .setRole(StorageRoles.legacyObjectReader().toString())
-            .addMembers(
-                "serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com")
-            .setCondition(
-                Condition.newBuilder()
-                    .setTitle("Title")
-                    .setDescription("Description")
-                    .setExpression(
-                        "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")")
-                    .build())
-            .build());
-    Policy conditionalPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            revertedPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
-            bucketOptions);
-    assertTrue(
-        bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size()
-            && bindingsWithConditionalPolicy.containsAll(conditionalPolicy.getBindingsList()));
-
-    // Remove Conditional Policy
-    conditionalPolicy =
-        storage.setIamPolicy(
-            BUCKET,
-            conditionalPolicy.toBuilder().setBindings(updatedBindings).setVersion(3).build(),
-            bucketOptions);
-
-    // Validate testing permissions.
-    List<Boolean> expectedPermissions = ImmutableList.of(true, true);
-    assertEquals(
-        expectedPermissions,
-        storage.testIamPermissions(
-            BUCKET,
-            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-            bucketOptions));
-
-    // Disable Uniform Bucket-Level Access
-    storage.update(
-        BucketInfo.newBuilder(BUCKET)
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
-                    .setIsUniformBucketLevelAccessEnabled(false)
-                    .build())
-            .build());
-  }
-
-  @Test
-  public void testUpdateBucketLabel() {
-    Bucket remoteBucket =
-        storage.get(BUCKET, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertNull(remoteBucket.getLabels());
-    remoteBucket = remoteBucket.toBuilder().setLabels(BUCKET_LABELS).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertEquals(BUCKET_LABELS, updatedBucket.getLabels());
-    remoteBucket.toBuilder().setLabels(REMOVE_BUCKET_LABELS).build().update();
-    assertNull(storage.get(BUCKET).getLabels());
-  }
-
-  @Test
-  public void testUpdateBucketRequesterPays() {
-    unsetRequesterPays();
-    Bucket remoteBucket =
-        storage.get(
-            BUCKET_REQUESTER_PAYS,
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertTrue(updatedBucket.requesterPays());
-
-    String projectId = storage.getOptions().getProjectId();
-    Bucket.BlobTargetOption option = Bucket.BlobTargetOption.userProject(projectId);
-    String blobName = "test-create-empty-blob-requester-pays";
-    Blob remoteBlob = updatedBucket.create(blobName, BLOB_BYTE_CONTENT, option);
-    assertNotNull(remoteBlob);
-    byte[] readBytes =
-        storage.readAllBytes(
-            BUCKET_REQUESTER_PAYS, blobName, Storage.BlobSourceOption.userProject(projectId));
-    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
-    assertFalse(updatedBucket.requesterPays());
-  }
-
-  @Test
-  public void testListBucketRequesterPaysFails() throws InterruptedException {
-    String projectId = storage.getOptions().getProjectId();
-    Iterator<Bucket> bucketIterator =
-        storage
-            .list(
-                Storage.BucketListOption.prefix(BUCKET),
-                Storage.BucketListOption.fields(),
-                Storage.BucketListOption.userProject(projectId))
-            .iterateAll()
-            .iterator();
-    while (!bucketIterator.hasNext()) {
-      Thread.sleep(500);
-      bucketIterator =
-          storage
-              .list(Storage.BucketListOption.prefix(BUCKET), Storage.BucketListOption.fields())
-              .iterateAll()
-              .iterator();
-    }
-    while (bucketIterator.hasNext()) {
-      Bucket remoteBucket = bucketIterator.next();
-      assertTrue(remoteBucket.getName().startsWith(BUCKET));
-      assertNull(remoteBucket.getCreateTime());
-      assertNull(remoteBucket.getSelfLink());
-    }
-  }
-
-  @Test
-  public void testRetentionPolicyNoLock() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket remoteBucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build());
-    try {
-      assertEquals(RETENTION_PERIOD, remoteBucket.getRetentionPeriod());
-      assertNotNull(remoteBucket.getRetentionEffectiveTime());
-      assertNull(remoteBucket.retentionPolicyIsLocked());
-      remoteBucket =
-          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.RETENTION_POLICY));
-      assertEquals(RETENTION_PERIOD, remoteBucket.getRetentionPeriod());
-      assertNotNull(remoteBucket.getRetentionEffectiveTime());
-      assertNull(remoteBucket.retentionPolicyIsLocked());
-      String blobName = "test-create-with-retention-policy-hold";
-      BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
-      Blob remoteBlob = storage.create(blobInfo);
-      assertNotNull(remoteBlob.getRetentionExpirationTime());
-      remoteBucket = remoteBucket.toBuilder().setRetentionPeriod(null).build().update();
-      assertNull(remoteBucket.getRetentionPeriod());
-      remoteBucket = remoteBucket.toBuilder().setRetentionPeriod(null).build().update();
-      assertNull(remoteBucket.getRetentionPeriod());
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
-  public void testRetentionPolicyLock() throws ExecutionException, InterruptedException {
-    retentionPolicyLockRequesterPays(true);
-    retentionPolicyLockRequesterPays(false);
-  }
-
-  private void retentionPolicyLockRequesterPays(boolean requesterPays)
-      throws ExecutionException, InterruptedException {
-    String projectId = storage.getOptions().getProjectId();
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    BucketInfo bucketInfo;
-    if (requesterPays) {
-      bucketInfo =
-          BucketInfo.newBuilder(bucketName)
-              .setRetentionPeriod(RETENTION_PERIOD)
-              .setRequesterPays(true)
-              .build();
-    } else {
-      bucketInfo = BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build();
-    }
-    Bucket remoteBucket = storage.create(bucketInfo);
-    try {
-      assertNull(remoteBucket.retentionPolicyIsLocked());
-      assertNotNull(remoteBucket.getRetentionEffectiveTime());
-      assertNotNull(remoteBucket.getMetageneration());
-      if (requesterPays) {
-        remoteBucket =
-            storage.lockRetentionPolicy(
-                remoteBucket,
-                Storage.BucketTargetOption.metagenerationMatch(),
-                Storage.BucketTargetOption.userProject(projectId));
-      } else {
-        remoteBucket =
-            storage.lockRetentionPolicy(
-                remoteBucket, Storage.BucketTargetOption.metagenerationMatch());
-      }
-      assertTrue(remoteBucket.retentionPolicyIsLocked());
-      assertNotNull(remoteBucket.getRetentionEffectiveTime());
-    } finally {
-      if (requesterPays) {
-        bucketInfo = bucketInfo.toBuilder().setRequesterPays(false).build();
-        Bucket updateBucket =
-            storage.update(bucketInfo, Storage.BucketTargetOption.userProject(projectId));
-        assertFalse(updateBucket.requesterPays());
-      }
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS, projectId);
-    }
-  }
-
-  @Test
   public void testAttemptObjectDeleteWithRetentionPolicy()
       throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
@@ -2468,35 +1614,6 @@ public class ITStorageTest {
       // expected
     } finally {
       Thread.sleep(RETENTION_PERIOD_IN_MILLISECONDS);
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
-  public void testEnableDisableBucketDefaultEventBasedHold()
-      throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket remoteBucket =
-        storage.create(BucketInfo.newBuilder(bucketName).setDefaultEventBasedHold(true).build());
-    try {
-      assertTrue(remoteBucket.getDefaultEventBasedHold());
-      remoteBucket =
-          storage.get(
-              bucketName, Storage.BucketGetOption.fields(BucketField.DEFAULT_EVENT_BASED_HOLD));
-      assertTrue(remoteBucket.getDefaultEventBasedHold());
-      String blobName = "test-create-with-event-based-hold";
-      BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
-      Blob remoteBlob = storage.create(blobInfo);
-      assertTrue(remoteBlob.getEventBasedHold());
-      remoteBlob =
-          storage.get(
-              blobInfo.getBlobId(), Storage.BlobGetOption.fields(BlobField.EVENT_BASED_HOLD));
-      assertTrue(remoteBlob.getEventBasedHold());
-      remoteBlob = remoteBlob.toBuilder().setEventBasedHold(false).build().update();
-      assertFalse(remoteBlob.getEventBasedHold());
-      remoteBucket = remoteBucket.toBuilder().setDefaultEventBasedHold(false).build().update();
-      assertFalse(remoteBucket.getDefaultEventBasedHold());
-    } finally {
       RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
@@ -2556,76 +1673,6 @@ public class ITStorageTest {
 
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
-  public void testBucketWithBucketPolicyOnlyEnabled() throws Exception {
-    String bucket = RemoteStorageHelper.generateBucketName();
-    try {
-      storage.create(
-          Bucket.newBuilder(bucket)
-              .setIamConfiguration(
-                  BucketInfo.IamConfiguration.newBuilder()
-                      .setIsBucketPolicyOnlyEnabled(true)
-                      .build())
-              .build());
-
-      Bucket remoteBucket =
-          storage.get(bucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
-
-      assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
-
-      try {
-        remoteBucket.listAcls();
-        fail("StorageException was expected.");
-      } catch (StorageException e) {
-        // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
-      }
-      try {
-        remoteBucket.listDefaultAcls();
-        fail("StorageException was expected");
-      } catch (StorageException e) {
-        // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
-      }
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucket, 1, TimeUnit.MINUTES);
-    }
-  }
-
-  @Test
-  public void testBucketWithUniformBucketLevelAccessEnabled() throws Exception {
-    String bucket = RemoteStorageHelper.generateBucketName();
-    try {
-      storage.create(
-          Bucket.newBuilder(bucket)
-              .setIamConfiguration(
-                  BucketInfo.IamConfiguration.newBuilder()
-                      .setIsUniformBucketLevelAccessEnabled(true)
-                      .build())
-              .build());
-
-      Bucket remoteBucket =
-          storage.get(bucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
-
-      assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
-      try {
-        remoteBucket.listAcls();
-        fail("StorageException was expected.");
-      } catch (StorageException e) {
-        // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
-      }
-      try {
-        remoteBucket.listDefaultAcls();
-        fail("StorageException was expected");
-      } catch (StorageException e) {
-        // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
-      }
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucket, 1, TimeUnit.MINUTES);
-    }
-  }
-
-  @Test
-  @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = RemoteStorageHelper.generateBucketName();
     try {
@@ -2678,287 +1725,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testEnableAndDisableUniformBucketLevelAccessOnExistingBucket() throws Exception {
-    String bpoBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
-          BucketInfo.IamConfiguration.newBuilder()
-              .setIsUniformBucketLevelAccessEnabled(false)
-              .build();
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(bpoBucket)
-                  .setIamConfiguration(ublaDisabledIamConfiguration)
-                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .setDefaultAcl(
-                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .build());
-
-      bucket
-          .toBuilder()
-          .setAcl(null)
-          .setDefaultAcl(null)
-          .setIamConfiguration(
-              ublaDisabledIamConfiguration
-                  .toBuilder()
-                  .setIsUniformBucketLevelAccessEnabled(true)
-                  .build())
-          .build()
-          .update();
-
-      Bucket remoteBucket =
-          storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
-
-      assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
-
-      remoteBucket.toBuilder().setIamConfiguration(ublaDisabledIamConfiguration).build().update();
-
-      remoteBucket =
-          storage.get(
-              bpoBucket,
-              Storage.BucketGetOption.fields(
-                  BucketField.IAMCONFIGURATION, BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
-
-      assertFalse(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getDefaultAcl().get(0).getEntity());
-      assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
-      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
-      assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bpoBucket, 1, TimeUnit.MINUTES);
-    }
-  }
-
-  private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
-    return storage.create(
-        Bucket.newBuilder(bucketName)
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
-                    .setPublicAccessPrevention(
-                        enforced
-                            ? BucketInfo.PublicAccessPrevention.ENFORCED
-                            : BucketInfo.PublicAccessPrevention.INHERITED)
-                    .build())
-            .build());
-  }
-
-  @Test
-  public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, true);
-      // Making bucket public should fail.
-      try {
-        storage.setIamPolicy(
-            papBucket,
-            Policy.newBuilder()
-                .setVersion(3)
-                .setBindings(
-                    ImmutableList.<com.google.cloud.Binding>of(
-                        com.google.cloud.Binding.newBuilder()
-                            .setRole("roles/storage.objectViewer")
-                            .addMembers("allUsers")
-                            .build()))
-                .build());
-        fail("pap: expected adding allUsers policy to bucket should fail");
-      } catch (StorageException storageException) {
-        // Creating a bucket with roles/storage.objectViewer is not
-        // allowed when publicAccessPrevention is enabled.
-        assertEquals(storageException.getCode(), 412);
-      }
-
-      // Making object public via ACL should fail.
-      try {
-        // Create a public object
-        bucket.create(
-            "pap-test-object",
-            "".getBytes(),
-            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
-        fail("pap: expected adding allUsers ACL to object should fail");
-      } catch (StorageException storageException) {
-        // Creating an object with allUsers roles/storage.viewer permission
-        // is not allowed. When Public Access Prevention is enabled.
-        assertEquals(storageException.getCode(), 412);
-      }
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
-    }
-  }
-
-  @Test
-  public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
-
-      // Now, making object public or making bucket public should succeed.
-      try {
-        // Create a public object
-        bucket.create(
-            "pap-test-object",
-            "".getBytes(),
-            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
-      } catch (StorageException storageException) {
-        fail("pap: expected adding allUsers ACL to object to succeed");
-      }
-
-      // Now, making bucket public should succeed.
-      try {
-        storage.setIamPolicy(
-            papBucket,
-            Policy.newBuilder()
-                .setVersion(3)
-                .setBindings(
-                    ImmutableList.<com.google.cloud.Binding>of(
-                        com.google.cloud.Binding.newBuilder()
-                            .setRole("roles/storage.objectViewer")
-                            .addMembers("allUsers")
-                            .build()))
-                .build());
-      } catch (StorageException storageException) {
-        fail("pap: expected adding allUsers policy to bucket to succeed");
-      }
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
-    }
-  }
-
-  @Test
-  public void testUBLAWithPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
-      assertEquals(
-          bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.INHERITED);
-      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
-
-      // Update PAP setting to ENFORCED and should not affect UBLA setting.
-      bucket
-          .toBuilder()
-          .setIamConfiguration(
-              bucket
-                  .getIamConfiguration()
-                  .toBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                  .build())
-          .build()
-          .update();
-      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
-      assertEquals(
-          bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.ENFORCED);
-      assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
-
-      // Updating UBLA should not affect PAP setting.
-      bucket =
-          bucket
-              .toBuilder()
-              .setIamConfiguration(
-                  bucket
-                      .getIamConfiguration()
-                      .toBuilder()
-                      .setIsUniformBucketLevelAccessEnabled(true)
-                      .build())
-              .build()
-              .update();
-      assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertTrue(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
-      assertEquals(
-          bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.ENFORCED);
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, papBucket, 1, TimeUnit.MINUTES);
-    }
-  }
-
-  @Test
-  public void testBucketLocationType() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    long bucketMetageneration = 42;
-    storage.create(
-        BucketInfo.newBuilder(bucketName)
-            .setLocation("us")
-            .setRetentionPeriod(RETENTION_PERIOD)
-            .build());
-    Bucket bucket =
-        storage.get(
-            bucketName, Storage.BucketGetOption.metagenerationNotMatch(bucketMetageneration));
-    assertTrue(LOCATION_TYPES.contains(bucket.getLocationType()));
-
-    Bucket bucket1 =
-        storage.lockRetentionPolicy(bucket, Storage.BucketTargetOption.metagenerationMatch());
-    assertTrue(LOCATION_TYPES.contains(bucket1.getLocationType()));
-
-    Bucket updatedBucket =
-        storage.update(
-            BucketInfo.newBuilder(bucketName)
-                .setLocation("asia")
-                .setRetentionPeriod(RETENTION_PERIOD)
-                .build());
-    assertTrue(LOCATION_TYPES.contains(updatedBucket.getLocationType()));
-
-    Iterator<Bucket> bucketIterator =
-        storage.list(Storage.BucketListOption.prefix(bucketName)).iterateAll().iterator();
-    while (bucketIterator.hasNext()) {
-      Bucket remoteBucket = bucketIterator.next();
-      assertTrue(LOCATION_TYPES.contains(remoteBucket.getLocationType()));
-    }
-    RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-  }
-
-  @Test
-  public void testBucketCustomPlacmentConfigDualRegion() {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    List<String> locations = new ArrayList<>();
-    locations.add("US-EAST1");
-    locations.add("US-WEST1");
-    CustomPlacementConfig customPlacementConfig =
-        CustomPlacementConfig.newBuilder().setDataLocations(locations).build();
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setCustomPlacementConfig(customPlacementConfig)
-                .setLocation("us")
-                .build());
-    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST1"));
-    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST1"));
-    assertTrue(bucket.getLocation().equalsIgnoreCase("us"));
-  }
-
-  @Test
-  public void testBucketLogging() throws ExecutionException, InterruptedException {
-    String logsBucket = RemoteStorageHelper.generateBucketName();
-    String loggingBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      assertNotNull(storage.create(BucketInfo.newBuilder(logsBucket).setLocation("us").build()));
-      Policy policy = storage.getIamPolicy(logsBucket);
-      assertNotNull(policy);
-      BucketInfo.Logging logging =
-          BucketInfo.Logging.newBuilder()
-              .setLogBucket(logsBucket)
-              .setLogObjectPrefix("test-logs")
-              .build();
-      Bucket bucket =
-          storage.create(
-              BucketInfo.newBuilder(loggingBucket).setLocation("us").setLogging(logging).build());
-      assertEquals(logsBucket, bucket.getLogging().getLogBucket());
-      assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
-
-      // Disable bucket logging.
-      Bucket updatedBucket = bucket.toBuilder().setLogging(null).build().update();
-      assertNull(updatedBucket.getLogging());
-
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
-      RemoteStorageHelper.forceDelete(storage, loggingBucket, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
   public void testBlobReload() throws Exception {
     String blobName = "test-blob-reload";
     BlobId blobId = BlobId.of(BUCKET, blobName);
@@ -2985,25 +1751,6 @@ public class ITStorageTest {
 
     updated.delete();
     assertNull(updated.reload());
-  }
-
-  @Test
-  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setLocation("us")
-                .setLifecycleRules(LIFECYCLE_RULES)
-                .build());
-    assertThat(bucket.getLifecycleRules()).isNotNull();
-    assertThat(bucket.getLifecycleRules()).hasSize(2);
-    try {
-      Bucket updatedBucket = bucket.toBuilder().deleteLifecycleRules().build().update();
-      assertThat(updatedBucket.getLifecycleRules()).hasSize(0);
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
   }
 
   @Test
@@ -3086,121 +1833,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testRemoveBucketCORS() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
-    List<HttpMethod> httpMethods = ImmutableList.of(HttpMethod.GET);
-    List<String> responseHeaders = ImmutableList.of("Content-Type");
-    try {
-      Cors cors =
-          Cors.newBuilder()
-              .setOrigins(origins)
-              .setMethods(httpMethods)
-              .setResponseHeaders(responseHeaders)
-              .setMaxAgeSeconds(100)
-              .build();
-      storage.create(BucketInfo.newBuilder(bucketName).setCors(ImmutableList.of(cors)).build());
-
-      // case-1 : Cors are set and field selector is selected then returns not-null.
-      Bucket remoteBucket =
-          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
-      assertThat(remoteBucket.getCors()).isNotNull();
-      assertThat(remoteBucket.getCors().get(0).getMaxAgeSeconds()).isEqualTo(100);
-      assertThat(remoteBucket.getCors().get(0).getMethods()).isEqualTo(httpMethods);
-      assertThat(remoteBucket.getCors().get(0).getOrigins()).isEqualTo(origins);
-      assertThat(remoteBucket.getCors().get(0).getResponseHeaders()).isEqualTo(responseHeaders);
-
-      // case-2 : Cors are set but field selector isn't selected then returns not-null.
-      remoteBucket = storage.get(bucketName);
-      assertThat(remoteBucket.getCors()).isNotNull();
-
-      // Remove CORS configuration from the bucket.
-      Bucket updatedBucket = remoteBucket.toBuilder().setCors(null).build().update();
-      assertThat(updatedBucket.getCors()).isNull();
-
-      // case-3 : Cors are not set and field selector is selected then returns null.
-      updatedBucket = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
-      assertThat(updatedBucket.getCors()).isNull();
-
-      // case-4 : Cors are not set and field selector isn't selected then returns null.
-      updatedBucket = storage.get(bucketName);
-      assertThat(updatedBucket.getCors()).isNull();
-
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
-  public void testBucketUpdateTime() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    BucketInfo bucketInfo =
-        BucketInfo.newBuilder(bucketName).setLocation("us").setVersioningEnabled(true).build();
-    try {
-      Bucket bucket = storage.create(bucketInfo);
-      assertThat(bucket).isNotNull();
-      assertThat(bucket.versioningEnabled()).isTrue();
-      assertThat(bucket.getCreateTime()).isNotNull();
-      assertThat(bucket.getUpdateTime()).isEqualTo(bucket.getCreateTime());
-
-      Bucket updatedBucket = bucket.toBuilder().setVersioningEnabled(false).build().update();
-      assertThat(updatedBucket.versioningEnabled()).isFalse();
-      assertThat(updatedBucket.getUpdateTime()).isNotNull();
-      assertThat(updatedBucket.getCreateTime()).isEqualTo(bucket.getCreateTime());
-      assertThat(updatedBucket.getUpdateTime()).isGreaterThan(bucket.getCreateTime());
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
-  public void testNotification() throws InterruptedException, ExecutionException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
-    NotificationInfo notificationInfo =
-        NotificationInfo.newBuilder(TOPIC)
-            .setCustomAttributes(CUSTOM_ATTRIBUTES)
-            .setPayloadFormat(PAYLOAD_FORMAT)
-            .build();
-    try {
-      assertThat(storage.listNotifications(bucketName)).isEmpty();
-      Notification notification = storage.createNotification(bucketName, notificationInfo);
-      assertThat(notification.getNotificationId()).isNotNull();
-      assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
-      assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
-      assertThat(notification.getTopic().contains(TOPIC)).isTrue();
-
-      // Gets the notification with the specified id.
-      Notification actualNotification =
-          storage.getNotification(bucketName, notification.getNotificationId());
-      assertThat(actualNotification.getNotificationId())
-          .isEqualTo(notification.getNotificationId());
-      assertThat(actualNotification.getTopic().trim()).isEqualTo(notification.getTopic().trim());
-      assertThat(actualNotification.getEtag()).isEqualTo(notification.getEtag());
-      assertThat(actualNotification.getEventTypes()).isEqualTo(notification.getEventTypes());
-      assertThat(actualNotification.getPayloadFormat()).isEqualTo(notification.getPayloadFormat());
-      assertThat(actualNotification.getSelfLink()).isEqualTo(notification.getSelfLink());
-      assertThat(actualNotification.getCustomAttributes())
-          .isEqualTo(notification.getCustomAttributes());
-
-      // Retrieves the list of notifications associated with the bucket.
-      List<Notification> notifications = storage.listNotifications(bucketName);
-      assertThat(notifications.size()).isEqualTo(1);
-      assertThat(notifications.get(0).getNotificationId())
-          .isEqualTo(actualNotification.getNotificationId());
-
-      // Deletes the notification with the specified id.
-      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId())).isTrue();
-      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId()))
-          .isFalse();
-      assertThat(storage.getNotification(bucketName, notification.getNotificationId())).isNull();
-      assertThat(storage.listNotifications(bucketName)).isEmpty();
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  @Test
   public void testBlobTimeStorageClassUpdated() {
     String blobName = "test-blob-with-storage-class";
     StorageClass storageClass = StorageClass.COLDLINE;
@@ -3236,22 +1868,5 @@ public class ITStorageTest {
     assertThat(updatedBlob2.getTimeStorageClassUpdated())
         .isEqualTo(updatedBlob1.getTimeStorageClassUpdated());
     assertThat(updatedBlob2.delete()).isTrue();
-  }
-
-  @Test
-  public void testRpoConfig() {
-    String rpoBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket =
-          storage.create(
-              BucketInfo.newBuilder(rpoBucket).setLocation("NAM4").setRpo(Rpo.ASYNC_TURBO).build());
-      assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
-
-      bucket.toBuilder().setRpo(Rpo.DEFAULT).build().update();
-
-      assertEquals("DEFAULT", storage.get(rpoBucket).getRpo().toString());
-    } finally {
-      storage.delete(rpoBucket);
-    }
   }
 }
