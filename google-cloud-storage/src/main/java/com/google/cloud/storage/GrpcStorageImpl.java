@@ -146,10 +146,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
    * walking overhead for every Code for every invocation of read, construct the set of exceptions
    * only once and keep in this value.
    */
-  private static final Set<ApiException> CODE_API_EXCEPTIONS =
+  private static final Set<StorageException> CODE_API_EXCEPTIONS =
       Arrays.stream(StatusCode.Code.values())
           .map(GrpcStorageImpl::statusCodeFor)
           .map(c -> ApiExceptionFactory.createException(null, c, false))
+          .map(StorageException::asStorageException)
           .collect(Collectors.toSet());
 
   private final StorageClient storageClient;
@@ -1254,7 +1255,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   static Set<StatusCode.Code> resultRetryAlgorithmToCodes(ResultRetryAlgorithm<?> alg) {
     return CODE_API_EXCEPTIONS.stream()
         .filter(e -> alg.shouldRetry(e, null))
-        .map(e -> e.getStatusCode().getCode())
+        .map(e -> e.apiExceptionCause.getStatusCode().getCode())
         .collect(Collectors.toSet());
   }
 
