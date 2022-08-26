@@ -26,6 +26,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.paging.AbstractPage;
@@ -36,6 +37,7 @@ import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
+import com.google.api.gax.rpc.UnimplementedException;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
@@ -126,6 +128,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+@BetaApi
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static final byte[] ZERO_BYTES = new byte[0];
@@ -356,8 +359,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GetBucketRequest.Builder builder =
         GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
     GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
-    // TODO(frankyn): Do we care about projection because Apiary uses FULL for projection? Missing
-    // projection=full
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -409,9 +410,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .apply(ListBucketsRequest.newBuilder())
             .build();
     ListBucketsPagedResponse call = listBucketsCallable.call(request, grpcCallContext);
-    ListBucketsPage page = call.getPage();
-    return new TransformingPageDecorator<>(
-        page, syntaxDecoders.bucket, getOptions(), retryAlgorithmManager.getFor(request));
+    try {
+      ListBucketsPage page = call.getPage();
+      return new TransformingPageDecorator<>(
+          page, syntaxDecoders.bucket, getOptions(), retryAlgorithmManager.getFor(request));
+    } catch (Exception e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
@@ -424,10 +429,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ListObjectsRequest.Builder builder =
         ListObjectsRequest.newBuilder().setParent(bucketNameCodec.encode(bucket));
     ListObjectsRequest req = opts.listObjectsRequest().apply(builder).build();
-    ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
-    ListObjectsPage page = call.getPage();
-    return new TransformingPageDecorator<>(
-        page, syntaxDecoders.blob, getOptions(), retryAlgorithmManager.getFor(req));
+    try {
+      ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
+      ListObjectsPage page = call.getPage();
+      return new TransformingPageDecorator<>(
+          page, syntaxDecoders.blob, getOptions(), retryAlgorithmManager.getFor(req));
+    } catch (Exception e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
@@ -489,8 +498,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           () -> storageClient.deleteBucketCallable().call(req, grpcCallContext),
           Decoder.identity());
       return true;
-    } catch (ApiException e) {
-      // TODO: We should throw a StorageException instead of ApiException when making the
+    } catch (StorageException e) {
       return false;
     }
   }
@@ -516,8 +524,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           () -> storageClient.deleteObjectCallable().call(req, grpcCallContext),
           Decoder.identity());
       return true;
-    } catch (ApiException e) {
-      // TODO: We should throw a StorageException instead of ApiException when making the
+    } catch (StorageException e) {
       return false;
     }
   }
@@ -554,7 +561,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public CopyWriter copy(CopyRequest copyRequest) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("copy", CopyRequest.class));
   }
 
   @Override
@@ -570,7 +577,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(baos)) {
       ByteStreams.copy(r, w);
-    } catch (IOException e) {
+    } catch (ApiException | IOException e) {
       throw StorageException.coalesce(e);
     }
     return baos.toByteArray();
@@ -607,7 +614,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Files.newByteChannel(path, WRITE_OPS)) {
       ByteStreams.copy(r, w);
-    } catch (IOException e) {
+    } catch (ApiException | IOException e) {
       throw StorageException.coalesce(e);
     }
   }
@@ -620,7 +627,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(outputStream)) {
       ByteStreams.copy(r, w);
-    } catch (IOException e) {
+    } catch (ApiException | IOException e) {
       throw StorageException.coalesce(e);
     }
   }
@@ -721,132 +728,137 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public List<Blob> get(BlobId... blobIds) {
-    return todo();
+    return throwHttpJsonOnly(fmtMethodName("get", BlobId[].class));
   }
 
   @Override
   public List<Blob> get(Iterable<BlobId> blobIds) {
-    return todo();
+    return throwHttpJsonOnly(fmtMethodName("get", Iterable.class));
   }
 
   @Override
   public List<Blob> update(BlobInfo... blobInfos) {
-    return todo();
+    return throwHttpJsonOnly(fmtMethodName("update", BlobInfo[].class));
   }
 
   @Override
   public List<Blob> update(Iterable<BlobInfo> blobInfos) {
-    return todo();
+    return throwHttpJsonOnly(fmtMethodName("update", Iterable.class));
   }
 
   @Override
   public List<Boolean> delete(BlobId... blobIds) {
-    return todo();
+    return throwHttpJsonOnly(fmtMethodName("delete", BlobId[].class));
   }
 
   @Override
   public List<Boolean> delete(Iterable<BlobId> blobIds) {
-    return todo();
+    return throwHttpJsonOnly(fmtMethodName("delete", Iterable.class));
   }
 
   @Override
   public Acl getAcl(String bucket, Entity entity, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("getAcl", String.class, Entity.class, BucketSourceOption[].class));
   }
 
   @Override
   public Acl getAcl(String bucket, Entity entity) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("getAcl", String.class, Entity.class));
   }
 
   @Override
   public boolean deleteAcl(String bucket, Entity entity, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("deleteAcl", String.class, Entity.class, BucketSourceOption[].class));
   }
 
   @Override
   public boolean deleteAcl(String bucket, Entity entity) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("deleteAcl", String.class, Entity.class));
   }
 
   @Override
   public Acl createAcl(String bucket, Acl acl, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("createAcl", String.class, Acl.class, BucketSourceOption[].class));
   }
 
   @Override
   public Acl createAcl(String bucket, Acl acl) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("createAcl", String.class, Acl.class));
   }
 
   @Override
   public Acl updateAcl(String bucket, Acl acl, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("updateAcl", String.class, Acl.class, BucketSourceOption[].class));
   }
 
   @Override
   public Acl updateAcl(String bucket, Acl acl) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("updateAcl", String.class, Acl.class));
   }
 
   @Override
   public List<Acl> listAcls(String bucket, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("listAcls", String.class, BucketSourceOption[].class));
   }
 
   @Override
   public List<Acl> listAcls(String bucket) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("listAcls", String.class));
   }
 
   @Override
   public Acl getDefaultAcl(String bucket, Entity entity) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("getDefaultAcl", String.class, Entity.class));
   }
 
   @Override
   public boolean deleteDefaultAcl(String bucket, Entity entity) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("deleteDefaultAcl", String.class, Entity.class));
   }
 
   @Override
   public Acl createDefaultAcl(String bucket, Acl acl) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("createDefaultAcl", String.class, Acl.class));
   }
 
   @Override
   public Acl updateDefaultAcl(String bucket, Acl acl) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("updateDefaultAcl", String.class, Acl.class));
   }
 
   @Override
   public List<Acl> listDefaultAcls(String bucket) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("listDefaultAcls", String.class));
   }
 
   @Override
   public Acl getAcl(BlobId blob, Entity entity) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("getAcl", BlobId.class, Entity.class));
   }
 
   @Override
   public boolean deleteAcl(BlobId blob, Entity entity) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("deleteAcl", BlobId.class, Entity.class));
   }
 
   @Override
   public Acl createAcl(BlobId blob, Acl acl) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("createAcl", BlobId.class, Acl.class));
   }
 
   @Override
   public Acl updateAcl(BlobId blob, Acl acl) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("updateAcl", BlobId.class, Acl.class));
   }
 
   @Override
   public List<Acl> listAcls(BlobId blob) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("listAcls", BlobId.class));
   }
 
   @Override
@@ -888,10 +900,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .andThen(opts.listHmacKeysRequest())
             .apply(ListHmacKeysRequest.newBuilder())
             .build();
-    ListHmacKeysPagedResponse call = listHmacKeysCallable.call(request, grpcCallContext);
-    ListHmacKeysPage page = call.getPage();
-    return new TransformingPageDecorator<>(
-        page, codecs.hmacKeyMetadata(), getOptions(), retryAlgorithmManager.getFor(request));
+    try {
+      ListHmacKeysPagedResponse call = listHmacKeysCallable.call(request, grpcCallContext);
+      ListHmacKeysPage page = call.getPage();
+      return new TransformingPageDecorator<>(
+          page, codecs.hmacKeyMetadata(), getOptions(), retryAlgorithmManager.getFor(request));
+    } catch (Exception e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
@@ -955,18 +971,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Policy getIamPolicy(String bucket, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("getIamPolicy", String.class, BucketSourceOption[].class));
   }
 
   @Override
   public Policy setIamPolicy(String bucket, Policy policy, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("setIamPolicy", String.class, Policy.class, BucketSourceOption[].class));
   }
 
   @Override
   public List<Boolean> testIamPermissions(
       String bucket, List<String> permissions, BucketSourceOption... options) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("testIamPermissions", String.class, List.class, BucketSourceOption.class));
   }
 
   @Override
@@ -982,22 +1001,23 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Notification createNotification(String bucket, NotificationInfo notificationInfo) {
-    return todo();
+    return throwNotYetImplemented(
+        fmtMethodName("createNotification", String.class, NotificationInfo.class));
   }
 
   @Override
   public Notification getNotification(String bucket, String notificationId) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("getNotification", String.class, String.class));
   }
 
   @Override
   public List<Notification> listNotifications(String bucket) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("listNotifications", String.class));
   }
 
   @Override
   public boolean deleteNotification(String bucket, String notificationId) {
-    return todo();
+    return throwNotYetImplemented(fmtMethodName("deleteNotification", String.class, String.class));
   }
 
   @Override
@@ -1006,9 +1026,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   }
 
   private Blob getBlob(ApiFuture<WriteObjectResponse> result) {
-    // TODO: investigate if we need to unnest any exception
-    WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(result);
-    return syntaxDecoders.blob.decode(response.getResource());
+    try {
+      WriteObjectResponse response = ApiExceptions.callAndTranslateApiException(result);
+      return syntaxDecoders.blob.decode(response.getResource());
+    } catch (Exception e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   /** Bind some decoders for our "Syntax" classes to this instance of GrpcStorageImpl */
@@ -1143,6 +1166,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             "%s#%s is only supported for HTTP_JSON transport. Please use StorageOptions.http() to construct a compatible instance.",
             Storage.class.getName(), methodName);
     throw new UnsupportedOperationException(message);
+  }
+
+  private <T> T throwNotYetImplemented(String methodName) {
+    String message =
+        String.format(
+            "%s#%s is not yet implemented for GRPC transport. Please use StorageOptions.http() to construct a compatible instance in the interim.",
+            Storage.class.getName(), methodName);
+    throw new UnimplementedException(
+        message, null, statusCodeFor(StatusCode.Code.UNIMPLEMENTED), false);
   }
 
   private static String fmtMethodName(String name, Class<?>... args) {
