@@ -17,9 +17,11 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.util.List;
@@ -51,22 +53,34 @@ final class WriteFlushStrategy {
    */
   static FlusherFactory fsyncEveryFlush(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
-    return (LongConsumer committedTotalBytesCallback,
+    return (String bucketName,
+        LongConsumer committedTotalBytesCallback,
         Consumer<WriteObjectResponse> onSuccessCallback) ->
-        new FsyncEveryFlusher(write, committedTotalBytesCallback, onSuccessCallback);
+        new FsyncEveryFlusher(write, bucketName, committedTotalBytesCallback, onSuccessCallback);
   }
 
   /**
    * Create a {@link Flusher} which will "fsync" only on {@link Flusher#close(WriteObjectRequest)}.
    * Calls to {@link Flusher#flush(List)} will be sent but not synced.
    *
-   * @see FlusherFactory#newFlusher(LongConsumer, Consumer)
+   * @see FlusherFactory#newFlusher(String, LongConsumer, Consumer)
    */
   static FlusherFactory fsyncOnClose(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
-    return (LongConsumer committedTotalBytesCallback,
+    return (String bucketName,
+        LongConsumer committedTotalBytesCallback,
         Consumer<WriteObjectResponse> onSuccessCallback) ->
-        new FsyncOnClose(write, committedTotalBytesCallback, onSuccessCallback);
+        new FsyncOnClose(write, bucketName, committedTotalBytesCallback, onSuccessCallback);
+  }
+
+  private static GrpcCallContext contextWithBucketName(String bucketName) {
+    GrpcCallContext ret = GrpcCallContext.createDefault();
+    if (bucketName != null && !bucketName.isEmpty()) {
+      return ret.withExtraHeaders(
+          ImmutableMap.of(
+              "x-goog-request-params", ImmutableList.of(String.format("bucket=%s", bucketName))));
+    }
+    return ret;
   }
 
   @FunctionalInterface
@@ -77,7 +91,9 @@ final class WriteFlushStrategy {
      * @param onSuccessCallback Callback to signal success, and provide the final response.
      */
     Flusher newFlusher(
-        LongConsumer committedTotalBytesCallback, Consumer<WriteObjectResponse> onSuccessCallback);
+        String bucketName,
+        LongConsumer committedTotalBytesCallback,
+        Consumer<WriteObjectResponse> onSuccessCallback);
   }
 
   interface Flusher {
@@ -89,14 +105,17 @@ final class WriteFlushStrategy {
   private static final class FsyncEveryFlusher implements Flusher {
 
     private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
+    private final String bucketName;
     private final LongConsumer sizeCallback;
     private final Consumer<WriteObjectResponse> completeCallback;
 
     private FsyncEveryFlusher(
         ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+        String bucketName,
         LongConsumer sizeCallback,
         Consumer<WriteObjectResponse> completeCallback) {
       this.write = write;
+      this.bucketName = bucketName;
       this.sizeCallback = sizeCallback;
       this.completeCallback = completeCallback;
     }
@@ -104,7 +123,9 @@ final class WriteFlushStrategy {
     public void flush(@NonNull List<WriteObjectRequest> segments) {
 
       Observer observer = new Observer(sizeCallback, completeCallback);
-      ApiStreamObserver<WriteObjectRequest> write = this.write.clientStreamingCall(observer);
+      GrpcCallContext internalContext = contextWithBucketName(bucketName);
+      ApiStreamObserver<WriteObjectRequest> write =
+          this.write.withDefaultCallContext(internalContext).clientStreamingCall(observer);
 
       boolean first = true;
       for (WriteObjectRequest message : segments) {
@@ -129,6 +150,7 @@ final class WriteFlushStrategy {
   private static final class FsyncOnClose implements Flusher {
 
     private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
+    private final String bucketName;
     private final Observer responseObserver;
 
     private volatile ApiStreamObserver<WriteObjectRequest> stream;
@@ -136,9 +158,11 @@ final class WriteFlushStrategy {
 
     private FsyncOnClose(
         ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+        String bucketName,
         LongConsumer sizeCallback,
         Consumer<WriteObjectResponse> completeCallback) {
       this.write = write;
+      this.bucketName = bucketName;
       this.responseObserver = new Observer(sizeCallback, completeCallback);
     }
 
@@ -172,7 +196,11 @@ final class WriteFlushStrategy {
       if (stream == null) {
         synchronized (this) {
           if (stream == null) {
-            stream = write.clientStreamingCall(responseObserver);
+            GrpcCallContext internalContext = contextWithBucketName(bucketName);
+            stream =
+                this.write
+                    .withDefaultCallContext(internalContext)
+                    .clientStreamingCall(responseObserver);
           }
         }
       }

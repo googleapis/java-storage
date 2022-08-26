@@ -24,6 +24,7 @@ import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.WriteObjectRequest;
 import java.util.Objects;
 import java.util.function.Function;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class ResumableWrite implements WriteObjectRequestBuilderFactory {
 
@@ -53,6 +54,14 @@ final class ResumableWrite implements WriteObjectRequestBuilderFactory {
   @Override
   public WriteObjectRequest.Builder newBuilder() {
     return writeRequest.toBuilder();
+  }
+
+  @Override
+  public @Nullable String bucketName() {
+    if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
+      return req.getWriteObjectSpec().getResource().getBucket();
+    }
+    return null;
   }
 
   @Override

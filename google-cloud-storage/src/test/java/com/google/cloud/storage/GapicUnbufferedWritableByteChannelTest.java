@@ -77,7 +77,7 @@ public final class GapicUnbufferedWritableByteChannelTest {
         WriteObjectResponse.newBuilder().setResource(obj.toBuilder().setSize(40)).build();
 
     WriteObjectRequest base = WriteObjectRequest.newBuilder().setWriteObjectSpec(spec).build();
-    WriteObjectRequestBuilderFactory reqFactory = base::toBuilder;
+    WriteObjectRequestBuilderFactory reqFactory = WriteObjectRequestBuilderFactory.simple(base);
 
     StorageImplBase service =
         new DirectWriteService(
