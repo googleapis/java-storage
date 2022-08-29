@@ -558,7 +558,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.openRewrite(rewriteRequest),
-        (r) -> new CopyWriter(getOptions(), r));
+        (r) -> new HttpCopyWriter(getOptions(), r));
   }
 
   @Override

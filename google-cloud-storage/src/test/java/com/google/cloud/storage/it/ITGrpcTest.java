@@ -26,14 +26,17 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobListOption;
+import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.CreateHmacKeyOption;
 import com.google.cloud.storage.Storage.ListHmacKeysOption;
 import com.google.cloud.storage.StorageFixture;
@@ -236,5 +239,30 @@ public final class ITGrpcTest {
     }
     byte[] actual = storageFixture.getInstance().readAllBytes(info.getBlobId());
     assertThat(actual).isEqualTo(content);
+  }
+
+  @Test
+  public void storageCopy() {
+    Storage s = storageFixture.getInstance();
+
+    byte[] expected = "Hello, World!".getBytes(StandardCharsets.UTF_8);
+
+    BlobInfo info = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), "copy/src").build();
+    Blob cpySrc = s.create(info, expected, BlobTargetOption.doesNotExist());
+
+    BlobInfo dst = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), "copy/dst").build();
+
+    CopyRequest copyRequest =
+        CopyRequest.newBuilder()
+            .setSource(cpySrc.getBlobId())
+            .setSourceOptions(BlobSourceOption.generationMatch(cpySrc.getGeneration()))
+            .setTarget(dst, BlobTargetOption.doesNotExist())
+            .build();
+
+    CopyWriter copyWriter = s.copy(copyRequest);
+    Blob result = copyWriter.getResult();
+
+    byte[] actualBytes = s.readAllBytes(result.getBlobId());
+    assertThat(actualBytes).isEqualTo(expected);
   }
 }

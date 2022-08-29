@@ -302,6 +302,18 @@ public final class UnifiedOptsGrpcTest {
                 .build();
         assertThat(actual).isEqualTo(expected);
       }
+
+      @Test
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfGenerationMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.generationMatch(1L)
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
     }
 
     public static final class GenerationNotMatchTest {
@@ -366,6 +378,18 @@ public final class UnifiedOptsGrpcTest {
                 .build();
         assertThat(actual).isEqualTo(expected);
       }
+
+      @Test
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfGenerationNotMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.generationNotMatch(1L)
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
     }
 
     public static final class KmsKeyNameTest {
@@ -396,6 +420,20 @@ public final class UnifiedOptsGrpcTest {
             UnifiedOpts.kmsKeyName("key")
                 .composeObject()
                 .apply(ComposeObjectRequest.newBuilder())
+                .build();
+
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setDestinationKmsKey("key").build();
+
+        RewriteObjectRequest actual =
+            UnifiedOpts.kmsKeyName("key")
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
                 .build();
 
         assertThat(actual).isEqualTo(expected);
@@ -473,6 +511,18 @@ public final class UnifiedOptsGrpcTest {
             UnifiedOpts.metagenerationMatch(1L)
                 .composeObject()
                 .apply(ComposeObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfMetagenerationMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.metagenerationMatch(1L)
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
                 .build();
         assertThat(actual).isEqualTo(expected);
       }
@@ -573,6 +623,18 @@ public final class UnifiedOptsGrpcTest {
             UnifiedOpts.metagenerationNotMatch(1L)
                 .deleteObject()
                 .apply(DeleteObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setIfMetagenerationNotMatch(1L).build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.metagenerationNotMatch(1L)
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
                 .build();
         assertThat(actual).isEqualTo(expected);
       }
@@ -719,6 +781,18 @@ public final class UnifiedOptsGrpcTest {
             UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE)
                 .composeObject()
                 .apply(ComposeObjectRequest.newBuilder())
+                .build();
+        assertThat(actual).isEqualTo(expected);
+      }
+
+      @Test
+      public void rewriteObject() {
+        RewriteObjectRequest expected =
+            RewriteObjectRequest.newBuilder().setDestinationPredefinedAcl("private").build();
+        RewriteObjectRequest actual =
+            UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE)
+                .rewriteObject()
+                .apply(RewriteObjectRequest.newBuilder())
                 .build();
         assertThat(actual).isEqualTo(expected);
       }

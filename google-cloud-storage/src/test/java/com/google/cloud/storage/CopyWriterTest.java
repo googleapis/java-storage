@@ -119,7 +119,7 @@ public class CopyWriterTest {
     EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .andReturn(RESPONSE_WITH_OBJECT_DONE);
     EasyMock.replay(storageRpcMock);
-    copyWriter = new CopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -131,7 +131,7 @@ public class CopyWriterTest {
     EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
         .andReturn(RESPONSE_WITHOUT_OBJECT_DONE);
     EasyMock.replay(storageRpcMock);
-    copyWriter = new CopyWriter(options, RESPONSE_WITHOUT_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -145,7 +145,7 @@ public class CopyWriterTest {
     EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .andReturn(RESPONSE_WITH_OBJECT_DONE);
     EasyMock.replay(storageRpcMock);
-    copyWriter = new CopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -159,7 +159,7 @@ public class CopyWriterTest {
     EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
         .andReturn(RESPONSE_WITHOUT_OBJECT_DONE);
     EasyMock.replay(storageRpcMock);
-    copyWriter = new CopyWriter(options, RESPONSE_WITHOUT_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());
     assertEquals(42L, copyWriter.getTotalBytesCopied());
@@ -173,7 +173,7 @@ public class CopyWriterTest {
     EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .andReturn(RESPONSE_WITH_OBJECT_DONE);
     EasyMock.replay(storageRpcMock);
-    copyWriter = new CopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     copyWriter.copyChunk();
     assertTrue(!copyWriter.isDone());
     assertEquals(21L, copyWriter.getTotalBytesCopied());
@@ -193,7 +193,7 @@ public class CopyWriterTest {
     EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITHOUT_OBJECT))
         .andReturn(RESPONSE_WITHOUT_OBJECT_DONE);
     EasyMock.replay(storageRpcMock);
-    copyWriter = new CopyWriter(options, RESPONSE_WITHOUT_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITHOUT_OBJECT);
     copyWriter.copyChunk();
     assertTrue(!copyWriter.isDone());
     assertEquals(21L, copyWriter.getTotalBytesCopied());
@@ -211,7 +211,7 @@ public class CopyWriterTest {
     EasyMock.expect(storageRpcMock.continueRewrite(RESPONSE_WITH_OBJECT))
         .andReturn(RESPONSE_WITH_OBJECT_DONE);
     EasyMock.replay(storageRpcMock);
-    copyWriter = new CopyWriter(options, RESPONSE_WITH_OBJECT);
+    copyWriter = new HttpCopyWriter(options, RESPONSE_WITH_OBJECT);
     copyWriter.copyChunk();
     assertEquals(result, copyWriter.getResult());
     assertTrue(copyWriter.isDone());

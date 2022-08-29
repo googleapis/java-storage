@@ -712,7 +712,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfGenerationMatch(val);
     }
 
     @Override
@@ -763,7 +763,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfGenerationNotMatch(val);
     }
 
     @Override
@@ -790,6 +790,11 @@ final class UnifiedOpts {
     @Override
     public Mapper<ComposeObjectRequest.Builder> composeObject() {
       return b -> b.setKmsKey(val);
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setDestinationKmsKey(val);
     }
   }
 
@@ -881,7 +886,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfMetagenerationMatch(val);
     }
 
     @Override
@@ -951,7 +956,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
-      return Mapper.identity();
+      return b -> b.setIfMetagenerationNotMatch(val);
     }
 
     @Override
@@ -1057,6 +1062,11 @@ final class UnifiedOpts {
     @Override
     public Mapper<CreateBucketRequest.Builder> createBucket() {
       return b -> b.setPredefinedAcl(val);
+    }
+
+    @Override
+    public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
+      return b -> b.setDestinationPredefinedAcl(val);
     }
   }
 
