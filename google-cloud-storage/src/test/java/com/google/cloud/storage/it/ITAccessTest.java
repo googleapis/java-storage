@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
 
 import com.google.cloud.Condition;
 import com.google.cloud.Identity;
@@ -41,7 +40,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
@@ -73,9 +71,6 @@ public class ITAccessTest {
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
   private static final Long RETENTION_PERIOD = 5L;
-  private static final boolean IS_VPC_TEST =
-      System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC") != null
-          && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
 
   private static Storage storage;
   private static String bucketName;
@@ -878,59 +873,6 @@ public class ITAccessTest {
     } catch (StorageException ex) {
       // expected
     }
-  }
-
-  @Test
-  public void testDownloadPublicBlobWithoutAuthentication() {
-    assumeFalse(IS_VPC_TEST);
-    // create an unauthorized user
-    Storage unauthorizedStorage = StorageOptions.getUnauthenticatedInstance().getService();
-
-    // try to download blobs from a public bucket
-    String landsatBucket = "gcp-public-data-landsat";
-    String landsatPrefix = "LC08/01/001/002/LC08_L1GT_001002_20160817_20170322_01_T2/";
-    String landsatBlob = landsatPrefix + "LC08_L1GT_001002_20160817_20170322_01_T2_ANG.txt";
-    byte[] bytes = unauthorizedStorage.readAllBytes(landsatBucket, landsatBlob);
-
-    assertThat(bytes.length).isEqualTo(117255);
-    int numBlobs = 0;
-    Iterator<Blob> blobIterator =
-        unauthorizedStorage
-            .list(landsatBucket, Storage.BlobListOption.prefix(landsatPrefix))
-            .iterateAll()
-            .iterator();
-    while (blobIterator.hasNext()) {
-      numBlobs++;
-      blobIterator.next();
-    }
-    assertThat(numBlobs).isEqualTo(14);
-
-    // try to download blobs from a bucket that requires authentication
-    // authenticated client will succeed
-    // unauthenticated client will receive an exception
-    String sourceBlobName = "source-blob-name";
-    BlobInfo sourceBlob = BlobInfo.newBuilder(bucketName, sourceBlobName).build();
-    assertThat(storage.create(sourceBlob)).isNotNull();
-    assertThat(storage.readAllBytes(bucketName, sourceBlobName)).isNotNull();
-    try {
-      unauthorizedStorage.readAllBytes(bucketName, sourceBlobName);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    assertThat(storage.get(sourceBlob.getBlobId()).delete()).isTrue();
-
-    // try to upload blobs to a bucket that requires authentication
-    // authenticated client will succeed
-    // unauthenticated client will receive an exception
-    assertThat(storage.create(sourceBlob)).isNotNull();
-    try {
-      unauthorizedStorage.create(sourceBlob);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    assertThat(storage.get(sourceBlob.getBlobId()).delete()).isTrue();
   }
 
   private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {

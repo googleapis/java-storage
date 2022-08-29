@@ -27,10 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.gax.paging.Page;
-import com.google.auth.http.HttpTransportFactory;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
@@ -72,8 +69,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -133,16 +128,6 @@ public class ITObjectTest {
   @AfterClass
   public static void afterClass() {
     unsetRequesterPays();
-  }
-
-  private static class CustomHttpTransportFactory implements HttpTransportFactory {
-    @Override
-    @SuppressWarnings({"unchecked", "deprecation"})
-    public HttpTransport create() {
-      PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
-      manager.setMaxTotal(1);
-      return new ApacheHttpTransport(HttpClients.createMinimal(manager));
-    }
   }
 
   @Test
