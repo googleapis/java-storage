@@ -16,12 +16,14 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import com.google.cloud.Condition;
 import com.google.cloud.Identity;
@@ -30,6 +32,7 @@ import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
@@ -38,6 +41,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
@@ -69,6 +73,9 @@ public class ITAccessTest {
       BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
   private static final Long RETENTION_PERIOD = 5L;
+  private static final boolean IS_VPC_TEST =
+      System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC") != null
+          && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
 
   private static Storage storage;
   private static String bucketName;
@@ -768,6 +775,162 @@ public class ITAccessTest {
           .build()
           .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
     }
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
+    String bpoBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      // BPO is disabled by default.
+      Bucket bucket =
+          storage.create(
+              Bucket.newBuilder(bpoBucket)
+                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                  .setDefaultAcl(
+                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                  .build());
+
+      BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
+          BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
+      bucket
+          .toBuilder()
+          .setAcl(null)
+          .setDefaultAcl(null)
+          .setIamConfiguration(bpoEnabledIamConfiguration)
+          .build()
+          .update();
+
+      Bucket remoteBucket =
+          storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+
+      assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
+
+      remoteBucket
+          .toBuilder()
+          .setIamConfiguration(
+              bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
+          .build()
+          .update();
+
+      remoteBucket =
+          storage.get(
+              bpoBucket,
+              Storage.BucketGetOption.fields(
+                  BucketField.IAMCONFIGURATION, BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
+
+      assertFalse(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getDefaultAcl().get(0).getEntity());
+      assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
+      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
+      assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bpoBucket, 1, TimeUnit.MINUTES);
+    }
+  }
+
+  @Test
+  public void testBlobAcl() {
+    BlobId blobId = BlobId.of(bucketName, "test-blob-acl");
+    BlobInfo blob = BlobInfo.newBuilder(blobId).build();
+    storage.create(blob);
+    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
+    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+    assertNotNull(storage.createAcl(blobId, acl));
+    Acl updatedAcl = storage.updateAcl(blobId, acl.toBuilder().setRole(Role.OWNER).build());
+    assertEquals(Role.OWNER, updatedAcl.getRole());
+    Set<Acl> acls = new HashSet<>(storage.listAcls(blobId));
+    assertTrue(acls.contains(updatedAcl));
+    assertTrue(storage.deleteAcl(blobId, User.ofAllAuthenticatedUsers()));
+    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
+    // test non-existing blob
+    BlobId otherBlobId = BlobId.of(bucketName, "test-blob-acl", -1L);
+    try {
+      assertNull(storage.getAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
+      fail("Expected an 'Invalid argument' exception");
+    } catch (StorageException e) {
+      assertThat(e.getMessage()).contains("Invalid argument");
+    }
+
+    try {
+      assertFalse(storage.deleteAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
+      fail("Expected an 'Invalid argument' exception");
+    } catch (StorageException e) {
+      assertThat(e.getMessage()).contains("Invalid argument");
+    }
+
+    try {
+      storage.createAcl(otherBlobId, acl);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
+    }
+    try {
+      storage.updateAcl(otherBlobId, acl);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
+    }
+    try {
+      storage.listAcls(otherBlobId);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
+    }
+  }
+
+  @Test
+  public void testDownloadPublicBlobWithoutAuthentication() {
+    assumeFalse(IS_VPC_TEST);
+    // create an unauthorized user
+    Storage unauthorizedStorage = StorageOptions.getUnauthenticatedInstance().getService();
+
+    // try to download blobs from a public bucket
+    String landsatBucket = "gcp-public-data-landsat";
+    String landsatPrefix = "LC08/01/001/002/LC08_L1GT_001002_20160817_20170322_01_T2/";
+    String landsatBlob = landsatPrefix + "LC08_L1GT_001002_20160817_20170322_01_T2_ANG.txt";
+    byte[] bytes = unauthorizedStorage.readAllBytes(landsatBucket, landsatBlob);
+
+    assertThat(bytes.length).isEqualTo(117255);
+    int numBlobs = 0;
+    Iterator<Blob> blobIterator =
+        unauthorizedStorage
+            .list(landsatBucket, Storage.BlobListOption.prefix(landsatPrefix))
+            .iterateAll()
+            .iterator();
+    while (blobIterator.hasNext()) {
+      numBlobs++;
+      blobIterator.next();
+    }
+    assertThat(numBlobs).isEqualTo(14);
+
+    // try to download blobs from a bucket that requires authentication
+    // authenticated client will succeed
+    // unauthenticated client will receive an exception
+    String sourceBlobName = "source-blob-name";
+    BlobInfo sourceBlob = BlobInfo.newBuilder(bucketName, sourceBlobName).build();
+    assertThat(storage.create(sourceBlob)).isNotNull();
+    assertThat(storage.readAllBytes(bucketName, sourceBlobName)).isNotNull();
+    try {
+      unauthorizedStorage.readAllBytes(bucketName, sourceBlobName);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
+    }
+    assertThat(storage.get(sourceBlob.getBlobId()).delete()).isTrue();
+
+    // try to upload blobs to a bucket that requires authentication
+    // authenticated client will succeed
+    // unauthenticated client will receive an exception
+    assertThat(storage.create(sourceBlob)).isNotNull();
+    try {
+      unauthorizedStorage.create(sourceBlob);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
+    }
+    assertThat(storage.get(sourceBlob.getBlobId()).delete()).isTrue();
   }
 
   private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {

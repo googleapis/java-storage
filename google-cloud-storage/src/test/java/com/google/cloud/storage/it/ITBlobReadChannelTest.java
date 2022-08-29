@@ -17,16 +17,25 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
+import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -34,7 +43,9 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.zip.GZIPInputStream;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -46,6 +57,10 @@ public final class ITBlobReadChannelTest {
 
   private static final int _16MiB = 16 * 1024 * 1024;
   private static final int _256KiB = 256 * 1024;
+  private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
+  private static final byte[] COMPRESSED_CONTENT =
+      BaseEncoding.base64()
+          .decode("H4sIAAAAAAAAAPNIzcnJV3DPz0/PSVVwzskvTVEILskvSkxPVQQA/LySchsAAAA=");
 
   @Rule public final TestName testName = new TestName();
 
@@ -138,6 +153,99 @@ public final class ITBlobReadChannelTest {
       assertThat(readBytes).isEqualTo(expectedBytes);
     } finally {
       file.delete();
+    }
+  }
+
+  @Test
+  public void testReadChannelFail() {
+    String blobName = "test-read-channel-blob-fail";
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
+    Blob remoteBlob = storage.create(blob);
+    assertNotNull(remoteBlob);
+    try (ReadChannel reader =
+        storage.reader(blob.getBlobId(), Storage.BlobSourceOption.metagenerationMatch(-1L))) {
+      reader.read(ByteBuffer.allocate(42));
+      fail("StorageException was expected");
+    } catch (IOException ex) {
+      // expected
+    }
+    try (ReadChannel reader =
+        storage.reader(blob.getBlobId(), Storage.BlobSourceOption.generationMatch(-1L))) {
+      reader.read(ByteBuffer.allocate(42));
+      fail("StorageException was expected");
+    } catch (IOException ex) {
+      // expected
+    }
+    BlobId blobIdWrongGeneration = BlobId.of(bucketName, blobName, -1L);
+    try (ReadChannel reader =
+        storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
+      reader.read(ByteBuffer.allocate(42));
+      fail("StorageException was expected");
+    } catch (IOException ex) {
+      // expected
+    }
+  }
+
+  @Test
+  public void testReadChannelFailUpdatedGeneration() throws IOException {
+    String blobName = "test-read-blob-fail-updated-generation";
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
+    Random random = new Random();
+    int chunkSize = 1024;
+    int blobSize = 2 * chunkSize;
+    byte[] content = new byte[blobSize];
+    random.nextBytes(content);
+    Blob remoteBlob = storage.create(blob, content);
+    assertNotNull(remoteBlob);
+    assertEquals(blobSize, (long) remoteBlob.getSize());
+    try (ReadChannel reader = storage.reader(blob.getBlobId())) {
+      reader.setChunkSize(chunkSize);
+      ByteBuffer readBytes = ByteBuffer.allocate(chunkSize);
+      int numReadBytes = reader.read(readBytes);
+      assertEquals(chunkSize, numReadBytes);
+      assertArrayEquals(Arrays.copyOf(content, chunkSize), readBytes.array());
+      try (WriteChannel writer = storage.writer(blob)) {
+        byte[] newContent = new byte[blobSize];
+        random.nextBytes(newContent);
+        int numWrittenBytes = writer.write(ByteBuffer.wrap(newContent));
+        assertEquals(blobSize, numWrittenBytes);
+      }
+      readBytes = ByteBuffer.allocate(chunkSize);
+      reader.read(readBytes);
+      fail("StorageException was expected");
+    } catch (IOException ex) {
+      StringBuilder messageBuilder = new StringBuilder();
+      messageBuilder.append("Blob ").append(blob.getBlobId()).append(" was updated while reading");
+      assertEquals(messageBuilder.toString(), ex.getMessage());
+    }
+  }
+
+  @Test
+  public void testReadCompressedBlob() throws IOException {
+    String blobName = "test-read-compressed-blob";
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(BlobId.of(bucketName, blobName))
+            .setContentType("text/plain")
+            .setContentEncoding("gzip")
+            .build();
+    Blob blob = storage.create(blobInfo, COMPRESSED_CONTENT);
+    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      try (ReadChannel reader = storage.reader(BlobId.of(bucketName, blobName))) {
+        reader.setChunkSize(8);
+        ByteBuffer buffer = ByteBuffer.allocate(8);
+        while (reader.read(buffer) != -1) {
+          buffer.flip();
+          output.write(buffer.array(), 0, buffer.limit());
+          buffer.clear();
+        }
+      }
+      assertArrayEquals(
+          BLOB_STRING_CONTENT.getBytes(UTF_8), storage.readAllBytes(bucketName, blobName));
+      assertArrayEquals(COMPRESSED_CONTENT, output.toByteArray());
+      try (GZIPInputStream zipInput =
+          new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))) {
+        assertArrayEquals(BLOB_STRING_CONTENT.getBytes(UTF_8), ByteStreams.toByteArray(zipInput));
+      }
     }
   }
 
