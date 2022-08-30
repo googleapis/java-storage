@@ -4,24 +4,7 @@
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage-parent</artifactId>
   <packaging>pom</packaging>
-  <version>2.11.4-SNAPSHOT</version>
-    <dependencies>
-        <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-      <dependency>
-        <groupId>com.google.cloud</groupId>
-        <artifactId>google-cloud-core</artifactId>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.google.cloud</groupId>
-        <artifactId>google-cloud-core</artifactId>
-        <scope>test</scope>
-      </dependency>
-    </dependencies><!-- {x-version-update:google-cloud-storage:current} -->
+  <version>2.11.4-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
   <name>Storage Parent</name>
   <url>https://github.com/googleapis/java-storage</url>
   <description>
