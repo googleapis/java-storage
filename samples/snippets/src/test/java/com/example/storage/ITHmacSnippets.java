@@ -33,7 +33,10 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.testing.junit4.MultipleAttemptsRule;
+import java.time.Duration;
+import java.time.Instant;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,14 +55,29 @@ public class ITHmacSnippets extends TestBase {
   @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5, 2000L);
 
   private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
+    Instant now = Instant.now();
+    Instant yesterday = now.minus(Duration.ofDays(1L));
+
     Page<HmacKey.HmacKeyMetadata> metadatas =
         storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
     for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
-      if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
-        hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
-      }
-      if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
-        storage.deleteHmacKey(hmacKeyMetadata);
+      Instant updated = Instant.ofEpochMilli(hmacKeyMetadata.getUpdateTime());
+      if (updated.isBefore(yesterday)) {
+
+        if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
+          hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
+        }
+
+        if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
+          try {
+            storage.deleteHmacKey(hmacKeyMetadata);
+          } catch (StorageException e) {
+            // attempted to delete concurrently, if the other succeeded swallow the error
+            if (!(e.getReason().equals("invalid") && e.getMessage().contains("deleted"))) {
+              throw e;
+            }
+          }
+        }
       }
     }
   }
