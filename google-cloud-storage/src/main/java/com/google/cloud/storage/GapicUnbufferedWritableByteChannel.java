@@ -57,7 +57,10 @@ final class GapicUnbufferedWritableByteChannel<
 
     this.writeCtx = new WriteCtx<>(requestFactory);
     this.flusher =
-        flusherFactory.newFlusher(writeCtx.getConfirmedBytes()::addAndGet, resultFuture::set);
+        flusherFactory.newFlusher(
+            requestFactory.bucketName(),
+            writeCtx.getConfirmedBytes()::addAndGet,
+            resultFuture::set);
   }
 
   @Override

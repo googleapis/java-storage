@@ -23,6 +23,7 @@ import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.storage.v2.WriteObjectRequest;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
 
@@ -74,9 +75,11 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
         + '}';
   }
 
-  @FunctionalInterface
   interface WriteObjectRequestBuilderFactory {
     WriteObjectRequest.Builder newBuilder();
+
+    @Nullable
+    String bucketName();
 
     static SimpleWriteObjectRequestBuilderFactory simple(WriteObjectRequest req) {
       return new SimpleWriteObjectRequestBuilderFactory(req);
@@ -94,6 +97,14 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
     @Override
     public WriteObjectRequest.Builder newBuilder() {
       return req.toBuilder();
+    }
+
+    @Override
+    public @Nullable String bucketName() {
+      if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
+        return req.getWriteObjectSpec().getResource().getBucket();
+      }
+      return null;
     }
 
     @Override
