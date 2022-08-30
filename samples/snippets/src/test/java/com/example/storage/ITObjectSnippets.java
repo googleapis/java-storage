@@ -62,6 +62,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.testing.junit4.MultipleAttemptsRule;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
@@ -101,6 +102,8 @@ public class ITObjectSnippets {
   private static Storage storage;
 
   @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
+
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
 
   @Rule public ExpectedException thrown = ExpectedException.none();
 

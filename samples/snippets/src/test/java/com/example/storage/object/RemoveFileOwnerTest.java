@@ -23,9 +23,13 @@ import com.example.storage.TestBase;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
+import com.google.cloud.testing.junit4.MultipleAttemptsRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class RemoveFileOwnerTest extends TestBase {
+
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
 
   public static final String IT_SERVICE_ACCOUNT_EMAIL = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
 

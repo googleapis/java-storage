@@ -49,7 +49,7 @@ public class ITHmacSnippets extends TestBase {
     cleanUpHmacKeys(ServiceAccount.of(HMAC_KEY_TEST_SERVICE_ACCOUNT));
   }
 
-  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5, 2000L);
 
   private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
     Page<HmacKey.HmacKeyMetadata> metadatas =
@@ -66,7 +66,6 @@ public class ITHmacSnippets extends TestBase {
 
   @Test
   public void testCreateHmacKey() throws Exception {
-    ;
     CreateHmacKey.createHmacKey(HMAC_KEY_TEST_SERVICE_ACCOUNT, PROJECT_ID);
     String snippetOutput = stdOut.getCapturedOutputAsUtf8String();
     String accessId = snippetOutput.split("Access ID: ")[1].split("\n")[0];
