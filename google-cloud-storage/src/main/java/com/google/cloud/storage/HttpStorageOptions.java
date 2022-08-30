@@ -33,6 +33,7 @@ import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import java.io.Serializable;
 import java.util.Set;
 
 // non-final because of mocking frameworks
@@ -239,7 +240,8 @@ public class HttpStorageOptions extends StorageOptions {
    * @see HttpStorageDefaults#getDefaultServiceFactory()
    */
   @InternalApi
-  public static class HttpStorageFactory implements StorageFactory {
+  public static class HttpStorageFactory implements StorageFactory, Serializable {
+    private static final long serialVersionUID = -509515936479640159L;
 
     /**
      * Internal implementation detail, only public to allow for {@link java.io.Serializable}.
@@ -253,6 +255,7 @@ public class HttpStorageOptions extends StorageOptions {
      * @deprecated instead use {@link HttpStorageDefaults#getDefaultServiceFactory()
      *     HttpStorageOptions.defaults().getDefaultServiceFactory()}
      */
+    // this class needs to be public due to ServiceOptions forName'ing it in it's readObject method
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
@@ -280,7 +283,8 @@ public class HttpStorageOptions extends StorageOptions {
    * @see HttpStorageDefaults#getDefaultRpcFactory()
    */
   @InternalApi
-  public static class HttpStorageRpcFactory implements StorageRpcFactory {
+  public static class HttpStorageRpcFactory implements StorageRpcFactory, Serializable {
+    private static final long serialVersionUID = -7487671939555953705L;
 
     /**
      * Internal implementation detail, only public to allow for {@link java.io.Serializable}.
@@ -294,6 +298,7 @@ public class HttpStorageOptions extends StorageOptions {
      * @deprecated instead use {@link HttpStorageDefaults#getDefaultRpcFactory()
      *     HttpStorageOptions.defaults().getDefaultRpcFactory()}
      */
+    // this class needs to be public due to ServiceOptions forName'ing it in it's readObject method
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")

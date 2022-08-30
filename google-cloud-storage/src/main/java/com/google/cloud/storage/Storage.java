@@ -3743,6 +3743,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP})
   boolean deleteNotification(String bucket, String notificationId);
 
+  /**
+   * @throws InterruptedException thrown if interrupted while awaiting termination of underlying
+   *     resources
+   */
   @Override
   default void close() throws Exception {}
 }

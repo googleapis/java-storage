@@ -62,6 +62,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
+  private final Duration terminationAwaitDuration;
 
   @BetaApi
   public GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
@@ -70,6 +71,9 @@ public final class GrpcStorageOptions extends StorageOptions
         new GrpcRetryAlgorithmManager(
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, serviceDefaults.getStorageRetryStrategy()));
+    this.terminationAwaitDuration =
+        MoreObjects.firstNonNull(
+            builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
   }
 
   @Override
@@ -80,6 +84,11 @@ public final class GrpcStorageOptions extends StorageOptions
   @InternalApi
   GrpcRetryAlgorithmManager getRetryAlgorithmManager() {
     return retryAlgorithmManager;
+  }
+
+  @InternalApi
+  Duration getTerminationAwaitDuration() {
+    return terminationAwaitDuration;
   }
 
   @InternalApi
@@ -160,7 +169,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof StorageOptions && baseEquals((StorageOptions) obj);
+    return obj instanceof GrpcStorageOptions && baseEquals((GrpcStorageOptions) obj);
   }
 
   @BetaApi
@@ -178,15 +187,41 @@ public final class GrpcStorageOptions extends StorageOptions
     return GrpcStorageOptions.GrpcStorageDefaults.INSTANCE;
   }
 
+  // since our new GrpcStorageImpl can "close" we need to help ServiceOptions know whether it can
+  // use it's cached instance.
+  @Override
+  protected boolean shouldRefreshService(Storage cachedService) {
+    if (cachedService instanceof GrpcStorageImpl) {
+      GrpcStorageImpl service = (GrpcStorageImpl) cachedService;
+      return service.isClosed();
+    }
+    return super.shouldRefreshService(cachedService);
+  }
+
   @BetaApi
   public static class Builder extends StorageOptions.Builder {
 
     private StorageRetryStrategy storageRetryStrategy;
+    private Duration terminationAwaitDuration;
 
     Builder() {}
 
     Builder(StorageOptions options) {
       super(options);
+    }
+
+    /**
+     * Set the maximum duration in which to await termination of any outstanding requests when
+     * calling {@link Storage#close()}
+     *
+     * @param terminationAwaitDuration a non-null Duration to use
+     * @return the builder
+     */
+    @BetaApi
+    public Builder setTerminationAwaitDuration(Duration terminationAwaitDuration) {
+      this.terminationAwaitDuration =
+          requireNonNull(terminationAwaitDuration, "terminationAwaitDuration must be non null");
+      return this;
     }
 
     @BetaApi
@@ -328,6 +363,11 @@ public final class GrpcStorageOptions extends StorageOptions
     public StorageRetryStrategy getStorageRetryStrategy() {
       return StorageRetryStrategy.getDefaultStorageRetryStrategy();
     }
+
+    @BetaApi
+    public Duration getTerminationAwaitDuration() {
+      return Duration.ofMinutes(1);
+    }
   }
 
   /**
@@ -356,6 +396,7 @@ public final class GrpcStorageOptions extends StorageOptions
      *     GrpcStorageOptions.GrpcStorageDefaults#getDefaultServiceFactory()
      *     GrpcStorageOptions.defaults().getDefaultServiceFactory()}
      */
+    // this class needs to be public due to ServiceOptions forName'ing it in it's readObject method
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
@@ -389,6 +430,8 @@ public final class GrpcStorageOptions extends StorageOptions
    * @see GrpcStorageOptions.GrpcStorageDefaults#getDefaultRpcFactory()
    */
   @InternalApi
+  @BetaApi
+  @Deprecated
   public static class GrpcStorageRpcFactory implements StorageRpcFactory {
 
     /**
@@ -403,6 +446,7 @@ public final class GrpcStorageOptions extends StorageOptions
      * @deprecated instead use {@link GrpcStorageOptions.GrpcStorageDefaults#getDefaultRpcFactory()
      *     GrpcStorageOptions.defaults().getDefaultRpcFactory()}
      */
+    // this class needs to be public due to ServiceOptions forName'ing it in it's readObject method
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
