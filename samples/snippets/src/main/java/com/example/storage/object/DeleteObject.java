@@ -32,7 +32,13 @@ public class DeleteObject {
     // String objectName = "your-object-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    storage.delete(bucketName, objectName);
+
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request to upload returns a 412 error if
+    // the object's generation number does not match your precondition.
+    Storage.BlobSourceOption precondition = Storage.BlobSourceOption.generationMatch(storage.get(bucketName, objectName).getGeneration());
+
+    storage.delete(bucketName, objectName, precondition);
 
     System.out.println("Object " + objectName + " was deleted from " + bucketName);
   }

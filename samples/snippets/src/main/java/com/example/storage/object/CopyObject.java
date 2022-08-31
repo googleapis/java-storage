@@ -17,9 +17,7 @@
 package com.example.storage.object;
 
 // [START storage_copy_file]
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.*;
 
 public class CopyObject {
   public static void copyObject(
@@ -34,14 +32,24 @@ public class CopyObject {
     // String objectName = "your-object-name";
 
     // The ID of the bucket to copy the object to
-    // String targetBucketName = "target-object-bucket"
+    // String targetBucketName = "target-object-bucket";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Blob blob = storage.get(sourceBucketName, objectName);
+    BlobId source = BlobId.of(sourceBucketName, objectName);
+    BlobId target = BlobId.of(targetBucketName, objectName); // you could change "objectName" to rename the object
 
-    // This keeps the original name, you could also do
-    // copyTo(targetBucketName, "target-object-name") to change the name
-    blob.copyTo(targetBucketName);
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request returns a 412 error if the
+    // preconditions are not met.
+    // For a target object that does not yet exist, set the DoesNotExist precondition.
+    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
+    // If the destination already exists in your bucket, instead set a generation-match precondition:
+    // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
+    storage.copy(Storage.CopyRequest.newBuilder()
+            .setSource(source)
+            .setTarget(target, precondition)
+            .build());
 
     System.out.println(
         "Copied object "

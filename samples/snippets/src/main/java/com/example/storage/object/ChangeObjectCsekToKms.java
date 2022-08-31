@@ -47,10 +47,16 @@ public class ChangeObjectCsekToKms {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     BlobId blobId = BlobId.of(bucketName, objectName);
+
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request to upload returns a 412 error if
+    // the object's generation number does not match your precondition.
+    Storage.BlobSourceOption precondition = Storage.BlobSourceOption.generationMatch(storage.get(blobId).getGeneration());
+
     Storage.CopyRequest request =
         Storage.CopyRequest.newBuilder()
             .setSource(blobId)
-            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(decryptionKey))
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(decryptionKey), precondition)
             .setTarget(blobId, Storage.BlobTargetOption.kmsKeyName(kmsKeyName))
             .build();
     storage.copy(request);

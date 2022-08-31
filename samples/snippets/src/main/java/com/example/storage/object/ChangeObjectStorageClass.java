@@ -44,12 +44,20 @@ public class ChangeObjectStorageClass {
     StorageClass storageClass = StorageClass.COLDLINE;
 
     // You can't change an object's storage class directly, the only way is to rewrite the object
-    // with the
-    // desired storage class
+    // with the desired storage class
+
+    BlobInfo targetBlob = BlobInfo.newBuilder(blobId).setStorageClass(storageClass).build();
+
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request to upload returns a 412 error if
+    // the object's generation number does not match your precondition.
+    Storage.BlobSourceOption precondition = Storage.BlobSourceOption.generationMatch(storage.get(blobId).getGeneration());
+
     Storage.CopyRequest request =
         Storage.CopyRequest.newBuilder()
             .setSource(blobId)
-            .setTarget(BlobInfo.newBuilder(blobId).setStorageClass(storageClass).build())
+            .setSourceOptions(precondition) // delete this line to run without preconditions
+            .setTarget(targetBlob)
             .build();
     Blob updatedBlob = storage.copy(request).getResult();
 

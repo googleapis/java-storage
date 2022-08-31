@@ -48,11 +48,17 @@ public class RotateObjectEncryptionKey {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     BlobId blobId = BlobId.of(bucketName, objectName);
+
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request to upload returns a 412 error if
+    // the object's generation number does not match your precondition.
+    Storage.BlobSourceOption precondition = Storage.BlobSourceOption.generationMatch(storage.get(blobId).getGeneration());
+
     // You can't change an object's encryption key directly, the only way is to overwrite the object
     Storage.CopyRequest request =
         Storage.CopyRequest.newBuilder()
             .setSource(blobId)
-            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(oldEncryptionKey))
+            .setSourceOptions(Storage.BlobSourceOption.decryptionKey(oldEncryptionKey), precondition)
             .setTarget(blobId, Storage.BlobTargetOption.encryptionKey(newEncryptionKey))
             .build();
     storage.copy(request);

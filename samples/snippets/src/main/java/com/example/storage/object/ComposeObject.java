@@ -46,12 +46,21 @@ public class ComposeObject {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request returns a 412 error if the
+    // preconditions are not met.
+    // For a target object that does not yet exist, set the DoesNotExist precondition.
+    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
+    // If the destination already exists in your bucket, instead set a generation-match precondition:
+    // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
     Storage.ComposeRequest composeRequest =
         Storage.ComposeRequest.newBuilder()
             // addSource takes varargs, so you can put as many objects here as you want, up to the
             // max of 32
             .addSource(firstObjectName, secondObjectName)
             .setTarget(BlobInfo.newBuilder(bucketName, targetObjectName).build())
+            .setTargetOptions(precondition)
             .build();
 
     Blob compositeObject = storage.compose(composeRequest);
