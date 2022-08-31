@@ -24,6 +24,7 @@ import com.google.api.core.InternalApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.retrying.StreamResumptionStrategy;
 import com.google.api.gax.rpc.HeaderProvider;
@@ -48,6 +49,7 @@ import java.net.URI;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.threeten.bp.Duration;
 
 @BetaApi
 @TransportCompatibility(Transport.GRPC)
@@ -97,21 +99,33 @@ public final class GrpcStorageOptions extends StorageOptions
     StorageSettings.Builder builder =
         StorageSettings.newBuilder()
             .setEndpoint(endpoint)
-            .setCredentialsProvider(credentialsProvider);
+            .setCredentialsProvider(credentialsProvider)
+            .setClock(getClock());
 
     if (scheme.equals("http")) {
       builder.setTransportChannelProvider(
-          com.google.api.gax.grpc.InstantiatingGrpcChannelProvider.newBuilder()
+          InstantiatingGrpcChannelProvider.newBuilder()
               .setEndpoint(endpoint)
               .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
               .build());
     }
-    RetrySettings retrySettings = getRetrySettings();
-    RetrySettings attemptOnce = retrySettings.toBuilder().setMaxAttempts(1).build();
+    RetrySettings readRetrySettings =
+        getRetrySettings()
+            .toBuilder()
+            // when performing a read via ReadObject, the ServerStream will have a default relative
+            // deadline set of `requestStartTime() + totalTimeout`, meaning if the specified
+            // RetrySettings have a totalTimeout of 10 seconds -- which should be plenty for
+            // metadata RPCs -- the entire ReadObject stream would need to complete within 10
+            // seconds.
+            // To allow read streams to have longer lifespans, crank up their timeouts, instead rely
+            // on idleTimeout below.
+            .setLogicalTimeout(Duration.ofDays(28))
+            .build();
+    Duration totalTimeout = getRetrySettings().getTotalTimeout();
     // all retries for unary methods are handled at a different level
     builder.applyToAllUnaryMethods(
         input -> {
-          input.setRetrySettings(attemptOnce);
+          input.setSimpleTimeoutNoRetries(totalTimeout);
           return null;
         });
     // for ReadObject we are configuring the server stream handling to do its own retries, so wire
@@ -119,13 +133,17 @@ public final class GrpcStorageOptions extends StorageOptions
     // considerations need to be made.
     builder
         .readObjectSettings()
-        .setRetrySettings(retrySettings)
+        .setRetrySettings(readRetrySettings)
         // even though we might want to default to the empty set for retryable codes, don't ever
         // actually do this. Doing so prevents any retry capability from being wired into the stream
         // pipeline, ever.
         // For our use, we will always set it one way or the other to ensure it's appropriate
         // DO NOT: .setRetryableCodes(Collections.emptySet())
-        .setResumptionStrategy(new ReadObjectResumptionStrategy());
+        .setResumptionStrategy(new ReadObjectResumptionStrategy())
+        // for reads, the stream can be held open for a long time in order to read all bytes,
+        // this is totally valid. instead we want to monitor if the stream is doing work and if not
+        // timeout.
+        .setIdleTimeout(totalTimeout);
     return builder.build();
   }
 
