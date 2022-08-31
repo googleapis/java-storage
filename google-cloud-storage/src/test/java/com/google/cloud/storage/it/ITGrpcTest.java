@@ -203,7 +203,7 @@ public final class ITGrpcTest {
   }
 
   @Test
-  public void objectCreate_storage_create() {
+  public void objectWrite_storage_create() {
     BucketInfo bucketInfo = bucketFixture.getBucketInfo();
     BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
@@ -213,7 +213,7 @@ public final class ITGrpcTest {
   }
 
   @Test
-  public void objectCreate_storage_create_stream() {
+  public void objectWrite_storage_create_stream() {
     BucketInfo bucketInfo = bucketFixture.getBucketInfo();
     BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
@@ -226,7 +226,7 @@ public final class ITGrpcTest {
   }
 
   @Test
-  public void objectCreate_storage_writer() throws IOException {
+  public void objectWrite_storage_writer() throws IOException {
     BucketInfo bucketInfo = bucketFixture.getBucketInfo();
     BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
