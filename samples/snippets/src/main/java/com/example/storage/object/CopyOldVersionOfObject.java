@@ -50,7 +50,8 @@ public class CopyOldVersionOfObject {
     // preconditions are not met.
     // For a target object that does not yet exist, set the DoesNotExist precondition.
     Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
-    // If the destination already exists in your bucket, instead set a generation-match precondition:
+    // If the destination already exists in your bucket, instead set a generation-match
+    // precondition:
     // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
 
     Storage.CopyRequest copyRequest =
