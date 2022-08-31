@@ -17,7 +17,10 @@
 package com.example.storage.object;
 
 // [START storage_copy_file]
-import com.google.cloud.storage.*;
+
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 
 public class CopyObject {
   public static void copyObject(

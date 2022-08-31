@@ -17,7 +17,11 @@
 package com.example.storage.object;
 
 // [START storage_move_file]
-import com.google.cloud.storage.*;
+
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 
 public class MoveObject {
   public static void moveObject(
