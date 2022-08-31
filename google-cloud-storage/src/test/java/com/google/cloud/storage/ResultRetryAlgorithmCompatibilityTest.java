@@ -18,8 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
-import com.google.api.gax.rpc.DataLossException;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
@@ -27,17 +26,14 @@ import org.junit.Test;
 
 public final class ResultRetryAlgorithmCompatibilityTest {
   @Test
-  public void validateConversion() {
-    BasicResultRetryAlgorithm<Object> alg =
-        new BasicResultRetryAlgorithm<java.lang.Object>() {
-          @Override
-          public boolean shouldRetry(
-              Throwable previousThrowable, java.lang.Object previousResponse) {
-            return previousThrowable instanceof DataLossException;
-          }
-        };
-    Set<Code> codes = GrpcStorageImpl.resultRetryAlgorithmToCodes(alg);
+  public void validateDefaultStorageRetryStrategy_idempotent() {
+    ResultRetryAlgorithm<?> idempotentHandler =
+        StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler();
 
-    assertThat(codes).isEqualTo(ImmutableSet.of(Code.DATA_LOSS));
+    Set<Code> codes = GrpcStorageImpl.resultRetryAlgorithmToCodes(idempotentHandler);
+    ImmutableSet<Code> expected =
+        ImmutableSet.of(
+            Code.INTERNAL, Code.UNAVAILABLE, Code.RESOURCE_EXHAUSTED, Code.DEADLINE_EXCEEDED);
+    assertThat(codes).isEqualTo(expected);
   }
 }

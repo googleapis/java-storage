@@ -112,7 +112,7 @@ public final class BackwardCompatibilityUtilsTest {
     expected.put(Code.ABORTED, 0);
     expected.put(Code.CANCELLED, 0);
     expected.put(Code.UNKNOWN, 0);
-    expected.put(Code.DEADLINE_EXCEEDED, 0);
+    expected.put(Code.DEADLINE_EXCEEDED, 504);
     expected.put(Code.DATA_LOSS, 0);
 
     EnumMap<Code, Integer> actual = new EnumMap<>(Code.class);

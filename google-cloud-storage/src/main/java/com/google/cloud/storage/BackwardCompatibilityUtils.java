@@ -126,12 +126,13 @@ final class BackwardCompatibilityUtils {
       case UNAVAILABLE:
         return 503;
         // 504 Gateway Timeout
+      case DEADLINE_EXCEEDED:
+        return 504;
         // TODO
 
       case ABORTED: // ?
       case CANCELLED: // ?
       case UNKNOWN: // ?
-      case DEADLINE_EXCEEDED: // ?
       case DATA_LOSS: // ?
       default:
         return 0;

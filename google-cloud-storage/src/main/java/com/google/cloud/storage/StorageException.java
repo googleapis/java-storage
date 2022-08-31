@@ -56,24 +56,30 @@ public final class StorageException extends BaseHttpServiceException {
 
   private static final long serialVersionUID = -4168430271327813063L;
 
+  final ApiException apiExceptionCause;
+
   public StorageException(int code, String message) {
     this(code, message, null);
   }
 
   public StorageException(int code, String message, Throwable cause) {
     super(code, message, null, true, RETRYABLE_ERRORS, cause);
+    this.apiExceptionCause = asApiExceptionOrNull(cause);
   }
 
   public StorageException(int code, String message, String reason, Throwable cause) {
     super(code, message, reason, true, RETRYABLE_ERRORS, cause);
+    this.apiExceptionCause = asApiExceptionOrNull(cause);
   }
 
   public StorageException(IOException exception) {
     super(exception, true, RETRYABLE_ERRORS);
+    this.apiExceptionCause = null;
   }
 
   public StorageException(GoogleJsonError error) {
     super(error, true, RETRYABLE_ERRORS);
+    this.apiExceptionCause = null;
   }
 
   /**
@@ -108,33 +114,34 @@ public final class StorageException extends BaseHttpServiceException {
       return (BaseServiceException) t.getCause();
     }
     if (t instanceof ApiException) {
-      ApiException apiEx = (ApiException) t;
-
-      // https://cloud.google.com/storage/docs/json_api/v1/status-codes
-      // https://cloud.google.com/apis/design/errors#http_mapping
-      // https://cloud.google.com/apis/design/errors#error_payloads
-      // TODO: flush this out more to wire through "error" and "details" when we're able to get real
-      //   errors from GCS
-      int httpStatusCode = 0;
-      StatusCode statusCode = apiEx.getStatusCode();
-      if (statusCode instanceof GrpcStatusCode) {
-        GrpcStatusCode gsc = (GrpcStatusCode) statusCode;
-        httpStatusCode =
-            BackwardCompatibilityUtils.grpcCodeToHttpStatusCode(gsc.getTransportCode());
-      }
-      // If there is a gRPC exception in our cause change pull it's error message up to be our
-      // message otherwise, create a generic error message with the status code.
-      String message =
-          Utils.firstNonNull(
-              () -> getStatusExceptionMessage(apiEx),
-              () -> String.format("Error: %s", statusCode.getCode().name()));
-
-      // It'd be better to use ExceptionData and BaseServiceException#<init>(ExceptionData) but,
-      // BaseHttpServiceException does not pass that through so we're stuck using this for now.
-      // TODO: When we can break the coupling to BaseHttpServiceException replace this
-      return new StorageException(httpStatusCode, message, apiEx.getReason(), apiEx);
+      return asStorageException((ApiException) t);
     }
     return getStorageException(t);
+  }
+
+  static StorageException asStorageException(ApiException apiEx) {
+    // https://cloud.google.com/storage/docs/json_api/v1/status-codes
+    // https://cloud.google.com/apis/design/errors#http_mapping
+    // https://cloud.google.com/apis/design/errors#error_payloads
+    // TODO: flush this out more to wire through "error" and "details" when we're able to get real
+    //   errors from GCS
+    int httpStatusCode = 0;
+    StatusCode statusCode = apiEx.getStatusCode();
+    if (statusCode instanceof GrpcStatusCode) {
+      GrpcStatusCode gsc = (GrpcStatusCode) statusCode;
+      httpStatusCode = BackwardCompatibilityUtils.grpcCodeToHttpStatusCode(gsc.getTransportCode());
+    }
+    // If there is a gRPC exception in our cause change pull it's error message up to be our
+    // message otherwise, create a generic error message with the status code.
+    String message =
+        Utils.firstNonNull(
+            () -> getStatusExceptionMessage(apiEx),
+            () -> String.format("Error: %s", statusCode.getCode().name()));
+
+    // It'd be better to use ExceptionData and BaseServiceException#<init>(ExceptionData) but,
+    // BaseHttpServiceException does not pass that through so we're stuck using this for now.
+    // TODO: When we can break the coupling to BaseHttpServiceException replace this
+    return new StorageException(httpStatusCode, message, apiEx.getReason(), apiEx);
   }
 
   /**
@@ -163,5 +170,14 @@ public final class StorageException extends BaseHttpServiceException {
       return cause.getMessage();
     }
     return null;
+  }
+
+  @Nullable
+  private static ApiException asApiExceptionOrNull(Throwable cause) {
+    if (cause instanceof ApiException) {
+      return (ApiException) cause;
+    } else {
+      return null;
+    }
   }
 }
