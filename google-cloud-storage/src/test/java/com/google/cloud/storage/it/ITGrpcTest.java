@@ -20,7 +20,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.gax.paging.Page;
 import com.google.cloud.NoCredentials;
+import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
@@ -28,6 +30,10 @@ import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobListOption;
+import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.CreateHmacKeyOption;
 import com.google.cloud.storage.Storage.ListHmacKeysOption;
 import com.google.cloud.storage.StorageFixture;
@@ -36,10 +42,17 @@ import com.google.cloud.storage.conformance.retry.CleanupStrategy;
 import com.google.cloud.storage.conformance.retry.TestBench;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 public final class ITGrpcTest {
   @ClassRule(order = 1)
@@ -64,6 +77,8 @@ public final class ITGrpcTest {
           .setHandle(storageFixture::getInstance)
           .build();
 
+  @Rule public final TestName testName = new TestName();
+
   @Test
   public void testCreateBucket() {
     final String bucketName = RemoteStorageHelper.generateBucketName();
@@ -74,13 +89,30 @@ public final class ITGrpcTest {
   @Test
   public void listBlobs() {
     BucketInfo bucketInfo = bucketFixture.getBucketInfo();
-    Page<Blob> list = storageFixture.getInstance().list(bucketInfo.getName());
-    ImmutableList<String> bucketNames =
+    byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
+    String prefix = testName.getMethodName();
+    List<Blob> blobs =
+        IntStream.rangeClosed(1, 10)
+            .mapToObj(i -> String.format("%s/%02d", prefix, i))
+            .map(n -> BlobInfo.newBuilder(bucketInfo, n).build())
+            .map(
+                info ->
+                    storageFixture
+                        .getInstance()
+                        .create(info, content, BlobTargetOption.doesNotExist()))
+            .collect(ImmutableList.toImmutableList());
+
+    List<String> expected =
+        blobs.stream().map(Blob::getName).collect(ImmutableList.toImmutableList());
+
+    Page<Blob> list =
+        storageFixture.getInstance().list(bucketInfo.getName(), BlobListOption.prefix(prefix));
+    ImmutableList<String> actual =
         StreamSupport.stream(list.iterateAll().spliterator(), false)
             .map(Blob::getName)
             .collect(ImmutableList.toImmutableList());
 
-    assertThat(bucketNames).isEmpty();
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -155,5 +187,54 @@ public final class ITGrpcTest {
     HmacKey hmacKey = storageFixture.getInstance().createHmacKey(serviceAccount);
     storageFixture.getInstance().updateHmacKeyState(hmacKey.getMetadata(), HmacKeyState.INACTIVE);
     storageFixture.getInstance().deleteHmacKey(hmacKey.getMetadata());
+  }
+
+  @Test
+  public void object_writeGetRead() {
+    Storage s = storageFixture.getInstance();
+    BlobInfo info = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), "writeGetRead").build();
+    byte[] content = "hello, world".getBytes(StandardCharsets.UTF_8);
+    s.create(info, content, BlobTargetOption.doesNotExist());
+
+    Blob blob = s.get(info.getBlobId());
+
+    byte[] actualContent = blob.getContent();
+    assertThat(actualContent).isEqualTo(content);
+  }
+
+  @Test
+  public void objectWrite_storage_create() {
+    BucketInfo bucketInfo = bucketFixture.getBucketInfo();
+    BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
+    byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
+    Blob blob = storageFixture.getInstance().create(info, content, BlobTargetOption.doesNotExist());
+    byte[] actual = blob.getContent();
+    assertThat(actual).isEqualTo(content);
+  }
+
+  @Test
+  public void objectWrite_storage_create_stream() {
+    BucketInfo bucketInfo = bucketFixture.getBucketInfo();
+    BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
+    byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
+    Blob blob =
+        storageFixture
+            .getInstance()
+            .create(info, new ByteArrayInputStream(content), BlobWriteOption.doesNotExist());
+    byte[] actual = blob.getContent();
+    assertThat(actual).isEqualTo(content);
+  }
+
+  @Test
+  public void objectWrite_storage_writer() throws IOException {
+    BucketInfo bucketInfo = bucketFixture.getBucketInfo();
+    BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
+    byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
+    try (WriteChannel c =
+        storageFixture.getInstance().writer(info, BlobWriteOption.doesNotExist())) {
+      c.write(ByteBuffer.wrap(content));
+    }
+    byte[] actual = storageFixture.getInstance().readAllBytes(info.getBlobId());
+    assertThat(actual).isEqualTo(content);
   }
 }

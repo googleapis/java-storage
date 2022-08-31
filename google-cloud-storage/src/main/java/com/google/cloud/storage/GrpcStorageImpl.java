@@ -382,7 +382,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetObjectRequest.Builder builder =
-        GetObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
+        GetObjectRequest.newBuilder()
+            .setBucket(bucketNameCodec.encode(blob.getBucket()))
+            .setObject(blob.getName());
     GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),

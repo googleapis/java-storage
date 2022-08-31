@@ -825,7 +825,10 @@ final class GrpcConversions {
     if (from.hasCustomerEncryption()) {
       toBuilder.setCustomerEncryption(customerEncryptionCodec.decode(from.getCustomerEncryption()));
     }
-    ifNonNull(from.getStorageClass(), StorageClass::valueOf, toBuilder::setStorageClass);
+    String storageClass = from.getStorageClass();
+    if (!storageClass.isEmpty()) {
+      toBuilder.setStorageClass(StorageClass.valueOf(storageClass));
+    }
     if (from.hasUpdateStorageClassTime()) {
       toBuilder.setTimeStorageClassUpdatedOffsetDateTime(
           timestampCodec.decode(from.getUpdateStorageClassTime()));
@@ -836,7 +839,7 @@ final class GrpcConversions {
     if (from.hasEventBasedHold()) {
       toBuilder.setEventBasedHold(from.getEventBasedHold());
     }
-    ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
+    toBuilder.setTemporaryHold(from.getTemporaryHold());
     if (from.hasRetentionExpireTime()) {
       toBuilder.setRetentionExpirationTimeOffsetDateTime(
           timestampCodec.decode(from.getRetentionExpireTime()));
