@@ -26,17 +26,20 @@ import com.google.cloud.PageImpl;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.Restorable;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
+import com.google.cloud.storage.Storage.PredefinedAcl;
+import com.google.cloud.storage.UnifiedOpts.Opt;
 import com.google.cloud.storage.spi.v1.StorageRpc;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class SerializationTest extends BaseSerializationTest {
 
-  private static final Storage STORAGE =
-      StorageOptions.newBuilder().setProjectId("p").build().getService();
   private static final Acl.Domain ACL_DOMAIN = new Acl.Domain("domain");
   private static final Acl.Group ACL_GROUP = new Acl.Group("group");
   private static final Acl.Project ACL_PROJECT_ = new Acl.Project(ProjectRole.VIEWERS, "pid");
@@ -45,13 +48,9 @@ public class SerializationTest extends BaseSerializationTest {
   private static final Acl ACL = Acl.of(ACL_DOMAIN, Acl.Role.OWNER);
   private static final BlobInfo BLOB_INFO = BlobInfo.newBuilder("b", "n").build();
   private static final BucketInfo BUCKET_INFO = BucketInfo.of("b");
-  private static final Blob BLOB = new Blob(STORAGE, new BlobInfo.BuilderImpl(BLOB_INFO));
-  private static final Bucket BUCKET = new Bucket(STORAGE, new BucketInfo.BuilderImpl(BUCKET_INFO));
   private static final Cors.Origin ORIGIN = Cors.Origin.any();
   private static final Cors CORS =
       Cors.newBuilder().setMaxAgeSeconds(1).setOrigins(Collections.singleton(ORIGIN)).build();
-  private static final PageImpl<Blob> PAGE_RESULT =
-      new PageImpl<>(null, "c", Collections.singletonList(BLOB));
   private static final StorageException STORAGE_EXCEPTION = new StorageException(42, "message");
   private static final Storage.BlobListOption BLOB_LIST_OPTIONS =
       Storage.BlobListOption.pageSize(100);
@@ -67,14 +66,96 @@ public class SerializationTest extends BaseSerializationTest {
       Storage.BucketTargetOption.metagenerationNotMatch();
   private static final Map<StorageRpc.Option, ?> EMPTY_RPC_OPTIONS = ImmutableMap.of();
 
+  private static Storage STORAGE;
+  private static Blob BLOB;
+  private static Bucket BUCKET;
+  private static PageImpl<Blob> PAGE_RESULT;
+
+  @BeforeClass
+  public static void beforeClass() {
+    StorageOptions storageOptions =
+        StorageOptions.newBuilder()
+            .setProjectId("p")
+            .setCredentials(NoCredentials.getInstance())
+            .build();
+    STORAGE = storageOptions.getService();
+    BLOB = BLOB_INFO.asBlob(STORAGE);
+    BUCKET = BUCKET_INFO.asBucket(STORAGE);
+    PAGE_RESULT = new PageImpl<>(null, "c", Collections.singletonList(BLOB));
+  }
+
+  @AfterClass
+  public static void afterClass() throws Exception {
+    if (STORAGE != null) {
+      STORAGE.close();
+    }
+  }
+
   @Override
   protected Serializable[] serializableObjects() {
-    StorageOptions options =
+    StorageOptions optionsDefault1 =
         StorageOptions.newBuilder()
             .setProjectId("p1")
             .setCredentials(NoCredentials.getInstance())
             .build();
-    StorageOptions otherOptions = options.toBuilder().setProjectId("p2").build();
+    StorageOptions optionsDefault2 = optionsDefault1.toBuilder().setProjectId("p2").build();
+    StorageOptions optionsHttp1 =
+        StorageOptions.http()
+            .setProjectId("http1")
+            .setCredentials(NoCredentials.getInstance())
+            .build();
+    StorageOptions optionsHttp2 = optionsHttp1.toBuilder().setProjectId("http2").build();
+    StorageOptions optionsGrpc1 =
+        StorageOptions.http()
+            .setProjectId("grpc1")
+            .setCredentials(NoCredentials.getInstance())
+            .build();
+    StorageOptions optionsGrpc2 = optionsGrpc1.toBuilder().setProjectId("grpc2").build();
+
+    // echo -n "key" | base64
+    String keyBase64 = "a2V5";
+
+    ImmutableList<Opt> serializableOpts =
+        ImmutableList.<Opt>builder()
+            .add(UnifiedOpts.crc32cMatch("crc32c"))
+            .add(UnifiedOpts.currentDirectory())
+            .add(UnifiedOpts.decryptionKey(keyBase64))
+            .add(UnifiedOpts.delimiter("/"))
+            .add(UnifiedOpts.detectContentType())
+            .add(UnifiedOpts.disableGzipContent())
+            .add(UnifiedOpts.doesNotExist())
+            .add(UnifiedOpts.encryptionKey(keyBase64))
+            .add(UnifiedOpts.endOffset("end"))
+            .add(UnifiedOpts.fields(""))
+            .add(UnifiedOpts.generationMatch(0))
+            .add(UnifiedOpts.generationNotMatch(0))
+            .add(UnifiedOpts.kmsKeyName("key"))
+            .add(UnifiedOpts.md5Match("md5"))
+            .add(UnifiedOpts.metagenerationMatch(1))
+            .add(UnifiedOpts.metagenerationNotMatch(1))
+            .add(UnifiedOpts.pageSize(3))
+            .add(UnifiedOpts.pageToken("token"))
+            .add(UnifiedOpts.predefinedAcl(PredefinedAcl.PRIVATE))
+            .add(UnifiedOpts.predefinedDefaultObjectAcl(PredefinedAcl.PRIVATE))
+            .add(UnifiedOpts.prefix("prefix"))
+            .add(UnifiedOpts.projectId("proj"))
+            .add(UnifiedOpts.projection("full"))
+            .add(UnifiedOpts.requestedPolicyVersion(2))
+            .add(UnifiedOpts.returnRawInputStream(false))
+            .add(UnifiedOpts.serviceAccount(ServiceAccount.of("x@y.z")))
+            .add(UnifiedOpts.setContentType("text/plain"))
+            .add(UnifiedOpts.showDeletedKeys(false))
+            .add(UnifiedOpts.startOffset("start"))
+            .add(UnifiedOpts.userProject("user-proj"))
+            .add(UnifiedOpts.versionsFilter(false))
+            .add(UnifiedOpts.generationMatchExtractor())
+            .add(UnifiedOpts.generationNotMatchExtractor())
+            .add(UnifiedOpts.metagenerationMatchExtractor())
+            .add(UnifiedOpts.metagenerationNotMatchExtractor())
+            .add(UnifiedOpts.crc32cMatchExtractor())
+            .add(UnifiedOpts.md5MatchExtractor())
+            .build();
+
     return new Serializable[] {
       ACL_DOMAIN,
       ACL_GROUP,
@@ -96,8 +177,13 @@ public class SerializationTest extends BaseSerializationTest {
       BUCKET_SOURCE_OPTIONS,
       BUCKET_TARGET_OPTIONS,
       STORAGE_EXCEPTION,
-      options,
-      otherOptions
+      optionsDefault1,
+      optionsDefault2,
+      optionsHttp1,
+      optionsHttp2,
+      optionsGrpc1,
+      optionsGrpc2,
+      serializableOpts
     };
   }
 

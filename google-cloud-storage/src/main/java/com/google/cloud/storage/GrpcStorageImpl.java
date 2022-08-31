@@ -158,7 +158,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final SyntaxDecoders syntaxDecoders;
 
-  @Deprecated private final transient ProjectId defaultProjectId;
+  @Deprecated private final ProjectId defaultProjectId;
 
   GrpcStorageImpl(GrpcStorageOptions options, StorageClient storageClient) {
     super(options);
@@ -173,6 +173,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public void close() throws Exception {
     try (StorageClient s = storageClient) {
       s.shutdownNow();
+      org.threeten.bp.Duration terminationAwaitDuration =
+          getOptions().getTerminationAwaitDuration();
+      s.awaitTermination(terminationAwaitDuration.toMillis(), TimeUnit.MILLISECONDS);
     }
   }
 
@@ -1026,6 +1029,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public GrpcStorageOptions getOptions() {
     return (GrpcStorageOptions) super.getOptions();
+  }
+
+  boolean isClosed() {
+    return storageClient.isShutdown();
   }
 
   private Blob getBlob(ApiFuture<WriteObjectResponse> result) {
