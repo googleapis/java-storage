@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,6 +31,7 @@ import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
@@ -767,6 +769,109 @@ public class ITAccessTest {
           .setRequesterPays(false)
           .build()
           .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
+    }
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "deprecation"})
+  public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
+    String bpoBucket = RemoteStorageHelper.generateBucketName();
+    try {
+      // BPO is disabled by default.
+      Bucket bucket =
+          storage.create(
+              Bucket.newBuilder(bpoBucket)
+                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                  .setDefaultAcl(
+                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                  .build());
+
+      BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
+          BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
+      bucket
+          .toBuilder()
+          .setAcl(null)
+          .setDefaultAcl(null)
+          .setIamConfiguration(bpoEnabledIamConfiguration)
+          .build()
+          .update();
+
+      Bucket remoteBucket =
+          storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+
+      assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
+
+      remoteBucket
+          .toBuilder()
+          .setIamConfiguration(
+              bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
+          .build()
+          .update();
+
+      remoteBucket =
+          storage.get(
+              bpoBucket,
+              Storage.BucketGetOption.fields(
+                  BucketField.IAMCONFIGURATION, BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
+
+      assertFalse(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getDefaultAcl().get(0).getEntity());
+      assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
+      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
+      assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
+    } finally {
+      RemoteStorageHelper.forceDelete(storage, bpoBucket, 1, TimeUnit.MINUTES);
+    }
+  }
+
+  @Test
+  public void testBlobAcl() {
+    BlobId blobId = BlobId.of(bucketName, "test-blob-acl");
+    BlobInfo blob = BlobInfo.newBuilder(blobId).build();
+    storage.create(blob);
+    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
+    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+    assertNotNull(storage.createAcl(blobId, acl));
+    Acl updatedAcl = storage.updateAcl(blobId, acl.toBuilder().setRole(Role.OWNER).build());
+    assertEquals(Role.OWNER, updatedAcl.getRole());
+    Set<Acl> acls = new HashSet<>(storage.listAcls(blobId));
+    assertTrue(acls.contains(updatedAcl));
+    assertTrue(storage.deleteAcl(blobId, User.ofAllAuthenticatedUsers()));
+    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
+    // test non-existing blob
+    BlobId otherBlobId = BlobId.of(bucketName, "test-blob-acl", -1L);
+    try {
+      assertNull(storage.getAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
+      fail("Expected an 'Invalid argument' exception");
+    } catch (StorageException e) {
+      assertThat(e.getMessage()).contains("Invalid argument");
+    }
+
+    try {
+      assertFalse(storage.deleteAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
+      fail("Expected an 'Invalid argument' exception");
+    } catch (StorageException e) {
+      assertThat(e.getMessage()).contains("Invalid argument");
+    }
+
+    try {
+      storage.createAcl(otherBlobId, acl);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
+    }
+    try {
+      storage.updateAcl(otherBlobId, acl);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
+    }
+    try {
+      storage.listAcls(otherBlobId);
+      fail("Expected StorageException");
+    } catch (StorageException ex) {
+      // expected
     }
   }
 

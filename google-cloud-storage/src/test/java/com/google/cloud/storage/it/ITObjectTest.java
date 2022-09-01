@@ -17,7 +17,6 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
-import static com.google.common.truth.Truth.assertWithMessage;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -27,30 +26,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.gax.paging.Page;
-import com.google.auth.http.HttpTransportFactory;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.TransportOptions;
 import com.google.cloud.WriteChannel;
-import com.google.cloud.http.HttpTransportOptions;
-import com.google.cloud.storage.Acl;
-import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
-import com.google.cloud.storage.DataGeneration;
-import com.google.cloud.storage.HmacKey;
-import com.google.cloud.storage.HmacKey.HmacKeyState;
-import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -58,7 +46,6 @@ import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -66,7 +53,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.io.BaseEncoding;
-import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -75,7 +61,6 @@ import java.nio.ByteBuffer;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -83,28 +68,13 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.StreamSupport;
-import java.util.zip.GZIPInputStream;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
-import org.threeten.bp.Duration;
-import org.threeten.bp.Instant;
 
-public class ITStorageTest {
-
-  private static Storage storage;
-  private static final Logger log = Logger.getLogger(ITStorageTest.class.getName());
-  private static final String BUCKET = RemoteStorageHelper.generateBucketName();
-  private static final String BUCKET_REQUESTER_PAYS = RemoteStorageHelper.generateBucketName();
+public class ITObjectTest {
   private static final String CONTENT_TYPE = "text/plain";
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
@@ -112,38 +82,31 @@ public class ITStorageTest {
   private static final String OTHER_BASE64_KEY = "IcOIQGlliNr5pr3vJb63l+XMqc7NjXqjfw/deBoNxPA=";
   private static final Key KEY =
       new SecretKeySpec(BaseEncoding.base64().decode(BASE64_KEY), "AES256");
-  private static final byte[] COMPRESSED_CONTENT =
-      BaseEncoding.base64()
-          .decode("H4sIAAAAAAAAAPNIzcnJV3DPz0/PSVVwzskvTVEILskvSkxPVQQA/LySchsAAAA=");
-  private static final Map<String, String> REMOVE_BUCKET_LABELS;
-
-  static {
-    REMOVE_BUCKET_LABELS = new HashMap<>();
-    REMOVE_BUCKET_LABELS.put("label1", null);
-  }
 
   private static final Long RETENTION_PERIOD = 5L;
   private static final Long RETENTION_PERIOD_IN_MILLISECONDS = RETENTION_PERIOD * 1000;
-  private static final String SERVICE_ACCOUNT_EMAIL_SUFFIX =
-      "@gs-project-accounts.iam.gserviceaccount.com";
-  private static final boolean IS_VPC_TEST =
-      System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC") != null
-          && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
 
-  @ClassRule
+  @ClassRule(order = 1)
   public static final StorageFixture storageFixture =
       StorageFixture.of(() -> RemoteStorageHelper.create().getOptions().getService());
 
-  @Rule public final TestName testName = new TestName();
-  @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+
+  @ClassRule(order = 3)
+  public static final BucketFixture requesterPaysFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+
+  private static String BUCKET;
+  private static String BUCKET_REQUESTER_PAYS;
+  private static Storage storage;
 
   @BeforeClass
   public static void beforeClass() throws IOException {
     storage = storageFixture.getInstance();
-
-    storage.create(BucketInfo.newBuilder(BUCKET).setLocation("us").build());
-
-    storage.create(BucketInfo.newBuilder(BUCKET_REQUESTER_PAYS).build());
+    BUCKET = bucketFixture.getBucketInfo().getName();
+    BUCKET_REQUESTER_PAYS = requesterPaysFixture.getBucketInfo().getName();
   }
 
   private static void unsetRequesterPays() {
@@ -163,32 +126,8 @@ public class ITStorageTest {
   }
 
   @AfterClass
-  public static void afterClass() throws ExecutionException, InterruptedException {
-
-    if (storage != null) {
-      // In beforeClass, we make buckets auto-delete blobs older than a day old.
-      // Here, delete all buckets older than 2 days. They should already be empty and easy.
-      long cleanTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(2);
-      long cleanTimeout = System.currentTimeMillis() - TimeUnit.MINUTES.toMillis(1);
-      RemoteStorageHelper.cleanBuckets(storage, cleanTime, cleanTimeout);
-
-      boolean wasDeleted = RemoteStorageHelper.forceDelete(storage, BUCKET, 1, TimeUnit.MINUTES);
-      if (!wasDeleted && log.isLoggable(Level.WARNING)) {
-        log.log(Level.WARNING, "Deletion of bucket {0} timed out, bucket is not empty", BUCKET);
-      }
-      unsetRequesterPays();
-      RemoteStorageHelper.forceDelete(storage, BUCKET_REQUESTER_PAYS, 5, TimeUnit.SECONDS);
-    }
-  }
-
-  private static class CustomHttpTransportFactory implements HttpTransportFactory {
-    @Override
-    @SuppressWarnings({"unchecked", "deprecation"})
-    public HttpTransport create() {
-      PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
-      manager.setMaxTotal(1);
-      return new ApacheHttpTransport(HttpClients.createMinimal(manager));
-    }
+  public static void afterClass() {
+    unsetRequesterPays();
   }
 
   @Test
@@ -1070,28 +1009,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testReadAndWriteChannels() throws IOException {
-    String blobName = "test-read-and-write-channels-blob";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
-    byte[] stringBytes;
-    try (WriteChannel writer = storage.writer(blob)) {
-      stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
-      writer.write(ByteBuffer.wrap(BLOB_BYTE_CONTENT));
-      writer.write(ByteBuffer.wrap(stringBytes));
-    }
-    ByteBuffer readBytes;
-    ByteBuffer readStringBytes;
-    try (ReadChannel reader = storage.reader(blob.getBlobId())) {
-      readBytes = ByteBuffer.allocate(BLOB_BYTE_CONTENT.length);
-      readStringBytes = ByteBuffer.allocate(stringBytes.length);
-      reader.read(readBytes);
-      reader.read(readStringBytes);
-    }
-    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes.array());
-    assertEquals(BLOB_STRING_CONTENT, new String(readStringBytes.array(), UTF_8));
-  }
-
-  @Test
   public void testReadAndWriteChannelWithEncryptionKey() throws IOException {
     String blobName = "test-read-write-channel-with-customer-key-blob";
     BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
@@ -1173,122 +1090,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testReadChannelFail() throws IOException {
-    String blobName = "test-read-channel-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
-    Blob remoteBlob = storage.create(blob);
-    assertNotNull(remoteBlob);
-    try (ReadChannel reader =
-        storage.reader(blob.getBlobId(), Storage.BlobSourceOption.metagenerationMatch(-1L))) {
-      reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
-    } catch (IOException ex) {
-      // expected
-    }
-    try (ReadChannel reader =
-        storage.reader(blob.getBlobId(), Storage.BlobSourceOption.generationMatch(-1L))) {
-      reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
-    } catch (IOException ex) {
-      // expected
-    }
-    BlobId blobIdWrongGeneration = BlobId.of(BUCKET, blobName, -1L);
-    try (ReadChannel reader =
-        storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
-      reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
-    } catch (IOException ex) {
-      // expected
-    }
-  }
-
-  @Test
-  public void testReadChannelFailUpdatedGeneration() throws IOException {
-    String blobName = "test-read-blob-fail-updated-generation";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
-    Random random = new Random();
-    int chunkSize = 1024;
-    int blobSize = 2 * chunkSize;
-    byte[] content = new byte[blobSize];
-    random.nextBytes(content);
-    Blob remoteBlob = storage.create(blob, content);
-    assertNotNull(remoteBlob);
-    assertEquals(blobSize, (long) remoteBlob.getSize());
-    try (ReadChannel reader = storage.reader(blob.getBlobId())) {
-      reader.setChunkSize(chunkSize);
-      ByteBuffer readBytes = ByteBuffer.allocate(chunkSize);
-      int numReadBytes = reader.read(readBytes);
-      assertEquals(chunkSize, numReadBytes);
-      assertArrayEquals(Arrays.copyOf(content, chunkSize), readBytes.array());
-      try (WriteChannel writer = storage.writer(blob)) {
-        byte[] newContent = new byte[blobSize];
-        random.nextBytes(newContent);
-        int numWrittenBytes = writer.write(ByteBuffer.wrap(newContent));
-        assertEquals(blobSize, numWrittenBytes);
-      }
-      readBytes = ByteBuffer.allocate(chunkSize);
-      reader.read(readBytes);
-      fail("StorageException was expected");
-    } catch (IOException ex) {
-      StringBuilder messageBuilder = new StringBuilder();
-      messageBuilder.append("Blob ").append(blob.getBlobId()).append(" was updated while reading");
-      assertEquals(messageBuilder.toString(), ex.getMessage());
-    }
-    assertTrue(storage.delete(BUCKET, blobName));
-  }
-
-  @Test
-  public void testWriteChannelFail() throws IOException {
-    String blobName = "test-write-channel-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName, -1L).build();
-    try {
-      try (WriteChannel writer = storage.writer(blob, Storage.BlobWriteOption.generationMatch())) {
-        writer.write(ByteBuffer.allocate(42));
-      }
-      fail("StorageException was expected");
-    } catch (StorageException ex) {
-      // expected
-    }
-  }
-
-  @Test
-  public void testWriteChannelExistingBlob() throws IOException {
-    String blobName = "test-write-channel-existing-blob";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
-    storage.create(blob);
-    byte[] stringBytes;
-    try (WriteChannel writer = storage.writer(blob)) {
-      stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
-      writer.write(ByteBuffer.wrap(stringBytes));
-    }
-    assertArrayEquals(stringBytes, storage.readAllBytes(blob.getBlobId()));
-    assertTrue(storage.delete(BUCKET, blobName));
-  }
-
-  @Test(timeout = 5000)
-  public void testWriteChannelWithConnectionPool() throws IOException {
-    TransportOptions transportOptions =
-        HttpTransportOptions.newBuilder()
-            .setHttpTransportFactory(new CustomHttpTransportFactory())
-            .build();
-    Storage storageWithPool =
-        StorageOptions.http().setTransportOptions(transportOptions).build().getService();
-    String blobName = "test-custom-pool-management";
-    BlobInfo blob = BlobInfo.newBuilder(BUCKET, blobName).build();
-    byte[] stringBytes;
-    try (WriteChannel writer = storageWithPool.writer(blob)) {
-      stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
-      writer.write(ByteBuffer.wrap(BLOB_BYTE_CONTENT));
-      writer.write(ByteBuffer.wrap(stringBytes));
-    }
-    try (WriteChannel writer = storageWithPool.writer(blob)) {
-      stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
-      writer.write(ByteBuffer.wrap(BLOB_BYTE_CONTENT));
-      writer.write(ByteBuffer.wrap(stringBytes));
-    }
-  }
-
-  @Test
   public void testGetBlobs() {
     String sourceBlobName1 = "test-get-blobs-1";
     String sourceBlobName2 = "test-get-blobs-2";
@@ -1301,59 +1102,6 @@ public class ITStorageTest {
     assertEquals(sourceBlob1.getName(), remoteBlobs.get(0).getName());
     assertEquals(sourceBlob2.getBucket(), remoteBlobs.get(1).getBucket());
     assertEquals(sourceBlob2.getName(), remoteBlobs.get(1).getName());
-  }
-
-  @Test
-  public void testDownloadPublicBlobWithoutAuthentication() {
-    assumeFalse(IS_VPC_TEST);
-    // create an unauthorized user
-    Storage unauthorizedStorage = StorageOptions.getUnauthenticatedInstance().getService();
-
-    // try to download blobs from a public bucket
-    String landsatBucket = "gcp-public-data-landsat";
-    String landsatPrefix = "LC08/01/001/002/LC08_L1GT_001002_20160817_20170322_01_T2/";
-    String landsatBlob = landsatPrefix + "LC08_L1GT_001002_20160817_20170322_01_T2_ANG.txt";
-    byte[] bytes = unauthorizedStorage.readAllBytes(landsatBucket, landsatBlob);
-
-    assertThat(bytes.length).isEqualTo(117255);
-    int numBlobs = 0;
-    Iterator<Blob> blobIterator =
-        unauthorizedStorage
-            .list(landsatBucket, Storage.BlobListOption.prefix(landsatPrefix))
-            .iterateAll()
-            .iterator();
-    while (blobIterator.hasNext()) {
-      numBlobs++;
-      blobIterator.next();
-    }
-    assertThat(numBlobs).isEqualTo(14);
-
-    // try to download blobs from a bucket that requires authentication
-    // authenticated client will succeed
-    // unauthenticated client will receive an exception
-    String sourceBlobName = "source-blob-name";
-    BlobInfo sourceBlob = BlobInfo.newBuilder(BUCKET, sourceBlobName).build();
-    assertThat(storage.create(sourceBlob)).isNotNull();
-    assertThat(storage.readAllBytes(BUCKET, sourceBlobName)).isNotNull();
-    try {
-      unauthorizedStorage.readAllBytes(BUCKET, sourceBlobName);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    assertThat(storage.get(sourceBlob.getBlobId()).delete()).isTrue();
-
-    // try to upload blobs to a bucket that requires authentication
-    // authenticated client will succeed
-    // unauthenticated client will receive an exception
-    assertThat(storage.create(sourceBlob)).isNotNull();
-    try {
-      unauthorizedStorage.create(sourceBlob);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    assertThat(storage.get(sourceBlob.getBlobId()).delete()).isTrue();
   }
 
   @Test
@@ -1435,167 +1183,6 @@ public class ITStorageTest {
   }
 
   @Test
-  public void testBlobAcl() {
-    BlobId blobId = BlobId.of(BUCKET, "test-blob-acl");
-    BlobInfo blob = BlobInfo.newBuilder(blobId).build();
-    storage.create(blob);
-    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
-    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(storage.createAcl(blobId, acl));
-    Acl updatedAcl = storage.updateAcl(blobId, acl.toBuilder().setRole(Role.OWNER).build());
-    assertEquals(Role.OWNER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>(storage.listAcls(blobId));
-    assertTrue(acls.contains(updatedAcl));
-    assertTrue(storage.deleteAcl(blobId, User.ofAllAuthenticatedUsers()));
-    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
-    // test non-existing blob
-    BlobId otherBlobId = BlobId.of(BUCKET, "test-blob-acl", -1L);
-    try {
-      assertNull(storage.getAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
-      fail("Expected an 'Invalid argument' exception");
-    } catch (StorageException e) {
-      assertThat(e.getMessage()).contains("Invalid argument");
-    }
-
-    try {
-      assertFalse(storage.deleteAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
-      fail("Expected an 'Invalid argument' exception");
-    } catch (StorageException e) {
-      assertThat(e.getMessage()).contains("Invalid argument");
-    }
-
-    try {
-      storage.createAcl(otherBlobId, acl);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    try {
-      storage.updateAcl(otherBlobId, acl);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    try {
-      storage.listAcls(otherBlobId);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-  }
-
-  // when modifying this test or {@link #cleanUpHmacKeys} be sure to remember multiple simultaneous
-  // runs of the integration suite can run with the same service account. Be sure to not clobber
-  // any possible run state for the other run.
-  @Test
-  public void testHmacKey() {
-    String serviceAccountEmail = System.getenv("IT_SERVICE_ACCOUNT_EMAIL");
-    assertNotNull("Unable to determine service account email", serviceAccountEmail);
-    ServiceAccount serviceAccount = ServiceAccount.of(serviceAccountEmail);
-    cleanUpHmacKeys(serviceAccount);
-
-    HmacKey hmacKey = storage.createHmacKey(serviceAccount);
-    String secretKey = hmacKey.getSecretKey();
-    assertNotNull(secretKey);
-    HmacKey.HmacKeyMetadata metadata = hmacKey.getMetadata();
-    String accessId = metadata.getAccessId();
-
-    assertNotNull(accessId);
-    assertNotNull(metadata.getEtag());
-    assertNotNull(metadata.getId());
-    assertEquals(storage.getOptions().getProjectId(), metadata.getProjectId());
-    assertEquals(serviceAccount.getEmail(), metadata.getServiceAccount().getEmail());
-    assertEquals(HmacKey.HmacKeyState.ACTIVE, metadata.getState());
-    assertNotNull(metadata.getCreateTime());
-    assertNotNull(metadata.getUpdateTime());
-
-    Page<HmacKey.HmacKeyMetadata> metadatas =
-        storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
-    boolean createdInList =
-        StreamSupport.stream(metadatas.iterateAll().spliterator(), false)
-            .map(HmacKey.HmacKeyMetadata::getAccessId)
-            .anyMatch(accessId::equals);
-
-    assertWithMessage("Created an HMAC key but it didn't show up in list()")
-        .that(createdInList)
-        .isTrue();
-
-    HmacKey.HmacKeyMetadata getResult = storage.getHmacKey(accessId);
-    assertEquals(metadata, getResult);
-
-    storage.updateHmacKeyState(metadata, HmacKey.HmacKeyState.INACTIVE);
-
-    storage.deleteHmacKey(metadata);
-
-    metadatas = storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
-    boolean deletedInList =
-        StreamSupport.stream(metadatas.iterateAll().spliterator(), false)
-            .map(HmacKey.HmacKeyMetadata::getAccessId)
-            .anyMatch(accessId::equals);
-
-    assertWithMessage("Deleted an HMAC key but it showed up in list()")
-        .that(deletedInList)
-        .isFalse();
-  }
-
-  private void cleanUpHmacKeys(ServiceAccount serviceAccount) {
-    Instant now = Instant.now();
-    Instant yesterday = now.minus(Duration.ofDays(1L));
-
-    Page<HmacKey.HmacKeyMetadata> metadatas =
-        storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
-    for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
-      Instant updated = Instant.ofEpochMilli(hmacKeyMetadata.getUpdateTime());
-      if (updated.isBefore(yesterday)) {
-
-        if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
-          hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
-        }
-
-        if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
-          try {
-            storage.deleteHmacKey(hmacKeyMetadata);
-          } catch (StorageException e) {
-            // attempted to delete concurrently, if the other succeeded swallow the error
-            if (!(e.getReason().equals("invalid") && e.getMessage().contains("deleted"))) {
-              throw e;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  @Test
-  public void testReadCompressedBlob() throws IOException {
-    String blobName = "test-read-compressed-blob";
-    BlobInfo blobInfo =
-        BlobInfo.newBuilder(BlobId.of(BUCKET, blobName))
-            .setContentType("text/plain")
-            .setContentEncoding("gzip")
-            .build();
-    Blob blob = storage.create(blobInfo, COMPRESSED_CONTENT);
-    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-      try (ReadChannel reader = storage.reader(BlobId.of(BUCKET, blobName))) {
-        reader.setChunkSize(8);
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        while (reader.read(buffer) != -1) {
-          buffer.flip();
-          output.write(buffer.array(), 0, buffer.limit());
-          buffer.clear();
-        }
-      }
-      assertArrayEquals(
-          BLOB_STRING_CONTENT.getBytes(UTF_8), storage.readAllBytes(BUCKET, blobName));
-      assertArrayEquals(COMPRESSED_CONTENT, output.toByteArray());
-      try (GZIPInputStream zipInput =
-          new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))) {
-        assertArrayEquals(BLOB_STRING_CONTENT.getBytes(UTF_8), ByteStreams.toByteArray(zipInput));
-      }
-    }
-  }
-
-  @Test
   public void testAttemptObjectDeleteWithRetentionPolicy()
       throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
@@ -1660,67 +1247,6 @@ public class ITStorageTest {
       // expected
     } finally {
       remoteBlob.toBuilder().setTemporaryHold(false).build().update();
-    }
-  }
-
-  @Test
-  public void testGetServiceAccount() {
-    String projectId = storage.getOptions().getProjectId();
-    ServiceAccount serviceAccount = storage.getServiceAccount(projectId);
-    assertNotNull(serviceAccount);
-    assertTrue(serviceAccount.getEmail().endsWith(SERVICE_ACCOUNT_EMAIL_SUFFIX));
-  }
-
-  @Test
-  @SuppressWarnings({"unchecked", "deprecation"})
-  public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
-    String bpoBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      // BPO is disabled by default.
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(bpoBucket)
-                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .setDefaultAcl(
-                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .build());
-
-      BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
-          BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
-      bucket
-          .toBuilder()
-          .setAcl(null)
-          .setDefaultAcl(null)
-          .setIamConfiguration(bpoEnabledIamConfiguration)
-          .build()
-          .update();
-
-      Bucket remoteBucket =
-          storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
-
-      assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
-      assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
-
-      remoteBucket
-          .toBuilder()
-          .setIamConfiguration(
-              bpoEnabledIamConfiguration.toBuilder().setIsBucketPolicyOnlyEnabled(false).build())
-          .build()
-          .update();
-
-      remoteBucket =
-          storage.get(
-              bpoBucket,
-              Storage.BucketGetOption.fields(
-                  BucketField.IAMCONFIGURATION, BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
-
-      assertFalse(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
-      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getDefaultAcl().get(0).getEntity());
-      assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
-      assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
-      assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
-    } finally {
-      RemoteStorageHelper.forceDelete(storage, bpoBucket, 1, TimeUnit.MINUTES);
     }
   }
 

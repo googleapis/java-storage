@@ -17,6 +17,8 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -67,6 +69,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 public final class ITBlobWriteChannelTest {
   private static final Logger LOGGER = Logger.getLogger(ITBlobWriteChannelTest.class.getName());
   private static final String NOW_STRING;
+  private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
 
   static {
     Instant now = Clock.systemUTC().instant();
@@ -123,6 +126,34 @@ public final class ITBlobWriteChannelTest {
     int contentSize = 292_617;
 
     blobWriteChannel_handlesRecoveryOnLastChunkWhenGenerationIsPresent(_4MiB, contentSize);
+  }
+
+  @Test
+  public void testWriteChannelExistingBlob() throws IOException {
+    HttpStorageOptions baseStorageOptions =
+        StorageOptions.http()
+            .setCredentials(NoCredentials.getInstance())
+            .setHost(testBench.getBaseUri())
+            .setProjectId("test-project-id")
+            .build();
+    Storage storage = baseStorageOptions.getService();
+    Instant now = Clock.systemUTC().instant();
+    DateTimeFormatter formatter =
+        DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
+    String nowString = formatter.format(now);
+    BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
+    String blobPath = String.format("%s/%s/blob", testName.getMethodName(), nowString);
+    BlobId blobId = BlobId.of(dataGeneration.getBucketName(), blobPath);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+    storage.create(bucketInfo);
+    storage.create(blobInfo);
+    byte[] stringBytes;
+    try (WriteChannel writer = storage.writer(blobInfo)) {
+      stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
+      writer.write(ByteBuffer.wrap(stringBytes));
+    }
+    assertArrayEquals(stringBytes, storage.readAllBytes(blobInfo.getBlobId()));
+    assertTrue(storage.delete(bucketInfo.getName(), blobInfo.getName()));
   }
 
   private void doJsonUnexpectedEOFTest(int contentSize, int cappedByteCount) throws IOException {
