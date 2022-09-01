@@ -71,10 +71,8 @@ public class CreateBucketDualRegion {
             + bucket.getName()
             + " in location "
             + bucket.getLocation()
-            + " with location type "
-            + bucket.getLocationType()
-            + " with Custom Placement Config "
-            + bucket.getCustomPlacementConfig().toString());
+            + " with regions "
+            + bucket.getCustomPlacementConfig().getDataLocations().toString());
   }
 }
 // [END storage_create_bucket_dual_region]
