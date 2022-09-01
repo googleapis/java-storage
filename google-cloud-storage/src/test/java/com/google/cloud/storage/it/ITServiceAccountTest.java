@@ -19,31 +19,55 @@ package com.google.cloud.storage.it;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.ServiceAccount;
-import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
-import org.junit.BeforeClass;
+import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.conformance.retry.ParallelParameterized;
+import com.google.cloud.storage.conformance.retry.TestBench;
+import java.util.Arrays;
+import java.util.Collection;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(ParallelParameterized.class)
 public class ITServiceAccountTest {
+  @ClassRule
+  public static final TestBench TEST_BENCH =
+      TestBench.newBuilder().setContainerName("it-grpc").build();
 
-  @ClassRule public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  @Rule public final StorageFixture storageFixture;
 
   private static final String SERVICE_ACCOUNT_EMAIL_SUFFIX =
       "@gs-project-accounts.iam.gserviceaccount.com";
 
-  private static Storage storage;
+  public ITServiceAccountTest(String clientName, StorageFixture storageFixture) {
+    this.storageFixture = storageFixture;
+  }
 
-  @BeforeClass
-  public static void setup() {
-    storage = storageFixture.getInstance();
+  @Parameters(name = "{0}")
+  public static Collection<Object[]> data() {
+    StorageFixture grpcStorageFixture =
+        StorageFixture.from(
+            () ->
+                StorageOptions.grpc()
+                    .setHost(TEST_BENCH.getGRPCBaseUri())
+                    .setCredentials(NoCredentials.getInstance())
+                    .setProjectId("test-project-id")
+                    .build());
+    StorageFixture jsonStorageFixture = StorageFixture.defaultHttp();
+    return Arrays.asList(
+        new Object[] {"JSON/storage.googleapis.com", jsonStorageFixture},
+        new Object[] {"GRPC/" + TEST_BENCH.getGRPCBaseUri(), grpcStorageFixture});
   }
 
   @Test
   public void testGetServiceAccount() {
-    String projectId = storage.getOptions().getProjectId();
-    ServiceAccount serviceAccount = storage.getServiceAccount(projectId);
+    String projectId = storageFixture.getInstance().getOptions().getProjectId();
+    ServiceAccount serviceAccount = storageFixture.getInstance().getServiceAccount(projectId);
     assertNotNull(serviceAccount);
     assertTrue(serviceAccount.getEmail().endsWith(SERVICE_ACCOUNT_EMAIL_SUFFIX));
   }
