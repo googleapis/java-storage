@@ -997,7 +997,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public ServiceAccount getServiceAccount(String projectId) {
     GetServiceAccountRequest req =
-        GetServiceAccountRequest.newBuilder().setProject(projectId).build();
+        GetServiceAccountRequest.newBuilder()
+            .setProject(projectNameCodec.encode(projectId))
+            .build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
