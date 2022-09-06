@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.google.api.gax.paging.Page;
+import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -28,6 +29,8 @@ import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
+import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.conformance.retry.TestBench;
 import java.util.stream.StreamSupport;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -36,7 +39,19 @@ import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
 
 public class ITHmacTest {
-  @ClassRule public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  @ClassRule(order = 1)
+  public static final TestBench TEST_BENCH =
+      TestBench.newBuilder().setContainerName("it-grpc").build();
+
+  @ClassRule(order = 2)
+  public static final StorageFixture storageFixture =
+      StorageFixture.from(
+          () ->
+              StorageOptions.grpc()
+                  .setHost(TEST_BENCH.getGRPCBaseUri())
+                  .setCredentials(NoCredentials.getInstance())
+                  .setProjectId("test-project-id")
+                  .build());
 
   private static Storage storage;
 
