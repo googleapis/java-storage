@@ -41,6 +41,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
+import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
@@ -227,8 +228,15 @@ final class GrpcConversions {
       to.setLabels(labelsMap);
     }
     if (from.hasWebsite()) {
-      to.setIndexPage(from.getWebsite().getMainPageSuffix());
-      to.setNotFoundPage(from.getWebsite().getNotFoundPage());
+      Website website = from.getWebsite();
+      String mainPageSuffix = website.getMainPageSuffix();
+      if (!mainPageSuffix.isEmpty()) {
+        to.setIndexPage(mainPageSuffix);
+      }
+      String notFoundPage = website.getNotFoundPage();
+      if (!notFoundPage.isEmpty()) {
+        to.setNotFoundPage(notFoundPage);
+      }
     }
     if (from.hasLifecycle()) {
       to.setLifecycleRules(
