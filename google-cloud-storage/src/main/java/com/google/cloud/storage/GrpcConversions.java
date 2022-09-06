@@ -38,7 +38,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.Descriptors;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
@@ -77,8 +76,6 @@ final class GrpcConversions {
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
   private final Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
-  private final Codec<BucketInfo.DeleteRule, Bucket.Lifecycle.Rule> deleteRuleCodec =
-      Codec.of(this::deleteRuleEncode, this::deleteRuleDecode);
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
       Codec.of(this::bucketInfoEncode, this::bucketInfoDecode);
   private final Codec<CustomerEncryption, com.google.storage.v2.CustomerEncryption>
@@ -161,10 +158,6 @@ final class GrpcConversions {
 
   Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRule() {
     return lifecycleRuleCodec;
-  }
-
-  Codec<BucketInfo.DeleteRule, Bucket.Lifecycle.Rule> deleteRule() {
-    return deleteRuleCodec;
   }
 
   Codec<BucketInfo, Bucket> bucketInfo() {
@@ -526,75 +519,6 @@ final class GrpcConversions {
       to.setPublicAccessPrevention(PublicAccessPrevention.parse(from.getPublicAccessPrevention()));
     }
     return to.build();
-  }
-
-  @SuppressWarnings("deprecation")
-  private Bucket.Lifecycle.Rule deleteRuleEncode(BucketInfo.DeleteRule from) {
-    Bucket.Lifecycle.Rule.Builder to = Bucket.Lifecycle.Rule.newBuilder();
-    to.setAction(
-        Bucket.Lifecycle.Rule.Action.newBuilder().setType(BucketInfo.DeleteRule.SUPPORTED_ACTION));
-    Bucket.Lifecycle.Rule.Condition.Builder condition =
-        Bucket.Lifecycle.Rule.Condition.newBuilder();
-    if (from instanceof BucketInfo.CreatedBeforeDeleteRule) {
-      BucketInfo.CreatedBeforeDeleteRule r = (BucketInfo.CreatedBeforeDeleteRule) from;
-      if (r.getTime() != null) {
-        condition.setCreatedBefore(
-            Date.newBuilder()
-                .setYear(r.getTime().getYear())
-                .setMonth(r.getTime().getMonthValue())
-                .setDay(r.getTime().getDayOfMonth())
-                .build());
-      }
-    } else if (from instanceof BucketInfo.AgeDeleteRule) {
-      BucketInfo.AgeDeleteRule r = (BucketInfo.AgeDeleteRule) from;
-      condition.setAgeDays(r.getDaysToLive());
-    } else if (from instanceof BucketInfo.NumNewerVersionsDeleteRule) {
-      BucketInfo.NumNewerVersionsDeleteRule r = (BucketInfo.NumNewerVersionsDeleteRule) from;
-      condition.setNumNewerVersions(r.getNumNewerVersions());
-    } else if (from instanceof BucketInfo.IsLiveDeleteRule) {
-      BucketInfo.IsLiveDeleteRule r = (BucketInfo.IsLiveDeleteRule) from;
-      condition.setIsLive(r.isLive());
-    } // else would be RawDeleteRule which is handled above
-    to.setCondition(condition);
-    return to.build();
-  }
-
-  static final List<Descriptors.FieldDescriptor> SUPPORTED_CONDITIONS_DELETE_RULE =
-      ImmutableList.of(
-          Bucket.Lifecycle.Rule.Condition.getDescriptor()
-              .findFieldByNumber(Bucket.Lifecycle.Rule.Condition.AGE_DAYS_FIELD_NUMBER),
-          Bucket.Lifecycle.Rule.Condition.getDescriptor()
-              .findFieldByNumber(Bucket.Lifecycle.Rule.Condition.CREATED_BEFORE_FIELD_NUMBER),
-          Bucket.Lifecycle.Rule.Condition.getDescriptor()
-              .findFieldByNumber(Bucket.Lifecycle.Rule.Condition.NUM_NEWER_VERSIONS_FIELD_NUMBER),
-          Bucket.Lifecycle.Rule.Condition.getDescriptor()
-              .findFieldByNumber(Bucket.Lifecycle.Rule.Condition.IS_LIVE_FIELD_NUMBER));
-
-  private boolean isValidDeleteRule(Bucket.Lifecycle.Rule rule) {
-    return rule.hasAction()
-        && rule.getAction().getType().equals(BucketInfo.LifecycleRule.DeleteLifecycleAction.TYPE)
-        && rule.getCondition().getAllFields().keySet().size() == 1
-        && rule.getCondition().getAllFields().keySet().stream()
-            .anyMatch(SUPPORTED_CONDITIONS_DELETE_RULE::contains);
-  }
-
-  @SuppressWarnings("deprecation")
-  private BucketInfo.DeleteRule deleteRuleDecode(Bucket.Lifecycle.Rule from) {
-    if (!isValidDeleteRule(from)) {
-      throw new IllegalArgumentException("Rule is not a valid DeleteRule" + from);
-    }
-    Bucket.Lifecycle.Rule.Condition condition = from.getCondition();
-    if (condition.hasAgeDays()) {
-      return new BucketInfo.AgeDeleteRule(condition.getAgeDays());
-    } else if (condition.hasCreatedBefore()) {
-      Date date = condition.getCreatedBefore();
-      return new BucketInfo.CreatedBeforeDeleteRule(
-          OffsetDateTime.from(LocalDate.of(date.getYear(), date.getMonth(), date.getDay())));
-    } else if (condition.hasNumNewerVersions()) {
-      return new BucketInfo.NumNewerVersionsDeleteRule(condition.getNumNewerVersions());
-    } else {
-      return new BucketInfo.IsLiveDeleteRule(condition.getIsLive());
-    }
   }
 
   private Bucket.Lifecycle.Rule lifecycleRuleEncode(BucketInfo.LifecycleRule from) {
