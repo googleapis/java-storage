@@ -29,11 +29,13 @@ import com.google.storage.v2.Bucket.Encryption;
 import com.google.storage.v2.Bucket.RetentionPolicy;
 import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
+import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.CustomerEncryption;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.Owner;
+import com.google.storage.v2.ProjectTeam;
 import com.google.type.Date;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -49,6 +51,7 @@ import net.jqwik.api.arbitraries.LongArbitrary;
 import net.jqwik.api.arbitraries.StringArbitrary;
 import net.jqwik.api.providers.TypeUsage;
 import net.jqwik.time.api.DateTimes;
+import net.jqwik.web.api.Web;
 
 public final class StorageArbitraries {
 
@@ -123,20 +126,33 @@ public final class StorageArbitraries {
     return Buckets.INSTANCE;
   }
 
+  public static AccessControl accessControl() {
+    return AccessControl.INSTANCE;
+  }
+
   public static Arbitrary<String> storageClass() {
     return Arbitraries.of(
-        "STANDARD",
-        "NEARLINE",
-        "COLDLINE",
-        "ARCHIVE",
-        "MULTI_REGIONAL",
-        "REGIONAL",
-        "DURABLE_REDUCED_AVAILABILITY");
+            "STANDARD",
+            "NEARLINE",
+            "COLDLINE",
+            "ARCHIVE",
+            "MULTI_REGIONAL",
+            "REGIONAL",
+            "DURABLE_REDUCED_AVAILABILITY")
+        .edgeCases(base -> base.add(""));
   }
 
   public static Arbitrary<Owner> owner() {
     Arbitrary<String> entity = alphaString().ofMinLength(1).ofMaxLength(1024);
     return entity.map(e -> Owner.newBuilder().setEntity(e).build());
+  }
+
+  public static Arbitrary<String> etag() {
+    return Arbitraries.strings()
+        .ascii()
+        .ofMinLength(1)
+        .ofMaxLength(8)
+        .edgeCases(base -> base.add(""));
   }
 
   public static final class Buckets {
@@ -168,18 +184,17 @@ public final class StorageArbitraries {
               });
     }
 
-    public Arbitrary<Bucket.Lifecycle.Rule.Action> actions() {
-      return Combinators.combine(Arbitraries.of("Delete", "SetStorageClass"), storageClass())
-          .as(
-              (a, s) -> {
-                Bucket.Lifecycle.Rule.Action.Builder actionBuilder =
-                    Bucket.Lifecycle.Rule.Action.newBuilder();
-                actionBuilder.setType(a);
-                if (a.equals("SetStorageClass")) {
-                  actionBuilder.setStorageClass(s);
-                }
-                return actionBuilder.build();
-              });
+    public Arbitrary<Bucket.Lifecycle.Rule.Action> action() {
+      return Arbitraries.oneOf(
+          Arbitraries.just(Bucket.Lifecycle.Rule.Action.newBuilder().setType("Delete").build()),
+          storageClass()
+              .withoutEdgeCases()
+              .map(
+                  c ->
+                      Bucket.Lifecycle.Rule.Action.newBuilder()
+                          .setType("SetStorageClass")
+                          .setStorageClass(c)
+                          .build()));
     }
 
     public Arbitrary<Bucket.Lifecycle.Rule> rule() {
@@ -191,44 +206,39 @@ public final class StorageArbitraries {
       Arbitrary<Date> conditionNoncurrentTime = date();
       Arbitrary<Integer> conditionDaysSinceCustomTime = Arbitraries.integers().between(0, 10);
       Arbitrary<Date> conditionCustomTime = date();
-      ListArbitrary<String> storageClassMatches = storageClass().list().uniqueElements();
+      ListArbitrary<String> storageClassMatches =
+          storageClass().withoutEdgeCases().list().uniqueElements();
 
-      return Arbitraries.oneOf(
-          Arbitraries.of(
-              Bucket.Lifecycle.Rule.newBuilder()
-                  .setAction(Bucket.Lifecycle.Rule.Action.newBuilder().setType("Delete").build())
-                  .setCondition(Bucket.Lifecycle.Rule.Condition.newBuilder().setAgeDays(10).build())
-                  .build()),
-          Combinators.combine(
-                  actions(),
-                  Combinators.combine(
-                          conditionIsLive,
-                          conditionAgeDays,
-                          conditionNumberOfNewVersions,
-                          conditionCreatedBeforeTime,
-                          conditionDaysSinceNoncurrentTime,
-                          conditionNoncurrentTime,
-                          conditionDaysSinceCustomTime,
-                          conditionCustomTime)
-                      .as(Tuple::of),
-                  storageClassMatches)
-              .as(
-                  (a, ct, s) ->
-                      Bucket.Lifecycle.Rule.newBuilder()
-                          .setAction(a)
-                          .setCondition(
-                              Bucket.Lifecycle.Rule.Condition.newBuilder()
-                                  .setIsLive(ct.get1())
-                                  .setAgeDays(ct.get2())
-                                  .setNumNewerVersions(ct.get3())
-                                  .setCreatedBefore(ct.get4())
-                                  .setDaysSinceNoncurrentTime(ct.get5())
-                                  .setNoncurrentTimeBefore(ct.get6())
-                                  .setDaysSinceCustomTime(ct.get7())
-                                  .setCustomTimeBefore(ct.get8())
-                                  .addAllMatchesStorageClass(s)
-                                  .build())
-                          .build()));
+      return Combinators.combine(
+              action(),
+              Combinators.combine(
+                      conditionIsLive,
+                      conditionAgeDays,
+                      conditionNumberOfNewVersions,
+                      conditionCreatedBeforeTime,
+                      conditionDaysSinceNoncurrentTime,
+                      conditionNoncurrentTime,
+                      conditionDaysSinceCustomTime,
+                      conditionCustomTime)
+                  .as(Tuple::of),
+              storageClassMatches)
+          .as(
+              (a, ct, s) ->
+                  Bucket.Lifecycle.Rule.newBuilder()
+                      .setAction(a)
+                      .setCondition(
+                          Bucket.Lifecycle.Rule.Condition.newBuilder()
+                              .setIsLive(ct.get1())
+                              .setAgeDays(ct.get2())
+                              .setNumNewerVersions(ct.get3())
+                              .setCreatedBefore(ct.get4())
+                              .setDaysSinceNoncurrentTime(ct.get5())
+                              .setNoncurrentTimeBefore(ct.get6())
+                              .setDaysSinceCustomTime(ct.get7())
+                              .setCustomTimeBefore(ct.get8())
+                              .addAllMatchesStorageClass(s)
+                              .build())
+                      .build());
     }
 
     public Arbitrary<Bucket.Lifecycle> lifecycle() {
@@ -300,10 +310,28 @@ public final class StorageArbitraries {
     }
 
     public ListArbitrary<ObjectAccessControl> objectAccessControl() {
-      Arbitrary<String> entity = alphaString().ofMinLength(1).ofMaxLength(25);
-      Arbitrary<String> role = alphaString().ofMinLength(1).ofMaxLength(25);
-      return Combinators.combine(entity, role)
-          .as((e, r) -> ObjectAccessControl.newBuilder().setEntity(e).setRole(r).build())
+      return Combinators.combine(accessControl().entity(), accessControl().role(), etag())
+          .as(
+              (entity, role, etag) -> {
+                ObjectAccessControl.Builder b = entity.newObjectBuilder();
+                ifNonNull(role, b::setRole);
+                ifNonNull(etag, b::setEtag);
+                return b.build();
+              })
+          .list()
+          .ofMinSize(0)
+          .ofMaxSize(10);
+    }
+
+    public ListArbitrary<BucketAccessControl> bucketAccessControl() {
+      return Combinators.combine(accessControl().entity(), accessControl().role(), etag())
+          .as(
+              (entity, role, etag) -> {
+                BucketAccessControl.Builder b = entity.newBucketBuilder();
+                ifNonNull(role, b::setRole);
+                ifNonNull(etag, b::setEtag);
+                return b.build();
+              })
           .list()
           .ofMinSize(0)
           .ofMaxSize(10);
@@ -467,9 +495,7 @@ public final class StorageArbitraries {
     }
 
     public ListArbitrary<ObjectAccessControl> objectAccessControl() {
-      return Arbitraries.of(ObjectAccessControl.getDefaultInstance())
-          .list()
-          .ofMaxSize(0) /*.ofMinSize(0).ofMaxSize(10)*/;
+      return buckets().objectAccessControl();
     }
   }
 
@@ -483,6 +509,8 @@ public final class StorageArbitraries {
    */
   public static final class HttpHeaders {
     private static final HttpHeaders INSTANCE = new HttpHeaders();
+
+    private HttpHeaders() {}
 
     public Arbitrary<String> cacheControl() {
       return Combinators.combine(
@@ -531,6 +559,139 @@ public final class StorageArbitraries {
 
     public Arbitrary<Timestamp> customTime() {
       return timestamp().injectNull(0.75);
+    }
+  }
+
+  public static final class AccessControl {
+    private static final AccessControl INSTANCE = new AccessControl();
+
+    private AccessControl() {}
+
+    public Arbitrary<String> id() {
+      return Arbitraries.shorts().greaterOrEqual((short) 1).map(s -> Short.toString(s));
+    }
+
+    /**
+     * <a target="_blank" rel="noopener noreferrer"
+     * href="https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource">https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource</a>
+     */
+    public Arbitrary<String> role() {
+      return Arbitraries.of("OWNER", "READER");
+    }
+
+    /**
+     * <a target="_blank" rel="noopener noreferrer"
+     * href="https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource">https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource</a>
+     */
+    public Arbitrary<String> team() {
+      return Arbitraries.of("owner", "editors", "viewers");
+    }
+
+    public Arbitrary<AclEntity> entity() {
+      return Arbitraries.oneOf(
+          id().map(AclEntity::userId),
+          Web.emails().map(AclEntity::user),
+          id().map(AclEntity::groupId),
+          Web.emails().map(AclEntity::group),
+          Web.webDomains().map(AclEntity::domain),
+          projectTeam().map(AclEntity::project),
+          Arbitraries.just(new PredefinedEntity("allUsers")),
+          Arbitraries.just(new PredefinedEntity("allAuthenticatedUsers")));
+    }
+
+    public Arbitrary<ProjectTeam> projectTeam() {
+      return Combinators.combine(id(), team())
+          .as(
+              (projectNumber, team) ->
+                  ProjectTeam.newBuilder().setProjectNumber(projectNumber).setTeam(team).build());
+    }
+
+    public abstract static class AclEntity {
+
+      private AclEntity() {}
+
+      abstract ObjectAccessControl.Builder newObjectBuilder();
+
+      abstract BucketAccessControl.Builder newBucketBuilder();
+
+      static EntityWithId userId(String id) {
+        return new EntityWithId(id);
+      }
+
+      static EntityWithoutId user(String email) {
+        return new EntityWithoutId(String.format("user-%s", email));
+      }
+
+      static EntityWithId groupId(String id) {
+        return new EntityWithId(id);
+      }
+
+      static EntityWithoutId group(String email) {
+        return new EntityWithoutId(String.format("group-%s", email));
+      }
+
+      static EntityWithoutId domain(String email) {
+        return new EntityWithoutId(String.format("domain-%s", email));
+      }
+
+      static EntityWithoutId project(ProjectTeam projectTeam) {
+        return new EntityWithoutId(
+            String.format("project-%s-%s", projectTeam.getTeam(), projectTeam.getProjectNumber()));
+      }
+    }
+
+    public static final class PredefinedEntity extends AclEntity {
+      private final String name;
+
+      private PredefinedEntity(String name) {
+        this.name = name;
+      }
+
+      @Override
+      ObjectAccessControl.Builder newObjectBuilder() {
+        return ObjectAccessControl.newBuilder().setEntity(name);
+      }
+
+      @Override
+      BucketAccessControl.Builder newBucketBuilder() {
+        return BucketAccessControl.newBuilder().setEntity(name);
+      }
+    }
+
+    public static final class EntityWithId extends AclEntity {
+      private final String id;
+
+      private EntityWithId(String id) {
+        this.id = id;
+      }
+
+      @Override
+      ObjectAccessControl.Builder newObjectBuilder() {
+        return ObjectAccessControl.newBuilder().setId(id);
+      }
+
+      @Override
+      BucketAccessControl.Builder newBucketBuilder() {
+        return BucketAccessControl.newBuilder().setId(id);
+      }
+    }
+
+    public static final class EntityWithoutId extends AclEntity {
+      private final String entity;
+
+      private EntityWithoutId(String entity) {
+        this.entity = entity;
+      }
+
+      @Override
+      ObjectAccessControl.Builder newObjectBuilder() {
+        return ObjectAccessControl.newBuilder().setEntity(entity);
+      }
+
+      @Override
+      BucketAccessControl.Builder newBucketBuilder() {
+        return BucketAccessControl.newBuilder().setEntity(entity);
+      }
     }
   }
 

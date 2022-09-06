@@ -49,9 +49,10 @@ public class HmacKeyMetadataArbitraryProvider implements ArbitraryProvider {
                 Arbitraries.of(HmacKey.HmacKeyState.class),
                 StorageArbitraries.timestamp(),
                 StorageArbitraries.timestamp(),
-                Web.emails())
+                Web.emails(),
+                StorageArbitraries.etag())
             .as(
-                (accessId, projectID, state, createTime, updateTime, email) ->
+                (accessId, projectID, state, createTime, updateTime, email, etag) ->
                     HmacKeyMetadata.newBuilder()
                         .setAccessId(accessId)
                         .setProject("projects/" + projectID.get())
@@ -60,6 +61,7 @@ public class HmacKeyMetadataArbitraryProvider implements ArbitraryProvider {
                         .setCreateTime(createTime)
                         .setUpdateTime(updateTime)
                         .setServiceAccountEmail(email)
+                        .setEtag(etag)
                         .build());
     return Collections.singleton(as);
   }

@@ -77,8 +77,9 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                     .as(Tuple::of),
                 Combinators.combine(
                         StorageArbitraries.objects().customMetadata(),
-                        StorageArbitraries.owner(),
-                        StorageArbitraries.objects().objectAccessControl())
+                        StorageArbitraries.owner().injectNull(0.1),
+                        StorageArbitraries.objects().objectAccessControl().injectNull(0.5),
+                        StorageArbitraries.etag())
                     .as(Tuple::of))
             .as(
                 (t1, t2, t3, t4) -> {
@@ -106,9 +107,10 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                   ifNonNull(t3.get5(), b::setRetentionExpireTime);
                   ifNonNull(t4.get1(), b::putAllMetadata);
                   ifNonNull(t3.get6(), b::setEventBasedHold);
-                  // ifNonNull(t4.get2(), b::setOwner); // TODO
+                  ifNonNull(t4.get2(), b::setOwner);
                   ifNonNull(t3.get7(), b::setCustomerEncryption);
                   ifNonNull(t3.get8(), b::setCustomTime);
+                  ifNonNull(t4.get4(), b::setEtag);
                   return b.build();
                 });
     return Collections.singleton(objectArbitrary);
