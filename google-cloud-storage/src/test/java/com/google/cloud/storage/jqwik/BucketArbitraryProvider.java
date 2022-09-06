@@ -51,10 +51,10 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().locationType(),
                         StorageArbitraries.metageneration(),
                         StorageArbitraries.buckets().versioning().injectNull(0.25),
-                        StorageArbitraries.timestamp()) // ctime
+                        StorageArbitraries.timestamp().injectNull(0.25)) // ctime
                     .as(Tuple::of),
                 Combinators.combine(
-                        StorageArbitraries.timestamp(), // utime
+                        StorageArbitraries.timestamp().injectNull(0.25), // utime
                         StorageArbitraries.buckets().website().injectNull(0.75),
                         StorageArbitraries.bool(),
                         StorageArbitraries.buckets().rpo(),
