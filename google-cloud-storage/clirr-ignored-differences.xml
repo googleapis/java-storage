@@ -52,4 +52,15 @@
     <method>void close()</method>
   </difference>
 
+  <!--
+  Allow com.google.cloud.storage.CopyWriter to now be abstract.
+  Previously, the class was only extendable within the package due to
+  constructor scope, making it abstract will be compatible for our
+  customers.
+  -->
+  <difference>
+    <differenceType>3005</differenceType>
+    <className>com/google/cloud/storage/CopyWriter</className>
+  </difference>
+
 </differences>

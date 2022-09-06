@@ -56,6 +56,7 @@ import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.Mapper;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
@@ -84,6 +85,8 @@ import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.RewriteObjectRequest;
+import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageClient.ListBucketsPage;
 import com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
@@ -567,7 +570,51 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public CopyWriter copy(CopyRequest copyRequest) {
-    return throwNotYetImplemented(fmtMethodName("copy", CopyRequest.class));
+    BlobId src = copyRequest.getSource();
+    BlobInfo dst = copyRequest.getTarget();
+    Opts<ObjectSourceOpt> srcOpts =
+        Opts.unwrap(copyRequest.getSourceOptions()).projectAsSource().resolveFrom(src);
+    Opts<ObjectTargetOpt> dstOpts = Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst);
+
+    Mapper<RewriteObjectRequest.Builder> mapper =
+        srcOpts.rewriteObjectsRequest().andThen(dstOpts.rewriteObjectsRequest());
+
+    Object srcProto = codecs.blobId().encode(src);
+    Object dstProto = codecs.blobInfo().encode(dst);
+
+    RewriteObjectRequest.Builder b =
+        RewriteObjectRequest.newBuilder()
+            .setDestinationName(dstProto.getName())
+            .setDestinationBucket(dstProto.getBucket())
+            // destination_kms_key comes from dstOpts
+            // according to the docs in the protos, it is illegal to populate the following fields,
+            // clear them out if they are set
+            // destination_predefined_acl comes from dstOpts
+            // if_*_match come from srcOpts and dstOpts
+            // copy_source_encryption_* come from srcOpts
+            // common_object_request_params come from dstOpts
+            .setDestination(dstProto.toBuilder().clearName().clearBucket().clearKmsKey().build())
+            .setSourceBucket(srcProto.getBucket())
+            .setSourceObject(srcProto.getName());
+
+    if (src.getGeneration() != null) {
+      b.setSourceGeneration(src.getGeneration());
+    }
+
+    if (copyRequest.getMegabytesCopiedPerChunk() != null) {
+      b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk());
+    }
+
+    RewriteObjectRequest req = mapper.apply(b).build();
+    GrpcCallContext grpcCallContext =
+        srcOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
+        storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> callable.call(req),
+        (resp) -> new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), resp));
   }
 
   @Override

@@ -381,6 +381,7 @@ public final class GrpcStorageOptions extends StorageOptions
    * @see GrpcStorageOptions.GrpcStorageDefaults#getDefaultServiceFactory()
    */
   @InternalApi
+  @BetaApi
   public static class GrpcStorageFactory implements StorageFactory {
 
     /**
@@ -400,6 +401,7 @@ public final class GrpcStorageOptions extends StorageOptions
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
+    @BetaApi
     public GrpcStorageFactory() {}
 
     @Override
@@ -450,6 +452,7 @@ public final class GrpcStorageOptions extends StorageOptions
     @InternalApi
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
+    @BetaApi
     public GrpcStorageRpcFactory() {}
 
     @Override

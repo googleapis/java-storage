@@ -57,6 +57,14 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     this.retryStrategy = retryStrategy;
   }
 
+  /**
+   * Some operations are inherently idempotent after they're started (Resumable uploads, rewrites)
+   * provide access to the idempotent {@link ResultRetryAlgorithm} for those uses.
+   */
+  ResultRetryAlgorithm<?> idempotent() {
+    return retryStrategy.getIdempotentHandler();
+  }
+
   public ResultRetryAlgorithm<?> getFor(ComposeObjectRequest req) {
     return req.hasIfGenerationMatch()
         ? retryStrategy.getIdempotentHandler()
