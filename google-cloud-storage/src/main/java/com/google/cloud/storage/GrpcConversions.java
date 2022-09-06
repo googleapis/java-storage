@@ -702,7 +702,8 @@ final class GrpcConversions {
   }
 
   private BlobId blobIdDecode(Object from) {
-    return BlobId.of(from.getBucket(), from.getName(), from.getGeneration());
+    String bucketName = bucketNameCodec.decode(from.getBucket());
+    return BlobId.of(bucketName, from.getName(), from.getGeneration());
   }
 
   private Object blobInfoEncode(BlobInfo from) {
