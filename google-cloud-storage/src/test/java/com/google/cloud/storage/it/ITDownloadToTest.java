@@ -51,7 +51,7 @@ public final class ITDownloadToTest {
 
   @Rule public final StorageFixture storageFixture;
 
-  @ClassRule public final BucketFixture bucketFixture;
+  @Rule public final BucketFixture bucketFixture;
 
   private static final byte[] helloWorldTextBytes = "hello world".getBytes();
   private static final byte[] helloWorldGzipBytes = TestUtils.gzipBytes(helloWorldTextBytes);
