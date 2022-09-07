@@ -28,6 +28,7 @@ import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.conformance.retry.CleanupStrategy;
+import com.google.cloud.storage.conformance.retry.ParallelParameterized;
 import com.google.cloud.storage.conformance.retry.TestBench;
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(ParallelParameterized.class)
 public final class ITDownloadToTest {
   @ClassRule(order = 0)
   public static final TestBench TEST_BENCH =
@@ -102,7 +103,6 @@ public final class ITDownloadToTest {
   @Before
   public void beforeClass() {
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "zipped_blob");
-
     BlobInfo blobInfo =
         BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
     storageFixture.getInstance().create(blobInfo, helloWorldGzipBytes);
