@@ -26,6 +26,7 @@ import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Encryption;
+import com.google.storage.v2.Bucket.Lifecycle.Rule.Condition;
 import com.google.storage.v2.Bucket.RetentionPolicy;
 import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
@@ -46,6 +47,7 @@ import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
 import net.jqwik.api.Tuple;
 import net.jqwik.api.arbitraries.CharacterArbitrary;
+import net.jqwik.api.arbitraries.IntegerArbitrary;
 import net.jqwik.api.arbitraries.ListArbitrary;
 import net.jqwik.api.arbitraries.LongArbitrary;
 import net.jqwik.api.arbitraries.StringArbitrary;
@@ -131,15 +133,8 @@ public final class StorageArbitraries {
   }
 
   public static Arbitrary<String> storageClass() {
-    return Arbitraries.of(
-            "STANDARD",
-            "NEARLINE",
-            "COLDLINE",
-            "ARCHIVE",
-            "MULTI_REGIONAL",
-            "REGIONAL",
-            "DURABLE_REDUCED_AVAILABILITY")
-        .edgeCases(base -> base.add(""));
+    return Arbitraries.oneOf(storageClassWithoutEdgeCases(), Arbitraries.just(""))
+        .edgeCases(config -> config.add(""));
   }
 
   public static Arbitrary<Owner> owner() {
@@ -152,7 +147,7 @@ public final class StorageArbitraries {
         .ascii()
         .ofMinLength(0)
         .ofMaxLength(8)
-        .edgeCases(base -> base.add(""));
+        .edgeCases(config -> config.add(""));
   }
 
   public static final class Buckets {
@@ -187,8 +182,7 @@ public final class StorageArbitraries {
     public Arbitrary<Bucket.Lifecycle.Rule.Action> action() {
       return Arbitraries.oneOf(
           Arbitraries.just(Bucket.Lifecycle.Rule.Action.newBuilder().setType("Delete").build()),
-          storageClass()
-              .withoutEdgeCases()
+          storageClassWithoutEdgeCases()
               .map(
                   c ->
                       Bucket.Lifecycle.Rule.Action.newBuilder()
@@ -198,16 +192,18 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Bucket.Lifecycle.Rule> rule() {
-      Arbitrary<Boolean> conditionIsLive = bool();
-      Arbitrary<Integer> conditionAgeDays = Arbitraries.integers().between(0, 100);
-      Arbitrary<Integer> conditionNumberOfNewVersions = Arbitraries.integers().between(0, 10);
-      Arbitrary<Date> conditionCreatedBeforeTime = date();
-      Arbitrary<Integer> conditionDaysSinceNoncurrentTime = Arbitraries.integers().between(0, 10);
-      Arbitrary<Date> conditionNoncurrentTime = date();
-      Arbitrary<Integer> conditionDaysSinceCustomTime = Arbitraries.integers().between(0, 10);
-      Arbitrary<Date> conditionCustomTime = date();
+      IntegerArbitrary zeroThroughTen = Arbitraries.integers().between(0, 10);
+
+      Arbitrary<Boolean> conditionIsLive = bool().injectNull(0.25);
+      Arbitrary<Integer> conditionAgeDays = Arbitraries.integers().between(0, 100).injectNull(0.25);
+      Arbitrary<Integer> conditionNumberOfNewVersions = zeroThroughTen.injectNull(0.25);
+      Arbitrary<Date> conditionCreatedBeforeTime = date().injectNull(0.25);
+      Arbitrary<Integer> conditionDaysSinceNoncurrentTime = zeroThroughTen.injectNull(0.25);
+      Arbitrary<Date> conditionNoncurrentTime = date().injectNull(0.25);
+      Arbitrary<Integer> conditionDaysSinceCustomTime = zeroThroughTen.injectNull(0.25);
+      Arbitrary<Date> conditionCustomTime = date().injectNull(0.25);
       ListArbitrary<String> storageClassMatches =
-          storageClass().withoutEdgeCases().list().uniqueElements();
+          storageClassWithoutEdgeCases().list().uniqueElements();
 
       return Combinators.combine(
               action(),
@@ -223,29 +219,26 @@ public final class StorageArbitraries {
                   .as(Tuple::of),
               storageClassMatches)
           .as(
-              (a, ct, s) ->
-                  Bucket.Lifecycle.Rule.newBuilder()
-                      .setAction(a)
-                      .setCondition(
-                          Bucket.Lifecycle.Rule.Condition.newBuilder()
-                              .setIsLive(ct.get1())
-                              .setAgeDays(ct.get2())
-                              .setNumNewerVersions(ct.get3())
-                              .setCreatedBefore(ct.get4())
-                              .setDaysSinceNoncurrentTime(ct.get5())
-                              .setNoncurrentTimeBefore(ct.get6())
-                              .setDaysSinceCustomTime(ct.get7())
-                              .setCustomTimeBefore(ct.get8())
-                              .addAllMatchesStorageClass(s)
-                              .build())
-                      .build());
+              (a, ct, s) -> {
+                Condition.Builder b = Condition.newBuilder();
+                ifNonNull(ct.get1(), b::setIsLive);
+                ifNonNull(ct.get2(), b::setAgeDays);
+                ifNonNull(ct.get3(), b::setNumNewerVersions);
+                ifNonNull(ct.get4(), b::setCreatedBefore);
+                ifNonNull(ct.get5(), b::setDaysSinceNoncurrentTime);
+                ifNonNull(ct.get6(), b::setNoncurrentTimeBefore);
+                ifNonNull(ct.get7(), b::setDaysSinceCustomTime);
+                ifNonNull(ct.get8(), b::setCustomTimeBefore);
+                b.addAllMatchesStorageClass(s);
+                return Bucket.Lifecycle.Rule.newBuilder().setAction(a).setCondition(b).build();
+              });
     }
 
     public Arbitrary<Bucket.Lifecycle> lifecycle() {
       return rule()
           .list()
           .ofMinSize(0)
-          .ofMaxSize(100)
+          .ofMaxSize(1)
           .uniqueElements()
           .map((r) -> Bucket.Lifecycle.newBuilder().addAllRule(r).build());
     }
@@ -273,7 +266,12 @@ public final class StorageArbitraries {
 
     public Arbitrary<Bucket.Logging> logging() {
       Arbitrary<BucketName> loggingBucketName = name();
-      Arbitrary<String> loggingPrefix = Arbitraries.strings().all().ofMinLength(1).ofMaxLength(10);
+      Arbitrary<String> loggingPrefix =
+          Arbitraries.strings()
+              .all()
+              .ofMinLength(0)
+              .ofMaxLength(10)
+              .edgeCases(config -> config.add(""));
       return Combinators.combine(loggingBucketName, loggingPrefix)
           .as(
               (b, p) ->
@@ -715,5 +713,16 @@ public final class StorageArbitraries {
    */
   private static Arbitrary<Integer> millisecondsAsNanos() {
     return Arbitraries.integers().between(0, 999).map(i -> i * 1_000_000);
+  }
+
+  private static Arbitrary<String> storageClassWithoutEdgeCases() {
+    return Arbitraries.of(
+        "STANDARD",
+        "NEARLINE",
+        "COLDLINE",
+        "ARCHIVE",
+        "MULTI_REGIONAL",
+        "REGIONAL",
+        "DURABLE_REDUCED_AVAILABILITY");
   }
 }
