@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.cloud.NoCredentials;
 import com.google.cloud.Policy;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
@@ -39,14 +38,10 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.conformance.retry.ParallelParameterized;
-import com.google.cloud.storage.conformance.retry.TestBench;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -54,70 +49,36 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(ParallelParameterized.class)
 public class ITBucketTest {
 
-  @ClassRule(order = 0)
-  public static final TestBench TEST_BENCH =
-      TestBench.newBuilder().setContainerName("it-grpc").build();
-
   @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc =
-      StorageFixture.from(
-          () ->
-              StorageOptions.grpc()
-                  .setHost(TEST_BENCH.getGRPCBaseUri())
-                  .setCredentials(NoCredentials.getInstance())
-                  .setProjectId("test-project-id")
-                  .build());
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
+  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
 
   @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureHttp =
-      BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
+  public static final BucketFixture bucketFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
-  @ClassRule(order = 2)
-  public static final BucketFixture requesterPaysFixtureHttp =
-      BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
+  @ClassRule(order = 3)
+  public static final BucketFixture requesterPaysFixture =
+      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
 
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureGrpc =
-      BucketFixture.newBuilder().setHandle(storageFixtureGrpc::getInstance).build();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture requesterPaysFixtureGrpc =
-      BucketFixture.newBuilder().setHandle(storageFixtureGrpc::getInstance).build();
-
-  private final StorageFixture storageFixture;
-  private final BucketFixture bucketFixture;
-  private final BucketFixture requesterPaysFixture;
-  private final String clientName;
+  private static Storage storage;
+  private static String bucketName;
+  private static String requesterPaysBucketName;
 
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
   private static final Map<String, String> BUCKET_LABELS = ImmutableMap.of("label1", "value1");
   private static final Long RETENTION_PERIOD = 5L;
 
-  public ITBucketTest(String clientName, StorageFixture storageFixture, BucketFixture bucketFixture, BucketFixture requesterPaysFixture) {
-    this.storageFixture = storageFixture;
-    this.bucketFixture = bucketFixture;
-    this.requesterPaysFixture = requesterPaysFixture;
-    this.clientName = clientName;
-  }
-
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return Arrays.asList(
-        new Object[] {"JSON/storage.googleapis.com", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp},
-        new Object[] {
-            "GRPC/" + TEST_BENCH.getGRPCBaseUri(), storageFixtureGrpc, bucketFixtureGrpc, requesterPaysFixtureGrpc
-        });
+  @BeforeClass
+  public static void setup() {
+    storage = storageFixture.getInstance();
+    bucketName = bucketFixture.getBucketInfo().getName();
+    requesterPaysBucketName = requesterPaysFixture.getBucketInfo().getName();
   }
 
   @AfterClass
@@ -127,18 +88,15 @@ public class ITBucketTest {
 
   @Test(timeout = 5000)
   public void testListBuckets() throws InterruptedException {
-    String bucketName = bucketFixture.getBucketInfo().getName();
     Iterator<Bucket> bucketIterator =
-        storageFixture
-            .getInstance()
+        storage
             .list(Storage.BucketListOption.prefix(bucketName), Storage.BucketListOption.fields())
             .iterateAll()
             .iterator();
     while (!bucketIterator.hasNext()) {
       Thread.sleep(500);
       bucketIterator =
-          storageFixture
-              .getInstance()
+          storage
               .list(Storage.BucketListOption.prefix(bucketName), Storage.BucketListOption.fields())
               .iterateAll()
               .iterator();
@@ -153,11 +111,7 @@ public class ITBucketTest {
 
   @Test
   public void testGetBucketSelectedFields() {
-    String bucketName = bucketFixture.getBucketInfo().getName();
-    Bucket remoteBucket =
-        storageFixture
-            .getInstance()
-            .get(bucketName, Storage.BucketGetOption.fields(BucketField.ID));
+    Bucket remoteBucket = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.ID));
     assertEquals(bucketName, remoteBucket.getName());
     assertNull(remoteBucket.getCreateTime());
     assertNotNull(remoteBucket.getGeneratedId());
@@ -165,11 +119,8 @@ public class ITBucketTest {
 
   @Test
   public void testGetBucketAllSelectedFields() {
-    String bucketName = bucketFixture.getBucketInfo().getName();
     Bucket remoteBucket =
-        storageFixture
-            .getInstance()
-            .get(bucketName, Storage.BucketGetOption.fields(BucketField.values()));
+        storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.values()));
     assertEquals(bucketName, remoteBucket.getName());
     assertNotNull(remoteBucket.getCreateTime());
     assertNotNull(remoteBucket.getSelfLink());
@@ -178,10 +129,7 @@ public class ITBucketTest {
   @Test
   public void testBucketLocationType() {
     String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket bucket =
-        storageFixture
-            .getInstance()
-            .create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
+    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
     assertEquals("multi-region", bucket.getLocationType());
   }
 
@@ -194,13 +142,11 @@ public class ITBucketTest {
     CustomPlacementConfig customPlacementConfig =
         CustomPlacementConfig.newBuilder().setDataLocations(locations).build();
     Bucket bucket =
-        storageFixture
-            .getInstance()
-            .create(
-                BucketInfo.newBuilder(bucketName)
-                    .setCustomPlacementConfig(customPlacementConfig)
-                    .setLocation("us")
-                    .build());
+        storage.create(
+            BucketInfo.newBuilder(bucketName)
+                .setCustomPlacementConfig(customPlacementConfig)
+                .setLocation("us")
+                .build());
     assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST1"));
     assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST1"));
     assertTrue(bucket.getLocation().equalsIgnoreCase("us"));
@@ -211,11 +157,8 @@ public class ITBucketTest {
     String logsBucket = RemoteStorageHelper.generateBucketName();
     String loggingBucket = RemoteStorageHelper.generateBucketName();
     try {
-      assertNotNull(
-          storageFixture
-              .getInstance()
-              .create(BucketInfo.newBuilder(logsBucket).setLocation("us").build()));
-      Policy policy = storageFixture.getInstance().getIamPolicy(logsBucket);
+      assertNotNull(storage.create(BucketInfo.newBuilder(logsBucket).setLocation("us").build()));
+      Policy policy = storage.getIamPolicy(logsBucket);
       assertNotNull(policy);
       BucketInfo.Logging logging =
           BucketInfo.Logging.newBuilder()
@@ -223,13 +166,8 @@ public class ITBucketTest {
               .setLogObjectPrefix("test-logs")
               .build();
       Bucket bucket =
-          storageFixture
-              .getInstance()
-              .create(
-                  BucketInfo.newBuilder(loggingBucket)
-                      .setLocation("us")
-                      .setLogging(logging)
-                      .build());
+          storage.create(
+              BucketInfo.newBuilder(loggingBucket).setLocation("us").setLogging(logging).build());
       assertEquals(logsBucket, bucket.getLogging().getLogBucket());
       assertEquals("test-logs", bucket.getLogging().getLogObjectPrefix());
 
@@ -238,10 +176,8 @@ public class ITBucketTest {
       assertNull(updatedBucket.getLogging());
 
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixture.getInstance(), logsBucket, 5, TimeUnit.SECONDS);
-      RemoteStorageHelper.forceDelete(
-          storageFixture.getInstance(), loggingBucket, 5, TimeUnit.SECONDS);
+      RemoteStorageHelper.forceDelete(storage, logsBucket, 5, TimeUnit.SECONDS);
+      RemoteStorageHelper.forceDelete(storage, loggingBucket, 5, TimeUnit.SECONDS);
     }
   }
 
@@ -259,15 +195,11 @@ public class ITBucketTest {
               .setResponseHeaders(responseHeaders)
               .setMaxAgeSeconds(100)
               .build();
-      storageFixture
-          .getInstance()
-          .create(BucketInfo.newBuilder(bucketName).setCors(ImmutableList.of(cors)).build());
+      storage.create(BucketInfo.newBuilder(bucketName).setCors(ImmutableList.of(cors)).build());
 
       // case-1 : Cors are set and field selector is selected then returns not-null.
       Bucket remoteBucket =
-          storageFixture
-              .getInstance()
-              .get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
+          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
       assertThat(remoteBucket.getCors()).isNotNull();
       assertThat(remoteBucket.getCors().get(0).getMaxAgeSeconds()).isEqualTo(100);
       assertThat(remoteBucket.getCors().get(0).getMethods()).isEqualTo(httpMethods);
@@ -275,7 +207,7 @@ public class ITBucketTest {
       assertThat(remoteBucket.getCors().get(0).getResponseHeaders()).isEqualTo(responseHeaders);
 
       // case-2 : Cors are set but field selector isn't selected then returns not-null.
-      remoteBucket = storageFixture.getInstance().get(bucketName);
+      remoteBucket = storage.get(bucketName);
       assertThat(remoteBucket.getCors()).isNotNull();
 
       // Remove CORS configuration from the bucket.
@@ -283,19 +215,15 @@ public class ITBucketTest {
       assertThat(updatedBucket.getCors()).isNull();
 
       // case-3 : Cors are not set and field selector is selected then returns null.
-      updatedBucket =
-          storageFixture
-              .getInstance()
-              .get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
+      updatedBucket = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.CORS));
       assertThat(updatedBucket.getCors()).isNull();
 
       // case-4 : Cors are not set and field selector isn't selected then returns null.
-      updatedBucket = storageFixture.getInstance().get(bucketName);
+      updatedBucket = storage.get(bucketName);
       assertThat(updatedBucket.getCors()).isNull();
 
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixture.getInstance(), bucketName, 5, TimeUnit.SECONDS);
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
 
@@ -304,20 +232,15 @@ public class ITBucketTest {
     String rpoBucket = RemoteStorageHelper.generateBucketName();
     try {
       Bucket bucket =
-          storageFixture
-              .getInstance()
-              .create(
-                  BucketInfo.newBuilder(rpoBucket)
-                      .setLocation("NAM4")
-                      .setRpo(Rpo.ASYNC_TURBO)
-                      .build());
+          storage.create(
+              BucketInfo.newBuilder(rpoBucket).setLocation("NAM4").setRpo(Rpo.ASYNC_TURBO).build());
       assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
 
       bucket.toBuilder().setRpo(Rpo.DEFAULT).build().update();
 
-      assertEquals("DEFAULT", storageFixture.getInstance().get(rpoBucket).getRpo().toString());
+      assertEquals("DEFAULT", storage.get(rpoBucket).getRpo().toString());
     } finally {
-      storageFixture.getInstance().delete(rpoBucket);
+      storage.delete(rpoBucket);
     }
   }
 
@@ -329,7 +252,7 @@ public class ITBucketTest {
 
   private void retentionPolicyLockRequesterPays(boolean requesterPays)
       throws ExecutionException, InterruptedException {
-    String projectId = storageFixture.getInstance().getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     String bucketName = RemoteStorageHelper.generateBucketName();
     BucketInfo bucketInfo;
     if (requesterPays) {
@@ -341,25 +264,21 @@ public class ITBucketTest {
     } else {
       bucketInfo = BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build();
     }
-    Bucket remoteBucket = storageFixture.getInstance().create(bucketInfo);
+    Bucket remoteBucket = storage.create(bucketInfo);
     try {
       assertNull(remoteBucket.retentionPolicyIsLocked());
       assertNotNull(remoteBucket.getRetentionEffectiveTime());
       assertNotNull(remoteBucket.getMetageneration());
       if (requesterPays) {
         remoteBucket =
-            storageFixture
-                .getInstance()
-                .lockRetentionPolicy(
-                    remoteBucket,
-                    Storage.BucketTargetOption.metagenerationMatch(),
-                    Storage.BucketTargetOption.userProject(projectId));
+            storage.lockRetentionPolicy(
+                remoteBucket,
+                Storage.BucketTargetOption.metagenerationMatch(),
+                Storage.BucketTargetOption.userProject(projectId));
       } else {
         remoteBucket =
-            storageFixture
-                .getInstance()
-                .lockRetentionPolicy(
-                    remoteBucket, Storage.BucketTargetOption.metagenerationMatch());
+            storage.lockRetentionPolicy(
+                remoteBucket, Storage.BucketTargetOption.metagenerationMatch());
       }
       assertTrue(remoteBucket.retentionPolicyIsLocked());
       assertNotNull(remoteBucket.getRetentionEffectiveTime());
@@ -367,62 +286,49 @@ public class ITBucketTest {
       if (requesterPays) {
         bucketInfo = bucketInfo.toBuilder().setRequesterPays(false).build();
         Bucket updateBucket =
-            storageFixture
-                .getInstance()
-                .update(bucketInfo, Storage.BucketTargetOption.userProject(projectId));
+            storage.update(bucketInfo, Storage.BucketTargetOption.userProject(projectId));
         assertFalse(updateBucket.requesterPays());
       }
-      RemoteStorageHelper.forceDelete(
-          storageFixture.getInstance(), bucketName, 5, TimeUnit.SECONDS, projectId);
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS, projectId);
     }
   }
 
   @Test
   public void testUpdateBucketLabel() {
-    String bucketName = bucketFixture.getBucketInfo().getName();
     Bucket remoteBucket =
-        storageFixture
-            .getInstance()
-            .get(bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+        storage.get(
+            bucketName, Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertNull(remoteBucket.getLabels());
     remoteBucket = remoteBucket.toBuilder().setLabels(BUCKET_LABELS).build();
-    Bucket updatedBucket = storageFixture.getInstance().update(remoteBucket);
+    Bucket updatedBucket = storage.update(remoteBucket);
     assertEquals(BUCKET_LABELS, updatedBucket.getLabels());
     remoteBucket.toBuilder().setLabels(Collections.emptyMap()).build().update();
-    assertNull(storageFixture.getInstance().get(bucketName).getLabels());
+    assertNull(storage.get(bucketName).getLabels());
   }
 
   @Test
   public void testUpdateBucketRequesterPays() {
-    String requesterPaysBucketName = requesterPaysFixture.getBucketInfo().getName();
     unsetRequesterPays();
     Bucket remoteBucket =
-        storageFixture
-            .getInstance()
-            .get(
-                requesterPaysBucketName,
-                Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+        storage.get(
+            requesterPaysBucketName,
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
     assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-    Bucket updatedBucket = storageFixture.getInstance().update(remoteBucket);
+    Bucket updatedBucket = storage.update(remoteBucket);
     assertTrue(updatedBucket.requesterPays());
 
-    String projectId = storageFixture.getInstance().getOptions().getProjectId();
+    String projectId = storage.getOptions().getProjectId();
     Bucket.BlobTargetOption option = Bucket.BlobTargetOption.userProject(projectId);
     String blobName = "test-create-empty-blob-requester-pays";
     Blob remoteBlob = updatedBucket.create(blobName, BLOB_BYTE_CONTENT, option);
     assertNotNull(remoteBlob);
     byte[] readBytes =
-        storageFixture
-            .getInstance()
-            .readAllBytes(
-                requesterPaysBucketName, blobName, Storage.BlobSourceOption.userProject(projectId));
+        storage.readAllBytes(
+            requesterPaysBucketName, blobName, Storage.BlobSourceOption.userProject(projectId));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
     remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-    updatedBucket =
-        storageFixture
-            .getInstance()
-            .update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
+    updatedBucket = storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
     assertFalse(updatedBucket.requesterPays());
   }
 
@@ -431,54 +337,43 @@ public class ITBucketTest {
       throws ExecutionException, InterruptedException {
     String bucketName = RemoteStorageHelper.generateBucketName();
     Bucket remoteBucket =
-        storageFixture
-            .getInstance()
-            .create(BucketInfo.newBuilder(bucketName).setDefaultEventBasedHold(true).build());
+        storage.create(BucketInfo.newBuilder(bucketName).setDefaultEventBasedHold(true).build());
     try {
       assertTrue(remoteBucket.getDefaultEventBasedHold());
       remoteBucket =
-          storageFixture
-              .getInstance()
-              .get(
-                  bucketName, Storage.BucketGetOption.fields(BucketField.DEFAULT_EVENT_BASED_HOLD));
+          storage.get(
+              bucketName, Storage.BucketGetOption.fields(BucketField.DEFAULT_EVENT_BASED_HOLD));
       assertTrue(remoteBucket.getDefaultEventBasedHold());
       String blobName = "test-create-with-event-based-hold";
       BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
-      Blob remoteBlob = storageFixture.getInstance().create(blobInfo);
+      Blob remoteBlob = storage.create(blobInfo);
       assertTrue(remoteBlob.getEventBasedHold());
       remoteBlob =
-          storageFixture
-              .getInstance()
-              .get(blobInfo.getBlobId(), Storage.BlobGetOption.fields(BlobField.EVENT_BASED_HOLD));
+          storage.get(
+              blobInfo.getBlobId(), Storage.BlobGetOption.fields(BlobField.EVENT_BASED_HOLD));
       assertTrue(remoteBlob.getEventBasedHold());
       remoteBlob = remoteBlob.toBuilder().setEventBasedHold(false).build().update();
       assertFalse(remoteBlob.getEventBasedHold());
       remoteBucket = remoteBucket.toBuilder().setDefaultEventBasedHold(false).build().update();
       assertFalse(remoteBucket.getDefaultEventBasedHold());
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixture.getInstance(), bucketName, 5, TimeUnit.SECONDS);
+      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
     }
   }
 
   private static void unsetRequesterPays() {
-    String requesterPaysBucketName = requesterPaysFixtureHttp.getBucketInfo().getName();
     Bucket remoteBucket =
-        storageFixtureHttp
-            .getInstance()
-            .get(
-                requesterPaysBucketName,
-                Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
-                Storage.BucketGetOption.userProject(
-                    storageFixtureHttp.getInstance().getOptions().getProjectId()));
+        storage.get(
+            requesterPaysBucketName,
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
+            Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
     // Disable requester pays in case a test fails to clean up.
     if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
-      remoteBucket.toBuilder()
+      remoteBucket
+          .toBuilder()
           .setRequesterPays(false)
           .build()
-          .update(
-              Storage.BucketTargetOption.userProject(
-                  storageFixtureHttp.getInstance().getOptions().getProjectId()));
+          .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
     }
   }
 }
