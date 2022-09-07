@@ -24,10 +24,14 @@ import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.cloud.storage.Utils.todo;
 
+import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
+import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -38,6 +42,7 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
+import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
@@ -58,7 +63,8 @@ final class GrpcConversions {
       Codec.of(this::entityEncode, this::entityDecode);
   private final Codec<Acl, ObjectAccessControl> objectAclCodec =
       Codec.of(this::objectAclEncode, this::objectAclDecode);
-  private final Codec<?, ?> bucketAclCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<Acl, BucketAccessControl> bucketAclCodec =
+      Codec.of(this::bucketAclEncode, this::bucketAclDecode);
   private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec =
       Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
   private final Codec<?, ?> hmacKeyCodec = Codec.of(Utils::todo, Utils::todo);
@@ -125,8 +131,8 @@ final class GrpcConversions {
     return objectAclCodec;
   }
 
-  Codec<?, ?> bucketAcl() {
-    return todo();
+  Codec<Acl, BucketAccessControl> bucketAcl() {
+    return bucketAclCodec;
   }
 
   Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadata() {
@@ -213,8 +219,12 @@ final class GrpcConversions {
     if (from.hasEncryption()) {
       to.setDefaultKmsKeyName(from.getEncryption().getDefaultKmsKey());
     }
-    ifNonNull(from.getRpo(), Rpo::valueOf, to::setRpo);
-    ifNonNull(from.getStorageClass(), StorageClass::valueOf, to::setStorageClass);
+    if (!from.getRpo().isEmpty()) {
+      to.setRpo(Rpo.valueOf(from.getRpo()));
+    }
+    if (!from.getStorageClass().isEmpty()) {
+      to.setStorageClass(StorageClass.valueOf(from.getStorageClass()));
+    }
     if (from.hasVersioning()) {
       to.setVersioningEnabled(from.getVersioning().getEnabled());
     }
@@ -246,6 +256,10 @@ final class GrpcConversions {
     if (!defaultObjectAclList.isEmpty()) {
       to.setDefaultAcl(toImmutableListOf(objectAclCodec::decode).apply(defaultObjectAclList));
     }
+    List<BucketAccessControl> bucketAclList = from.getAclList();
+    if (!bucketAclList.isEmpty()) {
+      to.setAcl(toImmutableListOf(bucketAclCodec::decode).apply(bucketAclList));
+    }
     if (from.hasIamConfig()) {
       to.setIamConfiguration(iamConfigurationCodec.decode(from.getIamConfig()));
     }
@@ -257,14 +271,15 @@ final class GrpcConversions {
               .build());
     }
     // TODO(frankyn): Add SelfLink when the field is available
-    // TODO(frankyn): Add Etag when support is available
+    if (!from.getEtag().isEmpty()) {
+      to.setEtag(from.getEtag());
+    }
     return to.build();
   }
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket.Builder to = Bucket.newBuilder();
     to.setName(bucketNameCodec.encode(from.getName()));
-    // TODO: We need to clean up bucketId handling
     ifNonNull(from.getGeneratedId(), to::setBucketId);
     if (from.getRetentionPeriodDuration() != null) {
       Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
@@ -334,6 +349,7 @@ final class GrpcConversions {
         from.getDefaultAcl(),
         toImmutableListOf(objectAclCodec::encode),
         to::addAllDefaultObjectAcl);
+    ifNonNull(from.getAcl(), toImmutableListOf(bucketAclCodec::encode), to::addAllAcl);
     ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
     CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
     if (customPlacementConfig != null && customPlacementConfig.getDataLocations() != null) {
@@ -343,7 +359,7 @@ final class GrpcConversions {
               .build());
     }
     // TODO(frankyn): Add SelfLink when the field is available
-    // TODO(frankyn): Add Etag when support is avialable
+    ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
   }
 
@@ -430,7 +446,7 @@ final class GrpcConversions {
       int idx = from.indexOf('-', 8);
       String team = from.substring(8, idx);
       String projectId = from.substring(idx + 1);
-      return new Acl.Project(Acl.Project.ProjectRole.valueOf(team.toUpperCase()), projectId);
+      return new Acl.Project(Acl.Project.ProjectRole.valueOf(team), projectId);
     }
     return new Acl.RawEntity(from);
   }
@@ -438,17 +454,41 @@ final class GrpcConversions {
   private Acl objectAclDecode(ObjectAccessControl from) {
     Acl.Role role = Acl.Role.valueOf(from.getRole());
     Acl.Entity entity = entityDecode(from.getEntity());
-    // TODO: Add etag when it becomes available
-    return Acl.newBuilder(entity, role).setId(from.getId()).build();
+    Acl.Builder to = Acl.newBuilder(entity, role).setId(from.getId());
+    if (!from.getEtag().isEmpty()) {
+      to.setEtag(from.getEtag());
+    }
+    return to.build();
   }
 
   private ObjectAccessControl objectAclEncode(Acl from) {
-    // TODO: Add etag when it becomes available
-    return ObjectAccessControl.newBuilder()
-        .setEntity(entityEncode(from.getEntity()))
-        .setRole(from.getRole().name())
-        .setId(from.getId())
-        .build();
+    ObjectAccessControl.Builder to =
+        ObjectAccessControl.newBuilder()
+            .setEntity(entityEncode(from.getEntity()))
+            .setRole(from.getRole().name())
+            .setId(from.getId());
+    ifNonNull(from.getEtag(), to::setEtag);
+    return to.build();
+  }
+
+  private Acl bucketAclDecode(com.google.storage.v2.BucketAccessControl from) {
+    Role role = Role.valueOf(from.getRole());
+    Entity entity = entityDecode(from.getEntity());
+    Acl.Builder to = Acl.newBuilder(entity, role).setId(from.getId());
+    if (!from.getEtag().isEmpty()) {
+      to.setEtag(from.getEtag());
+    }
+    return to.build();
+  }
+
+  private com.google.storage.v2.BucketAccessControl bucketAclEncode(Acl from) {
+    BucketAccessControl.Builder to =
+        BucketAccessControl.newBuilder()
+            .setEntity(from.getEntity().toString())
+            .setRole(from.getRole().toString())
+            .setId(from.getId());
+    ifNonNull(from.getEtag(), to::setEtag);
+    return to.build();
   }
 
   private Bucket.IamConfig.UniformBucketLevelAccess ublaEncode(BucketInfo.IamConfiguration from) {
@@ -482,10 +522,9 @@ final class GrpcConversions {
         ubla.getLockTime(),
         timestampCodec::decode,
         to::setUniformBucketLevelAccessLockedTimeOffsetDateTime);
-    ifNonNull(
-        from.getPublicAccessPrevention(),
-        BucketInfo.PublicAccessPrevention::parse,
-        to::setPublicAccessPrevention);
+    if (!from.getPublicAccessPrevention().isEmpty()) {
+      to.setPublicAccessPrevention(PublicAccessPrevention.parse(from.getPublicAccessPrevention()));
+    }
     return to.build();
   }
 
@@ -691,14 +730,18 @@ final class GrpcConversions {
   }
 
   private HmacKey.HmacKeyMetadata hmacKeyMetadataDecode(HmacKeyMetadata from) {
-    return HmacKey.HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
-        .setAccessId(from.getAccessId())
-        .setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()))
-        .setId(from.getId())
-        .setProjectId(projectNameCodec.decode(from.getProject()))
-        .setState(HmacKey.HmacKeyState.valueOf(from.getState()))
-        .setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()))
-        .build();
+    HmacKey.HmacKeyMetadata.Builder to =
+        HmacKey.HmacKeyMetadata.newBuilder(ServiceAccount.of(from.getServiceAccountEmail()))
+            .setAccessId(from.getAccessId())
+            .setCreateTimeOffsetDateTime(timestampCodec.decode(from.getCreateTime()))
+            .setId(from.getId())
+            .setProjectId(projectNameCodec.decode(from.getProject()))
+            .setState(HmacKeyState.valueOf(from.getState()))
+            .setUpdateTimeOffsetDateTime(timestampCodec.decode(from.getUpdateTime()));
+    if (!from.getEtag().isEmpty()) {
+      to.setEtag(from.getEtag());
+    }
+    return to.build();
   }
 
   private com.google.storage.v2.ServiceAccount serviceAccountEncode(ServiceAccount from) {
@@ -783,10 +826,13 @@ final class GrpcConversions {
         timestampCodec::encode,
         toBuilder::setRetentionExpireTime);
     // TODO(sydmunro): Add Selflink when available
-    // TODO(sydmunro): Add etag when available
-    // TODO(sydmunro): Add Owner
+    ifNonNull(from.getEtag(), toBuilder::setEtag);
+    Entity entity = from.getOwner();
+    if (entity != null) {
+      toBuilder.setOwner(Owner.newBuilder().setEntity(entityEncode(entity)).build());
+    }
     ifNonNull(from.getMetadata(), toBuilder::putAllMetadata);
-    // TODO(sydmunro): Object ACL
+    ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), toBuilder::addAllAcl);
     return toBuilder.build();
   }
 
@@ -847,6 +893,16 @@ final class GrpcConversions {
     if (!from.getMetadataMap().isEmpty()) {
       toBuilder.setMetadata(from.getMetadataMap());
     }
+    if (from.hasOwner()) {
+      Owner owner = from.getOwner();
+      if (!owner.getEntity().isEmpty()) {
+        toBuilder.setOwner(entityDecode(owner.getEntity()));
+      }
+    }
+    if (!from.getEtag().isEmpty()) {
+      toBuilder.setEtag(from.getEtag());
+    }
+    ifNonNull(from.getAclList(), toImmutableListOf(objectAcl()::decode), toBuilder::setAcl);
     return toBuilder.build();
   }
 

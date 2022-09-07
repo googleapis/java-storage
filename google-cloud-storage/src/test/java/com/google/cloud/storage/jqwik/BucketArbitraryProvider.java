@@ -67,9 +67,11 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().logging().injectNull(0.5),
                         StorageArbitraries.buckets().cors(),
                         StorageArbitraries.buckets().objectAccessControl().injectNull(0.5),
+                        StorageArbitraries.buckets().bucketAccessControl().injectNull(0.5),
                         StorageArbitraries.owner().injectNull(0.01),
                         StorageArbitraries.buckets().iamConfig().injectNull(0.5),
-                        StorageArbitraries.buckets().labels())
+                        StorageArbitraries.buckets().labels(),
+                        StorageArbitraries.etag())
                     .as(Tuple::of))
             .as(
                 (t1, t2, t3) -> {
@@ -93,9 +95,11 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                   ifNonNull(t3.get1(), b::setLogging);
                   ifNonNull(t3.get2(), b::addAllCors);
                   ifNonNull(t3.get3(), b::addAllDefaultObjectAcl);
-                  ifNonNull(t3.get4(), b::setOwner);
-                  ifNonNull(t3.get5(), b::setIamConfig);
-                  ifNonNull(t3.get6(), b::putAllLabels);
+                  ifNonNull(t3.get4(), b::addAllAcl);
+                  ifNonNull(t3.get5(), b::setOwner);
+                  ifNonNull(t3.get6(), b::setIamConfig);
+                  ifNonNull(t3.get7(), b::putAllLabels);
+                  ifNonNull(t3.get8(), b::setEtag);
                   // TODO: add CustomPlacementConfig
                   return b.build();
                 });
