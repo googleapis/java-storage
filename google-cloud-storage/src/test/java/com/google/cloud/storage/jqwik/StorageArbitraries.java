@@ -150,7 +150,7 @@ public final class StorageArbitraries {
   public static Arbitrary<String> etag() {
     return Arbitraries.strings()
         .ascii()
-        .ofMinLength(1)
+        .ofMinLength(0)
         .ofMaxLength(8)
         .edgeCases(base -> base.add(""));
   }
@@ -392,7 +392,8 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<String> rpo() {
-      return Arbitraries.of("DEFAULT", "ASYNC_TURBO");
+      return Arbitraries.of("DEFAULT", "ASYNC_TURBO", "")
+          .edgeCases(config -> config.add("")); // denote "" as an edge case
     }
 
     public Arbitrary<String> location() {
