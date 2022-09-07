@@ -17,6 +17,7 @@
 package com.example.storage.object;
 
 // [START storage_delete_file]
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
@@ -32,13 +33,18 @@ public class DeleteObject {
     // String objectName = "your-object-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    Blob blob = storage.get(bucketName, objectName);
+    if (blob == null) {
+      System.out.println("The object " + objectName + " wasn't found in " + bucketName);
+      return;
+    }
 
     // Optional: set a generation-match precondition to avoid potential race
     // conditions and data corruptions. The request to upload returns a 412 error if
     // the object's generation number does not match your precondition.
     Storage.BlobSourceOption precondition =
         Storage.BlobSourceOption.generationMatch(
-            storage.get(bucketName, objectName).getGeneration());
+            blob.getGeneration());
 
     storage.delete(bucketName, objectName, precondition);
 

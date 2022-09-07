@@ -38,6 +38,11 @@ public class ChangeObjectStorageClass {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     BlobId blobId = BlobId.of(bucketName, objectName);
+    Blob sourceBlob = storage.get(blobId);
+    if (sourceBlob == null) {
+      System.out.println("The object " + objectName + " wasn't found in " + bucketName);
+      return;
+    }
 
     // See the StorageClass documentation for other valid storage classes:
     // https://googleapis.dev/java/google-cloud-clients/latest/com/google/cloud/storage/StorageClass.html
@@ -52,7 +57,7 @@ public class ChangeObjectStorageClass {
     // conditions and data corruptions. The request to upload returns a 412 error if
     // the object's generation number does not match your precondition.
     Storage.BlobSourceOption precondition =
-        Storage.BlobSourceOption.generationMatch(storage.get(blobId).getGeneration());
+        Storage.BlobSourceOption.generationMatch(sourceBlob.getGeneration());
 
     Storage.CopyRequest request =
         Storage.CopyRequest.newBuilder()

@@ -17,6 +17,7 @@
 package com.example.storage.object;
 
 // [START storage_object_csek_to_cmek]
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
@@ -47,12 +48,17 @@ public class ChangeObjectCsekToKms {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     BlobId blobId = BlobId.of(bucketName, objectName);
+    Blob blob = storage.get(blobId);
+    if (blob == null) {
+      System.out.println("The object " + objectName + " wasn't found in " + bucketName);
+      return;
+    }
 
     // Optional: set a generation-match precondition to avoid potential race
     // conditions and data corruptions. The request to upload returns a 412 error if
     // the object's generation number does not match your precondition.
     Storage.BlobSourceOption precondition =
-        Storage.BlobSourceOption.generationMatch(storage.get(blobId).getGeneration());
+        Storage.BlobSourceOption.generationMatch(blob.getGeneration());
 
     Storage.CopyRequest request =
         Storage.CopyRequest.newBuilder()
