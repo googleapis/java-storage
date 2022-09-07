@@ -19,8 +19,8 @@ package com.google.cloud.storage.jqwik;
 import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.ifNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
-import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
@@ -39,6 +39,7 @@ import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.Owner;
 import com.google.storage.v2.ProjectTeam;
 import com.google.type.Date;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -57,6 +58,14 @@ import net.jqwik.time.api.DateTimes;
 import net.jqwik.web.api.Web;
 
 public final class StorageArbitraries {
+
+  // Predefine some values for 128-bit integers.
+  // These are used in generation of md5 values.
+  private static final String hex_128_min = "80000000" + "00000000" + "00000000" + "00000000";
+  private static final String hex_128_max = "7fffffff" + "ffffffff" + "ffffffff" + "ffffffff";
+  // BigIntegers don't inherently have the sign-bit, so simulate it by calling .negate()
+  private static final BigInteger _128_bit_min = new BigInteger(hex_128_min, 16).negate();
+  private static final BigInteger _128_bit_max = new BigInteger(hex_128_max, 16);
 
   private StorageArbitraries() {}
 
@@ -451,20 +460,23 @@ public final class StorageArbitraries {
           .filter(s -> !s.startsWith(".well-known/acme-challenge/"));
     }
 
-    public Arbitrary<ObjectChecksums> objectChecksumsArbitrary() {
+    public Arbitrary<ObjectChecksums> objectChecksums() {
       return Combinators.combine(
-              Arbitraries.integers().greaterOrEqual(1),
-              Arbitraries.strings()
-                  .map(
-                      s ->
-                          BaseEncoding.base64()
-                              .encode(Hashing.md5().hashBytes(s.getBytes()).asBytes())))
+              Arbitraries.integers().greaterOrEqual(0).injectNull(0.25), // crc32c
+              // md5s can be absent for composed objects, increase the nullness factor
+              Arbitraries.bigIntegers().between(_128_bit_min, _128_bit_max).injectNull(0.55) // md5
+              )
           .as(
-              (crc32c, md5) ->
-                  ObjectChecksums.newBuilder()
-                      .setCrc32C(crc32c)
-                      .setMd5Hash(ByteString.copyFrom(md5.getBytes()))
-                      .build());
+              (crc32c, md5) -> {
+                ObjectChecksums.Builder b = ObjectChecksums.newBuilder();
+                ifNonNull(crc32c, b::setCrc32C);
+                ifNonNull(md5, StorageArbitraries::md5ToByteString, b::setMd5Hash);
+                return b.build();
+              })
+          // make sure we don't yield an empty value, while theoretically possible, it isn't
+          // interesting from the standpoint of our tests, we explicitly need to test our handling
+          // of no checksum value being specified
+          .filter(oc -> oc.hasCrc32C() || !oc.getMd5Hash().isEmpty());
     }
 
     public Arbitrary<CustomerEncryption> customerEncryption() {
@@ -727,5 +739,11 @@ public final class StorageArbitraries {
         "MULTI_REGIONAL",
         "REGIONAL",
         "DURABLE_REDUCED_AVAILABILITY");
+  }
+
+  private static ByteString md5ToByteString(BigInteger md5) {
+    HashCode hashCode = Hashing.md5().hashBytes(md5.toByteArray());
+    byte[] bytes = hashCode.asBytes();
+    return ByteString.copyFrom(bytes);
   }
 }

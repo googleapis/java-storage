@@ -784,8 +784,9 @@ final class GrpcConversions {
       if (checksums.hasCrc32C()) {
         toBuilder.setCrc32c(crc32cCodec.encode(checksums.getCrc32C()));
       }
-      if (!checksums.getMd5Hash().equals(ByteString.empty())) {
-        toBuilder.setMd5(BaseEncoding.base64().encode(checksums.getMd5Hash().toByteArray()));
+      ByteString md5Hash = checksums.getMd5Hash();
+      if (!md5Hash.isEmpty()) {
+        toBuilder.setMd5(BaseEncoding.base64().encode(md5Hash.toByteArray()));
       }
     }
     ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);

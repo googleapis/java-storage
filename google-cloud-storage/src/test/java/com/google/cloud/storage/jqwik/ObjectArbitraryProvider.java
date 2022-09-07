@@ -63,7 +63,7 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.timestamp().injectNull(0.25), // ctime
                         // componentCount is populated if the object is made from compose
                         Arbitraries.integers().greaterOrEqual(0).injectNull(0.85),
-                        StorageArbitraries.objects().objectChecksumsArbitrary().injectNull(0.25))
+                        StorageArbitraries.objects().objectChecksums().injectNull(0.25))
                     .as(Tuple::of),
                 Combinators.combine(
                         StorageArbitraries.timestamp().injectNull(0.25), // utime
