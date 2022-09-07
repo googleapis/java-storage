@@ -27,6 +27,7 @@ import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Encryption;
 import com.google.storage.v2.Bucket.Lifecycle.Rule.Condition;
+import com.google.storage.v2.Bucket.Logging;
 import com.google.storage.v2.Bucket.RetentionPolicy;
 import com.google.storage.v2.Bucket.Versioning;
 import com.google.storage.v2.Bucket.Website;
@@ -271,14 +272,16 @@ public final class StorageArbitraries {
               .all()
               .ofMinLength(0)
               .ofMaxLength(10)
+              .injectNull(0.25)
               .edgeCases(config -> config.add(""));
       return Combinators.combine(loggingBucketName, loggingPrefix)
           .as(
-              (b, p) ->
-                  Bucket.Logging.newBuilder()
-                      .setLogObjectPrefix(p)
-                      .setLogBucket(b.toString())
-                      .build());
+              (b, p) -> {
+                Logging.Builder bld = Logging.newBuilder();
+                ifNonNull(p, bld::setLogObjectPrefix);
+                ifNonNull(b, BucketName::toString, bld::setLogBucket);
+                return bld.build();
+              });
     }
 
     public ListArbitrary<Bucket.Cors> cors() {

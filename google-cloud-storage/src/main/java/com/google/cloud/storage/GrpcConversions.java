@@ -366,7 +366,7 @@ final class GrpcConversions {
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
     Bucket.Logging.Builder to = Bucket.Logging.newBuilder();
-    if (!from.getLogObjectPrefix().isEmpty()) {
+    if (from.getLogObjectPrefix() != null && !from.getLogObjectPrefix().isEmpty()) {
       to.setLogObjectPrefix(from.getLogObjectPrefix());
     }
     ifNonNull(from.getLogBucket(), bucketNameCodec::encode, to::setLogBucket);
