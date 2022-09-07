@@ -43,8 +43,7 @@ public class DeleteObject {
     // conditions and data corruptions. The request to upload returns a 412 error if
     // the object's generation number does not match your precondition.
     Storage.BlobSourceOption precondition =
-        Storage.BlobSourceOption.generationMatch(
-            blob.getGeneration());
+        Storage.BlobSourceOption.generationMatch(blob.getGeneration());
 
     storage.delete(bucketName, objectName, precondition);
 
