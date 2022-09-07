@@ -28,78 +28,94 @@ import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.conformance.retry.CleanupStrategy;
-import com.google.cloud.storage.conformance.retry.ParallelParameterized;
 import com.google.cloud.storage.conformance.retry.TestBench;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collection;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(ParallelParameterized.class)
+@RunWith(Parameterized.class)
 public final class ITDownloadToTest {
-  @ClassRule
+  @ClassRule(order = 0)
   public static final TestBench TEST_BENCH =
       TestBench.newBuilder().setContainerName("it-grpc").build();
 
-  @Rule public final StorageFixture storageFixture;
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureGrpc =
+      StorageFixture.from(
+          () ->
+              StorageOptions.grpc()
+                  .setHost(TEST_BENCH.getGRPCBaseUri())
+                  .setCredentials(NoCredentials.getInstance())
+                  .setProjectId("test-project-id")
+                  .build());
 
-  @Rule public final BucketFixture bucketFixture;
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
+
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixtureGrpc =
+      BucketFixture.newBuilder()
+          .setBucketNameFmtString("java-storage-grpc-%s")
+          .setCleanupStrategy(CleanupStrategy.ALWAYS)
+          .setHandle(storageFixtureGrpc::getInstance)
+          .build();
+
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixtureHttp =
+      BucketFixture.newBuilder()
+          .setBucketNameFmtString("java-storage-http-%s")
+          .setCleanupStrategy(CleanupStrategy.ALWAYS)
+          .setHandle(storageFixtureHttp::getInstance)
+          .build();
 
   private static final byte[] helloWorldTextBytes = "hello world".getBytes();
   private static final byte[] helloWorldGzipBytes = TestUtils.gzipBytes(helloWorldTextBytes);
 
-  private static Storage storage;
-  private static BlobId blobId;
+  private final StorageFixture storageFixture;
+  private final BucketFixture bucketFixture;
+  private final String clientName;
 
-  public ITDownloadToTest(String clientName, StorageFixture storageFixture) {
+  public ITDownloadToTest(
+      String clientName, StorageFixture storageFixture, BucketFixture bucketFixture) {
     this.storageFixture = storageFixture;
-    this.bucketFixture =
-        BucketFixture.newBuilder()
-            .setBucketNameFmtString("java-storage-gcs-team-%s")
-            .setCleanupStrategy(CleanupStrategy.ALWAYS)
-            .setHandle(storageFixture::getInstance)
-            .build();
+    this.bucketFixture = bucketFixture;
+    this.clientName = clientName;
   }
 
   @Parameters(name = "{0}")
-  public static Collection<Object[]> data() {
-    StorageFixture grpcStorageFixture =
-        StorageFixture.from(
-            () ->
-                StorageOptions.grpc()
-                    .setHost(TEST_BENCH.getGRPCBaseUri())
-                    .setCredentials(NoCredentials.getInstance())
-                    .setProjectId("test-project-id")
-                    .build());
-    StorageFixture jsonStorageFixture = StorageFixture.defaultHttp();
+  public static Iterable<Object[]> data() {
     return Arrays.asList(
-        new Object[] {"JSON/storage.googleapis.com", jsonStorageFixture},
-        new Object[] {"GRPC/" + TEST_BENCH.getGRPCBaseUri(), grpcStorageFixture});
+        new Object[] {"JSON/storage.googleapis.com", storageFixtureHttp, bucketFixtureHttp},
+        new Object[] {
+          "GRPC/" + TEST_BENCH.getGRPCBaseUri(), storageFixtureGrpc, bucketFixtureGrpc
+        });
   }
 
   @Before
   public void beforeClass() {
-    blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "zipped_blob");
+    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "zipped_blob");
 
     BlobInfo blobInfo =
         BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
-    storage = storageFixture.getInstance();
-    storage.create(blobInfo, helloWorldGzipBytes);
+    storageFixture.getInstance().create(blobInfo, helloWorldGzipBytes);
   }
 
   @Test
   public void downloadTo_returnRawInputStream_yes() throws IOException {
+    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "zipped_blob");
     Path helloWorldTxtGz = File.createTempFile("helloWorld", ".txt.gz").toPath();
-    storage.downloadTo(
-        blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
+    storageFixture
+        .getInstance()
+        .downloadTo(
+            blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
 
     byte[] actualTxtGzBytes = Files.readAllBytes(helloWorldTxtGz);
     if (Arrays.equals(actualTxtGzBytes, helloWorldTextBytes)) {
@@ -110,9 +126,12 @@ public final class ITDownloadToTest {
 
   @Test
   public void downloadTo_returnRawInputStream_no() throws IOException {
+    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "zipped_blob");
     Path helloWorldTxt = File.createTempFile("helloWorld", ".txt").toPath();
-    storage.downloadTo(
-        blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
+    storageFixture
+        .getInstance()
+        .downloadTo(
+            blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
     byte[] actualTxtBytes = Files.readAllBytes(helloWorldTxt);
     assertThat(actualTxtBytes).isEqualTo(helloWorldTextBytes);
   }
