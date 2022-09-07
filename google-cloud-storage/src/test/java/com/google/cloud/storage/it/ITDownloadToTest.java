@@ -101,7 +101,7 @@ public final class ITDownloadToTest {
   }
 
   @Before
-  public void beforeClass() {
+  public void before() {
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "zipped_blob");
     BlobInfo blobInfo =
         BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
