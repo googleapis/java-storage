@@ -41,6 +41,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
+import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
@@ -227,8 +228,15 @@ final class GrpcConversions {
       to.setLabels(labelsMap);
     }
     if (from.hasWebsite()) {
-      to.setIndexPage(from.getWebsite().getMainPageSuffix());
-      to.setNotFoundPage(from.getWebsite().getNotFoundPage());
+      Website website = from.getWebsite();
+      String mainPageSuffix = website.getMainPageSuffix();
+      if (!mainPageSuffix.isEmpty()) {
+        to.setIndexPage(mainPageSuffix);
+      }
+      String notFoundPage = website.getNotFoundPage();
+      if (!notFoundPage.isEmpty()) {
+        to.setNotFoundPage(notFoundPage);
+      }
     }
     if (from.hasLifecycle()) {
       to.setLifecycleRules(
@@ -358,7 +366,7 @@ final class GrpcConversions {
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {
     Bucket.Logging.Builder to = Bucket.Logging.newBuilder();
-    if (!from.getLogObjectPrefix().isEmpty()) {
+    if (from.getLogObjectPrefix() != null && !from.getLogObjectPrefix().isEmpty()) {
       to.setLogObjectPrefix(from.getLogObjectPrefix());
     }
     ifNonNull(from.getLogBucket(), bucketNameCodec::encode, to::setLogBucket);
@@ -776,8 +784,9 @@ final class GrpcConversions {
       if (checksums.hasCrc32C()) {
         toBuilder.setCrc32c(crc32cCodec.encode(checksums.getCrc32C()));
       }
-      if (!checksums.getMd5Hash().equals(ByteString.empty())) {
-        toBuilder.setMd5(BaseEncoding.base64().encode(checksums.getMd5Hash().toByteArray()));
+      ByteString md5Hash = checksums.getMd5Hash();
+      if (!md5Hash.isEmpty()) {
+        toBuilder.setMd5(BaseEncoding.base64().encode(md5Hash.toByteArray()));
       }
     }
     ifNonNull(from.getMetageneration(), toBuilder::setMetageneration);
