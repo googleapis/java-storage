@@ -93,10 +93,8 @@ public final class ITDownloadToTest {
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return Arrays.asList(
-        new Object[] {"JSON/storage.googleapis.com", storageFixtureHttp, bucketFixtureHttp},
-        new Object[] {
-          "GRPC/" + TEST_BENCH.getGRPCBaseUri(), storageFixtureGrpc, bucketFixtureGrpc
-        });
+        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
+        new Object[] {"GRPC/TestBench", storageFixtureGrpc, bucketFixtureGrpc});
   }
 
   @Before

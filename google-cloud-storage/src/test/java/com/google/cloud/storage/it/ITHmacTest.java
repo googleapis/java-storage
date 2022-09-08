@@ -71,8 +71,8 @@ public class ITHmacTest {
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return Arrays.asList(
-        new Object[] {"JSON/storage.googleapis.com", storageFixtureHttp},
-        new Object[] {"GRPC/" + TEST_BENCH.getGRPCBaseUri(), storageFixtureGrpc});
+        new Object[] {"JSON/Prod", storageFixtureHttp},
+        new Object[] {"GRPC/TestBench", storageFixtureGrpc});
   }
 
   // when modifying this test or {@link #cleanUpHmacKeys} be sure to remember multiple simultaneous
