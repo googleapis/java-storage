@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.google.api.gax.paging.Page;
+import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -28,7 +29,9 @@ import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.conformance.retry.ParallelParameterized;
+import com.google.cloud.storage.conformance.retry.TestBench;
 import java.util.Arrays;
 import java.util.stream.StreamSupport;
 import org.junit.ClassRule;
@@ -40,10 +43,22 @@ import org.threeten.bp.Instant;
 
 @RunWith(ParallelParameterized.class)
 public class ITHmacTest {
+  @ClassRule(order = 0)
+  public static final TestBench TEST_BENCH =
+      TestBench.newBuilder().setContainerName("it-grpc").build();
 
-  @ClassRule public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureGrpc =
+      StorageFixture.from(
+          () ->
+              StorageOptions.grpc()
+                  .setHost(TEST_BENCH.getGRPCBaseUri())
+                  .setCredentials(NoCredentials.getInstance())
+                  .setProjectId("test-project-id")
+                  .build());
 
-  @ClassRule public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
 
   private final StorageFixture storageFixture;
   private final String clientName;
@@ -56,8 +71,8 @@ public class ITHmacTest {
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return Arrays.asList(
-        new Object[] {"JSON/Prod", storageFixtureHttp},
-        new Object[] {"GRPC/Prod", storageFixtureGrpc});
+        new Object[] {"JSON/storage.googleapis.com", storageFixtureHttp},
+        new Object[] {"GRPC/" + TEST_BENCH.getGRPCBaseUri(), storageFixtureGrpc});
   }
 
   // when modifying this test or {@link #cleanUpHmacKeys} be sure to remember multiple simultaneous

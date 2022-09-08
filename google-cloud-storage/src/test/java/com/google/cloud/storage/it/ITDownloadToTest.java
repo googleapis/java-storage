@@ -19,14 +19,17 @@ package com.google.cloud.storage.it;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.fail;
 
+import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.conformance.retry.CleanupStrategy;
 import com.google.cloud.storage.conformance.retry.ParallelParameterized;
+import com.google.cloud.storage.conformance.retry.TestBench;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,14 +43,24 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(ParallelParameterized.class)
 public final class ITDownloadToTest {
-
   @ClassRule(order = 0)
-  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-
-  @ClassRule(order = 0)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
+  public static final TestBench TEST_BENCH =
+      TestBench.newBuilder().setContainerName("it-grpc").build();
 
   @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureGrpc =
+      StorageFixture.from(
+          () ->
+              StorageOptions.grpc()
+                  .setHost(TEST_BENCH.getGRPCBaseUri())
+                  .setCredentials(NoCredentials.getInstance())
+                  .setProjectId("test-project-id")
+                  .build());
+
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
+
+  @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureGrpc =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-grpc-%s")
@@ -55,7 +68,7 @@ public final class ITDownloadToTest {
           .setHandle(storageFixtureGrpc::getInstance)
           .build();
 
-  @ClassRule(order = 1)
+  @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureHttp =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-http-%s")
@@ -80,8 +93,10 @@ public final class ITDownloadToTest {
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return Arrays.asList(
-        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
-        new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
+        new Object[] {"JSON/storage.googleapis.com", storageFixtureHttp, bucketFixtureHttp},
+        new Object[] {
+          "GRPC/" + TEST_BENCH.getGRPCBaseUri(), storageFixtureGrpc, bucketFixtureGrpc
+        });
   }
 
   @Before
