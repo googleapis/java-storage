@@ -29,6 +29,7 @@ import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -588,6 +589,10 @@ final class GrpcConversions {
         lifecycleAction =
             BucketInfo.LifecycleRule.LifecycleAction.newSetStorageClassAction(
                 StorageClass.valueOf(action.getStorageClass()));
+        break;
+      case AbortIncompleteMPUAction.TYPE:
+        lifecycleAction =
+            BucketInfo.LifecycleRule.LifecycleAction.newAbortIncompleteMPUploadAction();
         break;
       default:
         BucketInfo.log.warning(
