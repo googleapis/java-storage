@@ -1296,7 +1296,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   }
 
   private FieldMask updateMaskGenerator(Message message) {
-    //TODO: Filter based on API behavior and not a list
+    // TODO: Filter based on API behavior and not a list
     return FieldMask.newBuilder()
         .addAllPaths(
             message.getAllFields().entrySet().stream()
