@@ -111,6 +111,10 @@ public class HttpStorageRpc implements StorageRpc {
   private static final FileNameMap FILE_NAME_MAP = URLConnection.getFileNameMap();
 
   public HttpStorageRpc(StorageOptions options) {
+    this(options, new JacksonFactory());
+  }
+
+  public HttpStorageRpc(StorageOptions options, JsonFactory jsonFactory) {
     HttpTransportOptions transportOptions = (HttpTransportOptions) options.getTransportOptions();
     HttpTransport transport = transportOptions.getHttpTransportFactory().create();
     HttpRequestInitializer initializer = transportOptions.getHttpRequestInitializer(options);
@@ -122,7 +126,7 @@ public class HttpStorageRpc implements StorageRpc {
     initializer = new InvocationIdInitializer(initializer);
     batchRequestInitializer = censusHttpModule.getHttpRequestInitializer(null);
     storage =
-        new Storage.Builder(transport, new JacksonFactory(), initializer)
+        new Storage.Builder(transport, jsonFactory, initializer)
             .setRootUrl(options.getHost())
             .setApplicationName(options.getApplicationName())
             .build();
