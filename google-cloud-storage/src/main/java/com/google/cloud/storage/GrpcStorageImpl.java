@@ -62,6 +62,7 @@ import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
@@ -458,7 +459,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UpdateBucketRequest req =
         opts.updateBucketsRequest()
             .apply(builder)
-            .setUpdateMask(fieldMaskGenerator(bucket))
+            .setUpdateMask(updateMaskGenerator(bucket))
             .build();
 
     return Retrying.run(
@@ -478,7 +479,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     UpdateObjectRequest req =
         opts.updateObjectsRequest()
             .apply(builder)
-            .setUpdateMask(fieldMaskGenerator(object))
+            .setUpdateMask(updateMaskGenerator(object))
             .build();
     return Retrying.run(
         getOptions(),
@@ -1294,12 +1295,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .build();
   }
 
-  private FieldMask fieldMaskGenerator(Message message) {
+  private FieldMask updateMaskGenerator(Message message) {
+    // TODO: Filter based on API behavior and not a list
     return FieldMask.newBuilder()
         .addAllPaths(
             message.getAllFields().entrySet().stream()
                 .filter(x -> x.getValue() != null)
                 .map(e -> e.getKey().getName())
+                .filter(f -> updateFields().contains(f))
                 .collect(Collectors.toList()))
         .build();
   }
@@ -1356,5 +1359,23 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       default:
         throw new IllegalStateException("Unrecognized status code: " + code);
     }
+  }
+
+  private static ImmutableList<String> updateFields() {
+    return ImmutableList.of(
+        "cors",
+        "default_event_based_hold",
+        "retention_policy",
+        "versioning",
+        "billing",
+        "iam_config",
+        "encryption",
+        "lifecycle",
+        "logging",
+        "website",
+        "acl",
+        "default_object_acl",
+        "storage_class",
+        "rpo");
   }
 }
