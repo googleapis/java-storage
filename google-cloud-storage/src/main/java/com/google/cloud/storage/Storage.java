@@ -2069,7 +2069,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a {@code Bucket} object of the locked bucket
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Bucket lockRetentionPolicy(BucketInfo bucket, BucketTargetOption... options);
 
   /**

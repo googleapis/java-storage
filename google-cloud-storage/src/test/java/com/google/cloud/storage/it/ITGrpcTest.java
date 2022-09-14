@@ -36,6 +36,7 @@ import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.CreateHmacKeyOption;
 import com.google.cloud.storage.Storage.ListHmacKeysOption;
@@ -264,5 +265,20 @@ public final class ITGrpcTest {
 
     byte[] actualBytes = s.readAllBytes(result.getBlobId());
     assertThat(actualBytes).isEqualTo(expected);
+  }
+
+  @Test
+  public void lockBucketRetentionPolicy() {
+    Storage s = storageFixture.getInstance();
+
+    String tmpBucketName = bucketFixture.newBucketName();
+    Bucket bucket = s.create(BucketInfo.of(tmpBucketName));
+
+    Bucket locked = bucket.lockRetentionPolicy(BucketTargetOption.metagenerationMatch());
+    try {
+      assertThat(locked.retentionPolicyIsLocked()).isTrue();
+    } finally {
+      s.delete(bucket.getName());
+    }
   }
 }
