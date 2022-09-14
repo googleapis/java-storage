@@ -20,10 +20,12 @@ import static com.google.cloud.storage.ByteSizeConstants._15MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.storage.v2.WriteObjectRequest;
@@ -40,6 +42,8 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   GrpcBlobWriteChannel(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+      RetryingDependencies deps,
+      ResultRetryAlgorithm<?> alg,
       Supplier<ApiFuture<ResumableWrite>> start) {
     lazyWriteChannel =
         new LazyWriteChannel(
@@ -51,6 +55,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
                         .setHasher(Hasher.noop())
                         .setByteStringStrategy(ByteStringStrategy.copy())
                         .resumable()
+                        .withRetryConfig(deps, alg)
                         .buffered(Buffers.allocateAligned(chunkSize, _256KiB))
                         .setStartAsync(start.get())
                         .build()));

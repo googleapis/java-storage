@@ -23,6 +23,7 @@ import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedW
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteFlushStrategy.Flusher;
 import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.ObjectChecksums;
@@ -58,9 +59,7 @@ final class GapicUnbufferedWritableByteChannel<
     this.writeCtx = new WriteCtx<>(requestFactory);
     this.flusher =
         flusherFactory.newFlusher(
-            requestFactory.bucketName(),
-            writeCtx.getConfirmedBytes()::addAndGet,
-            resultFuture::set);
+            requestFactory.bucketName(), writeCtx.getConfirmedBytes()::set, resultFuture::set);
   }
 
   @Override
@@ -156,5 +155,10 @@ final class GapicUnbufferedWritableByteChannel<
       flusher.close(null);
     }
     open = false;
+  }
+
+  @VisibleForTesting
+  WriteCtx<RequestFactoryT> getWriteCtx() {
+    return writeCtx;
   }
 }

@@ -300,6 +300,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       session =
           channelSessionBuilder
               .resumable()
+              .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
               .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
               .setStartAsync(start)
               .build();
@@ -346,6 +347,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setHasher(Hasher.enabled())
             .setByteStringStrategy(ByteStringStrategy.noCopy())
             .resumable()
+            .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
             .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
             .setStartAsync(start)
             .build();
@@ -715,6 +717,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable(),
+        getOptions(),
+        retryAlgorithmManager.idempotent(),
         () ->
             ResumableMedia.gapic()
                 .write()

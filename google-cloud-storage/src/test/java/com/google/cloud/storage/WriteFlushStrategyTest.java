@@ -21,6 +21,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.WriteFlushStrategy.Flusher;
 import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
 import com.google.common.collect.ImmutableList;
@@ -43,7 +44,12 @@ public final class WriteFlushStrategyTest {
 
   @Test
   public void bucketNameAddedToXGoogRequestParams_nonNull_nonEmpty_fsyncEveryFlush() {
-    doTest(WriteFlushStrategy::fsyncEveryFlush, "bucket-name", expectedHeaderNonNullNonEmpty);
+    doTest(
+        write ->
+            WriteFlushStrategy.fsyncEveryFlush(
+                write, RetryingDependencies.attemptOnce(), Retrying.neverRetry()),
+        "bucket-name",
+        expectedHeaderNonNullNonEmpty);
   }
 
   @Test
@@ -53,7 +59,12 @@ public final class WriteFlushStrategyTest {
 
   @Test
   public void bucketNameNotAddedToXGoogRequestParams_nonNull_empty_fsyncEveryFlush() {
-    doTest(WriteFlushStrategy::fsyncEveryFlush, "", expectedHeaderNonNullEmpty);
+    doTest(
+        write ->
+            WriteFlushStrategy.fsyncEveryFlush(
+                write, RetryingDependencies.attemptOnce(), Retrying.neverRetry()),
+        "",
+        expectedHeaderNonNullEmpty);
   }
 
   @Test
@@ -63,7 +74,12 @@ public final class WriteFlushStrategyTest {
 
   @Test
   public void bucketNameNotAddedToXGoogRequestParams_null_fsyncEveryFlush() {
-    doTest(WriteFlushStrategy::fsyncEveryFlush, null, expectedHeaderNull);
+    doTest(
+        write ->
+            WriteFlushStrategy.fsyncEveryFlush(
+                write, RetryingDependencies.attemptOnce(), Retrying.neverRetry()),
+        null,
+        expectedHeaderNull);
   }
 
   @Test

@@ -21,9 +21,11 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
@@ -165,9 +167,69 @@ final class GapicWritableByteChannelSessionBuilder {
     private BufferedDirectUploadBuilder buffered(BufferHandle bufferHandle) {
       return new BufferedDirectUploadBuilder(bufferHandle);
     }
+
+    final class UnbufferedDirectUploadBuilder {
+
+      private WriteObjectRequest req;
+
+      /** Specify the {@link WriteObjectRequest} which will be used to start the Write stream. */
+      UnbufferedDirectUploadBuilder setRequest(WriteObjectRequest req) {
+        this.req = requireNonNull(req, "req must be non null");
+        return this;
+      }
+
+      UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        return new UnbufferedWriteSession<>(
+            ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
+            bindFunction(
+                    WriteFlushStrategy.fsyncOnClose(write),
+                    WriteObjectRequestBuilderFactory::simple)
+                .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
+    }
+
+    final class BufferedDirectUploadBuilder {
+
+      private final BufferHandle bufferHandle;
+      private WriteObjectRequest req;
+
+      BufferedDirectUploadBuilder(BufferHandle bufferHandle) {
+        this.bufferHandle = bufferHandle;
+      }
+
+      /** Specify the {@link WriteObjectRequest} which will be used to start the Write stream. */
+      BufferedDirectUploadBuilder setRequest(WriteObjectRequest req) {
+        this.req = requireNonNull(req, "req must be non null");
+        return this;
+      }
+
+      BufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        return new BufferedWriteSession<>(
+            ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
+            bindFunction(
+                    WriteFlushStrategy.fsyncOnClose(write),
+                    WriteObjectRequestBuilderFactory::simple)
+                .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
+                .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
+    }
   }
 
   final class ResumableUploadBuilder {
+
+    private RetryingDependencies deps;
+    private ResultRetryAlgorithm<?> alg;
+
+    ResumableUploadBuilder() {
+      this.deps = RetryingDependencies.attemptOnce();
+      this.alg = Retrying.neverRetry();
+    }
+
+    ResumableUploadBuilder withRetryConfig(RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
+      this.deps = requireNonNull(deps, "deps must be non null");
+      this.alg = requireNonNull(alg, "alg must be non null");
+      return this;
+    }
 
     /**
      * Do not apply any intermediate buffering. Any call to {@link
@@ -201,98 +263,56 @@ final class GapicWritableByteChannelSessionBuilder {
     private BufferedResumableUploadBuilder buffered(BufferHandle bufferHandle) {
       return new BufferedResumableUploadBuilder(bufferHandle);
     }
-  }
 
-  final class UnbufferedDirectUploadBuilder {
+    final class UnbufferedResumableUploadBuilder {
 
-    private WriteObjectRequest req;
+      private ApiFuture<ResumableWrite> start;
 
-    /** Specify the {@link WriteObjectRequest} which will be used to start the Write stream. */
-    UnbufferedDirectUploadBuilder setRequest(WriteObjectRequest req) {
-      this.req = requireNonNull(req, "req must be non null");
-      return this;
+      /**
+       * Set the Future which will contain the ResumableWrite information necessary to open the
+       * Write stream.
+       */
+      UnbufferedResumableUploadBuilder setStartAsync(ApiFuture<ResumableWrite> start) {
+        this.start = requireNonNull(start, "start must be non null");
+        return this;
+      }
+
+      UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        return new UnbufferedWriteSession<>(
+            requireNonNull(start, "start must be non null"),
+            bindFunction(
+                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg), ResumableWrite::identity)
+                .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
     }
 
-    UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
-      return new UnbufferedWriteSession<>(
-          ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-          bindFunction(
-                  WriteFlushStrategy.fsyncOnClose(write), WriteObjectRequestBuilderFactory::simple)
-              .andThen(StorageByteChannels.writable()::createSynchronized));
-    }
-  }
+    final class BufferedResumableUploadBuilder {
 
-  final class BufferedDirectUploadBuilder {
+      private final BufferHandle bufferHandle;
 
-    private final BufferHandle bufferHandle;
-    private WriteObjectRequest req;
+      private ApiFuture<ResumableWrite> start;
 
-    BufferedDirectUploadBuilder(BufferHandle bufferHandle) {
-      this.bufferHandle = bufferHandle;
-    }
+      BufferedResumableUploadBuilder(BufferHandle bufferHandle) {
+        this.bufferHandle = bufferHandle;
+      }
 
-    /** Specify the {@link WriteObjectRequest} which will be used to start the Write stream. */
-    BufferedDirectUploadBuilder setRequest(WriteObjectRequest req) {
-      this.req = requireNonNull(req, "req must be non null");
-      return this;
-    }
+      /**
+       * Set the Future which will contain the ResumableWrite information necessary to open the
+       * Write stream.
+       */
+      BufferedResumableUploadBuilder setStartAsync(ApiFuture<ResumableWrite> start) {
+        this.start = requireNonNull(start, "start must be non null");
+        return this;
+      }
 
-    BufferedWritableByteChannelSession<WriteObjectResponse> build() {
-      return new BufferedWriteSession<>(
-          ApiFutures.immediateFuture(requireNonNull(req, "req must be non null")),
-          bindFunction(
-                  WriteFlushStrategy.fsyncOnClose(write), WriteObjectRequestBuilderFactory::simple)
-              .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
-              .andThen(StorageByteChannels.writable()::createSynchronized));
-    }
-  }
-
-  final class UnbufferedResumableUploadBuilder {
-
-    private ApiFuture<ResumableWrite> start;
-
-    /**
-     * Set the Future which will contain the ResumableWrite information necessary to open the Write
-     * stream.
-     */
-    UnbufferedResumableUploadBuilder setStartAsync(ApiFuture<ResumableWrite> start) {
-      this.start = requireNonNull(start, "start must be non null");
-      return this;
-    }
-
-    UnbufferedWritableByteChannelSession<WriteObjectResponse> build() {
-      return new UnbufferedWriteSession<>(
-          requireNonNull(start, "start must be non null"),
-          bindFunction(WriteFlushStrategy.fsyncEveryFlush(write), ResumableWrite::identity)
-              .andThen(StorageByteChannels.writable()::createSynchronized));
-    }
-  }
-
-  final class BufferedResumableUploadBuilder {
-
-    private final BufferHandle bufferHandle;
-
-    private ApiFuture<ResumableWrite> start;
-
-    BufferedResumableUploadBuilder(BufferHandle bufferHandle) {
-      this.bufferHandle = bufferHandle;
-    }
-
-    /**
-     * Set the Future which will contain the ResumableWrite information necessary to open the Write
-     * stream.
-     */
-    BufferedResumableUploadBuilder setStartAsync(ApiFuture<ResumableWrite> start) {
-      this.start = requireNonNull(start, "start must be non null");
-      return this;
-    }
-
-    BufferedWritableByteChannelSession<WriteObjectResponse> build() {
-      return new BufferedWriteSession<>(
-          requireNonNull(start, "start must be non null"),
-          bindFunction(WriteFlushStrategy.fsyncEveryFlush(write), ResumableWrite::identity)
-              .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
-              .andThen(StorageByteChannels.writable()::createSynchronized));
+      BufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        return new BufferedWriteSession<>(
+            requireNonNull(start, "start must be non null"),
+            bindFunction(
+                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg), ResumableWrite::identity)
+                .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
+                .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
     }
   }
 }

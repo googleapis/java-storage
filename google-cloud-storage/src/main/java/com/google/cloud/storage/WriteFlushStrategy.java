@@ -18,8 +18,11 @@ package com.google.cloud.storage;
 
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
+import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.storage.v2.WriteObjectRequest;
@@ -52,11 +55,14 @@ final class WriteFlushStrategy {
    * along with {@link Flusher#close(WriteObjectRequest)}.
    */
   static FlusherFactory fsyncEveryFlush(
-      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write) {
+      ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+      RetryingDependencies deps,
+      ResultRetryAlgorithm<?> alg) {
     return (String bucketName,
         LongConsumer committedTotalBytesCallback,
         Consumer<WriteObjectResponse> onSuccessCallback) ->
-        new FsyncEveryFlusher(write, bucketName, committedTotalBytesCallback, onSuccessCallback);
+        new FsyncEveryFlusher(
+            write, deps, alg, bucketName, committedTotalBytesCallback, onSuccessCallback);
   }
 
   /**
@@ -105,39 +111,51 @@ final class WriteFlushStrategy {
   private static final class FsyncEveryFlusher implements Flusher {
 
     private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
+    private final RetryingDependencies deps;
+    private final ResultRetryAlgorithm<?> alg;
     private final String bucketName;
     private final LongConsumer sizeCallback;
     private final Consumer<WriteObjectResponse> completeCallback;
 
     private FsyncEveryFlusher(
         ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
+        RetryingDependencies deps,
+        ResultRetryAlgorithm<?> alg,
         String bucketName,
         LongConsumer sizeCallback,
         Consumer<WriteObjectResponse> completeCallback) {
       this.write = write;
+      this.deps = deps;
+      this.alg = alg;
       this.bucketName = bucketName;
       this.sizeCallback = sizeCallback;
       this.completeCallback = completeCallback;
     }
 
     public void flush(@NonNull List<WriteObjectRequest> segments) {
+      Retrying.run(
+          deps,
+          alg,
+          () -> {
+            Observer observer = new Observer(sizeCallback, completeCallback);
+            GrpcCallContext internalContext = contextWithBucketName(bucketName);
+            ApiStreamObserver<WriteObjectRequest> write =
+                this.write.withDefaultCallContext(internalContext).clientStreamingCall(observer);
 
-      Observer observer = new Observer(sizeCallback, completeCallback);
-      GrpcCallContext internalContext = contextWithBucketName(bucketName);
-      ApiStreamObserver<WriteObjectRequest> write =
-          this.write.withDefaultCallContext(internalContext).clientStreamingCall(observer);
+            boolean first = true;
+            for (WriteObjectRequest message : segments) {
+              if (!first) {
+                message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
+              }
 
-      boolean first = true;
-      for (WriteObjectRequest message : segments) {
-        if (!first) {
-          message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
-        }
-
-        write.onNext(message);
-        first = false;
-      }
-      write.onCompleted();
-      observer.await();
+              write.onNext(message);
+              first = false;
+            }
+            write.onCompleted();
+            observer.await();
+            return null;
+          },
+          Decoder.identity());
     }
 
     public void close(@Nullable WriteObjectRequest req) {
@@ -243,7 +261,6 @@ final class WriteFlushStrategy {
      */
     @Override
     public void onError(Throwable t) {
-      // TODO: is retryable?
       invocationHandle.setException(t);
     }
 
