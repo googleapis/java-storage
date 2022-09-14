@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.RetryHelper.runWithRetries;
-import static com.google.cloud.storage.PolicyHelper.convertToApiPolicy;
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -1417,20 +1416,21 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.getIamPolicy(bucket, optionsMap),
-        PolicyHelper::convertFromApiPolicy);
+        apiPolicy -> Conversions.apiary().policyCodec().decode(apiPolicy));
   }
 
   @Override
   public Policy setIamPolicy(
       final String bucket, final Policy policy, BucketSourceOption... options) {
-    com.google.api.services.storage.model.Policy pb = convertToApiPolicy(policy);
+    com.google.api.services.storage.model.Policy pb =
+        Conversions.apiary().policyCodec().encode(policy);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     ResultRetryAlgorithm<?> algorithm =
         retryAlgorithmManager.getForBucketsSetIamPolicy(bucket, pb, optionsMap);
     return run(
         algorithm,
         () -> storageRpc.setIamPolicy(bucket, pb, optionsMap),
-        PolicyHelper::convertFromApiPolicy);
+        apiPolicy -> Conversions.apiary().policyCodec().decode(apiPolicy));
   }
 
   @Override

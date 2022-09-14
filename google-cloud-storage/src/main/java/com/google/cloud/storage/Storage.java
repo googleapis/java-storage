@@ -3585,7 +3585,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Policy getIamPolicy(String bucket, BucketSourceOption... options);
 
   /**
@@ -3613,7 +3613,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Policy setIamPolicy(String bucket, Policy policy, BucketSourceOption... options);
 
   /**
@@ -3638,7 +3638,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Boolean> testIamPermissions(
       String bucket, List<String> permissions, BucketSourceOption... options);
 

@@ -65,6 +65,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
+import com.google.iam.v1.GetIamPolicyRequest;
+import com.google.iam.v1.SetIamPolicyRequest;
+import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
@@ -1037,21 +1040,57 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Policy getIamPolicy(String bucket, BucketSourceOption... options) {
-    return throwNotYetImplemented(
-        fmtMethodName("getIamPolicy", String.class, BucketSourceOption[].class));
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    GetIamPolicyRequest.Builder builder =
+        GetIamPolicyRequest.newBuilder().setResource(bucketNameCodec.encode(bucket));
+    GetIamPolicyRequest req = opts.getIamPolicyRequest().apply(builder).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.getIamPolicyCallable().call(req, grpcCallContext),
+        codecs.policyCodec());
   }
 
   @Override
   public Policy setIamPolicy(String bucket, Policy policy, BucketSourceOption... options) {
-    return throwNotYetImplemented(
-        fmtMethodName("setIamPolicy", String.class, Policy.class, BucketSourceOption[].class));
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    SetIamPolicyRequest req =
+        SetIamPolicyRequest.newBuilder()
+            .setResource(bucketNameCodec.encode(bucket))
+            .setPolicy(codecs.policyCodec().encode(policy))
+            .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.setIamPolicyCallable().call(req, grpcCallContext),
+        codecs.policyCodec());
   }
 
   @Override
   public List<Boolean> testIamPermissions(
       String bucket, List<String> permissions, BucketSourceOption... options) {
-    return throwNotYetImplemented(
-        fmtMethodName("testIamPermissions", String.class, List.class, BucketSourceOption.class));
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    TestIamPermissionsRequest req =
+        TestIamPermissionsRequest.newBuilder()
+            .setResource(bucketNameCodec.encode(bucket))
+            .addAllPermissions(permissions)
+            .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.testIamPermissionsCallable().call(req, grpcCallContext),
+        resp -> {
+          Set<String> heldPermissions = ImmutableSet.copyOf(resp.getPermissionsList());
+          return permissions.stream()
+              .map(heldPermissions::contains)
+              .collect(ImmutableList.toImmutableList());
+        });
   }
 
   @Override

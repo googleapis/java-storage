@@ -1983,6 +1983,10 @@ final class UnifiedOpts {
       return fuseMappers(HmacKeyTargetOpt.class, HmacKeyTargetOpt::deleteHmacKey);
     }
 
+    Mapper<GetIamPolicyRequest.Builder> getIamPolicyRequest() {
+      return fuseMappers(BucketSourceOpt.class, BucketSourceOpt::getIamPolicy);
+    }
+
     Mapper<BlobInfo.Builder> blobInfoMapper() {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::blobInfo);
     }
