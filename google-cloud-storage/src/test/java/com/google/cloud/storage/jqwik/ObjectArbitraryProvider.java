@@ -58,20 +58,20 @@ public final class ObjectArbitraryProvider implements ArbitraryProvider {
                 Combinators.combine(
                         StorageArbitraries.httpHeaders().cacheControl(),
                         StorageArbitraries.httpHeaders().contentLanguage(),
-                        StorageArbitraries.timestamp(), // dtime
+                        StorageArbitraries.timestamp().injectNull(0.25), // dtime
                         StorageArbitraries.httpHeaders().contentType(),
-                        StorageArbitraries.timestamp(), // ctime
+                        StorageArbitraries.timestamp().injectNull(0.25), // ctime
                         // componentCount is populated if the object is made from compose
                         Arbitraries.integers().greaterOrEqual(0).injectNull(0.85),
-                        StorageArbitraries.objects().objectChecksumsArbitrary())
+                        StorageArbitraries.objects().objectChecksums().injectNull(0.25))
                     .as(Tuple::of),
                 Combinators.combine(
-                        StorageArbitraries.timestamp(), // utime
+                        StorageArbitraries.timestamp().injectNull(0.25), // utime
                         StorageArbitraries.kmsKey(),
-                        StorageArbitraries.timestamp(), // UpdateStorageClassTime
-                        StorageArbitraries.bool(),
-                        StorageArbitraries.timestamp(), // RetentionExpireTime
-                        StorageArbitraries.bool(),
+                        StorageArbitraries.timestamp().injectNull(0.25), // UpdateStorageClassTime
+                        StorageArbitraries.bool().injectNull(0.25),
+                        StorageArbitraries.timestamp().injectNull(0.25), // RetentionExpireTime
+                        StorageArbitraries.bool().injectNull(0.25),
                         StorageArbitraries.objects().customerEncryption().injectNull(0.90),
                         StorageArbitraries.httpHeaders().customTime())
                     .as(Tuple::of),
