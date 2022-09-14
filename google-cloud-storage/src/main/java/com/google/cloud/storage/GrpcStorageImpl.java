@@ -21,7 +21,6 @@ import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.projectNameCodec;
-import static com.google.cloud.storage.Utils.todo;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
@@ -83,6 +82,7 @@ import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
+import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ReadObjectRequest;
@@ -376,7 +376,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket lockRetentionPolicy(BucketInfo bucket, BucketTargetOption... options) {
-    return todo();
+    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucket);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    LockBucketRetentionPolicyRequest.Builder builder =
+        LockBucketRetentionPolicyRequest.newBuilder()
+            .setBucket(bucketNameCodec.encode(bucket.getName()));
+    LockBucketRetentionPolicyRequest req =
+        opts.lockBucketRetentionPolicyRequest().apply(builder).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.lockBucketRetentionPolicyCallable().call(req, grpcCallContext),
+        syntaxDecoders.bucket);
   }
 
   @Override
