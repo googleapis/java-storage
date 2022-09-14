@@ -1138,7 +1138,7 @@ public class Bucket extends BucketInfo {
    * @return a {@code Bucket} object of the locked bucket
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Bucket lockRetentionPolicy(BucketTargetOption... options) {
     return storage.lockRetentionPolicy(this, options);
   }

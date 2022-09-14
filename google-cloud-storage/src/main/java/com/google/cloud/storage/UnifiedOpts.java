@@ -43,6 +43,7 @@ import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
+import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.UpdateBucketRequest;
@@ -211,6 +212,10 @@ final class UnifiedOpts {
     }
 
     default Mapper<DeleteBucketRequest.Builder> deleteBucket() {
+      return Mapper.identity();
+    }
+
+    default Mapper<LockBucketRetentionPolicyRequest.Builder> lockBucketRetentionPolicy() {
       return Mapper.identity();
     }
   }
@@ -901,6 +906,11 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<GetBucketRequest.Builder> getBucket() {
+      return b -> b.setIfMetagenerationMatch(val);
+    }
+
+    @Override
+    public Mapper<LockBucketRetentionPolicyRequest.Builder> lockBucketRetentionPolicy() {
       return b -> b.setIfMetagenerationMatch(val);
     }
 
@@ -1898,6 +1908,10 @@ final class UnifiedOpts {
 
     Mapper<DeleteBucketRequest.Builder> deleteBucketsRequest() {
       return fuseMappers(BucketTargetOpt.class, BucketTargetOpt::deleteBucket);
+    }
+
+    Mapper<LockBucketRetentionPolicyRequest.Builder> LockBucketRetentionPolicysRequest() {
+      return fuseMappers(BucketTargetOpt.class, BucketTargetOpt::lockBucketRetentionPolicy);
     }
 
     Mapper<WriteObjectRequest.Builder> writeObjectRequest() {

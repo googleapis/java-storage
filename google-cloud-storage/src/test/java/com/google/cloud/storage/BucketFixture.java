@@ -60,12 +60,19 @@ public final class BucketFixture implements TestRule {
     return bucketInfo;
   }
 
+  /**
+   * Create a new randomly generated bucket name based on the pattern configured for this fixture
+   */
+  public String newBucketName() {
+    return String.format(bucketNameFmtString, UUID.randomUUID());
+  }
+
   @Override
   public Statement apply(Statement base, Description description) {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
-        String bucketName = String.format(bucketNameFmtString, UUID.randomUUID());
+        String bucketName = newBucketName();
         Storage s = storageHandle.get();
         Bucket bucket = s.create(BucketInfo.of(bucketName));
         bucketInfo = bucket;
