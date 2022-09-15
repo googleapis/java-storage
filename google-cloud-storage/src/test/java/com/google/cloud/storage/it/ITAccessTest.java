@@ -24,9 +24,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.cloud.Condition;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
+import com.google.cloud.RetryHelper;
+import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
@@ -52,6 +55,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.BeforeClass;
@@ -142,17 +146,24 @@ public class ITAccessTest {
 
   @Test
   public void testBucketDefaultAcl() {
-    assertNull(storage.getDefaultAcl(bucketName, User.ofAllAuthenticatedUsers()));
-    assertFalse(storage.deleteDefaultAcl(bucketName, User.ofAllAuthenticatedUsers()));
+    // according to https://cloud.google.com/storage/docs/access-control/lists#default
+    // it can take up to 30 seconds for default acl updates to propagate
+    // Since this test is performing so many mutations to default acls there are several calls
+    // that are otherwise non-idempotent wrapped with retries.
+    assertNull(retry429s(() -> storage.getDefaultAcl(bucketName, User.ofAllAuthenticatedUsers())));
+    assertFalse(
+        retry429s(() -> storage.deleteDefaultAcl(bucketName, User.ofAllAuthenticatedUsers())));
     Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(storage.createDefaultAcl(bucketName, acl));
+    assertNotNull(retry429s(() -> storage.createDefaultAcl(bucketName, acl)));
     Acl updatedAcl =
-        storage.updateDefaultAcl(bucketName, acl.toBuilder().setRole(Role.OWNER).build());
+        retry429s(
+            () ->
+                storage.updateDefaultAcl(bucketName, acl.toBuilder().setRole(Role.OWNER).build()));
     assertEquals(Role.OWNER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>();
-    acls.addAll(storage.listDefaultAcls(bucketName));
+    Set<Acl> acls = new HashSet<>(storage.listDefaultAcls(bucketName));
     assertTrue(acls.contains(updatedAcl));
-    assertTrue(storage.deleteDefaultAcl(bucketName, User.ofAllAuthenticatedUsers()));
+    assertTrue(
+        retry429s(() -> storage.deleteDefaultAcl(bucketName, User.ofAllAuthenticatedUsers())));
     assertNull(storage.getDefaultAcl(bucketName, User.ofAllAuthenticatedUsers()));
   }
 
@@ -886,5 +897,22 @@ public class ITAccessTest {
                             : BucketInfo.PublicAccessPrevention.INHERITED)
                     .build())
             .build());
+  }
+
+  static <T> T retry429s(Callable<T> c) {
+    return RetryHelper.runWithRetries(
+        c,
+        storage.getOptions().getRetrySettings(),
+        new BasicResultRetryAlgorithm<Object>() {
+          @Override
+          public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+            if (previousThrowable instanceof BaseHttpServiceException) {
+              BaseHttpServiceException httpException = (BaseHttpServiceException) previousThrowable;
+              return httpException.getCode() == 429;
+            }
+            return false;
+          }
+        },
+        storage.getOptions().getClock());
   }
 }
