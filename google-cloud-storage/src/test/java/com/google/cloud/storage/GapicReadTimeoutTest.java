@@ -130,7 +130,10 @@ public final class GapicReadTimeoutTest {
         ReadObjectResponse actualResponse2 = iter.next();
         boolean hasNext = iter.hasNext();
         Stopwatch stop = started.stop();
-        assertThat(stop.elapsed(TimeUnit.MILLISECONDS)).isAtLeast(sleepDurationMillis);
+        // reduce our expectation by 1% to allow for the fact that sleep can sometimes be slightly
+        // less than the stated amount.
+        long minimumElapsedTime = sleepDurationMillis - (long) (sleepDurationMillis * 0.01);
+        assertThat(stop.elapsed(TimeUnit.MILLISECONDS)).isAtLeast(minimumElapsedTime);
         assertThat(actualResponse1).isEqualTo(resp1);
         assertThat(actualResponse2).isEqualTo(resp2);
         assertThat(hasNext).isFalse();
