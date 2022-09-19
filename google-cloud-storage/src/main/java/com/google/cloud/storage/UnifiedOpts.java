@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.projectNameCodec;
-import static com.google.cloud.storage.Utils.todo;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -1255,11 +1254,6 @@ final class UnifiedOpts {
 
     private ReturnRawInputStream(boolean val) {
       super(StorageRpc.Option.RETURN_RAW_INPUT_STREAM, val);
-    }
-
-    @Override
-    public Mapper<GetObjectRequest.Builder> getObject() {
-      return todo();
     }
   }
 

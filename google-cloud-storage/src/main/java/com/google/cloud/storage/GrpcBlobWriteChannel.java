@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._15MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
-import static com.google.cloud.storage.Utils.todo;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ClientStreamingCallable;
@@ -66,7 +65,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   @Override
   public RestorableState<WriteChannel> capture() {
-    return todo();
+    return GrpcStorageImpl.throwHttpJsonOnly(WriteChannel.class, "capture");
   }
 
   @Override

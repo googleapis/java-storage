@@ -66,10 +66,6 @@ public final class PackagePrivateMethodWorkarounds {
     };
   }
 
-  public static <T> T todo() {
-    return Utils.todo();
-  }
-
   public static <T> void ifNonNull(@Nullable T t, Consumer<T> c) {
     Utils.ifNonNull(t, c);
   }
