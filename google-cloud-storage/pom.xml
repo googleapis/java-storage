@@ -35,7 +35,6 @@
     <dependency>
       <groupId>com.google.http-client</groupId>
       <artifactId>google-http-client-gson</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.api-client</groupId>
@@ -274,6 +273,12 @@
               <dependency>net.jqwik:jqwik-engine</dependency>
               <dependency>net.jqwik:jqwik-time</dependency>
               <dependency>net.jqwik:jqwik-web</dependency>
+              <!--
+              We're only using google-http-client-gson in our tests, however if we scope it to test that will
+              break flatten plugins resolution where google-http-client-gson is needed in order for
+              google-api-client to be able to bootstrap.
+              -->
+              <dependency>com.google.http-client:google-http-client-gson</dependency>
             </ignoredDependencies>
           </configuration>
         </plugin>
