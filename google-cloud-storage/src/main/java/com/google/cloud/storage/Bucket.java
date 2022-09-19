@@ -675,7 +675,7 @@ public class Bucket extends BucketInfo {
    * @return a {@code Bucket} object with updated information
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Bucket update(BucketTargetOption... options) {
     return storage.update(this, options);
   }
@@ -699,7 +699,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if bucket was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean delete(BucketSourceOption... options) {
     // Don't use static imports of BlobSourceOption, it causes import resolution issues
     // with the new UnifiedOpts shim interfaces
