@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.client.util.Data;
 import com.google.api.core.BetaApi;
+import com.google.cloud.storage.Storage.BlobField;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -97,6 +98,7 @@ public class BlobInfo implements Serializable {
   private final Boolean eventBasedHold;
   private final Boolean temporaryHold;
   private final OffsetDateTime retentionExpirationTime;
+  private final transient ImmutableSet<Storage.BlobField> modifiedFields;
 
   /** This class is meant for internal use only. Users are discouraged from using this class. */
   public static final class ImmutableEmptyMap<K, V> extends AbstractMap<K, V> {
@@ -436,6 +438,7 @@ public class BlobInfo implements Serializable {
     private Boolean eventBasedHold;
     private Boolean temporaryHold;
     private OffsetDateTime retentionExpirationTime;
+    private final ImmutableSet.Builder<Storage.BlobField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(BlobId blobId) {
       this.blobId = blobId;
@@ -476,7 +479,19 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setBlobId(BlobId blobId) {
-      this.blobId = checkNotNull(blobId);
+      checkNotNull(blobId);
+      if (!Objects.equals(this.blobId, blobId)) {
+        if (!Objects.equals(this.blobId.getBucket(), blobId.getBucket())) {
+          modifiedFields.add(BlobField.BUCKET);
+        }
+        if (!Objects.equals(this.blobId.getName(), blobId.getName())) {
+          modifiedFields.add(BlobField.NAME);
+        }
+        if (!Objects.equals(this.blobId.getGeneration(), blobId.getGeneration())) {
+          modifiedFields.add(BlobField.GENERATION);
+        }
+      }
+      this.blobId = blobId;
       return this;
     }
 
@@ -488,25 +503,41 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setContentType(String contentType) {
-      this.contentType = firstNonNull(contentType, Data.nullOf(String.class));
+      String tmp = firstNonNull(contentType, Data.nullOf(String.class));
+      if (!Objects.equals(this.contentType, tmp)) {
+        modifiedFields.add(BlobField.CONTENT_TYPE);
+      }
+      this.contentType = tmp;
       return this;
     }
 
     @Override
     public Builder setContentDisposition(String contentDisposition) {
-      this.contentDisposition = firstNonNull(contentDisposition, Data.nullOf(String.class));
+      String tmp = firstNonNull(contentDisposition, Data.nullOf(String.class));
+      if (!Objects.equals(this.contentDisposition, tmp)) {
+        modifiedFields.add(BlobField.CONTENT_DISPOSITION);
+      }
+      this.contentDisposition = tmp;
       return this;
     }
 
     @Override
     public Builder setContentLanguage(String contentLanguage) {
-      this.contentLanguage = firstNonNull(contentLanguage, Data.nullOf(String.class));
+      String tmp = firstNonNull(contentLanguage, Data.nullOf(String.class));
+      if (!Objects.equals(this.contentLanguage, tmp)) {
+        modifiedFields.add(BlobField.CONTENT_LANGUAGE);
+      }
+      this.contentLanguage = tmp;
       return this;
     }
 
     @Override
     public Builder setContentEncoding(String contentEncoding) {
-      this.contentEncoding = firstNonNull(contentEncoding, Data.nullOf(String.class));
+      String tmp = firstNonNull(contentEncoding, Data.nullOf(String.class));
+      if (!Objects.equals(this.contentEncoding, tmp)) {
+        modifiedFields.add(BlobField.CONTENT_ENCODING);
+      }
+      this.contentEncoding = tmp;
       return this;
     }
 
@@ -518,18 +549,36 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setCacheControl(String cacheControl) {
-      this.cacheControl = firstNonNull(cacheControl, Data.nullOf(String.class));
+      String tmp = firstNonNull(cacheControl, Data.nullOf(String.class));
+      if (!Objects.equals(this.cacheControl, tmp)) {
+        modifiedFields.add(BlobField.CACHE_CONTROL);
+      }
+      this.cacheControl = tmp;
       return this;
     }
 
     @Override
     public Builder setAcl(List<Acl> acl) {
-      this.acl = acl != null ? ImmutableList.copyOf(acl) : null;
+      if (!Objects.equals(this.acl, acl)) {
+        modifiedFields.add(BlobField.ACL);
+      }
+      if (acl != null) {
+        if (acl instanceof ImmutableList) {
+          this.acl = acl;
+        } else {
+          this.acl = ImmutableList.copyOf(acl);
+        }
+      } else {
+        this.acl = null;
+      }
       return this;
     }
 
     @Override
     Builder setOwner(Acl.Entity owner) {
+      if (!Objects.equals(this.owner, owner)) {
+        modifiedFields.add(BlobField.OWNER);
+      }
       this.owner = owner;
       return this;
     }
@@ -542,6 +591,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setEtag(String etag) {
+      if (!Objects.equals(this.etag, etag)) {
+        modifiedFields.add(BlobField.ETAG);
+      }
       this.etag = etag;
       return this;
     }
@@ -554,7 +606,11 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setMd5(String md5) {
-      this.md5 = firstNonNull(md5, Data.nullOf(String.class));
+      String tmp = firstNonNull(md5, Data.nullOf(String.class));
+      if (!Objects.equals(this.md5, tmp)) {
+        modifiedFields.add(BlobField.MD5HASH);
+      }
+      this.md5 = tmp;
       return this;
     }
 
@@ -578,13 +634,16 @@ public class BlobInfo implements Serializable {
         }
         md5ByteBuffer.put((byte) (higherOrderBits << 4 | lowerOrderBits));
       }
-      this.md5 = BaseEncoding.base64().encode(md5ByteBuffer.array());
-      return this;
+      return setMd5(BaseEncoding.base64().encode(md5ByteBuffer.array()));
     }
 
     @Override
     public Builder setCrc32c(String crc32c) {
-      this.crc32c = firstNonNull(crc32c, Data.nullOf(String.class));
+      String tmp = firstNonNull(crc32c, Data.nullOf(String.class));
+      if (!Objects.equals(this.crc32c, tmp)) {
+        modifiedFields.add(BlobField.CRC32C);
+      }
+      this.crc32c = tmp;
       return this;
     }
 
@@ -597,6 +656,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setCustomTimeOffsetDateTime(OffsetDateTime customTime) {
+      if (!Objects.equals(this.customTime, customTime)) {
+        modifiedFields.add(BlobField.CUSTOM_TIME);
+      }
       this.customTime = customTime;
       return this;
     }
@@ -622,8 +684,7 @@ public class BlobInfo implements Serializable {
         }
         crc32cByteBuffer.put((byte) (higherOrderBits << 4 | lowerOrderBits));
       }
-      this.crc32c = BaseEncoding.base64().encode(crc32cByteBuffer.array());
-      return this;
+      return setCrc32c(BaseEncoding.base64().encode(crc32cByteBuffer.array()));
     }
 
     @Override
@@ -634,6 +695,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setMetadata(Map<String, String> metadata) {
+      if (!Objects.equals(this.metadata, metadata)) {
+        modifiedFields.add(BlobField.METADATA);
+      }
       if (metadata != null) {
         this.metadata = new HashMap<>(metadata);
       } else {
@@ -644,6 +708,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setStorageClass(StorageClass storageClass) {
+      if (!Objects.equals(this.storageClass, storageClass)) {
+        modifiedFields.add(BlobField.STORAGE_CLASS);
+      }
       this.storageClass = storageClass;
       return this;
     }
@@ -659,6 +726,9 @@ public class BlobInfo implements Serializable {
     @Override
     public Builder setTimeStorageClassUpdatedOffsetDateTime(
         OffsetDateTime timeStorageClassUpdated) {
+      if (!Objects.equals(this.timeStorageClassUpdated, timeStorageClassUpdated)) {
+        modifiedFields.add(BlobField.TIME_STORAGE_CLASS_UPDATED);
+      }
       this.timeStorageClassUpdated = timeStorageClassUpdated;
       return this;
     }
@@ -678,6 +748,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setDeleteTimeOffsetDateTime(OffsetDateTime deleteTime) {
+      if (!Objects.equals(this.deleteTime, deleteTime)) {
+        modifiedFields.add(BlobField.TIME_DELETED);
+      }
       this.deleteTime = deleteTime;
       return this;
     }
@@ -690,6 +763,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
+      if (!Objects.equals(this.updateTime, updateTime)) {
+        modifiedFields.add(BlobField.UPDATED);
+      }
       this.updateTime = updateTime;
       return this;
     }
@@ -703,6 +779,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
+      if (!Objects.equals(this.createTime, createTime)) {
+        modifiedFields.add(BlobField.TIME_CREATED);
+      }
       this.createTime = createTime;
       return this;
     }
@@ -715,24 +794,36 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setCustomerEncryption(CustomerEncryption customerEncryption) {
+      if (!Objects.equals(this.customerEncryption, customerEncryption)) {
+        modifiedFields.add(BlobField.CUSTOMER_ENCRYPTION);
+      }
       this.customerEncryption = customerEncryption;
       return this;
     }
 
     @Override
     Builder setKmsKeyName(String kmsKeyName) {
+      if (!Objects.equals(this.kmsKeyName, kmsKeyName)) {
+        modifiedFields.add(BlobField.KMS_KEY_NAME);
+      }
       this.kmsKeyName = kmsKeyName;
       return this;
     }
 
     @Override
     public Builder setEventBasedHold(Boolean eventBasedHold) {
+      if (!Objects.equals(this.eventBasedHold, eventBasedHold)) {
+        modifiedFields.add(BlobField.EVENT_BASED_HOLD);
+      }
       this.eventBasedHold = eventBasedHold;
       return this;
     }
 
     @Override
     public Builder setTemporaryHold(Boolean temporaryHold) {
+      if (!Objects.equals(this.temporaryHold, temporaryHold)) {
+        modifiedFields.add(BlobField.TEMPORARY_HOLD);
+      }
       this.temporaryHold = temporaryHold;
       return this;
     }
@@ -747,6 +838,9 @@ public class BlobInfo implements Serializable {
 
     @Override
     Builder setRetentionExpirationTimeOffsetDateTime(OffsetDateTime retentionExpirationTime) {
+      if (!Objects.equals(this.retentionExpirationTime, retentionExpirationTime)) {
+        modifiedFields.add(BlobField.RETENTION_EXPIRATION_TIME);
+      }
       this.retentionExpirationTime = retentionExpirationTime;
       return this;
     }
@@ -789,6 +883,7 @@ public class BlobInfo implements Serializable {
     eventBasedHold = builder.eventBasedHold;
     temporaryHold = builder.temporaryHold;
     retentionExpirationTime = builder.retentionExpirationTime;
+    modifiedFields = builder.modifiedFields.build();
   }
 
   /** Returns the blob's identity. */
@@ -1271,6 +1366,10 @@ public class BlobInfo implements Serializable {
         && Objects.equals(eventBasedHold, blobInfo.eventBasedHold)
         && Objects.equals(temporaryHold, blobInfo.temporaryHold)
         && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime);
+  }
+
+  ImmutableSet<BlobField> getModifiedFields() {
+    return modifiedFields;
   }
 
   /**
