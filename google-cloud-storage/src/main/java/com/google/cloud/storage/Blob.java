@@ -606,7 +606,7 @@ public class Blob extends BlobInfo {
    * @see <a
    *     href="https://cloud.google.com/storage/docs/json_api/v1/objects/update">https://cloud.google.com/storage/docs/json_api/v1/objects/update</a>
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Blob update(BlobTargetOption... options) {
     return storage.update(this, options);
   }
@@ -630,7 +630,7 @@ public class Blob extends BlobInfo {
    * @return {@code true} if blob was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean delete(BlobSourceOption... options) {
     // Don't use static imports of BlobSourceOption, it causes import resolution issues
     // with the new UnifiedOpts shim interfaces
@@ -656,7 +656,7 @@ public class Blob extends BlobInfo {
    *     blob or to complete the copy if more than one RPC request is needed
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public CopyWriter copyTo(BlobId targetBlob, BlobSourceOption... options) {
     CopyRequest copyRequest =
         CopyRequest.newBuilder()
@@ -687,7 +687,7 @@ public class Blob extends BlobInfo {
    *     blob or to complete the copy if more than one RPC request is needed
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public CopyWriter copyTo(String targetBucket, BlobSourceOption... options) {
     return copyTo(targetBucket, getName(), options);
   }
@@ -722,7 +722,7 @@ public class Blob extends BlobInfo {
    *     blob or to complete the copy if more than one RPC request is needed
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public CopyWriter copyTo(String targetBucket, String targetBlob, BlobSourceOption... options) {
     return copyTo(BlobId.of(targetBucket, targetBlob), options);
   }

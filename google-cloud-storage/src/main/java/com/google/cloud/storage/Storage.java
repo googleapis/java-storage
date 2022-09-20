@@ -1357,6 +1357,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @see <a href="https://cloud.google.com/storage/docs/composite-objects#_Compose">Compose
    *     Operation</a>
    */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   class ComposeRequest implements Serializable {
 
     private static final long serialVersionUID = -7385681353748590911L;
@@ -1491,6 +1492,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   }
 
   /** A class to contain all information needed for a Google Cloud Storage Copy operation. */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   class CopyRequest implements Serializable {
 
     private static final long serialVersionUID = -4498650529476219937L;
@@ -2209,7 +2211,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the updated bucket
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Bucket update(BucketInfo bucketInfo, BucketTargetOption... options);
 
   /**
@@ -2481,7 +2483,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @throws StorageException upon failure
    * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/objects/rewrite">Rewrite</a>
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   CopyWriter copy(CopyRequest copyRequest);
 
   /**
