@@ -160,10 +160,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           .map(StorageException::asStorageException)
           .collect(Collectors.toSet());
 
-  private final StorageClient storageClient;
-  private final GrpcConversions codecs;
-  private final GrpcRetryAlgorithmManager retryAlgorithmManager;
-  private final SyntaxDecoders syntaxDecoders;
+  final StorageClient storageClient;
+  final GrpcConversions codecs;
+  final GrpcRetryAlgorithmManager retryAlgorithmManager;
+  final SyntaxDecoders syntaxDecoders;
 
   @Deprecated private final ProjectId defaultProjectId;
 
@@ -1273,15 +1273,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     }
   }
 
-  private <T> T throwHttpJsonOnly(String methodName) {
+  static <T> T throwHttpJsonOnly(String methodName) {
+    return throwHttpJsonOnly(Storage.class, methodName);
+  }
+
+  static <T> T throwHttpJsonOnly(Class<?> clazz, String methodName) {
     String message =
         String.format(
             "%s#%s is only supported for HTTP_JSON transport. Please use StorageOptions.http() to construct a compatible instance.",
-            Storage.class.getName(), methodName);
+            clazz.getName(), methodName);
     throw new UnsupportedOperationException(message);
   }
 
-  private <T> T throwNotYetImplemented(String methodName) {
+  static <T> T throwNotYetImplemented(String methodName) {
     String message =
         String.format(
             "%s#%s is not yet implemented for GRPC transport. Please use StorageOptions.http() to construct a compatible instance in the interim.",

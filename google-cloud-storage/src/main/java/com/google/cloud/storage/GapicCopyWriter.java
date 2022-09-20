@@ -16,8 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.Utils.todo;
-
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.RestorableState;
@@ -86,6 +84,6 @@ final class GapicCopyWriter extends CopyWriter {
 
   @Override
   public RestorableState<CopyWriter> capture() {
-    return todo();
+    return GrpcStorageImpl.throwHttpJsonOnly(CopyWriter.class, "capture");
   }
 }

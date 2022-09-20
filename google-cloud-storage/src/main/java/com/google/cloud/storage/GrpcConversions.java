@@ -22,7 +22,6 @@ import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
-import static com.google.cloud.storage.Utils.todo;
 
 import com.google.cloud.Binding;
 import com.google.cloud.Condition;
@@ -72,7 +71,6 @@ final class GrpcConversions {
       Codec.of(this::bucketAclEncode, this::bucketAclDecode);
   private final Codec<HmacKey.HmacKeyMetadata, HmacKeyMetadata> hmacKeyMetadataCodec =
       Codec.of(this::hmacKeyMetadataEncode, this::hmacKeyMetadataDecode);
-  private final Codec<?, ?> hmacKeyCodec = Codec.of(Utils::todo, Utils::todo);
   private final Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccountCodec =
       Codec.of(this::serviceAccountEncode, this::serviceAccountDecode);
   private final Codec<Cors, Bucket.Cors> corsCodec = Codec.of(this::corsEncode, this::corsDecode);
@@ -91,7 +89,8 @@ final class GrpcConversions {
       Codec.of(this::blobIdEncode, this::blobIdDecode);
   private final Codec<BlobInfo, Object> blobInfoCodec =
       Codec.of(this::blobInfoEncode, this::blobInfoDecode);
-  private final Codec<?, ?> notificationInfoCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<NotificationInfo, com.google.storage.v2.Notification> notificationInfoCodec =
+      Codec.of(this::notificationEncode, this::notificationDecode);
   private final Codec<Policy, com.google.iam.v1.Policy> policyCodec =
       Codec.of(this::policyEncode, this::policyDecode);
   private final Codec<Binding, com.google.iam.v1.Binding> bindingCodec =
@@ -149,10 +148,6 @@ final class GrpcConversions {
     return hmacKeyMetadataCodec;
   }
 
-  Codec<?, ?> hmacKey() {
-    return todo();
-  }
-
   Codec<ServiceAccount, com.google.storage.v2.ServiceAccount> serviceAccount() {
     return serviceAccountCodec;
   }
@@ -189,8 +184,8 @@ final class GrpcConversions {
     return blobInfoCodec;
   }
 
-  Codec<?, ?> notificationInfo() {
-    return todo();
+  Codec<NotificationInfo, com.google.storage.v2.Notification> notificationInfo() {
+    return notificationInfoCodec;
   }
 
   Codec<Policy, com.google.iam.v1.Policy> policyCodec() {
@@ -860,6 +855,14 @@ final class GrpcConversions {
     return toBuilder.build();
   }
 
+  private com.google.storage.v2.Notification notificationEncode(NotificationInfo from) {
+    return todo();
+  }
+
+  private NotificationInfo notificationDecode(com.google.storage.v2.Notification from) {
+    return todo();
+  }
+
   private com.google.iam.v1.Policy policyEncode(Policy from) {
     com.google.iam.v1.Policy.Builder to = com.google.iam.v1.Policy.newBuilder();
     ifNonNull(from.getEtag(), ByteString::copyFromUtf8, to::setEtag);
@@ -922,5 +925,9 @@ final class GrpcConversions {
 
   private String crc32cEncode(int from) {
     return BaseEncoding.base64().encode(Ints.toByteArray(from));
+  }
+
+  private static <T> T todo() {
+    throw new IllegalStateException("Not yet implemented");
   }
 }

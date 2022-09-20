@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
-import static com.google.cloud.storage.Utils.todo;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
@@ -94,7 +93,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   @Override
   public RestorableState<ReadChannel> capture() {
-    return todo();
+    return GrpcStorageImpl.throwHttpJsonOnly(ReadChannel.class, "capture");
   }
 
   @Override

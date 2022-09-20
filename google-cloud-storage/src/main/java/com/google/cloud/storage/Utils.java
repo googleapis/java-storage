@@ -211,14 +211,6 @@ final class Utils {
     return l -> l.stream().map(f).collect(ImmutableList.toImmutableList());
   }
 
-  static final <T> T todo() {
-    throw new IllegalStateException("Not yet implemented");
-  }
-
-  static final <T1, T2> T2 todo(T1 t1) {
-    throw new IllegalStateException("Not yet implemented");
-  }
-
   /**
    * Convenience method to resolve the first non-null {@code T} from an array of suppliers.
    *
