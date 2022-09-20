@@ -42,6 +42,8 @@ import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.StorageObject.Owner;
+import com.google.cloud.Binding;
+import com.google.cloud.Policy;
 import com.google.cloud.storage.Acl.Domain;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Group;
@@ -118,6 +120,12 @@ final class ApiaryConversions {
   private final Codec<CustomPlacementConfig, Bucket.CustomPlacementConfig>
       customPlacementConfigCodec =
           Codec.of(this::customPlacementConfigEncode, this::customPlacementConfigDecode);
+  private final Codec<Policy, com.google.api.services.storage.model.Policy> policyCodec =
+      Codec.of(this::policyEncode, this::policyDecode);
+  private final Codec<Binding, com.google.api.services.storage.model.Policy.Bindings> bindingCodec =
+      Codec.of(this::bindingEncode, this::bindingDecode);
+  private final Codec<com.google.cloud.Condition, com.google.api.services.storage.model.Expr>
+      iamConditionCodec = Codec.of(this::conditionEncode, this::conditionDecode);
 
   private ApiaryConversions() {}
 
@@ -187,6 +195,10 @@ final class ApiaryConversions {
 
   Codec<CustomPlacementConfig, Bucket.CustomPlacementConfig> customPlacementConfig() {
     return customPlacementConfigCodec;
+  }
+
+  Codec<Policy, com.google.api.services.storage.model.Policy> policyCodec() {
+    return policyCodec;
   }
 
   private StorageObject blobInfoEncode(BlobInfo from) {
@@ -788,6 +800,74 @@ final class ApiaryConversions {
       builder.setEventTypes(eventTypes);
     }
     return builder.build();
+  }
+
+  private com.google.api.services.storage.model.Policy policyEncode(Policy from) {
+    com.google.api.services.storage.model.Policy to =
+        new com.google.api.services.storage.model.Policy();
+    ifNonNull(from.getEtag(), to::setEtag);
+    ifNonNull(from.getVersion(), to::setVersion);
+    if (from.getBindingsList() != null) {
+      ImmutableList<com.google.api.services.storage.model.Policy.Bindings> bindings =
+          from.getBindingsList().stream()
+              .map(bindingCodec::encode)
+              .collect(ImmutableList.toImmutableList());
+      to.setBindings(bindings);
+    }
+    return to;
+  }
+
+  private Policy policyDecode(com.google.api.services.storage.model.Policy from) {
+    Policy.Builder to = Policy.newBuilder();
+    if (!from.getEtag().isEmpty()) {
+      to.setEtag(from.getEtag());
+    }
+    to.setVersion(from.getVersion());
+    if (from.getBindings() != null) {
+      ImmutableList<Binding> bindings =
+          from.getBindings().stream()
+              .map(bindingCodec::decode)
+              .collect(ImmutableList.toImmutableList());
+      to.setBindings(bindings);
+    }
+    return to.build();
+  }
+
+  private com.google.api.services.storage.model.Policy.Bindings bindingEncode(Binding from) {
+    com.google.api.services.storage.model.Policy.Bindings to =
+        new com.google.api.services.storage.model.Policy.Bindings();
+    ifNonNull(from.getRole(), to::setRole);
+    ifNonNull(from.getMembers(), to::setMembers);
+    ifNonNull(from.getCondition(), iamConditionCodec::encode, to::setCondition);
+    return to;
+  }
+
+  private Binding bindingDecode(com.google.api.services.storage.model.Policy.Bindings from) {
+    Binding.Builder to = Binding.newBuilder();
+    ifNonNull(from.getRole(), to::setRole);
+    ifNonNull(from.getMembers(), to::setMembers);
+    ifNonNull(from.getCondition(), iamConditionCodec::decode, to::setCondition);
+    return to.build();
+  }
+
+  private com.google.api.services.storage.model.Expr conditionEncode(
+      com.google.cloud.Condition from) {
+    com.google.api.services.storage.model.Expr to =
+        new com.google.api.services.storage.model.Expr();
+    ifNonNull(from.getExpression(), to::setExpression);
+    ifNonNull(from.getTitle(), to::setTitle);
+    ifNonNull(from.getDescription(), to::setDescription);
+    // apiary doesn't have a "location" field like grpc does
+    return to;
+  }
+
+  private com.google.cloud.Condition conditionDecode(
+      com.google.api.services.storage.model.Expr from) {
+    com.google.cloud.Condition.Builder to = com.google.cloud.Condition.newBuilder();
+    ifNonNull(from.getExpression(), to::setExpression);
+    ifNonNull(from.getTitle(), to::setTitle);
+    ifNonNull(from.getDescription(), to::setDescription);
+    return to.build();
   }
 
   private Bucket.CustomPlacementConfig customPlacementConfigEncode(CustomPlacementConfig from) {

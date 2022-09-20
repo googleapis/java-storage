@@ -24,6 +24,9 @@ import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.cloud.storage.Utils.todo;
 
+import com.google.cloud.Binding;
+import com.google.cloud.Condition;
+import com.google.cloud.Policy;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
@@ -50,6 +53,7 @@ import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.Owner;
 import com.google.type.Date;
+import com.google.type.Expr;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -88,6 +92,13 @@ final class GrpcConversions {
   private final Codec<BlobInfo, Object> blobInfoCodec =
       Codec.of(this::blobInfoEncode, this::blobInfoDecode);
   private final Codec<?, ?> notificationInfoCodec = Codec.of(Utils::todo, Utils::todo);
+  private final Codec<Policy, com.google.iam.v1.Policy> policyCodec =
+      Codec.of(this::policyEncode, this::policyDecode);
+  private final Codec<Binding, com.google.iam.v1.Binding> bindingCodec =
+      Codec.of(this::bindingEncode, this::bindingDecode);
+  private final Codec<Condition, Expr> iamConditionCodec =
+      Codec.of(this::conditionEncode, this::conditionDecode);
+
   private final Codec<Integer, String> crc32cCodec =
       Codec.of(this::crc32cEncode, this::crc32cDecode);
 
@@ -180,6 +191,10 @@ final class GrpcConversions {
 
   Codec<?, ?> notificationInfo() {
     return todo();
+  }
+
+  Codec<Policy, com.google.iam.v1.Policy> policyCodec() {
+    return policyCodec;
   }
 
   private BucketInfo bucketInfoDecode(Bucket from) {
@@ -843,6 +858,61 @@ final class GrpcConversions {
     }
     ifNonNull(from.getAclList(), toImmutableListOf(objectAcl()::decode), toBuilder::setAcl);
     return toBuilder.build();
+  }
+
+  private com.google.iam.v1.Policy policyEncode(Policy from) {
+    com.google.iam.v1.Policy.Builder to = com.google.iam.v1.Policy.newBuilder();
+    ifNonNull(from.getEtag(), ByteString::copyFromUtf8, to::setEtag);
+    ifNonNull(from.getVersion(), to::setVersion);
+    from.getBindingsList().stream().map(bindingCodec::encode).forEach(to::addBindings);
+    return to.build();
+  }
+
+  private Policy policyDecode(com.google.iam.v1.Policy from) {
+    Policy.Builder to = Policy.newBuilder();
+    if (!from.getEtag().isEmpty()) {
+      to.setEtag(from.getEtag().toStringUtf8());
+    }
+    to.setVersion(from.getVersion());
+    ImmutableList<Binding> bindings =
+        from.getBindingsList().stream()
+            .map(bindingCodec::decode)
+            .collect(ImmutableList.toImmutableList());
+    to.setBindings(bindings);
+    return to.build();
+  }
+
+  private com.google.iam.v1.Binding bindingEncode(Binding from) {
+    com.google.iam.v1.Binding.Builder to = com.google.iam.v1.Binding.newBuilder();
+    to.setRole(from.getRole());
+    to.addAllMembers(from.getMembers());
+    to.setCondition(iamConditionCodec.encode(from.getCondition()));
+    return to.build();
+  }
+
+  private Binding bindingDecode(com.google.iam.v1.Binding from) {
+    Binding.Builder to = Binding.newBuilder();
+    to.setRole(from.getRole());
+    to.setMembers(from.getMembersList());
+    to.setCondition(iamConditionCodec.decode(from.getCondition()));
+    return to.build();
+  }
+
+  private Expr conditionEncode(Condition from) {
+    Expr.Builder to = Expr.newBuilder();
+    to.setExpression(from.getExpression());
+    to.setTitle(from.getTitle());
+    to.setDescription(from.getDescription());
+    // apiary doesn't have a "location" field like grpc does
+    return to.build();
+  }
+
+  private Condition conditionDecode(Expr from) {
+    Condition.Builder to = Condition.newBuilder();
+    to.setExpression(from.getExpression());
+    to.setTitle(from.getTitle());
+    to.setDescription(from.getDescription());
+    return to.build();
   }
 
   private int crc32cDecode(String from) {
