@@ -16,7 +16,7 @@
   </parent>
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
-    <kms.version>0.97.6</kms.version>
+    <kms.version>0.97.7</kms.version>
   </properties>
   <dependencies>
     <dependency>
