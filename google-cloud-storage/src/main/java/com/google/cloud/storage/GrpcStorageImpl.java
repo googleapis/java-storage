@@ -466,8 +466,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    com.google.storage.v2.Bucket bucket =
-        codecs.bucketInfo().encode(bucketInfo).toBuilder().buildPartial();
+    com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     UpdateBucketRequest.Builder builder = UpdateBucketRequest.newBuilder().setBucket(bucket);
     UpdateBucketRequest req =
         opts.updateBucketsRequest()
