@@ -466,7 +466,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
+    com.google.storage.v2.Bucket bucket =
+        codecs.bucketInfo().encode(bucketInfo).toBuilder().buildPartial();
     UpdateBucketRequest.Builder builder = UpdateBucketRequest.newBuilder().setBucket(bucket);
     UpdateBucketRequest req =
         opts.updateBucketsRequest()
@@ -536,7 +537,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteObjectRequest.Builder builder =
-        DeleteObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
+        DeleteObjectRequest.newBuilder()
+            .setBucket(bucketNameCodec.encode(blob.getBucket()))
+            .setObject(blob.getName());
     ifNonNull(blob.getGeneration(), builder::setGeneration);
     DeleteObjectRequest req = opts.deleteObjectsRequest().apply(builder).build();
     try {
@@ -1388,6 +1391,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         "acl",
         "default_object_acl",
         "storage_class",
-        "rpo");
+        "rpo",
+        "labels",
+        "event_based_hold");
   }
 }
