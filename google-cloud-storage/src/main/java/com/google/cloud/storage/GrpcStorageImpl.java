@@ -536,7 +536,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteObjectRequest.Builder builder =
-        DeleteObjectRequest.newBuilder().setBucket(blob.getBucket()).setObject(blob.getName());
+        DeleteObjectRequest.newBuilder()
+            .setBucket(bucketNameCodec.encode(blob.getBucket()))
+            .setObject(blob.getName());
     ifNonNull(blob.getGeneration(), builder::setGeneration);
     DeleteObjectRequest req = opts.deleteObjectsRequest().apply(builder).build();
     try {
@@ -1388,6 +1390,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         "acl",
         "default_object_acl",
         "storage_class",
-        "rpo");
+        "rpo",
+        "labels",
+        "event_based_hold");
   }
 }
