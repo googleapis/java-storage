@@ -28,6 +28,7 @@ import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.retrying.StreamResumptionStrategy;
 import com.google.api.gax.rpc.HeaderProvider;
+import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
@@ -118,8 +119,9 @@ public final class GrpcStorageOptions extends StorageOptions
               .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
               .build());
     }
+    RetrySettings baseRetrySettings = getRetrySettings();
     RetrySettings readRetrySettings =
-        getRetrySettings()
+        baseRetrySettings
             .toBuilder()
             // when performing a read via ReadObject, the ServerStream will have a default relative
             // deadline set of `requestStartTime() + totalTimeout`, meaning if the specified
@@ -130,13 +132,23 @@ public final class GrpcStorageOptions extends StorageOptions
             // on idleTimeout below.
             .setLogicalTimeout(Duration.ofDays(28))
             .build();
-    Duration totalTimeout = getRetrySettings().getTotalTimeout();
-    // all retries for unary methods are handled at a different level
+    Duration totalTimeout = baseRetrySettings.getTotalTimeout();
+    Set<Code> startResumableWriteRetryableCodes =
+        builder.startResumableWriteSettings().getRetryableCodes();
+
+    // retries for unary methods are generally handled at a different level, except
+    // StartResumableWrite
     builder.applyToAllUnaryMethods(
         input -> {
           input.setSimpleTimeoutNoRetries(totalTimeout);
           return null;
         });
+
+    // configure the settings for StartResumableWrite
+    builder
+        .startResumableWriteSettings()
+        .setRetrySettings(baseRetrySettings)
+        .setRetryableCodes(startResumableWriteRetryableCodes);
     // for ReadObject we are configuring the server stream handling to do its own retries, so wire
     // things through. Retryable codes will be controlled closer to the use site as idempotency
     // considerations need to be made.
