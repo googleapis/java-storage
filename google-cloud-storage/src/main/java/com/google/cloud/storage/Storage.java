@@ -92,42 +92,55 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   }
 
   enum BucketField implements FieldSelector {
-    ID("id"),
+    ID("id", "bucket_id"),
     SELF_LINK("selfLink"),
     NAME("name"),
-    TIME_CREATED("timeCreated"),
+    TIME_CREATED("timeCreated", "time_create"),
     METAGENERATION("metageneration"),
     ACL("acl"),
-    DEFAULT_OBJECT_ACL("defaultObjectAcl"),
+    DEFAULT_OBJECT_ACL("defaultObjectAcl", "default_object_acl"),
     OWNER("owner"),
     LABELS("labels"),
     LOCATION("location"),
-    LOCATION_TYPE("locationType"),
+    LOCATION_TYPE("locationType", "location_type"),
     WEBSITE("website"),
     VERSIONING("versioning"),
     CORS("cors"),
     LIFECYCLE("lifecycle"),
-    STORAGE_CLASS("storageClass"),
+    STORAGE_CLASS("storageClass", "storage_class"),
     ETAG("etag"),
     ENCRYPTION("encryption"),
     BILLING("billing"),
-    DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold"),
-    RETENTION_POLICY("retentionPolicy"),
-    IAMCONFIGURATION("iamConfiguration"),
+    DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold", "default_event_based_hold"),
+    RETENTION_POLICY("retentionPolicy", "retention_policy"),
+    IAMCONFIGURATION("iamConfiguration", "iam_config"),
     LOGGING("logging"),
-    UPDATED("updated");
+    UPDATED("updated", "update_time"),
+    RPO("rpo"),
+    CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
+    AUTOCLASS("autoclass");
 
     static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(NAME);
 
     private final String selector;
+    private final String grpcFieldName;
 
     BucketField(String selector) {
+      this(selector, selector);
+    }
+
+    BucketField(String selector, String grpcFieldName) {
       this.selector = selector;
+      this.grpcFieldName = grpcFieldName;
     }
 
     @Override
     public String getSelector() {
       return selector;
+    }
+
+    String getGrpcFieldName() {
+      return grpcFieldName;
     }
   }
 
