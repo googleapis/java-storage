@@ -247,7 +247,7 @@ public final class GapicUnbufferedWritableByteChannelTest {
                   new BasicResultRetryAlgorithm<Object>() {
                     @Override
                     public boolean shouldRetry(Throwable t, Object ignore) {
-                      return t instanceof DataLossException;
+                      return TestUtils.findThrowable(DataLossException.class, t) != null;
                     }
                   }))) {
         writeCtx = c.getWriteCtx();
@@ -275,18 +275,18 @@ public final class GapicUnbufferedWritableByteChannelTest {
     assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(40);
   }
 
-  private static class DirectWriteService extends StorageImplBase {
+  static class DirectWriteService extends StorageImplBase {
     private final BiConsumer<StreamObserver<WriteObjectResponse>, List<WriteObjectRequest>> c;
 
     private ImmutableList.Builder<WriteObjectRequest> requests;
 
-    private DirectWriteService(
+    DirectWriteService(
         BiConsumer<StreamObserver<WriteObjectResponse>, List<WriteObjectRequest>> c) {
       this.c = c;
       this.requests = new ImmutableList.Builder<>();
     }
 
-    private DirectWriteService(ImmutableMap<List<WriteObjectRequest>, WriteObjectResponse> writes) {
+    DirectWriteService(ImmutableMap<List<WriteObjectRequest>, WriteObjectResponse> writes) {
       this(
           (obs, build) -> {
             if (writes.containsKey(build)) {

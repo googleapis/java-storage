@@ -25,7 +25,6 @@ final class ByteSizeConstants {
   static final int _512KiB = 512 * _1KiB;
   static final int _1MiB = 1024 * _1KiB;
   static final int _2MiB = 2 * _1MiB;
-  static final int _15MiB = 15 * _1MiB;
   static final int _16MiB = 16 * _1MiB;
   static final int _32MiB = 32 * _1MiB;
 

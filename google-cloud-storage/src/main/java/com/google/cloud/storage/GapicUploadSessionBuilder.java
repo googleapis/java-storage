@@ -42,11 +42,14 @@ final class GapicUploadSessionBuilder {
   ApiFuture<ResumableWrite> resumableWrite(
       UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
       WriteObjectRequest writeObjectRequest) {
-    StartResumableWriteRequest req =
-        StartResumableWriteRequest.newBuilder()
-            .setCommonObjectRequestParams(writeObjectRequest.getCommonObjectRequestParams())
-            .setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec())
-            .build();
+    StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
+    if (writeObjectRequest.hasWriteObjectSpec()) {
+      b.setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec());
+    }
+    if (writeObjectRequest.hasCommonObjectRequestParams()) {
+      b.setCommonObjectRequestParams(writeObjectRequest.getCommonObjectRequestParams());
+    }
+    StartResumableWriteRequest req = b.build();
     return ApiFutures.transform(
         x.futureCall(req), (resp) -> new ResumableWrite(req, resp), MoreExecutors.directExecutor());
   }

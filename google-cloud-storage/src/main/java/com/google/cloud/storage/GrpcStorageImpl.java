@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteSizeConstants._15MiB;
+import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
@@ -224,26 +224,28 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
-    try {
-      UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
-          ResumableMedia.gapic()
-              .write()
-              .byteChannel(
-                  storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-              .setByteStringStrategy(ByteStringStrategy.noCopy())
-              .setHasher(Hasher.enabled())
-              .direct()
-              .unbuffered()
-              .setRequest(req)
-              .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+              ResumableMedia.gapic()
+                  .write()
+                  .byteChannel(
+                      storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+                  .setByteStringStrategy(ByteStringStrategy.noCopy())
+                  .setHasher(Hasher.enabled())
+                  .direct()
+                  .unbuffered()
+                  .setRequest(req)
+                  .build();
 
-      try (UnbufferedWritableByteChannel c = session.open()) {
-        c.write(ByteBuffer.wrap(content, offset, length));
-      }
-      return getBlob(session.getResult());
-    } catch (Exception e) {
-      throw StorageException.coalesce(e);
-    }
+          try (UnbufferedWritableByteChannel c = session.open()) {
+            c.write(ByteBuffer.wrap(content, offset, length));
+          }
+          return session.getResult();
+        },
+        this::getBlob);
   }
 
   @Override
@@ -258,7 +260,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, BlobWriteOption... options)
       throws IOException {
-    return createFrom(blobInfo, path, _15MiB, options);
+    return createFrom(blobInfo, path, _16MiB, options);
   }
 
   @Override
@@ -282,12 +284,29 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setHasher(Hasher.enabled())
             .setByteStringStrategy(ByteStringStrategy.noCopy());
 
-    BufferedWritableByteChannelSession<WriteObjectResponse> session;
     long size = Files.size(path);
     if (size < bufferSize) {
       // ignore the bufferSize argument if the file is smaller than it
-      session =
-          channelSessionBuilder.direct().buffered(Buffers.allocate(size)).setRequest(req).build();
+      return Retrying.run(
+          getOptions(),
+          retryAlgorithmManager.getFor(req),
+          () -> {
+            BufferedWritableByteChannelSession<WriteObjectResponse> session =
+                channelSessionBuilder
+                    .direct()
+                    .buffered(Buffers.allocate(size))
+                    .setRequest(req)
+                    .build();
+
+            try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS);
+                BufferedWritableByteChannel dst = session.open()) {
+              ByteStreams.copy(src, dst);
+            } catch (Exception e) {
+              throw StorageException.coalesce(e);
+            }
+            return session.getResult();
+          },
+          this::getBlob);
     } else {
       ApiFuture<ResumableWrite> start =
           ResumableMedia.gapic()
@@ -297,28 +316,27 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                       .startResumableWriteCallable()
                       .withDefaultCallContext(grpcCallContext),
                   req);
-      session =
+      BufferedWritableByteChannelSession<WriteObjectResponse> session =
           channelSessionBuilder
               .resumable()
               .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
               .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
               .setStartAsync(start)
               .build();
+      try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS);
+          BufferedWritableByteChannel dst = session.open()) {
+        ByteStreams.copy(src, dst);
+      } catch (Exception e) {
+        throw StorageException.coalesce(e);
+      }
+      return getBlob(session.getResult());
     }
-
-    try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS);
-        BufferedWritableByteChannel dst = session.open()) {
-      ByteStreams.copy(src, dst);
-    } catch (Exception e) {
-      throw StorageException.coalesce(e);
-    }
-    return getBlob(session.getResult());
   }
 
   @Override
   public Blob createFrom(BlobInfo blobInfo, InputStream content, BlobWriteOption... options)
       throws IOException {
-    return createFrom(blobInfo, content, _15MiB, options);
+    return createFrom(blobInfo, content, _16MiB, options);
   }
 
   @Override

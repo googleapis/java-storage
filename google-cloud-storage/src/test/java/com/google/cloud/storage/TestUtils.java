@@ -44,6 +44,7 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class TestUtils {
 
@@ -125,5 +126,25 @@ public final class TestUtils {
         return NanoClock.getDefaultClock();
       }
     };
+  }
+
+  /**
+   * Search {@code t} for an instance of {@code T} either directly or via a cause
+   *
+   * @return The found instance of T or null if not found.
+   */
+  @Nullable
+  public static <T extends Throwable> T findThrowable(Class<T> c, Throwable t) {
+    T found = null;
+    Throwable tmp = t;
+    while (tmp != null) {
+      if (c.isInstance(tmp)) {
+        found = c.cast(tmp);
+        break;
+      } else {
+        tmp = tmp.getCause();
+      }
+    }
+    return found;
   }
 }

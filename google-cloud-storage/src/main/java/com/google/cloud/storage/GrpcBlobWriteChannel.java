@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteSizeConstants._15MiB;
+import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 
 import com.google.api.core.ApiFuture;
@@ -38,7 +38,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   private final LazyWriteChannel lazyWriteChannel;
 
-  private int chunkSize = _15MiB;
+  private int chunkSize = _16MiB;
 
   GrpcBlobWriteChannel(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
