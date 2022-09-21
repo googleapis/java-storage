@@ -1036,7 +1036,7 @@ public class ITObjectTest {
 
   @Test
   public void testCopyBlobWithPredefinedAcl() {
-    // Copy is not allowlisted against Prod
+    // Bucket attribute extration on allowlist bug b/246634709
     assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-source";
@@ -1128,8 +1128,7 @@ public class ITObjectTest {
 
   @Test
   public void testCopyBlobUpdateMetadata() {
-    // Verified against testbench
-    // Copy is not allowlisted against Prod
+    // Bucket attribute extration on allowlist bug b/246634709
     assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-update-metadata-source";
@@ -1190,8 +1189,9 @@ public class ITObjectTest {
 
   @Test
   public void testCopyBlobNoContentType() {
-    // Not allowlisted for copy.
-    // TODO: verify locally
+    // Bucket attribute extration on allowlist bug b/246634709
+    assumeTrue(clientName.startsWith("JSON"));
+
     String sourceBlobName = "test-copy-blob-no-content-type-source";
     BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName);
     Blob remoteSourceBlob =
@@ -1220,7 +1220,7 @@ public class ITObjectTest {
   @Test
   public void testCopyBlobFail() {
     // Verified against testbench
-    // Copy is not allowlist against prod
+    // Bucket attribute extration on allowlist bug b/246634709
     assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-source-fail";
