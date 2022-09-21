@@ -325,7 +325,10 @@ public class ITObjectTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobMd5Fail() {
+    // Error Handling for GRPC not complete
+    // b/247621346
     assumeTrue(clientName.startsWith("JSON"));
+
     String blobName = "test-create-blob-md5-fail";
     BlobInfo blob =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo().getName(), blobName)
@@ -344,8 +347,8 @@ public class ITObjectTest {
   @Test
   public void testGetBlobEmptySelectedFields() {
     // FieldMask on get not supported by GRPC yet.
-    // TODO: Remove line when fieldmasks are supported
     assumeTrue(clientName.startsWith("JSON"));
+
     String blobName = "test-get-empty-selected-fields-blob";
     BlobInfo blob =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo().getName(), blobName)
@@ -361,8 +364,8 @@ public class ITObjectTest {
   @Test
   public void testGetBlobSelectedFields() {
     // FieldMask on get not supported by GRPC yet.
-    // TODO: Remove line when fieldmasks are supported
     assumeTrue(clientName.startsWith("JSON"));
+
     String blobName = "test-get-selected-fields-blob";
     BlobInfo blob =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo().getName(), blobName)
@@ -382,8 +385,8 @@ public class ITObjectTest {
   @Test
   public void testGetBlobAllSelectedFields() {
     // FieldMask on get not supported by GRPC yet.
-    // TODO: Remove line when fieldmasks are supported
     assumeTrue(clientName.startsWith("JSON"));
+
     String blobName = "test-get-all-selected-fields-blob";
     BlobInfo blob =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
@@ -490,8 +493,8 @@ public class ITObjectTest {
   @Test(timeout = 5000)
   public void testListBlobsEmptySelectedFields() throws InterruptedException {
     // FieldMask on list not supported by GRPC yet.
-    // TODO: Remove line when fieldmasks are supported
     assumeTrue(clientName.startsWith("JSON"));
+
     String[] blobNames = {
       "test-list-blobs-empty-selected-fields-blob1", "test-list-blobs-empty-selected-fields-blob2"
     };
@@ -705,7 +708,7 @@ public class ITObjectTest {
   @Test(timeout = 5000)
   public void testListBlobsCurrentDirectory() throws InterruptedException {
     // This test is currently timing out for GRPC
-    //assumeTrue(clientName.startsWith("JSON"));
+    // assumeTrue(clientName.startsWith("JSON"));
 
     String directoryName = "test-list-blobs-current-directory/";
     String subdirectoryName = "subdirectory/";
@@ -773,8 +776,6 @@ public class ITObjectTest {
 
   @Test
   public void testUpdateBlobReplaceMetadata() {
-
-    assumeTrue(clientName.startsWith("JSON"));
     String blobName = "test-update-blob-replace-metadata";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
     ImmutableMap<String, String> newMetadata = ImmutableMap.of("k2", "b");
@@ -790,7 +791,7 @@ public class ITObjectTest {
     assertNull(updatedBlob.getMetadata());
     updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
     assertEquals(blob.getName(), updatedBlob.getName());
-    assertEquals(blob.getBucket(), updatedBlob.getBucket());
+    assertTrue(updatedBlob.getBucket().contains(blob.getBucket()));
     assertEquals(newMetadata, updatedBlob.getMetadata());
   }
 
@@ -835,7 +836,7 @@ public class ITObjectTest {
     Blob updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
     assertNotNull(updatedBlob);
     assertEquals(blob.getName(), updatedBlob.getName());
-    assumeTrue(updatedBlob.getBucket().contains(blob.getBucket()));
+    assertTrue(updatedBlob.getBucket().contains(blob.getBucket()));
     assertEquals(expectedMetadata, updatedBlob.getMetadata());
   }
 
@@ -930,7 +931,7 @@ public class ITObjectTest {
     Blob remoteTargetBlob = storageFixture.getInstance().compose(req);
     assertNotNull(remoteTargetBlob);
     assertEquals(targetBlob.getName(), remoteTargetBlob.getName());
-    assumeTrue(remoteTargetBlob.getBucket().contains(targetBlob.getBucket()));
+    assertTrue(remoteTargetBlob.getBucket().contains(targetBlob.getBucket()));
     byte[] readBytes =
         storageFixture
             .getInstance()
