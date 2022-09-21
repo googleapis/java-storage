@@ -69,6 +69,13 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-bom</artifactId>
+        <version>3.19.5</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-shared-dependencies</artifactId>
         <version>${google.cloud.shared-dependencies.version}</version>
