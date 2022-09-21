@@ -963,7 +963,7 @@ public class ITObjectTest {
     Blob remoteTargetBlob = storageFixture.getInstance().compose(req);
     assertNotNull(remoteTargetBlob);
     assertEquals(targetBlob.getName(), remoteTargetBlob.getName());
-    assertEquals(targetBlob.getBucket(), remoteTargetBlob.getBucket());
+    assertTrue(remoteTargetBlob.getBucket().contains(targetBlob.getBucket()));
     assertEquals(CONTENT_TYPE, remoteTargetBlob.getContentType());
     byte[] readBytes =
         storageFixture
