@@ -1628,6 +1628,7 @@ public class BucketInfo implements Serializable {
       if (!Objects.equals(this.lifecycleRules, tmp)) {
         modifiedFields.add(BucketField.LIFECYCLE);
       }
+      this.lifecycleRules = tmp;
       return this;
     }
 
