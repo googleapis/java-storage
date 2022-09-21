@@ -252,16 +252,13 @@ public final class UpdateMaskTest {
       return BlobInfo.newBuilder("bucket", "obj-name").build();
     }
   }
-  
+
   public static final class BucketInfoUpdateMask {
-    
+
     @Test
     public void updateBucketRequest() throws Exception {
       Bucket expectedBucket =
-          Bucket.newBuilder()
-              .setName(bucketNameCodec.encode("bucket"))
-              .putLabels("x", "X")
-              .build();
+          Bucket.newBuilder().setName(bucketNameCodec.encode("bucket")).putLabels("x", "X").build();
       UpdateBucketRequest expected =
           UpdateBucketRequest.newBuilder()
               .setBucket(expectedBucket)
@@ -321,7 +318,14 @@ public final class UpdateMaskTest {
 
     @Test
     public void bucketInfo_field_setLifecycleRules() {
-      testBucketField(b -> b.setLifecycleRules(ImmutableList.of(new LifecycleRule(LifecycleAction.newDeleteAction(), LifecycleCondition.newBuilder().setAge(1).build()))), BucketField.LIFECYCLE);
+      testBucketField(
+          b ->
+              b.setLifecycleRules(
+                  ImmutableList.of(
+                      new LifecycleRule(
+                          LifecycleAction.newDeleteAction(),
+                          LifecycleCondition.newBuilder().setAge(1).build()))),
+          BucketField.LIFECYCLE);
     }
 
     @Test
@@ -346,7 +350,8 @@ public final class UpdateMaskTest {
 
     @Test
     public void bucketInfo_field_setCreateTimeOffsetDateTime() {
-      testBucketField(b -> b.setCreateTimeOffsetDateTime(OffsetDateTime.MAX), BucketField.TIME_CREATED);
+      testBucketField(
+          b -> b.setCreateTimeOffsetDateTime(OffsetDateTime.MAX), BucketField.TIME_CREATED);
     }
 
     @Test
@@ -356,17 +361,22 @@ public final class UpdateMaskTest {
 
     @Test
     public void bucketInfo_field_setCors() {
-      testBucketField(b -> b.setCors(ImmutableList.of(Cors.newBuilder().setMaxAgeSeconds(2).build())), BucketField.CORS);
+      testBucketField(
+          b -> b.setCors(ImmutableList.of(Cors.newBuilder().setMaxAgeSeconds(2).build())),
+          BucketField.CORS);
     }
 
     @Test
     public void bucketInfo_field_setAcl() {
-      testBucketField(b -> b.setAcl(ImmutableList.of(Acl.of(new User("x@y.x"), Role.READER))), BucketField.ACL);
+      testBucketField(
+          b -> b.setAcl(ImmutableList.of(Acl.of(new User("x@y.x"), Role.READER))), BucketField.ACL);
     }
 
     @Test
     public void bucketInfo_field_setDefaultAcl() {
-      testBucketField(b -> b.setDefaultAcl(ImmutableList.of(Acl.of(new User("x@y.x"), Role.READER))), BucketField.DEFAULT_OBJECT_ACL);
+      testBucketField(
+          b -> b.setDefaultAcl(ImmutableList.of(Acl.of(new User("x@y.x"), Role.READER))),
+          BucketField.DEFAULT_OBJECT_ACL);
     }
 
     @Test
@@ -381,41 +391,51 @@ public final class UpdateMaskTest {
 
     @Test
     public void bucketInfo_field_setDefaultEventBasedHold() {
-      testBucketField(b -> b.setDefaultEventBasedHold(true),
-          BucketField.DEFAULT_EVENT_BASED_HOLD);
+      testBucketField(b -> b.setDefaultEventBasedHold(true), BucketField.DEFAULT_EVENT_BASED_HOLD);
     }
 
     @Test
     public void bucketInfo_field_setRetentionEffectiveTimeOffsetDateTime() {
-      testBucketField(b -> b.setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime.MAX),
+      testBucketField(
+          b -> b.setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime.MAX),
           BucketField.RETENTION_POLICY);
     }
 
     @Test
     public void bucketInfo_field_setRetentionPolicyIsLocked() {
-      testBucketField(b -> b.setRetentionPolicyIsLocked(true),
-          BucketField.RETENTION_POLICY);
+      testBucketField(b -> b.setRetentionPolicyIsLocked(true), BucketField.RETENTION_POLICY);
     }
 
     @Test
     public void bucketInfo_field_setRetentionPeriodDuration() {
-      testBucketField(b -> b.setRetentionPeriodDuration(Duration.ofDays(3)),
-          BucketField.RETENTION_POLICY);
+      testBucketField(
+          b -> b.setRetentionPeriodDuration(Duration.ofDays(3)), BucketField.RETENTION_POLICY);
     }
 
     @Test
     public void bucketInfo_field_setIamConfiguration() {
-      testBucketField(b -> b.setIamConfiguration(IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build()), BucketField.IAMCONFIGURATION);
+      testBucketField(
+          b ->
+              b.setIamConfiguration(
+                  IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build()),
+          BucketField.IAMCONFIGURATION);
     }
 
     @Test
     public void bucketInfo_field_setLogging() {
-      testBucketField(b -> b.setLogging(Logging.newBuilder().setLogBucket("bucket2").build()), BucketField.LOGGING);
+      testBucketField(
+          b -> b.setLogging(Logging.newBuilder().setLogBucket("bucket2").build()),
+          BucketField.LOGGING);
     }
 
     @Test
     public void bucketInfo_field_setCustomPlacementConfig() {
-      testBucketField(b -> b.setCustomPlacementConfig(CustomPlacementConfig.newBuilder().setDataLocations(ImmutableList.of("a", "b")).build()),
+      testBucketField(
+          b ->
+              b.setCustomPlacementConfig(
+                  CustomPlacementConfig.newBuilder()
+                      .setDataLocations(ImmutableList.of("a", "b"))
+                      .build()),
           BucketField.CUSTOM_PLACEMENT_CONFIG);
     }
 
@@ -433,10 +453,9 @@ public final class UpdateMaskTest {
       BucketInfo actual2 = f.apply(actual1.toBuilder()).build();
       assertThat(actual2.getModifiedFields()).isEqualTo(ImmutableSet.of());
     }
-    
+
     private static BucketInfo base() {
       return BucketInfo.newBuilder("bucket").build();
     }
-    
   }
 }
