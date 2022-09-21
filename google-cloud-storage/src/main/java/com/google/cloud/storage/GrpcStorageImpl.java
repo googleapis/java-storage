@@ -70,7 +70,6 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
-import com.google.protobuf.Message;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
@@ -470,13 +469,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
-    UpdateBucketRequest.Builder builder = UpdateBucketRequest.newBuilder().setBucket(bucket);
-    UpdateBucketRequest req =
-        opts.updateBucketsRequest()
-            .apply(builder)
-            .setUpdateMask(updateMaskGenerator(bucket))
-            .build();
-
+    UpdateBucketRequest.Builder builder =
+        opts.updateBucketsRequest().apply(UpdateBucketRequest.newBuilder().setBucket(bucket));
+    builder
+        .getUpdateMaskBuilder()
+        .addAllPaths(
+            bucketInfo.getModifiedFields().stream()
+                .map(BucketField::getGrpcFieldName)
+                .collect(ImmutableList.toImmutableList()));
+    UpdateBucketRequest req = builder.build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -490,12 +491,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     Object object = codecs.blobInfo().encode(blobInfo);
-    UpdateObjectRequest.Builder builder = UpdateObjectRequest.newBuilder().setObject(object);
-    UpdateObjectRequest req =
-        opts.updateObjectsRequest()
-            .apply(builder)
-            .setUpdateMask(updateMaskGenerator(object))
-            .build();
+    UpdateObjectRequest.Builder builder =
+        opts.updateObjectsRequest().apply(UpdateObjectRequest.newBuilder().setObject(object));
+    builder
+        .getUpdateMaskBuilder()
+        .addAllPaths(
+            blobInfo.getModifiedFields().stream()
+                .map(BlobField::getGrpcFieldName)
+                .collect(ImmutableList.toImmutableList()));
+    UpdateObjectRequest req = builder.build();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -1349,18 +1353,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .setAutoGzipDecompression(!opts.autoGzipDecompression())
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)
-        .build();
-  }
-
-  private FieldMask updateMaskGenerator(Message message) {
-    // TODO: Filter based on API behavior and not a list
-    return FieldMask.newBuilder()
-        .addAllPaths(
-            message.getAllFields().entrySet().stream()
-                .filter(x -> x.getValue() != null)
-                .map(e -> e.getKey().getName())
-                .filter(f -> updateFields().contains(f))
-                .collect(Collectors.toList()))
         .build();
   }
 

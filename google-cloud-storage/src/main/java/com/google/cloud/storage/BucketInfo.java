@@ -29,9 +29,10 @@ import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.cloud.storage.Acl.Entity;
-import com.google.common.base.Function;
+import com.google.cloud.storage.Storage.BucketField;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import java.io.IOException;
@@ -107,6 +108,7 @@ public class BucketInfo implements Serializable {
   private final String locationType;
   private final Logging logging;
   private final CustomPlacementConfig customPlacementConfig;
+  private final transient ImmutableSet<Storage.BucketField> modifiedFields;
 
   /**
    * non-private for backward compatibility on message class. log messages are now emitted from
@@ -1461,6 +1463,7 @@ public class BucketInfo implements Serializable {
     private String locationType;
     private Logging logging;
     private CustomPlacementConfig customPlacementConfig;
+    private final ImmutableSet.Builder<Storage.BucketField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
       this.name = name;
@@ -1519,6 +1522,9 @@ public class BucketInfo implements Serializable {
 
     @Override
     Builder setOwner(Acl.Entity owner) {
+      if (!Objects.equals(this.owner, owner)) {
+        modifiedFields.add(BucketField.OWNER);
+      }
       this.owner = owner;
       return this;
     }
@@ -1531,24 +1537,38 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setVersioningEnabled(Boolean enable) {
-      this.versioningEnabled = firstNonNull(enable, Data.<Boolean>nullOf(Boolean.class));
+      Boolean tmp = firstNonNull(enable, Data.<Boolean>nullOf(Boolean.class));
+      if (!Objects.equals(this.versioningEnabled, tmp)) {
+        modifiedFields.add(BucketField.VERSIONING);
+      }
+      this.versioningEnabled = tmp;
       return this;
     }
 
     @Override
     public Builder setRequesterPays(Boolean enable) {
-      this.requesterPays = firstNonNull(enable, Data.<Boolean>nullOf(Boolean.class));
+      Boolean tmp = firstNonNull(enable, Data.<Boolean>nullOf(Boolean.class));
+      if (!Objects.equals(this.requesterPays, tmp)) {
+        modifiedFields.add(BucketField.BILLING);
+      }
+      this.requesterPays = tmp;
       return this;
     }
 
     @Override
     public Builder setIndexPage(String indexPage) {
+      if (!Objects.equals(this.indexPage, indexPage)) {
+        modifiedFields.add(BucketField.WEBSITE);
+      }
       this.indexPage = indexPage;
       return this;
     }
 
     @Override
     public Builder setNotFoundPage(String notFoundPage) {
+      if (!Objects.equals(this.notFoundPage, notFoundPage)) {
+        modifiedFields.add(BucketField.WEBSITE);
+      }
       this.notFoundPage = notFoundPage;
       return this;
     }
@@ -1595,44 +1615,60 @@ public class BucketInfo implements Serializable {
     @SuppressWarnings("unchecked")
     @Override
     public Builder setLifecycleRules(Iterable<? extends LifecycleRule> rules) {
+      final ImmutableList<LifecycleRule> tmp;
       if (rules != null) {
         if (rules instanceof ImmutableList) {
-          this.lifecycleRules = (ImmutableList<LifecycleRule>) rules;
+          tmp = (ImmutableList<LifecycleRule>) rules;
         } else {
-          this.lifecycleRules = ImmutableList.copyOf(rules);
+          tmp = ImmutableList.copyOf(rules);
         }
       } else {
-        this.lifecycleRules = ImmutableList.of();
+        tmp = ImmutableList.of();
       }
+      if (!Objects.equals(this.lifecycleRules, tmp)) {
+        modifiedFields.add(BucketField.LIFECYCLE);
+      }
+      this.lifecycleRules = tmp;
       return this;
     }
 
     @Override
     public Builder deleteLifecycleRules() {
-      setLifecycleRules(null);
-      return this;
+      return setLifecycleRules(null);
     }
 
     @Override
     public Builder setRpo(Rpo rpo) {
+      if (!Objects.equals(this.rpo, rpo)) {
+        modifiedFields.add(BucketField.RPO);
+      }
       this.rpo = rpo;
       return this;
     }
 
     @Override
     public Builder setStorageClass(StorageClass storageClass) {
+      if (!Objects.equals(this.storageClass, storageClass)) {
+        modifiedFields.add(BucketField.STORAGE_CLASS);
+      }
       this.storageClass = storageClass;
       return this;
     }
 
     @Override
     public Builder setLocation(String location) {
+      if (!Objects.equals(this.location, location)) {
+        modifiedFields.add(BucketField.LOCATION);
+      }
       this.location = location;
       return this;
     }
 
     @Override
     Builder setEtag(String etag) {
+      if (!Objects.equals(this.etag, etag)) {
+        modifiedFields.add(BucketField.ETAG);
+      }
       this.etag = etag;
       return this;
     }
@@ -1641,12 +1677,14 @@ public class BucketInfo implements Serializable {
     @Deprecated
     @Override
     Builder setCreateTime(Long createTime) {
-      this.createTime = millisOffsetDateTimeCodec.encode(createTime);
-      return this;
+      return setCreateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(createTime));
     }
 
     @Override
     Builder setCreateTimeOffsetDateTime(OffsetDateTime createTime) {
+      if (!Objects.equals(this.createTime, createTime)) {
+        modifiedFields.add(BucketField.TIME_CREATED);
+      }
       this.createTime = createTime;
       return this;
     }
@@ -1655,12 +1693,14 @@ public class BucketInfo implements Serializable {
     @Deprecated
     @Override
     Builder setUpdateTime(Long updateTime) {
-      this.updateTime = millisOffsetDateTimeCodec.encode(updateTime);
-      return this;
+      return setUpdateTimeOffsetDateTime(millisOffsetDateTimeCodec.encode(updateTime));
     }
 
     @Override
     Builder setUpdateTimeOffsetDateTime(OffsetDateTime updateTime) {
+      if (!Objects.equals(this.updateTime, updateTime)) {
+        modifiedFields.add(BucketField.UPDATED);
+      }
       this.updateTime = updateTime;
       return this;
     }
@@ -1673,50 +1713,69 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setCors(Iterable<Cors> cors) {
-      this.cors = cors != null ? ImmutableList.copyOf(cors) : ImmutableList.<Cors>of();
+      ImmutableList<Cors> tmp = cors != null ? ImmutableList.copyOf(cors) : ImmutableList.of();
+      if (!Objects.equals(this.cors, tmp)) {
+        modifiedFields.add(BucketField.CORS);
+      }
+      this.cors = tmp;
       return this;
     }
 
     @Override
     public Builder setAcl(Iterable<Acl> acl) {
-      this.acl = acl != null ? ImmutableList.copyOf(acl) : null;
+      List<Acl> tmp = acl != null ? ImmutableList.copyOf(acl) : null;
+      if (!Objects.equals(this.acl, tmp)) {
+        modifiedFields.add(BucketField.ACL);
+      }
+      this.acl = tmp;
       return this;
     }
 
     @Override
     public Builder setDefaultAcl(Iterable<Acl> acl) {
-      this.defaultAcl = acl != null ? ImmutableList.copyOf(acl) : null;
+      List<Acl> tmp = acl != null ? ImmutableList.copyOf(acl) : null;
+      if (!Objects.equals(this.defaultAcl, tmp)) {
+        modifiedFields.add(BucketField.DEFAULT_OBJECT_ACL);
+      }
+      this.defaultAcl = tmp;
       return this;
     }
 
     @Override
     public Builder setLabels(Map<String, String> labels) {
       if (labels != null) {
-        this.labels =
+        Map<String, String> tmp =
             Maps.transformValues(
                 labels,
-                new Function<String, String>() {
-                  @Override
-                  public String apply(String input) {
-                    // replace null values with empty strings
-                    return input == null ? Data.<String>nullOf(String.class) : input;
-                  }
+                input -> {
+                  // replace null values with empty strings
+                  return input == null ? Data.nullOf(String.class) : input;
                 });
+        if (!Objects.equals(this.labels, tmp)) {
+          modifiedFields.add(BucketField.LABELS);
+        }
+        this.labels = tmp;
       }
       return this;
     }
 
     @Override
     public Builder setDefaultKmsKeyName(String defaultKmsKeyName) {
-      this.defaultKmsKeyName =
-          defaultKmsKeyName != null ? defaultKmsKeyName : Data.<String>nullOf(String.class);
+      String tmp = defaultKmsKeyName != null ? defaultKmsKeyName : Data.nullOf(String.class);
+      if (!Objects.equals(this.defaultKmsKeyName, tmp)) {
+        modifiedFields.add(BucketField.ENCRYPTION);
+      }
+      this.defaultKmsKeyName = tmp;
       return this;
     }
 
     @Override
     public Builder setDefaultEventBasedHold(Boolean defaultEventBasedHold) {
-      this.defaultEventBasedHold =
-          firstNonNull(defaultEventBasedHold, Data.<Boolean>nullOf(Boolean.class));
+      Boolean tmp = firstNonNull(defaultEventBasedHold, Data.<Boolean>nullOf(Boolean.class));
+      if (!Objects.equals(this.defaultEventBasedHold, tmp)) {
+        modifiedFields.add(BucketField.DEFAULT_EVENT_BASED_HOLD);
+      }
+      this.defaultEventBasedHold = tmp;
       return this;
     }
 
@@ -1730,14 +1789,20 @@ public class BucketInfo implements Serializable {
 
     @Override
     Builder setRetentionEffectiveTimeOffsetDateTime(OffsetDateTime retentionEffectiveTime) {
+      if (!Objects.equals(this.retentionEffectiveTime, retentionEffectiveTime)) {
+        modifiedFields.add(BucketField.RETENTION_POLICY);
+      }
       this.retentionEffectiveTime = retentionEffectiveTime;
       return this;
     }
 
     @Override
     Builder setRetentionPolicyIsLocked(Boolean retentionPolicyIsLocked) {
-      this.retentionPolicyIsLocked =
-          firstNonNull(retentionPolicyIsLocked, Data.<Boolean>nullOf(Boolean.class));
+      Boolean tmp = firstNonNull(retentionPolicyIsLocked, Data.<Boolean>nullOf(Boolean.class));
+      if (!Objects.equals(this.retentionPolicyIsLocked, retentionPolicyIsLocked)) {
+        modifiedFields.add(BucketField.RETENTION_POLICY);
+      }
+      this.retentionPolicyIsLocked = tmp;
       return this;
     }
 
@@ -1749,30 +1814,46 @@ public class BucketInfo implements Serializable {
 
     @Override
     public Builder setRetentionPeriodDuration(Duration retentionPeriod) {
+      if (!Objects.equals(this.retentionPeriod, retentionPeriod)) {
+        modifiedFields.add(BucketField.RETENTION_POLICY);
+      }
       this.retentionPeriod = retentionPeriod;
       return this;
     }
 
     @Override
     public Builder setIamConfiguration(IamConfiguration iamConfiguration) {
+      if (!Objects.equals(this.iamConfiguration, iamConfiguration)) {
+        modifiedFields.add(BucketField.IAMCONFIGURATION);
+      }
       this.iamConfiguration = iamConfiguration;
       return this;
     }
 
     @Override
     public Builder setLogging(Logging logging) {
-      this.logging = logging != null ? logging : BucketInfo.Logging.newBuilder().build();
+      Logging tmp = logging != null ? logging : Logging.newBuilder().build();
+      if (!Objects.equals(this.logging, tmp)) {
+        modifiedFields.add(BucketField.LOGGING);
+      }
+      this.logging = tmp;
       return this;
     }
 
     @Override
     public Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig) {
-      this.customPlacementConfig = customPlacementConfig != null ? customPlacementConfig : null;
+      if (!Objects.equals(this.customPlacementConfig, customPlacementConfig)) {
+        modifiedFields.add(BucketField.CUSTOM_PLACEMENT_CONFIG);
+      }
+      this.customPlacementConfig = customPlacementConfig;
       return this;
     }
 
     @Override
     Builder setLocationType(String locationType) {
+      if (!Objects.equals(this.locationType, locationType)) {
+        modifiedFields.add(BucketField.LOCATION_TYPE);
+      }
       this.locationType = locationType;
       return this;
     }
@@ -1827,6 +1908,7 @@ public class BucketInfo implements Serializable {
     locationType = builder.locationType;
     logging = builder.logging;
     customPlacementConfig = builder.customPlacementConfig;
+    modifiedFields = builder.modifiedFields.build();
   }
 
   String getProject() {
@@ -2243,6 +2325,10 @@ public class BucketInfo implements Serializable {
    */
   Bucket asBucket(Storage storage) {
     return new Bucket(storage, new BucketInfo.BuilderImpl(this));
+  }
+
+  ImmutableSet<BucketField> getModifiedFields() {
+    return modifiedFields;
   }
 
   /** Creates a {@code BucketInfo} object for the provided bucket name. */

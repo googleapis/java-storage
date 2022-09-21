@@ -92,60 +92,73 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   }
 
   enum BucketField implements FieldSelector {
-    ID("id"),
+    ID("id", "bucket_id"),
     SELF_LINK("selfLink"),
     NAME("name"),
-    TIME_CREATED("timeCreated"),
+    TIME_CREATED("timeCreated", "time_create"),
     METAGENERATION("metageneration"),
     ACL("acl"),
-    DEFAULT_OBJECT_ACL("defaultObjectAcl"),
+    DEFAULT_OBJECT_ACL("defaultObjectAcl", "default_object_acl"),
     OWNER("owner"),
     LABELS("labels"),
     LOCATION("location"),
-    LOCATION_TYPE("locationType"),
+    LOCATION_TYPE("locationType", "location_type"),
     WEBSITE("website"),
     VERSIONING("versioning"),
     CORS("cors"),
     LIFECYCLE("lifecycle"),
-    STORAGE_CLASS("storageClass"),
+    STORAGE_CLASS("storageClass", "storage_class"),
     ETAG("etag"),
     ENCRYPTION("encryption"),
     BILLING("billing"),
-    DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold"),
-    RETENTION_POLICY("retentionPolicy"),
-    IAMCONFIGURATION("iamConfiguration"),
+    DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold", "default_event_based_hold"),
+    RETENTION_POLICY("retentionPolicy", "retention_policy"),
+    IAMCONFIGURATION("iamConfiguration", "iam_config"),
     LOGGING("logging"),
-    UPDATED("updated");
+    UPDATED("updated", "update_time"),
+    RPO("rpo"),
+    CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
+    AUTOCLASS("autoclass");
 
     static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(NAME);
 
     private final String selector;
+    private final String grpcFieldName;
 
     BucketField(String selector) {
+      this(selector, selector);
+    }
+
+    BucketField(String selector, String grpcFieldName) {
       this.selector = selector;
+      this.grpcFieldName = grpcFieldName;
     }
 
     @Override
     public String getSelector() {
       return selector;
     }
+
+    String getGrpcFieldName() {
+      return grpcFieldName;
+    }
   }
 
   enum BlobField implements FieldSelector {
     ACL("acl"),
     BUCKET("bucket"),
-    CACHE_CONTROL("cacheControl"),
-    COMPONENT_COUNT("componentCount"),
-    CONTENT_DISPOSITION("contentDisposition"),
-    CONTENT_ENCODING("contentEncoding"),
-    CONTENT_LANGUAGE("contentLanguage"),
-    CONTENT_TYPE("contentType"),
-    CRC32C("crc32c"),
+    CACHE_CONTROL("cacheControl", "cache_control"),
+    COMPONENT_COUNT("componentCount", "component_count"),
+    CONTENT_DISPOSITION("contentDisposition", "content_disposition"),
+    CONTENT_ENCODING("contentEncoding", "content_encoding"),
+    CONTENT_LANGUAGE("contentLanguage", "content_language"),
+    CONTENT_TYPE("contentType", "content_type"),
+    CRC32C("crc32c", "object_checksums.crc32c"),
     ETAG("etag"),
     GENERATION("generation"),
     ID("id"),
     KIND("kind"),
-    MD5HASH("md5Hash"),
+    MD5HASH("md5Hash", "object_checksums.md5_hash"),
     MEDIA_LINK("mediaLink"),
     METADATA("metadata"),
     METAGENERATION("metageneration"),
@@ -153,28 +166,39 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     OWNER("owner"),
     SELF_LINK("selfLink"),
     SIZE("size"),
-    STORAGE_CLASS("storageClass"),
-    TIME_DELETED("timeDeleted"),
-    TIME_CREATED("timeCreated"),
-    KMS_KEY_NAME("kmsKeyName"),
-    EVENT_BASED_HOLD("eventBasedHold"),
-    TEMPORARY_HOLD("temporaryHold"),
-    RETENTION_EXPIRATION_TIME("retentionExpirationTime"),
-    UPDATED("updated"),
-    CUSTOM_TIME("customTime"),
-    TIME_STORAGE_CLASS_UPDATED("timeStorageClassUpdated");
+    STORAGE_CLASS("storageClass", "storage_class"),
+    TIME_DELETED("timeDeleted", "delete_time"),
+    TIME_CREATED("timeCreated", "create_time"),
+    KMS_KEY_NAME("kmsKeyName", "kms_key"),
+    EVENT_BASED_HOLD("eventBasedHold", "event_based_hold"),
+    TEMPORARY_HOLD("temporaryHold", "temporary_hold"),
+    RETENTION_EXPIRATION_TIME("retentionExpirationTime", "retention_expire_time"),
+    UPDATED("updated", "update_time"),
+    CUSTOM_TIME("customTime", "custom_time"),
+    TIME_STORAGE_CLASS_UPDATED("timeStorageClassUpdated", "update_storage_class_time"),
+    CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption");
 
     static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
 
     private final String selector;
+    private final String grpcFieldName;
 
     BlobField(String selector) {
+      this(selector, selector);
+    }
+
+    BlobField(String selector, String grpcFieldName) {
       this.selector = selector;
+      this.grpcFieldName = grpcFieldName;
     }
 
     @Override
     public String getSelector() {
       return selector;
+    }
+
+    String getGrpcFieldName() {
+      return grpcFieldName;
     }
   }
 
