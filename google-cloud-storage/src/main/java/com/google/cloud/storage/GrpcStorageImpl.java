@@ -71,7 +71,6 @@ import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
 import com.google.storage.v2.ComposeObjectRequest;
-import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.DeleteBucketRequest;
@@ -407,6 +406,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         GetObjectRequest.newBuilder()
             .setBucket(bucketNameCodec.encode(blob.getBucket()))
             .setObject(blob.getName());
+    ifNonNull(blob.getGeneration(), builder::setGeneration);
     GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),
@@ -573,12 +573,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();
     composeRequest.getSourceBlobs().stream()
-        .map(
-            src ->
-                SourceObject.newBuilder()
-                    .setName(src.getName())
-                    .setGeneration(src.getGeneration())
-                    .build())
+        .map(src -> codecs.sourceObjectCodec().encode(src))
         .forEach(builder::addSourceObjects);
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
     builder.setDestination(target);

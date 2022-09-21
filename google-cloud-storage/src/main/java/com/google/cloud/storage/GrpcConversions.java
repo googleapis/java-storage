@@ -35,6 +35,7 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUActio
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
+import com.google.cloud.storage.Storage.ComposeRequest.SourceBlob;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -46,6 +47,7 @@ import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;
+import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
@@ -57,6 +59,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,6 +104,9 @@ final class GrpcConversions {
 
   private final Codec<Integer, String> crc32cCodec =
       Codec.of(this::crc32cEncode, this::crc32cDecode);
+
+  private final Codec<SourceBlob, SourceObject> sourceObjectCodec =
+      Codec.of(this::sourceObjectEncode, this::sourceObjectDecode);
 
   @VisibleForTesting
   final Codec<OffsetDateTime, Timestamp> timestampCodec =
@@ -190,6 +197,10 @@ final class GrpcConversions {
 
   Codec<Policy, com.google.iam.v1.Policy> policyCodec() {
     return policyCodec;
+  }
+
+  Codec<SourceBlob, SourceObject> sourceObjectCodec() {
+    return sourceObjectCodec;
   }
 
   private BucketInfo bucketInfoDecode(Bucket from) {
@@ -779,7 +790,7 @@ final class GrpcConversions {
     if (entity != null) {
       toBuilder.setOwner(Owner.newBuilder().setEntity(entityEncode(entity)).build());
     }
-    ifNonNull(from.getMetadata(), toBuilder::putAllMetadata);
+    ifNonNull(from.getMetadata(), this::removeNullValues, toBuilder::putAllMetadata);
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), toBuilder::addAllAcl);
     return toBuilder.build();
   }
@@ -925,6 +936,23 @@ final class GrpcConversions {
 
   private String crc32cEncode(int from) {
     return BaseEncoding.base64().encode(Ints.toByteArray(from));
+  }
+
+  private SourceObject sourceObjectEncode(SourceBlob from) {
+    SourceObject.Builder to = SourceObject.newBuilder();
+    to.setName(from.getName());
+    ifNonNull(from.getGeneration(), to::setGeneration);
+    return to.build();
+  }
+
+  private SourceBlob sourceObjectDecode(SourceObject from) {
+    return todo();
+  }
+
+  private Map<String, String> removeNullValues(Map<String, String> from) {
+    Map<String, String> to = new HashMap<>(from);
+    to.values().removeAll(Collections.singleton(null));
+    return to;
   }
 
   private static <T> T todo() {
