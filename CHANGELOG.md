@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.12.0](https://github.com/googleapis/java-storage/compare/v2.11.3...v2.12.0) (2022-09-15)
+
+
+### Features
+
+* Add toString method for CustomPlacementConfig ([#1602](https://github.com/googleapis/java-storage/issues/1602)) ([51aca10](https://github.com/googleapis/java-storage/commit/51aca10fafe685ed9e7cb41bc4ae79be10feb080))
+
+
+### Documentation
+
+* Add batch sample ([#1559](https://github.com/googleapis/java-storage/issues/1559)) ([583bf73](https://github.com/googleapis/java-storage/commit/583bf73f5d58aa5d79fbaa12b24407c558235eed))
+* Document thread safety of library ([#1566](https://github.com/googleapis/java-storage/issues/1566)) ([c740899](https://github.com/googleapis/java-storage/commit/c7408999e811ba917edb0c136432afa29075e0f2))
+* Fix broken links in readme ([#1520](https://github.com/googleapis/java-storage/issues/1520)) ([840b08a](https://github.com/googleapis/java-storage/commit/840b08a03fa7c0535855140244c282f79403b458))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.0.2 ([#1611](https://github.com/googleapis/java-storage/issues/1611)) ([8a48aea](https://github.com/googleapis/java-storage/commit/8a48aea7e0049c64ef944b532a2874115b1e2323))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.0.3 ([#1620](https://github.com/googleapis/java-storage/issues/1620)) ([20e6378](https://github.com/googleapis/java-storage/commit/20e63785462e7876a7ff0ceeeea1363007cc160f))
+
 ## [2.11.3](https://github.com/googleapis/java-storage/compare/v2.11.2...v2.11.3) (2022-08-08)
 
 

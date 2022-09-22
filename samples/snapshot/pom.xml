@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-storage</artifactId>
-      <version>2.11.4-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
+      <version>2.12.1-SNAPSHOT</version><!-- {x-version-update:google-cloud-storage:current} -->
     </dependency>
 
     <dependency>
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-pubsub</artifactId>
-      <version>1.120.13</version>
+      <version>1.120.18</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
