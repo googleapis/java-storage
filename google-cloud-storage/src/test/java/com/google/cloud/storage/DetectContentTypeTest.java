@@ -45,62 +45,66 @@ public final class DetectContentTypeTest {
 
   @Test
   public void blobId() {
-    ObjectTargetOpt actual = UnifiedOpts.detectContentType()
-        .extractFromBlobId(BlobId.of("bucket", objectName));
+    ObjectTargetOpt actual =
+        UnifiedOpts.detectContentType().extractFromBlobId(BlobId.of("bucket", objectName));
     assertThat(actual).isEqualTo(expected);
   }
 
   @Test
   public void blobInfo() {
-    ObjectTargetOpt actual = UnifiedOpts.detectContentType()
-        .extractFromBlobInfo(BlobInfo.newBuilder("bucket", objectName).build());
+    ObjectTargetOpt actual =
+        UnifiedOpts.detectContentType()
+            .extractFromBlobInfo(BlobInfo.newBuilder("bucket", objectName).build());
     assertThat(actual).isEqualTo(expected);
   }
 
   @Test
   public void updateBlobInfo() {
     BlobInfo base = BlobInfo.newBuilder("bucket", objectName).build();
-    BlobInfo actual = UnifiedOpts.detectContentType().extractFromBlobInfo(base).blobInfo()
-        .apply(base.toBuilder()).build();
+    BlobInfo actual =
+        UnifiedOpts.detectContentType()
+            .extractFromBlobInfo(base)
+            .blobInfo()
+            .apply(base.toBuilder())
+            .build();
     BlobInfo expected = base.toBuilder().setContentType(expectedContentType).build();
     assertThat(actual).isEqualTo(expected);
   }
 
   @Test
   public void writeObjectRequest() {
-    WriteObjectRequest base = WriteObjectRequest.newBuilder()
-        .setWriteObjectSpec(
-            WriteObjectSpec.newBuilder()
-                .setResource(Object.newBuilder()
-                    .setBucket("bucket")
-                    .setName(objectName)
+    WriteObjectRequest base =
+        WriteObjectRequest.newBuilder()
+            .setWriteObjectSpec(
+                WriteObjectSpec.newBuilder()
+                    .setResource(
+                        Object.newBuilder().setBucket("bucket").setName(objectName).build())
                     .build())
-                .build()
-        ).build();
-    WriteObjectRequest actual = UnifiedOpts.detectContentType()
-        .extractFromBlobInfo(BlobInfo.newBuilder("bucket", objectName).build())
-        .writeObject()
-        .apply(base.toBuilder())
-        .build();
+            .build();
+    WriteObjectRequest actual =
+        UnifiedOpts.detectContentType()
+            .extractFromBlobInfo(BlobInfo.newBuilder("bucket", objectName).build())
+            .writeObject()
+            .apply(base.toBuilder())
+            .build();
     WriteObjectRequest.Builder b2 = base.toBuilder();
     b2.getWriteObjectSpecBuilder().getResourceBuilder().setContentType(expectedContentType);
     WriteObjectRequest expected = b2.build();
     assertThat(actual).isEqualTo(expected);
   }
-  
+
   @Test
   public void updateObjectRequest() {
-    UpdateObjectRequest base = UpdateObjectRequest.newBuilder()
-        .setObject(Object.newBuilder()
-            .setBucket("bucket")
-            .setName(objectName)
-            .build()
-        ).build();
-    UpdateObjectRequest actual = UnifiedOpts.detectContentType()
-        .extractFromBlobInfo(BlobInfo.newBuilder("bucket", objectName).build())
-        .updateObject()
-        .apply(base.toBuilder())
-        .build();
+    UpdateObjectRequest base =
+        UpdateObjectRequest.newBuilder()
+            .setObject(Object.newBuilder().setBucket("bucket").setName(objectName).build())
+            .build();
+    UpdateObjectRequest actual =
+        UnifiedOpts.detectContentType()
+            .extractFromBlobInfo(BlobInfo.newBuilder("bucket", objectName).build())
+            .updateObject()
+            .apply(base.toBuilder())
+            .build();
     UpdateObjectRequest.Builder b2 = base.toBuilder();
     b2.getObjectBuilder().setContentType(expectedContentType);
     UpdateObjectRequest expected = b2.build();
@@ -110,10 +114,8 @@ public final class DetectContentTypeTest {
   @Parameters(name = "{0}")
   public static Iterable<java.lang.Object[]> data() {
     return Arrays.asList(
-        new java.lang.Object[]{"file1.txt", "text/plain"},
-        new java.lang.Object[]{"file.Jpg", "image/jpeg"},
-        new java.lang.Object[]{"file", "application/octet-stream"}
-    );
+        new java.lang.Object[] {"file1.txt", "text/plain"},
+        new java.lang.Object[] {"file.Jpg", "image/jpeg"},
+        new java.lang.Object[] {"file", "application/octet-stream"});
   }
-
 }
