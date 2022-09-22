@@ -181,7 +181,7 @@ public class ITObjectTest {
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
     assertNotNull(remoteBlob.getCustomTime());
-    assertTrue(remoteBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
@@ -199,7 +199,7 @@ public class ITObjectTest {
             .build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
-    assertTrue(remoteBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getMd5ToHexString(), remoteBlob.getMd5ToHexString());
     assertEquals(blob.getCrc32cToHexString(), remoteBlob.getCrc32cToHexString());
@@ -215,7 +215,7 @@ public class ITObjectTest {
     Blob remoteBlob =
         storage.create(blob, BLOB_BYTE_CONTENT, Storage.BlobTargetOption.encryptionKey(KEY));
     assertNotNull(remoteBlob);
-    assertTrue(remoteBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     byte[] readBytes =
         storage.readAllBytes(
@@ -238,7 +238,7 @@ public class ITObjectTest {
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
-    assertTrue(remoteBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
     assertArrayEquals(new byte[0], readBytes);
@@ -255,7 +255,7 @@ public class ITObjectTest {
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob remoteBlob = storage.create(blob, stream);
     assertNotNull(remoteBlob);
-    assertTrue(remoteBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getContentType(), remoteBlob.getContentType());
     byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
@@ -273,7 +273,7 @@ public class ITObjectTest {
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob remoteBlob = storage.create(blob, stream, BlobWriteOption.disableGzipContent());
     assertNotNull(remoteBlob);
-    assertTrue(remoteBlob.getName().contains(blob.getName()));
+    assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getContentType(), remoteBlob.getContentType());
     byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
@@ -447,7 +447,7 @@ public class ITObjectTest {
     Iterator<Blob> iterator = page.iterateAll().iterator();
     while (iterator.hasNext()) {
       Blob remoteBlob = iterator.next();
-      assertTrue(remoteBlob.getBucket().contains(bucketFixture.getBucketInfo().getName()));
+      assertEquals(bucketFixture.getBucketInfo().getName(), remoteBlob.getBucket());
       assertTrue(blobSet.contains(remoteBlob.getName()));
       assertEquals(metadata, remoteBlob.getMetadata());
       assertNull(remoteBlob.getContentType());
@@ -493,7 +493,7 @@ public class ITObjectTest {
     Iterator<Blob> iterator = page.iterateAll().iterator();
     while (iterator.hasNext()) {
       Blob remoteBlob = iterator.next();
-      assertTrue(remoteBlob.getBucket().contains(bucketFixture.getBucketInfo().getName()));
+      assertEquals(bucketFixture.getBucketInfo().getName(), remoteBlob.getBucket());
       assertTrue(blobSet.contains(remoteBlob.getName()));
       assertNull(remoteBlob.getContentType());
     }
@@ -588,7 +588,7 @@ public class ITObjectTest {
       Iterator<Blob> iterator = page.iterateAll().iterator();
       while (iterator.hasNext()) {
         Blob remoteBlob = iterator.next();
-        assertTrue(remoteBlob.getBucket().contains(bucketName));
+        assertEquals(bucketName, remoteBlob.getBucket());
         assertTrue(blobSet.contains(remoteBlob.getName()));
         assertNotNull(remoteBlob.getGeneration());
       }
@@ -709,7 +709,7 @@ public class ITObjectTest {
     Blob updatedBlob = remoteBlob.toBuilder().setContentType(CONTENT_TYPE).build().update();
     assertNotNull(updatedBlob);
     assertEquals(blob.getName(), updatedBlob.getName());
-    assertTrue(updatedBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), updatedBlob.getBucket());
     assertEquals(CONTENT_TYPE, updatedBlob.getContentType());
   }
 
@@ -730,7 +730,7 @@ public class ITObjectTest {
     assertNull(updatedBlob.getMetadata());
     updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
     assertEquals(blob.getName(), updatedBlob.getName());
-    assertTrue(updatedBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), updatedBlob.getBucket());
     assertEquals(newMetadata, updatedBlob.getMetadata());
   }
 
@@ -750,7 +750,7 @@ public class ITObjectTest {
     Blob updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
     assertNotNull(updatedBlob);
     assertEquals(blob.getName(), updatedBlob.getName());
-    assertTrue(updatedBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), updatedBlob.getBucket());
     assertEquals(expectedMetadata, updatedBlob.getMetadata());
   }
 
@@ -775,7 +775,7 @@ public class ITObjectTest {
     Blob updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
     assertNotNull(updatedBlob);
     assertEquals(blob.getName(), updatedBlob.getName());
-    assertTrue(updatedBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), updatedBlob.getBucket());
     assertEquals(expectedMetadata, updatedBlob.getMetadata());
   }
 
@@ -863,7 +863,7 @@ public class ITObjectTest {
     Blob remoteTargetBlob = storage.compose(req);
     assertNotNull(remoteTargetBlob);
     assertEquals(targetBlob.getName(), remoteTargetBlob.getName());
-    assertTrue(remoteTargetBlob.getBucket().contains(targetBlob.getBucket()));
+    assertEquals(targetBlob.getBucket(), remoteTargetBlob.getBucket());
     byte[] readBytes =
         storage.readAllBytes(bucketFixture.getBucketInfo().getName(), targetBlobName);
     byte[] composedBytes = Arrays.copyOf(BLOB_BYTE_CONTENT, BLOB_BYTE_CONTENT.length * 2);
@@ -894,7 +894,7 @@ public class ITObjectTest {
     Blob remoteTargetBlob = storage.compose(req);
     assertNotNull(remoteTargetBlob);
     assertEquals(targetBlob.getName(), remoteTargetBlob.getName());
-    assertTrue(remoteTargetBlob.getBucket().contains(targetBlob.getBucket()));
+    assertEquals(targetBlob.getBucket(), remoteTargetBlob.getBucket());
     assertEquals(CONTENT_TYPE, remoteTargetBlob.getContentType());
     byte[] readBytes =
         storage.readAllBytes(bucketFixture.getBucketInfo().getName(), targetBlobName);
@@ -980,8 +980,7 @@ public class ITObjectTest {
                 Storage.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ))
             .build();
     CopyWriter copyWriter = storage.copy(req);
-    assertTrue(
-        copyWriter.getResult().getBucket().contains(bucketFixture.getBucketInfo().getName()));
+    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
@@ -1061,8 +1060,7 @@ public class ITObjectTest {
             .build();
     Storage.CopyRequest req = Storage.CopyRequest.of(source, target);
     CopyWriter copyWriter = storage.copy(req);
-    assertTrue(
-        copyWriter.getResult().getBucket().contains(bucketFixture.getBucketInfo().getName()));
+    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
@@ -1589,7 +1587,7 @@ public class ITObjectTest {
             .build();
     Blob remoteBlob = storage.create(blob);
     assertThat(remoteBlob).isNotNull();
-    assertThat(remoteBlob.getBucket().contains(blob.getBucket()));
+    assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertThat(remoteBlob.getName()).isEqualTo(blob.getName());
     assertThat(remoteBlob.getCreateTime()).isNotNull();
     assertThat(remoteBlob.getUpdateTime()).isEqualTo(remoteBlob.getCreateTime());
