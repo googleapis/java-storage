@@ -47,6 +47,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.Storage.ComposeRequest.SourceBlob;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
@@ -71,6 +72,7 @@ import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.FieldMask;
 import com.google.storage.v2.ComposeObjectRequest;
+import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.DeleteBucketRequest;
@@ -573,7 +575,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();
     composeRequest.getSourceBlobs().stream()
-        .map(src -> codecs.sourceObjectCodec().encode(src))
+        .map(src -> sourceObjectEncode(src))
         .forEach(builder::addSourceObjects);
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
     builder.setDestination(target);
@@ -1423,5 +1425,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         "rpo",
         "labels",
         "event_based_hold");
+  }
+
+  private SourceObject sourceObjectEncode(SourceBlob from) {
+    SourceObject.Builder to = SourceObject.newBuilder();
+    to.setName(from.getName());
+    ifNonNull(from.getGeneration(), to::setGeneration);
+    return to.build();
   }
 }
