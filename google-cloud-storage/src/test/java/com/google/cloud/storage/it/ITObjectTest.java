@@ -146,15 +146,15 @@ public class ITObjectTest {
         });
   }
 
-  private static void unsetRequesterPays() {
+  private static void unsetRequesterPays(StorageFixture storageFixture, BucketFixture requesterPaysFixture) {
     Bucket remoteBucket =
-        storageFixtureHttp
+        storageFixture
             .getInstance()
             .get(
-                requesterPaysFixtureHttp.getBucketInfo().getName(),
+                requesterPaysFixture.getBucketInfo().getName(),
                 Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
                 Storage.BucketGetOption.userProject(
-                    storageFixtureHttp.getInstance().getOptions().getProjectId()));
+                    storageFixture.getInstance().getOptions().getProjectId()));
     // Disable requester pays in case a test fails to clean up.
     if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
       remoteBucket
@@ -163,13 +163,14 @@ public class ITObjectTest {
           .build()
           .update(
               Storage.BucketTargetOption.userProject(
-                  storageFixtureHttp.getInstance().getOptions().getProjectId()));
+                  storageFixture.getInstance().getOptions().getProjectId()));
     }
   }
 
   @AfterClass
   public static void afterClass() {
-    unsetRequesterPays();
+    unsetRequesterPays(storageFixtureHttp, requesterPaysFixtureHttp);
+    unsetRequesterPays(storageFixtureGrpc, requesterPaysFixtureGrpc);
   }
 
   @Test
@@ -541,7 +542,7 @@ public class ITObjectTest {
 
   @Test(timeout = 7500)
   public void testListBlobRequesterPays() throws InterruptedException {
-    unsetRequesterPays();
+    unsetRequesterPays(storageFixture, requesterPaysFixture);
     BlobInfo blob1 =
         BlobInfo.newBuilder(
                 requesterPaysFixture.getBucketInfo().getName(),
