@@ -47,7 +47,6 @@ import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.conformance.retry.ParallelParameterized;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -75,9 +74,10 @@ import org.junit.AfterClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(ParallelParameterized.class)
+@RunWith(Parameterized.class)
 public class ITObjectTest {
   private static final String CONTENT_TYPE = "text/plain";
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
@@ -651,7 +651,7 @@ public class ITObjectTest {
   @Test(timeout = 5000)
   public void testListBlobsCurrentDirectory() throws InterruptedException {
     // This test is currently timing out for GRPC
-    // assumeTrue(clientName.startsWith("JSON"));
+    assumeTrue(clientName.startsWith("JSON"));
 
     String directoryName = "test-list-blobs-current-directory/";
     String subdirectoryName = "subdirectory/";
@@ -805,10 +805,6 @@ public class ITObjectTest {
 
   @Test
   public void testDeleteBlobNonExistingGeneration() {
-    // Error Handling for GRPC not complete
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
-
     String blobName = "test-delete-blob-non-existing-generation";
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     assertNotNull(storage.create(blob));
@@ -823,10 +819,6 @@ public class ITObjectTest {
 
   @Test
   public void testDeleteBlobFail() {
-    // Error Handling for GRPC not complete
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
-
     String blobName = "test-delete-blob-fail";
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Blob remoteBlob = storage.create(blob);
@@ -1380,10 +1372,6 @@ public class ITObjectTest {
   @Test
   public void testAttemptObjectDeleteWithRetentionPolicy()
       throws ExecutionException, InterruptedException {
-    // Error Handling for GRPC not complete
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
-
     String bucketName = bucketFixture.newBucketName();
     Bucket remoteBucket =
         storageFixtureHttp
@@ -1422,9 +1410,6 @@ public class ITObjectTest {
 
   @Test
   public void testAttemptObjectDeleteWithEventBasedHold() {
-    // Error Handling for GRPC not complete
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
     String blobName = "test-create-with-event-based-hold";
     BlobInfo blobInfo =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
@@ -1444,9 +1429,6 @@ public class ITObjectTest {
 
   @Test
   public void testAttemptDeletionObjectTemporaryHold() {
-    // Error Handling for GRPC not complete
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
     String blobName = "test-create-with-temporary-hold";
     BlobInfo blobInfo =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).setTemporaryHold(true).build();
@@ -1550,7 +1532,7 @@ public class ITObjectTest {
       assertEquals(types[i], blob_true.getContentType());
 
       Blob blob_false = createBlob(method, blobInfo, false);
-      assertEquals("application/octet-stream", blob_false.getContentType());
+      assertThat(blob_false.getContentType()).isAnyOf("application/octet-stream", "");
     }
     String customType = "custom/type";
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), names[0]);

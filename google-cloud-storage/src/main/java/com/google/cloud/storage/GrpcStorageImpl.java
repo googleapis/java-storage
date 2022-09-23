@@ -34,6 +34,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.api.gax.rpc.UnimplementedException;
@@ -550,16 +551,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setObject(blob.getName());
     ifNonNull(blob.getGeneration(), builder::setGeneration);
     DeleteObjectRequest req = opts.deleteObjectsRequest().apply(builder).build();
-    try {
-      Retrying.run(
-          getOptions(),
-          retryAlgorithmManager.getFor(req),
-          () -> storageClient.deleteObjectCallable().call(req, grpcCallContext),
-          Decoder.identity());
-      return true;
-    } catch (StorageException e) {
-      return false;
-    }
+    return Boolean.TRUE.equals(
+        Retrying.run(
+            getOptions(),
+            retryAlgorithmManager.getFor(req),
+            () -> {
+              try {
+                storageClient.deleteObjectCallable().call(req, grpcCallContext);
+                return true;
+              } catch (NotFoundException e) {
+                return false;
+              }
+            },
+            Decoder.identity()));
   }
 
   @Override

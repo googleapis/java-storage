@@ -788,7 +788,9 @@ final class GrpcConversions {
 
   private BlobInfo blobInfoDecode(Object from) {
     BlobInfo.Builder toBuilder =
-        BlobInfo.newBuilder(BlobId.of(bucketNameCodec.decode(from.getBucket()), from.getName(), from.getGeneration()));
+        BlobInfo.newBuilder(
+            BlobId.of(
+                bucketNameCodec.decode(from.getBucket()), from.getName(), from.getGeneration()));
     ifNonNull(from.getCacheControl(), toBuilder::setCacheControl);
     ifNonNull(from.getSize(), toBuilder::setSize);
     ifNonNull(from.getContentType(), toBuilder::setContentType);
