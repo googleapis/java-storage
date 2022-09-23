@@ -1553,6 +1553,9 @@ public class ITObjectTest {
 
   @Test
   public void testAutoContentTypeWriter() throws IOException {
+    // GRPC Write Channel bug
+    // b/248605626
+    assumeTrue(clientName.startsWith("JSON"));
     testAutoContentType("writer");
   }
 
