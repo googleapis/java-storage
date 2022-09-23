@@ -341,6 +341,7 @@ final class UnifiedOpts {
     return new Delimiter(s);
   }
 
+  @Deprecated
   static DetectContentType detectContentType() {
     return DetectContentType.INSTANCE;
   }
@@ -1436,7 +1437,7 @@ final class UnifiedOpts {
    */
   @Deprecated
   static final class DetectContentType implements ObjectOptExtractor<ObjectTargetOpt> {
-    private static final DetectContentType INSTANCE = new DetectContentType();
+    @Deprecated private static final DetectContentType INSTANCE = new DetectContentType();
     private static final FileNameMap FILE_NAME_MAP = URLConnection.getFileNameMap();
     private static final long serialVersionUID = 1L;
 
