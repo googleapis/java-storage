@@ -16,13 +16,17 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.ApiClock;
+import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Any;
@@ -107,5 +111,19 @@ public final class TestUtils {
           .filter(Buffer::hasRemaining)
           .collect(ImmutableList.toImmutableList());
     }
+  }
+
+  static RetryingDependencies defaultRetryingDeps() {
+    return new RetryingDependencies() {
+      @Override
+      public RetrySettings getRetrySettings() {
+        return StorageOptions.getDefaultRetrySettings();
+      }
+
+      @Override
+      public ApiClock getClock() {
+        return NanoClock.getDefaultClock();
+      }
+    };
   }
 }

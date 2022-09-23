@@ -16,9 +16,13 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.apiException;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
+import com.google.api.gax.rpc.DataLossException;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -38,11 +42,70 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 import org.junit.Test;
 
 public final class GapicUnbufferedWritableByteChannelTest {
 
-  ChunkSegmenter segmenter = new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 10, 5);
+  private static final ChunkSegmenter segmenter =
+      new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 10, 5);
+
+  private static final String uploadId = "upload-id";
+
+  private static final Object obj = Object.newBuilder().setBucket("buck").setName("obj").build();
+  private static final WriteObjectSpec spec = WriteObjectSpec.newBuilder().setResource(obj).build();
+
+  private static final StartResumableWriteRequest startReq =
+      StartResumableWriteRequest.newBuilder().setWriteObjectSpec(spec).build();
+  private static final StartResumableWriteResponse startResp =
+      StartResumableWriteResponse.newBuilder().setUploadId(uploadId).build();
+
+  private static final byte[] bytes = DataGenerator.base64Characters().genBytes(40);
+  private static final WriteObjectRequest req1 =
+      WriteObjectRequest.newBuilder()
+          .setUploadId(uploadId)
+          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 0, 10)))
+          .build();
+  private static final WriteObjectRequest req2 =
+      WriteObjectRequest.newBuilder()
+          .setUploadId(uploadId)
+          .setWriteOffset(10)
+          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 10, 10)))
+          .build();
+  private static final WriteObjectRequest req3 =
+      WriteObjectRequest.newBuilder()
+          .setUploadId(uploadId)
+          .setWriteOffset(20)
+          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 20, 10)))
+          .build();
+  private static final WriteObjectRequest req4 =
+      WriteObjectRequest.newBuilder()
+          .setUploadId(uploadId)
+          .setWriteOffset(30)
+          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 30, 10)))
+          .build();
+  private static final WriteObjectRequest req5 =
+      WriteObjectRequest.newBuilder()
+          .setUploadId(uploadId)
+          .setWriteOffset(40)
+          .setFinishWrite(true)
+          .build();
+
+  private static final WriteObjectResponse resp1 =
+      WriteObjectResponse.newBuilder().setPersistedSize(10).build();
+  private static final WriteObjectResponse resp2 =
+      WriteObjectResponse.newBuilder().setPersistedSize(20).build();
+  private static final WriteObjectResponse resp3 =
+      WriteObjectResponse.newBuilder().setPersistedSize(30).build();
+  private static final WriteObjectResponse resp4 =
+      WriteObjectResponse.newBuilder().setPersistedSize(40).build();
+  private static final WriteObjectResponse resp5 =
+      WriteObjectResponse.newBuilder().setResource(obj.toBuilder().setSize(40)).build();
+
+  private static final WriteObjectRequestBuilderFactory reqFactory =
+      new ResumableWrite(startReq, startResp);
 
   @Test
   public void directUpload() throws IOException, InterruptedException, ExecutionException {
@@ -99,56 +162,6 @@ public final class GapicUnbufferedWritableByteChannelTest {
 
   @Test
   public void resumableUpload() throws IOException, InterruptedException, ExecutionException {
-    String uploadId = "upload-id";
-
-    Object obj = Object.newBuilder().setBucket("buck").setName("obj").build();
-    WriteObjectSpec spec = WriteObjectSpec.newBuilder().setResource(obj).build();
-
-    StartResumableWriteRequest startReq =
-        StartResumableWriteRequest.newBuilder().setWriteObjectSpec(spec).build();
-    StartResumableWriteResponse startResp =
-        StartResumableWriteResponse.newBuilder().setUploadId(uploadId).build();
-
-    byte[] bytes = DataGenerator.base64Characters().genBytes(40);
-    WriteObjectRequest req1 =
-        WriteObjectRequest.newBuilder()
-            .setUploadId(uploadId)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 0, 10)))
-            .build();
-    WriteObjectRequest req2 =
-        WriteObjectRequest.newBuilder()
-            .setUploadId(uploadId)
-            .setWriteOffset(10)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 10, 10)))
-            .build();
-    WriteObjectRequest req3 =
-        WriteObjectRequest.newBuilder()
-            .setUploadId(uploadId)
-            .setWriteOffset(20)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 20, 10)))
-            .build();
-    WriteObjectRequest req4 =
-        WriteObjectRequest.newBuilder()
-            .setUploadId(uploadId)
-            .setWriteOffset(30)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 30, 10)))
-            .build();
-    WriteObjectRequest req5 =
-        WriteObjectRequest.newBuilder()
-            .setUploadId(uploadId)
-            .setWriteOffset(40)
-            .setFinishWrite(true)
-            .build();
-
-    WriteObjectResponse resp1 = WriteObjectResponse.newBuilder().setPersistedSize(10).build();
-    WriteObjectResponse resp2 = WriteObjectResponse.newBuilder().setPersistedSize(20).build();
-    WriteObjectResponse resp3 = WriteObjectResponse.newBuilder().setPersistedSize(30).build();
-    WriteObjectResponse resp4 = WriteObjectResponse.newBuilder().setPersistedSize(40).build();
-    WriteObjectResponse resp5 =
-        WriteObjectResponse.newBuilder().setResource(obj.toBuilder().setSize(40)).build();
-
-    WriteObjectRequestBuilderFactory reqFactory = new ResumableWrite(startReq, startResp);
-
     ImmutableMap<List<WriteObjectRequest>, WriteObjectResponse> writes =
         ImmutableMap.<List<WriteObjectRequest>, WriteObjectResponse>builder()
             .put(ImmutableList.of(req1), resp1)
@@ -166,7 +179,10 @@ public final class GapicUnbufferedWritableByteChannelTest {
               result,
               segmenter,
               reqFactory,
-              WriteFlushStrategy.fsyncEveryFlush(sc.writeObjectCallable()))) {
+              WriteFlushStrategy.fsyncEveryFlush(
+                  sc.writeObjectCallable(),
+                  RetryingDependencies.attemptOnce(),
+                  Retrying.neverRetry()))) {
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
         for (ByteBuffer buf : buffers) {
           c.write(buf);
@@ -176,14 +192,111 @@ public final class GapicUnbufferedWritableByteChannelTest {
     }
   }
 
+  @Test
+  public void resumableUpload_chunkAutomaticRetry()
+      throws IOException, InterruptedException, ExecutionException {
+    AtomicBoolean req2SendErr = new AtomicBoolean(true);
+    AtomicBoolean req4SendErr = new AtomicBoolean(true);
+    AtomicInteger writeCount = new AtomicInteger(0);
+    StorageImplBase service =
+        new DirectWriteService(
+            (obs, requests) -> {
+              writeCount.getAndIncrement();
+              if (requests.equals(ImmutableList.of(req1))) {
+                obs.onNext(resp1);
+                obs.onCompleted();
+              } else if (requests.equals(ImmutableList.of(req2))) {
+                obs.onNext(resp2);
+                if (req2SendErr.get()) {
+                  req2SendErr.set(false);
+                  obs.onError(apiException(Code.DATA_LOSS));
+                } else {
+                  obs.onCompleted();
+                }
+              } else if (requests.equals(ImmutableList.of(req3))) {
+                obs.onNext(resp3);
+                obs.onCompleted();
+              } else if (requests.equals(ImmutableList.of(req4))) {
+                obs.onNext(resp4);
+                if (req4SendErr.get()) {
+                  req4SendErr.set(false);
+                  obs.onError(apiException(Code.DATA_LOSS));
+                } else {
+                  obs.onCompleted();
+                }
+              } else if (requests.equals(ImmutableList.of(req5))) {
+                obs.onNext(resp5);
+                obs.onCompleted();
+              } else {
+                obs.onError(
+                    TestUtils.apiException(Code.PERMISSION_DENIED, "Unexpected request chain."));
+              }
+            });
+    WriteCtx<?> writeCtx;
+    try (FakeServer fake = FakeServer.of(service);
+        StorageClient sc = StorageClient.create(fake.storageSettings())) {
+      SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
+      try (GapicUnbufferedWritableByteChannel<?> c =
+          new GapicUnbufferedWritableByteChannel<>(
+              result,
+              segmenter,
+              reqFactory,
+              WriteFlushStrategy.fsyncEveryFlush(
+                  sc.writeObjectCallable(),
+                  TestUtils.defaultRetryingDeps(),
+                  new BasicResultRetryAlgorithm<Object>() {
+                    @Override
+                    public boolean shouldRetry(Throwable t, Object ignore) {
+                      return t instanceof DataLossException;
+                    }
+                  }))) {
+        writeCtx = c.getWriteCtx();
+        ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
+        c.write(buffers.get(0));
+        assertThat(writeCtx.getTotalSentBytes().get()).isEqualTo(10);
+        assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(10);
+        c.write(buffers.get(1));
+        assertThat(writeCtx.getTotalSentBytes().get()).isEqualTo(20);
+        assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(20);
+        c.write(buffers.get(2));
+        assertThat(writeCtx.getTotalSentBytes().get()).isEqualTo(30);
+        assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(30);
+        c.write(buffers.get(3));
+        assertThat(writeCtx.getTotalSentBytes().get()).isEqualTo(40);
+        assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(40);
+      }
+      assertThat(result.get()).isEqualTo(resp5);
+    }
+    assertThat(req2SendErr.get()).isFalse();
+    assertThat(req4SendErr.get()).isFalse();
+    assertThat(writeCount.get()).isEqualTo(7);
+
+    assertThat(writeCtx.getTotalSentBytes().get()).isEqualTo(40);
+    assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(40);
+  }
+
   private static class DirectWriteService extends StorageImplBase {
-    private final ImmutableMap<List<WriteObjectRequest>, WriteObjectResponse> writes;
+    private final BiConsumer<StreamObserver<WriteObjectResponse>, List<WriteObjectRequest>> c;
 
     private ImmutableList.Builder<WriteObjectRequest> requests;
 
-    private DirectWriteService(ImmutableMap<List<WriteObjectRequest>, WriteObjectResponse> writes) {
-      this.writes = writes;
+    private DirectWriteService(
+        BiConsumer<StreamObserver<WriteObjectResponse>, List<WriteObjectRequest>> c) {
+      this.c = c;
       this.requests = new ImmutableList.Builder<>();
+    }
+
+    private DirectWriteService(ImmutableMap<List<WriteObjectRequest>, WriteObjectResponse> writes) {
+      this(
+          (obs, build) -> {
+            if (writes.containsKey(build)) {
+              obs.onNext(writes.get(build));
+              obs.onCompleted();
+            } else {
+              obs.onError(
+                  TestUtils.apiException(Code.PERMISSION_DENIED, "Unexpected request chain."));
+            }
+          });
     }
 
     @Override
@@ -200,14 +313,8 @@ public final class GapicUnbufferedWritableByteChannelTest {
         @Override
         public void onCompleted() {
           ImmutableList<WriteObjectRequest> build = requests.build();
-          if (writes.containsKey(build)) {
-            requests = new ImmutableList.Builder<>();
-            obs.onNext(writes.get(build));
-            obs.onCompleted();
-          } else {
-            obs.onError(
-                TestUtils.apiException(Code.PERMISSION_DENIED, "Unexpected request chain."));
-          }
+          c.accept(obs, build);
+          requests = new ImmutableList.Builder<>();
         }
       };
     }

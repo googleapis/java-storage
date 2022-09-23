@@ -19,6 +19,8 @@ package com.google.cloud.storage;
 import static com.google.cloud.RetryHelper.runWithRetries;
 
 import com.google.api.core.ApiClock;
+import com.google.api.core.NanoClock;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.RetryHelper.RetryHelperException;
@@ -95,6 +97,15 @@ final class Retrying {
     }
   }
 
+  static ResultRetryAlgorithm<?> neverRetry() {
+    return new BasicResultRetryAlgorithm<Object>() {
+      @Override
+      public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+        return false;
+      }
+    };
+  }
+
   /**
    * Rather than requiring a full set of {@link StorageOptions} to be passed specify what we
    * actually need and have StorageOptions implement this interface.
@@ -104,5 +115,19 @@ final class Retrying {
     RetrySettings getRetrySettings();
 
     ApiClock getClock();
+
+    static RetryingDependencies attemptOnce() {
+      return new RetryingDependencies() {
+        @Override
+        public RetrySettings getRetrySettings() {
+          return RetrySettings.newBuilder().setMaxAttempts(1).build();
+        }
+
+        @Override
+        public ApiClock getClock() {
+          return NanoClock.getDefaultClock();
+        }
+      };
+    }
   }
 }

@@ -18,20 +18,16 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.api.core.ApiClock;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.core.NanoClock;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
-import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.retrying.TimedAttemptSettings;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.PagedListDescriptor;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.GrpcStorageImpl.TransformingPageDecorator;
-import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -85,7 +81,7 @@ public class GrpcTransformPageDecoratorTest {
         new TransformingPageDecorator<>(
             page,
             String::toUpperCase,
-            retryingDeps(),
+            TestUtils.defaultRetryingDeps(),
             StorageRetryStrategy.getUniformStorageRetryStrategy().getIdempotentHandler());
 
     assertThat(ImmutableList.copyOf(decorator.getValues().iterator()))
@@ -106,7 +102,8 @@ public class GrpcTransformPageDecoratorTest {
         PageContext.create(callable, descriptor, req1, apiCallContext);
     ReqRespPage page = new ReqRespPage(context, resp1);
     TransformingPageDecorator<Req, Resp, String, ReqRespPage, String> decorator =
-        new TransformingPageDecorator<>(page, String::toUpperCase, retryingDeps(), alg);
+        new TransformingPageDecorator<>(
+            page, String::toUpperCase, TestUtils.defaultRetryingDeps(), alg);
 
     ImmutableList<String> actual = ImmutableList.copyOf(decorator.iterateAll().iterator());
     assertThat(actual).containsExactlyElementsIn(expectedValues);
@@ -114,20 +111,6 @@ public class GrpcTransformPageDecoratorTest {
     assertThat(alg.shouldRetryCallCount.get()).isAtLeast(1);
     // we expect to attempt the RPC twice, first attempt fails, latter calls succeed
     assertThat(callable.callableCallCount.get()).isEqualTo(3);
-  }
-
-  static RetryingDependencies retryingDeps() {
-    return new RetryingDependencies() {
-      @Override
-      public RetrySettings getRetrySettings() {
-        return StorageOptions.getDefaultRetrySettings();
-      }
-
-      @Override
-      public ApiClock getClock() {
-        return NanoClock.getDefaultClock();
-      }
-    };
   }
 
   private static class ReqRespPage extends AbstractPage<Req, Resp, String, ReqRespPage> {
