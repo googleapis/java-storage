@@ -44,10 +44,20 @@ public class CopyOldVersionOfObject {
     // String newObjectName = "your-new-object";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request returns a 412 error if the
+    // preconditions are not met.
+    // For a target object that does not yet exist, set the DoesNotExist precondition.
+    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
+    // If the destination already exists in your bucket, instead set a generation-match
+    // precondition:
+    // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
     Storage.CopyRequest copyRequest =
         Storage.CopyRequest.newBuilder()
             .setSource(BlobId.of(bucketName, objectToCopy, generationToCopy))
-            .setTarget(BlobId.of(bucketName, newObjectName))
+            .setTarget(BlobId.of(bucketName, newObjectName), precondition)
             .build();
     storage.copy(copyRequest);
 
