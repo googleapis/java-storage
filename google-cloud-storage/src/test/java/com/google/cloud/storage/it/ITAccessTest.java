@@ -44,7 +44,6 @@ import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageRoles;
-import com.google.cloud.storage.conformance.retry.ParallelParameterized;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -62,9 +61,10 @@ import java.util.concurrent.TimeUnit;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(ParallelParameterized.class)
+@RunWith(Parameterized.class)
 public class ITAccessTest {
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
