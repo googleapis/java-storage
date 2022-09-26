@@ -120,12 +120,12 @@ public class ITAccessTest {
 
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return Collections.singletonList(
+    return ImmutableList.of(
         new Object[] {
           "JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp
         });
     /*
-    return Arrays.asList(
+    return ImmutableList.of(
         new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp},
         new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc, requesterPaysFixtureGrpc});
      */

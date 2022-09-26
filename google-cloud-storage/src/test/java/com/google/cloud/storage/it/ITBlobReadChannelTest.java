@@ -32,6 +32,7 @@ import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
@@ -44,7 +45,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import org.junit.ClassRule;
@@ -109,10 +109,9 @@ public final class ITBlobReadChannelTest {
 
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return Collections.singletonList(
-        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
+    return ImmutableList.of(new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
     /*
-    return Arrays.asList(
+    return ImmutableList.of(
         new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
         new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
     */

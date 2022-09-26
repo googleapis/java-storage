@@ -26,12 +26,12 @@ import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -93,10 +93,9 @@ public class ITNotificationTest {
 
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return Collections.singletonList(
-        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
+    return ImmutableList.of(new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
     /*
-    return Arrays.asList(
+    return ImmutableList.of(
         new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
         new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
      */
