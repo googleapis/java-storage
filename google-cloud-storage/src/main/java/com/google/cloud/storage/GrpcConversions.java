@@ -57,6 +57,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -779,14 +781,16 @@ final class GrpcConversions {
     if (entity != null) {
       toBuilder.setOwner(Owner.newBuilder().setEntity(entityEncode(entity)).build());
     }
-    ifNonNull(from.getMetadata(), toBuilder::putAllMetadata);
+    ifNonNull(from.getMetadata(), this::removeNullValues, toBuilder::putAllMetadata);
     ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), toBuilder::addAllAcl);
     return toBuilder.build();
   }
 
   private BlobInfo blobInfoDecode(Object from) {
     BlobInfo.Builder toBuilder =
-        BlobInfo.newBuilder(BlobId.of(from.getBucket(), from.getName(), from.getGeneration()));
+        BlobInfo.newBuilder(
+            BlobId.of(
+                bucketNameCodec.decode(from.getBucket()), from.getName(), from.getGeneration()));
     ifNonNull(from.getCacheControl(), toBuilder::setCacheControl);
     ifNonNull(from.getSize(), toBuilder::setSize);
     ifNonNull(from.getContentType(), toBuilder::setContentType);
@@ -925,6 +929,12 @@ final class GrpcConversions {
 
   private String crc32cEncode(int from) {
     return BaseEncoding.base64().encode(Ints.toByteArray(from));
+  }
+
+  private Map<String, String> removeNullValues(Map<String, String> from) {
+    Map<String, String> to = new HashMap<>(from);
+    to.values().removeAll(Collections.singleton(null));
+    return to;
   }
 
   private static <T> T todo() {

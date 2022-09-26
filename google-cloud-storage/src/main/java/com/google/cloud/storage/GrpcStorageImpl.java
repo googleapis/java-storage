@@ -34,6 +34,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.api.gax.rpc.UnimplementedException;
@@ -47,6 +48,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
+import com.google.cloud.storage.Storage.ComposeRequest.SourceBlob;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
@@ -409,6 +411,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         GetObjectRequest.newBuilder()
             .setBucket(bucketNameCodec.encode(blob.getBucket()))
             .setObject(blob.getName());
+    ifNonNull(blob.getGeneration(), builder::setGeneration);
     GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),
@@ -550,16 +553,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setObject(blob.getName());
     ifNonNull(blob.getGeneration(), builder::setGeneration);
     DeleteObjectRequest req = opts.deleteObjectsRequest().apply(builder).build();
-    try {
-      Retrying.run(
-          getOptions(),
-          retryAlgorithmManager.getFor(req),
-          () -> storageClient.deleteObjectCallable().call(req, grpcCallContext),
-          Decoder.identity());
-      return true;
-    } catch (StorageException e) {
-      return false;
-    }
+    return Boolean.TRUE.equals(
+        Retrying.run(
+            getOptions(),
+            retryAlgorithmManager.getFor(req),
+            () -> {
+              try {
+                storageClient.deleteObjectCallable().call(req, grpcCallContext);
+                return true;
+              } catch (NotFoundException e) {
+                return false;
+              }
+            },
+            Decoder.identity()));
   }
 
   @Override
@@ -575,12 +581,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();
     composeRequest.getSourceBlobs().stream()
-        .map(
-            src ->
-                SourceObject.newBuilder()
-                    .setName(src.getName())
-                    .setGeneration(src.getGeneration())
-                    .build())
+        .map(src -> sourceObjectEncode(src))
         .forEach(builder::addSourceObjects);
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
     builder.setDestination(target);
@@ -1432,5 +1433,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         "rpo",
         "labels",
         "event_based_hold");
+  }
+
+  private SourceObject sourceObjectEncode(SourceBlob from) {
+    SourceObject.Builder to = SourceObject.newBuilder();
+    to.setName(from.getName());
+    ifNonNull(from.getGeneration(), to::setGeneration);
+    return to.build();
   }
 }
