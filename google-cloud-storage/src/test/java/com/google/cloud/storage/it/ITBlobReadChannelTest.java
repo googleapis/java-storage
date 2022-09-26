@@ -32,6 +32,7 @@ import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
@@ -46,14 +47,19 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public final class ITBlobReadChannelTest {
+
+  // Stubbed From GRPC Uncomment Fixtures and parameters to enable GRPC tests
 
   private static final int _16MiB = 16 * 1024 * 1024;
   private static final int _256KiB = 256 * 1024;
@@ -69,22 +75,47 @@ public final class ITBlobReadChannelTest {
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
 
   @ClassRule(order = 1)
-  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
+  /*
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
+   */
 
   @ClassRule(order = 2)
-  public static final BucketFixture bucketFixture =
-      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+  public static final BucketFixture bucketFixtureHttp =
+      BucketFixture.newBuilder()
+          .setBucketNameFmtString("java-storage-http-%s")
+          .setHandle(storageFixtureHttp::getInstance)
+          .build();
+  /*
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixtureGrpc =
+      BucketFixture.newBuilder()
+          .setBucketNameFmtString("java-storage-grpc-%s")
+          .setHandle(storageFixtureHttp::getInstance)
+          .build();
+   */
 
-  private Storage storage;
-  private String bucketName;
-  private String blobName;
+  private final Storage storage;
+  private final BucketFixture bucketFixture;
+  private final String clientName;
 
-  @Before
-  public void setUp() throws Exception {
-    storage = storageFixture.getInstance();
-    bucketName = bucketFixture.getBucketInfo().getName();
+  public ITBlobReadChannelTest(
+      String clientName, StorageFixture storageFixture, BucketFixture bucketFixture) {
+    this.storage = storageFixture.getInstance();
+    this.bucketFixture = bucketFixture;
+    this.clientName = clientName;
+  }
 
-    blobName = String.format("%s/src", testName.getMethodName());
+  @Parameters(name = "{0}")
+  public static Iterable<Object[]> data() {
+    return ImmutableList.of(new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
+    /*
+    return ImmutableList.of(
+        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
+        new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
+    */
+
   }
 
   @Test
@@ -126,7 +157,8 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void testLimit_downloadToFile() throws IOException {
-    BlobId blobId = BlobId.of(bucketName, blobName);
+    String blobName = String.format("%s/src", testName.getMethodName());
+    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
     ByteBuffer content = dataGeneration.randByteBuffer(108);
     try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
       writer.write(content);
@@ -159,7 +191,7 @@ public final class ITBlobReadChannelTest {
   @Test
   public void testReadChannelFail() {
     String blobName = "test-read-channel-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     try (ReadChannel reader =
@@ -176,7 +208,8 @@ public final class ITBlobReadChannelTest {
     } catch (IOException ex) {
       // expected
     }
-    BlobId blobIdWrongGeneration = BlobId.of(bucketName, blobName, -1L);
+    BlobId blobIdWrongGeneration =
+        BlobId.of(bucketFixture.getBucketInfo().getName(), blobName, -1L);
     try (ReadChannel reader =
         storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
       reader.read(ByteBuffer.allocate(42));
@@ -189,7 +222,7 @@ public final class ITBlobReadChannelTest {
   @Test
   public void testReadChannelFailUpdatedGeneration() throws IOException {
     String blobName = "test-read-blob-fail-updated-generation";
-    BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Random random = new Random();
     int chunkSize = 1024;
     int blobSize = 2 * chunkSize;
@@ -224,13 +257,14 @@ public final class ITBlobReadChannelTest {
   public void testReadCompressedBlob() throws IOException {
     String blobName = "test-read-compressed-blob";
     BlobInfo blobInfo =
-        BlobInfo.newBuilder(BlobId.of(bucketName, blobName))
+        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
             .setContentType("text/plain")
             .setContentEncoding("gzip")
             .build();
     Blob blob = storage.create(blobInfo, COMPRESSED_CONTENT);
     try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-      try (ReadChannel reader = storage.reader(BlobId.of(bucketName, blobName))) {
+      try (ReadChannel reader =
+          storage.reader(BlobId.of(bucketFixture.getBucketInfo().getName(), blobName))) {
         reader.setChunkSize(8);
         ByteBuffer buffer = ByteBuffer.allocate(8);
         while (reader.read(buffer) != -1) {
@@ -240,7 +274,8 @@ public final class ITBlobReadChannelTest {
         }
       }
       assertArrayEquals(
-          BLOB_STRING_CONTENT.getBytes(UTF_8), storage.readAllBytes(bucketName, blobName));
+          BLOB_STRING_CONTENT.getBytes(UTF_8),
+          storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName));
       assertArrayEquals(COMPRESSED_CONTENT, output.toByteArray());
       try (GZIPInputStream zipInput =
           new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))) {
@@ -251,7 +286,8 @@ public final class ITBlobReadChannelTest {
 
   private void doLimitTest(int srcContentSize, int rangeBegin, int rangeEnd, int chunkSize)
       throws IOException {
-    BlobInfo src = BlobInfo.newBuilder(bucketName, blobName).build();
+    String blobName = String.format("%s/src", testName.getMethodName());
+    BlobInfo src = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     ByteBuffer content = dataGeneration.randByteBuffer(srcContentSize);
     ByteBuffer dup = content.duplicate();
     dup.position(rangeBegin);

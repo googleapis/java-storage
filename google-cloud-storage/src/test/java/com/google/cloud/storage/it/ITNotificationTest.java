@@ -26,6 +26,7 @@ import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.GetIamPolicyRequest;
@@ -42,14 +43,32 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public class ITNotificationTest {
   @ClassRule(order = 1)
-  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
+
+  /*
+  @ClassRule(order = 1)
+  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
+   */
 
   @ClassRule(order = 2)
-  public static final BucketFixture bucketFixture =
-      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+  public static final BucketFixture bucketFixtureHttp =
+      BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
+
+  /*
+  @ClassRule(order = 2)
+  public static final BucketFixture bucketFixtureGrpc =
+      BucketFixture.newBuilder()
+          .setBucketNameFmtString("java-storage-grpc-%s")
+          .setHandle(storageFixtureHttp::getInstance)
+          .build();
+   */
 
   private static final String PROJECT = ServiceOptions.getDefaultProjectId();
   private static final String ID = UUID.randomUUID().toString().substring(0, 8);
@@ -60,14 +79,30 @@ public class ITNotificationTest {
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final Logger log = Logger.getLogger(ITNotificationTest.class.getName());
 
-  private static Storage storage;
-  private static String bucketName;
+  private final Storage storage;
+  private final BucketFixture bucketFixture;
+  private final String clientName;
   private static TopicAdminClient topicAdminClient;
+
+  public ITNotificationTest(
+      String clientName, StorageFixture storageFixture, BucketFixture bucketFixture) {
+    this.clientName = clientName;
+    this.storage = storageFixture.getInstance();
+    this.bucketFixture = bucketFixture;
+  }
+
+  @Parameters(name = "{0}")
+  public static Iterable<Object[]> data() {
+    return ImmutableList.of(new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
+    /*
+    return ImmutableList.of(
+        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
+        new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
+     */
+  }
 
   @BeforeClass
   public static void setup() throws IOException {
-    storage = storageFixture.getInstance();
-    bucketName = bucketFixture.getBucketInfo().getName();
     // Configure topic admin client for notification.
     topicAdminClient = configureTopicAdminClient();
   }
@@ -111,8 +146,9 @@ public class ITNotificationTest {
             .setPayloadFormat(PAYLOAD_FORMAT)
             .build();
     try {
-      assertThat(storage.listNotifications(bucketName)).isEmpty();
-      Notification notification = storage.createNotification(bucketName, notificationInfo);
+      assertThat(storage.listNotifications(bucketFixture.getBucketInfo().getName())).isEmpty();
+      Notification notification =
+          storage.createNotification(bucketFixture.getBucketInfo().getName(), notificationInfo);
       assertThat(notification.getNotificationId()).isNotNull();
       assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
       assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
@@ -120,7 +156,8 @@ public class ITNotificationTest {
 
       // Gets the notification with the specified id.
       Notification actualNotification =
-          storage.getNotification(bucketName, notification.getNotificationId());
+          storage.getNotification(
+              bucketFixture.getBucketInfo().getName(), notification.getNotificationId());
       assertThat(actualNotification.getNotificationId())
           .isEqualTo(notification.getNotificationId());
       assertThat(actualNotification.getTopic().trim()).isEqualTo(notification.getTopic().trim());
@@ -132,19 +169,29 @@ public class ITNotificationTest {
           .isEqualTo(notification.getCustomAttributes());
 
       // Retrieves the list of notifications associated with the bucket.
-      List<Notification> notifications = storage.listNotifications(bucketName);
+      List<Notification> notifications =
+          storage.listNotifications(bucketFixture.getBucketInfo().getName());
       assertThat(notifications.size()).isEqualTo(1);
       assertThat(notifications.get(0).getNotificationId())
           .isEqualTo(actualNotification.getNotificationId());
 
       // Deletes the notification with the specified id.
-      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId())).isTrue();
-      assertThat(storage.deleteNotification(bucketName, notification.getNotificationId()))
+      assertThat(
+              storage.deleteNotification(
+                  bucketFixture.getBucketInfo().getName(), notification.getNotificationId()))
+          .isTrue();
+      assertThat(
+              storage.deleteNotification(
+                  bucketFixture.getBucketInfo().getName(), notification.getNotificationId()))
           .isFalse();
-      assertThat(storage.getNotification(bucketName, notification.getNotificationId())).isNull();
-      assertThat(storage.listNotifications(bucketName)).isEmpty();
+      assertThat(
+              storage.getNotification(
+                  bucketFixture.getBucketInfo().getName(), notification.getNotificationId()))
+          .isNull();
+      assertThat(storage.listNotifications(bucketFixture.getBucketInfo().getName())).isEmpty();
     } finally {
-      RemoteStorageHelper.forceDelete(storage, bucketName, 5, TimeUnit.SECONDS);
+      RemoteStorageHelper.forceDelete(
+          storage, bucketFixture.getBucketInfo().getName(), 5, TimeUnit.SECONDS);
     }
   }
 }
