@@ -48,6 +48,7 @@ import org.junit.rules.TemporaryFolder;
  * WriteObjectRequest}s as expected.
  */
 public final class GrpcStorageImplUploadRetryTest {
+  private static final String FORMATTED_BUCKET_NAME = "projects/_/buckets/buck";
   private static final int objectContentSize = 64;
   private static final byte[] bytes = DataGenerator.base64Characters().genBytes(objectContentSize);
 
@@ -130,7 +131,7 @@ public final class GrpcStorageImplUploadRetryTest {
 
   private static final class Direct {
     private static final Object obj =
-        Object.newBuilder().setBucket("projects/_/buckets/buck").setName("obj").build();
+        Object.newBuilder().setBucket(FORMATTED_BUCKET_NAME).setName("obj").build();
     private static final WriteObjectSpec spec =
         WriteObjectSpec.newBuilder().setResource(obj).setIfGenerationMatch(0).build();
 
@@ -186,7 +187,7 @@ public final class GrpcStorageImplUploadRetryTest {
     private static final String uploadId = "upload-id";
 
     private static final Object obj =
-        Object.newBuilder().setBucket("projects/_/buckets/buck").setName("obj").build();
+        Object.newBuilder().setBucket(FORMATTED_BUCKET_NAME).setName("obj").build();
     private static final WriteObjectSpec spec =
         WriteObjectSpec.newBuilder().setResource(obj).setIfGenerationMatch(0).build();
 
