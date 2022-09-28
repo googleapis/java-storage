@@ -164,7 +164,7 @@ final class GapicWritableByteChannelSessionBuilder {
       return buffered(BufferHandle.handleOf(byteBuffer));
     }
 
-    private BufferedDirectUploadBuilder buffered(BufferHandle bufferHandle) {
+    BufferedDirectUploadBuilder buffered(BufferHandle bufferHandle) {
       return new BufferedDirectUploadBuilder(bufferHandle);
     }
 
@@ -260,7 +260,7 @@ final class GapicWritableByteChannelSessionBuilder {
       return buffered(BufferHandle.handleOf(byteBuffer));
     }
 
-    private BufferedResumableUploadBuilder buffered(BufferHandle bufferHandle) {
+    BufferedResumableUploadBuilder buffered(BufferHandle bufferHandle) {
       return new BufferedResumableUploadBuilder(bufferHandle);
     }
 

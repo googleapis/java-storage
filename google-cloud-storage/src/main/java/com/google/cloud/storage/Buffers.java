@@ -113,9 +113,14 @@ final class Buffers {
    * <p>i.e. Given 344k size, 256k alignmentMultiple expect 512k
    */
   static ByteBuffer allocateAligned(int size, int alignmentMultiple) {
-    int actualSize = size;
+    int actualSize = alignSize(size, alignmentMultiple);
+    return allocate(actualSize);
+  }
+
+  static int alignSize(int size, int alignmentMultiple) {
+    int alignedSize = size;
     if (size < alignmentMultiple) {
-      actualSize = alignmentMultiple;
+      alignedSize = alignmentMultiple;
     } else if (size % alignmentMultiple != 0) {
       // TODO: this mod will cause two divisions to happen
       //   * try and measure how expensive two divisions is compared to one
@@ -124,8 +129,8 @@ final class Buffers {
 
       // add almost another full alignmentMultiple to the size
       // then integer divide it before multiplying it by the alignmentMultiple
-      actualSize = (size + alignmentMultiple - 1) / alignmentMultiple * alignmentMultiple;
+      alignedSize = (size + alignmentMultiple - 1) / alignmentMultiple * alignmentMultiple;
     } // else size is already aligned
-    return allocate(actualSize);
+    return alignedSize;
   }
 }

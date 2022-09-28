@@ -40,6 +40,15 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   private int chunkSize = _15MiB;
 
+  /**
+   * This is tracked for compatibility with BlobWriteChannel, such that simply creating a writer
+   * will create an object.
+   *
+   * <p>In the future we should move away from this behavior, and only create an object if write is
+   * called.
+   */
+  private boolean writeCalledAtLeastOnce = false;
+
   GrpcBlobWriteChannel(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
       RetryingDependencies deps,
@@ -56,7 +65,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
                         .setByteStringStrategy(ByteStringStrategy.copy())
                         .resumable()
                         .withRetryConfig(deps, alg)
-                        .buffered(Buffers.allocateAligned(chunkSize, _256KiB))
+                        .buffered(BufferHandle.allocate(Buffers.alignSize(chunkSize, _256KiB)))
                         .setStartAsync(start.get())
                         .build()));
   }
@@ -75,6 +84,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   @Override
   public int write(ByteBuffer src) throws IOException {
+    writeCalledAtLeastOnce = true;
     return lazyWriteChannel.getChannel().write(src);
   }
 
@@ -85,6 +95,9 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   @Override
   public void close() throws IOException {
+    if (!writeCalledAtLeastOnce) {
+      lazyWriteChannel.getChannel().write(ByteBuffer.allocate(0));
+    }
     if (isOpen()) {
       lazyWriteChannel.getChannel().close();
     }
