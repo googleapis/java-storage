@@ -235,9 +235,9 @@ final class HttpRetryAlgorithmManager implements Serializable {
 
   public ResultRetryAlgorithm<?> getForResumableUploadSessionWrite(
       Map<StorageRpc.Option, ?> optionsMap) {
-    return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
-        ? retryStrategy.getIdempotentHandler()
-        : retryStrategy.getNonidempotentHandler();
+    // writing to a resumable upload session is always idempotent once it's active
+    // even if the start of the session wasn't idempotent our incremental writes can be.
+    return retryStrategy.getIdempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getForServiceAccountGet(String pb) {
