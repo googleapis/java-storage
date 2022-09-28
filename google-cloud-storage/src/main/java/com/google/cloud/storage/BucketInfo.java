@@ -327,6 +327,15 @@ public class BucketInfo implements Serializable {
         return new IamConfiguration(this);
       }
     }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("isUniformBucketLevelAccessEnabled", isUniformBucketLevelAccessEnabled)
+          .add("uniformBucketLevelAccessLockedTime", uniformBucketLevelAccessLockedTime)
+          .add("publicAccessPrevention", publicAccessPrevention)
+          .toString();
+    }
   }
 
   /**
@@ -1429,6 +1438,66 @@ public class BucketInfo implements Serializable {
 
     /** Creates a {@code BucketInfo} object. */
     public abstract BucketInfo build();
+
+    abstract Builder clearGeneratedId();
+
+    abstract Builder clearProject();
+
+    abstract Builder clearName();
+
+    abstract Builder clearOwner();
+
+    abstract Builder clearSelfLink();
+
+    abstract Builder clearRequesterPays();
+
+    abstract Builder clearVersioningEnabled();
+
+    abstract Builder clearIndexPage();
+
+    abstract Builder clearNotFoundPage();
+
+    abstract Builder clearLifecycleRules();
+
+    abstract Builder clearRpo();
+
+    abstract Builder clearStorageClass();
+
+    abstract Builder clearLocation();
+
+    abstract Builder clearEtag();
+
+    abstract Builder clearCreateTime();
+
+    abstract Builder clearUpdateTime();
+
+    abstract Builder clearMetageneration();
+
+    abstract Builder clearCors();
+
+    abstract Builder clearAcl();
+
+    abstract Builder clearDefaultAcl();
+
+    abstract Builder clearLabels();
+
+    abstract Builder clearDefaultKmsKeyName();
+
+    abstract Builder clearDefaultEventBasedHold();
+
+    abstract Builder clearRetentionEffectiveTime();
+
+    abstract Builder clearRetentionPolicyIsLocked();
+
+    abstract Builder clearRetentionPeriod();
+
+    abstract Builder clearIamConfiguration();
+
+    abstract Builder clearLocationType();
+
+    abstract Builder clearLogging();
+
+    abstract Builder clearCustomPlacementConfig();
   }
 
   static final class BuilderImpl extends Builder {
@@ -1862,6 +1931,186 @@ public class BucketInfo implements Serializable {
     public BucketInfo build() {
       checkNotNull(name);
       return new BucketInfo(this);
+    }
+
+    @Override
+    BuilderImpl clearGeneratedId() {
+      this.generatedId = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearProject() {
+      this.project = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearName() {
+      this.name = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearOwner() {
+      this.owner = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearSelfLink() {
+      this.selfLink = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearRequesterPays() {
+      this.requesterPays = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearVersioningEnabled() {
+      this.versioningEnabled = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearIndexPage() {
+      this.indexPage = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearNotFoundPage() {
+      this.notFoundPage = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearLifecycleRules() {
+      this.lifecycleRules = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearRpo() {
+      this.rpo = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearStorageClass() {
+      this.storageClass = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearLocation() {
+      this.location = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearEtag() {
+      this.etag = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearCreateTime() {
+      this.createTime = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearUpdateTime() {
+      this.updateTime = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearMetageneration() {
+      this.metageneration = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearCors() {
+      this.cors = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearAcl() {
+      this.acl = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearDefaultAcl() {
+      this.defaultAcl = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearLabels() {
+      this.labels = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearDefaultKmsKeyName() {
+      this.defaultKmsKeyName = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearDefaultEventBasedHold() {
+      this.defaultEventBasedHold = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearRetentionEffectiveTime() {
+      this.retentionEffectiveTime = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearRetentionPolicyIsLocked() {
+      this.retentionPolicyIsLocked = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearRetentionPeriod() {
+      this.retentionPeriod = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearIamConfiguration() {
+      this.iamConfiguration = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearLocationType() {
+      this.locationType = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearLogging() {
+      this.logging = null;
+      return this;
+    }
+
+    @Override
+    BuilderImpl clearCustomPlacementConfig() {
+      this.customPlacementConfig = null;
+      return this;
     }
 
     private Builder clearDeleteLifecycleRules() {

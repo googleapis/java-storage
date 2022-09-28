@@ -19,7 +19,6 @@ package com.google.cloud.storage.it;
 import static org.junit.Assume.assumeTrue;
 
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.FieldSelector.Helper;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -57,14 +56,15 @@ import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.conformance.retry.CleanupStrategy;
 import com.google.cloud.storage.conformance.retry.TestBench;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Collections;
+import java.util.Set;
+import java.util.function.Function;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -320,9 +320,37 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_BucketGetOption_fields_BucketField() {
-    String expected = Helper.selector(ImmutableList.copyOf(BucketField.values()));
+    Set<String> expected =
+        ImmutableSet.of(
+            "acl",
+            "autoclass",
+            "billing",
+            "cors",
+            "customPlacementConfig",
+            "defaultEventBasedHold",
+            "defaultObjectAcl",
+            "encryption",
+            "etag",
+            "iamConfiguration",
+            "id",
+            "labels",
+            "lifecycle",
+            "location",
+            "locationType",
+            "logging",
+            "metageneration",
+            "name",
+            "owner",
+            "retentionPolicy",
+            "rpo",
+            "selfLink",
+            "storageClass",
+            "timeCreated",
+            "updated",
+            "versioning",
+            "website");
     s.get(b.getName(), BucketGetOption.fields(BucketField.values()));
-    requestAuditing.assertQueryParam("fields", expected);
+    requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 
   @Test
@@ -695,9 +723,42 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_BlobGetOption_fields_BlobField() {
-    String expected = Helper.selector(ImmutableList.copyOf(BlobField.values()));
+    Set<String> expected =
+        ImmutableSet.of(
+            "acl",
+            "bucket",
+            "cacheControl",
+            "componentCount",
+            "contentDisposition",
+            "contentEncoding",
+            "contentLanguage",
+            "contentType",
+            "crc32c",
+            "customTime",
+            "customerEncryption",
+            "etag",
+            "eventBasedHold",
+            "generation",
+            "id",
+            "kind",
+            "kmsKeyName",
+            "md5Hash",
+            "mediaLink",
+            "metadata",
+            "metageneration",
+            "name",
+            "owner",
+            "retentionExpirationTime",
+            "selfLink",
+            "size",
+            "storageClass",
+            "temporaryHold",
+            "timeCreated",
+            "timeDeleted",
+            "timeStorageClassUpdated",
+            "updated");
     s.get(o.getBlobId(), BlobGetOption.fields(BlobField.values()));
-    requestAuditing.assertQueryParam("fields", expected);
+    requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 
   @Test
@@ -744,9 +805,38 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_BucketListOption_fields_BucketField() {
-    String expected = Helper.listSelector("items", ImmutableList.copyOf(BucketField.values()));
+    Set<String> expected =
+        ImmutableSet.of(
+            "nextPageToken",
+            "items/acl",
+            "items/autoclass",
+            "items/billing",
+            "items/cors",
+            "items/customPlacementConfig",
+            "items/defaultEventBasedHold",
+            "items/defaultObjectAcl",
+            "items/encryption",
+            "items/etag",
+            "items/iamConfiguration",
+            "items/id",
+            "items/labels",
+            "items/lifecycle",
+            "items/location",
+            "items/locationType",
+            "items/logging",
+            "items/metageneration",
+            "items/name",
+            "items/owner",
+            "items/retentionPolicy",
+            "items/rpo",
+            "items/selfLink",
+            "items/storageClass",
+            "items/timeCreated",
+            "items/updated",
+            "items/versioning",
+            "items/website");
     s.list(BucketListOption.fields(BucketField.values()));
-    requestAuditing.assertQueryParam("fields", expected);
+    requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 
   @Test
@@ -805,11 +895,44 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_BlobListOption_fields_BlobField() {
-    String expected =
-        Helper.listSelector(
-            new String[] {"prefixes"}, "items", Collections.emptyList(), BlobField.values());
+    Set<String> expected =
+        ImmutableSet.of(
+            "nextPageToken",
+            "prefixes",
+            "items/acl",
+            "items/bucket",
+            "items/cacheControl",
+            "items/componentCount",
+            "items/contentDisposition",
+            "items/contentEncoding",
+            "items/contentLanguage",
+            "items/contentType",
+            "items/crc32c",
+            "items/customTime",
+            "items/customerEncryption",
+            "items/etag",
+            "items/eventBasedHold",
+            "items/generation",
+            "items/id",
+            "items/kind",
+            "items/kmsKeyName",
+            "items/md5Hash",
+            "items/mediaLink",
+            "items/metadata",
+            "items/metageneration",
+            "items/name",
+            "items/owner",
+            "items/retentionExpirationTime",
+            "items/selfLink",
+            "items/size",
+            "items/storageClass",
+            "items/temporaryHold",
+            "items/timeCreated",
+            "items/timeDeleted",
+            "items/timeStorageClassUpdated",
+            "items/updated");
     s.list(b.getName(), BlobListOption.fields(BlobField.values()));
-    requestAuditing.assertQueryParam("fields", expected);
+    requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 
   @Test
@@ -1064,6 +1187,10 @@ public final class ITOptionRegressionTest {
 
   private static String objectName() {
     return String.format("object-%03d", objectCounter++);
+  }
+
+  private static Function<String, Set<String>> splitOnCommaToSet() {
+    return s -> ImmutableSet.copyOf(s.split(","));
   }
 
   private static final class Content {

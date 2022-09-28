@@ -377,7 +377,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         getOptions(),
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getBucketCallable().call(req, grpcCallContext),
-        syntaxDecoders.bucket);
+        syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
   }
 
   @Override
@@ -417,7 +417,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         getOptions(),
         retryAlgorithmManager.getFor(req),
         () -> storageClient.getObjectCallable().call(req, grpcCallContext),
-        syntaxDecoders.blob);
+        syntaxDecoders.blob.andThen(opts.clearBlobFields()));
   }
 
   @Override
@@ -442,7 +442,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     try {
       ListBucketsPage page = call.getPage();
       return new TransformingPageDecorator<>(
-          page, syntaxDecoders.bucket, getOptions(), retryAlgorithmManager.getFor(request));
+          page,
+          syntaxDecoders.bucket.andThen(opts.clearBucketFields()),
+          getOptions(),
+          retryAlgorithmManager.getFor(request));
     } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
@@ -462,7 +465,10 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
       ListObjectsPage page = call.getPage();
       return new TransformingPageDecorator<>(
-          page, syntaxDecoders.blob, getOptions(), retryAlgorithmManager.getFor(req));
+          page,
+          syntaxDecoders.blob.andThen(opts.clearBlobFields()),
+          getOptions(),
+          retryAlgorithmManager.getFor(req));
     } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
@@ -480,7 +486,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .getUpdateMaskBuilder()
         .addAllPaths(
             bucketInfo.getModifiedFields().stream()
-                .map(BucketField::getGrpcFieldName)
+                .map(BucketField::getGrpcName)
                 .collect(ImmutableList.toImmutableList()));
     UpdateBucketRequest req = builder.build();
     return Retrying.run(
@@ -502,7 +508,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .getUpdateMaskBuilder()
         .addAllPaths(
             blobInfo.getModifiedFields().stream()
-                .map(BlobField::getGrpcFieldName)
+                .map(BlobField::getGrpcName)
                 .collect(ImmutableList.toImmutableList()));
     UpdateObjectRequest req = builder.build();
     return Retrying.run(

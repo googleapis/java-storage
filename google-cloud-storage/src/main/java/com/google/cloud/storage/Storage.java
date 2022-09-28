@@ -24,7 +24,6 @@ import com.google.api.gax.paging.Page;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
 import com.google.cloud.FieldSelector;
-import com.google.cloud.FieldSelector.Helper;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.Service;
@@ -40,12 +39,15 @@ import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.OptionShim;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * An interface for Google Cloud Storage.
@@ -91,36 +94,63 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
   }
 
-  enum BucketField implements FieldSelector {
+  enum BucketField implements FieldSelector, NamedField {
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     ID("id", "bucket_id"),
+    @TransportCompatibility(Transport.HTTP)
     SELF_LINK("selfLink"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     NAME("name"),
-    TIME_CREATED("timeCreated", "time_create"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    TIME_CREATED("timeCreated", "create_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     METAGENERATION("metageneration"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     ACL("acl"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     DEFAULT_OBJECT_ACL("defaultObjectAcl", "default_object_acl"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     OWNER("owner"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     LABELS("labels"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     LOCATION("location"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     LOCATION_TYPE("locationType", "location_type"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     WEBSITE("website"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     VERSIONING("versioning"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CORS("cors"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     LIFECYCLE("lifecycle"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     STORAGE_CLASS("storageClass", "storage_class"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     ETAG("etag"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     ENCRYPTION("encryption"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     BILLING("billing"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     DEFAULT_EVENT_BASED_HOLD("defaultEventBasedHold", "default_event_based_hold"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     RETENTION_POLICY("retentionPolicy", "retention_policy"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     IAMCONFIGURATION("iamConfiguration", "iam_config"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     LOGGING("logging"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     UPDATED("updated", "update_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     RPO("rpo"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     AUTOCLASS("autoclass");
 
-    static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(NAME);
+    static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
 
     private final String selector;
     private final String grpcFieldName;
@@ -139,46 +169,86 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return selector;
     }
 
-    String getGrpcFieldName() {
+    @Override
+    public String getApiaryName() {
+      return selector;
+    }
+
+    @Override
+    public String getGrpcName() {
       return grpcFieldName;
     }
   }
 
-  enum BlobField implements FieldSelector {
+  enum BlobField implements FieldSelector, NamedField {
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     ACL("acl"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     BUCKET("bucket"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CACHE_CONTROL("cacheControl", "cache_control"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     COMPONENT_COUNT("componentCount", "component_count"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CONTENT_DISPOSITION("contentDisposition", "content_disposition"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CONTENT_ENCODING("contentEncoding", "content_encoding"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CONTENT_LANGUAGE("contentLanguage", "content_language"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CONTENT_TYPE("contentType", "content_type"),
-    CRC32C("crc32c", "object_checksums.crc32c"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    CRC32C("crc32c", "checksums.crc32c"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     ETAG("etag"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     GENERATION("generation"),
+    @TransportCompatibility(Transport.HTTP)
     ID("id"),
+    /** {@code kind} is not exposed in {@link BlobInfo} or {@link Blob} no need to select it */
+    @Deprecated
+    @TransportCompatibility(Transport.HTTP)
     KIND("kind"),
-    MD5HASH("md5Hash", "object_checksums.md5_hash"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    MD5HASH("md5Hash", "checksums.md5_hash"),
+    @TransportCompatibility(Transport.HTTP)
     MEDIA_LINK("mediaLink"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     METADATA("metadata"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     METAGENERATION("metageneration"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     NAME("name"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     OWNER("owner"),
+    @TransportCompatibility(Transport.HTTP)
     SELF_LINK("selfLink"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     SIZE("size"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     STORAGE_CLASS("storageClass", "storage_class"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     TIME_DELETED("timeDeleted", "delete_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     TIME_CREATED("timeCreated", "create_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     KMS_KEY_NAME("kmsKeyName", "kms_key"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     EVENT_BASED_HOLD("eventBasedHold", "event_based_hold"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     TEMPORARY_HOLD("temporaryHold", "temporary_hold"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     RETENTION_EXPIRATION_TIME("retentionExpirationTime", "retention_expire_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     UPDATED("updated", "update_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CUSTOM_TIME("customTime", "custom_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     TIME_STORAGE_CLASS_UPDATED("timeStorageClassUpdated", "update_storage_class_time"),
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption");
 
-    static final List<? extends FieldSelector> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
+    static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
 
     private final String selector;
     private final String grpcFieldName;
@@ -197,7 +267,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return selector;
     }
 
-    String getGrpcFieldName() {
+    @Override
+    public String getApiaryName() {
+      return selector;
+    }
+
+    @Override
+    public String getGrpcName() {
       return grpcFieldName;
     }
   }
@@ -478,8 +554,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BucketGetOption fields(BucketField... fields) {
-      String selector = Helper.selector(BucketField.REQUIRED_FIELDS, fields);
-      return new BucketGetOption(UnifiedOpts.fields(selector));
+      ImmutableSet<NamedField> set =
+          ImmutableSet.<NamedField>builder()
+              .addAll(BucketField.REQUIRED_FIELDS)
+              .add(fields)
+              .build();
+      return new BucketGetOption(UnifiedOpts.fields(set));
     }
   }
 
@@ -884,8 +964,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BlobGetOption fields(BlobField... fields) {
-      String selector = Helper.selector(BlobField.REQUIRED_FIELDS, fields);
-      return new BlobGetOption(UnifiedOpts.fields(selector));
+      ImmutableSet<NamedField> set =
+          ImmutableSet.<NamedField>builder().addAll(BlobField.REQUIRED_FIELDS).add(fields).build();
+      return new BlobGetOption(UnifiedOpts.fields(set));
     }
 
     /**
@@ -966,15 +1047,19 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BucketListOption fields(BucketField... fields) {
-      String selector = Helper.listSelector("items", BucketField.REQUIRED_FIELDS, fields);
-      return new BucketListOption(UnifiedOpts.fields(selector));
+      ImmutableSet<NamedField> set =
+          Streams.concat(
+                  Stream.of(NamedField.literal("nextPageToken")),
+                  Streams.concat(BucketField.REQUIRED_FIELDS.stream(), Arrays.stream(fields))
+                      .map(f -> NamedField.prefixed("items/", f)))
+              .collect(ImmutableSet.toImmutableSet());
+      return new BucketListOption(UnifiedOpts.fields(set));
     }
   }
 
   /** Class for specifying blob list options. */
   class BlobListOption extends Option<ObjectListOpt> {
 
-    private static final String[] TOP_LEVEL_FIELDS = {"prefixes"};
     private static final long serialVersionUID = 5677832374576757707L;
 
     private BlobListOption(ObjectListOpt opt) {
@@ -1071,9 +1156,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specified.
      */
     public static BlobListOption fields(BlobField... fields) {
-      String selector =
-          Helper.listSelector(TOP_LEVEL_FIELDS, "items", BlobField.REQUIRED_FIELDS, fields);
-      return new BlobListOption(UnifiedOpts.fields(selector));
+      ImmutableSet<NamedField> set =
+          Streams.concat(
+                  Stream.of(NamedField.literal("nextPageToken"), NamedField.literal("prefixes")),
+                  Streams.concat(BlobField.REQUIRED_FIELDS.stream(), Arrays.stream(fields))
+                      .map(f -> NamedField.prefixed("items/", f)))
+              .collect(ImmutableSet.toImmutableSet());
+      return new BlobListOption(UnifiedOpts.fields(set));
     }
   }
 

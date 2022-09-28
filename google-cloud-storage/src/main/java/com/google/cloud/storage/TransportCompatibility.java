@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * <p>Not all operations are compatible with all transports.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Documented
 @Inherited
 @interface TransportCompatibility {

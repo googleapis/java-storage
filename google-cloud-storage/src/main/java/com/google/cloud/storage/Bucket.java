@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.BetaApi;
 import com.google.api.gax.paging.Page;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Storage.BlobGetOption;
@@ -598,6 +599,186 @@ public class Bucket extends BucketInfo {
     public Bucket build() {
       return new Bucket(storage, infoBuilder);
     }
+
+    @Override
+    Builder clearGeneratedId() {
+      infoBuilder.clearGeneratedId();
+      return this;
+    }
+
+    @Override
+    Builder clearProject() {
+      infoBuilder.clearProject();
+      return this;
+    }
+
+    @Override
+    Builder clearName() {
+      infoBuilder.clearName();
+      return this;
+    }
+
+    @Override
+    Builder clearOwner() {
+      infoBuilder.clearOwner();
+      return this;
+    }
+
+    @Override
+    Builder clearSelfLink() {
+      infoBuilder.clearSelfLink();
+      return this;
+    }
+
+    @Override
+    Builder clearRequesterPays() {
+      infoBuilder.clearRequesterPays();
+      return this;
+    }
+
+    @Override
+    Builder clearVersioningEnabled() {
+      infoBuilder.clearVersioningEnabled();
+      return this;
+    }
+
+    @Override
+    Builder clearIndexPage() {
+      infoBuilder.clearIndexPage();
+      return this;
+    }
+
+    @Override
+    Builder clearNotFoundPage() {
+      infoBuilder.clearNotFoundPage();
+      return this;
+    }
+
+    @Override
+    Builder clearLifecycleRules() {
+      infoBuilder.clearLifecycleRules();
+      return this;
+    }
+
+    @Override
+    Builder clearRpo() {
+      infoBuilder.clearRpo();
+      return this;
+    }
+
+    @Override
+    Builder clearStorageClass() {
+      infoBuilder.clearStorageClass();
+      return this;
+    }
+
+    @Override
+    Builder clearLocation() {
+      infoBuilder.clearLocation();
+      return this;
+    }
+
+    @Override
+    Builder clearEtag() {
+      infoBuilder.clearEtag();
+      return this;
+    }
+
+    @Override
+    Builder clearCreateTime() {
+      infoBuilder.clearCreateTime();
+      return this;
+    }
+
+    @Override
+    Builder clearUpdateTime() {
+      infoBuilder.clearUpdateTime();
+      return this;
+    }
+
+    @Override
+    Builder clearMetageneration() {
+      infoBuilder.clearMetageneration();
+      return this;
+    }
+
+    @Override
+    Builder clearCors() {
+      infoBuilder.clearCors();
+      return this;
+    }
+
+    @Override
+    Builder clearAcl() {
+      infoBuilder.clearAcl();
+      return this;
+    }
+
+    @Override
+    Builder clearDefaultAcl() {
+      infoBuilder.clearDefaultAcl();
+      return this;
+    }
+
+    @Override
+    Builder clearLabels() {
+      infoBuilder.clearLabels();
+      return this;
+    }
+
+    @Override
+    Builder clearDefaultKmsKeyName() {
+      infoBuilder.clearDefaultKmsKeyName();
+      return this;
+    }
+
+    @Override
+    Builder clearDefaultEventBasedHold() {
+      infoBuilder.clearDefaultEventBasedHold();
+      return this;
+    }
+
+    @Override
+    Builder clearRetentionEffectiveTime() {
+      infoBuilder.clearRetentionEffectiveTime();
+      return this;
+    }
+
+    @Override
+    Builder clearRetentionPolicyIsLocked() {
+      infoBuilder.clearRetentionPolicyIsLocked();
+      return this;
+    }
+
+    @Override
+    Builder clearRetentionPeriod() {
+      infoBuilder.clearRetentionPeriod();
+      return this;
+    }
+
+    @Override
+    Builder clearIamConfiguration() {
+      infoBuilder.clearIamConfiguration();
+      return this;
+    }
+
+    @Override
+    Builder clearLocationType() {
+      infoBuilder.clearLocationType();
+      return this;
+    }
+
+    @Override
+    Builder clearLogging() {
+      infoBuilder.clearLogging();
+      return this;
+    }
+
+    @Override
+    Builder clearCustomPlacementConfig() {
+      infoBuilder.clearCustomPlacementConfig();
+      return this;
+    }
   }
 
   Bucket(Storage storage, BucketInfo.BuilderImpl infoBuilder) {
@@ -1168,6 +1349,12 @@ public class Bucket extends BucketInfo {
   @Override
   public final int hashCode() {
     return Objects.hash(super.hashCode(), options);
+  }
+
+  /** Drop the held {@link Storage} instance. */
+  @BetaApi
+  public BucketInfo asBucketInfo() {
+    return this.toBuilder().infoBuilder.build();
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

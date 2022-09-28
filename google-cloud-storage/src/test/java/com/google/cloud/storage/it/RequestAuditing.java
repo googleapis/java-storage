@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 final class RequestAuditing extends HttpTransportOptions {
@@ -64,13 +65,18 @@ final class RequestAuditing extends HttpTransportOptions {
   }
 
   void assertQueryParam(String paramName, String expectedValue) {
+    assertQueryParam(paramName, expectedValue, Function.identity());
+  }
+
+  <T> void assertQueryParam(String paramName, T expectedValue, Function<String, T> transform) {
     ImmutableList<HttpRequest> requests = getRequests();
 
-    List<String> actual =
+    List<T> actual =
         requests.stream()
             .map(HttpRequest::getUrl)
             .distinct() // todo: figure out why requests seem to be recorded twice for blob create
             .map(u -> (String) u.getFirst(paramName))
+            .map(transform)
             .collect(Collectors.toList());
 
     assertThat(actual).isEqualTo(ImmutableList.of(expectedValue));

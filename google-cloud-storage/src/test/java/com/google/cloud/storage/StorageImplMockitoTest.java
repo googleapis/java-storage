@@ -1172,63 +1172,6 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testListBucketsWithSelectedFields() {
-    String cursor = "cursor";
-    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
-        ArgumentCaptor.forClass(Map.class);
-
-    ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
-    Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
-        Tuple.of(
-            cursor, Iterables.transform(bucketInfoList, Conversions.apiary().bucketInfo()::encode));
-
-    doReturn(result)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .list(capturedOptions.capture());
-    initializeService();
-    ImmutableList<Bucket> bucketList = ImmutableList.of(expectedBucket1, expectedBucket2);
-    Page<Bucket> page = storage.list(BUCKET_LIST_FIELDS);
-    String selector = (String) capturedOptions.getValue().get(StorageRpc.Option.FIELDS);
-    assertTrue(selector.contains("items("));
-    assertTrue(selector.contains("name"));
-    assertTrue(selector.contains("acl"));
-    assertTrue(selector.contains("location"));
-    assertTrue(selector.contains("nextPageToken"));
-    assertTrue(selector.endsWith(")"));
-    assertEquals(38, selector.length());
-    assertEquals(cursor, page.getNextPageToken());
-    assertArrayEquals(bucketList.toArray(), Iterables.toArray(page.getValues(), Bucket.class));
-  }
-
-  @Test
-  public void testListBucketsWithEmptyFields() {
-    String cursor = "cursor";
-    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
-        ArgumentCaptor.forClass(Map.class);
-    ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
-    Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
-        Tuple.of(
-            cursor, Iterables.transform(bucketInfoList, Conversions.apiary().bucketInfo()::encode));
-
-    doReturn(result)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .list(capturedOptions.capture());
-    initializeService();
-    ImmutableList<Bucket> bucketList = ImmutableList.of(expectedBucket1, expectedBucket2);
-    Page<Bucket> page = storage.list(BUCKET_LIST_EMPTY_FIELDS);
-    String selector = (String) capturedOptions.getValue().get(StorageRpc.Option.FIELDS);
-    assertTrue(selector.contains("items("));
-    assertTrue(selector.contains("name"));
-    assertTrue(selector.contains("nextPageToken"));
-    assertTrue(selector.endsWith(")"));
-    assertEquals(25, selector.length());
-    assertEquals(cursor, page.getNextPageToken());
-    assertArrayEquals(bucketList.toArray(), Iterables.toArray(page.getValues(), Bucket.class));
-  }
-
-  @Test
   public void testListBucketsWithException() {
     doThrow(STORAGE_FAILURE).when(storageRpcMock).list(EMPTY_RPC_OPTIONS);
     initializeService();
@@ -1291,72 +1234,6 @@ public class StorageImplMockitoTest {
     ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
     Page<Blob> page =
         storage.list(BUCKET_NAME1, BLOB_LIST_PAGE_SIZE, BLOB_LIST_PREFIX, BLOB_LIST_VERSIONS);
-    assertEquals(cursor, page.getNextPageToken());
-    assertArrayEquals(blobList.toArray(), Iterables.toArray(page.getValues(), Blob.class));
-  }
-
-  @Test
-  public void testListBlobsWithSelectedFields() {
-    String cursor = "cursor";
-    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
-        ArgumentCaptor.forClass(Map.class);
-    ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
-    Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
-    doReturn(result)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .list(Mockito.eq(BUCKET_NAME1), capturedOptions.capture());
-
-    initializeService();
-    ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
-    Page<Blob> page =
-        storage.list(BUCKET_NAME1, BLOB_LIST_PAGE_SIZE, BLOB_LIST_PREFIX, BLOB_LIST_FIELDS);
-    assertEquals(PAGE_SIZE, capturedOptions.getValue().get(StorageRpc.Option.MAX_RESULTS));
-    assertEquals("prefix", capturedOptions.getValue().get(StorageRpc.Option.PREFIX));
-    String selector = (String) capturedOptions.getValue().get(StorageRpc.Option.FIELDS);
-    assertTrue(selector.contains("prefixes"));
-    assertTrue(selector.contains("items("));
-    assertTrue(selector.contains("bucket"));
-    assertTrue(selector.contains("name"));
-    assertTrue(selector.contains("contentType"));
-    assertTrue(selector.contains("md5Hash"));
-    assertTrue(selector.contains("nextPageToken"));
-    assertTrue(selector.endsWith(")"));
-    assertEquals(61, selector.length());
-    assertEquals(cursor, page.getNextPageToken());
-    assertArrayEquals(blobList.toArray(), Iterables.toArray(page.getValues(), Blob.class));
-  }
-
-  @Test
-  public void testListBlobsWithEmptyFields() {
-    String cursor = "cursor";
-    ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
-        ArgumentCaptor.forClass(Map.class);
-    ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
-    Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
-    doReturn(result)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .list(Mockito.eq(BUCKET_NAME1), capturedOptions.capture());
-
-    initializeService();
-    ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
-    Page<Blob> page =
-        storage.list(BUCKET_NAME1, BLOB_LIST_PAGE_SIZE, BLOB_LIST_PREFIX, BLOB_LIST_EMPTY_FIELDS);
-    assertEquals(PAGE_SIZE, capturedOptions.getValue().get(StorageRpc.Option.MAX_RESULTS));
-    assertEquals("prefix", capturedOptions.getValue().get(StorageRpc.Option.PREFIX));
-    String selector = (String) capturedOptions.getValue().get(StorageRpc.Option.FIELDS);
-    assertTrue(selector.contains("prefixes"));
-    assertTrue(selector.contains("items("));
-    assertTrue(selector.contains("bucket"));
-    assertTrue(selector.contains("name"));
-    assertTrue(selector.contains("nextPageToken"));
-    assertTrue(selector.endsWith(")"));
-    assertEquals(41, selector.length());
     assertEquals(cursor, page.getNextPageToken());
     assertArrayEquals(blobList.toArray(), Iterables.toArray(page.getValues(), Blob.class));
   }
