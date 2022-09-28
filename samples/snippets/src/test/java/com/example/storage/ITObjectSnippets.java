@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.example.storage.object.BatchSetObjectMetadata;
 import com.example.storage.object.ChangeObjectCsekToKms;
 import com.example.storage.object.ChangeObjectStorageClass;
 import com.example.storage.object.ComposeObject;
@@ -61,6 +62,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.testing.junit4.MultipleAttemptsRule;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
@@ -100,6 +102,8 @@ public class ITObjectSnippets {
   private static Storage storage;
 
   @Rule public final StdOutCaptureRule stdOutCaptureRule = new StdOutCaptureRule();
+
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
 
   @Rule public ExpectedException thrown = ExpectedException.none();
 
@@ -415,5 +419,19 @@ public class ITObjectSnippets {
     String blobName = "kms-encrypted-blob";
     UploadKmsEncryptedObject.uploadKmsEncryptedObject(PROJECT_ID, BUCKET, blobName, KMS_KEY_NAME);
     assertNotNull(storage.get(BUCKET, blobName));
+  }
+
+  @Test
+  public void testBatchSetObjectMetadata() {
+    storage.create(BlobInfo.newBuilder(BUCKET, "b/1.txt").build());
+    storage.create(BlobInfo.newBuilder(BUCKET, "b/2.txt").build());
+
+    BatchSetObjectMetadata.batchSetObjectMetadata(PROJECT_ID, BUCKET, "b/");
+
+    Map<String, String> firstBlobMetadata = storage.get(BUCKET, "b/1.txt").getMetadata();
+    Map<String, String> secondBlobMetadata = storage.get(BUCKET, "b/2.txt").getMetadata();
+
+    assertEquals("value", firstBlobMetadata.get("keyToAddOrUpdate"));
+    assertEquals("value", secondBlobMetadata.get("keyToAddOrUpdate"));
   }
 }

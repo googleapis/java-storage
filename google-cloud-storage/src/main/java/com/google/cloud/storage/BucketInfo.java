@@ -355,6 +355,11 @@ public class BucketInfo implements Serializable {
       return Objects.hash(dataLocations);
     }
 
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("dataLocations", dataLocations).toString();
+    }
+
     public static Builder newBuilder() {
       return new Builder();
     }

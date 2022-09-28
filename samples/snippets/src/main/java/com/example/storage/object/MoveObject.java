@@ -17,8 +17,9 @@
 package com.example.storage.object;
 
 // [START storage_move_file]
+
 import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.CopyWriter;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
@@ -45,13 +46,25 @@ public class MoveObject {
     // String targetObjectName = "your-new-object-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Blob blob = storage.get(sourceBucketName, sourceObjectName);
-    // Write a copy of the object to the target bucket
-    CopyWriter copyWriter = blob.copyTo(targetBucketName, targetObjectName);
-    Blob copiedBlob = copyWriter.getResult();
+    BlobId source = BlobId.of(sourceBucketName, sourceObjectName);
+    BlobId target = BlobId.of(targetBucketName, targetObjectName);
+
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request returns a 412 error if the
+    // preconditions are not met.
+    // For a target object that does not yet exist, set the DoesNotExist precondition.
+    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
+    // If the destination already exists in your bucket, instead set a generation-match
+    // precondition:
+    // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
+    // Copy source object to target object
+    storage.copy(
+        Storage.CopyRequest.newBuilder().setSource(source).setTarget(target, precondition).build());
+    Blob copiedObject = storage.get(target);
     // Delete the original blob now that we've copied to where we want it, finishing the "move"
     // operation
-    blob.delete();
+    storage.get(source).delete();
 
     System.out.println(
         "Moved object "
@@ -61,7 +74,7 @@ public class MoveObject {
             + " to "
             + targetObjectName
             + " in bucket "
-            + copiedBlob.getBucket());
+            + copiedObject.getBucket());
   }
 }
 // [END storage_move_file]

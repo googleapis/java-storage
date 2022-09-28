@@ -27,10 +27,10 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The name of the bucket containing the object to read.
+   * Required. The name of the bucket containing the object to read.
    * </pre>
    *
-   * <code>string bucket = 1;</code>
+   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bucket.
    */
@@ -39,10 +39,10 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The name of the bucket containing the object to read.
+   * Required. The name of the bucket containing the object to read.
    * </pre>
    *
-   * <code>string bucket = 1;</code>
+   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bytes for bucket.
    */
@@ -52,10 +52,10 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The name of the object to read.
+   * Required. The name of the object to read.
    * </pre>
    *
-   * <code>string object = 2;</code>
+   * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The object.
    */
@@ -64,10 +64,10 @@ public interface ReadObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The name of the object to read.
+   * Required. The name of the object to read.
    * </pre>
    *
-   * <code>string object = 2;</code>
+   * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bytes for object.
    */

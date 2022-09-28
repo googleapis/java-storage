@@ -60,10 +60,10 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. The maximum number of keys to return.
+   * The maximum number of keys to return.
    * </pre>
    *
-   * <code>int32 page_size = 2 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>int32 page_size = 2;</code>
    *
    * @return The pageSize.
    */
@@ -73,10 +73,10 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. A previously returned token from ListHmacKeysResponse to get the next page.
+   * A previously returned token from ListHmacKeysResponse to get the next page.
    * </pre>
    *
-   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>string page_token = 3;</code>
    *
    * @return The pageToken.
    */
@@ -85,10 +85,10 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. A previously returned token from ListHmacKeysResponse to get the next page.
+   * A previously returned token from ListHmacKeysResponse to get the next page.
    * </pre>
    *
-   * <code>string page_token = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>string page_token = 3;</code>
    *
    * @return The bytes for pageToken.
    */
@@ -98,10 +98,10 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. If set, filters to only return HMAC keys for specified service account.
+   * If set, filters to only return HMAC keys for specified service account.
    * </pre>
    *
-   * <code>string service_account_email = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>string service_account_email = 4;</code>
    *
    * @return The serviceAccountEmail.
    */
@@ -110,10 +110,10 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. If set, filters to only return HMAC keys for specified service account.
+   * If set, filters to only return HMAC keys for specified service account.
    * </pre>
    *
-   * <code>string service_account_email = 4 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>string service_account_email = 4;</code>
    *
    * @return The bytes for serviceAccountEmail.
    */
@@ -123,10 +123,10 @@ public interface ListHmacKeysRequestOrBuilder
    *
    *
    * <pre>
-   * Optional. If set, return deleted keys that have not yet been wiped out.
+   * If set, return deleted keys that have not yet been wiped out.
    * </pre>
    *
-   * <code>bool show_deleted_keys = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>bool show_deleted_keys = 5;</code>
    *
    * @return The showDeletedKeys.
    */

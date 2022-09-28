@@ -142,10 +142,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any preconditions.
    * </pre>
    *
-   * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return Whether the writeObjectSpec field is set.
    */
@@ -157,10 +159,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any preconditions.
    * </pre>
    *
-   * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return The writeObjectSpec.
    */
@@ -174,10 +178,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any preconditions.
    * </pre>
    *
-   * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    */
   @java.lang.Override
   public com.google.storage.v2.WriteObjectSpecOrBuilder getWriteObjectSpecOrBuilder() {
@@ -603,10 +609,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
      * @return Whether the writeObjectSpec field is set.
      */
@@ -617,10 +625,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
      * @return The writeObjectSpec.
      */
@@ -637,10 +647,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder setWriteObjectSpec(com.google.storage.v2.WriteObjectSpec value) {
       if (writeObjectSpecBuilder_ == null) {
@@ -659,10 +671,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder setWriteObjectSpec(
         com.google.storage.v2.WriteObjectSpec.Builder builderForValue) {
@@ -679,10 +693,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder mergeWriteObjectSpec(com.google.storage.v2.WriteObjectSpec value) {
       if (writeObjectSpecBuilder_ == null) {
@@ -705,10 +721,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder clearWriteObjectSpec() {
       if (writeObjectSpecBuilder_ == null) {
@@ -725,10 +743,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public com.google.storage.v2.WriteObjectSpec.Builder getWriteObjectSpecBuilder() {
 
@@ -739,10 +759,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public com.google.storage.v2.WriteObjectSpecOrBuilder getWriteObjectSpecOrBuilder() {
       if (writeObjectSpecBuilder_ != null) {
@@ -757,10 +779,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any preconditions.
      * </pre>
      *
-     * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+     * <code>
+     * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.WriteObjectSpec,

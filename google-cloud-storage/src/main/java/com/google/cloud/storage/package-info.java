@@ -17,10 +17,8 @@
 /**
  * A client for Cloud Storage - Unified object storage.
  *
- * <p>Here's a simple usage example for using google-cloud from App/Compute Engine. This example
- * shows how to create a Storage blob. For the complete source code see <a
- * href="https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/GetOrCreateBlob.java">
- * CreateBlob.java</a>.
+ * <p>Here's a simple usage example the Java Storage client. This example shows how to create a
+ * Storage object.
  *
  * <pre>{@code
  * Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -29,10 +27,7 @@
  * Blob blob = storage.create(blobInfo, "Hello, Cloud Storage!".getBytes(UTF_8));
  * }</pre>
  *
- * <p>This second example shows how to update the blob's content if the blob exists. For the
- * complete source code see <a
- * href="https://github.com/googleapis/google-cloud-java/tree/master/google-cloud-examples/src/main/java/com/google/cloud/examples/storage/snippets/UpdateBlob.java">
- * UpdateBlob.java</a>.
+ * <p>This second example shows how to update an object's content if the object exists.
  *
  * <pre>{@code
  * Storage storage = StorageOptions.getDefaultInstance().getService();
@@ -47,10 +42,19 @@
  * }
  * }</pre>
  *
+ * <p>For more detailed code examples, see the <a
+ * href="https://cloud.google.com/storage/docs/samples">sample library</a>.
+ *
  * <p>When using google-cloud from outside of App/Compute Engine, you have to <a
  * href="https://github.com/googleapis/google-cloud-java#specifying-a-project-id">specify a project
  * ID</a> and <a href="https://github.com/googleapis/google-cloud-java#authentication">provide
  * credentials</a>.
+ *
+ * <p>Operations in this library are generally thread safe, except for the use of <a
+ * href="https://github.com/googleapis/java-storage/blob/main/google-cloud-storage/src/main/java/com/google/cloud/storage/BlobReadChannel.java">
+ * BlobReadChannel</a> and <a
+ * href="https://github.com/googleapis/java-storage/blob/main/google-cloud-storage/src/main/java/com/google/cloud/storage/BlobWriteChannel.java">
+ * BlobWriteChannel</a>.
  *
  * @see <a href="https://cloud.google.com/storage/">Google Cloud Storage</a>
  */

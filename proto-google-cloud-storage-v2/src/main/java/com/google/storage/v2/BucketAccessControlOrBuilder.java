@@ -83,7 +83,8 @@ public interface BucketAccessControlOrBuilder
    * * `group-{groupid}`
    * * `group-{email}`
    * * `domain-{domain}`
-   * * `project-{team-projectid}`
+   * * `project-{team}-{projectnumber}`
+   * * `project-{team}-{projectid}`
    * * `allUsers`
    * * `allAuthenticatedUsers`
    * Examples:
@@ -92,6 +93,8 @@ public interface BucketAccessControlOrBuilder
    * `group-example&#64;googlegroups.com`
    * * All members of the Google Apps for Business domain `example.com` would be
    * `domain-example.com`
+   * For project entities, `project-{team}-{projectnumber}` format will be
+   * returned on response.
    * </pre>
    *
    * <code>string entity = 3;</code>
@@ -109,7 +112,8 @@ public interface BucketAccessControlOrBuilder
    * * `group-{groupid}`
    * * `group-{email}`
    * * `domain-{domain}`
-   * * `project-{team-projectid}`
+   * * `project-{team}-{projectnumber}`
+   * * `project-{team}-{projectid}`
    * * `allUsers`
    * * `allAuthenticatedUsers`
    * Examples:
@@ -118,6 +122,8 @@ public interface BucketAccessControlOrBuilder
    * `group-example&#64;googlegroups.com`
    * * All members of the Google Apps for Business domain `example.com` would be
    * `domain-example.com`
+   * For project entities, `project-{team}-{projectnumber}` format will be
+   * returned on response.
    * </pre>
    *
    * <code>string entity = 3;</code>
@@ -125,6 +131,33 @@ public interface BucketAccessControlOrBuilder
    * @return The bytes for entity.
    */
   com.google.protobuf.ByteString getEntityBytes();
+
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The alternative entity format, if exists. For project entities,
+   * `project-{team}-{projectid}` format will be returned on response.
+   * </pre>
+   *
+   * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+   *
+   * @return The entityAlt.
+   */
+  java.lang.String getEntityAlt();
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The alternative entity format, if exists. For project entities,
+   * `project-{team}-{projectid}` format will be returned on response.
+   * </pre>
+   *
+   * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+   *
+   * @return The bytes for entityAlt.
+   */
+  com.google.protobuf.ByteString getEntityAltBytes();
 
   /**
    *

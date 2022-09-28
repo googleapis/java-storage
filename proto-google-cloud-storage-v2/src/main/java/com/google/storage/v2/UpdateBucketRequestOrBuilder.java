@@ -27,11 +27,11 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * The bucket to update.
+   * Required. The bucket to update.
    * The bucket's `name` field will be used to identify the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 1;</code>
+   * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return Whether the bucket field is set.
    */
@@ -40,11 +40,11 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * The bucket to update.
+   * Required. The bucket to update.
    * The bucket's `name` field will be used to identify the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 1;</code>
+   * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bucket.
    */
@@ -53,11 +53,11 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * The bucket to update.
+   * Required. The bucket to update.
    * The bucket's `name` field will be used to identify the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 1;</code>
+   * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    */
   com.google.storage.v2.BucketOrBuilder getBucketOrBuilder();
 
@@ -177,7 +177,7 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -187,7 +187,8 @@ public interface UpdateBucketRequestOrBuilder
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return Whether the updateMask field is set.
    */
@@ -196,7 +197,7 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -206,7 +207,8 @@ public interface UpdateBucketRequestOrBuilder
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return The updateMask.
    */
@@ -215,7 +217,7 @@ public interface UpdateBucketRequestOrBuilder
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -225,7 +227,8 @@ public interface UpdateBucketRequestOrBuilder
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    */
   com.google.protobuf.FieldMaskOrBuilder getUpdateMaskOrBuilder();
 }

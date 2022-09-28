@@ -353,11 +353,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. If present, only send notifications about listed event types. If empty,
+   * If present, only send notifications about listed event types. If empty,
    * sent notifications for all event types.
    * </pre>
    *
-   * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>repeated string event_types = 3;</code>
    *
    * @return A list containing the eventTypes.
    */
@@ -368,11 +368,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. If present, only send notifications about listed event types. If empty,
+   * If present, only send notifications about listed event types. If empty,
    * sent notifications for all event types.
    * </pre>
    *
-   * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>repeated string event_types = 3;</code>
    *
    * @return The count of eventTypes.
    */
@@ -383,11 +383,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. If present, only send notifications about listed event types. If empty,
+   * If present, only send notifications about listed event types. If empty,
    * sent notifications for all event types.
    * </pre>
    *
-   * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>repeated string event_types = 3;</code>
    *
    * @param index The index of the element to return.
    * @return The eventTypes at the given index.
@@ -399,11 +399,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. If present, only send notifications about listed event types. If empty,
+   * If present, only send notifications about listed event types. If empty,
    * sent notifications for all event types.
    * </pre>
    *
-   * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>repeated string event_types = 3;</code>
    *
    * @param index The index of the value to return.
    * @return The bytes of the eventTypes at the given index.
@@ -443,13 +443,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. An optional list of additional attributes to attach to each Pub/Sub
+   * A list of additional attributes to attach to each Pub/Sub
    * message published for this notification subscription.
    * </pre>
    *
-   * <code>
-   * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-   * </code>
+   * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
    */
   @java.lang.Override
   public boolean containsCustomAttributes(java.lang.String key) {
@@ -468,13 +466,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. An optional list of additional attributes to attach to each Pub/Sub
+   * A list of additional attributes to attach to each Pub/Sub
    * message published for this notification subscription.
    * </pre>
    *
-   * <code>
-   * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-   * </code>
+   * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
    */
   @java.lang.Override
   public java.util.Map<java.lang.String, java.lang.String> getCustomAttributesMap() {
@@ -484,13 +480,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. An optional list of additional attributes to attach to each Pub/Sub
+   * A list of additional attributes to attach to each Pub/Sub
    * message published for this notification subscription.
    * </pre>
    *
-   * <code>
-   * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-   * </code>
+   * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
    */
   @java.lang.Override
   public java.lang.String getCustomAttributesOrDefault(
@@ -505,13 +499,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. An optional list of additional attributes to attach to each Pub/Sub
+   * A list of additional attributes to attach to each Pub/Sub
    * message published for this notification subscription.
    * </pre>
    *
-   * <code>
-   * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-   * </code>
+   * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
    */
   @java.lang.Override
   public java.lang.String getCustomAttributesOrThrow(java.lang.String key) {
@@ -531,11 +523,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. If present, only apply this notification config to object names that
+   * If present, only apply this notification config to object names that
    * begin with this prefix.
    * </pre>
    *
-   * <code>string object_name_prefix = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>string object_name_prefix = 5;</code>
    *
    * @return The objectNamePrefix.
    */
@@ -555,11 +547,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Optional. If present, only apply this notification config to object names that
+   * If present, only apply this notification config to object names that
    * begin with this prefix.
    * </pre>
    *
-   * <code>string object_name_prefix = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+   * <code>string object_name_prefix = 5;</code>
    *
    * @return The bytes for objectNamePrefix.
    */
@@ -1440,11 +1432,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @return A list containing the eventTypes.
      */
@@ -1455,11 +1447,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @return The count of eventTypes.
      */
@@ -1470,11 +1462,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @param index The index of the element to return.
      * @return The eventTypes at the given index.
@@ -1486,11 +1478,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @param index The index of the value to return.
      * @return The bytes of the eventTypes at the given index.
@@ -1502,11 +1494,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @param index The index to set the value at.
      * @param value The eventTypes to set.
@@ -1525,11 +1517,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @param value The eventTypes to add.
      * @return This builder for chaining.
@@ -1547,11 +1539,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @param values The eventTypes to add.
      * @return This builder for chaining.
@@ -1566,11 +1558,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @return This builder for chaining.
      */
@@ -1584,11 +1576,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only send notifications about listed event types. If empty,
+     * If present, only send notifications about listed event types. If empty,
      * sent notifications for all event types.
      * </pre>
      *
-     * <code>repeated string event_types = 3 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>repeated string event_types = 3;</code>
      *
      * @param value The bytes of the eventTypes to add.
      * @return This builder for chaining.
@@ -1637,13 +1629,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. An optional list of additional attributes to attach to each Pub/Sub
+     * A list of additional attributes to attach to each Pub/Sub
      * message published for this notification subscription.
      * </pre>
      *
-     * <code>
-     * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-     * </code>
+     * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     @java.lang.Override
     public boolean containsCustomAttributes(java.lang.String key) {
@@ -1662,13 +1652,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. An optional list of additional attributes to attach to each Pub/Sub
+     * A list of additional attributes to attach to each Pub/Sub
      * message published for this notification subscription.
      * </pre>
      *
-     * <code>
-     * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-     * </code>
+     * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     @java.lang.Override
     public java.util.Map<java.lang.String, java.lang.String> getCustomAttributesMap() {
@@ -1678,13 +1666,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. An optional list of additional attributes to attach to each Pub/Sub
+     * A list of additional attributes to attach to each Pub/Sub
      * message published for this notification subscription.
      * </pre>
      *
-     * <code>
-     * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-     * </code>
+     * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     @java.lang.Override
     public java.lang.String getCustomAttributesOrDefault(
@@ -1700,13 +1686,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. An optional list of additional attributes to attach to each Pub/Sub
+     * A list of additional attributes to attach to each Pub/Sub
      * message published for this notification subscription.
      * </pre>
      *
-     * <code>
-     * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-     * </code>
+     * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     @java.lang.Override
     public java.lang.String getCustomAttributesOrThrow(java.lang.String key) {
@@ -1729,13 +1713,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. An optional list of additional attributes to attach to each Pub/Sub
+     * A list of additional attributes to attach to each Pub/Sub
      * message published for this notification subscription.
      * </pre>
      *
-     * <code>
-     * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-     * </code>
+     * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     public Builder removeCustomAttributes(java.lang.String key) {
       if (key == null) {
@@ -1753,13 +1735,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. An optional list of additional attributes to attach to each Pub/Sub
+     * A list of additional attributes to attach to each Pub/Sub
      * message published for this notification subscription.
      * </pre>
      *
-     * <code>
-     * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-     * </code>
+     * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     public Builder putCustomAttributes(java.lang.String key, java.lang.String value) {
       if (key == null) {
@@ -1776,13 +1756,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. An optional list of additional attributes to attach to each Pub/Sub
+     * A list of additional attributes to attach to each Pub/Sub
      * message published for this notification subscription.
      * </pre>
      *
-     * <code>
-     * map&lt;string, string&gt; custom_attributes = 4 [(.google.api.field_behavior) = OPTIONAL];
-     * </code>
+     * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     public Builder putAllCustomAttributes(
         java.util.Map<java.lang.String, java.lang.String> values) {
@@ -1795,11 +1773,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only apply this notification config to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
-     * <code>string object_name_prefix = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>string object_name_prefix = 5;</code>
      *
      * @return The objectNamePrefix.
      */
@@ -1818,11 +1796,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only apply this notification config to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
-     * <code>string object_name_prefix = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>string object_name_prefix = 5;</code>
      *
      * @return The bytes for objectNamePrefix.
      */
@@ -1841,11 +1819,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only apply this notification config to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
-     * <code>string object_name_prefix = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>string object_name_prefix = 5;</code>
      *
      * @param value The objectNamePrefix to set.
      * @return This builder for chaining.
@@ -1863,11 +1841,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only apply this notification config to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
-     * <code>string object_name_prefix = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>string object_name_prefix = 5;</code>
      *
      * @return This builder for chaining.
      */
@@ -1881,11 +1859,11 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Optional. If present, only apply this notification config to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
-     * <code>string object_name_prefix = 5 [(.google.api.field_behavior) = OPTIONAL];</code>
+     * <code>string object_name_prefix = 5;</code>
      *
      * @param value The bytes for objectNamePrefix to set.
      * @return This builder for chaining.

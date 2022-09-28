@@ -27,14 +27,14 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The object to update.
+   * Required. The object to update.
    * The object's bucket and name fields are used to identify the object to
    * update. If present, the object's generation field selects a specific
    * revision of this object whose metadata should be updated. Otherwise,
    * assumes the live version of the object.
    * </pre>
    *
-   * <code>.google.storage.v2.Object object = 1;</code>
+   * <code>.google.storage.v2.Object object = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return Whether the object field is set.
    */
@@ -43,14 +43,14 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The object to update.
+   * Required. The object to update.
    * The object's bucket and name fields are used to identify the object to
    * update. If present, the object's generation field selects a specific
    * revision of this object whose metadata should be updated. Otherwise,
    * assumes the live version of the object.
    * </pre>
    *
-   * <code>.google.storage.v2.Object object = 1;</code>
+   * <code>.google.storage.v2.Object object = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The object.
    */
@@ -59,14 +59,14 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * The object to update.
+   * Required. The object to update.
    * The object's bucket and name fields are used to identify the object to
    * update. If present, the object's generation field selects a specific
    * revision of this object whose metadata should be updated. Otherwise,
    * assumes the live version of the object.
    * </pre>
    *
-   * <code>.google.storage.v2.Object object = 1;</code>
+   * <code>.google.storage.v2.Object object = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    */
   com.google.storage.v2.ObjectOrBuilder getObjectOrBuilder();
 
@@ -217,7 +217,7 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -227,7 +227,8 @@ public interface UpdateObjectRequestOrBuilder
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 7;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 7 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return Whether the updateMask field is set.
    */
@@ -236,7 +237,7 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -246,7 +247,8 @@ public interface UpdateObjectRequestOrBuilder
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 7;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 7 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return The updateMask.
    */
@@ -255,7 +257,7 @@ public interface UpdateObjectRequestOrBuilder
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -265,7 +267,8 @@ public interface UpdateObjectRequestOrBuilder
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 7;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 7 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    */
   com.google.protobuf.FieldMaskOrBuilder getUpdateMaskOrBuilder();
 

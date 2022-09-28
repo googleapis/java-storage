@@ -45,7 +45,17 @@ public class UploadKmsEncryptedObject {
 
     BlobId blobId = BlobId.of(bucketName, objectName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
-    storage.create(blobInfo, data, Storage.BlobTargetOption.kmsKeyName(kmsKeyName));
+
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request returns a 412 error if the
+    // preconditions are not met.
+    // For a target object that does not yet exist, set the DoesNotExist precondition.
+    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
+    // If the destination already exists in your bucket, instead set a generation-match
+    // precondition:
+    // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
+    storage.create(blobInfo, data, Storage.BlobTargetOption.kmsKeyName(kmsKeyName), precondition);
 
     System.out.println(
         "Uploaded object "

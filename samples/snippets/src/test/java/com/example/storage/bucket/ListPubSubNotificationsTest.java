@@ -23,6 +23,7 @@ import com.example.storage.TestBase;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
+import com.google.cloud.testing.junit4.MultipleAttemptsRule;
 import com.google.common.collect.ImmutableMap;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.GetIamPolicyRequest;
@@ -32,9 +33,12 @@ import java.util.Map;
 import java.util.UUID;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class ListPubSubNotificationsTest extends TestBase {
+
+  @Rule public MultipleAttemptsRule multipleAttemptsRule = new MultipleAttemptsRule(5);
 
   private static final Notification.PayloadFormat PAYLOAD_FORMAT =
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;

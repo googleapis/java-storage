@@ -27,10 +27,12 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any preconditions.
    * </pre>
    *
-   * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return Whether the writeObjectSpec field is set.
    */
@@ -39,10 +41,12 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any preconditions.
    * </pre>
    *
-   * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return The writeObjectSpec.
    */
@@ -51,10 +55,12 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any preconditions.
    * </pre>
    *
-   * <code>.google.storage.v2.WriteObjectSpec write_object_spec = 1;</code>
+   * <code>
+   * .google.storage.v2.WriteObjectSpec write_object_spec = 1 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    */
   com.google.storage.v2.WriteObjectSpecOrBuilder getWriteObjectSpecOrBuilder();
 

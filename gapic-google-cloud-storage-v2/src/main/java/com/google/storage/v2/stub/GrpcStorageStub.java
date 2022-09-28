@@ -432,6 +432,10 @@ public class GrpcStorageStub extends StorageStub {
   private static final PathTemplate DELETE_BUCKET_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate GET_BUCKET_0_PATH_TEMPLATE = PathTemplate.create("{bucket=**}");
+  private static final PathTemplate CREATE_BUCKET_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
+  private static final PathTemplate LIST_BUCKETS_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
   private static final PathTemplate LOCK_BUCKET_RETENTION_POLICY_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate GET_IAM_POLICY_0_PATH_TEMPLATE =
@@ -481,6 +485,18 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate QUERY_WRITE_STATUS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
+  private static final PathTemplate GET_SERVICE_ACCOUNT_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
+  private static final PathTemplate CREATE_HMAC_KEY_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
+  private static final PathTemplate DELETE_HMAC_KEY_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
+  private static final PathTemplate GET_HMAC_KEY_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
+  private static final PathTemplate LIST_HMAC_KEYS_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
+  private static final PathTemplate UPDATE_HMAC_KEY_0_PATH_TEMPLATE =
+      PathTemplate.create("{project=**}");
 
   public static final GrpcStorageStub create(StorageStubSettings settings) throws IOException {
     return new GrpcStorageStub(settings, ClientContext.create(settings));
@@ -540,10 +556,22 @@ public class GrpcStorageStub extends StorageStub {
     GrpcCallSettings<CreateBucketRequest, Bucket> createBucketTransportSettings =
         GrpcCallSettings.<CreateBucketRequest, Bucket>newBuilder()
             .setMethodDescriptor(createBucketMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getParent(), "project", CREATE_BUCKET_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<ListBucketsRequest, ListBucketsResponse> listBucketsTransportSettings =
         GrpcCallSettings.<ListBucketsRequest, ListBucketsResponse>newBuilder()
             .setMethodDescriptor(listBucketsMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getParent(), "project", LIST_BUCKETS_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<LockBucketRetentionPolicyRequest, Bucket>
         lockBucketRetentionPolicyTransportSettings =
@@ -792,26 +820,67 @@ public class GrpcStorageStub extends StorageStub {
     GrpcCallSettings<GetServiceAccountRequest, ServiceAccount> getServiceAccountTransportSettings =
         GrpcCallSettings.<GetServiceAccountRequest, ServiceAccount>newBuilder()
             .setMethodDescriptor(getServiceAccountMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getProject(), "project", GET_SERVICE_ACCOUNT_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<CreateHmacKeyRequest, CreateHmacKeyResponse> createHmacKeyTransportSettings =
         GrpcCallSettings.<CreateHmacKeyRequest, CreateHmacKeyResponse>newBuilder()
             .setMethodDescriptor(createHmacKeyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getProject(), "project", CREATE_HMAC_KEY_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<DeleteHmacKeyRequest, Empty> deleteHmacKeyTransportSettings =
         GrpcCallSettings.<DeleteHmacKeyRequest, Empty>newBuilder()
             .setMethodDescriptor(deleteHmacKeyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getProject(), "project", DELETE_HMAC_KEY_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<GetHmacKeyRequest, HmacKeyMetadata> getHmacKeyTransportSettings =
         GrpcCallSettings.<GetHmacKeyRequest, HmacKeyMetadata>newBuilder()
             .setMethodDescriptor(getHmacKeyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getProject(), "project", GET_HMAC_KEY_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<ListHmacKeysRequest, ListHmacKeysResponse> listHmacKeysTransportSettings =
         GrpcCallSettings.<ListHmacKeysRequest, ListHmacKeysResponse>newBuilder()
             .setMethodDescriptor(listHmacKeysMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getProject(), "project", LIST_HMAC_KEYS_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
             .build();
     GrpcCallSettings<UpdateHmacKeyRequest, HmacKeyMetadata> updateHmacKeyTransportSettings =
         GrpcCallSettings.<UpdateHmacKeyRequest, HmacKeyMetadata>newBuilder()
             .setMethodDescriptor(updateHmacKeyMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  if (request.getHmacKey() != null) {
+                    builder.add(
+                        request.getHmacKey().getProject(),
+                        "project",
+                        UPDATE_HMAC_KEY_0_PATH_TEMPLATE);
+                  }
+                  return builder.build();
+                })
             .build();
 
     this.deleteBucketCallable =

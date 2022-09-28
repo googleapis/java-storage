@@ -41,6 +41,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     role_ = "";
     id_ = "";
     entity_ = "";
+    entityAlt_ = "";
     entityId_ = "";
     etag_ = "";
     email_ = "";
@@ -138,6 +139,13 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
               java.lang.String s = input.readStringRequireUtf8();
 
               etag_ = s;
+              break;
+            }
+          case 74:
+            {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              entityAlt_ = s;
               break;
             }
           default:
@@ -286,7 +294,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
    * * `group-{groupid}`
    * * `group-{email}`
    * * `domain-{domain}`
-   * * `project-{team-projectid}`
+   * * `project-{team}-{projectnumber}`
+   * * `project-{team}-{projectid}`
    * * `allUsers`
    * * `allAuthenticatedUsers`
    * Examples:
@@ -295,6 +304,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
    * `group-example&#64;googlegroups.com`
    * * All members of the Google Apps for Business domain `example.com` would be
    * `domain-example.com`
+   * For project entities, `project-{team}-{projectnumber}` format will be
+   * returned on response.
    * </pre>
    *
    * <code>string entity = 3;</code>
@@ -323,7 +334,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
    * * `group-{groupid}`
    * * `group-{email}`
    * * `domain-{domain}`
-   * * `project-{team-projectid}`
+   * * `project-{team}-{projectnumber}`
+   * * `project-{team}-{projectid}`
    * * `allUsers`
    * * `allAuthenticatedUsers`
    * Examples:
@@ -332,6 +344,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
    * `group-example&#64;googlegroups.com`
    * * All members of the Google Apps for Business domain `example.com` would be
    * `domain-example.com`
+   * For project entities, `project-{team}-{projectnumber}` format will be
+   * returned on response.
    * </pre>
    *
    * <code>string entity = 3;</code>
@@ -345,6 +359,57 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       com.google.protobuf.ByteString b =
           com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
       entity_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  public static final int ENTITY_ALT_FIELD_NUMBER = 9;
+  private volatile java.lang.Object entityAlt_;
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The alternative entity format, if exists. For project entities,
+   * `project-{team}-{projectid}` format will be returned on response.
+   * </pre>
+   *
+   * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+   *
+   * @return The entityAlt.
+   */
+  @java.lang.Override
+  public java.lang.String getEntityAlt() {
+    java.lang.Object ref = entityAlt_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      entityAlt_ = s;
+      return s;
+    }
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Output only. The alternative entity format, if exists. For project entities,
+   * `project-{team}-{projectid}` format will be returned on response.
+   * </pre>
+   *
+   * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+   *
+   * @return The bytes for entityAlt.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString getEntityAltBytes() {
+    java.lang.Object ref = entityAlt_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+      entityAlt_ = b;
       return b;
     } else {
       return (com.google.protobuf.ByteString) ref;
@@ -639,6 +704,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 8, etag_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(entityAlt_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 9, entityAlt_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -672,6 +740,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(8, etag_);
     }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(entityAlt_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(9, entityAlt_);
+    }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
     return size;
@@ -691,6 +762,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     if (!getRole().equals(other.getRole())) return false;
     if (!getId().equals(other.getId())) return false;
     if (!getEntity().equals(other.getEntity())) return false;
+    if (!getEntityAlt().equals(other.getEntityAlt())) return false;
     if (!getEntityId().equals(other.getEntityId())) return false;
     if (!getEtag().equals(other.getEtag())) return false;
     if (!getEmail().equals(other.getEmail())) return false;
@@ -716,6 +788,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     hash = (53 * hash) + getId().hashCode();
     hash = (37 * hash) + ENTITY_FIELD_NUMBER;
     hash = (53 * hash) + getEntity().hashCode();
+    hash = (37 * hash) + ENTITY_ALT_FIELD_NUMBER;
+    hash = (53 * hash) + getEntityAlt().hashCode();
     hash = (37 * hash) + ENTITY_ID_FIELD_NUMBER;
     hash = (53 * hash) + getEntityId().hashCode();
     hash = (37 * hash) + ETAG_FIELD_NUMBER;
@@ -879,6 +953,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
 
       entity_ = "";
 
+      entityAlt_ = "";
+
       entityId_ = "";
 
       etag_ = "";
@@ -923,6 +999,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       result.role_ = role_;
       result.id_ = id_;
       result.entity_ = entity_;
+      result.entityAlt_ = entityAlt_;
       result.entityId_ = entityId_;
       result.etag_ = etag_;
       result.email_ = email_;
@@ -991,6 +1068,10 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       }
       if (!other.getEntity().isEmpty()) {
         entity_ = other.entity_;
+        onChanged();
+      }
+      if (!other.getEntityAlt().isEmpty()) {
+        entityAlt_ = other.entityAlt_;
         onChanged();
       }
       if (!other.getEntityId().isEmpty()) {
@@ -1264,7 +1345,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * * `group-{groupid}`
      * * `group-{email}`
      * * `domain-{domain}`
-     * * `project-{team-projectid}`
+     * * `project-{team}-{projectnumber}`
+     * * `project-{team}-{projectid}`
      * * `allUsers`
      * * `allAuthenticatedUsers`
      * Examples:
@@ -1273,6 +1355,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`
+     * For project entities, `project-{team}-{projectnumber}` format will be
+     * returned on response.
      * </pre>
      *
      * <code>string entity = 3;</code>
@@ -1300,7 +1384,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * * `group-{groupid}`
      * * `group-{email}`
      * * `domain-{domain}`
-     * * `project-{team-projectid}`
+     * * `project-{team}-{projectnumber}`
+     * * `project-{team}-{projectid}`
      * * `allUsers`
      * * `allAuthenticatedUsers`
      * Examples:
@@ -1309,6 +1394,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`
+     * For project entities, `project-{team}-{projectnumber}` format will be
+     * returned on response.
      * </pre>
      *
      * <code>string entity = 3;</code>
@@ -1336,7 +1423,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * * `group-{groupid}`
      * * `group-{email}`
      * * `domain-{domain}`
-     * * `project-{team-projectid}`
+     * * `project-{team}-{projectnumber}`
+     * * `project-{team}-{projectid}`
      * * `allUsers`
      * * `allAuthenticatedUsers`
      * Examples:
@@ -1345,6 +1433,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`
+     * For project entities, `project-{team}-{projectnumber}` format will be
+     * returned on response.
      * </pre>
      *
      * <code>string entity = 3;</code>
@@ -1371,7 +1461,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * * `group-{groupid}`
      * * `group-{email}`
      * * `domain-{domain}`
-     * * `project-{team-projectid}`
+     * * `project-{team}-{projectnumber}`
+     * * `project-{team}-{projectid}`
      * * `allUsers`
      * * `allAuthenticatedUsers`
      * Examples:
@@ -1380,6 +1471,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`
+     * For project entities, `project-{team}-{projectnumber}` format will be
+     * returned on response.
      * </pre>
      *
      * <code>string entity = 3;</code>
@@ -1402,7 +1495,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * * `group-{groupid}`
      * * `group-{email}`
      * * `domain-{domain}`
-     * * `project-{team-projectid}`
+     * * `project-{team}-{projectnumber}`
+     * * `project-{team}-{projectid}`
      * * `allUsers`
      * * `allAuthenticatedUsers`
      * Examples:
@@ -1411,6 +1505,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * `group-example&#64;googlegroups.com`
      * * All members of the Google Apps for Business domain `example.com` would be
      * `domain-example.com`
+     * For project entities, `project-{team}-{projectnumber}` format will be
+     * returned on response.
      * </pre>
      *
      * <code>string entity = 3;</code>
@@ -1425,6 +1521,117 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       checkByteStringIsUtf8(value);
 
       entity_ = value;
+      onChanged();
+      return this;
+    }
+
+    private java.lang.Object entityAlt_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * Output only. The alternative entity format, if exists. For project entities,
+     * `project-{team}-{projectid}` format will be returned on response.
+     * </pre>
+     *
+     * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+     *
+     * @return The entityAlt.
+     */
+    public java.lang.String getEntityAlt() {
+      java.lang.Object ref = entityAlt_;
+      if (!(ref instanceof java.lang.String)) {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        entityAlt_ = s;
+        return s;
+      } else {
+        return (java.lang.String) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Output only. The alternative entity format, if exists. For project entities,
+     * `project-{team}-{projectid}` format will be returned on response.
+     * </pre>
+     *
+     * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+     *
+     * @return The bytes for entityAlt.
+     */
+    public com.google.protobuf.ByteString getEntityAltBytes() {
+      java.lang.Object ref = entityAlt_;
+      if (ref instanceof String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        entityAlt_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Output only. The alternative entity format, if exists. For project entities,
+     * `project-{team}-{projectid}` format will be returned on response.
+     * </pre>
+     *
+     * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+     *
+     * @param value The entityAlt to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEntityAlt(java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      entityAlt_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Output only. The alternative entity format, if exists. For project entities,
+     * `project-{team}-{projectid}` format will be returned on response.
+     * </pre>
+     *
+     * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearEntityAlt() {
+
+      entityAlt_ = getDefaultInstance().getEntityAlt();
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Output only. The alternative entity format, if exists. For project entities,
+     * `project-{team}-{projectid}` format will be returned on response.
+     * </pre>
+     *
+     * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
+     *
+     * @param value The bytes for entityAlt to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEntityAltBytes(com.google.protobuf.ByteString value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      checkByteStringIsUtf8(value);
+
+      entityAlt_ = value;
       onChanged();
       return this;
     }

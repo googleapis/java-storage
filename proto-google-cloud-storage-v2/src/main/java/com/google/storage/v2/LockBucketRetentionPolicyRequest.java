@@ -178,11 +178,11 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
    *
    *
    * <pre>
-   * Makes the operation conditional on whether bucket's current metageneration
+   * Required. Makes the operation conditional on whether bucket's current metageneration
    * matches the given value. Must be positive.
    * </pre>
    *
-   * <code>int64 if_metageneration_match = 2;</code>
+   * <code>int64 if_metageneration_match = 2 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The ifMetagenerationMatch.
    */
@@ -646,11 +646,11 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
      *
      *
      * <pre>
-     * Makes the operation conditional on whether bucket's current metageneration
+     * Required. Makes the operation conditional on whether bucket's current metageneration
      * matches the given value. Must be positive.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 2;</code>
+     * <code>int64 if_metageneration_match = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The ifMetagenerationMatch.
      */
@@ -662,11 +662,11 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
      *
      *
      * <pre>
-     * Makes the operation conditional on whether bucket's current metageneration
+     * Required. Makes the operation conditional on whether bucket's current metageneration
      * matches the given value. Must be positive.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 2;</code>
+     * <code>int64 if_metageneration_match = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The ifMetagenerationMatch to set.
      * @return This builder for chaining.
@@ -681,11 +681,11 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
      *
      *
      * <pre>
-     * Makes the operation conditional on whether bucket's current metageneration
+     * Required. Makes the operation conditional on whether bucket's current metageneration
      * matches the given value. Must be positive.
      * </pre>
      *
-     * <code>int64 if_metageneration_match = 2;</code>
+     * <code>int64 if_metageneration_match = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return This builder for chaining.
      */

@@ -170,11 +170,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The bucket to update.
+   * Required. The bucket to update.
    * The bucket's `name` field will be used to identify the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 1;</code>
+   * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return Whether the bucket field is set.
    */
@@ -186,11 +186,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The bucket to update.
+   * Required. The bucket to update.
    * The bucket's `name` field will be used to identify the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 1;</code>
+   * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bucket.
    */
@@ -202,11 +202,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * The bucket to update.
+   * Required. The bucket to update.
    * The bucket's `name` field will be used to identify the bucket.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 1;</code>
+   * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    */
   @java.lang.Override
   public com.google.storage.v2.BucketOrBuilder getBucketOrBuilder() {
@@ -395,7 +395,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -405,7 +405,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return Whether the updateMask field is set.
    */
@@ -417,7 +418,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -427,7 +428,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
    * @return The updateMask.
    */
@@ -439,7 +441,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * List of fields to be updated.
+   * Required. List of fields to be updated.
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
@@ -449,7 +451,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
    * an error.
    * </pre>
    *
-   * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+   * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    */
   @java.lang.Override
   public com.google.protobuf.FieldMaskOrBuilder getUpdateMaskOrBuilder() {
@@ -907,11 +910,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return Whether the bucket field is set.
      */
@@ -922,11 +925,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bucket.
      */
@@ -941,11 +944,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public Builder setBucket(com.google.storage.v2.Bucket value) {
       if (bucketBuilder_ == null) {
@@ -964,11 +967,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public Builder setBucket(com.google.storage.v2.Bucket.Builder builderForValue) {
       if (bucketBuilder_ == null) {
@@ -984,11 +987,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public Builder mergeBucket(com.google.storage.v2.Bucket value) {
       if (bucketBuilder_ == null) {
@@ -1009,11 +1012,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public Builder clearBucket() {
       if (bucketBuilder_ == null) {
@@ -1030,11 +1033,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public com.google.storage.v2.Bucket.Builder getBucketBuilder() {
 
@@ -1045,11 +1048,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public com.google.storage.v2.BucketOrBuilder getBucketOrBuilder() {
       if (bucketBuilder_ != null) {
@@ -1062,11 +1065,11 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * The bucket to update.
+     * Required. The bucket to update.
      * The bucket's `name` field will be used to identify the bucket.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 1;</code>
+     * <code>.google.storage.v2.Bucket bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket,
@@ -1469,7 +1472,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1479,7 +1482,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
      * @return Whether the updateMask field is set.
      */
@@ -1490,7 +1494,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1500,7 +1504,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
      * @return The updateMask.
      */
@@ -1517,7 +1522,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1527,7 +1532,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder setUpdateMask(com.google.protobuf.FieldMask value) {
       if (updateMaskBuilder_ == null) {
@@ -1546,7 +1552,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1556,7 +1562,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder setUpdateMask(com.google.protobuf.FieldMask.Builder builderForValue) {
       if (updateMaskBuilder_ == null) {
@@ -1572,7 +1579,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1582,7 +1589,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder mergeUpdateMask(com.google.protobuf.FieldMask value) {
       if (updateMaskBuilder_ == null) {
@@ -1603,7 +1611,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1613,7 +1621,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder clearUpdateMask() {
       if (updateMaskBuilder_ == null) {
@@ -1630,7 +1639,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1640,7 +1649,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public com.google.protobuf.FieldMask.Builder getUpdateMaskBuilder() {
 
@@ -1651,7 +1661,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1661,7 +1671,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public com.google.protobuf.FieldMaskOrBuilder getUpdateMaskOrBuilder() {
       if (updateMaskBuilder_ != null) {
@@ -1676,7 +1687,7 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * List of fields to be updated.
+     * Required. List of fields to be updated.
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
@@ -1686,7 +1697,8 @@ public final class UpdateBucketRequest extends com.google.protobuf.GeneratedMess
      * an error.
      * </pre>
      *
-     * <code>.google.protobuf.FieldMask update_mask = 6;</code>
+     * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.protobuf.FieldMask,
