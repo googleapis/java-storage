@@ -20,4 +20,23 @@
     <method>* *ObjectSize()</method>
   </difference>
 
+  <!-- Allow adding new entity_alt field to Acls -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/BucketAccessControlOrBuilder</className>
+    <method>* *EntityAlt*()</method>
+  </difference>
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/ObjectAccessControlOrBuilder</className>
+    <method>* *EntityAlt*()</method>
+  </difference>
+
+  <!-- Allow Bucket.RetentionPolicy.retention_period to be optional -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/Bucket$RetentionPolicyOrBuilder</className>
+    <method>boolean hasRetentionPeriod()</method>
+  </difference>
+
 </differences>

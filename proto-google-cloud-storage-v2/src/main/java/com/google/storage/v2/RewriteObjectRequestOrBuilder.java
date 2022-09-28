@@ -27,7 +27,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the destination object.
+   * Required. Immutable. The name of the destination object.
    * See the
    * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
    * Example: `test.txt`
@@ -36,7 +36,9 @@ public interface RewriteObjectRequestOrBuilder
    * (bucket, object, generation).
    * </pre>
    *
-   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return The destinationName.
    */
@@ -45,7 +47,7 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the destination object.
+   * Required. Immutable. The name of the destination object.
    * See the
    * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
    * Example: `test.txt`
@@ -54,7 +56,9 @@ public interface RewriteObjectRequestOrBuilder
    * (bucket, object, generation).
    * </pre>
    *
-   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return The bytes for destinationName.
    */
@@ -64,11 +68,11 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the bucket containing the destination object.
+   * Required. Immutable. The name of the bucket containing the destination object.
    * </pre>
    *
    * <code>
-   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
    * </code>
    *
    * @return The destinationBucket.
@@ -78,11 +82,11 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Immutable. The name of the bucket containing the destination object.
+   * Required. Immutable. The name of the bucket containing the destination object.
    * </pre>
    *
    * <code>
-   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
    * </code>
    *
    * @return The bytes for destinationBucket.

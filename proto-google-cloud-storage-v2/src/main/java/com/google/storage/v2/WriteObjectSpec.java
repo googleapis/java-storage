@@ -166,10 +166,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Destination object, including its name and its metadata.
+   * Required. Destination object, including its name and its metadata.
    * </pre>
    *
-   * <code>.google.storage.v2.Object resource = 1;</code>
+   * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return Whether the resource field is set.
    */
@@ -181,10 +181,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Destination object, including its name and its metadata.
+   * Required. Destination object, including its name and its metadata.
    * </pre>
    *
-   * <code>.google.storage.v2.Object resource = 1;</code>
+   * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The resource.
    */
@@ -196,10 +196,10 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Destination object, including its name and its metadata.
+   * Required. Destination object, including its name and its metadata.
    * </pre>
    *
-   * <code>.google.storage.v2.Object resource = 1;</code>
+   * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectOrBuilder getResourceOrBuilder() {
@@ -922,10 +922,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
      * @return Whether the resource field is set.
      */
@@ -936,10 +937,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
      * @return The resource.
      */
@@ -954,10 +956,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder setResource(com.google.storage.v2.Object value) {
       if (resourceBuilder_ == null) {
@@ -976,10 +979,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder setResource(com.google.storage.v2.Object.Builder builderForValue) {
       if (resourceBuilder_ == null) {
@@ -995,10 +999,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder mergeResource(com.google.storage.v2.Object value) {
       if (resourceBuilder_ == null) {
@@ -1019,10 +1024,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public Builder clearResource() {
       if (resourceBuilder_ == null) {
@@ -1039,10 +1045,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public com.google.storage.v2.Object.Builder getResourceBuilder() {
 
@@ -1053,10 +1060,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     public com.google.storage.v2.ObjectOrBuilder getResourceOrBuilder() {
       if (resourceBuilder_ != null) {
@@ -1069,10 +1077,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Destination object, including its name and its metadata.
+     * Required. Destination object, including its name and its metadata.
      * </pre>
      *
-     * <code>.google.storage.v2.Object resource = 1;</code>
+     * <code>.google.storage.v2.Object resource = 1 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Object,

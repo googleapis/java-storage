@@ -442,9 +442,9 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param parent Required. The project to which this bucket will belong.
-   * @param bucket Required. Properties of the new bucket being inserted. The project and name of
-   *     the bucket are specified in the parent and bucket_id fields, respectively. Populating those
-   *     fields in `bucket` will result in an error.
+   * @param bucket Properties of the new bucket being inserted. The project and name of the bucket
+   *     are specified in the parent and bucket_id fields, respectively. Populating those fields in
+   *     `bucket` will result in an error.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -481,9 +481,9 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param parent Required. The project to which this bucket will belong.
-   * @param bucket Required. Properties of the new bucket being inserted. The project and name of
-   *     the bucket are specified in the parent and bucket_id fields, respectively. Populating those
-   *     fields in `bucket` will result in an error.
+   * @param bucket Properties of the new bucket being inserted. The project and name of the bucket
+   *     are specified in the parent and bucket_id fields, respectively. Populating those fields in
+   *     `bucket` will result in an error.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -1256,9 +1256,9 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param bucket The bucket to update. The bucket's `name` field will be used to identify the
-   *     bucket.
-   * @param updateMask List of fields to be updated.
+   * @param bucket Required. The bucket to update. The bucket's `name` field will be used to
+   *     identify the bucket.
+   * @param updateMask Required. List of fields to be updated.
    *     <p>To specify ALL fields, equivalent to the JSON API's "update" function, specify a single
    *     field with the value `&#42;`. Note: not recommended. If a new field is introduced at a
    *     later time, an older client updating with the `&#42;` may accidentally reset the new
@@ -2338,11 +2338,11 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param object The object to update. The object's bucket and name fields are used to identify
-   *     the object to update. If present, the object's generation field selects a specific revision
-   *     of this object whose metadata should be updated. Otherwise, assumes the live version of the
-   *     object.
-   * @param updateMask List of fields to be updated.
+   * @param object Required. The object to update. The object's bucket and name fields are used to
+   *     identify the object to update. If present, the object's generation field selects a specific
+   *     revision of this object whose metadata should be updated. Otherwise, assumes the live
+   *     version of the object.
+   * @param updateMask Required. List of fields to be updated.
    *     <p>To specify ALL fields, equivalent to the JSON API's "update" function, specify a single
    *     field with the value `&#42;`. Note: not recommended. If a new field is introduced at a
    *     later time, an older client updating with the `&#42;` may accidentally reset the new

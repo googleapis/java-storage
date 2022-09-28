@@ -199,10 +199,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * The name of the bucket containing the object to read.
+   * Required. The name of the bucket containing the object to read.
    * </pre>
    *
-   * <code>string bucket = 1;</code>
+   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bucket.
    */
@@ -222,10 +222,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * The name of the bucket containing the object to read.
+   * Required. The name of the bucket containing the object to read.
    * </pre>
    *
-   * <code>string bucket = 1;</code>
+   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bytes for bucket.
    */
@@ -248,10 +248,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * The name of the object to read.
+   * Required. The name of the object to read.
    * </pre>
    *
-   * <code>string object = 2;</code>
+   * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The object.
    */
@@ -271,10 +271,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
    *
    *
    * <pre>
-   * The name of the object to read.
+   * Required. The name of the object to read.
    * </pre>
    *
-   * <code>string object = 2;</code>
+   * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The bytes for object.
    */
@@ -1153,10 +1153,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the bucket containing the object to read.
+     * Required. The name of the bucket containing the object to read.
      * </pre>
      *
-     * <code>string bucket = 1;</code>
+     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bucket.
      */
@@ -1175,10 +1175,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the bucket containing the object to read.
+     * Required. The name of the bucket containing the object to read.
      * </pre>
      *
-     * <code>string bucket = 1;</code>
+     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bytes for bucket.
      */
@@ -1197,10 +1197,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the bucket containing the object to read.
+     * Required. The name of the bucket containing the object to read.
      * </pre>
      *
-     * <code>string bucket = 1;</code>
+     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The bucket to set.
      * @return This builder for chaining.
@@ -1218,10 +1218,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the bucket containing the object to read.
+     * Required. The name of the bucket containing the object to read.
      * </pre>
      *
-     * <code>string bucket = 1;</code>
+     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return This builder for chaining.
      */
@@ -1235,10 +1235,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the bucket containing the object to read.
+     * Required. The name of the bucket containing the object to read.
      * </pre>
      *
-     * <code>string bucket = 1;</code>
+     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The bytes for bucket to set.
      * @return This builder for chaining.
@@ -1259,10 +1259,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the object to read.
+     * Required. The name of the object to read.
      * </pre>
      *
-     * <code>string object = 2;</code>
+     * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The object.
      */
@@ -1281,10 +1281,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the object to read.
+     * Required. The name of the object to read.
      * </pre>
      *
-     * <code>string object = 2;</code>
+     * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The bytes for object.
      */
@@ -1303,10 +1303,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the object to read.
+     * Required. The name of the object to read.
      * </pre>
      *
-     * <code>string object = 2;</code>
+     * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The object to set.
      * @return This builder for chaining.
@@ -1324,10 +1324,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the object to read.
+     * Required. The name of the object to read.
      * </pre>
      *
-     * <code>string object = 2;</code>
+     * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return This builder for chaining.
      */
@@ -1341,10 +1341,10 @@ public final class ReadObjectRequest extends com.google.protobuf.GeneratedMessag
      *
      *
      * <pre>
-     * The name of the object to read.
+     * Required. The name of the object to read.
      * </pre>
      *
-     * <code>string object = 2;</code>
+     * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The bytes for object to set.
      * @return This builder for chaining.

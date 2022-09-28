@@ -285,7 +285,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Immutable. The name of the destination object.
+   * Required. Immutable. The name of the destination object.
    * See the
    * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
    * Example: `test.txt`
@@ -294,7 +294,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * (bucket, object, generation).
    * </pre>
    *
-   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return The destinationName.
    */
@@ -314,7 +316,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Immutable. The name of the destination object.
+   * Required. Immutable. The name of the destination object.
    * See the
    * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
    * Example: `test.txt`
@@ -323,7 +325,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * (bucket, object, generation).
    * </pre>
    *
-   * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+   * <code>
+   * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+   * </code>
    *
    * @return The bytes for destinationName.
    */
@@ -346,11 +350,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Immutable. The name of the bucket containing the destination object.
+   * Required. Immutable. The name of the bucket containing the destination object.
    * </pre>
    *
    * <code>
-   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
    * </code>
    *
    * @return The destinationBucket.
@@ -371,11 +375,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    *
    *
    * <pre>
-   * Immutable. The name of the bucket containing the destination object.
+   * Required. Immutable. The name of the bucket containing the destination object.
    * </pre>
    *
    * <code>
-   * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+   * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
    * </code>
    *
    * @return The bytes for destinationBucket.
@@ -1957,7 +1961,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the destination object.
+     * Required. Immutable. The name of the destination object.
      * See the
      * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
      * Example: `test.txt`
@@ -1966,7 +1970,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * (bucket, object, generation).
      * </pre>
      *
-     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @return The destinationName.
      */
@@ -1985,7 +1991,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the destination object.
+     * Required. Immutable. The name of the destination object.
      * See the
      * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
      * Example: `test.txt`
@@ -1994,7 +2000,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * (bucket, object, generation).
      * </pre>
      *
-     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @return The bytes for destinationName.
      */
@@ -2013,7 +2021,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the destination object.
+     * Required. Immutable. The name of the destination object.
      * See the
      * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
      * Example: `test.txt`
@@ -2022,7 +2030,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * (bucket, object, generation).
      * </pre>
      *
-     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param value The destinationName to set.
      * @return This builder for chaining.
@@ -2040,7 +2050,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the destination object.
+     * Required. Immutable. The name of the destination object.
      * See the
      * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
      * Example: `test.txt`
@@ -2049,7 +2059,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * (bucket, object, generation).
      * </pre>
      *
-     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -2063,7 +2075,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the destination object.
+     * Required. Immutable. The name of the destination object.
      * See the
      * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
      * Example: `test.txt`
@@ -2072,7 +2084,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * (bucket, object, generation).
      * </pre>
      *
-     * <code>string destination_name = 24 [(.google.api.field_behavior) = IMMUTABLE];</code>
+     * <code>
+     * string destination_name = 24 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE];
+     * </code>
      *
      * @param value The bytes for destinationName to set.
      * @return This builder for chaining.
@@ -2093,11 +2107,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the bucket containing the destination object.
+     * Required. Immutable. The name of the bucket containing the destination object.
      * </pre>
      *
      * <code>
-     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
      * </code>
      *
      * @return The destinationBucket.
@@ -2117,11 +2131,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the bucket containing the destination object.
+     * Required. Immutable. The name of the bucket containing the destination object.
      * </pre>
      *
      * <code>
-     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
      * </code>
      *
      * @return The bytes for destinationBucket.
@@ -2141,11 +2155,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the bucket containing the destination object.
+     * Required. Immutable. The name of the bucket containing the destination object.
      * </pre>
      *
      * <code>
-     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
      * </code>
      *
      * @param value The destinationBucket to set.
@@ -2164,11 +2178,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the bucket containing the destination object.
+     * Required. Immutable. The name of the bucket containing the destination object.
      * </pre>
      *
      * <code>
-     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
      * </code>
      *
      * @return This builder for chaining.
@@ -2183,11 +2197,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      *
      *
      * <pre>
-     * Immutable. The name of the bucket containing the destination object.
+     * Required. Immutable. The name of the bucket containing the destination object.
      * </pre>
      *
      * <code>
-     * string destination_bucket = 25 [(.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
+     * string destination_bucket = 25 [(.google.api.field_behavior) = REQUIRED, (.google.api.field_behavior) = IMMUTABLE, (.google.api.resource_reference) = { ... }
      * </code>
      *
      * @param value The bytes for destinationBucket to set.

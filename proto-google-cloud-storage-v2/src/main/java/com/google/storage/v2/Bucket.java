@@ -12546,7 +12546,22 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * periods should only be used for testing purposes.
      * </pre>
      *
-     * <code>int64 retention_period = 3;</code>
+     * <code>optional int64 retention_period = 3;</code>
+     *
+     * @return Whether the retentionPeriod field is set.
+     */
+    boolean hasRetentionPeriod();
+    /**
+     *
+     *
+     * <pre>
+     * The duration in seconds that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes.
+     * </pre>
+     *
+     * <code>optional int64 retention_period = 3;</code>
      *
      * @return The retentionPeriod.
      */
@@ -12592,6 +12607,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (extensionRegistry == null) {
         throw new java.lang.NullPointerException();
       }
+      int mutable_bitField0_ = 0;
       com.google.protobuf.UnknownFieldSet.Builder unknownFields =
           com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
@@ -12624,6 +12640,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               }
             case 24:
               {
+                bitField0_ |= 0x00000001;
                 retentionPeriod_ = input.readInt64();
                 break;
               }
@@ -12663,6 +12680,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.storage.v2.Bucket.RetentionPolicy.Builder.class);
     }
 
+    private int bitField0_;
     public static final int EFFECTIVE_TIME_FIELD_NUMBER = 1;
     private com.google.protobuf.Timestamp effectiveTime_;
     /**
@@ -12744,7 +12762,25 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * periods should only be used for testing purposes.
      * </pre>
      *
-     * <code>int64 retention_period = 3;</code>
+     * <code>optional int64 retention_period = 3;</code>
+     *
+     * @return Whether the retentionPeriod field is set.
+     */
+    @java.lang.Override
+    public boolean hasRetentionPeriod() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The duration in seconds that objects need to be retained. Retention
+     * duration must be greater than zero and less than 100 years. Note that
+     * enforcement of retention periods less than a day is not guaranteed. Such
+     * periods should only be used for testing purposes.
+     * </pre>
+     *
+     * <code>optional int64 retention_period = 3;</code>
      *
      * @return The retentionPeriod.
      */
@@ -12773,7 +12809,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (isLocked_ != false) {
         output.writeBool(2, isLocked_);
       }
-      if (retentionPeriod_ != 0L) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         output.writeInt64(3, retentionPeriod_);
       }
       unknownFields.writeTo(output);
@@ -12791,7 +12827,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (isLocked_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(2, isLocked_);
       }
-      if (retentionPeriod_ != 0L) {
+      if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, retentionPeriod_);
       }
       size += unknownFields.getSerializedSize();
@@ -12815,7 +12851,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (!getEffectiveTime().equals(other.getEffectiveTime())) return false;
       }
       if (getIsLocked() != other.getIsLocked()) return false;
-      if (getRetentionPeriod() != other.getRetentionPeriod()) return false;
+      if (hasRetentionPeriod() != other.hasRetentionPeriod()) return false;
+      if (hasRetentionPeriod()) {
+        if (getRetentionPeriod() != other.getRetentionPeriod()) return false;
+      }
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
     }
@@ -12833,8 +12872,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       hash = (37 * hash) + IS_LOCKED_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsLocked());
-      hash = (37 * hash) + RETENTION_PERIOD_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getRetentionPeriod());
+      if (hasRetentionPeriod()) {
+        hash = (37 * hash) + RETENTION_PERIOD_FIELD_NUMBER;
+        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getRetentionPeriod());
+      }
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -12991,7 +13032,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         isLocked_ = false;
 
         retentionPeriod_ = 0L;
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -13019,13 +13060,19 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       public com.google.storage.v2.Bucket.RetentionPolicy buildPartial() {
         com.google.storage.v2.Bucket.RetentionPolicy result =
             new com.google.storage.v2.Bucket.RetentionPolicy(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
         if (effectiveTimeBuilder_ == null) {
           result.effectiveTime_ = effectiveTime_;
         } else {
           result.effectiveTime_ = effectiveTimeBuilder_.build();
         }
         result.isLocked_ = isLocked_;
-        result.retentionPeriod_ = retentionPeriod_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.retentionPeriod_ = retentionPeriod_;
+          to_bitField0_ |= 0x00000001;
+        }
+        result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
       }
@@ -13083,7 +13130,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (other.getIsLocked() != false) {
           setIsLocked(other.getIsLocked());
         }
-        if (other.getRetentionPeriod() != 0L) {
+        if (other.hasRetentionPeriod()) {
           setRetentionPeriod(other.getRetentionPeriod());
         }
         this.mergeUnknownFields(other.unknownFields);
@@ -13114,6 +13161,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         }
         return this;
       }
+
+      private int bitField0_;
 
       private com.google.protobuf.Timestamp effectiveTime_;
       private com.google.protobuf.SingleFieldBuilderV3<
@@ -13372,7 +13421,25 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * periods should only be used for testing purposes.
        * </pre>
        *
-       * <code>int64 retention_period = 3;</code>
+       * <code>optional int64 retention_period = 3;</code>
+       *
+       * @return Whether the retentionPeriod field is set.
+       */
+      @java.lang.Override
+      public boolean hasRetentionPeriod() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration in seconds that objects need to be retained. Retention
+       * duration must be greater than zero and less than 100 years. Note that
+       * enforcement of retention periods less than a day is not guaranteed. Such
+       * periods should only be used for testing purposes.
+       * </pre>
+       *
+       * <code>optional int64 retention_period = 3;</code>
        *
        * @return The retentionPeriod.
        */
@@ -13390,13 +13457,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * periods should only be used for testing purposes.
        * </pre>
        *
-       * <code>int64 retention_period = 3;</code>
+       * <code>optional int64 retention_period = 3;</code>
        *
        * @param value The retentionPeriod to set.
        * @return This builder for chaining.
        */
       public Builder setRetentionPeriod(long value) {
-
+        bitField0_ |= 0x00000001;
         retentionPeriod_ = value;
         onChanged();
         return this;
@@ -13411,12 +13478,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * periods should only be used for testing purposes.
        * </pre>
        *
-       * <code>int64 retention_period = 3;</code>
+       * <code>optional int64 retention_period = 3;</code>
        *
        * @return This builder for chaining.
        */
       public Builder clearRetentionPeriod() {
-
+        bitField0_ = (bitField0_ & ~0x00000001);
         retentionPeriod_ = 0L;
         onChanged();
         return this;
@@ -18084,8 +18151,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * Configuration that, if present, specifies the data placement for a
+   * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -18100,8 +18167,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * Configuration that, if present, specifies the data placement for a
+   * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -18118,8 +18185,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Configuration that, if present, specifies the data placement for a Custom
-   * Dual Region.
+   * Configuration that, if present, specifies the data placement for a
+   * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
    * </pre>
    *
    * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -23915,8 +23982,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -23930,8 +23997,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -23951,8 +24018,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -23975,8 +24042,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -23996,8 +24063,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -24024,8 +24091,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -24045,8 +24112,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -24061,8 +24128,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>
@@ -24081,8 +24148,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Configuration that, if present, specifies the data placement for a Custom
-     * Dual Region.
+     * Configuration that, if present, specifies the data placement for a
+     * [https://cloud.google.com/storage/docs/use-dual-regions][Dual Region].
      * </pre>
      *
      * <code>.google.storage.v2.Bucket.CustomPlacementConfig custom_placement_config = 26;</code>

@@ -210,13 +210,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. Properties of the new bucket being inserted.
+   * Properties of the new bucket being inserted.
    * The project and name of the bucket are specified in the parent and
    * bucket_id fields, respectively. Populating those fields in `bucket` will
    * result in an error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>.google.storage.v2.Bucket bucket = 2;</code>
    *
    * @return Whether the bucket field is set.
    */
@@ -228,13 +228,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. Properties of the new bucket being inserted.
+   * Properties of the new bucket being inserted.
    * The project and name of the bucket are specified in the parent and
    * bucket_id fields, respectively. Populating those fields in `bucket` will
    * result in an error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>.google.storage.v2.Bucket bucket = 2;</code>
    *
    * @return The bucket.
    */
@@ -246,13 +246,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    *
    *
    * <pre>
-   * Required. Properties of the new bucket being inserted.
+   * Properties of the new bucket being inserted.
    * The project and name of the bucket are specified in the parent and
    * bucket_id fields, respectively. Populating those fields in `bucket` will
    * result in an error.
    * </pre>
    *
-   * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>.google.storage.v2.Bucket bucket = 2;</code>
    */
   @java.lang.Override
   public com.google.storage.v2.BucketOrBuilder getBucketOrBuilder() {
@@ -938,13 +938,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      *
      * @return Whether the bucket field is set.
      */
@@ -955,13 +955,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      *
      * @return The bucket.
      */
@@ -976,13 +976,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public Builder setBucket(com.google.storage.v2.Bucket value) {
       if (bucketBuilder_ == null) {
@@ -1001,13 +1001,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public Builder setBucket(com.google.storage.v2.Bucket.Builder builderForValue) {
       if (bucketBuilder_ == null) {
@@ -1023,13 +1023,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public Builder mergeBucket(com.google.storage.v2.Bucket value) {
       if (bucketBuilder_ == null) {
@@ -1050,13 +1050,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public Builder clearBucket() {
       if (bucketBuilder_ == null) {
@@ -1073,13 +1073,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public com.google.storage.v2.Bucket.Builder getBucketBuilder() {
 
@@ -1090,13 +1090,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public com.google.storage.v2.BucketOrBuilder getBucketOrBuilder() {
       if (bucketBuilder_ != null) {
@@ -1109,13 +1109,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      *
      *
      * <pre>
-     * Required. Properties of the new bucket being inserted.
+     * Properties of the new bucket being inserted.
      * The project and name of the bucket are specified in the parent and
      * bucket_id fields, respectively. Populating those fields in `bucket` will
      * result in an error.
      * </pre>
      *
-     * <code>.google.storage.v2.Bucket bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.Bucket,
