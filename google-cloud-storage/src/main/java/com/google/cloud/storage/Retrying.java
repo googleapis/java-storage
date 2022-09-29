@@ -90,7 +90,25 @@ final class Retrying {
       Callable<T> c,
       Decoder<T, U> f) {
     try {
-      T result = runWithRetries(c, deps.getRetrySettings(), algorithm, deps.getClock());
+      T result =
+          runWithRetries(
+              () -> {
+                try {
+                  return c.call();
+                } catch (StorageException se) {
+                  // we hope for this case
+                  throw se;
+                } catch (Exception e) {
+                  // but wire in this fall through just in case.
+                  // all of our retry algorithms are centered around StorageException so this helps
+                  // those
+                  // be more effective
+                  throw StorageException.coalesce(e);
+                }
+              },
+              deps.getRetrySettings(),
+              algorithm,
+              deps.getClock());
       return result == null ? null : f.decode(result);
     } catch (RetryHelperException e) {
       throw StorageException.coalesce(e.getCause());

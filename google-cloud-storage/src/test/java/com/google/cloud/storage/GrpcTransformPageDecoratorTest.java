@@ -272,7 +272,7 @@ public class GrpcTransformPageDecoratorTest {
     public boolean shouldRetry(Throwable prevThrowable, Object prevResponse)
         throws CancellationException {
       shouldRetryCallCount.incrementAndGet();
-      return prevThrowable instanceof ShouldRetryException;
+      return TestUtils.findThrowable(ShouldRetryException.class, prevThrowable) != null;
     }
   }
 
