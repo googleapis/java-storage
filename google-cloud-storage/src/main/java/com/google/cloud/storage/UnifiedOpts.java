@@ -18,17 +18,24 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Predicates.not;
 
 import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.Storage.BlobField;
+import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.FieldMask;
 import com.google.storage.v2.CommonObjectRequestParams;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
@@ -56,9 +63,12 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.crypto.spec.SecretKeySpec;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -366,9 +376,7 @@ final class UnifiedOpts {
     return new EndOffset(s);
   }
 
-  @Deprecated
-  static Fields fields(String s) {
-    // TODO: do we care if the string provided is empty?
+  static Fields fields(ImmutableSet<NamedField> s) {
     return new Fields(s);
   }
 
@@ -661,13 +669,209 @@ final class UnifiedOpts {
     }
   }
 
-  static final class Fields extends RpcOptVal<String>
+  static final class Fields extends RpcOptVal<ImmutableSet<NamedField>>
       implements ObjectSourceOpt, ObjectListOpt, BucketSourceOpt, BucketListOpt {
-    private static final long serialVersionUID = -6861404961336468409L;
 
-    private Fields(String val) {
+    /**
+     * Apiary and gRPC have differing handling of where the field selector is evaluated relative to
+     * the request. For Apiary, it's from the root response document; for gRPC it's from the
+     * collection of results.
+     *
+     * <p>In our current case, this means we exclude some fields when we know it is being consumed
+     * for a gRPC message. Unfortunately, we don't know if the constructed Fields instance is for
+     * use with gRPC when it is instantiated so we must define here.
+     */
+    private static final ImmutableSet<String> grpcExcludedFields =
+        ImmutableSet.of("nextPageToken", "prefixes", "selfLink", "mediaLink", "kind", "id");
+
+    private static final long serialVersionUID = -320337719611149532L;
+
+    private Fields(ImmutableSet<NamedField> val) {
       super(StorageRpc.Option.FIELDS, val);
     }
+
+    @Override
+    public Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> mapper() {
+      return b -> {
+        String collect =
+            val.stream().map(NamedField::getApiaryName).collect(Collectors.joining(","));
+        return b.put(StorageRpc.Option.FIELDS, collect);
+      };
+    }
+
+    @Override
+    public Mapper<GetBucketRequest.Builder> getBucket() {
+      return b -> b.setReadMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
+    }
+
+    @Override
+    public Mapper<ListBucketsRequest.Builder> listBuckets() {
+      return b -> b.setReadMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
+    }
+
+    @Override
+    public Mapper<GetObjectRequest.Builder> getObject() {
+      return b -> b.setReadMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return b -> b.setReadMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
+    }
+
+    @Override
+    public Mapper<ReadObjectRequest.Builder> readObject() {
+      return b -> b.setReadMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
+    }
+
+    /**
+     * Define a decoder which can clear out any fields which may have not been selected.
+     *
+     * <p>This approach, isn't ideal at the backside after decoding has already taken place.
+     * However, refactoring the whole model pipeline for both json and grpc is going to be a large
+     * change.
+     */
+    Decoder<Blob, Blob> clearUnselectedBlobFields() {
+      return b -> {
+        if (val.isEmpty()) {
+          return b;
+        } else {
+          Set<String> names = getPaths();
+          Blob.Builder bldr = b.toBuilder();
+          blobInfoFieldClearers.entrySet().stream()
+              .filter(e -> !names.contains(e.getKey()))
+              .map(Entry::getValue)
+              .forEach(m -> m.apply(bldr));
+          return bldr.build();
+        }
+      };
+    }
+
+    /**
+     * Define a decoder which can clear out any fields which may have not been selected.
+     *
+     * <p>This approach, isn't ideal at the backside after decoding has already taken place.
+     * However, refactoring the whole model pipeline for both json and grpc is going to be a large
+     * change.
+     */
+    Decoder<Bucket, Bucket> clearUnselectedBucketFields() {
+      return b -> {
+        if (val.isEmpty()) {
+          return b;
+        } else {
+          Set<String> names = getPaths();
+          Bucket.Builder bldr = b.toBuilder();
+          bucketInfoFieldClearers.entrySet().stream()
+              .filter(e -> !names.contains(e.getKey()))
+              .map(Entry::getValue)
+              .forEach(m -> m.apply(bldr));
+          return bldr.build();
+        }
+      };
+    }
+
+    private Set<String> getPaths() {
+      //noinspection Guava
+      return val.stream()
+          .map(NamedField::stripPrefix)
+          .map(NamedField::getGrpcName)
+          .filter(not(grpcExcludedFields::contains))
+          .collect(Collectors.toSet());
+    }
+
+    // It'd be preferable to define these clearing mappers in the fields themselves, however today
+    // the fields are enums and require interfaces in order to extend anything which in turn makes
+    // things public.
+    //
+    // To avoid putting more things on the public api that will hopefully take a different form
+    // in the medium term, we define them here.
+    private static final ImmutableMap<String, Mapper<BlobInfo.Builder>> blobInfoFieldClearers =
+        ImmutableMap.<String, Mapper<BlobInfo.Builder>>builder()
+            .put(BlobField.ACL.getGrpcName(), BlobInfo.Builder::clearAcl)
+            .put(BlobField.CACHE_CONTROL.getGrpcName(), BlobInfo.Builder::clearCacheControl)
+            .put(BlobField.COMPONENT_COUNT.getGrpcName(), BlobInfo.Builder::clearComponentCount)
+            .put(
+                BlobField.CONTENT_DISPOSITION.getGrpcName(),
+                BlobInfo.Builder::clearContentDisposition)
+            .put(BlobField.CONTENT_ENCODING.getGrpcName(), BlobInfo.Builder::clearContentEncoding)
+            .put(BlobField.CONTENT_LANGUAGE.getGrpcName(), BlobInfo.Builder::clearContentLanguage)
+            .put(BlobField.CONTENT_TYPE.getGrpcName(), BlobInfo.Builder::clearContentType)
+            .put(BlobField.CRC32C.getGrpcName(), BlobInfo.Builder::clearCrc32c)
+            .put(
+                BlobField.CUSTOMER_ENCRYPTION.getGrpcName(),
+                BlobInfo.Builder::clearCustomerEncryption)
+            .put(BlobField.CUSTOM_TIME.getGrpcName(), BlobInfo.Builder::clearCustomTime)
+            .put(BlobField.ETAG.getGrpcName(), BlobInfo.Builder::clearEtag)
+            .put(BlobField.EVENT_BASED_HOLD.getGrpcName(), BlobInfo.Builder::clearEventBasedHold)
+            .put(
+                BlobField.GENERATION.getGrpcName(),
+                b -> {
+                  BlobId current = b.getBlobId();
+                  return b.setBlobId(BlobId.of(current.getBucket(), current.getName()));
+                })
+            .put(BlobField.ID.getGrpcName(), BlobInfo.Builder::clearGeneratedId)
+            .put(BlobField.KMS_KEY_NAME.getGrpcName(), BlobInfo.Builder::clearKmsKeyName)
+            .put(BlobField.MD5HASH.getGrpcName(), BlobInfo.Builder::clearMd5)
+            .put(BlobField.MEDIA_LINK.getGrpcName(), BlobInfo.Builder::clearMediaLink)
+            .put(BlobField.METADATA.getGrpcName(), BlobInfo.Builder::clearMetadata)
+            .put(BlobField.METAGENERATION.getGrpcName(), BlobInfo.Builder::clearMetageneration)
+            .put(BlobField.OWNER.getGrpcName(), BlobInfo.Builder::clearOwner)
+            .put(
+                BlobField.RETENTION_EXPIRATION_TIME.getGrpcName(),
+                BlobInfo.Builder::clearRetentionExpirationTime)
+            .put(BlobField.SELF_LINK.getGrpcName(), BlobInfo.Builder::clearSelfLink)
+            .put(BlobField.SIZE.getGrpcName(), BlobInfo.Builder::clearSize)
+            .put(BlobField.STORAGE_CLASS.getGrpcName(), BlobInfo.Builder::clearStorageClass)
+            .put(BlobField.TEMPORARY_HOLD.getGrpcName(), BlobInfo.Builder::clearTemporaryHold)
+            .put(BlobField.TIME_CREATED.getGrpcName(), BlobInfo.Builder::clearCreateTime)
+            .put(BlobField.TIME_DELETED.getGrpcName(), BlobInfo.Builder::clearDeleteTime)
+            .put(
+                BlobField.TIME_STORAGE_CLASS_UPDATED.getGrpcName(),
+                BlobInfo.Builder::clearTimeStorageClassUpdated)
+            .put(BlobField.UPDATED.getGrpcName(), BlobInfo.Builder::clearUpdateTime)
+            .build();
+
+    private static final ImmutableMap<String, Mapper<BucketInfo.Builder>> bucketInfoFieldClearers =
+        ImmutableMap.<String, Mapper<BucketInfo.Builder>>builder()
+            .put(BucketField.ACL.getGrpcName(), BucketInfo.Builder::clearAcl)
+            // .put(BucketField.AUTOCLASS.getGrpcName(), b -> b.clearAutoclass())
+            .put(BucketField.BILLING.getGrpcName(), BucketInfo.Builder::clearRequesterPays)
+            .put(BucketField.CORS.getGrpcName(), BucketInfo.Builder::clearCors)
+            .put(
+                BucketField.CUSTOM_PLACEMENT_CONFIG.getGrpcName(),
+                BucketInfo.Builder::clearCustomPlacementConfig)
+            .put(
+                BucketField.DEFAULT_EVENT_BASED_HOLD.getGrpcName(),
+                BucketInfo.Builder::clearDefaultEventBasedHold)
+            .put(BucketField.DEFAULT_OBJECT_ACL.getGrpcName(), BucketInfo.Builder::clearDefaultAcl)
+            .put(BucketField.ENCRYPTION.getGrpcName(), BucketInfo.Builder::clearDefaultKmsKeyName)
+            .put(BucketField.ETAG.getGrpcName(), BucketInfo.Builder::clearEtag)
+            .put(
+                BucketField.IAMCONFIGURATION.getGrpcName(),
+                BucketInfo.Builder::clearIamConfiguration)
+            .put(BucketField.ID.getGrpcName(), BucketInfo.Builder::clearGeneratedId)
+            .put(BucketField.LABELS.getGrpcName(), BucketInfo.Builder::clearLabels)
+            .put(BucketField.LIFECYCLE.getGrpcName(), BucketInfo.Builder::clearLifecycleRules)
+            .put(BucketField.LOCATION.getGrpcName(), BucketInfo.Builder::clearLocation)
+            .put(BucketField.LOCATION_TYPE.getGrpcName(), BucketInfo.Builder::clearLocationType)
+            .put(BucketField.LOGGING.getGrpcName(), BucketInfo.Builder::clearLogging)
+            .put(BucketField.METAGENERATION.getGrpcName(), BucketInfo.Builder::clearMetageneration)
+            .put(BucketField.NAME.getGrpcName(), BucketInfo.Builder::clearName)
+            .put(BucketField.OWNER.getGrpcName(), BucketInfo.Builder::clearOwner)
+            .put(
+                BucketField.RETENTION_POLICY.getGrpcName(),
+                b ->
+                    b.clearRetentionEffectiveTime()
+                        .clearRetentionPolicyIsLocked()
+                        .clearRetentionPeriod())
+            .put(BucketField.RPO.getGrpcName(), BucketInfo.Builder::clearRpo)
+            .put(BucketField.STORAGE_CLASS.getGrpcName(), BucketInfo.Builder::clearStorageClass)
+            .put(BucketField.TIME_CREATED.getGrpcName(), BucketInfo.Builder::clearCreateTime)
+            .put(BucketField.UPDATED.getGrpcName(), BucketInfo.Builder::clearUpdateTime)
+            .put(BucketField.VERSIONING.getGrpcName(), BucketInfo.Builder::clearVersioningEnabled)
+            .put(BucketField.WEBSITE.getGrpcName(), b -> b.clearIndexPage().clearNotFoundPage())
+            .put("project", BucketInfo.Builder::clearProject)
+            .build();
   }
 
   /**
@@ -1998,6 +2202,20 @@ final class UnifiedOpts {
       return filterTo(ReturnRawInputStream.class).findFirst().map(r -> r.val).orElse(false);
     }
 
+    Decoder<Blob, Blob> clearBlobFields() {
+      return filterTo(Fields.class)
+          .findFirst()
+          .map(Fields::clearUnselectedBlobFields)
+          .orElse(Decoder.identity());
+    }
+
+    Decoder<Bucket, Bucket> clearBucketFields() {
+      return filterTo(Fields.class)
+          .findFirst()
+          .map(Fields::clearUnselectedBucketFields)
+          .orElse(Decoder.identity());
+    }
+
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {
       return fuseMappers(RpcOptVal.class, RpcOptVal::mapper);
     }
@@ -2046,11 +2264,125 @@ final class UnifiedOpts {
     }
   }
 
+  /**
+   * Interface which represents a field of some resource which is present in the storage api, and
+   * which can be used for a {@link com.google.cloud.FieldSelector read_mask}.
+   */
+  interface NamedField extends Serializable {
+    String getApiaryName();
+
+    String getGrpcName();
+
+    default NamedField stripPrefix() {
+      if (this instanceof PrefixedNamedField) {
+        PrefixedNamedField pnf = (PrefixedNamedField) this;
+        return pnf.delegate;
+      } else {
+        return this;
+      }
+    }
+
+    static NamedField prefixed(String prefix, NamedField delegate) {
+      return new PrefixedNamedField(prefix, delegate);
+    }
+
+    static NamedField literal(String name) {
+      return new LiteralNamedField(name);
+    }
+  }
+
   private static CommonObjectRequestParams.Builder customerSuppliedKey(
       CommonObjectRequestParams.Builder b, Key key) {
     HashCode keySha256 = Hashing.sha256().hashBytes(key.getEncoded());
     return b.setEncryptionAlgorithm(key.getAlgorithm())
         .setEncryptionKeyBytes(ByteString.copyFrom(key.getEncoded()))
         .setEncryptionKeySha256Bytes(ByteString.copyFrom(keySha256.asBytes()));
+  }
+
+  private static final class PrefixedNamedField implements NamedField {
+
+    private final String prefix;
+    private final NamedField delegate;
+
+    public PrefixedNamedField(String prefix, NamedField delegate) {
+      this.prefix = prefix;
+      this.delegate = delegate;
+    }
+
+    @Override
+    public String getApiaryName() {
+      return prefix + delegate.getApiaryName();
+    }
+
+    @Override
+    public String getGrpcName() {
+      return prefix + delegate.getGrpcName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof PrefixedNamedField)) {
+        return false;
+      }
+      PrefixedNamedField that = (PrefixedNamedField) o;
+      return Objects.equals(prefix, that.prefix) && Objects.equals(delegate, that.delegate);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(prefix, delegate);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("prefix", prefix)
+          .add("delegate", delegate)
+          .toString();
+    }
+  }
+
+  private static class LiteralNamedField implements NamedField {
+
+    private final String name;
+
+    LiteralNamedField(String name) {
+      this.name = name;
+    }
+
+    @Override
+    public String getApiaryName() {
+      return name;
+    }
+
+    @Override
+    public String getGrpcName() {
+      return name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof LiteralNamedField)) {
+        return false;
+      }
+      LiteralNamedField that = (LiteralNamedField) o;
+      return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("name", name).toString();
+    }
   }
 }

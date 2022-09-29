@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.BetaApi;
 import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
 import com.google.cloud.ReadChannel;
@@ -475,8 +476,7 @@ public class Blob extends BlobInfo {
     }
 
     @Override
-    BlobInfo.Builder setRetentionExpirationTimeOffsetDateTime(
-        OffsetDateTime retentionExpirationTime) {
+    Builder setRetentionExpirationTimeOffsetDateTime(OffsetDateTime retentionExpirationTime) {
       infoBuilder.setRetentionExpirationTimeOffsetDateTime(retentionExpirationTime);
       return this;
     }
@@ -484,6 +484,191 @@ public class Blob extends BlobInfo {
     @Override
     public Blob build() {
       return new Blob(storage, infoBuilder);
+    }
+
+    @Override
+    BlobId getBlobId() {
+      return infoBuilder.getBlobId();
+    }
+
+    @Override
+    Builder clearBlobId() {
+      infoBuilder.clearBlobId();
+      return this;
+    }
+
+    @Override
+    Builder clearGeneratedId() {
+      infoBuilder.clearGeneratedId();
+      return this;
+    }
+
+    @Override
+    Builder clearContentType() {
+      infoBuilder.clearContentType();
+      return this;
+    }
+
+    @Override
+    Builder clearContentEncoding() {
+      infoBuilder.clearContentEncoding();
+      return this;
+    }
+
+    @Override
+    Builder clearContentDisposition() {
+      infoBuilder.clearContentDisposition();
+      return this;
+    }
+
+    @Override
+    Builder clearContentLanguage() {
+      infoBuilder.clearContentLanguage();
+      return this;
+    }
+
+    @Override
+    Builder clearComponentCount() {
+      infoBuilder.clearComponentCount();
+      return this;
+    }
+
+    @Override
+    Builder clearCacheControl() {
+      infoBuilder.clearCacheControl();
+      return this;
+    }
+
+    @Override
+    Builder clearAcl() {
+      infoBuilder.clearAcl();
+      return this;
+    }
+
+    @Override
+    Builder clearOwner() {
+      infoBuilder.clearOwner();
+      return this;
+    }
+
+    @Override
+    Builder clearSize() {
+      infoBuilder.clearSize();
+      return this;
+    }
+
+    @Override
+    Builder clearEtag() {
+      infoBuilder.clearEtag();
+      return this;
+    }
+
+    @Override
+    Builder clearSelfLink() {
+      infoBuilder.clearSelfLink();
+      return this;
+    }
+
+    @Override
+    Builder clearMd5() {
+      infoBuilder.clearMd5();
+      return this;
+    }
+
+    @Override
+    Builder clearCrc32c() {
+      infoBuilder.clearCrc32c();
+      return this;
+    }
+
+    @Override
+    Builder clearCustomTime() {
+      infoBuilder.clearCustomTime();
+      return this;
+    }
+
+    @Override
+    Builder clearMediaLink() {
+      infoBuilder.clearMediaLink();
+      return this;
+    }
+
+    @Override
+    Builder clearMetadata() {
+      infoBuilder.clearMetadata();
+      return this;
+    }
+
+    @Override
+    Builder clearMetageneration() {
+      infoBuilder.clearMetageneration();
+      return this;
+    }
+
+    @Override
+    Builder clearDeleteTime() {
+      infoBuilder.clearDeleteTime();
+      return this;
+    }
+
+    @Override
+    Builder clearUpdateTime() {
+      infoBuilder.clearUpdateTime();
+      return this;
+    }
+
+    @Override
+    Builder clearCreateTime() {
+      infoBuilder.clearCreateTime();
+      return this;
+    }
+
+    @Override
+    Builder clearIsDirectory() {
+      infoBuilder.clearIsDirectory();
+      return this;
+    }
+
+    @Override
+    Builder clearCustomerEncryption() {
+      infoBuilder.clearCustomerEncryption();
+      return this;
+    }
+
+    @Override
+    Builder clearStorageClass() {
+      infoBuilder.clearStorageClass();
+      return this;
+    }
+
+    @Override
+    Builder clearTimeStorageClassUpdated() {
+      infoBuilder.clearTimeStorageClassUpdated();
+      return this;
+    }
+
+    @Override
+    Builder clearKmsKeyName() {
+      infoBuilder.clearKmsKeyName();
+      return this;
+    }
+
+    @Override
+    Builder clearEventBasedHold() {
+      infoBuilder.clearEventBasedHold();
+      return this;
+    }
+
+    @Override
+    Builder clearTemporaryHold() {
+      infoBuilder.clearTemporaryHold();
+      return this;
+    }
+
+    @Override
+    Builder clearRetentionExpirationTime() {
+      infoBuilder.clearRetentionExpirationTime();
+      return this;
     }
   }
 
@@ -975,6 +1160,12 @@ public class Blob extends BlobInfo {
   @Override
   public final int hashCode() {
     return Objects.hash(super.hashCode(), options);
+  }
+
+  /** Drop the held {@link Storage} instance. */
+  @BetaApi
+  public BlobInfo asBlobInfo() {
+    return this.toBuilder().infoBuilder.build();
   }
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

@@ -26,11 +26,13 @@ import com.google.cloud.PageImpl;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.Restorable;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
+import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.UnifiedOpts.Opt;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
@@ -126,7 +128,7 @@ public class SerializationTest extends BaseSerializationTest {
             .add(UnifiedOpts.doesNotExist())
             .add(UnifiedOpts.encryptionKey(keyBase64))
             .add(UnifiedOpts.endOffset("end"))
-            .add(UnifiedOpts.fields(""))
+            .add(UnifiedOpts.fields(ImmutableSet.of(BucketField.LOCATION)))
             .add(UnifiedOpts.generationMatch(0))
             .add(UnifiedOpts.generationNotMatch(0))
             .add(UnifiedOpts.kmsKeyName("key"))

@@ -39,6 +39,10 @@ final class Conversions {
   interface Decoder<From, To> {
     To decode(From f);
 
+    default <R> Decoder<From, R> andThen(Decoder<To, R> d) {
+      return f -> d.decode(this.decode(f));
+    }
+
     static <X> Decoder<X, X> identity() {
       return (x) -> x;
     }

@@ -404,10 +404,72 @@ public class BlobInfo implements Serializable {
 
     /** Creates a {@code BlobInfo} object. */
     public abstract BlobInfo build();
+
+    abstract BlobId getBlobId();
+
+    abstract Builder clearBlobId();
+
+    abstract Builder clearGeneratedId();
+
+    abstract Builder clearContentType();
+
+    abstract Builder clearContentEncoding();
+
+    abstract Builder clearContentDisposition();
+
+    abstract Builder clearContentLanguage();
+
+    abstract Builder clearComponentCount();
+
+    abstract Builder clearCacheControl();
+
+    abstract Builder clearAcl();
+
+    abstract Builder clearOwner();
+
+    abstract Builder clearSize();
+
+    abstract Builder clearEtag();
+
+    abstract Builder clearSelfLink();
+
+    abstract Builder clearMd5();
+
+    abstract Builder clearCrc32c();
+
+    abstract Builder clearCustomTime();
+
+    abstract Builder clearMediaLink();
+
+    abstract Builder clearMetadata();
+
+    abstract Builder clearMetageneration();
+
+    abstract Builder clearDeleteTime();
+
+    abstract Builder clearUpdateTime();
+
+    abstract Builder clearCreateTime();
+
+    abstract Builder clearIsDirectory();
+
+    abstract Builder clearCustomerEncryption();
+
+    abstract Builder clearStorageClass();
+
+    abstract Builder clearTimeStorageClassUpdated();
+
+    abstract Builder clearKmsKeyName();
+
+    abstract Builder clearEventBasedHold();
+
+    abstract Builder clearTemporaryHold();
+
+    abstract Builder clearRetentionExpirationTime();
   }
 
   static final class BuilderImpl extends Builder {
-    private final String hexDecimalValues = "0123456789abcdef";
+    private static final String hexDecimalValues = "0123456789abcdef";
     private BlobId blobId;
     private String generatedId;
     private String contentType;
@@ -849,6 +911,191 @@ public class BlobInfo implements Serializable {
     public BlobInfo build() {
       checkNotNull(blobId);
       return new BlobInfo(this);
+    }
+
+    @Override
+    BlobId getBlobId() {
+      return blobId;
+    }
+
+    @Override
+    Builder clearBlobId() {
+      this.blobId = null;
+      return this;
+    }
+
+    @Override
+    Builder clearGeneratedId() {
+      this.generatedId = null;
+      return this;
+    }
+
+    @Override
+    Builder clearContentType() {
+      this.contentType = null;
+      return this;
+    }
+
+    @Override
+    Builder clearContentEncoding() {
+      this.contentEncoding = null;
+      return this;
+    }
+
+    @Override
+    Builder clearContentDisposition() {
+      this.contentDisposition = null;
+      return this;
+    }
+
+    @Override
+    Builder clearContentLanguage() {
+      this.contentLanguage = null;
+      return this;
+    }
+
+    @Override
+    Builder clearComponentCount() {
+      this.componentCount = null;
+      return this;
+    }
+
+    @Override
+    Builder clearCacheControl() {
+      this.cacheControl = null;
+      return this;
+    }
+
+    @Override
+    Builder clearAcl() {
+      this.acl = null;
+      return this;
+    }
+
+    @Override
+    Builder clearOwner() {
+      this.owner = null;
+      return this;
+    }
+
+    @Override
+    Builder clearSize() {
+      this.size = null;
+      return this;
+    }
+
+    @Override
+    Builder clearEtag() {
+      this.etag = null;
+      return this;
+    }
+
+    @Override
+    Builder clearSelfLink() {
+      this.selfLink = null;
+      return this;
+    }
+
+    @Override
+    Builder clearMd5() {
+      this.md5 = null;
+      return this;
+    }
+
+    @Override
+    Builder clearCrc32c() {
+      this.crc32c = null;
+      return this;
+    }
+
+    @Override
+    Builder clearCustomTime() {
+      this.customTime = null;
+      return this;
+    }
+
+    @Override
+    Builder clearMediaLink() {
+      this.mediaLink = null;
+      return this;
+    }
+
+    @Override
+    Builder clearMetadata() {
+      this.metadata = null;
+      return this;
+    }
+
+    @Override
+    Builder clearMetageneration() {
+      this.metageneration = null;
+      return this;
+    }
+
+    @Override
+    Builder clearDeleteTime() {
+      this.deleteTime = null;
+      return this;
+    }
+
+    @Override
+    Builder clearUpdateTime() {
+      this.updateTime = null;
+      return this;
+    }
+
+    @Override
+    Builder clearCreateTime() {
+      this.createTime = null;
+      return this;
+    }
+
+    @Override
+    Builder clearIsDirectory() {
+      this.isDirectory = null;
+      return this;
+    }
+
+    @Override
+    Builder clearCustomerEncryption() {
+      this.customerEncryption = null;
+      return this;
+    }
+
+    @Override
+    Builder clearStorageClass() {
+      this.storageClass = null;
+      return this;
+    }
+
+    @Override
+    Builder clearTimeStorageClassUpdated() {
+      this.timeStorageClassUpdated = null;
+      return this;
+    }
+
+    @Override
+    Builder clearKmsKeyName() {
+      this.kmsKeyName = null;
+      return this;
+    }
+
+    @Override
+    Builder clearEventBasedHold() {
+      this.eventBasedHold = null;
+      return this;
+    }
+
+    @Override
+    Builder clearTemporaryHold() {
+      this.temporaryHold = null;
+      return this;
+    }
+
+    @Override
+    Builder clearRetentionExpirationTime() {
+      this.retentionExpirationTime = null;
+      return this;
     }
   }
 

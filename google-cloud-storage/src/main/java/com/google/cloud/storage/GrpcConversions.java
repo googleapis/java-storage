@@ -460,7 +460,7 @@ final class GrpcConversions {
       int idx = from.indexOf('-', 8);
       String team = from.substring(8, idx);
       String projectId = from.substring(idx + 1);
-      return new Acl.Project(Acl.Project.ProjectRole.valueOf(team), projectId);
+      return new Acl.Project(Acl.Project.ProjectRole.valueOf(team.toUpperCase()), projectId);
     }
     return new Acl.RawEntity(from);
   }
@@ -532,10 +532,10 @@ final class GrpcConversions {
 
     BucketInfo.IamConfiguration.Builder to = BucketInfo.IamConfiguration.newBuilder();
     ifNonNull(ubla.getEnabled(), to::setIsUniformBucketLevelAccessEnabled);
-    ifNonNull(
-        ubla.getLockTime(),
-        timestampCodec::decode,
-        to::setUniformBucketLevelAccessLockedTimeOffsetDateTime);
+    if (ubla.hasLockTime()) {
+      to.setUniformBucketLevelAccessLockedTimeOffsetDateTime(
+          timestampCodec.decode(ubla.getLockTime()));
+    }
     if (!from.getPublicAccessPrevention().isEmpty()) {
       to.setPublicAccessPrevention(PublicAccessPrevention.parse(from.getPublicAccessPrevention()));
     }
