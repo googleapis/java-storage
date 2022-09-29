@@ -115,33 +115,6 @@ public final class ITReadMaskTest {
     blobId = blobId1;
   }
 
-  /*
-  public static final class UpdateMask {
-
-    @Test
-    public void nestedUpdate() {
-      ImmutableMap<String, String> m1 = ImmutableMap.of("x", "X");
-      ImmutableMap<String, String> m2 = ImmutableMap.<String, String>builder()
-          .putAll(m1)
-          .put("y", "Y")
-          .build();
-      ImmutableMap<String, String> m3 = ImmutableMap.<String, String>builder()
-          .putAll(m1)
-          .put("y", "Z")
-          .build();
-      BlobInfo info1 = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), "UpdateMask/001")
-          .setMetadata(m1).build();
-      Blob blob = sh.create(info1);
-      Blob update1 = sh.update(blob.toBuilder().setMetadata(m2).build(),
-          BlobTargetOption.metagenerationMatch());
-      Blob update2 = sg.update(update1.toBuilder().setMetadata(m3).build(),
-          BlobTargetOption.metagenerationMatch());
-
-      assertThat(update2.asBlobInfo()).isEqualTo(update1.asBlobInfo());
-    }
-  }
-  */
-
   @RunWith(ParallelParameterized.class)
   public static final class BucketReadMask {
 

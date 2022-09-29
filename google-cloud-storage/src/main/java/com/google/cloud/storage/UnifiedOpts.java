@@ -731,7 +731,7 @@ final class UnifiedOpts {
      * However, refactoring the whole model pipeline for both json and grpc is going to be a large
      * change.
      */
-    Decoder<Blob, Blob> clearBlobFields() {
+    Decoder<Blob, Blob> clearUnselectedBlobFields() {
       return b -> {
         if (val.isEmpty()) {
           return b;
@@ -754,7 +754,7 @@ final class UnifiedOpts {
      * However, refactoring the whole model pipeline for both json and grpc is going to be a large
      * change.
      */
-    Decoder<Bucket, Bucket> clearBucketFields() {
+    Decoder<Bucket, Bucket> clearUnselectedBucketFields() {
       return b -> {
         if (val.isEmpty()) {
           return b;
@@ -2205,14 +2205,14 @@ final class UnifiedOpts {
     Decoder<Blob, Blob> clearBlobFields() {
       return filterTo(Fields.class)
           .findFirst()
-          .map(Fields::clearBlobFields)
+          .map(Fields::clearUnselectedBlobFields)
           .orElse(Decoder.identity());
     }
 
     Decoder<Bucket, Bucket> clearBucketFields() {
       return filterTo(Fields.class)
           .findFirst()
-          .map(Fields::clearBucketFields)
+          .map(Fields::clearUnselectedBucketFields)
           .orElse(Decoder.identity());
     }
 
