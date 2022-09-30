@@ -19,6 +19,8 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.GapicUnbufferedWritableByteChannelTest.DirectWriteService;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -29,6 +31,7 @@ import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
+import com.google.storage.v2.StorageGrpc.StorageImplBase;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
@@ -129,6 +132,44 @@ public final class GrpcStorageImplUploadRetryTest {
     assertThat(service.returnError.get()).isFalse();
   }
 
+  @Test
+  public void startResumableWrite() throws Exception {
+
+    AtomicBoolean returnError = new AtomicBoolean(true);
+    StorageImplBase service =
+        new StorageImplBase() {
+          @Override
+          public void startResumableWrite(
+              StartResumableWriteRequest request, StreamObserver<StartResumableWriteResponse> obs) {
+            if (request.equals(Resumable.startReq)) {
+              if (returnError.get()) {
+                // clear the need to error. We only error on the first request.
+                returnError.compareAndSet(true, false);
+                obs.onError(TestUtils.apiException(Code.INTERNAL, "should retry"));
+              } else {
+                obs.onNext(Resumable.startResp);
+                obs.onCompleted();
+              }
+            } else {
+              obs.onError(
+                  TestUtils.apiException(Code.PERMISSION_DENIED, "Unexpected request chain."));
+            }
+          }
+        };
+
+    try (FakeServer server = FakeServer.of(service);
+        GrpcStorageImpl s = (GrpcStorageImpl) server.getGrpcStorageOptions().getService()) {
+      ApiFuture<ResumableWrite> f =
+          s.startResumableWrite(GrpcCallContext.createDefault(), Resumable.baseReq);
+      ResumableWrite resumableWrite = f.get();
+      StartResumableWriteResponse resp = resumableWrite.getRes();
+      assertThat(resp).isNotNull();
+      assertThat(resp.getUploadId()).isEqualTo(Resumable.uploadId);
+    }
+
+    assertThat(returnError.get()).isFalse();
+  }
+
   private static final class Direct {
     private static final Object obj =
         Object.newBuilder().setBucket(FORMATTED_BUCKET_NAME).setName("obj").build();
@@ -157,6 +198,7 @@ public final class GrpcStorageImplUploadRetryTest {
             (obs, reqs) -> {
               if (reqs.equals(ImmutableList.of(req1))) {
                 if (returnError.get()) {
+                  // clear the need to error. We only error on the first request.
                   returnError.compareAndSet(true, false);
                   obs.onError(TestUtils.apiException(Code.INTERNAL, "should retry"));
                 } else {
@@ -191,6 +233,8 @@ public final class GrpcStorageImplUploadRetryTest {
     private static final WriteObjectSpec spec =
         WriteObjectSpec.newBuilder().setResource(obj).setIfGenerationMatch(0).build();
 
+    private static final WriteObjectRequest baseReq =
+        WriteObjectRequest.newBuilder().setWriteObjectSpec(spec).build();
     private static final StartResumableWriteRequest startReq =
         StartResumableWriteRequest.newBuilder().setWriteObjectSpec(spec).build();
     private static final StartResumableWriteResponse startResp =
@@ -218,6 +262,7 @@ public final class GrpcStorageImplUploadRetryTest {
             (obs, reqs) -> {
               if (reqs.equals(ImmutableList.of(req1))) {
                 if (returnError.get()) {
+                  // clear the need to error. We only error on the first request.
                   returnError.compareAndSet(true, false);
                   obs.onError(TestUtils.apiException(Code.INTERNAL, "should retry"));
                 } else {

@@ -63,6 +63,7 @@ import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
@@ -310,14 +311,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           },
           this::getBlob);
     } else {
-      ApiFuture<ResumableWrite> start =
-          ResumableMedia.gapic()
-              .write()
-              .resumableWrite(
-                  storageClient
-                      .startResumableWriteCallable()
-                      .withDefaultCallContext(grpcCallContext),
-                  req);
+      ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
       BufferedWritableByteChannelSession<WriteObjectResponse> session =
           channelSessionBuilder
               .resumable()
@@ -352,12 +346,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
-    ApiFuture<ResumableWrite> start =
-        ResumableMedia.gapic()
-            .write()
-            .resumableWrite(
-                storageClient.startResumableWriteCallable().withDefaultCallContext(grpcCallContext),
-                req);
+    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
 
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
@@ -744,14 +733,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         storageClient.writeObjectCallable(),
         getOptions(),
         retryAlgorithmManager.idempotent(),
-        () ->
-            ResumableMedia.gapic()
-                .write()
-                .resumableWrite(
-                    storageClient
-                        .startResumableWriteCallable()
-                        .withDefaultCallContext(grpcCallContext),
-                    req));
+        () -> startResumableWrite(grpcCallContext, req));
   }
 
   @Override
@@ -1383,6 +1365,20 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)
         .build();
+  }
+
+  @VisibleForTesting
+  ApiFuture<ResumableWrite> startResumableWrite(
+      GrpcCallContext grpcCallContext, WriteObjectRequest req) {
+    Set<StatusCode.Code> codes =
+        GrpcStorageImpl.resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
+    return ResumableMedia.gapic()
+        .write()
+        .resumableWrite(
+            storageClient
+                .startResumableWriteCallable()
+                .withDefaultCallContext(grpcCallContext.withRetryableCodes(codes)),
+            req);
   }
 
   /**
