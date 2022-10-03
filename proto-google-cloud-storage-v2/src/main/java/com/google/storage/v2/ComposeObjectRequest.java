@@ -54,120 +54,6 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     return this.unknownFields;
   }
 
-  private ComposeObjectRequest(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10:
-            {
-              com.google.storage.v2.Object.Builder subBuilder = null;
-              if (destination_ != null) {
-                subBuilder = destination_.toBuilder();
-              }
-              destination_ =
-                  input.readMessage(com.google.storage.v2.Object.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(destination_);
-                destination_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          case 18:
-            {
-              if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                sourceObjects_ =
-                    new java.util.ArrayList<
-                        com.google.storage.v2.ComposeObjectRequest.SourceObject>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              sourceObjects_.add(
-                  input.readMessage(
-                      com.google.storage.v2.ComposeObjectRequest.SourceObject.parser(),
-                      extensionRegistry));
-              break;
-            }
-          case 32:
-            {
-              bitField0_ |= 0x00000001;
-              ifGenerationMatch_ = input.readInt64();
-              break;
-            }
-          case 40:
-            {
-              bitField0_ |= 0x00000002;
-              ifMetagenerationMatch_ = input.readInt64();
-              break;
-            }
-          case 50:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              kmsKey_ = s;
-              break;
-            }
-          case 58:
-            {
-              com.google.storage.v2.CommonObjectRequestParams.Builder subBuilder = null;
-              if (commonObjectRequestParams_ != null) {
-                subBuilder = commonObjectRequestParams_.toBuilder();
-              }
-              commonObjectRequestParams_ =
-                  input.readMessage(
-                      com.google.storage.v2.CommonObjectRequestParams.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(commonObjectRequestParams_);
-                commonObjectRequestParams_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          case 74:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              destinationPredefinedAcl_ = s;
-              break;
-            }
-          default:
-            {
-              if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (com.google.protobuf.UninitializedMessageException e) {
-      throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
-    } finally {
-      if (((mutable_bitField0_ & 0x00000001) != 0)) {
-        sourceObjects_ = java.util.Collections.unmodifiableList(sourceObjects_);
-      }
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_ComposeObjectRequest_descriptor;
@@ -305,76 +191,6 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       return this.unknownFields;
     }
 
-    private SourceObject(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      if (extensionRegistry == null) {
-        throw new java.lang.NullPointerException();
-      }
-      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder();
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            case 10:
-              {
-                java.lang.String s = input.readStringRequireUtf8();
-
-                name_ = s;
-                break;
-              }
-            case 16:
-              {
-                generation_ = input.readInt64();
-                break;
-              }
-            case 26:
-              {
-                com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions.Builder
-                    subBuilder = null;
-                if (objectPreconditions_ != null) {
-                  subBuilder = objectPreconditions_.toBuilder();
-                }
-                objectPreconditions_ =
-                    input.readMessage(
-                        com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions
-                            .parser(),
-                        extensionRegistry);
-                if (subBuilder != null) {
-                  subBuilder.mergeFrom(objectPreconditions_);
-                  objectPreconditions_ = subBuilder.buildPartial();
-                }
-
-                break;
-              }
-            default:
-              {
-                if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                  done = true;
-                }
-                break;
-              }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (com.google.protobuf.UninitializedMessageException e) {
-        throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
-      } finally {
-        this.unknownFields = unknownFields.build();
-        makeExtensionsImmutable();
-      }
-    }
-
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
           .internal_static_google_storage_v2_ComposeObjectRequest_SourceObject_descriptor;
@@ -456,53 +272,6 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         return this.unknownFields;
       }
 
-      private ObjectPreconditions(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        this();
-        if (extensionRegistry == null) {
-          throw new java.lang.NullPointerException();
-        }
-        int mutable_bitField0_ = 0;
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-            com.google.protobuf.UnknownFieldSet.newBuilder();
-        try {
-          boolean done = false;
-          while (!done) {
-            int tag = input.readTag();
-            switch (tag) {
-              case 0:
-                done = true;
-                break;
-              case 8:
-                {
-                  bitField0_ |= 0x00000001;
-                  ifGenerationMatch_ = input.readInt64();
-                  break;
-                }
-              default:
-                {
-                  if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                    done = true;
-                  }
-                  break;
-                }
-            }
-          }
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          throw e.setUnfinishedMessage(this);
-        } catch (com.google.protobuf.UninitializedMessageException e) {
-          throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-        } catch (java.io.IOException e) {
-          throw new com.google.protobuf.InvalidProtocolBufferException(e)
-              .setUnfinishedMessage(this);
-        } finally {
-          this.unknownFields = unknownFields.build();
-          makeExtensionsImmutable();
-        }
-      }
-
       public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
         return com.google.storage.v2.StorageProto
             .internal_static_google_storage_v2_ComposeObjectRequest_SourceObject_ObjectPreconditions_descriptor;
@@ -574,7 +343,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         if (((bitField0_ & 0x00000001) != 0)) {
           output.writeInt64(1, ifGenerationMatch_);
         }
-        unknownFields.writeTo(output);
+        getUnknownFields().writeTo(output);
       }
 
       @java.lang.Override
@@ -586,7 +355,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         if (((bitField0_ & 0x00000001) != 0)) {
           size += com.google.protobuf.CodedOutputStream.computeInt64Size(1, ifGenerationMatch_);
         }
-        size += unknownFields.getSerializedSize();
+        size += getUnknownFields().getSerializedSize();
         memoizedSize = size;
         return size;
       }
@@ -608,7 +377,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         if (hasIfGenerationMatch()) {
           if (getIfGenerationMatch() != other.getIfGenerationMatch()) return false;
         }
-        if (!unknownFields.equals(other.unknownFields)) return false;
+        if (!getUnknownFields().equals(other.getUnknownFields())) return false;
         return true;
       }
 
@@ -623,7 +392,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           hash = (37 * hash) + IF_GENERATION_MATCH_FIELD_NUMBER;
           hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfGenerationMatch());
         }
-        hash = (29 * hash) + unknownFields.hashCode();
+        hash = (29 * hash) + getUnknownFields().hashCode();
         memoizedHashCode = hash;
         return hash;
       }
@@ -766,17 +535,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
 
         // Construct using
         // com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions.newBuilder()
-        private Builder() {
-          maybeForceBuilderInitialization();
-        }
+        private Builder() {}
 
         private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
           super(parent);
-          maybeForceBuilderInitialization();
-        }
-
-        private void maybeForceBuilderInitialization() {
-          if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
         }
 
         @java.lang.Override
@@ -883,7 +645,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           if (other.hasIfGenerationMatch()) {
             setIfGenerationMatch(other.getIfGenerationMatch());
           }
-          this.mergeUnknownFields(other.unknownFields);
+          this.mergeUnknownFields(other.getUnknownFields());
           onChanged();
           return this;
         }
@@ -898,20 +660,37 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions
-              parsedMessage = null;
+          if (extensionRegistry == null) {
+            throw new java.lang.NullPointerException();
+          }
           try {
-            parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+            boolean done = false;
+            while (!done) {
+              int tag = input.readTag();
+              switch (tag) {
+                case 0:
+                  done = true;
+                  break;
+                case 8:
+                  {
+                    ifGenerationMatch_ = input.readInt64();
+                    bitField0_ |= 0x00000001;
+                    break;
+                  } // case 8
+                default:
+                  {
+                    if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                      done = true; // was an endgroup tag
+                    }
+                    break;
+                  } // default:
+              } // switch (tag)
+            } // while (!done)
           } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage =
-                (com.google.storage.v2.ComposeObjectRequest.SourceObject.ObjectPreconditions)
-                    e.getUnfinishedMessage();
             throw e.unwrapIOException();
           } finally {
-            if (parsedMessage != null) {
-              mergeFrom(parsedMessage);
-            }
-          }
+            onChanged();
+          } // finally
           return this;
         }
 
@@ -1029,7 +808,19 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
                 com.google.protobuf.CodedInputStream input,
                 com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws com.google.protobuf.InvalidProtocolBufferException {
-              return new ObjectPreconditions(input, extensionRegistry);
+              Builder builder = newBuilder();
+              try {
+                builder.mergeFrom(input, extensionRegistry);
+              } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+                throw e.setUnfinishedMessage(builder.buildPartial());
+              } catch (com.google.protobuf.UninitializedMessageException e) {
+                throw e.asInvalidProtocolBufferException()
+                    .setUnfinishedMessage(builder.buildPartial());
+              } catch (java.io.IOException e) {
+                throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                    .setUnfinishedMessage(builder.buildPartial());
+              }
+              return builder.buildPartial();
             }
           };
 
@@ -1199,7 +990,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       if (objectPreconditions_ != null) {
         output.writeMessage(3, getObjectPreconditions());
       }
-      unknownFields.writeTo(output);
+      getUnknownFields().writeTo(output);
     }
 
     @java.lang.Override
@@ -1218,7 +1009,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         size +=
             com.google.protobuf.CodedOutputStream.computeMessageSize(3, getObjectPreconditions());
       }
-      size += unknownFields.getSerializedSize();
+      size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
     }
@@ -1240,7 +1031,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       if (hasObjectPreconditions()) {
         if (!getObjectPreconditions().equals(other.getObjectPreconditions())) return false;
       }
-      if (!unknownFields.equals(other.unknownFields)) return false;
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
 
@@ -1259,7 +1050,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         hash = (37 * hash) + OBJECT_PRECONDITIONS_FIELD_NUMBER;
         hash = (53 * hash) + getObjectPreconditions().hashCode();
       }
-      hash = (29 * hash) + unknownFields.hashCode();
+      hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
     }
@@ -1391,17 +1182,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
 
       // Construct using com.google.storage.v2.ComposeObjectRequest.SourceObject.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
+      private Builder() {}
 
       private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
-        maybeForceBuilderInitialization();
-      }
-
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
       }
 
       @java.lang.Override
@@ -1513,7 +1297,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         if (other.hasObjectPreconditions()) {
           mergeObjectPreconditions(other.getObjectPreconditions());
         }
-        this.mergeUnknownFields(other.unknownFields);
+        this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
       }
@@ -1528,18 +1312,50 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.google.storage.v2.ComposeObjectRequest.SourceObject parsedMessage = null;
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
         try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10:
+                {
+                  name_ = input.readStringRequireUtf8();
+
+                  break;
+                } // case 10
+              case 16:
+                {
+                  generation_ = input.readInt64();
+
+                  break;
+                } // case 16
+              case 26:
+                {
+                  input.readMessage(
+                      getObjectPreconditionsFieldBuilder().getBuilder(), extensionRegistry);
+
+                  break;
+                } // case 26
+              default:
+                {
+                  if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                    done = true; // was an endgroup tag
+                  }
+                  break;
+                } // default:
+            } // switch (tag)
+          } // while (!done)
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage =
-              (com.google.storage.v2.ComposeObjectRequest.SourceObject) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
+          onChanged();
+        } // finally
         return this;
       }
 
@@ -1955,7 +1771,19 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws com.google.protobuf.InvalidProtocolBufferException {
-            return new SourceObject(input, extensionRegistry);
+            Builder builder = newBuilder();
+            try {
+              builder.mergeFrom(input, extensionRegistry);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+              throw e.setUnfinishedMessage(builder.buildPartial());
+            } catch (com.google.protobuf.UninitializedMessageException e) {
+              throw e.asInvalidProtocolBufferException()
+                  .setUnfinishedMessage(builder.buildPartial());
+            } catch (java.io.IOException e) {
+              throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                  .setUnfinishedMessage(builder.buildPartial());
+            }
+            return builder.buildPartial();
           }
         };
 
@@ -2359,7 +2187,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(destinationPredefinedAcl_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 9, destinationPredefinedAcl_);
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -2392,7 +2220,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       size +=
           com.google.protobuf.GeneratedMessageV3.computeStringSize(9, destinationPredefinedAcl_);
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -2428,7 +2256,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       if (!getCommonObjectRequestParams().equals(other.getCommonObjectRequestParams()))
         return false;
     }
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -2463,7 +2291,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       hash = (37 * hash) + COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER;
       hash = (53 * hash) + getCommonObjectRequestParams().hashCode();
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -2592,19 +2420,10 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     }
 
     // Construct using com.google.storage.v2.ComposeObjectRequest.newBuilder()
-    private Builder() {
-      maybeForceBuilderInitialization();
-    }
+    private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
-        getSourceObjectsFieldBuilder();
-      }
     }
 
     @java.lang.Override
@@ -2618,10 +2437,11 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       }
       if (sourceObjectsBuilder_ == null) {
         sourceObjects_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
       } else {
+        sourceObjects_ = null;
         sourceObjectsBuilder_.clear();
       }
+      bitField0_ = (bitField0_ & ~0x00000001);
       destinationPredefinedAcl_ = "";
 
       ifGenerationMatch_ = 0L;
@@ -2791,7 +2611,7 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       if (other.hasCommonObjectRequestParams()) {
         mergeCommonObjectRequestParams(other.getCommonObjectRequestParams());
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -2806,17 +2626,82 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.google.storage.v2.ComposeObjectRequest parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                input.readMessage(getDestinationFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 10
+            case 18:
+              {
+                com.google.storage.v2.ComposeObjectRequest.SourceObject m =
+                    input.readMessage(
+                        com.google.storage.v2.ComposeObjectRequest.SourceObject.parser(),
+                        extensionRegistry);
+                if (sourceObjectsBuilder_ == null) {
+                  ensureSourceObjectsIsMutable();
+                  sourceObjects_.add(m);
+                } else {
+                  sourceObjectsBuilder_.addMessage(m);
+                }
+                break;
+              } // case 18
+            case 32:
+              {
+                ifGenerationMatch_ = input.readInt64();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 32
+            case 40:
+              {
+                ifMetagenerationMatch_ = input.readInt64();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 40
+            case 50:
+              {
+                kmsKey_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 50
+            case 58:
+              {
+                input.readMessage(
+                    getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 58
+            case 74:
+              {
+                destinationPredefinedAcl_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 74
+            default:
+              {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.google.storage.v2.ComposeObjectRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
 
@@ -4004,7 +3889,18 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-          return new ComposeObjectRequest(input, extensionRegistry);
+          Builder builder = newBuilder();
+          try {
+            builder.mergeFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.setUnfinishedMessage(builder.buildPartial());
+          } catch (com.google.protobuf.UninitializedMessageException e) {
+            throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+          } catch (java.io.IOException e) {
+            throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                .setUnfinishedMessage(builder.buildPartial());
+          }
+          return builder.buildPartial();
         }
       };
 

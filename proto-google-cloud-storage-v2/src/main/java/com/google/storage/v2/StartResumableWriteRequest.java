@@ -50,77 +50,6 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     return this.unknownFields;
   }
 
-  private StartResumableWriteRequest(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10:
-            {
-              com.google.storage.v2.WriteObjectSpec.Builder subBuilder = null;
-              if (writeObjectSpec_ != null) {
-                subBuilder = writeObjectSpec_.toBuilder();
-              }
-              writeObjectSpec_ =
-                  input.readMessage(
-                      com.google.storage.v2.WriteObjectSpec.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(writeObjectSpec_);
-                writeObjectSpec_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          case 26:
-            {
-              com.google.storage.v2.CommonObjectRequestParams.Builder subBuilder = null;
-              if (commonObjectRequestParams_ != null) {
-                subBuilder = commonObjectRequestParams_.toBuilder();
-              }
-              commonObjectRequestParams_ =
-                  input.readMessage(
-                      com.google.storage.v2.CommonObjectRequestParams.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(commonObjectRequestParams_);
-                commonObjectRequestParams_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          default:
-            {
-              if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (com.google.protobuf.UninitializedMessageException e) {
-      throw e.asInvalidProtocolBufferException().setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
-    } finally {
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_StartResumableWriteRequest_descriptor;
@@ -259,7 +188,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     if (commonObjectRequestParams_ != null) {
       output.writeMessage(3, getCommonObjectRequestParams());
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -276,7 +205,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
           com.google.protobuf.CodedOutputStream.computeMessageSize(
               3, getCommonObjectRequestParams());
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -301,7 +230,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       if (!getCommonObjectRequestParams().equals(other.getCommonObjectRequestParams()))
         return false;
     }
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -320,7 +249,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       hash = (37 * hash) + COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER;
       hash = (53 * hash) + getCommonObjectRequestParams().hashCode();
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -449,17 +378,10 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     }
 
     // Construct using com.google.storage.v2.StartResumableWriteRequest.newBuilder()
-    private Builder() {
-      maybeForceBuilderInitialization();
-    }
+    private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
     }
 
     @java.lang.Override
@@ -570,7 +492,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       if (other.hasCommonObjectRequestParams()) {
         mergeCommonObjectRequestParams(other.getCommonObjectRequestParams());
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -585,17 +507,44 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.google.storage.v2.StartResumableWriteRequest parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                input.readMessage(getWriteObjectSpecFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 10
+            case 26:
+              {
+                input.readMessage(
+                    getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 26
+            default:
+              {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.google.storage.v2.StartResumableWriteRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
 
@@ -1025,7 +974,18 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-          return new StartResumableWriteRequest(input, extensionRegistry);
+          Builder builder = newBuilder();
+          try {
+            builder.mergeFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.setUnfinishedMessage(builder.buildPartial());
+          } catch (com.google.protobuf.UninitializedMessageException e) {
+            throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+          } catch (java.io.IOException e) {
+            throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                .setUnfinishedMessage(builder.buildPartial());
+          }
+          return builder.buildPartial();
         }
       };
 
