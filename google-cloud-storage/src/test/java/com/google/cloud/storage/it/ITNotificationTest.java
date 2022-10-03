@@ -25,7 +25,6 @@ import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.iam.v1.Binding;
@@ -35,8 +34,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.AfterClass;
@@ -139,7 +136,7 @@ public class ITNotificationTest {
   }
 
   @Test
-  public void testNotification() throws InterruptedException, ExecutionException {
+  public void testNotification() {
     NotificationInfo notificationInfo =
         NotificationInfo.newBuilder(TOPIC)
             .setCustomAttributes(CUSTOM_ATTRIBUTES)
@@ -190,8 +187,7 @@ public class ITNotificationTest {
           .isNull();
       assertThat(storage.listNotifications(bucketFixture.getBucketInfo().getName())).isEmpty();
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storage, bucketFixture.getBucketInfo().getName(), 5, TimeUnit.SECONDS);
+      // delete is taken care of by BucketFixture now
     }
   }
 }
