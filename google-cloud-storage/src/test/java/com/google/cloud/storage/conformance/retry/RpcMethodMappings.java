@@ -28,7 +28,6 @@ import com.google.cloud.Binding;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
-import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
@@ -1172,11 +1171,8 @@ final class RpcMethodMappings {
                                     Channels.newChannel(ByteStreams.nullOutputStream());
                                 ByteStreams.copy(reader, write);
                               } catch (IOException e) {
-                                if (e.getCause() instanceof RetryHelperException) {
-                                  RetryHelperException cause = (RetryHelperException) e.getCause();
-                                  if (cause.getCause() instanceof BaseServiceException) {
-                                    throw cause.getCause();
-                                  }
+                                if (e.getCause() instanceof BaseServiceException) {
+                                  throw e.getCause();
                                 }
                               }
                             }))
@@ -1197,11 +1193,8 @@ final class RpcMethodMappings {
                                     Channels.newChannel(ByteStreams.nullOutputStream());
                                 ByteStreams.copy(reader, write);
                               } catch (IOException e) {
-                                if (e.getCause() instanceof RetryHelperException) {
-                                  RetryHelperException cause = (RetryHelperException) e.getCause();
-                                  if (cause.getCause() instanceof BaseServiceException) {
-                                    throw cause.getCause();
-                                  }
+                                if (e.getCause() instanceof BaseServiceException) {
+                                  throw e.getCause();
                                 }
                               }
                             }))

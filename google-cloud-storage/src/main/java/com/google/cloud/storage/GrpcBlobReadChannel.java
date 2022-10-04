@@ -118,7 +118,13 @@ final class GrpcBlobReadChannel implements ReadChannel {
       close();
       return -1;
     }
-    return lazyReadChannel.getChannel().read(dst);
+    try {
+      return lazyReadChannel.getChannel().read(dst);
+    } catch (IOException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new IOException(StorageException.coalesce(e));
+    }
   }
 
   ApiFuture<Object> getResults() {

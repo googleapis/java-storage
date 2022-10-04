@@ -184,31 +184,48 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  public void testReadChannelFail() {
-    String blobName = "test-read-channel-blob-fail";
+  public void
+      testReadChannel_preconditionFailureResultsInIOException_metagenerationMatch_specified() {
+    String blobName = testName.getMethodName();
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     try (ReadChannel reader =
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.metagenerationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
+      fail("IOException was expected");
     } catch (IOException ex) {
       // expected
     }
+  }
+
+  @Test
+  public void testReadChannel_preconditionFailureResultsInIOException_generationMatch_specified() {
+    String blobName = testName.getMethodName();
+    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    Blob remoteBlob = storage.create(blob);
+    assertNotNull(remoteBlob);
     try (ReadChannel reader =
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.generationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
+      fail("IOException was expected");
     } catch (IOException ex) {
       // expected
     }
+  }
+
+  @Test
+  public void testReadChannel_preconditionFailureResultsInIOException_generationMatch_extractor() {
+    String blobName = testName.getMethodName();
+    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    Blob remoteBlob = storage.create(blob);
+    assertNotNull(remoteBlob);
     BlobId blobIdWrongGeneration =
         BlobId.of(bucketFixture.getBucketInfo().getName(), blobName, -1L);
     try (ReadChannel reader =
         storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
       reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
+      fail("IOException was expected");
     } catch (IOException ex) {
       // expected
     }

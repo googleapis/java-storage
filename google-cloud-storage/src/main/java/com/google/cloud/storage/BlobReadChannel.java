@@ -146,7 +146,7 @@ class BlobReadChannel implements ReadChannel {
         lastEtag = etag;
         buffer = bytes;
       } catch (RetryHelper.RetryHelperException e) {
-        throw new IOException(e);
+        throw new IOException(e.getCause());
       }
       if (toRead > buffer.length) {
         endOfStream = true;
