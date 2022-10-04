@@ -28,7 +28,8 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class StorageV2ProtoUtils {
 
-  private static final String VALIDATION_TEMPLATE = "0 <= offset <= limit (0 <= %s <= %s)";
+  private static final String VALIDATION_TEMPLATE =
+      "offset >= 0 && limit >= 0 (%s >= 0 && %s >= 0)";
 
   private static final Printer PROTO_PRINTER =
       JsonFormat.printer().omittingInsignificantWhitespace().preservingProtoFieldNames();
@@ -70,10 +71,6 @@ final class StorageV2ProtoUtils {
 
     if (!limitNull) {
       checkArgument(0 <= limit, VALIDATION_TEMPLATE, offset, limit);
-    }
-
-    if (!offsetNull && !limitNull) {
-      checkArgument(offset <= limit, VALIDATION_TEMPLATE, offset, limit);
     }
   }
 

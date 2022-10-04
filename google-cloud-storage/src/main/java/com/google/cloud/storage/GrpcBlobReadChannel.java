@@ -32,6 +32,7 @@ import com.google.storage.v2.ReadObjectResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.function.Supplier;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GrpcBlobReadChannel implements ReadChannel {
 
@@ -50,7 +51,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
             Suppliers.memoize(
                 () -> {
                   ReadObjectRequest req =
-                      seekReadObjectRequest(request, position, limit - position);
+                      seekReadObjectRequest(request, position, sub(limit, position));
                   return ResumableMedia.gapic()
                       .read()
                       .byteChannel(read)
@@ -112,7 +113,8 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   @Override
   public int read(ByteBuffer dst) throws IOException {
-    if (limit - position <= 0) {
+    Long diff = sub(limit, position);
+    if (diff != null && diff <= 0) {
       close();
       return -1;
     }
@@ -121,6 +123,19 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   ApiFuture<Object> getResults() {
     return lazyReadChannel.session.get().getResult();
+  }
+
+  /**
+   * Null aware subtraction. If both {@code l} and {@code r} are non-null, return {@code l - r}.
+   * Otherwise, return {@code null}.
+   */
+  @Nullable
+  private static Long sub(@Nullable Long l, @Nullable Long r) {
+    if (l == null || r == null) {
+      return null;
+    } else {
+      return l - r;
+    }
   }
 
   private static final class LazyReadChannel {
