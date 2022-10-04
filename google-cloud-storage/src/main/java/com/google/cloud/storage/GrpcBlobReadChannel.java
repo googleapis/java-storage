@@ -49,7 +49,8 @@ final class GrpcBlobReadChannel implements ReadChannel {
         new LazyReadChannel(
             Suppliers.memoize(
                 () -> {
-                  ReadObjectRequest req = seekReadObjectRequest(request, position, limit);
+                  ReadObjectRequest req =
+                      seekReadObjectRequest(request, position, limit - position);
                   return ResumableMedia.gapic()
                       .read()
                       .byteChannel(read)
@@ -111,6 +112,10 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   @Override
   public int read(ByteBuffer dst) throws IOException {
+    if (limit - position <= 0) {
+      close();
+      return -1;
+    }
     return lazyReadChannel.getChannel().read(dst);
   }
 
