@@ -22,6 +22,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
@@ -213,6 +214,9 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void testReadChannelFailUpdatedGeneration() throws IOException {
+    // this test scenario is valid for both grpc and json, however the current semantics of actual
+    // request interleaving are very different, so this specific test is only applicable to json.
+    assumeTrue(this.clientName.startsWith("JSON"));
     String blobName = "test-read-blob-fail-updated-generation";
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Random random = new Random();
