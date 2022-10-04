@@ -59,8 +59,6 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public final class ITBlobReadChannelTest {
 
-  // Stubbed From GRPC Uncomment Fixtures and parameters to enable GRPC tests
-
   private static final int _16MiB = 16 * 1024 * 1024;
   private static final int _256KiB = 256 * 1024;
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
@@ -76,10 +74,9 @@ public final class ITBlobReadChannelTest {
 
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-  /*
+
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-   */
 
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureHttp =
@@ -87,14 +84,13 @@ public final class ITBlobReadChannelTest {
           .setBucketNameFmtString("java-storage-http-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-  /*
+
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureGrpc =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-grpc-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-   */
 
   private final Storage storage;
   private final BucketFixture bucketFixture;
@@ -109,13 +105,9 @@ public final class ITBlobReadChannelTest {
 
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return ImmutableList.of(new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
-    /*
     return ImmutableList.of(
         new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
         new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
-    */
-
   }
 
   @Test
