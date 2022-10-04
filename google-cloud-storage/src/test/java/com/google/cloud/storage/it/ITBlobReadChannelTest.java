@@ -32,6 +32,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.StorageFixture;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.BaseEncoding;
@@ -41,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -250,8 +252,8 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  public void testReadCompressedBlob() throws IOException {
-    String blobName = "test-read-compressed-blob";
+  public void ensureReaderReturnsCompressedBytesByDefault() throws IOException {
+    String blobName = testName.getMethodName();
     BlobInfo blobInfo =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
             .setContentType("text/plain")
@@ -262,16 +264,66 @@ public final class ITBlobReadChannelTest {
       try (ReadChannel reader =
           storage.reader(BlobId.of(bucketFixture.getBucketInfo().getName(), blobName))) {
         reader.setChunkSize(8);
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        while (reader.read(buffer) != -1) {
-          buffer.flip();
-          output.write(buffer.array(), 0, buffer.limit());
-          buffer.clear();
-        }
+        ByteStreams.copy(reader, Channels.newChannel(output));
       }
       assertArrayEquals(
           BLOB_STRING_CONTENT.getBytes(UTF_8),
-          storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName));
+          storage.readAllBytes(
+              bucketFixture.getBucketInfo().getName(),
+              blobName,
+              BlobSourceOption.shouldReturnRawInputStream(false)));
+      assertArrayEquals(COMPRESSED_CONTENT, output.toByteArray());
+      try (GZIPInputStream zipInput =
+          new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))) {
+        assertArrayEquals(BLOB_STRING_CONTENT.getBytes(UTF_8), ByteStreams.toByteArray(zipInput));
+      }
+    }
+  }
+
+  @Test
+  public void ensureReaderCanAutoDecompressWhenReturnRawInputStream_false() throws IOException {
+    String blobName = testName.getMethodName();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+            .setContentType("text/plain")
+            .setContentEncoding("gzip")
+            .build();
+    Blob blob = storage.create(blobInfo, COMPRESSED_CONTENT);
+    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      try (ReadChannel reader =
+          storage.reader(
+              BlobId.of(bucketFixture.getBucketInfo().getName(), blobName),
+              BlobSourceOption.shouldReturnRawInputStream(false))) {
+        reader.setChunkSize(8);
+        ByteStreams.copy(reader, Channels.newChannel(output));
+      }
+      assertArrayEquals(BLOB_STRING_CONTENT.getBytes(UTF_8), output.toByteArray());
+    }
+  }
+
+  @Test
+  public void returnRawInputStream_true() throws IOException {
+    String blobName = testName.getMethodName();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+            .setContentType("text/plain")
+            .setContentEncoding("gzip")
+            .build();
+    Blob blob = storage.create(blobInfo, COMPRESSED_CONTENT);
+    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      try (ReadChannel reader =
+          storage.reader(
+              BlobId.of(bucketFixture.getBucketInfo().getName(), blobName),
+              BlobSourceOption.shouldReturnRawInputStream(true))) {
+        reader.setChunkSize(8);
+        ByteStreams.copy(reader, Channels.newChannel(output));
+      }
+      assertArrayEquals(
+          BLOB_STRING_CONTENT.getBytes(UTF_8),
+          storage.readAllBytes(
+              bucketFixture.getBucketInfo().getName(),
+              blobName,
+              BlobSourceOption.shouldReturnRawInputStream(false)));
       assertArrayEquals(COMPRESSED_CONTENT, output.toByteArray());
       try (GZIPInputStream zipInput =
           new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))) {
