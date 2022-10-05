@@ -279,12 +279,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
+    Hasher hasher = Hasher.enabled();
+    if (req.hasObjectChecksums() && req.getObjectChecksums().hasCrc32C()) {
+      hasher = Hasher.constant(req.getObjectChecksums().getCrc32C());
+    }
     GapicWritableByteChannelSessionBuilder channelSessionBuilder =
         ResumableMedia.gapic()
             .write()
             .byteChannel(
                 storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-            .setHasher(Hasher.enabled())
+            .setHasher(hasher)
             .setByteStringStrategy(ByteStringStrategy.noCopy());
 
     long size = Files.size(path);
@@ -348,12 +352,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
     ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
 
+    Hasher hasher = Hasher.enabled();
+    if (req.hasObjectChecksums() && req.getObjectChecksums().hasCrc32C()) {
+      hasher = Hasher.constant(req.getObjectChecksums().getCrc32C());
+    }
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
             .byteChannel(
                 storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-            .setHasher(Hasher.enabled())
+            .setHasher(hasher)
             .setByteStringStrategy(ByteStringStrategy.noCopy())
             .resumable()
             .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
@@ -729,11 +737,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+    Hasher hasher = Hasher.noop();
+    if (req.hasObjectChecksums() && req.getObjectChecksums().hasCrc32C()) {
+      hasher = Hasher.constant(req.getObjectChecksums().getCrc32C());
+    }
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable(),
         getOptions(),
         retryAlgorithmManager.idempotent(),
-        () -> startResumableWrite(grpcCallContext, req));
+        () -> startResumableWrite(grpcCallContext, req),
+        hasher);
   }
 
   @Override

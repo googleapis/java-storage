@@ -88,11 +88,12 @@ final class GapicUnbufferedWritableByteChannel<
       ByteString b = datum.getB();
       int contentSize = b.size();
       long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
+      Crc32cLengthKnown cumulative =
+          writeCtx
+              .getCumulativeCrc32c()
+              .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
       ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
       if (crc32c != null) {
-        writeCtx
-            .getCumulativeCrc32c()
-            .getAndAccumulate(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
         checksummedData.setCrc32C(crc32c.getValue());
       }
       WriteObjectRequest.Builder builder =
@@ -102,11 +103,9 @@ final class GapicUnbufferedWritableByteChannel<
               .setChecksummedData(checksummedData.build());
       if (!datum.isOnlyFullBlocks()) {
         builder.setFinishWrite(true);
-        if (crc32c != null) {
+        if (cumulative != null) {
           builder.setObjectChecksums(
-              ObjectChecksums.newBuilder()
-                  .setCrc32C(writeCtx.getCumulativeCrc32c().get().getValue())
-                  .build());
+              ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
         }
         finished = true;
       }

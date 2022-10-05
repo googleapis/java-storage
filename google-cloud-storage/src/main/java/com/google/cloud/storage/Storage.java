@@ -721,7 +721,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     /**
      * Returns an option for blob's data MD5 hash match. If this option is used the request will
      * fail if blobs' data MD5 hash does not match.
+     *
+     * @deprecated Please compute and use a crc32c checksum instead. {@link #crc32cMatch()}
      */
+    @Deprecated
+    @TransportCompatibility(Transport.HTTP)
     public static BlobWriteOption md5Match() {
       return new BlobWriteOption(UnifiedOpts.md5MatchExtractor());
     }
@@ -730,6 +734,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data CRC32C checksum match. If this option is used the request
      * will fail if blobs' data CRC32C checksum does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption crc32cMatch() {
       return new BlobWriteOption(UnifiedOpts.crc32cMatchExtractor());
     }

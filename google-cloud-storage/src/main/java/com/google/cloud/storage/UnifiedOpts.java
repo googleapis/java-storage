@@ -331,8 +331,12 @@ final class UnifiedOpts {
   compatibility overloads
   -- */
 
-  static Crc32cMatch crc32cMatch(String i) {
+  static Crc32cMatch crc32cMatch(int i) {
     return new Crc32cMatch(i);
+  }
+
+  static Crc32cMatch crc32cMatch(String i) {
+    return new Crc32cMatch(Utils.crc32cCodec.decode(i));
   }
 
   static Delimiter currentDirectory() {
@@ -495,18 +499,17 @@ final class UnifiedOpts {
     return Md5MatchExtractor.INSTANCE;
   }
 
-  @Deprecated
   static final class Crc32cMatch implements ObjectTargetOpt {
     private static final long serialVersionUID = -8680237667319155418L;
-    private final String val;
+    private final int val;
 
-    private Crc32cMatch(String val) {
+    private Crc32cMatch(int val) {
       this.val = val;
     }
 
     @Override
     public Mapper<BlobInfo.Builder> blobInfo() {
-      return b -> b.setCrc32c(val);
+      return b -> b.setCrc32c(Utils.crc32cCodec.encode(val));
     }
 
     @Override
@@ -519,6 +522,14 @@ final class UnifiedOpts {
       }
       Crc32cMatch that = (Crc32cMatch) o;
       return Objects.equals(val, that.val);
+    }
+
+    @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getObjectChecksumsBuilder().setCrc32C(val);
+        return b;
+      };
     }
 
     @Override

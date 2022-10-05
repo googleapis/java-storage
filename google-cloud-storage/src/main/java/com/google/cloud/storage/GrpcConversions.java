@@ -39,7 +39,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
-import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
@@ -99,9 +98,6 @@ final class GrpcConversions {
       Codec.of(this::bindingEncode, this::bindingDecode);
   private final Codec<Condition, Expr> iamConditionCodec =
       Codec.of(this::conditionEncode, this::conditionDecode);
-
-  private final Codec<Integer, String> crc32cCodec =
-      Codec.of(this::crc32cEncode, this::crc32cDecode);
 
   @VisibleForTesting
   final Codec<OffsetDateTime, Timestamp> timestampCodec =
@@ -750,7 +746,7 @@ final class GrpcConversions {
             ByteString.copyFrom(BaseEncoding.base64().decode(from.getMd5())));
       }
       if (from.getCrc32c() != null) {
-        objectChecksums.setCrc32C(crc32cCodec.decode(from.getCrc32c()));
+        objectChecksums.setCrc32C(Utils.crc32cCodec.decode(from.getCrc32c()));
       }
       toBuilder.setChecksums(objectChecksums.build());
     }
@@ -801,7 +797,7 @@ final class GrpcConversions {
     if (from.hasChecksums()) {
       ObjectChecksums checksums = from.getChecksums();
       if (checksums.hasCrc32C()) {
-        toBuilder.setCrc32c(crc32cCodec.encode(checksums.getCrc32C()));
+        toBuilder.setCrc32c(Utils.crc32cCodec.encode(checksums.getCrc32C()));
       }
       ByteString md5Hash = checksums.getMd5Hash();
       if (!md5Hash.isEmpty()) {
@@ -920,15 +916,6 @@ final class GrpcConversions {
     to.setTitle(from.getTitle());
     to.setDescription(from.getDescription());
     return to.build();
-  }
-
-  private int crc32cDecode(String from) {
-    byte[] decodeCrc32c = BaseEncoding.base64().decode(from);
-    return Ints.fromByteArray(decodeCrc32c);
-  }
-
-  private String crc32cEncode(int from) {
-    return BaseEncoding.base64().encode(Ints.toByteArray(from));
   }
 
   private Map<String, String> removeNullValues(Map<String, String> from) {

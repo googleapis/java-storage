@@ -53,7 +53,8 @@ final class GrpcBlobWriteChannel implements WriteChannel {
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
       RetryingDependencies deps,
       ResultRetryAlgorithm<?> alg,
-      Supplier<ApiFuture<ResumableWrite>> start) {
+      Supplier<ApiFuture<ResumableWrite>> start,
+      Hasher hasher) {
     lazyWriteChannel =
         new LazyWriteChannel(
             Suppliers.memoize(
@@ -61,7 +62,7 @@ final class GrpcBlobWriteChannel implements WriteChannel {
                     ResumableMedia.gapic()
                         .write()
                         .byteChannel(write)
-                        .setHasher(Hasher.noop())
+                        .setHasher(hasher)
                         .setByteStringStrategy(ByteStringStrategy.copy())
                         .resumable()
                         .withRetryConfig(deps, alg)
