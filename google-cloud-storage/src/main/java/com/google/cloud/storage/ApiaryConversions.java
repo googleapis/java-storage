@@ -17,7 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.dateTimeCodec;
-import static com.google.cloud.storage.Utils.durationMillisCodec;
+import static com.google.cloud.storage.Utils.durationSecondsCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.nullableDateTimeCodec;
@@ -376,7 +376,7 @@ final class ApiaryConversions {
       to.setRetentionPolicy(Data.nullOf(Bucket.RetentionPolicy.class));
     } else {
       Bucket.RetentionPolicy retentionPolicy = new Bucket.RetentionPolicy();
-      retentionPolicy.setRetentionPeriod(durationMillisCodec.encode(retentionPeriod));
+      retentionPolicy.setRetentionPeriod(durationSecondsCodec.encode(retentionPeriod));
       ifNonNull(
           from.getRetentionEffectiveTimeOffsetDateTime(),
           dateTimeCodec::encode,
