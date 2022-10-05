@@ -17,6 +17,7 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 import com.google.api.gax.paging.Page;
 import com.google.cloud.storage.Blob;
@@ -146,7 +147,8 @@ public final class ITReadMaskTest {
     public static Iterable<Args<BucketField, BucketInfo>> parameters() {
       ImmutableList<Args<BucketField, BucketInfo>> args =
           ImmutableList.of(
-              new Args<>(BucketField.ACL, LazyAssertion.equal()),
+              new Args<>(
+                  BucketField.ACL, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
               new Args<>(BucketField.AUTOCLASS, LazyAssertion.equal()),
               new Args<>(BucketField.BILLING, LazyAssertion.equal()),
               new Args<>(BucketField.CORS, LazyAssertion.equal()),
@@ -164,7 +166,8 @@ public final class ITReadMaskTest {
                     assertThat(grpcT.getDefaultAcl()).isNull();
                   }),
               new Args<>(BucketField.ENCRYPTION, LazyAssertion.equal()),
-              new Args<>(BucketField.ETAG, LazyAssertion.equal()),
+              new Args<>(
+                  BucketField.ETAG, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
               new Args<>(BucketField.IAMCONFIGURATION, LazyAssertion.equal()),
               new Args<>(BucketField.ID, LazyAssertion.equal()),
               new Args<>(BucketField.LABELS, LazyAssertion.equal()),
@@ -248,7 +251,7 @@ public final class ITReadMaskTest {
     public static Iterable<Args<BlobField, BlobInfo>> parameters() {
       ImmutableList<Args<BlobField, BlobInfo>> args =
           ImmutableList.of(
-              new Args<>(BlobField.ACL, LazyAssertion.equal()),
+              new Args<>(BlobField.ACL, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
               new Args<>(BlobField.BUCKET, LazyAssertion.equal()),
               new Args<>(
                   BlobField.CACHE_CONTROL,
@@ -289,7 +292,7 @@ public final class ITReadMaskTest {
               new Args<>(BlobField.CRC32C, LazyAssertion.equal()),
               new Args<>(BlobField.CUSTOMER_ENCRYPTION, LazyAssertion.equal()),
               new Args<>(BlobField.CUSTOM_TIME, LazyAssertion.equal()),
-              new Args<>(BlobField.ETAG, LazyAssertion.equal()),
+              new Args<>(BlobField.ETAG, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
               new Args<>(
                   BlobField.EVENT_BASED_HOLD,
                   LazyAssertion.apiaryNullGrpcDefault(false, BlobInfo::getEventBasedHold)),
@@ -407,6 +410,10 @@ public final class ITReadMaskTest {
 
     static <X> LazyAssertion<X> equal() {
       return (a, g) -> assertThat(g).isEqualTo(a);
+    }
+
+    static <X> LazyAssertion<X> skip(String message) {
+      return (a, g) -> assumeTrue(message, false);
     }
 
     static <X, F> LazyAssertion<X> apiaryNullGrpcDefault(F def, Function<X, F> extractor) {
