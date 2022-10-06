@@ -52,6 +52,7 @@ import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
+import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
@@ -100,6 +101,8 @@ final class ApiaryConversions {
       Codec.of(this::loggingEncode, this::loggingDecode);
   private final Codec<IamConfiguration, Bucket.IamConfiguration> iamConfigurationCodec =
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
+  private final Codec<Autoclass, Bucket.Autoclass> autoclassCodec =
+      Codec.of(this::autoclassEncode, this::autoclassDecode);
   private final Codec<LifecycleRule, Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<LifecycleCondition, Condition> lifecycleConditionCodec =
@@ -385,6 +388,7 @@ final class ApiaryConversions {
       to.setRetentionPolicy(retentionPolicy);
     }
     ifNonNull(from.getIamConfiguration(), this::iamConfigEncode, to::setIamConfiguration);
+    ifNonNull(from.getAutoclass(), this::autoclassEncode, to::setAutoclass);
     ifNonNull(from.getLogging(), this::loggingEncode, to::setLogging);
     ifNonNull(
         from.getCustomPlacementConfig(),
@@ -437,6 +441,7 @@ final class ApiaryConversions {
     ifNonNull(retentionPolicy, RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
     ifNonNull(retentionPolicy, RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
     ifNonNull(from.getIamConfiguration(), this::iamConfigDecode, to::setIamConfiguration);
+    ifNonNull(from.getAutoclass(), this::autoclassDecode, to::setAutoclass);
     ifNonNull(from.getLogging(), this::loggingDecode, to::setLogging);
     ifNonNull(
         from.getCustomPlacementConfig(),
@@ -469,6 +474,22 @@ final class ApiaryConversions {
         from.getPublicAccessPrevention(),
         PublicAccessPrevention::parse,
         to::setPublicAccessPrevention);
+    return to.build();
+  }
+
+  private Bucket.Autoclass autoclassEncode(Autoclass from) {
+    Bucket.Autoclass to = new Bucket.Autoclass();
+    if(from.getEnabled() != null) {
+      to.setEnabled(from.getEnabled());
+    }
+    ifNonNull(from.getToggleTime(), dateTimeCodec::encode, to::setToggleTime);
+    return to;
+  }
+
+  private Autoclass autoclassDecode(Bucket.Autoclass from) {
+    Autoclass.Builder to = Autoclass.newBuilder();
+    to.setEnabled(from.getEnabled());
+    ifNonNull(from.getToggleTime(), dateTimeCodec::decode, to::setToggleTime);
     return to.build();
   }
 

@@ -578,6 +578,12 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
+    public Builder setAutoclass(Autoclass autoclass) {
+      infoBuilder.setAutoclass(autoclass);
+      return this;
+    }
+
+    @Override
     public Builder setLogging(Logging logging) {
       infoBuilder.setLogging(logging);
       return this;

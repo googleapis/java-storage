@@ -105,6 +105,7 @@ public class BucketInfo implements Serializable {
   private final Boolean retentionPolicyIsLocked;
   private final Duration retentionPeriod;
   private final IamConfiguration iamConfiguration;
+  private final Autoclass autoclass;
   private final String locationType;
   private final Logging logging;
   private final CustomPlacementConfig customPlacementConfig;
@@ -335,6 +336,90 @@ public class BucketInfo implements Serializable {
           .add("uniformBucketLevelAccessLockedTime", uniformBucketLevelAccessLockedTime)
           .add("publicAccessPrevention", publicAccessPrevention)
           .toString();
+    }
+  }
+
+  public static class Autoclass implements Serializable {
+
+    private static final long serialVersionUID = -2378172222188072439L;
+    private Boolean enabled;
+    private OffsetDateTime toggleTime;
+
+    public Boolean getEnabled() {
+      return enabled;
+    }
+
+    public OffsetDateTime getToggleTime() {
+      return toggleTime;
+    }
+
+    @Override
+    public boolean equals (Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Autoclass)) {
+        return false;
+      }
+      Autoclass that = (Autoclass) o;
+      return Objects.equals(enabled, that.enabled)
+          && Objects.equals(toggleTime, that.toggleTime);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(enabled, toggleTime);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("enabled", enabled)
+          .add("toggleTime", toggleTime)
+          .toString();
+    }
+
+    private Autoclass(Builder builder) {
+      this.enabled = builder.enabled;
+      this.toggleTime = builder.toggleTime;
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+
+    public Builder toBuilder() {
+      return newBuilder()
+          .setEnabled(enabled)
+          .setToggleTime(toggleTime);
+    }
+
+    public static class Builder {
+      private Boolean enabled;
+      private OffsetDateTime toggleTime;
+
+      /**
+       * Sets whether Autoclass is enabled for this bucket. Currently, autoclass can only
+       * be enabled at bucket create time. Any calls to update an existing Autoclass configuration
+       * must be to disable it, calls to enable Autoclass on an existing bucket will fail.
+       */
+      public Builder setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+      }
+
+      /**
+       * Sets the last time autoclass was toggled on or off. Set to package private because
+       * this should only be set by the backend.
+       */
+      Builder setToggleTime(OffsetDateTime toggleTime) {
+        this.toggleTime = toggleTime;
+        return this;
+      }
+
+      public Autoclass build() {
+        return new Autoclass(this);
+      }
     }
   }
 
@@ -1437,6 +1522,8 @@ public class BucketInfo implements Serializable {
     @BetaApi
     public abstract Builder setIamConfiguration(IamConfiguration iamConfiguration);
 
+    public abstract Builder setAutoclass(Autoclass autoclass);
+
     public abstract Builder setLogging(Logging logging);
 
     public abstract Builder setCustomPlacementConfig(CustomPlacementConfig customPlacementConfig);
@@ -1534,6 +1621,7 @@ public class BucketInfo implements Serializable {
     private Boolean retentionPolicyIsLocked;
     private Duration retentionPeriod;
     private IamConfiguration iamConfiguration;
+    private Autoclass autoclass;
     private String locationType;
     private Logging logging;
     private CustomPlacementConfig customPlacementConfig;
@@ -1571,6 +1659,7 @@ public class BucketInfo implements Serializable {
       retentionPolicyIsLocked = bucketInfo.retentionPolicyIsLocked;
       retentionPeriod = bucketInfo.retentionPeriod;
       iamConfiguration = bucketInfo.iamConfiguration;
+      autoclass = bucketInfo.autoclass;
       locationType = bucketInfo.locationType;
       logging = bucketInfo.logging;
       customPlacementConfig = bucketInfo.customPlacementConfig;
@@ -1905,6 +1994,15 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
+    public Builder setAutoclass(Autoclass autoclass) {
+      if (!Objects.equals(this.autoclass, autoclass)) {
+        modifiedFields.add(BucketField.AUTOCLASS);
+      }
+      this.autoclass = autoclass;
+      return this;
+    }
+
+    @Override
     public Builder setLogging(Logging logging) {
       Logging tmp = logging != null ? logging : Logging.newBuilder().build();
       if (!Objects.equals(this.logging, tmp)) {
@@ -2159,6 +2257,7 @@ public class BucketInfo implements Serializable {
     retentionPolicyIsLocked = builder.retentionPolicyIsLocked;
     retentionPeriod = builder.retentionPeriod;
     iamConfiguration = builder.iamConfiguration;
+    autoclass = builder.autoclass;
     locationType = builder.locationType;
     logging = builder.logging;
     customPlacementConfig = builder.customPlacementConfig;
@@ -2481,6 +2580,11 @@ public class BucketInfo implements Serializable {
     return iamConfiguration;
   }
 
+  /** Returns the Autoclass configuration */
+  public Autoclass getAutoclass() {
+    return autoclass;
+  }
+
   /** Returns the Logging */
   public Logging getLogging() {
     return logging;
@@ -2525,6 +2629,7 @@ public class BucketInfo implements Serializable {
         retentionPolicyIsLocked,
         retentionPeriod,
         iamConfiguration,
+        autoclass,
         locationType,
         logging);
   }
@@ -2564,6 +2669,7 @@ public class BucketInfo implements Serializable {
         && Objects.equals(retentionPolicyIsLocked, that.retentionPolicyIsLocked)
         && Objects.equals(retentionPeriod, that.retentionPeriod)
         && Objects.equals(iamConfiguration, that.iamConfiguration)
+        && Objects.equals(autoclass, that.autoclass)
         && Objects.equals(locationType, that.locationType)
         && Objects.equals(logging, that.logging);
   }
