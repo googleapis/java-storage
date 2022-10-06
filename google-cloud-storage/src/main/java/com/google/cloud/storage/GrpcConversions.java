@@ -17,8 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.bucketNameCodec;
-import static com.google.cloud.storage.Utils.dateTimeCodec;
-import static com.google.cloud.storage.Utils.durationMillisCodec;
 import static com.google.cloud.storage.Utils.durationSecondsCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
