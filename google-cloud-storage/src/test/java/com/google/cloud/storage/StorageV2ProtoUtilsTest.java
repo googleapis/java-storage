@@ -47,9 +47,7 @@ public final class StorageV2ProtoUtilsTest {
 
   @Example
   void validation_offset_lteq_limit() {
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 3L, 2L));
+    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 3L, 2L);
     seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 0L, 0L);
     seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 1L, 1L);
   }
@@ -83,13 +81,10 @@ public final class StorageV2ProtoUtilsTest {
     } else if (offset == null && limit != null) {
       ReadObjectRequest seek = seekReadObjectRequest(srr.req, offset, limit);
       assertThat(seek.getReadLimit()).isEqualTo(limit);
-    } else if (offset <= limit) {
+    } else {
       ReadObjectRequest seek = seekReadObjectRequest(srr.req, offset, limit);
       assertThat(seek.getReadOffset()).isEqualTo(offset);
       assertThat(seek.getReadLimit()).isEqualTo(limit);
-    } else {
-      assertThrows(
-          IllegalArgumentException.class, () -> seekReadObjectRequest(srr.req, offset, limit));
     }
   }
 

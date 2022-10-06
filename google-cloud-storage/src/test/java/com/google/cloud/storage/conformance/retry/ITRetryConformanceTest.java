@@ -151,6 +151,7 @@ public class ITRetryConformanceTest {
             .setHost(TEST_BENCH.getBaseUri().replaceAll("https?://", ""))
             .setTestAllowFilter(
                 RetryTestCaseResolver.includeAll()
+                    // .and(RetryTestCaseResolver.specificMappings(44, 45))
                     .and(
                         (m, trc) ->
                             trc.getScenarioId()

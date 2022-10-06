@@ -227,14 +227,32 @@ public class GzipReadableByteChannelTest {
     }
 
     @Test
-    public void storage_readAllBytes() {
-      Storage s = storageFixture.getInstance();
-      byte[] actual = s.readAllBytes(BlobId.of("buck", "obj-compressed"));
-      assertThat(actual).isEqualTo(dataUncompressed);
+    public void autoGzipDecompress_default_disabled() throws IOException {
+      UnbufferedReadableByteChannelSession<Object> session =
+          ResumableMedia.gapic()
+              .read()
+              .byteChannel(storageClient.getInstance().readObjectCallable())
+              .setHasher(Hasher.noop())
+              .unbuffered()
+              .setReadObjectRequest(reqCompressed)
+              .build();
+
+      byte[] actualBytes = new byte[dataCompressed.length];
+      try (UnbufferedReadableByteChannel c = session.open()) {
+        c.read(ByteBuffer.wrap(actualBytes));
+      }
+      assertThat(actualBytes).isEqualTo(dataCompressed);
     }
 
     @Test
-    public void storage_readAllBytes_returnRawInputStream() {
+    public void storage_readAllBytes_defaultCompressed() {
+      Storage s = storageFixture.getInstance();
+      byte[] actual = s.readAllBytes(BlobId.of("buck", "obj-compressed"));
+      assertThat(actual).isEqualTo(dataCompressed);
+    }
+
+    @Test
+    public void storage_readAllBytes_returnRawInputStream_true() {
       Storage s = storageFixture.getInstance();
       byte[] actual =
           s.readAllBytes(
@@ -244,17 +262,17 @@ public class GzipReadableByteChannelTest {
     }
 
     @Test
-    public void storage_reader() throws Exception {
+    public void storage_reader_defaultCompressed() throws Exception {
       Storage s = storageFixture.getInstance();
-      byte[] actual = new byte[dataUncompressed.length];
+      byte[] actual = new byte[dataCompressed.length];
       try (ReadChannel c = s.reader(BlobId.of("buck", "obj-compressed"))) {
         c.read(ByteBuffer.wrap(actual));
       }
-      assertThat(actual).isEqualTo(dataUncompressed);
+      assertThat(actual).isEqualTo(dataCompressed);
     }
 
     @Test
-    public void storage_reader_returnRawInputStream() throws Exception {
+    public void storage_reader_returnRawInputStream_true() throws Exception {
       Storage s = storageFixture.getInstance();
       byte[] actual = new byte[dataCompressed.length];
       try (ReadChannel c =

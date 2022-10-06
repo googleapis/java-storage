@@ -2199,7 +2199,7 @@ final class UnifiedOpts {
      */
     @Deprecated
     boolean autoGzipDecompression() {
-      return filterTo(ReturnRawInputStream.class).findFirst().map(r -> r.val).orElse(false);
+      return filterTo(ReturnRawInputStream.class).findFirst().map(r -> r.val).orElse(true);
     }
 
     Decoder<Blob, Blob> clearBlobFields() {
