@@ -151,6 +151,11 @@
       <artifactId>grpc-stub</artifactId>
     </dependency>
     <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-googleapis</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.checkerframework</groupId>
       <artifactId>checker-qual</artifactId>
     </dependency>
@@ -260,6 +265,11 @@
             <usedDependencies>io.grpc:grpc-xds</usedDependencies>
             <ignoredDependencies>
               <dependency>io.grpc:grpc-netty-shaded</dependency>
+              <!--
+              defining a runtime dependency on this so it is on the default classpath for customers wanting
+              to use direct path
+              -->
+              <dependency>io.grpc:grpc-googleapis</dependency>
               <!--
               We depend on `net.jqwik:jqwik` which itself has no classes, but depends on each of the other jars.
               In order to not churn on which of the sub apis we happen to be using at this time, we're flagging

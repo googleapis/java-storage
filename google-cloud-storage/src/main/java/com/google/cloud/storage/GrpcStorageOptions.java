@@ -64,6 +64,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final Duration terminationAwaitDuration;
+  private final boolean attemptDirectPath;
 
   @BetaApi
   public GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
@@ -75,6 +76,7 @@ public final class GrpcStorageOptions extends StorageOptions
     this.terminationAwaitDuration =
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
+    this.attemptDirectPath = builder.attemptDirectPath;
   }
 
   @Override
@@ -94,10 +96,20 @@ public final class GrpcStorageOptions extends StorageOptions
 
   @InternalApi
   StorageSettings getStorageSettings() throws IOException {
-    URI uri = URI.create(getHost());
+    String endpoint = getHost();
+    URI uri = URI.create(endpoint);
     String scheme = uri.getScheme();
-    int port = uri.getPort() > 0 ? uri.getPort() : scheme.equals("http") ? 80 : 443;
-    String endpoint = String.format("%s:%d", uri.getHost(), port);
+    int port = uri.getPort();
+    // Gax routes the endpoint into a method which can't handle schemes, unless for direct path
+    // try and strip here if we can
+    switch (scheme) {
+      case "http":
+        endpoint = String.format("%s:%s", uri.getHost(), port > 0 ? port : 80);
+        break;
+      case "https":
+        endpoint = String.format("%s:%s", uri.getHost(), port > 0 ? port : 443);
+        break;
+    }
 
     CredentialsProvider credentialsProvider;
     if (credentials instanceof NoCredentials) {
@@ -112,13 +124,15 @@ public final class GrpcStorageOptions extends StorageOptions
             .setCredentialsProvider(credentialsProvider)
             .setClock(getClock());
 
+    InstantiatingGrpcChannelProvider.Builder channelProviderBuilder =
+        InstantiatingGrpcChannelProvider.newBuilder()
+            .setEndpoint(endpoint)
+            .setAttemptDirectPath(attemptDirectPath);
+
     if (scheme.equals("http")) {
-      builder.setTransportChannelProvider(
-          InstantiatingGrpcChannelProvider.newBuilder()
-              .setEndpoint(endpoint)
-              .setChannelConfigurator(ManagedChannelBuilder::usePlaintext)
-              .build());
+      channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
+    builder.setTransportChannelProvider(channelProviderBuilder.build());
     RetrySettings baseRetrySettings = getRetrySettings();
     RetrySettings readRetrySettings =
         baseRetrySettings
@@ -215,6 +229,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
     private StorageRetryStrategy storageRetryStrategy;
     private Duration terminationAwaitDuration;
+    private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
 
     Builder() {}
 
@@ -233,6 +248,22 @@ public final class GrpcStorageOptions extends StorageOptions
     public Builder setTerminationAwaitDuration(Duration terminationAwaitDuration) {
       this.terminationAwaitDuration =
           requireNonNull(terminationAwaitDuration, "terminationAwaitDuration must be non null");
+      return this;
+    }
+
+    /**
+     * Option which signifies the client should attempt to connect to gcs via Direct Path.
+     *
+     * <p>In order to use direct path, both this option must be true and the environment variable
+     * (not system property) {@code GOOGLE_CLOUD_ENABLE_DIRECT_PATH_XDS} must be true.
+     *
+     * <p><i>NOTE</i>There is no need to specify a new endpoint via {@link #setHost(String)} as the
+     * underlying code will translate the normal {@code https://storage.googleapis.com:443} into the
+     * proper Direct Path URI for you.
+     */
+    @BetaApi
+    public GrpcStorageOptions.Builder setAttemptDirectPath(boolean attemptDirectPath) {
+      this.attemptDirectPath = attemptDirectPath;
       return this;
     }
 
@@ -379,6 +410,11 @@ public final class GrpcStorageOptions extends StorageOptions
     @BetaApi
     public Duration getTerminationAwaitDuration() {
       return Duration.ofMinutes(1);
+    }
+
+    @BetaApi
+    public boolean isAttemptDirectPath() {
+      return false;
     }
   }
 
