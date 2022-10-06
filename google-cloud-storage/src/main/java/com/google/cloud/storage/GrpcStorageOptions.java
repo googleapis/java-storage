@@ -39,8 +39,6 @@ import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -127,22 +125,9 @@ public final class GrpcStorageOptions extends StorageOptions
             .setClock(getClock());
 
     InstantiatingGrpcChannelProvider.Builder channelProviderBuilder =
-        InstantiatingGrpcChannelProvider.newBuilder().setEndpoint(endpoint);
-
-    if (attemptDirectPath) {
-      channelProviderBuilder
-          .setAttemptDirectPath(true)
-          .setDirectPathServiceConfig(
-              ImmutableMap.of(
-                  "loadBalancingConfig",
-                  ImmutableList.of(
-                      ImmutableMap.of(
-                          "grpclb",
-                          ImmutableMap.of(
-                              "childPolicy",
-                              ImmutableList.of(
-                                  ImmutableMap.of("round_robin", ImmutableMap.of())))))));
-    }
+        InstantiatingGrpcChannelProvider.newBuilder()
+            .setEndpoint(endpoint)
+            .setAttemptDirectPath(attemptDirectPath);
 
     if (scheme.equals("http")) {
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
