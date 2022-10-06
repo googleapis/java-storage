@@ -18,7 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.BackwardCompatibilityUtils.millisOffsetDateTimeCodec;
 import static com.google.cloud.storage.BackwardCompatibilityUtils.millisUtcCodec;
-import static com.google.cloud.storage.BackwardCompatibilityUtils.nullableDurationMillisCodec;
+import static com.google.cloud.storage.BackwardCompatibilityUtils.nullableDurationSecondsCodec;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -1425,7 +1425,7 @@ public class BucketInfo implements Serializable {
      */
     @BetaApi
     public Builder setRetentionPeriodDuration(Duration retentionPeriod) {
-      return setRetentionPeriod(nullableDurationMillisCodec.encode(retentionPeriod));
+      return setRetentionPeriod(nullableDurationSecondsCodec.encode(retentionPeriod));
     }
 
     /**
@@ -1883,7 +1883,7 @@ public class BucketInfo implements Serializable {
     /** @deprecated Use {@link #setRetentionPeriodDuration(Duration)} */
     @Override
     public Builder setRetentionPeriod(Long retentionPeriod) {
-      return setRetentionPeriodDuration(nullableDurationMillisCodec.decode(retentionPeriod));
+      return setRetentionPeriodDuration(nullableDurationSecondsCodec.decode(retentionPeriod));
     }
 
     @Override
@@ -2466,7 +2466,7 @@ public class BucketInfo implements Serializable {
   @BetaApi
   @Deprecated
   public Long getRetentionPeriod() {
-    return nullableDurationMillisCodec.encode(retentionPeriod);
+    return nullableDurationSecondsCodec.encode(retentionPeriod);
   }
 
   /** Returns the retention policy retention period. */

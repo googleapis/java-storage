@@ -67,8 +67,8 @@ final class BackwardCompatibilityUtils {
                   .atOffset(ZoneOffset.UTC),
           odt -> requireNonNull(odt, "odt must be non null").toInstant().toEpochMilli());
 
-  static final Codec<@Nullable Duration, @Nullable Long> nullableDurationMillisCodec =
-      Utils.durationMillisCodec.nullable();
+  static final Codec<@Nullable Duration, @Nullable Long> nullableDurationSecondsCodec =
+      Utils.durationSecondsCodec.nullable();
 
   @SuppressWarnings("deprecation")
   static final Codec<DeleteRule, LifecycleRule> deleteRuleCodec =
