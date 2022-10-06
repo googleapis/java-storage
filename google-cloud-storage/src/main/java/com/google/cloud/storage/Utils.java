@@ -50,8 +50,8 @@ final class Utils {
 
   static final DateTimeFormatter RFC_3339_DATE_TIME_FORMATTER =
       DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-  static final Codec<Duration, Long> durationMillisCodec =
-      Codec.of(Duration::toMillis, Duration::ofMillis);
+  static final Codec<Duration, Long> durationSecondsCodec =
+      Codec.of(Duration::getSeconds, Duration::ofSeconds);
 
   @VisibleForTesting
   static final Codec<OffsetDateTime, DateTime> dateTimeCodec =

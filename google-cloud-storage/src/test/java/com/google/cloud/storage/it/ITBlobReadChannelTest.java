@@ -22,6 +22,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
@@ -31,6 +32,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.StorageFixture;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.BaseEncoding;
@@ -40,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -59,8 +62,6 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public final class ITBlobReadChannelTest {
 
-  // Stubbed From GRPC Uncomment Fixtures and parameters to enable GRPC tests
-
   private static final int _16MiB = 16 * 1024 * 1024;
   private static final int _256KiB = 256 * 1024;
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
@@ -76,10 +77,9 @@ public final class ITBlobReadChannelTest {
 
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-  /*
+
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-   */
 
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureHttp =
@@ -87,14 +87,13 @@ public final class ITBlobReadChannelTest {
           .setBucketNameFmtString("java-storage-http-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-  /*
+
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureGrpc =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-grpc-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-   */
 
   private final Storage storage;
   private final BucketFixture bucketFixture;
@@ -109,13 +108,9 @@ public final class ITBlobReadChannelTest {
 
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return ImmutableList.of(new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
-    /*
     return ImmutableList.of(
         new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
         new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
-    */
-
   }
 
   @Test
@@ -189,31 +184,48 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  public void testReadChannelFail() {
-    String blobName = "test-read-channel-blob-fail";
+  public void
+      testReadChannel_preconditionFailureResultsInIOException_metagenerationMatch_specified() {
+    String blobName = testName.getMethodName();
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     try (ReadChannel reader =
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.metagenerationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
+      fail("IOException was expected");
     } catch (IOException ex) {
       // expected
     }
+  }
+
+  @Test
+  public void testReadChannel_preconditionFailureResultsInIOException_generationMatch_specified() {
+    String blobName = testName.getMethodName();
+    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    Blob remoteBlob = storage.create(blob);
+    assertNotNull(remoteBlob);
     try (ReadChannel reader =
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.generationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
+      fail("IOException was expected");
     } catch (IOException ex) {
       // expected
     }
+  }
+
+  @Test
+  public void testReadChannel_preconditionFailureResultsInIOException_generationMatch_extractor() {
+    String blobName = testName.getMethodName();
+    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    Blob remoteBlob = storage.create(blob);
+    assertNotNull(remoteBlob);
     BlobId blobIdWrongGeneration =
         BlobId.of(bucketFixture.getBucketInfo().getName(), blobName, -1L);
     try (ReadChannel reader =
         storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
       reader.read(ByteBuffer.allocate(42));
-      fail("StorageException was expected");
+      fail("IOException was expected");
     } catch (IOException ex) {
       // expected
     }
@@ -221,6 +233,9 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void testReadChannelFailUpdatedGeneration() throws IOException {
+    // this test scenario is valid for both grpc and json, however the current semantics of actual
+    // request interleaving are very different, so this specific test is only applicable to json.
+    assumeTrue(this.clientName.startsWith("JSON"));
     String blobName = "test-read-blob-fail-updated-generation";
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     Random random = new Random();
@@ -254,8 +269,8 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  public void testReadCompressedBlob() throws IOException {
-    String blobName = "test-read-compressed-blob";
+  public void ensureReaderReturnsCompressedBytesByDefault() throws IOException {
+    String blobName = testName.getMethodName();
     BlobInfo blobInfo =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
             .setContentType("text/plain")
@@ -266,16 +281,66 @@ public final class ITBlobReadChannelTest {
       try (ReadChannel reader =
           storage.reader(BlobId.of(bucketFixture.getBucketInfo().getName(), blobName))) {
         reader.setChunkSize(8);
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        while (reader.read(buffer) != -1) {
-          buffer.flip();
-          output.write(buffer.array(), 0, buffer.limit());
-          buffer.clear();
-        }
+        ByteStreams.copy(reader, Channels.newChannel(output));
       }
       assertArrayEquals(
           BLOB_STRING_CONTENT.getBytes(UTF_8),
-          storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName));
+          storage.readAllBytes(
+              bucketFixture.getBucketInfo().getName(),
+              blobName,
+              BlobSourceOption.shouldReturnRawInputStream(false)));
+      assertArrayEquals(COMPRESSED_CONTENT, output.toByteArray());
+      try (GZIPInputStream zipInput =
+          new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))) {
+        assertArrayEquals(BLOB_STRING_CONTENT.getBytes(UTF_8), ByteStreams.toByteArray(zipInput));
+      }
+    }
+  }
+
+  @Test
+  public void ensureReaderCanAutoDecompressWhenReturnRawInputStream_false() throws IOException {
+    String blobName = testName.getMethodName();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+            .setContentType("text/plain")
+            .setContentEncoding("gzip")
+            .build();
+    Blob blob = storage.create(blobInfo, COMPRESSED_CONTENT);
+    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      try (ReadChannel reader =
+          storage.reader(
+              BlobId.of(bucketFixture.getBucketInfo().getName(), blobName),
+              BlobSourceOption.shouldReturnRawInputStream(false))) {
+        reader.setChunkSize(8);
+        ByteStreams.copy(reader, Channels.newChannel(output));
+      }
+      assertArrayEquals(BLOB_STRING_CONTENT.getBytes(UTF_8), output.toByteArray());
+    }
+  }
+
+  @Test
+  public void returnRawInputStream_true() throws IOException {
+    String blobName = testName.getMethodName();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+            .setContentType("text/plain")
+            .setContentEncoding("gzip")
+            .build();
+    Blob blob = storage.create(blobInfo, COMPRESSED_CONTENT);
+    try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      try (ReadChannel reader =
+          storage.reader(
+              BlobId.of(bucketFixture.getBucketInfo().getName(), blobName),
+              BlobSourceOption.shouldReturnRawInputStream(true))) {
+        reader.setChunkSize(8);
+        ByteStreams.copy(reader, Channels.newChannel(output));
+      }
+      assertArrayEquals(
+          BLOB_STRING_CONTENT.getBytes(UTF_8),
+          storage.readAllBytes(
+              bucketFixture.getBucketInfo().getName(),
+              blobName,
+              BlobSourceOption.shouldReturnRawInputStream(false)));
       assertArrayEquals(COMPRESSED_CONTENT, output.toByteArray());
       try (GZIPInputStream zipInput =
           new GZIPInputStream(new ByteArrayInputStream(output.toByteArray()))) {

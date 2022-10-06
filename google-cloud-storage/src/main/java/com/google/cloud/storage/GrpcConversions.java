@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.dateTimeCodec;
 import static com.google.cloud.storage.Utils.durationMillisCodec;
+import static com.google.cloud.storage.Utils.durationSecondsCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.projectNameCodec;
@@ -207,7 +208,7 @@ final class GrpcConversions {
       ifNonNull(retentionPolicy.getIsLocked(), to::setRetentionPolicyIsLocked);
       ifNonNull(
           retentionPolicy.getRetentionPeriod(),
-          Utils.durationMillisCodec::decode,
+          Utils.durationSecondsCodec::decode,
           to::setRetentionPeriodDuration);
       ifNonNull(
           retentionPolicy.getEffectiveTime(),
@@ -306,7 +307,7 @@ final class GrpcConversions {
       Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
       ifNonNull(
           from.getRetentionPeriodDuration(),
-          durationMillisCodec::encode,
+          durationSecondsCodec::encode,
           retentionPolicyBuilder::setRetentionPeriod);
       ifNonNull(from.retentionPolicyIsLocked(), retentionPolicyBuilder::setIsLocked);
       if (from.retentionPolicyIsLocked() == Boolean.TRUE) {

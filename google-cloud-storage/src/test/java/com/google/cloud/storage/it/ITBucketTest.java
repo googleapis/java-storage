@@ -46,6 +46,7 @@ import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.time.OffsetDateTime;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -104,6 +105,7 @@ public class ITBucketTest {
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
   private static final Map<String, String> BUCKET_LABELS = ImmutableMap.of("label1", "value1");
   private static final Long RETENTION_PERIOD = 5L;
+  private static final Duration RETENTION_DURATION = Duration.ofSeconds(5);
 
   public ITBucketTest(
       String clientName,
@@ -367,6 +369,8 @@ public class ITBucketTest {
       bucketInfo = BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build();
     }
     Bucket remoteBucket = storageFixtureHttp.getInstance().create(bucketInfo);
+    assertThat(remoteBucket.getRetentionPeriod()).isEqualTo(RETENTION_PERIOD);
+    assertThat(remoteBucket.getRetentionPeriodDuration()).isEqualTo(RETENTION_DURATION);
     try {
       assertNull(remoteBucket.retentionPolicyIsLocked());
       assertNotNull(remoteBucket.getRetentionEffectiveTime());
