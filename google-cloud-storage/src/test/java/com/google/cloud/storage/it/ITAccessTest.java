@@ -69,10 +69,8 @@ public class ITAccessTest {
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
 
-  /*
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-   */
 
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureHttp =
@@ -82,23 +80,19 @@ public class ITAccessTest {
   public static final BucketFixture requesterPaysFixtureHttp =
       BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
 
-  /*
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureGrpc =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-grpc-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-   */
 
-  /*
   @ClassRule(order = 2)
   public static final BucketFixture requesterPaysFixtureGrpc =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-grpc-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-   */
 
   private static final Long RETENTION_PERIOD = 5L;
 
@@ -121,14 +115,8 @@ public class ITAccessTest {
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return ImmutableList.of(
-        new Object[] {
-          "JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp
-        });
-    /*
-    return ImmutableList.of(
         new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp},
         new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc, requesterPaysFixtureGrpc});
-     */
   }
 
   @Test
