@@ -479,9 +479,7 @@ final class ApiaryConversions {
 
   private Bucket.Autoclass autoclassEncode(Autoclass from) {
     Bucket.Autoclass to = new Bucket.Autoclass();
-    if(from.getEnabled() != null) {
-      to.setEnabled(from.getEnabled());
-    }
+    ifNonNull(from.getEnabled(), to::setEnabled);
     ifNonNull(from.getToggleTime(), dateTimeCodec::encode, to::setToggleTime);
     return to;
   }

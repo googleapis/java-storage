@@ -379,6 +379,8 @@ public class BucketInfo implements Serializable {
           .toString();
     }
 
+    private Autoclass() {}
+
     private Autoclass(Builder builder) {
       this.enabled = builder.enabled;
       this.toggleTime = builder.toggleTime;
