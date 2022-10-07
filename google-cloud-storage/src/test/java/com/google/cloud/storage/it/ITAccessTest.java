@@ -40,8 +40,11 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.IamConfiguration;
+import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageRoles;
@@ -748,54 +751,84 @@ public class ITAccessTest {
   }
 
   @Test
-  public void testUBLAWithPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
+  public void changingPAPDoesNotAffectUBLA() throws Exception {
+    String bucketName = bucketFixture.newBucketName();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(bucketName)
+                    .setIamConfiguration(
+                        BucketInfo.IamConfiguration.newBuilder()
+                            .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
+                            .setIsUniformBucketLevelAccessEnabled(false)
+                            .build()
+                    )
+                    .build())
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      Bucket bucket = tempB.getBucket();
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
           BucketInfo.PublicAccessPrevention.INHERITED);
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
+      IamConfiguration iamConfiguration1 = bucket.getIamConfiguration().toBuilder()
+          .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED).build();
       // Update PAP setting to ENFORCED and should not affect UBLA setting.
-      bucket
+      storage.update(bucket
           .toBuilder()
-          .setIamConfiguration(
-              bucket
-                  .getIamConfiguration()
-                  .toBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                  .build())
-          .build()
-          .update();
-      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+          .setIamConfiguration(iamConfiguration1)
+          .build(), BucketTargetOption.metagenerationMatch());
+      Bucket bucket2 = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      assertEquals(
+          bucket2.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.ENFORCED);
+      assertFalse(bucket2.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(bucket2.getIamConfiguration().isBucketPolicyOnlyEnabled());
+    }
+  }
+
+  @Test
+  public void changingUBLADoesNotAffectPAP() throws Exception {
+    String bucketName = bucketFixture.newBucketName();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(bucketName)
+                    .setIamConfiguration(
+                        BucketInfo.IamConfiguration.newBuilder()
+                            .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
+                            .setIsUniformBucketLevelAccessEnabled(false)
+                            .build()
+                    )
+                    .build())
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      Bucket bucket = tempB.getBucket();
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.ENFORCED);
+          PublicAccessPrevention.INHERITED);
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
+      IamConfiguration iamConfiguration1 = bucket.getIamConfiguration().toBuilder()
+          .setIsUniformBucketLevelAccessEnabled(true).build();
       // Updating UBLA should not affect PAP setting.
-      bucket =
+      Bucket bucket2 =
+          storage.update(
           bucket
               .toBuilder()
-              .setIamConfiguration(
-                  bucket
-                      .getIamConfiguration()
-                      .toBuilder()
-                      .setIsUniformBucketLevelAccessEnabled(true)
-                      .build())
-              .build()
-              .update();
-      assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertTrue(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+              .setIamConfiguration(iamConfiguration1)
+              // clear out ACL related config in conjunction with enabling UBLA
+              .setAcl(Collections.emptyList())
+              .setDefaultAcl(Collections.emptyList())
+              .build(), BucketTargetOption.metagenerationMatch());
       assertEquals(
-          bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.ENFORCED);
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), papBucket, 1, TimeUnit.MINUTES);
+          bucket2.getIamConfiguration().getPublicAccessPrevention(),
+          PublicAccessPrevention.INHERITED);
+      assertTrue(bucket2.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertTrue(bucket2.getIamConfiguration().isBucketPolicyOnlyEnabled());
     }
   }
 
@@ -984,13 +1017,13 @@ public class ITAccessTest {
   private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
     return storage.create(
         Bucket.newBuilder(bucketName)
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
+        .setIamConfiguration(
+            BucketInfo.IamConfiguration.newBuilder()
                     .setPublicAccessPrevention(
                         enforced
                             ? BucketInfo.PublicAccessPrevention.ENFORCED
                             : BucketInfo.PublicAccessPrevention.INHERITED)
-                    .build())
+                .build())
             .build());
   }
 
