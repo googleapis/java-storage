@@ -80,13 +80,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.spec.SecretKeySpec;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.AfterParam;
+import org.junit.runners.Parameterized.BeforeParam;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
@@ -98,6 +98,8 @@ public class ITKmsTest {
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
 
+  // TODO: replace with StorageFixtureGrpc
+  // b/246634709
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureHttp =
       BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
@@ -134,8 +136,7 @@ public class ITKmsTest {
   private final BucketFixture bucketFixture;
   private final String clientName;
 
-  public ITKmsTest(String clientName, StorageFixture storageFixture, BucketFixture bucketFixture)
-      throws IOException {
+  public ITKmsTest(String clientName, StorageFixture storageFixture, BucketFixture bucketFixture) {
     this.storage = storageFixture.getInstance();
     this.bucketFixture = bucketFixture;
     this.clientName = clientName;
@@ -148,12 +149,15 @@ public class ITKmsTest {
         new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
   }
 
-  @BeforeClass
-  public static void setup() {
+  @BeforeParam
+  public static void setup(
+      String clientName, StorageFixture storageFixture, BucketFixture bucketFixture) {
     // Prepare KMS KeyRing for CMEK tests
     // https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys
-    String projectId = storageFixtureHttp.getInstance().getOptions().getProjectId();
-    Credentials credentials = storageFixtureHttp.getInstance().getOptions().getCredentials();
+    // We don't care currently if we are using HTTP or gRPC because
+    // these values should be the same.
+    String projectId = storageFixture.getInstance().getOptions().getProjectId();
+    Credentials credentials = storageFixture.getInstance().getOptions().getCredentials();
     kmsChannel = ManagedChannelBuilder.forTarget("cloudkms.googleapis.com:443").build();
     KeyManagementServiceBlockingStub kmsStub =
         KeyManagementServiceGrpc.newBlockingStub(kmsChannel)
@@ -172,7 +176,7 @@ public class ITKmsTest {
             kmsStub, projectId, KMS_KEY_RING_LOCATION, KMS_KEY_RING_NAME, KMS_KEY_TWO_NAME);
   }
 
-  @AfterClass
+  @AfterParam
   public static void afterClass() {
     if (kmsChannel != null) {
       try {
@@ -304,6 +308,8 @@ public class ITKmsTest {
   @Test
   public void testClearBucketDefaultKmsKeyName() throws ExecutionException, InterruptedException {
     String bucketName = bucketFixture.newBucketName();
+    // TODO: replace with storage
+    // b/246634709
     Bucket remoteBucket =
         storageFixtureHttp
             .getInstance()
@@ -324,6 +330,8 @@ public class ITKmsTest {
 
   @Test
   public void testUpdateBucketDefaultKmsKeyName() throws ExecutionException, InterruptedException {
+    // TODO: replace with storage
+    // b/246634709
     String bucketName = bucketFixture.newBucketName();
     Bucket remoteBucket =
         storageFixtureHttp
@@ -377,6 +385,8 @@ public class ITKmsTest {
   public void testCreateBlobWithDefaultKmsKeyName()
       throws ExecutionException, InterruptedException {
     String bucketName = bucketFixture.newBucketName();
+    // TODO: replace with storage
+    // b/246634709
     Bucket bucket =
         storageFixtureHttp
             .getInstance()
@@ -534,6 +544,8 @@ public class ITKmsTest {
   @Test
   public void testListBucketDefaultKmsKeyName() throws ExecutionException, InterruptedException {
     String bucketName = bucketFixture.newBucketName();
+    // TODO: replace with storage
+    // b/246634709
     Bucket remoteBucket =
         storageFixtureHttp
             .getInstance()
