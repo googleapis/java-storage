@@ -940,18 +940,15 @@ final class GrpcConversions {
   }
 
   private String removeKmsVersion(String from) {
-    PathTemplate unversionedKmsTemplate =
-        PathTemplate.createWithoutUrlEncoding(
-            "projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}");
-    if (unversionedKmsTemplate.matches(from)) {
-      return from;
-    }
     PathTemplate versionedKmsTemplate =
         PathTemplate.createWithoutUrlEncoding(
             "projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}/cryptoKeyVersions/{version}");
-    Map<String, String> res = versionedKmsTemplate.match(from);
-    return CryptoKeyName.format(
-        res.get("project"), res.get("location"), res.get("key_ring"), res.get("crypto_key"));
+    if (versionedKmsTemplate.matches(from)) {
+      Map<String, String> res = versionedKmsTemplate.match(from);
+      return CryptoKeyName.format(
+          res.get("project"), res.get("location"), res.get("key_ring"), res.get("crypto_key"));
+    }
+    return from;
   }
 
   private static <T> T todo() {
