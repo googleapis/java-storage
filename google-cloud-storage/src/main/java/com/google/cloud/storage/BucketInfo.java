@@ -339,7 +339,7 @@ public class BucketInfo implements Serializable {
     }
   }
 
-  public static class Autoclass implements Serializable {
+  public static final class Autoclass implements Serializable {
 
     private static final long serialVersionUID = -2378172222188072439L;
     private Boolean enabled;
@@ -394,7 +394,7 @@ public class BucketInfo implements Serializable {
           .setToggleTime(toggleTime);
     }
 
-    public static class Builder {
+    public static final class Builder {
       private Boolean enabled;
       private OffsetDateTime toggleTime;
 

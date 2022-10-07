@@ -507,7 +507,7 @@ public class ITBucketTest {
             .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
             .build());
     try {
-      Bucket remoteBucket = storageFixtureHttp.getInstance().get(bucketName);
+      Bucket remoteBucket = storageFixture.getInstance().get(bucketName);
 
       assertNotNull(remoteBucket.getAutoclass());
       assertTrue(remoteBucket.getAutoclass().getEnabled());
@@ -519,7 +519,7 @@ public class ITBucketTest {
           .build()
           .update();
 
-      remoteBucket = storageFixtureHttp.getInstance().get(bucketName);
+      remoteBucket = storageFixture.getInstance().get(bucketName);
       assertNotNull(remoteBucket.getAutoclass());
       assertFalse(remoteBucket.getAutoclass().getEnabled());
       assertNotNull(remoteBucket.getAutoclass().getToggleTime());

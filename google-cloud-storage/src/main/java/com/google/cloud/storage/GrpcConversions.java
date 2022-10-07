@@ -534,9 +534,7 @@ final class GrpcConversions {
 
   private Bucket.Autoclass autoclassEncode(BucketInfo.Autoclass from) {
     Bucket.Autoclass.Builder to = Bucket.Autoclass.newBuilder();
-    if (from.getEnabled() != null) {
-      to.setEnabled(from.getEnabled());
-    }
+    ifNonNull(from.getEnabled(), to::setEnabled);
     ifNonNull(from.getToggleTime(), timestampCodec::encode, to::setToggleTime);
     return to.build();
   }
