@@ -23,6 +23,7 @@ import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.cloud.storage.Utils.toImmutableListOf;
 
+import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.Binding;
 import com.google.cloud.Condition;
 import com.google.cloud.Policy;
@@ -45,6 +46,7 @@ import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;
+import com.google.storage.v2.CryptoKeyName;
 import com.google.storage.v2.HmacKeyMetadata;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
@@ -764,7 +766,7 @@ final class GrpcConversions {
         from.getTimeStorageClassUpdatedOffsetDateTime(),
         timestampCodec::encode,
         toBuilder::setUpdateStorageClassTime);
-    ifNonNull(from.getKmsKeyName(), toBuilder::setKmsKey);
+    ifNonNull(from.getKmsKeyName(), this::removeKmsVersion, toBuilder::setKmsKey);
     ifNonNull(from.getEventBasedHold(), toBuilder::setEventBasedHold);
     ifNonNull(from.getTemporaryHold(), toBuilder::setTemporaryHold);
     ifNonNull(
@@ -922,6 +924,18 @@ final class GrpcConversions {
     Map<String, String> to = new HashMap<>(from);
     to.values().removeAll(Collections.singleton(null));
     return to;
+  }
+
+  private String removeKmsVersion(String from) {
+    PathTemplate versionedKmsTemplate =
+        PathTemplate.createWithoutUrlEncoding(
+            "projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}/cryptoKeyVersions/{version}");
+    if (versionedKmsTemplate.matches(from)) {
+      Map<String, String> res = versionedKmsTemplate.match(from);
+      return CryptoKeyName.format(
+          res.get("project"), res.get("location"), res.get("key_ring"), res.get("crypto_key"));
+    }
+    return from;
   }
 
   private static <T> T todo() {
