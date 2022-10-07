@@ -45,6 +45,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -484,6 +485,7 @@ public class BucketTest {
     BlobInfo info = BlobInfo.newBuilder(BlobId.of("b", "n")).setContentType(CONTENT_TYPE).build();
     Blob expectedBlob = info.asBlob(serviceMockReturnsOptions);
     byte[] content = {0xD, 0xE, 0xA, 0xD};
+    String crc32c = Utils.crc32cCodec.encode(Hashing.crc32c().hashBytes(content).asInt());
     Storage.PredefinedAcl acl = Storage.PredefinedAcl.ALL_AUTHENTICATED_USERS;
     InputStream streamContent = new ByteArrayInputStream(content);
     expect(storage.getOptions()).andReturn(mockOptions);
@@ -494,7 +496,7 @@ public class BucketTest {
                 new BlobWriteOption(UnifiedOpts.generationMatch(42L)),
                 new BlobWriteOption(UnifiedOpts.metagenerationMatch(24L)),
                 Storage.BlobWriteOption.predefinedAcl(acl),
-                new BlobWriteOption(UnifiedOpts.crc32cMatch("crc")),
+                new BlobWriteOption(UnifiedOpts.crc32cMatch(crc32c)),
                 new BlobWriteOption(UnifiedOpts.md5Match("md5")),
                 Storage.BlobWriteOption.encryptionKey(BASE64_KEY),
                 Storage.BlobWriteOption.userProject(USER_PROJECT)))
@@ -509,7 +511,7 @@ public class BucketTest {
             Bucket.BlobWriteOption.generationMatch(42L),
             Bucket.BlobWriteOption.metagenerationMatch(24L),
             Bucket.BlobWriteOption.predefinedAcl(acl),
-            Bucket.BlobWriteOption.crc32cMatch("crc"),
+            Bucket.BlobWriteOption.crc32cMatch(crc32c),
             Bucket.BlobWriteOption.md5Match("md5"),
             Bucket.BlobWriteOption.encryptionKey(BASE64_KEY),
             Bucket.BlobWriteOption.userProject(USER_PROJECT));

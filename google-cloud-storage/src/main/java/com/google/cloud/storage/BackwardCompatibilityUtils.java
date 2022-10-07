@@ -93,6 +93,7 @@ final class BackwardCompatibilityUtils {
       case OK:
         return 200;
         // 400 Bad Request
+      case DATA_LOSS:
       case INVALID_ARGUMENT:
       case OUT_OF_RANGE:
         return 400;
@@ -133,7 +134,6 @@ final class BackwardCompatibilityUtils {
       case ABORTED: // ?
       case CANCELLED: // ?
       case UNKNOWN: // ?
-      case DATA_LOSS: // ?
       default:
         return 0;
     }

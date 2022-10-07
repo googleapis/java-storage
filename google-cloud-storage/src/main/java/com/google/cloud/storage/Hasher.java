@@ -47,6 +47,17 @@ interface Hasher {
     return GuavaHasher.INSTANCE;
   }
 
+  /**
+   * Create a Hasher which will always yield the specified value when {@link
+   * #nullSafeConcat(Crc32cLengthKnown, Crc32cLengthKnown)} is invoked.
+   */
+  // Not perfect, and not a great approach for a public API. However, this is the most pragmatic way
+  // right now to wire an externally defined value all the way down to the last write message of a
+  // resumable upload session.
+  static Hasher constant(int crc32c) {
+    return new ConstantConcatValueHasher(Crc32cValue.of(crc32c, -1));
+  }
+
   @Immutable
   class NoOpHasher implements Hasher {
     private static final NoOpHasher INSTANCE = new NoOpHasher();
@@ -99,6 +110,28 @@ interface Hasher {
       } else {
         return r1.concat(r2);
       }
+    }
+  }
+
+  @Immutable
+  class ConstantConcatValueHasher implements Hasher {
+    private final Crc32cLengthKnown value;
+
+    private ConstantConcatValueHasher(Crc32cLengthKnown value) {
+      this.value = value;
+    }
+
+    @Override
+    public @Nullable Crc32cLengthKnown hash(ByteBuffer b) {
+      return null;
+    }
+
+    @Override
+    public void validate(Crc32cValue<?> expected, Supplier<ByteBuffer> b) {}
+
+    @Override
+    public @Nullable Crc32cLengthKnown nullSafeConcat(Crc32cLengthKnown r1, Crc32cLengthKnown r2) {
+      return value;
     }
   }
 }

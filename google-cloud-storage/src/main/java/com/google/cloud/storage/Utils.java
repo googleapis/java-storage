@@ -23,6 +23,8 @@ import com.google.api.core.InternalApi;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.BaseEncoding;
+import com.google.common.primitives.Ints;
 import com.google.storage.v2.BucketName;
 import com.google.storage.v2.ProjectName;
 import java.time.Duration;
@@ -147,6 +149,9 @@ final class Utils {
             }
           });
 
+  static final Codec<Integer, String> crc32cCodec =
+      Codec.of(Utils::crc32cEncode, Utils::crc32cDecode);
+
   private Utils() {}
 
   /**
@@ -227,5 +232,14 @@ final class Utils {
       }
     }
     throw new IllegalStateException("Unable to resolve non-null value");
+  }
+
+  private static int crc32cDecode(String from) {
+    byte[] decodeCrc32c = BaseEncoding.base64().decode(from);
+    return Ints.fromByteArray(decodeCrc32c);
+  }
+
+  private static String crc32cEncode(int from) {
+    return BaseEncoding.base64().encode(Ints.toByteArray(from));
   }
 }
