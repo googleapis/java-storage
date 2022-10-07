@@ -16,14 +16,14 @@
 
 package com.example.storage.bucket;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import com.example.storage.TestBase;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import org.junit.Assert;
 import org.junit.Test;
-
-import static com.google.common.truth.Truth.assertThat;
 
 public class AutoclassTest extends TestBase {
 

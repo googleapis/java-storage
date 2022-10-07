@@ -47,7 +47,7 @@ public class SetBucketAutoclass {
         .update();
 
     System.out.println("Autoclass for bucket " + bucketName + " was "
-      + (enabled ? "enabled." : "disabled."));
+        + (enabled ? "enabled." : "disabled."));
   }
 }
 // [END storage_set_autoclass]

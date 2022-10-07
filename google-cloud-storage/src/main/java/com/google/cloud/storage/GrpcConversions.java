@@ -43,7 +43,6 @@ import com.google.common.primitives.Ints;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
-import com.google.storage.v2.Bucket.Autoclass;
 import com.google.storage.v2.Bucket.Billing;
 import com.google.storage.v2.Bucket.Website;
 import com.google.storage.v2.BucketAccessControl;

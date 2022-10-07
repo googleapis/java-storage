@@ -45,8 +45,8 @@ import com.google.cloud.storage.conformance.retry.ParallelParameterized;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.time.OffsetDateTime;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -503,9 +503,10 @@ public class ITBucketTest {
     String bucketName = bucketFixture.newBucketName();
     storageFixtureHttp
         .getInstance()
-        .create(BucketInfo.newBuilder(bucketName)
-            .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
-            .build());
+        .create(
+            BucketInfo.newBuilder(bucketName)
+                .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
+                .build());
     try {
       Bucket remoteBucket = storageFixture.getInstance().get(bucketName);
 
@@ -514,7 +515,8 @@ public class ITBucketTest {
       OffsetDateTime time = remoteBucket.getAutoclass().getToggleTime();
       assertNotNull(time);
 
-      remoteBucket.toBuilder()
+      remoteBucket
+          .toBuilder()
           .setAutoclass(Autoclass.newBuilder().setEnabled(false).build())
           .build()
           .update();
@@ -529,7 +531,6 @@ public class ITBucketTest {
           storageFixtureHttp.getInstance(), bucketName, 5, TimeUnit.SECONDS);
     }
   }
-
 
   private void unsetRequesterPays() {
     Bucket remoteBucket =

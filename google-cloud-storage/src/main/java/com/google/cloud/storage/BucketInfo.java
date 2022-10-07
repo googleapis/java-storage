@@ -354,7 +354,7 @@ public class BucketInfo implements Serializable {
     }
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
       if (this == o) {
         return true;
       }
@@ -362,8 +362,7 @@ public class BucketInfo implements Serializable {
         return false;
       }
       Autoclass that = (Autoclass) o;
-      return Objects.equals(enabled, that.enabled)
-          && Objects.equals(toggleTime, that.toggleTime);
+      return Objects.equals(enabled, that.enabled) && Objects.equals(toggleTime, that.toggleTime);
     }
 
     @Override
@@ -391,9 +390,7 @@ public class BucketInfo implements Serializable {
     }
 
     public Builder toBuilder() {
-      return newBuilder()
-          .setEnabled(enabled)
-          .setToggleTime(toggleTime);
+      return newBuilder().setEnabled(enabled).setToggleTime(toggleTime);
     }
 
     public static final class Builder {
@@ -401,9 +398,9 @@ public class BucketInfo implements Serializable {
       private OffsetDateTime toggleTime;
 
       /**
-       * Sets whether Autoclass is enabled for this bucket. Currently, autoclass can only
-       * be enabled at bucket create time. Any calls to update an existing Autoclass configuration
-       * must be to disable it, calls to enable Autoclass on an existing bucket will fail.
+       * Sets whether Autoclass is enabled for this bucket. Currently, autoclass can only be enabled
+       * at bucket create time. Any calls to update an existing Autoclass configuration must be to
+       * disable it, calls to enable Autoclass on an existing bucket will fail.
        */
       public Builder setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -411,8 +408,8 @@ public class BucketInfo implements Serializable {
       }
 
       /**
-       * Sets the last time autoclass was toggled on or off. Set to package private because
-       * this should only be set by the backend.
+       * Sets the last time autoclass was toggled on or off. Set to package private because this
+       * should only be set by the backend.
        */
       Builder setToggleTime(OffsetDateTime toggleTime) {
         this.toggleTime = toggleTime;
