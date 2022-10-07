@@ -81,6 +81,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -138,10 +139,21 @@ public class ITKmsTest {
     this.storage = storageFixture.getInstance();
     this.bucketFixture = bucketFixture;
     this.clientName = clientName;
+  }
+
+  @Parameters(name = "{0}")
+  public static Iterable<Object[]> data() {
+    return ImmutableList.of(
+        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
+        new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
+  }
+
+  @BeforeClass
+  public static void setup() {
     // Prepare KMS KeyRing for CMEK tests
     // https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys
-    String projectId = storage.getOptions().getProjectId();
-    Credentials credentials = storage.getOptions().getCredentials();
+    String projectId = storageFixtureHttp.getInstance().getOptions().getProjectId();
+    Credentials credentials = storageFixtureHttp.getInstance().getOptions().getCredentials();
     kmsChannel = ManagedChannelBuilder.forTarget("cloudkms.googleapis.com:443").build();
     KeyManagementServiceBlockingStub kmsStub =
         KeyManagementServiceGrpc.newBlockingStub(kmsChannel)
@@ -158,13 +170,6 @@ public class ITKmsTest {
     kmsKeyTwoResourcePath =
         ensureKmsKeyExistsForTests(
             kmsStub, projectId, KMS_KEY_RING_LOCATION, KMS_KEY_RING_NAME, KMS_KEY_TWO_NAME);
-  }
-
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return ImmutableList.of(
-        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
-        new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
   }
 
   @AfterClass
@@ -219,13 +224,13 @@ public class ITKmsTest {
     return kmsKeyRingResourcePath;
   }
 
-  private void ensureKmsKeyRingIamPermissionsForTests(
+  private static void ensureKmsKeyRingIamPermissionsForTests(
       IAMPolicyGrpc.IAMPolicyBlockingStub iamStub,
       String projectId,
       String location,
       String keyRingName)
       throws StatusRuntimeException {
-    ServiceAccount serviceAccount = storage.getServiceAccount(projectId);
+    ServiceAccount serviceAccount = storageFixtureHttp.getInstance().getServiceAccount(projectId);
     String kmsKeyRingResourcePath = KeyRingName.of(projectId, location, keyRingName).toString();
     Binding binding =
         Binding.newBuilder()
@@ -373,11 +378,13 @@ public class ITKmsTest {
       throws ExecutionException, InterruptedException {
     String bucketName = bucketFixture.newBucketName();
     Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setDefaultKmsKeyName(kmsKeyOneResourcePath)
-                .setLocation(KMS_KEY_RING_LOCATION)
-                .build());
+        storageFixtureHttp
+            .getInstance()
+            .create(
+                BucketInfo.newBuilder(bucketName)
+                    .setDefaultKmsKeyName(kmsKeyOneResourcePath)
+                    .setLocation(KMS_KEY_RING_LOCATION)
+                    .build());
     assertEquals(bucket.getDefaultKmsKeyName(), kmsKeyOneResourcePath);
 
     try {
