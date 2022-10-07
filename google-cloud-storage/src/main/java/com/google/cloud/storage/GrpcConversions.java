@@ -198,15 +198,15 @@ final class GrpcConversions {
     to.setGeneratedId(from.getBucketId());
     if (from.hasRetentionPolicy()) {
       Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
-      ifNonNull(retentionPolicy.getIsLocked(), to::setRetentionPolicyIsLocked);
-      ifNonNull(
-          retentionPolicy.getRetentionPeriod(),
-          Utils.durationSecondsCodec::decode,
-          to::setRetentionPeriodDuration);
-      ifNonNull(
-          retentionPolicy.getEffectiveTime(),
-          timestampCodec::decode,
-          to::setRetentionEffectiveTimeOffsetDateTime);
+      to.setRetentionPolicyIsLocked(retentionPolicy.getIsLocked());
+      if (retentionPolicy.hasRetentionPeriod()) {
+        to.setRetentionPeriodDuration(
+            durationSecondsCodec.decode(retentionPolicy.getRetentionPeriod()));
+      }
+      if (retentionPolicy.hasEffectiveTime()) {
+        to.setRetentionEffectiveTimeOffsetDateTime(
+            timestampCodec.decode(retentionPolicy.getEffectiveTime()));
+      }
     }
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
