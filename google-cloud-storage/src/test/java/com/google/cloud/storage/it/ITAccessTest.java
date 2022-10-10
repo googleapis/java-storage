@@ -599,7 +599,14 @@ public class ITAccessTest {
 
   @Test
   public void testBucketWithUniformBucketLevelAccessEnabled() throws Exception {
-    String bucket = RemoteStorageHelper.generateBucketName();
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. Create bucket with UniformBucketLevelAccess enabled
+    //   2. Get bucket with UniformBucketLevelAccess enabled
+    //   3. Expect failure when attempting to list ACLs for UniformBucketLevelAccess bucket
+    //   4. Expect failure when attempting to list default ACLs for UniformBucketLevelAccess bucket
+
+    String bucket = bucketFixture.newBucketName();
     try {
       storage.create(
           Bucket.newBuilder(bucket)
