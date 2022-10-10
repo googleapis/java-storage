@@ -40,6 +40,7 @@ import com.google.api.services.storage.model.Bucket.Versioning;
 import com.google.api.services.storage.model.Bucket.Website;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.ObjectAccessControl;
+import com.google.api.services.storage.model.Policy.Bindings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.StorageObject.Owner;
 import com.google.cloud.Binding;
@@ -819,16 +820,16 @@ final class ApiaryConversions {
 
   private Policy policyDecode(com.google.api.services.storage.model.Policy from) {
     Policy.Builder to = Policy.newBuilder();
-    if (!from.getEtag().isEmpty()) {
-      to.setEtag(from.getEtag());
+    String etag = from.getEtag();
+    if (etag != null && !etag.isEmpty()) {
+      to.setEtag(etag);
     }
     to.setVersion(from.getVersion());
-    if (from.getBindings() != null) {
-      ImmutableList<Binding> bindings =
-          from.getBindings().stream()
-              .map(bindingCodec::decode)
-              .collect(ImmutableList.toImmutableList());
-      to.setBindings(bindings);
+    List<Bindings> bindings = from.getBindings();
+    if (bindings != null && !bindings.isEmpty()) {
+      to.setBindings(bindings.stream()
+          .map(bindingCodec::decode)
+          .collect(ImmutableList.toImmutableList()));
     }
     return to.build();
   }

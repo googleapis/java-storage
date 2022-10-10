@@ -54,6 +54,7 @@ import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -344,17 +345,17 @@ public class ITAccessTest {
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
         ImmutableMap.of(
             StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            ImmutableSet.of(projectOwner, projectEditor),
             StorageRoles.legacyBucketReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
+            ImmutableSet.of(projectViewer));
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
         ImmutableMap.of(
             StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            ImmutableSet.of(projectOwner, projectEditor),
             StorageRoles.legacyBucketReader(),
-            new HashSet<>(Collections.singleton(projectViewer)),
+            ImmutableSet.of(projectViewer),
             StorageRoles.legacyObjectReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
+            ImmutableSet.of(Identity.allUsers()));
 
     // Validate getting policy.
     Policy currentPolicy =
@@ -772,8 +773,7 @@ public class ITAccessTest {
                         BucketInfo.IamConfiguration.newBuilder()
                             .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
                             .setIsUniformBucketLevelAccessEnabled(false)
-                            .build()
-                    )
+                            .build())
                     .build())
             .setStorage(storageFixtureHttp.getInstance())
             .build()) {
@@ -784,14 +784,18 @@ public class ITAccessTest {
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
-      IamConfiguration iamConfiguration1 = bucket.getIamConfiguration().toBuilder()
-          .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED).build();
+      IamConfiguration iamConfiguration1 =
+          bucket
+              .getIamConfiguration()
+              .toBuilder()
+              .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED)
+              .build();
       // Update PAP setting to ENFORCED and should not affect UBLA setting.
-      storage.update(bucket
-          .toBuilder()
-          .setIamConfiguration(iamConfiguration1)
-          .build(), BucketTargetOption.metagenerationMatch());
-      Bucket bucket2 = storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      storage.update(
+          bucket.toBuilder().setIamConfiguration(iamConfiguration1).build(),
+          BucketTargetOption.metagenerationMatch());
+      Bucket bucket2 =
+          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
       assertEquals(
           bucket2.getIamConfiguration().getPublicAccessPrevention(),
           BucketInfo.PublicAccessPrevention.ENFORCED);
@@ -811,8 +815,7 @@ public class ITAccessTest {
                         BucketInfo.IamConfiguration.newBuilder()
                             .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
                             .setIsUniformBucketLevelAccessEnabled(false)
-                            .build()
-                    )
+                            .build())
                     .build())
             .setStorage(storageFixtureHttp.getInstance())
             .build()) {
@@ -823,18 +826,23 @@ public class ITAccessTest {
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
-      IamConfiguration iamConfiguration1 = bucket.getIamConfiguration().toBuilder()
-          .setIsUniformBucketLevelAccessEnabled(true).build();
+      IamConfiguration iamConfiguration1 =
+          bucket
+              .getIamConfiguration()
+              .toBuilder()
+              .setIsUniformBucketLevelAccessEnabled(true)
+              .build();
       // Updating UBLA should not affect PAP setting.
       Bucket bucket2 =
           storage.update(
-          bucket
-              .toBuilder()
-              .setIamConfiguration(iamConfiguration1)
-              // clear out ACL related config in conjunction with enabling UBLA
-              .setAcl(Collections.emptyList())
-              .setDefaultAcl(Collections.emptyList())
-              .build(), BucketTargetOption.metagenerationMatch());
+              bucket
+                  .toBuilder()
+                  .setIamConfiguration(iamConfiguration1)
+                  // clear out ACL related config in conjunction with enabling UBLA
+                  .setAcl(Collections.emptyList())
+                  .setDefaultAcl(Collections.emptyList())
+                  .build(),
+              BucketTargetOption.metagenerationMatch());
       assertEquals(
           bucket2.getIamConfiguration().getPublicAccessPrevention(),
           PublicAccessPrevention.INHERITED);
@@ -1040,13 +1048,13 @@ public class ITAccessTest {
   private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
     return storage.create(
         Bucket.newBuilder(bucketName)
-        .setIamConfiguration(
-            BucketInfo.IamConfiguration.newBuilder()
+            .setIamConfiguration(
+                BucketInfo.IamConfiguration.newBuilder()
                     .setPublicAccessPrevention(
                         enforced
                             ? BucketInfo.PublicAccessPrevention.ENFORCED
                             : BucketInfo.PublicAccessPrevention.INHERITED)
-                .build())
+                    .build())
             .build());
   }
 
