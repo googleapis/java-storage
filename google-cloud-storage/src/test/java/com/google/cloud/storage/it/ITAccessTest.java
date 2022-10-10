@@ -947,28 +947,32 @@ public class ITAccessTest {
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = bucketFixture.newBucketName();
-    try {
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                Bucket.newBuilder(bpoBucket)
+                    .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                    .setDefaultAcl(
+                        ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                    .build())
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
       // BPO is disabled by default.
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(bpoBucket)
-                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .setDefaultAcl(
-                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .build());
+      BucketInfo bucket = tempB.getBucket();
+      assertThat(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled()).isFalse();
 
       BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
           BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
-      bucket
-          .toBuilder()
-          .setAcl(null)
-          .setDefaultAcl(null)
-          .setIamConfiguration(bpoEnabledIamConfiguration)
-          .build()
-          .update();
+      storage.update(
+          bucket
+              .toBuilder()
+              .setAcl(null)
+              .setDefaultAcl(null)
+              .setIamConfiguration(bpoEnabledIamConfiguration)
+              .build(),
+          BucketTargetOption.metagenerationMatch());
 
-      Bucket remoteBucket =
-          storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      Bucket remoteBucket = storage.get(bpoBucket);
 
       assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
@@ -991,9 +995,6 @@ public class ITAccessTest {
       assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
       assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
       assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bpoBucket, 1, TimeUnit.MINUTES);
     }
   }
 
