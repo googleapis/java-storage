@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.cloud.Condition;
@@ -130,12 +131,14 @@ public class ITAccessTest {
 
   @Test
   public void bucketAcl_requesterPays_true() {
+    assumeTrue(clientName.startsWith("JSON"));
     unsetRequesterPays(storage, requesterPaysFixture);
     testBucketAclRequesterPays(true);
   }
 
   @Test
   public void bucketAcl_requesterPays_false() {
+    assumeTrue(clientName.startsWith("JSON"));
     unsetRequesterPays(storage, requesterPaysFixture);
     testBucketAclRequesterPays(false);
   }
@@ -207,6 +210,14 @@ public class ITAccessTest {
 
   @Test
   public void testBucketDefaultAcl() {
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. get default ACL for specific entity
+    //   2. Delete a default ACL for a specific entity
+    //   3. Create a default ACL for specific entity
+    //   4. Update default ACL to change role of a specific entity
+    //   5. List default ACLs
+
     // according to https://cloud.google.com/storage/docs/access-control/lists#default
     // it can take up to 30 seconds for default acl updates to propagate
     // Since this test is performing so many mutations to default acls there are several calls
@@ -966,6 +977,18 @@ public class ITAccessTest {
 
   @Test
   public void testBlobAcl() {
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. get ACL for specific entity
+    //   2. Create an ACL for specific entity
+    //   3. Update ACL to change role of a specific entity
+    //   4. List ACLs for an object
+    //   5. Delete an ACL for a specific entity
+    //   6. Attempt to get an acl for an object that doesn't exist
+    //   7. Attempt to delete an acl for an object that doesn't exist
+    //   8. Attempt to create an acl for an object that doesn't exist
+    //   9. Attempt to update an acl for an object that doesn't exist
+    //   10. Attempt to list acls for an object that doesn't exist
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "test-blob-acl");
     BlobInfo blob = BlobInfo.newBuilder(blobId).build();
     storage.create(blob);
