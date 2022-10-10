@@ -641,32 +641,38 @@ public class ITAccessTest {
 
   @Test
   public void testEnableAndDisableUniformBucketLevelAccessOnExistingBucket() throws Exception {
-    String bpoBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
-          BucketInfo.IamConfiguration.newBuilder()
-              .setIsUniformBucketLevelAccessEnabled(false)
-              .build();
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(bpoBucket)
-                  .setIamConfiguration(ublaDisabledIamConfiguration)
-                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .setDefaultAcl(
-                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .build());
+    String bpoBucket = bucketFixture.newBucketName();
+    BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
+        BucketInfo.IamConfiguration.newBuilder()
+            .setIsUniformBucketLevelAccessEnabled(false)
+            .build();
+    BucketInfo bucketInfo =
+        Bucket.newBuilder(bpoBucket)
+            .setIamConfiguration(ublaDisabledIamConfiguration)
+            .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+            .setDefaultAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+            .build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(bucketInfo)
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      // BPO is disabled by default.
+      BucketInfo bucket = tempB.getBucket();
+      assertThat(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled()).isFalse();
 
-      bucket
-          .toBuilder()
-          .setAcl(null)
-          .setDefaultAcl(null)
-          .setIamConfiguration(
-              ublaDisabledIamConfiguration
-                  .toBuilder()
-                  .setIsUniformBucketLevelAccessEnabled(true)
-                  .build())
-          .build()
-          .update();
+      storage.update(
+          bucket
+              .toBuilder()
+              .setAcl(null)
+              .setDefaultAcl(null)
+              .setIamConfiguration(
+                  ublaDisabledIamConfiguration
+                      .toBuilder()
+                      .setIsUniformBucketLevelAccessEnabled(true)
+                      .build())
+              .build(),
+          BucketTargetOption.metagenerationMatch());
 
       Bucket remoteBucket =
           storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
@@ -687,9 +693,6 @@ public class ITAccessTest {
       assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
       assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
       assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bpoBucket, 1, TimeUnit.MINUTES);
     }
   }
 
