@@ -556,7 +556,14 @@ public class ITAccessTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testBucketWithBucketPolicyOnlyEnabled() throws Exception {
-    String bucket = RemoteStorageHelper.generateBucketName();
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. Create bucket with BucketPolicyOnly enabled
+    //   2. Get bucket with BucketPolicyOnly enabled
+    //   3. Expect failure when attempting to list ACLs for BucketPolicyOnly bucket
+    //   4. Expect failure when attempting to list default ACLs for BucketPolicyOnly bucket
+
+    String bucket = bucketFixture.newBucketName();
     try {
       storage.create(
           Bucket.newBuilder(bucket)
