@@ -747,9 +747,17 @@ public class ITAccessTest {
 
   @Test
   public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
+    String papBucket = bucketFixture.newBucketName();
+    BucketInfo bucketInfo = BucketInfo.newBuilder(papBucket)
+        .setIamConfiguration(
+            IamConfiguration.newBuilder()
+                .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
+                .build())
+        .build();
+
+    try (TemporaryBucket tempB = TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(
+        storageFixtureHttp.getInstance()).build()) {
+      Bucket bucket = tempB.getBucket();
 
       // Now, making object public or making bucket public should succeed.
       try {
@@ -769,7 +777,7 @@ public class ITAccessTest {
             Policy.newBuilder()
                 .setVersion(3)
                 .setBindings(
-                    ImmutableList.<com.google.cloud.Binding>of(
+                    ImmutableList.of(
                         com.google.cloud.Binding.newBuilder()
                             .setRole("roles/storage.objectViewer")
                             .addMembers("allUsers")
@@ -778,9 +786,6 @@ public class ITAccessTest {
       } catch (StorageException storageException) {
         fail("pap: expected adding allUsers policy to bucket to succeed");
       }
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), papBucket, 1, TimeUnit.MINUTES);
     }
   }
 
@@ -1066,19 +1071,6 @@ public class ITAccessTest {
     } catch (StorageException ex) {
       // expected
     }
-  }
-
-  private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
-    return storage.create(
-        Bucket.newBuilder(bucketName)
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
-                    .setPublicAccessPrevention(
-                        enforced
-                            ? BucketInfo.PublicAccessPrevention.ENFORCED
-                            : BucketInfo.PublicAccessPrevention.INHERITED)
-                    .build())
-            .build());
   }
 
   static <T> T retry429s(Callable<T> c, Storage storage) {
