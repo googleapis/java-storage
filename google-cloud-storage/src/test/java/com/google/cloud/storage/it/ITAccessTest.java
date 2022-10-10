@@ -698,9 +698,17 @@ public class ITAccessTest {
 
   @Test
   public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, true);
+    String papBucket = bucketFixture.newBucketName();
+    BucketInfo bucketInfo = BucketInfo.newBuilder(papBucket)
+        .setIamConfiguration(
+            IamConfiguration.newBuilder()
+                .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED)
+                .build())
+        .build();
+
+    try (TemporaryBucket tempB = TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(
+        storageFixtureHttp.getInstance()).build()) {
+      Bucket bucket = tempB.getBucket();
       // Making bucket public should fail.
       try {
         storage.setIamPolicy(
@@ -708,7 +716,7 @@ public class ITAccessTest {
             Policy.newBuilder()
                 .setVersion(3)
                 .setBindings(
-                    ImmutableList.<com.google.cloud.Binding>of(
+                    ImmutableList.of(
                         com.google.cloud.Binding.newBuilder()
                             .setRole("roles/storage.objectViewer")
                             .addMembers("allUsers")
@@ -734,9 +742,6 @@ public class ITAccessTest {
         // is not allowed. When Public Access Prevention is enabled.
         assertEquals(storageException.getCode(), 412);
       }
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), papBucket, 1, TimeUnit.MINUTES);
     }
   }
 
