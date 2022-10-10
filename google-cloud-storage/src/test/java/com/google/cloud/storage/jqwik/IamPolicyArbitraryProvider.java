@@ -90,15 +90,15 @@ public final class IamPolicyArbitraryProvider implements ArbitraryProvider {
   }
 
   static Arbitrary<Expr> condition() {
-    return Combinators.combine(
-            nonEmptyAlphaString(),
-            nonEmptyAlphaString(),
-            nonEmptyAlphaString())
+    return Combinators.combine(nonEmptyAlphaString(), nonEmptyAlphaString(), nonEmptyAlphaString())
         .as(
             (title, description, expression) -> {
               // location intentionally omitted as the json representation of an Expr does not
               // specify location
-              return Expr.newBuilder().setTitle(title).setDescription(description).setExpression(expression)
+              return Expr.newBuilder()
+                  .setTitle(title)
+                  .setDescription(description)
+                  .setExpression(expression)
                   .build();
             });
   }

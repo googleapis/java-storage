@@ -827,9 +827,8 @@ final class ApiaryConversions {
     to.setVersion(from.getVersion());
     List<Bindings> bindings = from.getBindings();
     if (bindings != null && !bindings.isEmpty()) {
-      to.setBindings(bindings.stream()
-          .map(bindingCodec::decode)
-          .collect(ImmutableList.toImmutableList()));
+      to.setBindings(
+          bindings.stream().map(bindingCodec::decode).collect(ImmutableList.toImmutableList()));
     }
     return to.build();
   }
