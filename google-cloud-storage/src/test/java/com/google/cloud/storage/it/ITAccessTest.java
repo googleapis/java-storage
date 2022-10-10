@@ -699,15 +699,19 @@ public class ITAccessTest {
   @Test
   public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = bucketFixture.newBucketName();
-    BucketInfo bucketInfo = BucketInfo.newBuilder(papBucket)
-        .setIamConfiguration(
-            IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED)
-                .build())
-        .build();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(papBucket)
+            .setIamConfiguration(
+                IamConfiguration.newBuilder()
+                    .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED)
+                    .build())
+            .build();
 
-    try (TemporaryBucket tempB = TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(
-        storageFixtureHttp.getInstance()).build()) {
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(bucketInfo)
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
       Bucket bucket = tempB.getBucket();
       // Making bucket public should fail.
       try {
@@ -748,15 +752,19 @@ public class ITAccessTest {
   @Test
   public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
     String papBucket = bucketFixture.newBucketName();
-    BucketInfo bucketInfo = BucketInfo.newBuilder(papBucket)
-        .setIamConfiguration(
-            IamConfiguration.newBuilder()
-                .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
-                .build())
-        .build();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(papBucket)
+            .setIamConfiguration(
+                IamConfiguration.newBuilder()
+                    .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
+                    .build())
+            .build();
 
-    try (TemporaryBucket tempB = TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(
-        storageFixtureHttp.getInstance()).build()) {
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(bucketInfo)
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
       Bucket bucket = tempB.getBucket();
 
       // Now, making object public or making bucket public should succeed.
