@@ -17,7 +17,6 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
-import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -44,14 +43,13 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageRoles;
-import com.google.cloud.storage.conformance.retry.CleanupStrategy;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -712,7 +710,7 @@ public class ITAccessTest {
             .setBucketInfo(bucketInfo)
             .setStorage(storageFixtureHttp.getInstance())
             .build()) {
-      Bucket bucket = tempB.getBucket();
+      BucketInfo bucket = tempB.getBucket();
       // Making bucket public should fail.
       try {
         storage.setIamPolicy(
@@ -736,10 +734,8 @@ public class ITAccessTest {
       // Making object public via ACL should fail.
       try {
         // Create a public object
-        bucket.create(
-            "pap-test-object",
-            "".getBytes(),
-            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+        storage.create(BlobInfo.newBuilder(bucket, "pap-test-object").build(),
+            BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
         fail("pap: expected adding allUsers ACL to object should fail");
       } catch (StorageException storageException) {
         // Creating an object with allUsers roles/storage.viewer permission
@@ -765,15 +761,14 @@ public class ITAccessTest {
             .setBucketInfo(bucketInfo)
             .setStorage(storageFixtureHttp.getInstance())
             .build()) {
-      Bucket bucket = tempB.getBucket();
+      BucketInfo bucket = tempB.getBucket();
 
       // Now, making object public or making bucket public should succeed.
       try {
         // Create a public object
-        bucket.create(
-            "pap-test-object",
-            "".getBytes(),
-            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+        storage.create(
+            BlobInfo.newBuilder(bucket, "pap-test-object").build(),
+            BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
       } catch (StorageException storageException) {
         fail("pap: expected adding allUsers ACL to object to succeed");
       }
@@ -812,7 +807,7 @@ public class ITAccessTest {
                     .build())
             .setStorage(storageFixtureHttp.getInstance())
             .build()) {
-      Bucket bucket = tempB.getBucket();
+      BucketInfo bucket = tempB.getBucket();
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
           BucketInfo.PublicAccessPrevention.INHERITED);
@@ -854,7 +849,7 @@ public class ITAccessTest {
                     .build())
             .setStorage(storageFixtureHttp.getInstance())
             .build()) {
-      Bucket bucket = tempB.getBucket();
+      BucketInfo bucket = tempB.getBucket();
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
           PublicAccessPrevention.INHERITED);
@@ -924,7 +919,7 @@ public class ITAccessTest {
                 BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build())
             .setStorage(storageFixtureHttp.getInstance())
             .build()) {
-      Bucket remoteBucket = tempB.getBucket();
+      BucketInfo remoteBucket = tempB.getBucket();
 
       assertThat(remoteBucket.getRetentionPeriod()).isEqualTo(RETENTION_PERIOD);
       assertThat(remoteBucket.getRetentionPeriodDuration()).isEqualTo(RETENTION_PERIOD_DURATION);
@@ -1098,76 +1093,4 @@ public class ITAccessTest {
         storage.getOptions().getClock());
   }
 
-  private static final class TemporaryBucket implements AutoCloseable {
-    private final Bucket bucket;
-    private final Duration cleanupTimeout;
-    private final CleanupStrategy cleanupStrategy;
-
-    public TemporaryBucket(
-        Bucket bucket, Duration cleanupTimeout, CleanupStrategy cleanupStrategy) {
-      this.bucket = bucket;
-      this.cleanupTimeout = cleanupTimeout;
-      this.cleanupStrategy = cleanupStrategy;
-    }
-
-    public Bucket getBucket() {
-      return bucket;
-    }
-
-    @Override
-    public void close() throws Exception {
-      if (cleanupStrategy == CleanupStrategy.ALWAYS) {
-        RemoteStorageHelper.forceDelete(
-            bucket.getStorage(),
-            bucket.getName(),
-            cleanupTimeout.toMillis(),
-            TimeUnit.MILLISECONDS);
-      }
-    }
-
-    static Builder newBuilder() {
-      return new Builder();
-    }
-
-    static final class Builder {
-      private CleanupStrategy cleanupStrategy;
-      private Duration cleanupTimeoutDuration;
-      private BucketInfo bucketInfo;
-      private Storage storage;
-
-      private Builder() {
-        this.cleanupStrategy = CleanupStrategy.ALWAYS;
-        this.cleanupTimeoutDuration = Duration.ofMinutes(1);
-      }
-
-      public Builder setCleanupStrategy(CleanupStrategy cleanupStrategy) {
-        this.cleanupStrategy = cleanupStrategy;
-        return this;
-      }
-
-      public Builder setCleanupTimeoutDuration(Duration cleanupTimeoutDuration) {
-        this.cleanupTimeoutDuration = cleanupTimeoutDuration;
-        return this;
-      }
-
-      public Builder setBucketInfo(BucketInfo bucketInfo) {
-        this.bucketInfo = bucketInfo;
-        return this;
-      }
-
-      public Builder setStorage(Storage storage) {
-        this.storage = storage;
-        return this;
-      }
-
-      TemporaryBucket build() {
-        Preconditions.checkArgument(
-            cleanupStrategy != CleanupStrategy.ONLY_ON_SUCCESS, "Unable to detect success.");
-        Storage s = requireNonNull(storage, "storage must be non null");
-        Bucket b = s.create(requireNonNull(bucketInfo, "bucketInfo must be non null"));
-
-        return new TemporaryBucket(b, cleanupTimeoutDuration, cleanupStrategy);
-      }
-    }
-  }
 }
