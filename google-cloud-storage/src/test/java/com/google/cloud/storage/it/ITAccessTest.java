@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.cloud.Condition;
@@ -39,14 +40,20 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.IamConfiguration;
+import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -56,7 +63,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -69,10 +75,8 @@ public class ITAccessTest {
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
 
-  /*
   @ClassRule(order = 1)
   public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-   */
 
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureHttp =
@@ -82,25 +86,22 @@ public class ITAccessTest {
   public static final BucketFixture requesterPaysFixtureHttp =
       BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
 
-  /*
   @ClassRule(order = 2)
   public static final BucketFixture bucketFixtureGrpc =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-grpc-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-   */
 
-  /*
   @ClassRule(order = 2)
   public static final BucketFixture requesterPaysFixtureGrpc =
       BucketFixture.newBuilder()
           .setBucketNameFmtString("java-storage-grpc-%s")
           .setHandle(storageFixtureHttp::getInstance)
           .build();
-   */
 
   private static final Long RETENTION_PERIOD = 5L;
+  private static final Duration RETENTION_PERIOD_DURATION = Duration.ofSeconds(5);
 
   private final Storage storage;
   private final BucketFixture bucketFixture;
@@ -121,20 +122,23 @@ public class ITAccessTest {
   @Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return ImmutableList.of(
-        new Object[] {
-          "JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp
-        });
-    /*
-    return ImmutableList.of(
         new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp},
-        new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc, requesterPaysFixtureGrpc});
-     */
+        new Object[] {
+          "GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc, requesterPaysFixtureGrpc
+        });
   }
 
   @Test
-  public void testBucketAcl() {
+  public void bucketAcl_requesterPays_true() {
+    assumeTrue(clientName.startsWith("JSON"));
     unsetRequesterPays(storage, requesterPaysFixture);
     testBucketAclRequesterPays(true);
+  }
+
+  @Test
+  public void bucketAcl_requesterPays_false() {
+    assumeTrue(clientName.startsWith("JSON"));
+    unsetRequesterPays(storage, requesterPaysFixture);
     testBucketAclRequesterPays(false);
   }
 
@@ -205,6 +209,14 @@ public class ITAccessTest {
 
   @Test
   public void testBucketDefaultAcl() {
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. get default ACL for specific entity
+    //   2. Delete a default ACL for a specific entity
+    //   3. Create a default ACL for specific entity
+    //   4. Update default ACL to change role of a specific entity
+    //   5. List default ACLs
+
     // according to https://cloud.google.com/storage/docs/access-control/lists#default
     // it can take up to 30 seconds for default acl updates to propagate
     // Since this test is performing so many mutations to default acls there are several calls
@@ -331,17 +343,17 @@ public class ITAccessTest {
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
         ImmutableMap.of(
             StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            ImmutableSet.of(projectOwner, projectEditor),
             StorageRoles.legacyBucketReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
+            ImmutableSet.of(projectViewer));
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
         ImmutableMap.of(
             StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            ImmutableSet.of(projectOwner, projectEditor),
             StorageRoles.legacyBucketReader(),
-            new HashSet<>(Collections.singleton(projectViewer)),
+            ImmutableSet.of(projectViewer),
             StorageRoles.legacyObjectReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
+            ImmutableSet.of(Identity.allUsers()));
 
     // Validate getting policy.
     Policy currentPolicy =
@@ -542,7 +554,14 @@ public class ITAccessTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testBucketWithBucketPolicyOnlyEnabled() throws Exception {
-    String bucket = RemoteStorageHelper.generateBucketName();
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. Create bucket with BucketPolicyOnly enabled
+    //   2. Get bucket with BucketPolicyOnly enabled
+    //   3. Expect failure when attempting to list ACLs for BucketPolicyOnly bucket
+    //   4. Expect failure when attempting to list default ACLs for BucketPolicyOnly bucket
+
+    String bucket = bucketFixture.newBucketName();
     try {
       storage.create(
           Bucket.newBuilder(bucket)
@@ -578,7 +597,14 @@ public class ITAccessTest {
 
   @Test
   public void testBucketWithUniformBucketLevelAccessEnabled() throws Exception {
-    String bucket = RemoteStorageHelper.generateBucketName();
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. Create bucket with UniformBucketLevelAccess enabled
+    //   2. Get bucket with UniformBucketLevelAccess enabled
+    //   3. Expect failure when attempting to list ACLs for UniformBucketLevelAccess bucket
+    //   4. Expect failure when attempting to list default ACLs for UniformBucketLevelAccess bucket
+
+    String bucket = bucketFixture.newBucketName();
     try {
       storage.create(
           Bucket.newBuilder(bucket)
@@ -613,32 +639,38 @@ public class ITAccessTest {
 
   @Test
   public void testEnableAndDisableUniformBucketLevelAccessOnExistingBucket() throws Exception {
-    String bpoBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
-          BucketInfo.IamConfiguration.newBuilder()
-              .setIsUniformBucketLevelAccessEnabled(false)
-              .build();
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(bpoBucket)
-                  .setIamConfiguration(ublaDisabledIamConfiguration)
-                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .setDefaultAcl(
-                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .build());
+    String bpoBucket = bucketFixture.newBucketName();
+    BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
+        BucketInfo.IamConfiguration.newBuilder()
+            .setIsUniformBucketLevelAccessEnabled(false)
+            .build();
+    BucketInfo bucketInfo =
+        Bucket.newBuilder(bpoBucket)
+            .setIamConfiguration(ublaDisabledIamConfiguration)
+            .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+            .setDefaultAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+            .build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(bucketInfo)
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      // BPO is disabled by default.
+      BucketInfo bucket = tempB.getBucket();
+      assertThat(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled()).isFalse();
 
-      bucket
-          .toBuilder()
-          .setAcl(null)
-          .setDefaultAcl(null)
-          .setIamConfiguration(
-              ublaDisabledIamConfiguration
-                  .toBuilder()
-                  .setIsUniformBucketLevelAccessEnabled(true)
-                  .build())
-          .build()
-          .update();
+      storage.update(
+          bucket
+              .toBuilder()
+              .setAcl(null)
+              .setDefaultAcl(null)
+              .setIamConfiguration(
+                  ublaDisabledIamConfiguration
+                      .toBuilder()
+                      .setIsUniformBucketLevelAccessEnabled(true)
+                      .build())
+              .build(),
+          BucketTargetOption.metagenerationMatch());
 
       Bucket remoteBucket =
           storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
@@ -659,17 +691,26 @@ public class ITAccessTest {
       assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
       assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
       assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bpoBucket, 1, TimeUnit.MINUTES);
     }
   }
 
   @Test
   public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, true);
+    String papBucket = bucketFixture.newBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(papBucket)
+            .setIamConfiguration(
+                IamConfiguration.newBuilder()
+                    .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED)
+                    .build())
+            .build();
+
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(bucketInfo)
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      BucketInfo bucket = tempB.getBucket();
       // Making bucket public should fail.
       try {
         storage.setIamPolicy(
@@ -677,7 +718,7 @@ public class ITAccessTest {
             Policy.newBuilder()
                 .setVersion(3)
                 .setBindings(
-                    ImmutableList.<com.google.cloud.Binding>of(
+                    ImmutableList.of(
                         com.google.cloud.Binding.newBuilder()
                             .setRole("roles/storage.objectViewer")
                             .addMembers("allUsers")
@@ -693,35 +734,42 @@ public class ITAccessTest {
       // Making object public via ACL should fail.
       try {
         // Create a public object
-        bucket.create(
-            "pap-test-object",
-            "".getBytes(),
-            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+        storage.create(
+            BlobInfo.newBuilder(bucket, "pap-test-object").build(),
+            BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
         fail("pap: expected adding allUsers ACL to object should fail");
       } catch (StorageException storageException) {
         // Creating an object with allUsers roles/storage.viewer permission
         // is not allowed. When Public Access Prevention is enabled.
         assertEquals(storageException.getCode(), 412);
       }
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), papBucket, 1, TimeUnit.MINUTES);
     }
   }
 
   @Test
   public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
+    String papBucket = bucketFixture.newBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(papBucket)
+            .setIamConfiguration(
+                IamConfiguration.newBuilder()
+                    .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
+                    .build())
+            .build();
+
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(bucketInfo)
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      BucketInfo bucket = tempB.getBucket();
 
       // Now, making object public or making bucket public should succeed.
       try {
         // Create a public object
-        bucket.create(
-            "pap-test-object",
-            "".getBytes(),
-            Bucket.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
+        storage.create(
+            BlobInfo.newBuilder(bucket, "pap-test-object").build(),
+            BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
       } catch (StorageException storageException) {
         fail("pap: expected adding allUsers ACL to object to succeed");
       }
@@ -733,7 +781,7 @@ public class ITAccessTest {
             Policy.newBuilder()
                 .setVersion(3)
                 .setBindings(
-                    ImmutableList.<com.google.cloud.Binding>of(
+                    ImmutableList.of(
                         com.google.cloud.Binding.newBuilder()
                             .setRole("roles/storage.objectViewer")
                             .addMembers("allUsers")
@@ -742,61 +790,95 @@ public class ITAccessTest {
       } catch (StorageException storageException) {
         fail("pap: expected adding allUsers policy to bucket to succeed");
       }
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), papBucket, 1, TimeUnit.MINUTES);
     }
   }
 
   @Test
-  public void testUBLAWithPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = RemoteStorageHelper.generateBucketName();
-    try {
-      Bucket bucket = generatePublicAccessPreventionBucket(papBucket, false);
+  public void changingPAPDoesNotAffectUBLA() throws Exception {
+    String bucketName = bucketFixture.newBucketName();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(bucketName)
+                    .setIamConfiguration(
+                        BucketInfo.IamConfiguration.newBuilder()
+                            .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
+                            .setIsUniformBucketLevelAccessEnabled(false)
+                            .build())
+                    .build())
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      BucketInfo bucket = tempB.getBucket();
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
           BucketInfo.PublicAccessPrevention.INHERITED);
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
+      IamConfiguration iamConfiguration1 =
+          bucket
+              .getIamConfiguration()
+              .toBuilder()
+              .setPublicAccessPrevention(PublicAccessPrevention.ENFORCED)
+              .build();
       // Update PAP setting to ENFORCED and should not affect UBLA setting.
-      bucket
-          .toBuilder()
-          .setIamConfiguration(
-              bucket
-                  .getIamConfiguration()
-                  .toBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.ENFORCED)
-                  .build())
-          .build()
-          .update();
-      bucket = storage.get(papBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      storage.update(
+          bucket.toBuilder().setIamConfiguration(iamConfiguration1).build(),
+          BucketTargetOption.metagenerationMatch());
+      Bucket bucket2 =
+          storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      assertEquals(
+          bucket2.getIamConfiguration().getPublicAccessPrevention(),
+          BucketInfo.PublicAccessPrevention.ENFORCED);
+      assertFalse(bucket2.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertFalse(bucket2.getIamConfiguration().isBucketPolicyOnlyEnabled());
+    }
+  }
+
+  @Test
+  public void changingUBLADoesNotAffectPAP() throws Exception {
+    String bucketName = bucketFixture.newBucketName();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(bucketName)
+                    .setIamConfiguration(
+                        BucketInfo.IamConfiguration.newBuilder()
+                            .setPublicAccessPrevention(PublicAccessPrevention.INHERITED)
+                            .setIsUniformBucketLevelAccessEnabled(false)
+                            .build())
+                    .build())
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      BucketInfo bucket = tempB.getBucket();
       assertEquals(
           bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.ENFORCED);
+          PublicAccessPrevention.INHERITED);
       assertFalse(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertFalse(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
 
-      // Updating UBLA should not affect PAP setting.
-      bucket =
+      IamConfiguration iamConfiguration1 =
           bucket
+              .getIamConfiguration()
               .toBuilder()
-              .setIamConfiguration(
-                  bucket
-                      .getIamConfiguration()
-                      .toBuilder()
-                      .setIsUniformBucketLevelAccessEnabled(true)
-                      .build())
-              .build()
-              .update();
-      assertTrue(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
-      assertTrue(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
+              .setIsUniformBucketLevelAccessEnabled(true)
+              .build();
+      // Updating UBLA should not affect PAP setting.
+      Bucket bucket2 =
+          storage.update(
+              bucket
+                  .toBuilder()
+                  .setIamConfiguration(iamConfiguration1)
+                  // clear out ACL related config in conjunction with enabling UBLA
+                  .setAcl(Collections.emptyList())
+                  .setDefaultAcl(Collections.emptyList())
+                  .build(),
+              BucketTargetOption.metagenerationMatch());
       assertEquals(
-          bucket.getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.ENFORCED);
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), papBucket, 1, TimeUnit.MINUTES);
+          bucket2.getIamConfiguration().getPublicAccessPrevention(),
+          PublicAccessPrevention.INHERITED);
+      assertTrue(bucket2.getIamConfiguration().isUniformBucketLevelAccessEnabled());
+      assertTrue(bucket2.getIamConfiguration().isBucketPolicyOnlyEnabled());
     }
   }
 
@@ -830,31 +912,35 @@ public class ITAccessTest {
   }
 
   @Test
-  public void testRetentionPolicyNoLock() throws ExecutionException, InterruptedException {
+  public void testRetentionPolicyNoLock() throws Exception {
     String bucketName = bucketFixture.newBucketName();
-    Bucket remoteBucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build());
-    try {
-      assertEquals(RETENTION_PERIOD, remoteBucket.getRetentionPeriod());
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build())
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
+      BucketInfo remoteBucket = tempB.getBucket();
+
+      assertThat(remoteBucket.getRetentionPeriod()).isEqualTo(RETENTION_PERIOD);
+      assertThat(remoteBucket.getRetentionPeriodDuration()).isEqualTo(RETENTION_PERIOD_DURATION);
       assertNotNull(remoteBucket.getRetentionEffectiveTime());
-      assertNull(remoteBucket.retentionPolicyIsLocked());
-      remoteBucket =
+      assertThat(remoteBucket.retentionPolicyIsLocked()).isAnyOf(null, false);
+
+      Bucket remoteBucket2 =
           storage.get(bucketName, Storage.BucketGetOption.fields(BucketField.RETENTION_POLICY));
-      assertEquals(RETENTION_PERIOD, remoteBucket.getRetentionPeriod());
-      assertNotNull(remoteBucket.getRetentionEffectiveTime());
-      assertNull(remoteBucket.retentionPolicyIsLocked());
+      assertEquals(RETENTION_PERIOD, remoteBucket2.getRetentionPeriod());
+      assertThat(remoteBucket2.getRetentionPeriodDuration()).isEqualTo(RETENTION_PERIOD_DURATION);
+      assertNotNull(remoteBucket2.getRetentionEffectiveTime());
+      assertThat(remoteBucket2.retentionPolicyIsLocked()).isAnyOf(null, false);
+
       String blobName = "test-create-with-retention-policy-hold";
       BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
       Blob remoteBlob = storage.create(blobInfo);
       assertNotNull(remoteBlob.getRetentionExpirationTime());
-      remoteBucket = remoteBucket.toBuilder().setRetentionPeriod(null).build().update();
-      assertNull(remoteBucket.getRetentionPeriod());
-      remoteBucket = remoteBucket.toBuilder().setRetentionPeriod(null).build().update();
-      assertNull(remoteBucket.getRetentionPeriod());
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bucketName, 5, TimeUnit.SECONDS);
+
+      Bucket remoteBucket3 = remoteBucket2.toBuilder().setRetentionPeriod(null).build().update();
+      assertNull(remoteBucket3.getRetentionPeriod());
     }
   }
 
@@ -878,28 +964,32 @@ public class ITAccessTest {
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = bucketFixture.newBucketName();
-    try {
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder()
+            .setBucketInfo(
+                Bucket.newBuilder(bpoBucket)
+                    .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                    .setDefaultAcl(
+                        ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
+                    .build())
+            .setStorage(storageFixtureHttp.getInstance())
+            .build()) {
       // BPO is disabled by default.
-      Bucket bucket =
-          storage.create(
-              Bucket.newBuilder(bpoBucket)
-                  .setAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .setDefaultAcl(
-                      ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
-                  .build());
+      BucketInfo bucket = tempB.getBucket();
+      assertThat(bucket.getIamConfiguration().isBucketPolicyOnlyEnabled()).isFalse();
 
       BucketInfo.IamConfiguration bpoEnabledIamConfiguration =
           BucketInfo.IamConfiguration.newBuilder().setIsBucketPolicyOnlyEnabled(true).build();
-      bucket
-          .toBuilder()
-          .setAcl(null)
-          .setDefaultAcl(null)
-          .setIamConfiguration(bpoEnabledIamConfiguration)
-          .build()
-          .update();
+      storage.update(
+          bucket
+              .toBuilder()
+              .setAcl(null)
+              .setDefaultAcl(null)
+              .setIamConfiguration(bpoEnabledIamConfiguration)
+              .build(),
+          BucketTargetOption.metagenerationMatch());
 
-      Bucket remoteBucket =
-          storage.get(bpoBucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+      Bucket remoteBucket = storage.get(bpoBucket);
 
       assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
@@ -922,14 +1012,23 @@ public class ITAccessTest {
       assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
       assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
       assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bpoBucket, 1, TimeUnit.MINUTES);
     }
   }
 
   @Test
   public void testBlobAcl() {
+    assumeTrue(clientName.startsWith("JSON"));
+    // TODO: break this test up into each of the respective scenarios
+    //   1. get ACL for specific entity
+    //   2. Create an ACL for specific entity
+    //   3. Update ACL to change role of a specific entity
+    //   4. List ACLs for an object
+    //   5. Delete an ACL for a specific entity
+    //   6. Attempt to get an acl for an object that doesn't exist
+    //   7. Attempt to delete an acl for an object that doesn't exist
+    //   8. Attempt to create an acl for an object that doesn't exist
+    //   9. Attempt to update an acl for an object that doesn't exist
+    //   10. Attempt to list acls for an object that doesn't exist
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "test-blob-acl");
     BlobInfo blob = BlobInfo.newBuilder(blobId).build();
     storage.create(blob);
@@ -976,19 +1075,6 @@ public class ITAccessTest {
     } catch (StorageException ex) {
       // expected
     }
-  }
-
-  private Bucket generatePublicAccessPreventionBucket(String bucketName, boolean enforced) {
-    return storage.create(
-        Bucket.newBuilder(bucketName)
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
-                    .setPublicAccessPrevention(
-                        enforced
-                            ? BucketInfo.PublicAccessPrevention.ENFORCED
-                            : BucketInfo.PublicAccessPrevention.INHERITED)
-                    .build())
-            .build());
   }
 
   static <T> T retry429s(Callable<T> c, Storage storage) {

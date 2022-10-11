@@ -41,6 +41,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ProtocolStringList;
 import com.google.protobuf.Timestamp;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.Bucket.Billing;
@@ -198,15 +199,15 @@ final class GrpcConversions {
     to.setGeneratedId(from.getBucketId());
     if (from.hasRetentionPolicy()) {
       Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
-      ifNonNull(retentionPolicy.getIsLocked(), to::setRetentionPolicyIsLocked);
-      ifNonNull(
-          retentionPolicy.getRetentionPeriod(),
-          Utils.durationSecondsCodec::decode,
-          to::setRetentionPeriodDuration);
-      ifNonNull(
-          retentionPolicy.getEffectiveTime(),
-          timestampCodec::decode,
-          to::setRetentionEffectiveTimeOffsetDateTime);
+      to.setRetentionPolicyIsLocked(retentionPolicy.getIsLocked());
+      if (retentionPolicy.hasRetentionPeriod()) {
+        to.setRetentionPeriodDuration(
+            durationSecondsCodec.decode(retentionPolicy.getRetentionPeriod()));
+      }
+      if (retentionPolicy.hasEffectiveTime()) {
+        to.setRetentionEffectiveTimeOffsetDateTime(
+            timestampCodec.decode(retentionPolicy.getEffectiveTime()));
+      }
     }
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
@@ -465,7 +466,7 @@ final class GrpcConversions {
 
   private Acl objectAclDecode(ObjectAccessControl from) {
     Acl.Role role = Acl.Role.valueOf(from.getRole());
-    Acl.Entity entity = entityDecode(from.getEntity());
+    Acl.Entity entity = entityCodec.decode(from.getEntity());
     Acl.Builder to = Acl.newBuilder(entity, role).setId(from.getId());
     if (!from.getEtag().isEmpty()) {
       to.setEtag(from.getEtag());
@@ -474,11 +475,10 @@ final class GrpcConversions {
   }
 
   private ObjectAccessControl objectAclEncode(Acl from) {
-    ObjectAccessControl.Builder to =
-        ObjectAccessControl.newBuilder()
-            .setEntity(entityEncode(from.getEntity()))
-            .setRole(from.getRole().name())
-            .setId(from.getId());
+    ObjectAccessControl.Builder to = ObjectAccessControl.newBuilder();
+    ifNonNull(from.getEntity(), entityCodec::encode, to::setEntity);
+    ifNonNull(from.getRole(), Role::name, to::setRole);
+    ifNonNull(from.getId(), to::setId);
     ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
   }
@@ -875,48 +875,70 @@ final class GrpcConversions {
 
   private Policy policyDecode(com.google.iam.v1.Policy from) {
     Policy.Builder to = Policy.newBuilder();
-    if (!from.getEtag().isEmpty()) {
-      to.setEtag(from.getEtag().toStringUtf8());
+    ByteString etag = from.getEtag();
+    if (!etag.isEmpty()) {
+      to.setEtag(etag.toStringUtf8());
     }
     to.setVersion(from.getVersion());
-    ImmutableList<Binding> bindings =
-        from.getBindingsList().stream()
-            .map(bindingCodec::decode)
-            .collect(ImmutableList.toImmutableList());
-    to.setBindings(bindings);
+    List<com.google.iam.v1.Binding> bindingsList = from.getBindingsList();
+    if (!bindingsList.isEmpty()) {
+      ImmutableList<Binding> bindings =
+          bindingsList.stream().map(bindingCodec::decode).collect(ImmutableList.toImmutableList());
+      to.setBindings(bindings);
+    }
     return to.build();
   }
 
   private com.google.iam.v1.Binding bindingEncode(Binding from) {
     com.google.iam.v1.Binding.Builder to = com.google.iam.v1.Binding.newBuilder();
-    to.setRole(from.getRole());
-    to.addAllMembers(from.getMembers());
-    to.setCondition(iamConditionCodec.encode(from.getCondition()));
+    ifNonNull(from.getRole(), to::setRole);
+    ImmutableList<String> members = from.getMembers();
+    if (!members.isEmpty()) {
+      to.addAllMembers(members);
+    }
+    ifNonNull(from.getCondition(), iamConditionCodec::encode, to::setCondition);
     return to.build();
   }
 
   private Binding bindingDecode(com.google.iam.v1.Binding from) {
     Binding.Builder to = Binding.newBuilder();
-    to.setRole(from.getRole());
-    to.setMembers(from.getMembersList());
-    to.setCondition(iamConditionCodec.decode(from.getCondition()));
+    String role = from.getRole();
+    if (!role.isEmpty()) {
+      to.setRole(role);
+    }
+    ProtocolStringList membersList = from.getMembersList();
+    if (!membersList.isEmpty()) {
+      to.setMembers(membersList);
+    }
+    if (from.hasCondition()) {
+      to.setCondition(iamConditionCodec.decode(from.getCondition()));
+    }
     return to.build();
   }
 
   private Expr conditionEncode(Condition from) {
     Expr.Builder to = Expr.newBuilder();
-    to.setExpression(from.getExpression());
-    to.setTitle(from.getTitle());
-    to.setDescription(from.getDescription());
+    ifNonNull(from.getExpression(), to::setExpression);
+    ifNonNull(from.getTitle(), to::setTitle);
+    ifNonNull(from.getDescription(), to::setDescription);
     // apiary doesn't have a "location" field like grpc does
     return to.build();
   }
 
   private Condition conditionDecode(Expr from) {
     Condition.Builder to = Condition.newBuilder();
-    to.setExpression(from.getExpression());
-    to.setTitle(from.getTitle());
-    to.setDescription(from.getDescription());
+    String expression = from.getExpression();
+    if (!expression.isEmpty()) {
+      to.setExpression(expression);
+    }
+    String title = from.getTitle();
+    if (!title.isEmpty()) {
+      to.setTitle(title);
+    }
+    String description = from.getDescription();
+    if (!description.isEmpty()) {
+      to.setDescription(description);
+    }
     return to.build();
   }
 
