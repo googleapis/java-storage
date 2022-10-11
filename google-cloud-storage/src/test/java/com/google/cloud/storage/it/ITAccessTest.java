@@ -734,7 +734,8 @@ public class ITAccessTest {
       // Making object public via ACL should fail.
       try {
         // Create a public object
-        storage.create(BlobInfo.newBuilder(bucket, "pap-test-object").build(),
+        storage.create(
+            BlobInfo.newBuilder(bucket, "pap-test-object").build(),
             BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ));
         fail("pap: expected adding allUsers ACL to object should fail");
       } catch (StorageException storageException) {
@@ -1092,5 +1093,4 @@ public class ITAccessTest {
         },
         storage.getOptions().getClock());
   }
-
 }

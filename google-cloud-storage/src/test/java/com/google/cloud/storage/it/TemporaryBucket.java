@@ -35,16 +35,17 @@ final class TemporaryBucket implements AutoCloseable {
   private final CleanupStrategy cleanupStrategy;
 
   private TemporaryBucket(
-      BucketInfo bucket, Storage storage, Duration cleanupTimeout, CleanupStrategy cleanupStrategy) {
+      BucketInfo bucket,
+      Storage storage,
+      Duration cleanupTimeout,
+      CleanupStrategy cleanupStrategy) {
     this.bucket = bucket;
     this.storage = storage;
     this.cleanupTimeout = cleanupTimeout;
     this.cleanupStrategy = cleanupStrategy;
   }
 
-  /**
-   * Return the BucketInfo from the created temporary bucket.
-   */
+  /** Return the BucketInfo from the created temporary bucket. */
   BucketInfo getBucket() {
     return bucket;
   }
@@ -53,10 +54,7 @@ final class TemporaryBucket implements AutoCloseable {
   public void close() throws Exception {
     if (cleanupStrategy == CleanupStrategy.ALWAYS) {
       RemoteStorageHelper.forceDelete(
-          storage,
-          bucket.getName(),
-          cleanupTimeout.toMillis(),
-          TimeUnit.MILLISECONDS);
+          storage, bucket.getName(), cleanupTimeout.toMillis(), TimeUnit.MILLISECONDS);
     }
   }
 
