@@ -67,9 +67,10 @@ import java.util.concurrent.TimeUnit;
  * byte[] content = blob.getContent(); // one or multiple RPC calls will be issued
  * }</pre>
  */
+@TransportCompatibility({Transport.HTTP, Transport.GRPC})
 public class Blob extends BlobInfo {
 
-  private static final long serialVersionUID = -6242932432991389329L;
+  private static final long serialVersionUID = 5007541696912440917L;
 
   private final StorageOptions options;
   private transient Storage storage;
@@ -77,7 +78,7 @@ public class Blob extends BlobInfo {
   /** Class for specifying blob source options when {@code Blob} methods are used. */
   public static class BlobSourceOption extends Option<ObjectSourceOpt> {
 
-    private static final long serialVersionUID = 214616862061934846L;
+    private static final long serialVersionUID = 8205000496563385634L;
 
     private BlobSourceOption(ObjectSourceOpt opt) {
       super(opt);
@@ -1162,7 +1163,11 @@ public class Blob extends BlobInfo {
     return Objects.hash(super.hashCode(), options);
   }
 
-  /** Drop the held {@link Storage} instance. */
+  /**
+   * Drop the held {@link Storage} instance.
+   *
+   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public BlobInfo asBlobInfo() {
     return this.toBuilder().infoBuilder.build();

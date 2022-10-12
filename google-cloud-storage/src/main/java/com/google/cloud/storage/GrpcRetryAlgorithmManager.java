@@ -50,7 +50,7 @@ import java.io.Serializable;
 
 final class GrpcRetryAlgorithmManager implements Serializable {
 
-  private static final long serialVersionUID = -355073454247905645L;
+  private static final long serialVersionUID = 3084833873820431477L;
   private final StorageRetryStrategy retryStrategy;
 
   GrpcRetryAlgorithmManager(StorageRetryStrategy retryStrategy) {

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  */
 public final class BlobId implements Serializable {
 
-  private static final long serialVersionUID = -6156002883225601925L;
+  private static final long serialVersionUID = 8201580858265557469L;
   private final String bucket;
   private final String name;
   private final Long generation;

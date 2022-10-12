@@ -329,7 +329,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
 
   static class StateImpl extends BaseWriteChannel.BaseState<StorageOptions, BlobInfo> {
 
-    private static final long serialVersionUID = -9028324143780151286L;
+    private static final long serialVersionUID = -6700378962714601115L;
 
     private final ResultRetryAlgorithm<?> algorithmForWrite;
 

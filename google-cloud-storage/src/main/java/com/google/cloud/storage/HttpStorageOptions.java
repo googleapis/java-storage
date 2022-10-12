@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
+import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.HeaderProvider;
@@ -28,6 +29,7 @@ import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
@@ -36,10 +38,13 @@ import com.google.common.collect.ImmutableSet;
 import java.io.Serializable;
 import java.util.Set;
 
+/** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
+@BetaApi
+@TransportCompatibility(Transport.HTTP)
 // non-final because of mocking frameworks
 public class HttpStorageOptions extends StorageOptions {
 
-  private static final long serialVersionUID = -954534299318865816L;
+  private static final long serialVersionUID = -5302637952911052045L;
   private static final String API_SHORT_NAME = "Storage";
   private static final String GCS_SCOPE = "https://www.googleapis.com/auth/devstorage.full_control";
   private static final Set<String> SCOPES = ImmutableSet.of(GCS_SCOPE);
@@ -60,10 +65,12 @@ public class HttpStorageOptions extends StorageOptions {
     return SCOPES;
   }
 
+  @InternalApi
   HttpRetryAlgorithmManager getRetryAlgorithmManager() {
     return retryAlgorithmManager;
   }
 
+  @InternalApi
   StorageRpc getStorageRpcV1() {
     return (StorageRpc) getRpc();
   }
@@ -80,7 +87,7 @@ public class HttpStorageOptions extends StorageOptions {
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof StorageOptions && baseEquals((StorageOptions) obj);
+    return obj instanceof HttpStorageOptions && baseEquals((HttpStorageOptions) obj);
   }
 
   public static HttpStorageOptions.Builder newBuilder() {
@@ -241,7 +248,7 @@ public class HttpStorageOptions extends StorageOptions {
    */
   @InternalApi
   public static class HttpStorageFactory implements StorageFactory, Serializable {
-    private static final long serialVersionUID = -509515936479640159L;
+    private static final long serialVersionUID = 1063208433681579145L;
 
     /**
      * Internal implementation detail, only public to allow for {@link java.io.Serializable}.
@@ -284,7 +291,7 @@ public class HttpStorageOptions extends StorageOptions {
    */
   @InternalApi
   public static class HttpStorageRpcFactory implements StorageRpcFactory, Serializable {
-    private static final long serialVersionUID = -7487671939555953705L;
+    private static final long serialVersionUID = -5896805045709989797L;
 
     /**
      * Internal implementation detail, only public to allow for {@link java.io.Serializable}.

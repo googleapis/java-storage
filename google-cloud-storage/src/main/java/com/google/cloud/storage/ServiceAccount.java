@@ -28,7 +28,7 @@ import java.util.Objects;
  */
 public final class ServiceAccount implements Serializable {
 
-  private static final long serialVersionUID = 4199610694227857331L;
+  private static final long serialVersionUID = -6492243440372543799L;
 
   private final String email;
 

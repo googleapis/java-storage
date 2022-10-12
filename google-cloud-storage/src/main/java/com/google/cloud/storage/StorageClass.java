@@ -25,7 +25,7 @@ import com.google.cloud.StringEnumValue;
  * for details.
  */
 public final class StorageClass extends StringEnumValue {
-  private static final long serialVersionUID = -6938125060419556331L;
+  private static final long serialVersionUID = -1077862391496082625L;
 
   private StorageClass(String constant) {
     super(constant);

@@ -30,7 +30,7 @@ import java.util.Objects;
 /** The class representing Pub/Sub Notification metadata for the Storage. */
 public class NotificationInfo implements Serializable {
 
-  private static final long serialVersionUID = 5725883368559753810L;
+  private static final long serialVersionUID = -996243512290027661L;
   private static final PathTemplate PATH_TEMPLATE =
       PathTemplate.createWithoutUrlEncoding("projects/{project}/topics/{topic}");
 

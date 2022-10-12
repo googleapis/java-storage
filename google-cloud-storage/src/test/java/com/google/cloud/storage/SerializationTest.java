@@ -108,7 +108,7 @@ public class SerializationTest extends BaseSerializationTest {
             .build();
     StorageOptions optionsHttp2 = optionsHttp1.toBuilder().setProjectId("http2").build();
     StorageOptions optionsGrpc1 =
-        StorageOptions.http()
+        StorageOptions.grpc()
             .setProjectId("grpc1")
             .setCredentials(NoCredentials.getInstance())
             .build();
@@ -191,7 +191,6 @@ public class SerializationTest extends BaseSerializationTest {
 
   @Override
   protected Restorable<?>[] restorableObjects() {
-    // TODO: Think about this some more
     HttpStorageOptions options = HttpStorageOptions.newBuilder().setProjectId("p2").build();
     ResultRetryAlgorithm<?> algorithm =
         options.getRetryAlgorithmManager().getForResumableUploadSessionWrite(EMPTY_RPC_OPTIONS);

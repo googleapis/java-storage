@@ -52,9 +52,10 @@ import java.util.Objects;
  * return a new object. To get a {@code Bucket} object with the most recent information use {@link
  * #reload}. {@code Bucket} adds a layer of service-related functionality over {@link BucketInfo}.
  */
+@TransportCompatibility({Transport.HTTP, Transport.GRPC})
 public class Bucket extends BucketInfo {
 
-  private static final long serialVersionUID = -5916736761953534767L;
+  private static final long serialVersionUID = 3599706574671671516L;
 
   private final StorageOptions options;
   private transient Storage storage;
@@ -62,7 +63,7 @@ public class Bucket extends BucketInfo {
   /** Class for specifying bucket source options when {@code Bucket} methods are used. */
   public static class BucketSourceOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = 6928872234155522371L;
+    private static final long serialVersionUID = 6765489853972162215L;
 
     private BucketSourceOption(BucketSourceOpt opt) {
       super(opt);
@@ -129,7 +130,7 @@ public class Bucket extends BucketInfo {
   /** Class for specifying blob target options when {@code Bucket} methods are used. */
   public static class BlobTargetOption extends Option<ObjectTargetOpt> {
 
-    private static final long serialVersionUID = 8345296337342509425L;
+    private static final long serialVersionUID = -7203767045761758606L;
 
     private BlobTargetOption(ObjectTargetOpt opt) {
       super(opt);
@@ -240,7 +241,7 @@ public class Bucket extends BucketInfo {
   /** Class for specifying blob write options when {@code Bucket} methods are used. */
   public static class BlobWriteOption extends OptionShim<ObjectTargetOpt> implements Serializable {
 
-    private static final long serialVersionUID = -1103041630932223724L;
+    private static final long serialVersionUID = 59762268190041584L;
 
     private BlobWriteOption(ObjectTargetOpt opt) {
       super(opt);
@@ -952,7 +953,7 @@ public class Bucket extends BucketInfo {
    * @return an immutable list of {@code Blob} objects
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   public List<Blob> get(String blobName1, String blobName2, String... blobNames) {
     List<BlobId> blobIds = Lists.newArrayListWithCapacity(blobNames.length + 2);
     blobIds.add(BlobId.of(getName(), blobName1));
@@ -986,7 +987,7 @@ public class Bucket extends BucketInfo {
    * @return an immutable list of {@code Blob} objects
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   public List<Blob> get(Iterable<String> blobNames) {
     ImmutableList.Builder<BlobId> builder = ImmutableList.builder();
     for (String blobName : blobNames) {
@@ -1351,7 +1352,11 @@ public class Bucket extends BucketInfo {
     return Objects.hash(super.hashCode(), options);
   }
 
-  /** Drop the held {@link Storage} instance. */
+  /**
+   * Drop the held {@link Storage} instance.
+   *
+   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public BucketInfo asBucketInfo() {
     return this.toBuilder().infoBuilder.build();

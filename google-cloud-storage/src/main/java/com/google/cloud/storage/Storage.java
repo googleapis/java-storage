@@ -296,7 +296,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket target options. */
   class BucketTargetOption extends Option<BucketTargetOpt> {
 
-    private static final long serialVersionUID = 22594853046651193L;
+    private static final long serialVersionUID = 6699243191830059404L;
 
     private BucketTargetOption(BucketTargetOpt opt) {
       super(opt);
@@ -352,7 +352,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket source options. */
   class BucketSourceOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = -162739527257621625L;
+    private static final long serialVersionUID = 3808812145390746748L;
 
     BucketSourceOption(BucketSourceOpt opt) {
       super(opt);
@@ -517,7 +517,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket get options. */
   class BucketGetOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = 6162812462707653332L;
+    private static final long serialVersionUID = -669900932880354035L;
 
     BucketGetOption(BucketSourceOpt opt) {
       super(opt);
@@ -566,7 +566,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob target options. */
   class BlobTargetOption extends Option<ObjectTargetOpt> {
 
-    private static final long serialVersionUID = -389155232891981906L;
+    private static final long serialVersionUID = -5554842495450599563L;
 
     BlobTargetOption(ObjectTargetOpt opt) {
       super(opt);
@@ -668,7 +668,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob write options. */
   class BlobWriteOption extends OptionShim<ObjectTargetOpt> implements Serializable {
 
-    private static final long serialVersionUID = 1834774766750256808L;
+    private static final long serialVersionUID = 5536338021856320475L;
 
     BlobWriteOption(ObjectTargetOpt opt) {
       super(opt);
@@ -795,7 +795,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob source options. */
   class BlobSourceOption extends Option<ObjectSourceOpt> {
 
-    private static final long serialVersionUID = 2131185332093994401L;
+    private static final long serialVersionUID = -8626355836092280204L;
 
     BlobSourceOption(ObjectSourceOpt opt) {
       super(opt);
@@ -898,7 +898,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob get options. */
   class BlobGetOption extends Option<ObjectSourceOpt> {
 
-    private static final long serialVersionUID = 4464929616050835795L;
+    private static final long serialVersionUID = -2857961421224394114L;
 
     BlobGetOption(ObjectSourceOpt opt) {
       super(opt);
@@ -1013,7 +1013,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket list options. */
   class BucketListOption extends Option<BucketListOpt> {
 
-    private static final long serialVersionUID = 5717590216719591953L;
+    private static final long serialVersionUID = 6388807550815607557L;
 
     private BucketListOption(BucketListOpt opt) {
       super(opt);
@@ -1065,7 +1065,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob list options. */
   class BlobListOption extends Option<ObjectListOpt> {
 
-    private static final long serialVersionUID = 5677832374576757707L;
+    private static final long serialVersionUID = 5216908055423927281L;
 
     private BlobListOption(ObjectListOpt opt) {
       super(opt);
@@ -1173,7 +1173,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   /** Class for specifying Post Policy V4 options. * */
   class PostPolicyV4Option implements Serializable {
-    private static final long serialVersionUID = 8150867146534084543L;
+    private static final long serialVersionUID = -1592545784993528897L;
     private final PostPolicyV4Option.Option option;
     private final Object value;
 
@@ -1275,7 +1275,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying signed URL options. */
   class SignUrlOption implements Serializable {
 
-    private static final long serialVersionUID = 7850569877451099267L;
+    private static final long serialVersionUID = -3165388740755311106L;
 
     private final Option option;
     private final Object value;
@@ -1478,7 +1478,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   class ComposeRequest implements Serializable {
 
-    private static final long serialVersionUID = -7385681353748590911L;
+    private static final long serialVersionUID = 6612204553167273919L;
 
     private final List<SourceBlob> sourceBlobs;
     private final BlobInfo target;
@@ -1487,7 +1487,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     /** Class for Compose source blobs. */
     public static class SourceBlob implements Serializable {
 
-      private static final long serialVersionUID = 4094962795951990439L;
+      private static final long serialVersionUID = -157636474404489874L;
 
       final String name;
       final Long generation;
@@ -1613,7 +1613,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   class CopyRequest implements Serializable {
 
-    private static final long serialVersionUID = -4498650529476219937L;
+    private static final long serialVersionUID = 5670794463350011330L;
 
     private final BlobId source;
     private final List<BlobSourceOption> sourceOptions;

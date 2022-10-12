@@ -24,7 +24,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
  */
 final class UniformStorageRetryStrategy implements StorageRetryStrategy {
 
-  private static final long serialVersionUID = -1656941189344618393L;
+  private static final long serialVersionUID = -8606685654893234472L;
   private final ResultRetryAlgorithm<?> algorithm;
 
   public UniformStorageRetryStrategy(ResultRetryAlgorithm<?> algorithm) {

@@ -30,6 +30,7 @@ import com.google.api.core.BetaApi;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -57,6 +58,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @see <a href="https://cloud.google.com/storage/docs/concepts-techniques#concepts">Concepts and
  *     Terminology</a>
  */
+@TransportCompatibility({Transport.HTTP, Transport.GRPC})
 public class BucketInfo implements Serializable {
 
   // this class reference (LifecycleRule.DeleteLifecycleAction) must be long form.
@@ -70,7 +72,7 @@ public class BucketInfo implements Serializable {
   private static final Predicate<LifecycleRule> IS_DELETE_LIFECYCLE_RULE =
       r -> r.getAction().getActionType().equals(LifecycleRule.DeleteLifecycleAction.TYPE);
 
-  private static final long serialVersionUID = -4712013629621638459L;
+  private static final long serialVersionUID = 4793572058456298945L;
   private final String generatedId;
   private final String project;
   private final String name;
@@ -172,7 +174,7 @@ public class BucketInfo implements Serializable {
    *     href="https://cloud.google.com/storage/docs/public-access-prevention">public-access-prevention</a>
    */
   public static class IamConfiguration implements Serializable {
-    private static final long serialVersionUID = -8671736104909424616L;
+    private static final long serialVersionUID = -7564209362829587435L;
 
     private final Boolean isUniformBucketLevelAccessEnabled;
     private final OffsetDateTime uniformBucketLevelAccessLockedTime;
@@ -344,7 +346,7 @@ public class BucketInfo implements Serializable {
    */
   public static class CustomPlacementConfig implements Serializable {
 
-    private static final long serialVersionUID = -3172255903331692127L;
+    private static final long serialVersionUID = 7284488308696895602L;
     private List<String> dataLocations;
 
     @Override
@@ -408,7 +410,7 @@ public class BucketInfo implements Serializable {
    */
   public static class Logging implements Serializable {
 
-    private static final long serialVersionUID = -708892101216778492L;
+    private static final long serialVersionUID = 5213268072569764596L;
     private final String logBucket;
     private final String logObjectPrefix;
 
@@ -491,7 +493,7 @@ public class BucketInfo implements Serializable {
    */
   public static class LifecycleRule implements Serializable {
 
-    private static final long serialVersionUID = -5739807320148748613L;
+    private static final long serialVersionUID = 8685745573894069326L;
     private final LifecycleAction lifecycleAction;
     private final LifecycleCondition lifecycleCondition;
 
@@ -559,7 +561,7 @@ public class BucketInfo implements Serializable {
      *     Management</a>
      */
     public static class LifecycleCondition implements Serializable {
-      private static final long serialVersionUID = -6482314338394768785L;
+      private static final long serialVersionUID = 7127585850045827932L;
       private final Integer age;
       private final OffsetDateTime createdBefore;
       private final Integer numberOfNewerVersions;
@@ -922,7 +924,7 @@ public class BucketInfo implements Serializable {
      * expressed as subclasses of this class, accessed by static factory methods.
      */
     public static class LifecycleAction implements Serializable {
-      private static final long serialVersionUID = 5801228724709173284L;
+      private static final long serialVersionUID = -816170697779323819L;
 
       private final String actionType;
 
@@ -997,7 +999,7 @@ public class BucketInfo implements Serializable {
 
     public static class DeleteLifecycleAction extends LifecycleAction {
       public static final String TYPE = "Delete";
-      private static final long serialVersionUID = -2050986302222644873L;
+      private static final long serialVersionUID = 4235058923106460876L;
 
       private DeleteLifecycleAction() {
         super(TYPE);
@@ -1006,7 +1008,7 @@ public class BucketInfo implements Serializable {
 
     public static class SetStorageClassLifecycleAction extends LifecycleAction {
       public static final String TYPE = "SetStorageClass";
-      private static final long serialVersionUID = -62615467186000899L;
+      private static final long serialVersionUID = 1235008830965208895L;
 
       private final StorageClass storageClass;
 
@@ -1030,7 +1032,7 @@ public class BucketInfo implements Serializable {
 
     public static class AbortIncompleteMPUAction extends LifecycleAction {
       public static final String TYPE = "AbortIncompleteMultipartUpload";
-      private static final long serialVersionUID = -1072182310389348060L;
+      private static final long serialVersionUID = 8158049841366366988L;
 
       private AbortIncompleteMPUAction() {
         super(TYPE);
@@ -1049,7 +1051,7 @@ public class BucketInfo implements Serializable {
   @Deprecated
   public abstract static class DeleteRule implements Serializable {
 
-    private static final long serialVersionUID = 3137971668395933033L;
+    private static final long serialVersionUID = -2831684017163653163L;
     static final String SUPPORTED_ACTION = "Delete";
     private final Type type;
 
@@ -1100,7 +1102,7 @@ public class BucketInfo implements Serializable {
   @Deprecated
   public static class AgeDeleteRule extends DeleteRule {
 
-    private static final long serialVersionUID = 5697166940712116380L;
+    private static final long serialVersionUID = 8655342969048652720L;
     private final int daysToLive;
 
     /**
@@ -1121,8 +1123,8 @@ public class BucketInfo implements Serializable {
   }
 
   static class RawDeleteRule extends DeleteRule {
-    // TODO(benwhitehead): investigate having deleted the populateCondition method
-    private static final long serialVersionUID = -7166938278642301933L;
+
+    private static final long serialVersionUID = -3490275955461147025L;
 
     private transient Rule rule;
 
@@ -1156,7 +1158,7 @@ public class BucketInfo implements Serializable {
   @Deprecated
   public static class CreatedBeforeDeleteRule extends DeleteRule {
 
-    private static final long serialVersionUID = 881692650279195867L;
+    private static final long serialVersionUID = -2941931783781989505L;
     private final OffsetDateTime time;
 
     /**
@@ -1204,7 +1206,7 @@ public class BucketInfo implements Serializable {
   @Deprecated
   public static class NumNewerVersionsDeleteRule extends DeleteRule {
 
-    private static final long serialVersionUID = -1955554976528303894L;
+    private static final long serialVersionUID = 8984956956307794724L;
     private final int numNewerVersions;
 
     /**
@@ -1233,7 +1235,7 @@ public class BucketInfo implements Serializable {
   @Deprecated
   public static class IsLiveDeleteRule extends DeleteRule {
 
-    private static final long serialVersionUID = -3502994563121313364L;
+    private static final long serialVersionUID = 6769701586197631153L;
     private final boolean isLive;
 
     /**

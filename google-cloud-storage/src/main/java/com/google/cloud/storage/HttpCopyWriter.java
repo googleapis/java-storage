@@ -98,7 +98,7 @@ public class HttpCopyWriter extends CopyWriter {
 
   static class StateImpl implements RestorableState<CopyWriter>, Serializable {
 
-    private static final long serialVersionUID = 1693964441435822700L;
+    private static final long serialVersionUID = 1843004265650868946L;
 
     private final HttpStorageOptions serviceOptions;
     private final BlobId source;
