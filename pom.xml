@@ -54,7 +54,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <github.global.server>github</github.global.server>
     <site.installationModule>google-cloud-storage-parent</site.installationModule>
-    <google.cloud.shared-dependencies.version>2.10.0</google.cloud.shared-dependencies.version>
+    <google.cloud.shared-dependencies.version>2.10.1</google.cloud.shared-dependencies.version>
   </properties>
 
   <dependencyManagement>
@@ -62,7 +62,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-shared-dependencies</artifactId>
-        <version>2.10.1</version>
+        <version>${google.cloud.shared-dependencies.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
