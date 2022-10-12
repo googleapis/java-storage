@@ -50,140 +50,6 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     return this.unknownFields;
   }
 
-  private WriteObjectRequest(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-              firstMessageCase_ = 1;
-              firstMessage_ = s;
-              break;
-            }
-          case 18:
-            {
-              com.google.storage.v2.WriteObjectSpec.Builder subBuilder = null;
-              if (firstMessageCase_ == 2) {
-                subBuilder = ((com.google.storage.v2.WriteObjectSpec) firstMessage_).toBuilder();
-              }
-              firstMessage_ =
-                  input.readMessage(
-                      com.google.storage.v2.WriteObjectSpec.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.google.storage.v2.WriteObjectSpec) firstMessage_);
-                firstMessage_ = subBuilder.buildPartial();
-              }
-              firstMessageCase_ = 2;
-              break;
-            }
-          case 24:
-            {
-              writeOffset_ = input.readInt64();
-              break;
-            }
-          case 34:
-            {
-              com.google.storage.v2.ChecksummedData.Builder subBuilder = null;
-              if (dataCase_ == 4) {
-                subBuilder = ((com.google.storage.v2.ChecksummedData) data_).toBuilder();
-              }
-              data_ =
-                  input.readMessage(
-                      com.google.storage.v2.ChecksummedData.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom((com.google.storage.v2.ChecksummedData) data_);
-                data_ = subBuilder.buildPartial();
-              }
-              dataCase_ = 4;
-              break;
-            }
-          case 50:
-            {
-              com.google.storage.v2.ObjectChecksums.Builder subBuilder = null;
-              if (objectChecksums_ != null) {
-                subBuilder = objectChecksums_.toBuilder();
-              }
-              objectChecksums_ =
-                  input.readMessage(
-                      com.google.storage.v2.ObjectChecksums.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(objectChecksums_);
-                objectChecksums_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          case 56:
-            {
-              finishWrite_ = input.readBool();
-              break;
-            }
-          case 66:
-            {
-              com.google.storage.v2.CommonObjectRequestParams.Builder subBuilder = null;
-              if (commonObjectRequestParams_ != null) {
-                subBuilder = commonObjectRequestParams_.toBuilder();
-              }
-              commonObjectRequestParams_ =
-                  input.readMessage(
-                      com.google.storage.v2.CommonObjectRequestParams.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(commonObjectRequestParams_);
-                commonObjectRequestParams_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          case 74:
-            {
-              com.google.storage.v2.CommonRequestParams.Builder subBuilder = null;
-              if (commonRequestParams_ != null) {
-                subBuilder = commonRequestParams_.toBuilder();
-              }
-              commonRequestParams_ =
-                  input.readMessage(
-                      com.google.storage.v2.CommonRequestParams.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(commonRequestParams_);
-                commonRequestParams_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          default:
-            {
-              if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
-    } finally {
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_WriteObjectRequest_descriptor;
@@ -713,7 +579,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     if (commonRequestParams_ != null) {
       output.writeMessage(9, getCommonRequestParams());
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -752,7 +618,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     if (commonRequestParams_ != null) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(9, getCommonRequestParams());
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -801,7 +667,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       case 0:
       default:
     }
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -848,7 +714,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       case 0:
       default:
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -977,24 +843,23 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     }
 
     // Construct using com.google.storage.v2.WriteObjectRequest.newBuilder()
-    private Builder() {
-      maybeForceBuilderInitialization();
-    }
+    private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
     }
 
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      if (writeObjectSpecBuilder_ != null) {
+        writeObjectSpecBuilder_.clear();
+      }
       writeOffset_ = 0L;
 
+      if (checksummedDataBuilder_ != null) {
+        checksummedDataBuilder_.clear();
+      }
       if (objectChecksumsBuilder_ == null) {
         objectChecksums_ = null;
       } else {
@@ -1175,7 +1040,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             break;
           }
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -1190,17 +1055,82 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.google.storage.v2.WriteObjectRequest parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                java.lang.String s = input.readStringRequireUtf8();
+                firstMessageCase_ = 1;
+                firstMessage_ = s;
+                break;
+              } // case 10
+            case 18:
+              {
+                input.readMessage(getWriteObjectSpecFieldBuilder().getBuilder(), extensionRegistry);
+                firstMessageCase_ = 2;
+                break;
+              } // case 18
+            case 24:
+              {
+                writeOffset_ = input.readInt64();
+
+                break;
+              } // case 24
+            case 34:
+              {
+                input.readMessage(getChecksummedDataFieldBuilder().getBuilder(), extensionRegistry);
+                dataCase_ = 4;
+                break;
+              } // case 34
+            case 50:
+              {
+                input.readMessage(getObjectChecksumsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 50
+            case 56:
+              {
+                finishWrite_ = input.readBool();
+
+                break;
+              } // case 56
+            case 66:
+              {
+                input.readMessage(
+                    getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 66
+            case 74:
+              {
+                input.readMessage(
+                    getCommonRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 74
+            default:
+              {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.google.storage.v2.WriteObjectRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
 
@@ -2572,7 +2502,18 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-          return new WriteObjectRequest(input, extensionRegistry);
+          Builder builder = newBuilder();
+          try {
+            builder.mergeFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.setUnfinishedMessage(builder.buildPartial());
+          } catch (com.google.protobuf.UninitializedMessageException e) {
+            throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+          } catch (java.io.IOException e) {
+            throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                .setUnfinishedMessage(builder.buildPartial());
+          }
+          return builder.buildPartial();
         }
       };
 
