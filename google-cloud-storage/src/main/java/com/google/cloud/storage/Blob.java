@@ -88,6 +88,7 @@ public class Blob extends BlobInfo {
      * Returns an option for blob's generation match. If this option is used the request will fail
      * if generation does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption generationMatch() {
       return new BlobSourceOption(UnifiedOpts.generationMatchExtractor());
     }
@@ -99,6 +100,7 @@ public class Blob extends BlobInfo {
      * @deprecated This option is invalid, and can never result in a valid response from the server.
      */
     @Deprecated
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption generationNotMatch() {
       return new BlobSourceOption(UnifiedOpts.generationNotMatchExtractor());
     }
@@ -107,6 +109,7 @@ public class Blob extends BlobInfo {
      * Returns an option for blob's metageneration match. If this option is used the request will
      * fail if metageneration does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption metagenerationMatch() {
       return new BlobSourceOption(UnifiedOpts.metagenerationMatchExtractor());
     }
@@ -115,6 +118,7 @@ public class Blob extends BlobInfo {
      * Returns an option for blob's metageneration mismatch. If this option is used the request will
      * fail if metageneration matches.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption metagenerationNotMatch() {
       return new BlobSourceOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
@@ -123,6 +127,7 @@ public class Blob extends BlobInfo {
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption decryptionKey(Key key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
@@ -133,6 +138,7 @@ public class Blob extends BlobInfo {
      *
      * @param key the AES256 encoded in base64
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption decryptionKey(String key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
@@ -141,6 +147,7 @@ public class Blob extends BlobInfo {
      * Returns an option for blob's billing user project. This option is used only if the blob's
      * bucket has requester_pays flag enabled.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption userProject(String userProject) {
       return new BlobSourceOption(UnifiedOpts.userProject(userProject));
     }
@@ -150,6 +157,7 @@ public class Blob extends BlobInfo {
      * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
      * true for ReadChannel.read().
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
       return new BlobSourceOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
     }
