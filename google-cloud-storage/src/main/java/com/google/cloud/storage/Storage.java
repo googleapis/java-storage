@@ -725,7 +725,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @deprecated Please compute and use a crc32c checksum instead. {@link #crc32cMatch()}
      */
     @Deprecated
-    @TransportCompatibility(Transport.HTTP)
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption md5Match() {
       return new BlobWriteOption(UnifiedOpts.md5MatchExtractor());
     }

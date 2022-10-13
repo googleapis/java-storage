@@ -89,6 +89,20 @@ final class WriteFlushStrategy {
     return ret;
   }
 
+  /**
+   * Several fields of a WriteObjectRequest are only allowed on the "first" message sent to gcs,
+   * this utility method centralizes the logic necessary to clear those fields for use by subsequent
+   * messages.
+   */
+  private static WriteObjectRequest trimNonFirstRequestMessage(WriteObjectRequest message) {
+    return message
+        .toBuilder()
+        .clearUploadId()
+        .clearWriteObjectSpec()
+        .clearObjectChecksums()
+        .build();
+  }
+
   @FunctionalInterface
   interface FlusherFactory {
     /**
@@ -145,11 +159,12 @@ final class WriteFlushStrategy {
             boolean first = true;
             for (WriteObjectRequest message : segments) {
               if (!first) {
-                message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
+                message = trimNonFirstRequestMessage(message);
+              } else {
+                first = false;
               }
 
               write.onNext(message);
-              first = false;
             }
             write.onCompleted();
             observer.await();
@@ -189,11 +204,12 @@ final class WriteFlushStrategy {
       ensureOpen();
       for (WriteObjectRequest message : segments) {
         if (!first) {
-          message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
+          message = trimNonFirstRequestMessage(message);
+        } else {
+          first = false;
         }
 
         stream.onNext(message);
-        first = false;
       }
     }
 
@@ -202,7 +218,7 @@ final class WriteFlushStrategy {
       ensureOpen();
       if (message != null) {
         if (!first) {
-          message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
+          message = trimNonFirstRequestMessage(message);
         }
         stream.onNext(message);
       }

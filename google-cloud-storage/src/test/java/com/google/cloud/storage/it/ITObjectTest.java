@@ -17,7 +17,6 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,10 +53,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
-import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -89,12 +86,8 @@ import org.junit.runners.Parameterized.Parameters;
 public class ITObjectTest {
   private static final String CONTENT_TYPE = "text/plain";
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
-  private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
-  private static final String BLOB_STRING_CONTENT_CRC32C =
-      BaseEncoding.base64()
-          .encode(
-              Ints.toByteArray(
-                  Hashing.crc32c().hashBytes(BLOB_STRING_CONTENT.getBytes(UTF_8)).asInt()));
+  private static final ChecksummedTestContent BLOB_CONTENT =
+      ChecksummedTestContent.of("Hello Google Cloud Storage!");
   private static final String BASE64_KEY = "JVzfVl8NLD9FjedFuStegjRfES5ll5zc59CIXw572OA=";
   private static final String OTHER_BASE64_KEY = "IcOIQGlliNr5pr3vJb63l+XMqc7NjXqjfw/deBoNxPA=";
   private static final Key KEY =
@@ -260,39 +253,39 @@ public class ITObjectTest {
   }
 
   @Test
-  @SuppressWarnings({"unchecked", "deprecation"})
+  @SuppressWarnings({"deprecation"})
   public void testCreateBlobStream() {
     String blobName = "test-create-blob-stream";
     BlobInfo blob =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
             .setContentType(CONTENT_TYPE)
             .build();
-    ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
+    ByteArrayInputStream stream = BLOB_CONTENT.bytesAsInputStream();
     Blob remoteBlob = storage.create(blob, stream);
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getContentType(), remoteBlob.getContentType());
     byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
-    assertEquals(BLOB_STRING_CONTENT, new String(readBytes, UTF_8));
+    assertThat(readBytes).isEqualTo(BLOB_CONTENT.getBytes());
   }
 
   @Test
-  @SuppressWarnings({"unchecked", "deprecation"})
+  @SuppressWarnings({"deprecation"})
   public void testCreateBlobStreamDisableGzipContent() {
     String blobName = "test-create-blob-stream-disable-gzip-compression";
     BlobInfo blob =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
             .setContentType(CONTENT_TYPE)
             .build();
-    ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
+    ByteArrayInputStream stream = BLOB_CONTENT.bytesAsInputStream();
     Blob remoteBlob = storage.create(blob, stream, BlobWriteOption.disableGzipContent());
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getContentType(), remoteBlob.getContentType());
     byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
-    assertEquals(BLOB_STRING_CONTENT, new String(readBytes, UTF_8));
+    assertThat(readBytes).isEqualTo(BLOB_CONTENT.getBytes());
   }
 
   @Test
@@ -313,21 +306,17 @@ public class ITObjectTest {
   }
 
   @Test
-  @SuppressWarnings({"unchecked", "deprecation"})
+  @SuppressWarnings({"deprecation"})
   public void testCreateBlobMd5Fail() {
-    // Error Handling for GRPC not complete
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
-
     String blobName = "test-create-blob-md5-fail";
     BlobInfo blob =
         BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
             .setContentType(CONTENT_TYPE)
-            .setMd5("O1R4G1HJSDUISJjoIYmVhQ==")
+            .setMd5(BLOB_CONTENT.getMd5Base64())
             .build();
-    ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
+    byte[] bytes = BLOB_CONTENT.concat('x');
     try {
-      storage.create(blob, stream, Storage.BlobWriteOption.md5Match());
+      storage.create(blob, new ByteArrayInputStream(bytes), Storage.BlobWriteOption.md5Match());
       fail("StorageException was expected");
     } catch (StorageException ex) {
       // expected
@@ -1173,24 +1162,16 @@ public class ITObjectTest {
   public void testReadAndWriteChannelWithEncryptionKey() throws IOException {
     String blobName = "test-read-write-channel-with-customer-key-blob";
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
-    byte[] stringBytes;
     try (WriteChannel writer =
         storage.writer(blob, Storage.BlobWriteOption.encryptionKey(BASE64_KEY))) {
-      stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
-      writer.write(ByteBuffer.wrap(BLOB_BYTE_CONTENT));
-      writer.write(ByteBuffer.wrap(stringBytes));
+      ByteStreams.copy(Channels.newChannel(BLOB_CONTENT.bytesAsInputStream()), writer);
     }
-    ByteBuffer readBytes;
-    ByteBuffer readStringBytes;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try (ReadChannel reader =
         storage.reader(blob.getBlobId(), Storage.BlobSourceOption.decryptionKey(KEY))) {
-      readBytes = ByteBuffer.allocate(BLOB_BYTE_CONTENT.length);
-      readStringBytes = ByteBuffer.allocate(stringBytes.length);
-      reader.read(readBytes);
-      reader.read(readStringBytes);
+      ByteStreams.copy(reader, Channels.newChannel(baos));
     }
-    assertArrayEquals(BLOB_BYTE_CONTENT, readBytes.array());
-    assertEquals(BLOB_STRING_CONTENT, new String(readStringBytes.array(), UTF_8));
+    assertThat(baos.toByteArray()).isEqualTo(BLOB_CONTENT.getBytes());
     assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), blobName));
   }
 
@@ -1230,7 +1211,7 @@ public class ITObjectTest {
     BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
     byte[] stringBytes;
     WriteChannel writer = storage.writer(blob);
-    stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
+    stringBytes = BLOB_CONTENT.getBytes();
     writer.write(ByteBuffer.wrap(BLOB_BYTE_CONTENT));
     RestorableState<WriteChannel> writerState = writer.capture();
     WriteChannel secondWriter = writerState.restore();
@@ -1249,7 +1230,7 @@ public class ITObjectTest {
     reader.close();
     secondReader.close();
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes.array());
-    assertEquals(BLOB_STRING_CONTENT, new String(readStringBytes.array(), UTF_8));
+    assertThat(readStringBytes.array()).isEqualTo(BLOB_CONTENT.getBytes());
     assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), blobName));
   }
 
@@ -1518,9 +1499,10 @@ public class ITObjectTest {
   public void testCrc32cValidated_createFrom_expectFailure() {
     String blobName = testName.getMethodName();
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(BLOB_STRING_CONTENT_CRC32C).build();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setCrc32c(BLOB_CONTENT.getCrc32cBase64()).build();
 
-    byte[] bytes = (BLOB_STRING_CONTENT + "x").getBytes(UTF_8);
+    byte[] bytes = BLOB_CONTENT.concat('x');
     StorageException expected =
         assertThrows(
             StorageException.class,
@@ -1537,25 +1519,27 @@ public class ITObjectTest {
   public void testCrc32cValidated_createFrom_expectSuccess() throws IOException {
     String blobName = testName.getMethodName();
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(BLOB_STRING_CONTENT_CRC32C).build();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setCrc32c(BLOB_CONTENT.getCrc32cBase64()).build();
 
-    byte[] bytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
+    byte[] bytes = BLOB_CONTENT.getBytes();
     Blob blob =
         storage.createFrom(
             blobInfo,
             new ByteArrayInputStream(bytes),
             BlobWriteOption.doesNotExist(),
             BlobWriteOption.crc32cMatch());
-    assertThat(blob.getCrc32c()).isEqualTo(BLOB_STRING_CONTENT_CRC32C);
+    assertThat(blob.getCrc32c()).isEqualTo(BLOB_CONTENT.getCrc32cBase64());
   }
 
   @Test
   public void testCrc32cValidated_writer_expectFailure() {
     String blobName = testName.getMethodName();
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(BLOB_STRING_CONTENT_CRC32C).build();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setCrc32c(BLOB_CONTENT.getCrc32cBase64()).build();
 
-    byte[] bytes = (BLOB_STRING_CONTENT + "x").getBytes(UTF_8);
+    byte[] bytes = BLOB_CONTENT.concat('x');
     StorageException expected =
         assertThrows(
             StorageException.class,
@@ -1576,9 +1560,10 @@ public class ITObjectTest {
   public void testCrc32cValidated_writer_expectSuccess() throws IOException {
     String blobName = testName.getMethodName();
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(BLOB_STRING_CONTENT_CRC32C).build();
+    BlobInfo blobInfo =
+        BlobInfo.newBuilder(blobId).setCrc32c(BLOB_CONTENT.getCrc32cBase64()).build();
 
-    byte[] bytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
+    byte[] bytes = BLOB_CONTENT.getBytes();
 
     try (ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(bytes));
         WriteChannel dst =
@@ -1588,7 +1573,7 @@ public class ITObjectTest {
     }
 
     Blob blob = storage.get(blobId);
-    assertThat(blob.getCrc32c()).isEqualTo(BLOB_STRING_CONTENT_CRC32C);
+    assertThat(blob.getCrc32c()).isEqualTo(BLOB_CONTENT.getCrc32cBase64());
   }
 
   private Blob createBlob(String method, BlobInfo blobInfo, boolean detectType) throws IOException {

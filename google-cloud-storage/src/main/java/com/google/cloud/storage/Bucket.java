@@ -300,6 +300,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for blob's data MD5 hash match. If this option is used the request will
      * fail if blobs' data MD5 hash does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption md5Match(String md5) {
       return new BlobWriteOption(UnifiedOpts.md5Match(md5));
     }
@@ -308,6 +309,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for blob's data CRC32C checksum match. If this option is used the request
      * will fail if blobs' data CRC32C checksum does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption crc32cMatch(String crc32c) {
       return new BlobWriteOption(UnifiedOpts.crc32cMatch(crc32c));
     }

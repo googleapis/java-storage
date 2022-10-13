@@ -105,7 +105,7 @@ public final class GapicUnbufferedWritableByteChannelTest {
       WriteObjectResponse.newBuilder().setResource(obj.toBuilder().setSize(40)).build();
 
   private static final WriteObjectRequestBuilderFactory reqFactory =
-      new ResumableWrite(startReq, startResp);
+      new ResumableWrite(startReq, startResp, StorageV2ProtoUtils.onlyUploadId());
 
   @Test
   public void directUpload() throws IOException, InterruptedException, ExecutionException {

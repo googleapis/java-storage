@@ -23,6 +23,8 @@ import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Printer;
 import com.google.storage.v2.ReadObjectRequest;
+import com.google.storage.v2.WriteObjectRequest;
+import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -81,5 +83,14 @@ final class StorageV2ProtoUtils {
     } catch (InvalidProtocolBufferException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /**
+   * Return a function which when provided an {@code uploadId} will create a {@link
+   * WriteObjectRequest} with that {@code uploadId}
+   */
+  @NonNull
+  static Function<String, WriteObjectRequest> onlyUploadId() {
+    return uId -> WriteObjectRequest.newBuilder().setUploadId(uId).build();
   }
 }

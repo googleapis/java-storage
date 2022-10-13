@@ -1045,6 +1045,15 @@ final class UnifiedOpts {
     }
 
     @Override
+    public Mapper<WriteObjectRequest.Builder> writeObject() {
+      return b -> {
+        b.getObjectChecksumsBuilder()
+            .setMd5Hash(ByteString.copyFrom(BaseEncoding.base64().decode(val)));
+        return b;
+      };
+    }
+
+    @Override
     public int hashCode() {
       return Objects.hash(val);
     }
