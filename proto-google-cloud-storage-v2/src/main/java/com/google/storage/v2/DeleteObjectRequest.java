@@ -55,126 +55,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     return this.unknownFields;
   }
 
-  private DeleteObjectRequest(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-    this();
-    if (extensionRegistry == null) {
-      throw new java.lang.NullPointerException();
-    }
-    int mutable_bitField0_ = 0;
-    com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-        com.google.protobuf.UnknownFieldSet.newBuilder();
-    try {
-      boolean done = false;
-      while (!done) {
-        int tag = input.readTag();
-        switch (tag) {
-          case 0:
-            done = true;
-            break;
-          case 10:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              bucket_ = s;
-              break;
-            }
-          case 18:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              object_ = s;
-              break;
-            }
-          case 26:
-            {
-              java.lang.String s = input.readStringRequireUtf8();
-
-              uploadId_ = s;
-              break;
-            }
-          case 32:
-            {
-              generation_ = input.readInt64();
-              break;
-            }
-          case 40:
-            {
-              bitField0_ |= 0x00000001;
-              ifGenerationMatch_ = input.readInt64();
-              break;
-            }
-          case 48:
-            {
-              bitField0_ |= 0x00000002;
-              ifGenerationNotMatch_ = input.readInt64();
-              break;
-            }
-          case 56:
-            {
-              bitField0_ |= 0x00000004;
-              ifMetagenerationMatch_ = input.readInt64();
-              break;
-            }
-          case 64:
-            {
-              bitField0_ |= 0x00000008;
-              ifMetagenerationNotMatch_ = input.readInt64();
-              break;
-            }
-          case 82:
-            {
-              com.google.storage.v2.CommonObjectRequestParams.Builder subBuilder = null;
-              if (commonObjectRequestParams_ != null) {
-                subBuilder = commonObjectRequestParams_.toBuilder();
-              }
-              commonObjectRequestParams_ =
-                  input.readMessage(
-                      com.google.storage.v2.CommonObjectRequestParams.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(commonObjectRequestParams_);
-                commonObjectRequestParams_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          case 90:
-            {
-              com.google.storage.v2.CommonRequestParams.Builder subBuilder = null;
-              if (commonRequestParams_ != null) {
-                subBuilder = commonRequestParams_.toBuilder();
-              }
-              commonRequestParams_ =
-                  input.readMessage(
-                      com.google.storage.v2.CommonRequestParams.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(commonRequestParams_);
-                commonRequestParams_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-          default:
-            {
-              if (!parseUnknownField(input, unknownFields, extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-        }
-      }
-    } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-      throw e.setUnfinishedMessage(this);
-    } catch (java.io.IOException e) {
-      throw new com.google.protobuf.InvalidProtocolBufferException(e).setUnfinishedMessage(this);
-    } finally {
-      this.unknownFields = unknownFields.build();
-      makeExtensionsImmutable();
-    }
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_DeleteObjectRequest_descriptor;
@@ -648,7 +528,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     if (commonRequestParams_ != null) {
       output.writeMessage(11, getCommonRequestParams());
     }
-    unknownFields.writeTo(output);
+    getUnknownFields().writeTo(output);
   }
 
   @java.lang.Override
@@ -690,7 +570,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       size +=
           com.google.protobuf.CodedOutputStream.computeMessageSize(11, getCommonRequestParams());
     }
-    size += unknownFields.getSerializedSize();
+    size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
   }
@@ -735,7 +615,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     if (hasCommonRequestParams()) {
       if (!getCommonRequestParams().equals(other.getCommonRequestParams())) return false;
     }
-    if (!unknownFields.equals(other.unknownFields)) return false;
+    if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
 
@@ -778,7 +658,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       hash = (37 * hash) + COMMON_REQUEST_PARAMS_FIELD_NUMBER;
       hash = (53 * hash) + getCommonRequestParams().hashCode();
     }
-    hash = (29 * hash) + unknownFields.hashCode();
+    hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
@@ -908,17 +788,10 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     }
 
     // Construct using com.google.storage.v2.DeleteObjectRequest.newBuilder()
-    private Builder() {
-      maybeForceBuilderInitialization();
-    }
+    private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {}
     }
 
     @java.lang.Override
@@ -1094,7 +967,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       if (other.hasCommonRequestParams()) {
         mergeCommonRequestParams(other.getCommonRequestParams());
       }
-      this.mergeUnknownFields(other.unknownFields);
+      this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
     }
@@ -1109,17 +982,93 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      com.google.storage.v2.DeleteObjectRequest parsedMessage = null;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
       try {
-        parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10:
+              {
+                bucket_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 10
+            case 18:
+              {
+                object_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 18
+            case 26:
+              {
+                uploadId_ = input.readStringRequireUtf8();
+
+                break;
+              } // case 26
+            case 32:
+              {
+                generation_ = input.readInt64();
+
+                break;
+              } // case 32
+            case 40:
+              {
+                ifGenerationMatch_ = input.readInt64();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 40
+            case 48:
+              {
+                ifGenerationNotMatch_ = input.readInt64();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 48
+            case 56:
+              {
+                ifMetagenerationMatch_ = input.readInt64();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 56
+            case 64:
+              {
+                ifMetagenerationNotMatch_ = input.readInt64();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 64
+            case 82:
+              {
+                input.readMessage(
+                    getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 82
+            case 90:
+              {
+                input.readMessage(
+                    getCommonRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 90
+            default:
+              {
+                if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                  done = true; // was an endgroup tag
+                }
+                break;
+              } // default:
+          } // switch (tag)
+        } // while (!done)
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (com.google.storage.v2.DeleteObjectRequest) e.getUnfinishedMessage();
         throw e.unwrapIOException();
       } finally {
-        if (parsedMessage != null) {
-          mergeFrom(parsedMessage);
-        }
-      }
+        onChanged();
+      } // finally
       return this;
     }
 
@@ -2212,7 +2161,18 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
-          return new DeleteObjectRequest(input, extensionRegistry);
+          Builder builder = newBuilder();
+          try {
+            builder.mergeFrom(input, extensionRegistry);
+          } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+            throw e.setUnfinishedMessage(builder.buildPartial());
+          } catch (com.google.protobuf.UninitializedMessageException e) {
+            throw e.asInvalidProtocolBufferException().setUnfinishedMessage(builder.buildPartial());
+          } catch (java.io.IOException e) {
+            throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                .setUnfinishedMessage(builder.buildPartial());
+          }
+          return builder.buildPartial();
         }
       };
 
