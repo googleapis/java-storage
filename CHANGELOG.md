@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.2](https://github.com/googleapis/java-storage/compare/v2.6.1...v2.6.2) (2022-10-13)
+
+
+### Dependencies
+
+* Regenerating with new Protobuf (2.6.x) ([#1700](https://github.com/googleapis/java-storage/issues/1700)) ([ed44471](https://github.com/googleapis/java-storage/commit/ed44471872468d89dc55f146fabb520841d93346))
+
 ### [2.6.1](https://github.com/googleapis/java-storage/compare/v2.6.0...v2.6.1) (2022-04-15)
 
 
