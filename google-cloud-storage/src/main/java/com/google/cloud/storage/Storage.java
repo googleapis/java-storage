@@ -838,7 +838,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * detected from the blob name if not explicitly set. This option is on the client side only, it
      * does not appear in a RPC call.
      *
-     * Content type detection is based on the database presented by {@link URLConnection#getFileNameMap()}
+     * <p>Content type detection is based on the database presented by {@link
+     * URLConnection#getFileNameMap()}
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption detectContentType() {
