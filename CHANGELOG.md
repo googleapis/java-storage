@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.13.0](https://github.com/googleapis/java-storage/compare/v2.12.0...v2.13.0) (2022-10-03)
+
+
+### Features
+
+* Regenerate gapic storage v2 client as of googleapis/googleapis@844d0f7 ([#1673](https://github.com/googleapis/java-storage/issues/1673)) ([bd818b3](https://github.com/googleapis/java-storage/commit/bd818b311186c37ceb527630ed56755d89e2b71b))
+
+
+### Documentation
+
+* Add preconditions to some samples ([#1600](https://github.com/googleapis/java-storage/issues/1600)) ([4b3be44](https://github.com/googleapis/java-storage/commit/4b3be44bd4c53613f08bbd01d3b4a9ded419565d))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.0.4 ([#1685](https://github.com/googleapis/java-storage/issues/1685)) ([3d8f550](https://github.com/googleapis/java-storage/commit/3d8f550e4d646a7d4bda6f9e74bc5996d573d5b4))
+* Update dependency gcp-releasetool to v1.8.9 ([#1684](https://github.com/googleapis/java-storage/issues/1684)) ([54a5159](https://github.com/googleapis/java-storage/commit/54a5159707efd6a2d4abd0273ab7c279f507005b))
+* Update dependency importlib-metadata to v4.13.0 ([#1682](https://github.com/googleapis/java-storage/issues/1682)) ([2487aff](https://github.com/googleapis/java-storage/commit/2487affad5a1adf1c39589d8f8a976c7f245b0c9))
+* Update dependency importlib-metadata to v5 ([#1683](https://github.com/googleapis/java-storage/issues/1683)) ([020fe8c](https://github.com/googleapis/java-storage/commit/020fe8ce7991e8c72135a2912f615ed50cc68fd4))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.14 ([#1643](https://github.com/googleapis/java-storage/issues/1643)) ([ab3a198](https://github.com/googleapis/java-storage/commit/ab3a198115ae637710982f838231d2d36c029486))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.9.1 ([#1635](https://github.com/googleapis/java-storage/issues/1635)) ([ba85ab6](https://github.com/googleapis/java-storage/commit/ba85ab6ce9304b4c426538d2bacc99ef73ed2b0e))
+
 ## [2.12.0](https://github.com/googleapis/java-storage/compare/v2.11.3...v2.12.0) (2022-09-15)
 
 
