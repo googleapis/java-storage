@@ -25,7 +25,7 @@ import java.util.Objects;
 /** HMAC key for a service account. */
 public class HmacKey implements Serializable {
 
-  private static final long serialVersionUID = -1809610424373783062L;
+  private static final long serialVersionUID = 3033393659217005187L;
   private final String secretKey;
   private final HmacKeyMetadata metadata;
 
@@ -109,7 +109,7 @@ public class HmacKey implements Serializable {
    */
   public static class HmacKeyMetadata implements Serializable {
 
-    private static final long serialVersionUID = 4571684785352640737L;
+    private static final long serialVersionUID = 9130344756739042314L;
     private final String accessId;
     private final String etag;
     private final String id;

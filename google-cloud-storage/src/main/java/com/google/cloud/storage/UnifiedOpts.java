@@ -500,7 +500,7 @@ final class UnifiedOpts {
   }
 
   static final class Crc32cMatch implements ObjectTargetOpt {
-    private static final long serialVersionUID = -8680237667319155418L;
+    private static final long serialVersionUID = 8172282701777561769L;
     private final int val;
 
     private Crc32cMatch(int val) {
@@ -545,7 +545,7 @@ final class UnifiedOpts {
 
   /** @see EncryptionKey */
   static final class DecryptionKey extends RpcOptVal<Key> implements ObjectSourceOpt {
-    private static final long serialVersionUID = -4583830666730826055L;
+    private static final long serialVersionUID = -2198422155991275316L;
 
     private DecryptionKey(Key val) {
       super(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, val);
@@ -588,7 +588,7 @@ final class UnifiedOpts {
   }
 
   static final class Delimiter extends RpcOptVal<String> implements ObjectListOpt {
-    private static final long serialVersionUID = 8639409337839854122L;
+    private static final long serialVersionUID = -3789556789947615714L;
 
     private Delimiter(String val) {
       super(StorageRpc.Option.DELIMITER, val);
@@ -602,7 +602,7 @@ final class UnifiedOpts {
 
   static final class DisableGzipContent extends RpcOptVal<@NonNull Boolean>
       implements ObjectTargetOpt {
-    private static final long serialVersionUID = -8673296387131912651L;
+    private static final long serialVersionUID = 7445066765944965549L;
 
     private DisableGzipContent(boolean val) {
       super(StorageRpc.Option.IF_DISABLE_GZIP_CONTENT, val);
@@ -611,7 +611,7 @@ final class UnifiedOpts {
 
   /** @see DecryptionKey */
   static final class EncryptionKey extends RpcOptVal<Key> implements ObjectTargetOpt {
-    private static final long serialVersionUID = 7563566358784847875L;
+    private static final long serialVersionUID = -7335988656032764620L;
 
     private EncryptionKey(Key val) {
       super(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, val);
@@ -668,7 +668,7 @@ final class UnifiedOpts {
 
   /** @see StartOffset */
   static final class EndOffset extends RpcOptVal<String> implements ObjectListOpt {
-    private static final long serialVersionUID = -4571919566602569625L;
+    private static final long serialVersionUID = 7446382028145458833L;
 
     private EndOffset(String val) {
       super(StorageRpc.Option.END_OFF_SET, val);
@@ -695,7 +695,7 @@ final class UnifiedOpts {
     private static final ImmutableSet<String> grpcExcludedFields =
         ImmutableSet.of("nextPageToken", "prefixes", "selfLink", "mediaLink", "kind", "id");
 
-    private static final long serialVersionUID = -320337719611149532L;
+    private static final long serialVersionUID = 3286889410148272195L;
 
     private Fields(ImmutableSet<NamedField> val) {
       super(StorageRpc.Option.FIELDS, val);
@@ -891,7 +891,7 @@ final class UnifiedOpts {
    */
   static final class GenerationMatch extends RpcOptVal<@NonNull Long>
       implements ObjectSourceOpt, ObjectTargetOpt, ProjectAsSource<SourceGenerationMatch> {
-    private static final long serialVersionUID = -2356341166190897807L;
+    private static final long serialVersionUID = 2645517179434741007L;
 
     private GenerationMatch(long val) {
       super(StorageRpc.Option.IF_GENERATION_MATCH, val);
@@ -947,7 +947,7 @@ final class UnifiedOpts {
    */
   static final class GenerationNotMatch extends RpcOptVal<@NonNull Long>
       implements ObjectSourceOpt, ObjectTargetOpt, ProjectAsSource<SourceGenerationNotMatch> {
-    private static final long serialVersionUID = -6055322302594035351L;
+    private static final long serialVersionUID = 156505623580743531L;
 
     private GenerationNotMatch(long val) {
       super(StorageRpc.Option.IF_GENERATION_NOT_MATCH, val);
@@ -993,7 +993,7 @@ final class UnifiedOpts {
   }
 
   static final class KmsKeyName extends RpcOptVal<String> implements ObjectTargetOpt {
-    private static final long serialVersionUID = -3337302773119117013L;
+    private static final long serialVersionUID = -3053839109272566113L;
 
     private KmsKeyName(String val) {
       super(StorageRpc.Option.KMS_KEY_NAME, val);
@@ -1020,7 +1020,7 @@ final class UnifiedOpts {
 
   @Deprecated
   static final class Md5Match implements ObjectTargetOpt {
-    private static final long serialVersionUID = -4497633005169883788L;
+    private static final long serialVersionUID = 5237207911268363887L;
     private final String val;
 
     private Md5Match(String val) {
@@ -1065,7 +1065,7 @@ final class UnifiedOpts {
           ObjectSourceOpt,
           ObjectTargetOpt,
           ProjectAsSource<SourceMetagenerationMatch> {
-    private static final long serialVersionUID = 5508074897592817147L;
+    private static final long serialVersionUID = 49086960234390739L;
 
     private MetagenerationMatch(long val) {
       super(StorageRpc.Option.IF_METAGENERATION_MATCH, val);
@@ -1145,7 +1145,7 @@ final class UnifiedOpts {
           ObjectSourceOpt,
           ObjectTargetOpt,
           ProjectAsSource<SourceMetagenerationNotMatch> {
-    private static final long serialVersionUID = 6869928996186950306L;
+    private static final long serialVersionUID = -1795350187419586248L;
 
     private MetagenerationNotMatch(long val) {
       super(StorageRpc.Option.IF_METAGENERATION_NOT_MATCH, val);
@@ -1207,7 +1207,7 @@ final class UnifiedOpts {
 
   static final class PageSize extends RpcOptVal<@NonNull Long>
       implements BucketListOpt, ObjectListOpt, HmacKeyListOpt {
-    private static final long serialVersionUID = -3510673708181397881L;
+    private static final long serialVersionUID = -8184518840397826601L;
 
     private PageSize(long val) {
       super(StorageRpc.Option.MAX_RESULTS, val);
@@ -1231,7 +1231,7 @@ final class UnifiedOpts {
 
   static final class PageToken extends RpcOptVal<String>
       implements BucketListOpt, ObjectListOpt, HmacKeyListOpt {
-    private static final long serialVersionUID = -542427084922230782L;
+    private static final long serialVersionUID = -1370658416509499177L;
 
     private PageToken(String val) {
       super(StorageRpc.Option.PAGE_TOKEN, val);
@@ -1255,7 +1255,7 @@ final class UnifiedOpts {
 
   static final class PredefinedAcl extends RpcOptVal<String>
       implements BucketTargetOpt, ObjectTargetOpt {
-    private static final long serialVersionUID = 4189588503372535057L;
+    private static final long serialVersionUID = -1743736785228368741L;
 
     private PredefinedAcl(String val) {
       super(StorageRpc.Option.PREDEFINED_ACL, val);
@@ -1297,7 +1297,7 @@ final class UnifiedOpts {
 
   static final class PredefinedDefaultObjectAcl extends RpcOptVal<String>
       implements BucketTargetOpt {
-    private static final long serialVersionUID = 6598022065653572605L;
+    private static final long serialVersionUID = -1771832790114963130L;
 
     private PredefinedDefaultObjectAcl(String val) {
       super(StorageRpc.Option.PREDEFINED_DEFAULT_OBJECT_ACL, val);
@@ -1315,7 +1315,7 @@ final class UnifiedOpts {
   }
 
   static final class Prefix extends RpcOptVal<String> implements BucketListOpt, ObjectListOpt {
-    private static final long serialVersionUID = 155278267048093608L;
+    private static final long serialVersionUID = -3973478772547687371L;
 
     private Prefix(String val) {
       super(StorageRpc.Option.PREFIX, val);
@@ -1339,7 +1339,7 @@ final class UnifiedOpts {
   @Deprecated
   static final class ProjectId extends RpcOptVal<String>
       implements HmacKeySourceOpt, HmacKeyTargetOpt, HmacKeyListOpt, BucketListOpt {
-    private static final long serialVersionUID = 1471462503030451598L;
+    private static final long serialVersionUID = 6273807286378420321L;
 
     private ProjectId(String val) {
       super(StorageRpc.Option.PROJECT_ID, val);
@@ -1367,7 +1367,7 @@ final class UnifiedOpts {
   }
 
   static final class Projection extends RpcOptVal<String> implements BucketTargetOpt {
-    private static final long serialVersionUID = -1260415089938322394L;
+    private static final long serialVersionUID = -7394684784418942133L;
 
     private Projection(String val) {
       super(StorageRpc.Option.PROJECTION, val);
@@ -1380,7 +1380,7 @@ final class UnifiedOpts {
    */
   static final class SourceGenerationMatch extends RpcOptVal<@NonNull Long>
       implements ObjectSourceOpt, ObjectTargetOpt {
-    private static final long serialVersionUID = 5530465094492461956L;
+    private static final long serialVersionUID = -4074703368515265616L;
 
     private SourceGenerationMatch(@NonNull Long val) {
       super(StorageRpc.Option.IF_SOURCE_GENERATION_MATCH, val);
@@ -1398,7 +1398,7 @@ final class UnifiedOpts {
    */
   static final class SourceGenerationNotMatch extends RpcOptVal<@NonNull Long>
       implements ObjectSourceOpt, ObjectTargetOpt {
-    private static final long serialVersionUID = 313414895558156715L;
+    private static final long serialVersionUID = -5232032184462880657L;
 
     private SourceGenerationNotMatch(@NonNull Long val) {
       super(StorageRpc.Option.IF_SOURCE_GENERATION_NOT_MATCH, val);
@@ -1416,7 +1416,7 @@ final class UnifiedOpts {
    */
   static final class SourceMetagenerationMatch extends RpcOptVal<@NonNull Long>
       implements BucketSourceOpt, BucketTargetOpt, ObjectSourceOpt, ObjectTargetOpt {
-    private static final long serialVersionUID = -3643340315457580094L;
+    private static final long serialVersionUID = 5223360761780436495L;
 
     private SourceMetagenerationMatch(@NonNull Long val) {
       super(StorageRpc.Option.IF_SOURCE_METAGENERATION_MATCH, val);
@@ -1434,7 +1434,7 @@ final class UnifiedOpts {
    */
   static final class SourceMetagenerationNotMatch extends RpcOptVal<@NonNull Long>
       implements BucketSourceOpt, BucketTargetOpt, ObjectSourceOpt, ObjectTargetOpt {
-    private static final long serialVersionUID = -6682202521743160969L;
+    private static final long serialVersionUID = 2679308305890468285L;
 
     private SourceMetagenerationNotMatch(@NonNull Long val) {
       super(StorageRpc.Option.IF_SOURCE_METAGENERATION_NOT_MATCH, val);
@@ -1448,7 +1448,7 @@ final class UnifiedOpts {
 
   static final class RequestedPolicyVersion extends RpcOptVal<@NonNull Long>
       implements BucketSourceOpt {
-    private static final long serialVersionUID = 7044856817626952830L;
+    private static final long serialVersionUID = -3606062322328656218L;
 
     private RequestedPolicyVersion(Long val) {
       super(StorageRpc.Option.REQUESTED_POLICY_VERSION, val);
@@ -1466,7 +1466,7 @@ final class UnifiedOpts {
   @Deprecated
   static final class ReturnRawInputStream extends RpcOptVal<@NonNull Boolean>
       implements ObjectSourceOpt {
-    private static final long serialVersionUID = 505293506385742781L;
+    private static final long serialVersionUID = -5741791424843430584L;
 
     private ReturnRawInputStream(boolean val) {
       super(StorageRpc.Option.RETURN_RAW_INPUT_STREAM, val);
@@ -1474,7 +1474,7 @@ final class UnifiedOpts {
   }
 
   static final class ServiceAccount extends RpcOptVal<String> implements HmacKeyListOpt {
-    private static final long serialVersionUID = 1630581690347694016L;
+    private static final long serialVersionUID = 5617709092359745482L;
 
     private ServiceAccount(String val) {
       super(StorageRpc.Option.SERVICE_ACCOUNT_EMAIL, val);
@@ -1487,7 +1487,7 @@ final class UnifiedOpts {
   }
 
   static final class SetContentType implements ObjectTargetOpt {
-    private static final long serialVersionUID = -5358445952573187492L;
+    private static final long serialVersionUID = -5715260463246857009L;
     private final String val;
 
     private SetContentType(String val) {
@@ -1539,7 +1539,7 @@ final class UnifiedOpts {
   }
 
   static final class ShowDeletedKeys extends RpcOptVal<@NonNull Boolean> implements HmacKeyListOpt {
-    private static final long serialVersionUID = 6650364639734728488L;
+    private static final long serialVersionUID = -6604176744362903487L;
 
     private ShowDeletedKeys(boolean val) {
       super(StorageRpc.Option.SHOW_DELETED_KEYS, val);
@@ -1553,7 +1553,7 @@ final class UnifiedOpts {
 
   /** @see EndOffset */
   static final class StartOffset extends RpcOptVal<String> implements ObjectListOpt {
-    private static final long serialVersionUID = 7763387382950935370L;
+    private static final long serialVersionUID = -1459727336598737833L;
 
     private StartOffset(String val) {
       super(StorageRpc.Option.START_OFF_SET, val);
@@ -1575,7 +1575,7 @@ final class UnifiedOpts {
           HmacKeySourceOpt,
           HmacKeyTargetOpt,
           HmacKeyListOpt {
-    private static final long serialVersionUID = -3580124936740285695L;
+    private static final long serialVersionUID = 3962499996741180460L;
 
     private UserProject(String val) {
       super(StorageRpc.Option.USER_PROJECT, val);
@@ -1614,7 +1614,7 @@ final class UnifiedOpts {
   @Deprecated
   static final class Crc32cMatchExtractor implements ObjectOptExtractor<ObjectTargetOpt> {
     private static final Crc32cMatchExtractor INSTANCE = new Crc32cMatchExtractor();
-    private static final long serialVersionUID = 2222053443431466916L;
+    private static final long serialVersionUID = 7045998436157555676L;
 
     @Deprecated
     private Crc32cMatchExtractor() {}
@@ -1654,7 +1654,7 @@ final class UnifiedOpts {
   static final class DetectContentType implements ObjectOptExtractor<ObjectTargetOpt> {
     @Deprecated private static final DetectContentType INSTANCE = new DetectContentType();
     private static final FileNameMap FILE_NAME_MAP = URLConnection.getFileNameMap();
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -1089120180148634090L;
 
     @Deprecated
     private DetectContentType() {}
@@ -1700,7 +1700,7 @@ final class UnifiedOpts {
   @Deprecated
   static final class GenerationMatchExtractor implements ObjectOptExtractor<GenerationMatch> {
     private static final GenerationMatchExtractor INSTANCE = new GenerationMatchExtractor();
-    private static final long serialVersionUID = -4016709200925410921L;
+    private static final long serialVersionUID = -7211192249703566097L;
 
     @Deprecated
     private GenerationMatchExtractor() {}
@@ -1734,7 +1734,7 @@ final class UnifiedOpts {
   @Deprecated
   static final class GenerationNotMatchExtractor implements ObjectOptExtractor<GenerationNotMatch> {
     private static final GenerationNotMatchExtractor INSTANCE = new GenerationNotMatchExtractor();
-    private static final long serialVersionUID = 2419121370772040679L;
+    private static final long serialVersionUID = -107520114846569713L;
 
     @Deprecated
     private GenerationNotMatchExtractor() {}
@@ -1768,7 +1768,7 @@ final class UnifiedOpts {
   @Deprecated
   static final class Md5MatchExtractor implements ObjectOptExtractor<ObjectTargetOpt> {
     private static final Md5MatchExtractor INSTANCE = new Md5MatchExtractor();
-    private static final long serialVersionUID = -227445210555345030L;
+    private static final long serialVersionUID = 8375506989224962531L;
 
     @Deprecated
     private Md5MatchExtractor() {}
@@ -1804,7 +1804,7 @@ final class UnifiedOpts {
   static final class MetagenerationMatchExtractor
       implements ObjectOptExtractor<ObjectTargetOpt>, BucketOptExtractor<MetagenerationMatch> {
     private static final MetagenerationMatchExtractor INSTANCE = new MetagenerationMatchExtractor();
-    private static final long serialVersionUID = -9012665484224118046L;
+    private static final long serialVersionUID = -4165372534008844973L;
 
     @Deprecated
     private MetagenerationMatchExtractor() {}
@@ -1851,7 +1851,7 @@ final class UnifiedOpts {
       implements ObjectOptExtractor<ObjectTargetOpt>, BucketOptExtractor<MetagenerationNotMatch> {
     private static final MetagenerationNotMatchExtractor INSTANCE =
         new MetagenerationNotMatchExtractor();
-    private static final long serialVersionUID = -732561730735045523L;
+    private static final long serialVersionUID = 6544628474151482319L;
 
     @Deprecated
     private MetagenerationNotMatchExtractor() {}
@@ -1894,7 +1894,7 @@ final class UnifiedOpts {
   @VisibleForTesting
   static final class NoOpObjectTargetOpt implements ObjectTargetOpt {
     @VisibleForTesting static final NoOpObjectTargetOpt INSTANCE = new NoOpObjectTargetOpt();
-    private static final long serialVersionUID = -3702724179751638748L;
+    private static final long serialVersionUID = -5356245440686012545L;
 
     private NoOpObjectTargetOpt() {}
 
@@ -1923,7 +1923,7 @@ final class UnifiedOpts {
    */
   @Deprecated
   abstract static class OptionShim<O extends Opt> implements Serializable {
-    private static final long serialVersionUID = -1026813326366179926L;
+    private static final long serialVersionUID = 3410752214075057852L;
     private final O opt;
 
     OptionShim(O opt) {
@@ -1964,7 +1964,7 @@ final class UnifiedOpts {
    * @param <T>
    */
   private abstract static class RpcOptVal<T> implements Opt {
-    private static final long serialVersionUID = -86698141922923191L;
+    private static final long serialVersionUID = 9170283346051824148L;
     protected final StorageRpc.Option key;
     protected final T val;
 

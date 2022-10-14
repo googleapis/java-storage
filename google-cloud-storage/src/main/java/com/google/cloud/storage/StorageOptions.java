@@ -29,7 +29,7 @@ import com.google.cloud.storage.spi.StorageRpcFactory;
 
 public abstract class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
-  private static final long serialVersionUID = 7784772908840175401L;
+  private static final long serialVersionUID = -7295846567928013233L;
 
   /** @deprecated Use {@link HttpStorageFactory} */
   @Deprecated
@@ -96,28 +96,48 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   @Override
   public abstract boolean equals(Object obj);
 
-  /** Returns a default {@code StorageOptions} instance. */
+  /**
+   * Returns a default {@code StorageOptions} instance. The default instance will use JSON over HTTP
+   * for its transport.
+   */
   @TransportCompatibility(Transport.HTTP)
   public static StorageOptions getDefaultInstance() {
     return HttpStorageOptions.newBuilder().build();
   }
 
-  /** Returns a unauthenticated {@code StorageOptions} instance. */
+  /**
+   * Returns a unauthenticated {@code StorageOptions} instance. The returned instance will use JSON
+   * over HTTP for its transport.
+   */
   @TransportCompatibility(Transport.HTTP)
   public static StorageOptions getUnauthenticatedInstance() {
     return HttpStorageOptions.newBuilder().setCredentials(NoCredentials.getInstance()).build();
   }
 
+  /** The returned instance will use JSON over HTTP for its transport. */
   @TransportCompatibility(Transport.HTTP)
   public static StorageOptions.Builder newBuilder() {
     return http();
   }
 
+  /**
+   * Builder factory method which will create a JSON over HTTP specific instance of storage options.
+   *
+   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
   @TransportCompatibility(Transport.HTTP)
   public static HttpStorageOptions.Builder http() {
     return HttpStorageOptions.newBuilder();
   }
 
+  /**
+   * Builder factory method which will create a gRPC specific instance of storage options.
+   *
+   * <p>Google Cloud Storage is in Private Preview for a gRPC centric transport.
+   *
+   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   @TransportCompatibility(Transport.GRPC)
   public static GrpcStorageOptions.Builder grpc() {

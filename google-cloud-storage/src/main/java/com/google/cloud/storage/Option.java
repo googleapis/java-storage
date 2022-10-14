@@ -24,7 +24,7 @@ import java.io.Serializable;
 public abstract class Option<O extends Opt> extends UnifiedOpts.OptionShim<O>
     implements Serializable {
 
-  private static final long serialVersionUID = -3517676609070123326L;
+  private static final long serialVersionUID = -7579883369516703936L;
 
   Option(O opt) {
     super(opt);

@@ -22,7 +22,7 @@ import com.google.cloud.StringEnumValue;
 
 /** Http method supported by Storage service. */
 public final class HttpMethod extends StringEnumValue {
-  private static final long serialVersionUID = -1394461645628254471L;
+  private static final long serialVersionUID = -5787845034130236201L;
 
   private HttpMethod(String constant) {
     super(constant);

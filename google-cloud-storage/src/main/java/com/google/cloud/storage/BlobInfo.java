@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.api.client.util.Data;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Storage.BlobField;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -58,9 +59,10 @@ import java.util.Set;
  * @see <a href="https://cloud.google.com/storage/docs/concepts-techniques#concepts">Concepts and
  *     Terminology</a>
  */
+@TransportCompatibility({Transport.HTTP, Transport.GRPC})
 public class BlobInfo implements Serializable {
 
-  private static final long serialVersionUID = -5625857076205028976L;
+  private static final long serialVersionUID = -2490471217826624578L;
   private final BlobId blobId;
   private final String generatedId;
   private final String selfLink;
@@ -115,7 +117,7 @@ public class BlobInfo implements Serializable {
    */
   public static class CustomerEncryption implements Serializable {
 
-    private static final long serialVersionUID = -2133042982786959351L;
+    private static final long serialVersionUID = -7427738060808591323L;
 
     private final String encryptionAlgorithm;
     private final String keySha256;

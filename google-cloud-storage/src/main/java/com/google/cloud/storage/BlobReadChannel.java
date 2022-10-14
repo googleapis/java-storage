@@ -181,7 +181,7 @@ class BlobReadChannel implements ReadChannel {
 
   static class StateImpl implements RestorableState<ReadChannel>, Serializable {
 
-    private static final long serialVersionUID = 3889420316004453706L;
+    private static final long serialVersionUID = 7784852608213694645L;
 
     private final HttpStorageOptions serviceOptions;
     private final BlobId blob;

@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 public final class Cors implements Serializable {
 
-  private static final long serialVersionUID = -8637770919343335655L;
+  private static final long serialVersionUID = 3811576113627241235L;
 
   private final Integer maxAgeSeconds;
   private final ImmutableList<HttpMethod> methods;
@@ -43,7 +43,7 @@ public final class Cors implements Serializable {
   /** Class for a CORS origin. */
   public static final class Origin implements Serializable {
 
-    private static final long serialVersionUID = -4447958124895577993L;
+    private static final long serialVersionUID = -3240120183350397818L;
     private static final String ANY_URI = "*";
     private final String value;
 

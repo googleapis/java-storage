@@ -53,6 +53,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.security.Key;
 import java.util.Arrays;
@@ -73,6 +74,7 @@ import java.util.stream.Stream;
 @InternalExtensionOnly
 public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   enum PredefinedAcl {
     AUTHENTICATED_READ("authenticatedRead"),
     ALL_AUTHENTICATED_USERS("allAuthenticatedUsers"),
@@ -296,18 +298,20 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket target options. */
   class BucketTargetOption extends Option<BucketTargetOpt> {
 
-    private static final long serialVersionUID = 22594853046651193L;
+    private static final long serialVersionUID = 6699243191830059404L;
 
     private BucketTargetOption(BucketTargetOpt opt) {
       super(opt);
     }
 
     /** Returns an option for specifying bucket's predefined ACL configuration. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketTargetOption predefinedAcl(PredefinedAcl acl) {
       return new BucketTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
 
     /** Returns an option for specifying bucket's default ACL configuration for blobs. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketTargetOption predefinedDefaultObjectAcl(PredefinedAcl acl) {
       return new BucketTargetOption(UnifiedOpts.predefinedDefaultObjectAcl(acl));
     }
@@ -316,6 +320,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's metageneration match. If this option is used the request will
      * fail if metageneration does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketTargetOption metagenerationMatch() {
       return new BucketTargetOption(UnifiedOpts.metagenerationMatchExtractor());
     }
@@ -324,6 +329,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's metageneration mismatch. If this option is used the request
      * will fail if metageneration matches.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketTargetOption metagenerationNotMatch() {
       return new BucketTargetOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
@@ -332,6 +338,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketTargetOption userProject(String userProject) {
       return new BucketTargetOption(UnifiedOpts.userProject(userProject));
     }
@@ -344,6 +351,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/buckets/patch">Buckets:
      *     patch</a>
      */
+    @TransportCompatibility({Transport.HTTP})
     public static BucketTargetOption projection(String projection) {
       return new BucketTargetOption(UnifiedOpts.projection(projection));
     }
@@ -352,7 +360,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket source options. */
   class BucketSourceOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = -162739527257621625L;
+    private static final long serialVersionUID = 3808812145390746748L;
 
     BucketSourceOption(BucketSourceOpt opt) {
       super(opt);
@@ -362,6 +370,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's metageneration match. If this option is used the request will
      * fail if bucket's metageneration does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption metagenerationMatch(long metageneration) {
       return new BucketSourceOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
@@ -370,6 +379,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's metageneration mismatch. If this option is used the request
      * will fail if bucket's metageneration matches the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption metagenerationNotMatch(long metageneration) {
       return new BucketSourceOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
@@ -378,10 +388,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption userProject(String userProject) {
       return new BucketSourceOption(UnifiedOpts.userProject(userProject));
     }
 
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption requestedPolicyVersion(long version) {
       return new BucketSourceOption(UnifiedOpts.requestedPolicyVersion(version));
     }
@@ -398,16 +410,19 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for the Service Account whose keys to list. If this option is not used,
      * keys for all accounts will be listed.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ListHmacKeysOption serviceAccount(ServiceAccount serviceAccount) {
       return new ListHmacKeysOption(UnifiedOpts.serviceAccount(serviceAccount));
     }
 
     /** Returns an option for the maximum amount of HMAC keys returned per page. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ListHmacKeysOption maxResults(long pageSize) {
       return new ListHmacKeysOption(UnifiedOpts.pageSize(pageSize));
     }
 
     /** Returns an option to specify the page token from which to start listing HMAC keys. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ListHmacKeysOption pageToken(String pageToken) {
       return new ListHmacKeysOption(UnifiedOpts.pageToken(pageToken));
     }
@@ -416,6 +431,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify whether to show deleted keys in the result. This option is false
      * by default.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ListHmacKeysOption showDeletedKeys(boolean showDeletedKeys) {
       return new ListHmacKeysOption(UnifiedOpts.showDeletedKeys(showDeletedKeys));
     }
@@ -424,6 +440,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the project to be billed for this request. Required for
      * Requester Pays buckets.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ListHmacKeysOption userProject(String userProject) {
       return new ListHmacKeysOption(UnifiedOpts.userProject(userProject));
     }
@@ -432,6 +449,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the Project ID for this request. If not specified, defaults to
      * Application Default Credentials.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ListHmacKeysOption projectId(String projectId) {
       return new ListHmacKeysOption(UnifiedOpts.projectId(projectId));
     }
@@ -448,6 +466,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the project to be billed for this request. Required for
      * Requester Pays buckets.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static CreateHmacKeyOption userProject(String userProject) {
       return new CreateHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
@@ -456,6 +475,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the Project ID for this request. If not specified, defaults to
      * Application Default Credentials.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static CreateHmacKeyOption projectId(String projectId) {
       return new CreateHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
@@ -471,6 +491,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the project to be billed for this request. Required for
      * Requester Pays buckets.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static GetHmacKeyOption userProject(String userProject) {
       return new GetHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
@@ -479,6 +500,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the Project ID for this request. If not specified, defaults to
      * Application Default Credentials.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static GetHmacKeyOption projectId(String projectId) {
       return new GetHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
@@ -494,6 +516,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the project to be billed for this request. Required for
      * Requester Pays buckets.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static DeleteHmacKeyOption userProject(String userProject) {
       return new DeleteHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
@@ -509,6 +532,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to specify the project to be billed for this request. Required for
      * Requester Pays buckets.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static UpdateHmacKeyOption userProject(String userProject) {
       return new UpdateHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
@@ -517,7 +541,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket get options. */
   class BucketGetOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = 6162812462707653332L;
+    private static final long serialVersionUID = -669900932880354035L;
 
     BucketGetOption(BucketSourceOpt opt) {
       super(opt);
@@ -527,6 +551,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's metageneration match. If this option is used the request will
      * fail if bucket's metageneration does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketGetOption metagenerationMatch(long metageneration) {
       return new BucketGetOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
@@ -535,6 +560,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's metageneration mismatch. If this option is used the request
      * will fail if bucket's metageneration matches the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketGetOption metagenerationNotMatch(long metageneration) {
       return new BucketGetOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
@@ -543,6 +569,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketGetOption userProject(String userProject) {
       return new BucketGetOption(UnifiedOpts.userProject(userProject));
     }
@@ -553,6 +580,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * be used to specify only the fields of interest. Bucket name is always returned, even if not
      * specified.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketGetOption fields(BucketField... fields) {
       ImmutableSet<NamedField> set =
           ImmutableSet.<NamedField>builder()
@@ -566,13 +594,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob target options. */
   class BlobTargetOption extends Option<ObjectTargetOpt> {
 
-    private static final long serialVersionUID = -389155232891981906L;
+    private static final long serialVersionUID = -5554842495450599563L;
 
     BlobTargetOption(ObjectTargetOpt opt) {
       super(opt);
     }
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption predefinedAcl(PredefinedAcl acl) {
       return new BlobTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
@@ -580,6 +609,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     /**
      * Returns an option that causes an operation to succeed only if the target blob does not exist.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption doesNotExist() {
       return new BlobTargetOption(UnifiedOpts.doesNotExist());
     }
@@ -588,6 +618,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation match. If this option is used the request will
      * fail if generation does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption generationMatch() {
       return new BlobTargetOption(UnifiedOpts.generationMatchExtractor());
     }
@@ -596,6 +627,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation mismatch. If this option is used the request
      * will fail if generation matches.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption generationNotMatch() {
       return new BlobTargetOption(UnifiedOpts.generationNotMatchExtractor());
     }
@@ -604,6 +636,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration match. If this option is used the request will
      * fail if metageneration does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption metagenerationMatch() {
       return new BlobTargetOption(UnifiedOpts.metagenerationMatchExtractor());
     }
@@ -612,6 +645,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration mismatch. If this option is used the request will
      * fail if metageneration matches.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption metagenerationNotMatch() {
       return new BlobTargetOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
@@ -620,6 +654,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data disabledGzipContent. If this option is used, the request
      * will create a blob with disableGzipContent; at present, this is only for upload.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption disableGzipContent() {
       return new BlobTargetOption(UnifiedOpts.disableGzipContent());
     }
@@ -629,6 +664,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * detected from the blob name if not explicitly set. This option is on the client side only, it
      * does not appear in a RPC call.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption detectContentType() {
       return new BlobTargetOption(UnifiedOpts.detectContentType());
     }
@@ -637,6 +673,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption encryptionKey(Key key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
@@ -645,6 +682,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption userProject(String userProject) {
       return new BlobTargetOption(UnifiedOpts.userProject(userProject));
     }
@@ -655,11 +693,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param key the AES256 encoded in base64
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption encryptionKey(String key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
 
     /** Returns an option to set a customer-managed key for server-side encryption of the blob. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption kmsKeyName(String kmsKeyName) {
       return new BlobTargetOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
@@ -668,13 +708,14 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob write options. */
   class BlobWriteOption extends OptionShim<ObjectTargetOpt> implements Serializable {
 
-    private static final long serialVersionUID = 1834774766750256808L;
+    private static final long serialVersionUID = 5536338021856320475L;
 
     BlobWriteOption(ObjectTargetOpt opt) {
       super(opt);
     }
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption predefinedAcl(PredefinedAcl acl) {
       return new BlobWriteOption(UnifiedOpts.predefinedAcl(acl));
     }
@@ -682,6 +723,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     /**
      * Returns an option that causes an operation to succeed only if the target blob does not exist.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption doesNotExist() {
       return new BlobWriteOption(UnifiedOpts.doesNotExist());
     }
@@ -690,6 +732,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation match. If this option is used the request will
      * fail if generation does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption generationMatch() {
       return new BlobWriteOption(UnifiedOpts.generationMatchExtractor());
     }
@@ -698,6 +741,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation mismatch. If this option is used the request
      * will fail if generation matches.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption generationNotMatch() {
       return new BlobWriteOption(UnifiedOpts.generationNotMatchExtractor());
     }
@@ -706,6 +750,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration match. If this option is used the request will
      * fail if metageneration does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption metagenerationMatch() {
       return new BlobWriteOption(UnifiedOpts.metagenerationMatchExtractor());
     }
@@ -714,6 +759,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration mismatch. If this option is used the request will
      * fail if metageneration matches.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption metagenerationNotMatch() {
       return new BlobWriteOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
@@ -743,6 +789,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption encryptionKey(Key key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
@@ -753,6 +800,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param key the AES256 encoded in base64
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption encryptionKey(String key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
@@ -762,6 +810,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param kmsKeyName the KMS key resource id
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption kmsKeyName(String kmsKeyName) {
       return new BlobWriteOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
@@ -770,6 +819,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption userProject(String userProject) {
       return new BlobWriteOption(UnifiedOpts.userProject(userProject));
     }
@@ -778,6 +828,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option that signals automatic gzip compression should not be performed en route to
      * the bucket.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption disableGzipContent() {
       return new BlobWriteOption(UnifiedOpts.disableGzipContent());
     }
@@ -786,7 +837,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for detecting content type. If this option is used, the content type is
      * detected from the blob name if not explicitly set. This option is on the client side only, it
      * does not appear in a RPC call.
+     *
+     * <p>Content type detection is based on the database presented by {@link
+     * URLConnection#getFileNameMap()}
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption detectContentType() {
       return new BlobWriteOption(UnifiedOpts.detectContentType());
     }
@@ -795,7 +850,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob source options. */
   class BlobSourceOption extends Option<ObjectSourceOpt> {
 
-    private static final long serialVersionUID = 2131185332093994401L;
+    private static final long serialVersionUID = -8626355836092280204L;
 
     BlobSourceOption(ObjectSourceOpt opt) {
       super(opt);
@@ -808,6 +863,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * a {@link Storage} method and {@link BlobId#getGeneration()} is {@code null} or no {@link
      * BlobId} is provided an exception is thrown.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption generationMatch() {
       return new BlobSourceOption(UnifiedOpts.generationMatchExtractor());
     }
@@ -816,6 +872,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation match. If this option is used the request will
      * fail if blob's generation does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption generationMatch(long generation) {
       return new BlobSourceOption(UnifiedOpts.generationMatch(generation));
     }
@@ -831,6 +888,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     use {@link #generationNotMatch(long)} instead.
      */
     @Deprecated
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption generationNotMatch() {
       return new BlobSourceOption(UnifiedOpts.generationNotMatchExtractor());
     }
@@ -839,6 +897,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation mismatch. If this option is used the request
      * will fail if blob's generation matches the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption generationNotMatch(long generation) {
       return new BlobSourceOption(UnifiedOpts.generationNotMatch(generation));
     }
@@ -847,6 +906,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration match. If this option is used the request will
      * fail if blob's metageneration does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption metagenerationMatch(long metageneration) {
       return new BlobSourceOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
@@ -855,6 +915,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration mismatch. If this option is used the request will
      * fail if blob's metageneration matches the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption metagenerationNotMatch(long metageneration) {
       return new BlobSourceOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
@@ -863,6 +924,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption decryptionKey(Key key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
@@ -873,6 +935,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param key the AES256 encoded in base64
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption decryptionKey(String key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
@@ -881,6 +944,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption userProject(String userProject) {
       return new BlobSourceOption(UnifiedOpts.userProject(userProject));
     }
@@ -890,6 +954,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
      * true for ReadChannel.read().
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
       return new BlobSourceOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
     }
@@ -898,7 +963,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob get options. */
   class BlobGetOption extends Option<ObjectSourceOpt> {
 
-    private static final long serialVersionUID = 4464929616050835795L;
+    private static final long serialVersionUID = -2857961421224394114L;
 
     BlobGetOption(ObjectSourceOpt opt) {
       super(opt);
@@ -911,6 +976,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * a {@link Storage} method and {@link BlobId#getGeneration()} is {@code null} or no {@link
      * BlobId} is provided an exception is thrown.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption generationMatch() {
       return new BlobGetOption(UnifiedOpts.generationMatchExtractor());
     }
@@ -919,6 +985,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation match. If this option is used the request will
      * fail if blob's generation does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption generationMatch(long generation) {
       return new BlobGetOption(UnifiedOpts.generationMatch(generation));
     }
@@ -934,6 +1001,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     use {@link #generationNotMatch(long)} instead.
      */
     @Deprecated
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption generationNotMatch() {
       return new BlobGetOption(UnifiedOpts.generationNotMatchExtractor());
     }
@@ -942,6 +1010,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's data generation mismatch. If this option is used the request
      * will fail if blob's generation matches the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption generationNotMatch(long generation) {
       return new BlobGetOption(UnifiedOpts.generationNotMatch(generation));
     }
@@ -950,6 +1019,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration match. If this option is used the request will
      * fail if blob's metageneration does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption metagenerationMatch(long metageneration) {
       return new BlobGetOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
@@ -958,6 +1028,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's metageneration mismatch. If this option is used the request will
      * fail if blob's metageneration matches the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption metagenerationNotMatch(long metageneration) {
       return new BlobGetOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
@@ -968,6 +1039,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specify only the fields of interest. Blob name and bucket are always returned, even if not
      * specified.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption fields(BlobField... fields) {
       ImmutableSet<NamedField> set =
           ImmutableSet.<NamedField>builder().addAll(BlobField.REQUIRED_FIELDS).add(fields).build();
@@ -978,6 +1050,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for blob's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption userProject(String userProject) {
       return new BlobGetOption(UnifiedOpts.userProject(userProject));
     }
@@ -986,6 +1059,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to set a customer-supplied AES256 key for server-side decryption of the
      * blob.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption decryptionKey(Key key) {
       return new BlobGetOption(UnifiedOpts.decryptionKey(key));
     }
@@ -996,6 +1070,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param key the AES256 encoded in base64
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption decryptionKey(String key) {
       return new BlobGetOption(UnifiedOpts.decryptionKey(key));
     }
@@ -1005,6 +1080,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * automatically decompressing the content. By default, this is false for Blob.downloadTo(), but
      * true for ReadChannel.read().
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
       return new BlobGetOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
     }
@@ -1013,18 +1089,20 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying bucket list options. */
   class BucketListOption extends Option<BucketListOpt> {
 
-    private static final long serialVersionUID = 5717590216719591953L;
+    private static final long serialVersionUID = 6388807550815607557L;
 
     private BucketListOption(BucketListOpt opt) {
       super(opt);
     }
 
     /** Returns an option to specify the maximum number of buckets returned per page. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption pageSize(long pageSize) {
       return new BucketListOption(UnifiedOpts.pageSize(pageSize));
     }
 
     /** Returns an option to specify the page token from which to start listing buckets. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption pageToken(String pageToken) {
       return new BucketListOption(UnifiedOpts.pageToken(pageToken));
     }
@@ -1033,6 +1111,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to set a prefix to filter results to buckets whose names begin with this
      * prefix.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption prefix(String prefix) {
       return new BucketListOption(UnifiedOpts.prefix(prefix));
     }
@@ -1041,6 +1120,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option for bucket's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption userProject(String userProject) {
       return new BucketListOption(UnifiedOpts.userProject(userProject));
     }
@@ -1051,6 +1131,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * be used to specify only the fields of interest. Bucket name is always returned, even if not
      * specified.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption fields(BucketField... fields) {
       ImmutableSet<NamedField> set =
           Streams.concat(
@@ -1065,18 +1146,20 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying blob list options. */
   class BlobListOption extends Option<ObjectListOpt> {
 
-    private static final long serialVersionUID = 5677832374576757707L;
+    private static final long serialVersionUID = 5216908055423927281L;
 
     private BlobListOption(ObjectListOpt opt) {
       super(opt);
     }
 
     /** Returns an option to specify the maximum number of blobs returned per page. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption pageSize(long pageSize) {
       return new BlobListOption(UnifiedOpts.pageSize(pageSize));
     }
 
     /** Returns an option to specify the page token from which to start listing blobs. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption pageToken(String pageToken) {
       return new BlobListOption(UnifiedOpts.pageToken(pageToken));
     }
@@ -1085,6 +1168,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Returns an option to set a prefix to filter results to blobs whose names begin with this
      * prefix.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption prefix(String prefix) {
       return new BlobListOption(UnifiedOpts.prefix(prefix));
     }
@@ -1099,6 +1183,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Blob#getSize()} returns {@code 0} while {@link Blob#isDirectory()} returns {@code true}.
      * Duplicate directory blobs are omitted.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption currentDirectory() {
       return new BlobListOption(UnifiedOpts.currentDirectory());
     }
@@ -1109,6 +1194,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param delimiter generally '/' is the one used most often, but you can used other delimiters
      *     as well.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption delimiter(String delimiter) {
       return new BlobListOption(UnifiedOpts.delimiter(delimiter));
     }
@@ -1120,6 +1206,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param startOffset startOffset to filter the results
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption startOffset(String startOffset) {
       return new BlobListOption(UnifiedOpts.startOffset(startOffset));
     }
@@ -1131,6 +1218,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param endOffset endOffset to filter the results
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption endOffset(String endOffset) {
       return new BlobListOption(UnifiedOpts.endOffset(endOffset));
     }
@@ -1141,6 +1229,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @param userProject projectId of the billing user project.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption userProject(String userProject) {
       return new BlobListOption(UnifiedOpts.userProject(userProject));
     }
@@ -1150,6 +1239,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @see <a href="https://cloud.google.com/storage/docs/object-versioning">Object Versioning</a>
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption versions(boolean versions) {
       return new BlobListOption(UnifiedOpts.versionsFilter(versions));
     }
@@ -1160,6 +1250,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * specify only the fields of interest. Blob name and bucket are always returned, even if not
      * specified.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption fields(BlobField... fields) {
       ImmutableSet<NamedField> set =
           Streams.concat(
@@ -1173,10 +1264,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
   /** Class for specifying Post Policy V4 options. * */
   class PostPolicyV4Option implements Serializable {
-    private static final long serialVersionUID = 8150867146534084543L;
+    private static final long serialVersionUID = -1592545784993528897L;
     private final PostPolicyV4Option.Option option;
     private final Object value;
 
+    @TransportCompatibility(Transport.HTTP)
     enum Option {
       PATH_STYLE,
       VIRTUAL_HOSTED_STYLE,
@@ -1204,6 +1296,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @see <a href="https://cloud.google.com/storage/docs/authentication#service_accounts">Service
      *     Accounts</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static PostPolicyV4Option signWith(ServiceAccountSigner signer) {
       return new PostPolicyV4Option(PostPolicyV4Option.Option.SERVICE_ACCOUNT_CRED, signer);
     }
@@ -1215,6 +1308,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static PostPolicyV4Option withVirtualHostedStyle() {
       return new PostPolicyV4Option(PostPolicyV4Option.Option.VIRTUAL_HOSTED_STYLE, "");
     }
@@ -1228,6 +1322,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static PostPolicyV4Option withPathStyle() {
       return new PostPolicyV4Option(PostPolicyV4Option.Option.PATH_STYLE, "");
     }
@@ -1246,6 +1341,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
      *     GCLB Redirects</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static PostPolicyV4Option withBucketBoundHostname(String bucketBoundHostname) {
       return withBucketBoundHostname(bucketBoundHostname, Storage.UriScheme.HTTP);
     }
@@ -1264,6 +1360,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
      *     GCLB Redirects</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static PostPolicyV4Option withBucketBoundHostname(
         String bucketBoundHostname, Storage.UriScheme uriScheme) {
       return new PostPolicyV4Option(
@@ -1275,11 +1372,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   /** Class for specifying signed URL options. */
   class SignUrlOption implements Serializable {
 
-    private static final long serialVersionUID = 7850569877451099267L;
+    private static final long serialVersionUID = -3165388740755311106L;
 
     private final Option option;
     private final Object value;
 
+    @TransportCompatibility(Transport.HTTP)
     enum Option {
       HTTP_METHOD,
       CONTENT_TYPE,
@@ -1294,6 +1392,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       QUERY_PARAMS
     }
 
+    @TransportCompatibility(Transport.HTTP)
     enum SignatureVersion {
       V2,
       V4
@@ -1316,6 +1415,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * The HTTP method to be used with the signed URL. If this method is not called, defaults to
      * GET.
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption httpMethod(HttpMethod httpMethod) {
       return new SignUrlOption(Option.HTTP_METHOD, httpMethod);
     }
@@ -1325,6 +1425,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * URL should include the blob's content-type with their request. If using this URL from a
      * browser, you must include a content type that matches what the browser will send.
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withContentType() {
       return new SignUrlOption(Option.CONTENT_TYPE, true);
     }
@@ -1333,6 +1434,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Use it if signature should include the blob's md5. When used, users of the signed URL should
      * include the blob's md5 with their request.
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withMd5() {
       return new SignUrlOption(Option.MD5, true);
     }
@@ -1344,6 +1446,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @see <a href="https://cloud.google.com/storage/docs/xml-api/reference-headers">Request
      *     Headers</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withExtHeaders(Map<String, String> extHeaders) {
       return new SignUrlOption(Option.EXT_HEADERS, extHeaders);
     }
@@ -1352,6 +1455,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Use if signature version should be V2. This is the default if neither this or {@code
      * withV4Signature()} is called.
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withV2Signature() {
       return new SignUrlOption(Option.SIGNATURE_VERSION, SignatureVersion.V2);
     }
@@ -1361,6 +1465,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * longer than 7 days. V2 will be the default if neither this or {@code withV2Signature()} is
      * called.
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withV4Signature() {
       return new SignUrlOption(Option.SIGNATURE_VERSION, SignatureVersion.V4);
     }
@@ -1372,6 +1477,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @see <a href="https://cloud.google.com/storage/docs/authentication#service_accounts">Service
      *     Accounts</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption signWith(ServiceAccountSigner signer) {
       return new SignUrlOption(Option.SERVICE_ACCOUNT_CRED, signer);
     }
@@ -1383,6 +1489,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * withVirtualHostedStyle()} method, you should omit the bucket name from the hostname, as it
      * automatically gets prepended to the hostname for virtual hosted-style URLs.
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withHostName(String hostName) {
       return new SignUrlOption(Option.HOST_NAME, hostName);
     }
@@ -1396,6 +1503,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withVirtualHostedStyle() {
       return new SignUrlOption(Option.VIRTUAL_HOSTED_STYLE, "");
     }
@@ -1409,6 +1517,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *
      * @see <a href="https://cloud.google.com/storage/docs/request-endpoints">Request Endpoints</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withPathStyle() {
       return new SignUrlOption(Option.PATH_STYLE, "");
     }
@@ -1427,6 +1536,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
      *     GCLB Redirects</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withBucketBoundHostname(String bucketBoundHostname) {
       return withBucketBoundHostname(bucketBoundHostname, UriScheme.HTTP);
     }
@@ -1445,6 +1555,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     href="https://cloud.google.com/load-balancing/docs/https/adding-backend-buckets-to-load-balancers">
      *     GCLB Redirects</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withBucketBoundHostname(
         String bucketBoundHostname, UriScheme uriScheme) {
       return new SignUrlOption(
@@ -1464,6 +1575,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @see <a href="https://cloud.google.com/storage/docs/access-control/signed-urls-v2">V2 Signing
      *     Process</a>
      */
+    @TransportCompatibility(Transport.HTTP)
     public static SignUrlOption withQueryParams(Map<String, String> queryParams) {
       return new SignUrlOption(Option.QUERY_PARAMS, queryParams);
     }
@@ -1478,16 +1590,17 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   class ComposeRequest implements Serializable {
 
-    private static final long serialVersionUID = -7385681353748590911L;
+    private static final long serialVersionUID = 6612204553167273919L;
 
     private final List<SourceBlob> sourceBlobs;
     private final BlobInfo target;
     private final List<BlobTargetOption> targetOptions;
 
     /** Class for Compose source blobs. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static class SourceBlob implements Serializable {
 
-      private static final long serialVersionUID = 4094962795951990439L;
+      private static final long serialVersionUID = -157636474404489874L;
 
       final String name;
       final Long generation;
@@ -1613,7 +1726,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   class CopyRequest implements Serializable {
 
-    private static final long serialVersionUID = -4498650529476219937L;
+    private static final long serialVersionUID = 5670794463350011330L;
 
     private final BlobId source;
     private final List<BlobSourceOption> sourceOptions;

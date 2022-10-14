@@ -28,7 +28,7 @@ import java.util.Set;
 
 final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
 
-  private static final long serialVersionUID = -6145057244885961913L;
+  private static final long serialVersionUID = 7928177703325504905L;
 
   private static final Interceptor INTERCEPTOR_IDEMPOTENT =
       new InterceptorImpl(true, StorageException.RETRYABLE_ERRORS);
@@ -56,7 +56,7 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
 
   private static class InterceptorImpl implements BaseInterceptor {
 
-    private static final long serialVersionUID = -5153236691367895096L;
+    private static final long serialVersionUID = 5283634944744417128L;
     private final boolean idempotent;
     private final ImmutableSet<BaseServiceException.Error> retryableErrors;
 
@@ -117,7 +117,7 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
   }
 
   private static final class EmptyJsonParsingExceptionInterceptor implements BaseInterceptor {
-    private static final long serialVersionUID = -3320984020388043628L;
+    private static final long serialVersionUID = -3466977370399704805L;
 
     @Override
     public RetryResult beforeEval(Exception exception) {

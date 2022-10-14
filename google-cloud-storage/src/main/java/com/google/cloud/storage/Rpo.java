@@ -28,7 +28,7 @@ import com.google.cloud.StringEnumValue;
  */
 public final class Rpo extends StringEnumValue {
 
-  private static final long serialVersionUID = -3954216195295821508L;
+  private static final long serialVersionUID = -2916656819456559679L;
 
   private Rpo(String constant) {
     super(constant);

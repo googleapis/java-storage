@@ -311,7 +311,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static class BucketPageFetcher implements NextPageFetcher<Bucket> {
 
-    private static final long serialVersionUID = 5850406828803613729L;
+    private static final long serialVersionUID = 8534413447247364038L;
     private final Map<StorageRpc.Option, ?> requestOptions;
     private final HttpStorageOptions serviceOptions;
 
@@ -330,7 +330,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static class BlobPageFetcher implements NextPageFetcher<Blob> {
 
-    private static final long serialVersionUID = 81807334445874098L;
+    private static final long serialVersionUID = -4308415167471093443L;
     private final Map<StorageRpc.Option, ?> requestOptions;
     private final HttpStorageOptions serviceOptions;
     private final String bucket;
@@ -354,7 +354,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static class HmacKeyMetadataPageFetcher implements NextPageFetcher<HmacKeyMetadata> {
 
-    private static final long serialVersionUID = 308012320541700881L;
+    private static final long serialVersionUID = -8637392485924772927L;
     private final HttpStorageOptions serviceOptions;
     private final HttpRetryAlgorithmManager retryAlgorithmManager;
     private final Map<StorageRpc.Option, ?> options;

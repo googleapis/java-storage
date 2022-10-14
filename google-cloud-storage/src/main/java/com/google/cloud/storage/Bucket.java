@@ -52,17 +52,19 @@ import java.util.Objects;
  * return a new object. To get a {@code Bucket} object with the most recent information use {@link
  * #reload}. {@code Bucket} adds a layer of service-related functionality over {@link BucketInfo}.
  */
+@TransportCompatibility({Transport.HTTP, Transport.GRPC})
 public class Bucket extends BucketInfo {
 
-  private static final long serialVersionUID = -5916736761953534767L;
+  private static final long serialVersionUID = 3599706574671671516L;
 
   private final StorageOptions options;
   private transient Storage storage;
 
   /** Class for specifying bucket source options when {@code Bucket} methods are used. */
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public static class BucketSourceOption extends Option<BucketSourceOpt> {
 
-    private static final long serialVersionUID = 6928872234155522371L;
+    private static final long serialVersionUID = 6765489853972162215L;
 
     private BucketSourceOption(BucketSourceOpt opt) {
       super(opt);
@@ -72,6 +74,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for bucket's metageneration match. If this option is used the request will
      * fail if metageneration does not match.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption metagenerationMatch() {
       return new BucketSourceOption(UnifiedOpts.metagenerationMatchExtractor());
     }
@@ -80,6 +83,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for bucket's metageneration mismatch. If this option is used the request
      * will fail if metageneration matches.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption metagenerationNotMatch() {
       return new BucketSourceOption(UnifiedOpts.metagenerationNotMatchExtractor());
     }
@@ -88,6 +92,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for blob's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption userProject(String userProject) {
       return new BucketSourceOption(UnifiedOpts.userProject(userProject));
     }
@@ -129,13 +134,14 @@ public class Bucket extends BucketInfo {
   /** Class for specifying blob target options when {@code Bucket} methods are used. */
   public static class BlobTargetOption extends Option<ObjectTargetOpt> {
 
-    private static final long serialVersionUID = 8345296337342509425L;
+    private static final long serialVersionUID = -7203767045761758606L;
 
     private BlobTargetOption(ObjectTargetOpt opt) {
       super(opt);
     }
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption predefinedAcl(Storage.PredefinedAcl acl) {
       return new BlobTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
@@ -145,6 +151,7 @@ public class Bucket extends BucketInfo {
      * This option can not be provided together with {@link #generationMatch(long)} or {@link
      * #generationNotMatch(long)}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption doesNotExist() {
       return new BlobTargetOption(UnifiedOpts.doesNotExist());
     }
@@ -154,6 +161,7 @@ public class Bucket extends BucketInfo {
      * fail if generation does not match the provided value. This option can not be provided
      * together with {@link #generationNotMatch(long)} or {@link #doesNotExist()}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption generationMatch(long generation) {
       return new BlobTargetOption(UnifiedOpts.generationMatch(generation));
     }
@@ -163,6 +171,7 @@ public class Bucket extends BucketInfo {
      * will fail if blob's generation matches the provided value. This option can not be provided
      * together with {@link #generationMatch(long)} or {@link #doesNotExist()}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption generationNotMatch(long generation) {
       return new BlobTargetOption(UnifiedOpts.generationNotMatch(generation));
     }
@@ -172,6 +181,7 @@ public class Bucket extends BucketInfo {
      * fail if metageneration does not match the provided value. This option can not be provided
      * together with {@link #metagenerationNotMatch(long)}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption metagenerationMatch(long metageneration) {
       return new BlobTargetOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
@@ -181,6 +191,7 @@ public class Bucket extends BucketInfo {
      * fail if metageneration matches the provided value. This option can not be provided together
      * with {@link #metagenerationMatch(long)}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption metagenerationNotMatch(long metageneration) {
       return new BlobTargetOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
@@ -189,6 +200,7 @@ public class Bucket extends BucketInfo {
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption encryptionKey(Key key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
@@ -199,6 +211,7 @@ public class Bucket extends BucketInfo {
      *
      * @param key the AES256 encoded in base64
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption encryptionKey(String key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
@@ -208,6 +221,7 @@ public class Bucket extends BucketInfo {
      *
      * @param kmsKeyName the KMS key resource id
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption kmsKeyName(String kmsKeyName) {
       return new BlobTargetOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
@@ -216,6 +230,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for blob's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption userProject(String userProject) {
       return new BlobTargetOption(UnifiedOpts.userProject(userProject));
     }
@@ -240,13 +255,14 @@ public class Bucket extends BucketInfo {
   /** Class for specifying blob write options when {@code Bucket} methods are used. */
   public static class BlobWriteOption extends OptionShim<ObjectTargetOpt> implements Serializable {
 
-    private static final long serialVersionUID = -1103041630932223724L;
+    private static final long serialVersionUID = 59762268190041584L;
 
     private BlobWriteOption(ObjectTargetOpt opt) {
       super(opt);
     }
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption predefinedAcl(Storage.PredefinedAcl acl) {
       return new BlobWriteOption(UnifiedOpts.predefinedAcl(acl));
     }
@@ -256,6 +272,7 @@ public class Bucket extends BucketInfo {
      * This option can not be provided together with {@link #generationMatch(long)} or {@link
      * #generationNotMatch(long)}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption doesNotExist() {
       return new BlobWriteOption(UnifiedOpts.doesNotExist());
     }
@@ -265,6 +282,7 @@ public class Bucket extends BucketInfo {
      * fail if generation does not match the provided value. This option can not be provided
      * together with {@link #generationNotMatch(long)} or {@link #doesNotExist()}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption generationMatch(long generation) {
       return new BlobWriteOption(UnifiedOpts.generationMatch(generation));
     }
@@ -274,6 +292,7 @@ public class Bucket extends BucketInfo {
      * will fail if generation matches the provided value. This option can not be provided together
      * with {@link #generationMatch(long)} or {@link #doesNotExist()}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption generationNotMatch(long generation) {
       return new BlobWriteOption(UnifiedOpts.generationNotMatch(generation));
     }
@@ -283,6 +302,7 @@ public class Bucket extends BucketInfo {
      * fail if metageneration does not match the provided value. This option can not be provided
      * together with {@link #metagenerationNotMatch(long)}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption metagenerationMatch(long metageneration) {
       return new BlobWriteOption(UnifiedOpts.metagenerationMatch(metageneration));
     }
@@ -292,6 +312,7 @@ public class Bucket extends BucketInfo {
      * fail if metageneration matches the provided value. This option can not be provided together
      * with {@link #metagenerationMatch(long)}.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption metagenerationNotMatch(long metageneration) {
       return new BlobWriteOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
@@ -300,6 +321,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for blob's data MD5 hash match. If this option is used the request will
      * fail if blobs' data MD5 hash does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption md5Match(String md5) {
       return new BlobWriteOption(UnifiedOpts.md5Match(md5));
     }
@@ -308,6 +330,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for blob's data CRC32C checksum match. If this option is used the request
      * will fail if blobs' data CRC32C checksum does not match the provided value.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption crc32cMatch(String crc32c) {
       return new BlobWriteOption(UnifiedOpts.crc32cMatch(crc32c));
     }
@@ -316,6 +339,7 @@ public class Bucket extends BucketInfo {
      * Returns an option to set a customer-supplied AES256 key for server-side encryption of the
      * blob.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption encryptionKey(Key key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
@@ -326,6 +350,7 @@ public class Bucket extends BucketInfo {
      *
      * @param key the AES256 encoded in base64
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption encryptionKey(String key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
@@ -334,6 +359,7 @@ public class Bucket extends BucketInfo {
      * Returns an option for blob's billing user project. This option is only used by the buckets
      * with 'requester_pays' flag.
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption userProject(String userProject) {
       return new BlobWriteOption(UnifiedOpts.userProject(userProject));
     }
@@ -952,7 +978,7 @@ public class Bucket extends BucketInfo {
    * @return an immutable list of {@code Blob} objects
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   public List<Blob> get(String blobName1, String blobName2, String... blobNames) {
     List<BlobId> blobIds = Lists.newArrayListWithCapacity(blobNames.length + 2);
     blobIds.add(BlobId.of(getName(), blobName1));
@@ -986,7 +1012,7 @@ public class Bucket extends BucketInfo {
    * @return an immutable list of {@code Blob} objects
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+  @TransportCompatibility({Transport.HTTP})
   public List<Blob> get(Iterable<String> blobNames) {
     ImmutableList.Builder<BlobId> builder = ImmutableList.builder();
     for (String blobName : blobNames) {
@@ -1351,7 +1377,11 @@ public class Bucket extends BucketInfo {
     return Objects.hash(super.hashCode(), options);
   }
 
-  /** Drop the held {@link Storage} instance. */
+  /**
+   * Drop the held {@link Storage} instance.
+   *
+   * @since 2.14.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public BucketInfo asBucketInfo() {
     return this.toBuilder().infoBuilder.build();

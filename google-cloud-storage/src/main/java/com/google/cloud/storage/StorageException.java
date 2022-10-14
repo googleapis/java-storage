@@ -54,7 +54,7 @@ public final class StorageException extends BaseHttpServiceException {
           new Error(null, INTERNAL_ERROR),
           new Error(null, CONNECTION_CLOSED_PREMATURELY));
 
-  private static final long serialVersionUID = -4168430271327813063L;
+  private static final long serialVersionUID = 757915549325467990L;
 
   final ApiException apiExceptionCause;
 

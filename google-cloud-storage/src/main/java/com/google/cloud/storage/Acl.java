@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 public final class Acl implements Serializable {
 
-  private static final long serialVersionUID = 7516713233557576082L;
+  private static final long serialVersionUID = -1000021464049679956L;
 
   private final Entity entity;
   private final Role role;
@@ -41,7 +41,7 @@ public final class Acl implements Serializable {
   private final String etag;
 
   public static final class Role extends StringEnumValue {
-    private static final long serialVersionUID = 123037132067643600L;
+    private static final long serialVersionUID = 2067949416720207403L;
 
     private Role(String constant) {
       super(constant);
@@ -125,7 +125,7 @@ public final class Acl implements Serializable {
   /** Base class for Access Control List entities. */
   public abstract static class Entity implements Serializable {
 
-    private static final long serialVersionUID = -2707407252771255840L;
+    private static final long serialVersionUID = 2321254094152522444L;
 
     private final Type type;
     private final String value;
@@ -179,7 +179,7 @@ public final class Acl implements Serializable {
   /** Class for ACL Domain entities. */
   public static final class Domain extends Entity {
 
-    private static final long serialVersionUID = -3033025857280447253L;
+    private static final long serialVersionUID = 6852649665598880139L;
 
     /**
      * Creates a domain entity.
@@ -199,7 +199,7 @@ public final class Acl implements Serializable {
   /** Class for ACL Group entities. */
   public static final class Group extends Entity {
 
-    private static final long serialVersionUID = -1660987136294408826L;
+    private static final long serialVersionUID = 5642929747944714384L;
 
     /**
      * Creates a group entity.
@@ -219,7 +219,7 @@ public final class Acl implements Serializable {
   /** Class for ACL User entities. */
   public static final class User extends Entity {
 
-    private static final long serialVersionUID = 3076518036392737008L;
+    private static final long serialVersionUID = -4113630416489429660L;
     static final String ALL_USERS = "allUsers";
     static final String ALL_AUTHENTICATED_USERS = "allAuthenticatedUsers";
 
@@ -249,13 +249,13 @@ public final class Acl implements Serializable {
   /** Class for ACL Project entities. */
   public static final class Project extends Entity {
 
-    private static final long serialVersionUID = 7933776866530023027L;
+    private static final long serialVersionUID = -743189540406339074L;
 
     private final ProjectRole projectRole;
     private final String projectId;
 
     public static final class ProjectRole extends StringEnumValue {
-      private static final long serialVersionUID = -8360324311187914382L;
+      private static final long serialVersionUID = 1284991422168016498L;
 
       private ProjectRole(String constant) {
         super(constant);
@@ -335,7 +335,7 @@ public final class Acl implements Serializable {
 
   public static final class RawEntity extends Entity {
 
-    private static final long serialVersionUID = 3966205614223053950L;
+    private static final long serialVersionUID = -3049252571732490102L;
 
     RawEntity(String entity) {
       super(Type.UNKNOWN, entity);
