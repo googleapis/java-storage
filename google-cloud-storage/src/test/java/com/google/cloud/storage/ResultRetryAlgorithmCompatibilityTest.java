@@ -30,7 +30,8 @@ public final class ResultRetryAlgorithmCompatibilityTest {
     ResultRetryAlgorithm<?> idempotentHandler =
         StorageRetryStrategy.getDefaultStorageRetryStrategy().getIdempotentHandler();
 
-    Set<Code> codes = GrpcStorageImpl.resultRetryAlgorithmToCodes(idempotentHandler);
+    Set<Code> codes =
+        GrpcToHttpStatusCodeTranslation.resultRetryAlgorithmToCodes(idempotentHandler);
     ImmutableSet<Code> expected =
         ImmutableSet.of(
             Code.INTERNAL, Code.UNAVAILABLE, Code.RESOURCE_EXHAUSTED, Code.DEADLINE_EXCEEDED);

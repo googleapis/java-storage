@@ -129,7 +129,8 @@ public final class StorageException extends BaseHttpServiceException {
     StatusCode statusCode = apiEx.getStatusCode();
     if (statusCode instanceof GrpcStatusCode) {
       GrpcStatusCode gsc = (GrpcStatusCode) statusCode;
-      httpStatusCode = BackwardCompatibilityUtils.grpcCodeToHttpStatusCode(gsc.getTransportCode());
+      httpStatusCode =
+          GrpcToHttpStatusCodeTranslation.grpcCodeToHttpStatusCode(gsc.getTransportCode());
     }
     // If there is a gRPC exception in our cause change pull it's error message up to be our
     // message otherwise, create a generic error message with the status code.

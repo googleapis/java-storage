@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
+import static com.google.cloud.storage.GrpcToHttpStatusCodeTranslation.resultRetryAlgorithmToCodes;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.projectNameCodec;
@@ -32,7 +33,6 @@ import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
-import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
@@ -147,20 +147,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           StandardOpenOption.WRITE,
           StandardOpenOption.CREATE,
           StandardOpenOption.TRUNCATE_EXISTING);
-  /**
-   * For use in {@link #resultRetryAlgorithmToCodes(ResultRetryAlgorithm)}. Resolve all codes and
-   * construct corresponding ApiExceptions.
-   *
-   * <p>Constructing the exceptions will walk the stack for each one. In order to avoid the stack
-   * walking overhead for every Code for every invocation of read, construct the set of exceptions
-   * only once and keep in this value.
-   */
-  private static final Set<StorageException> CODE_API_EXCEPTIONS =
-      Arrays.stream(StatusCode.Code.values())
-          .map(GrpcStorageImpl::statusCodeFor)
-          .map(c -> ApiExceptionFactory.createException(null, c, false))
-          .map(StorageException::asStorageException)
-          .collect(Collectors.toSet());
 
   final StorageClient storageClient;
   final GrpcConversions codecs;
@@ -696,8 +682,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
-    Set<StatusCode.Code> codes =
-        GrpcStorageImpl.resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
+    Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
@@ -1318,8 +1303,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         String.format(
             "%s#%s is not yet implemented for GRPC transport. Please use StorageOptions.http() to construct a compatible instance in the interim.",
             Storage.class.getName(), methodName);
-    throw new UnimplementedException(
-        message, null, statusCodeFor(StatusCode.Code.UNIMPLEMENTED), false);
+    throw new UnimplementedException(message, null, GrpcStatusCode.of(Code.UNIMPLEMENTED), false);
   }
 
   private static String fmtMethodName(String name, Class<?>... args) {
@@ -1368,8 +1352,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes =
-        GrpcStorageImpl.resultRetryAlgorithmToCodes(
-            retryAlgorithmManager.getFor(readObjectRequest));
+        resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
     return ResumableMedia.gapic()
         .read()
@@ -1383,8 +1366,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @VisibleForTesting
   ApiFuture<ResumableWrite> startResumableWrite(
       GrpcCallContext grpcCallContext, WriteObjectRequest req) {
-    Set<StatusCode.Code> codes =
-        GrpcStorageImpl.resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
+    Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
     return ResumableMedia.gapic()
         .write()
         .resumableWrite(
@@ -1392,80 +1374,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                 .startResumableWriteCallable()
                 .withDefaultCallContext(grpcCallContext.withRetryableCodes(codes)),
             req);
-  }
-
-  /**
-   * When using the retry features of the Gapic client, we are only allowed to provide a {@link
-   * Set}{@code <}{@link StatusCode.Code}{@code >}. Given {@link StatusCode.Code} is an enum, we can
-   * resolve the set of values from a given {@link ResultRetryAlgorithm} by evaluating each one as
-   * an {@link ApiException}.
-   */
-  static Set<StatusCode.Code> resultRetryAlgorithmToCodes(ResultRetryAlgorithm<?> alg) {
-    return CODE_API_EXCEPTIONS.stream()
-        .filter(e -> alg.shouldRetry(e, null))
-        .map(e -> e.apiExceptionCause.getStatusCode().getCode())
-        .collect(Collectors.toSet());
-  }
-
-  private static GrpcStatusCode statusCodeFor(StatusCode.Code code) {
-    switch (code) {
-      case OK:
-        return GrpcStatusCode.of(Code.OK);
-      case CANCELLED:
-        return GrpcStatusCode.of(Code.CANCELLED);
-      case UNKNOWN:
-        return GrpcStatusCode.of(Code.UNKNOWN);
-      case INVALID_ARGUMENT:
-        return GrpcStatusCode.of(Code.INVALID_ARGUMENT);
-      case DEADLINE_EXCEEDED:
-        return GrpcStatusCode.of(Code.DEADLINE_EXCEEDED);
-      case NOT_FOUND:
-        return GrpcStatusCode.of(Code.NOT_FOUND);
-      case ALREADY_EXISTS:
-        return GrpcStatusCode.of(Code.ALREADY_EXISTS);
-      case PERMISSION_DENIED:
-        return GrpcStatusCode.of(Code.PERMISSION_DENIED);
-      case RESOURCE_EXHAUSTED:
-        return GrpcStatusCode.of(Code.RESOURCE_EXHAUSTED);
-      case FAILED_PRECONDITION:
-        return GrpcStatusCode.of(Code.FAILED_PRECONDITION);
-      case ABORTED:
-        return GrpcStatusCode.of(Code.ABORTED);
-      case OUT_OF_RANGE:
-        return GrpcStatusCode.of(Code.OUT_OF_RANGE);
-      case UNIMPLEMENTED:
-        return GrpcStatusCode.of(Code.UNIMPLEMENTED);
-      case INTERNAL:
-        return GrpcStatusCode.of(Code.INTERNAL);
-      case UNAVAILABLE:
-        return GrpcStatusCode.of(Code.UNAVAILABLE);
-      case DATA_LOSS:
-        return GrpcStatusCode.of(Code.DATA_LOSS);
-      case UNAUTHENTICATED:
-        return GrpcStatusCode.of(Code.UNAUTHENTICATED);
-      default:
-        throw new IllegalStateException("Unrecognized status code: " + code);
-    }
-  }
-
-  private static ImmutableList<String> updateFields() {
-    return ImmutableList.of(
-        "cors",
-        "default_event_based_hold",
-        "retention_policy",
-        "versioning",
-        "billing",
-        "iam_config",
-        "encryption",
-        "lifecycle",
-        "logging",
-        "website",
-        "acl",
-        "default_object_acl",
-        "storage_class",
-        "rpo",
-        "labels",
-        "event_based_hold");
   }
 
   private SourceObject sourceObjectEncode(SourceBlob from) {
