@@ -28,13 +28,18 @@ import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
+import javax.annotation.concurrent.Immutable;
 
+@Immutable
 final class GapicDownloadSessionBuilder {
+  private static final GapicDownloadSessionBuilder INSTANCE = new GapicDownloadSessionBuilder();
+
+  private static final int DEFAULT_BUFFER_CAPACITY = ByteSizeConstants._16MiB;
 
   private GapicDownloadSessionBuilder() {}
 
   public static GapicDownloadSessionBuilder create() {
-    return new GapicDownloadSessionBuilder();
+    return INSTANCE;
   }
 
   /**
@@ -60,7 +65,7 @@ final class GapicDownloadSessionBuilder {
     }
 
     public BufferedReadableByteChannelSessionBuilder buffered() {
-      return buffered(Buffers.allocate(16 * 1024 * 1024));
+      return buffered(BufferHandle.allocate(DEFAULT_BUFFER_CAPACITY));
     }
 
     public ReadableByteChannelSessionBuilder setHasher(Hasher hasher) {
@@ -74,20 +79,20 @@ final class GapicDownloadSessionBuilder {
       return this;
     }
 
-    public BufferedReadableByteChannelSessionBuilder buffered(int capacity) {
-      return new BufferedReadableByteChannelSessionBuilder(BufferHandle.allocate(capacity), getF());
+    public BufferedReadableByteChannelSessionBuilder buffered(BufferHandle bufferHandle) {
+      return new BufferedReadableByteChannelSessionBuilder(bufferHandle, bindFunction());
     }
 
     public BufferedReadableByteChannelSessionBuilder buffered(ByteBuffer buffer) {
-      return new BufferedReadableByteChannelSessionBuilder(BufferHandle.handleOf(buffer), getF());
+      return buffered(BufferHandle.handleOf(buffer));
     }
 
     public UnbufferedReadableByteChannelSessionBuilder unbuffered() {
-      return new UnbufferedReadableByteChannelSessionBuilder(getF());
+      return new UnbufferedReadableByteChannelSessionBuilder(bindFunction());
     }
 
     private BiFunction<ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
-        getF() {
+        bindFunction() {
       // for any non-final value, create a reference to the value at this point in time
       Hasher hasher = this.hasher;
       boolean autoGzipDecompression = this.autoGzipDecompression;
@@ -103,7 +108,8 @@ final class GapicDownloadSessionBuilder {
 
     public static final class BufferedReadableByteChannelSessionBuilder {
 
-      private BiFunction<ReadObjectRequest, SettableApiFuture<Object>, BufferedReadableByteChannel>
+      private final BiFunction<
+              ReadObjectRequest, SettableApiFuture<Object>, BufferedReadableByteChannel>
           f;
       private ReadObjectRequest request;
 
@@ -129,7 +135,7 @@ final class GapicDownloadSessionBuilder {
 
     public static final class UnbufferedReadableByteChannelSessionBuilder {
 
-      private BiFunction<
+      private final BiFunction<
               ReadObjectRequest, SettableApiFuture<Object>, UnbufferedReadableByteChannel>
           f;
       private ReadObjectRequest request;
