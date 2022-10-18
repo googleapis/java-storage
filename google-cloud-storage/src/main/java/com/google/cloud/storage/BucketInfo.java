@@ -662,7 +662,9 @@ public class BucketInfo implements Serializable {
               .setDaysSinceNoncurrentTime(condition.getDaysSinceNoncurrentTime())
               .setNoncurrentTimeBefore(condition.getNoncurrentTimeBefore())
               .setCustomTimeBefore(condition.getCustomTimeBefore())
-              .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
+              .setDaysSinceCustomTime(condition.getDaysSinceCustomTime())
+              .setMatchesPrefix(condition.getMatchesPrefix())
+              .setMatchesSuffix(condition.getMatchesSuffix());
 
       return new LifecycleRule(lifecycleAction, conditionBuilder.build());
     }
