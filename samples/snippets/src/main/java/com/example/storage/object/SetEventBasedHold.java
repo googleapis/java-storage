@@ -18,6 +18,7 @@ package com.example.storage.object;
 
 // [START storage_set_event_based_hold]
 
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
@@ -37,9 +38,14 @@ public class SetEventBasedHold {
     // String objectName = "your-object-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    BlobId blobId = BlobId.of(bucketName, objectName);
+    Blob blob = storage.get(bucketName, objectName);
 
-    storage.update(BlobInfo.newBuilder(blobId).setEventBasedHold(true).build());
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request to upload returns a 412 error if
+    // the object's generation number does not match your precondition.
+    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
+    blob.toBuilder().setEventBasedHold(true).build().update(precondition);
 
     System.out.println("Event-based hold was set for " + objectName);
   }

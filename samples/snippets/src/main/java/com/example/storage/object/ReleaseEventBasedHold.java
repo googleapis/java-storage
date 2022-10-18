@@ -39,7 +39,12 @@ public class ReleaseEventBasedHold {
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     BlobId blobId = BlobId.of(bucketName, objectName);
 
-    storage.update(BlobInfo.newBuilder(blobId).setEventBasedHold(false).build());
+    // Optional: set a generation-match precondition to avoid potential race
+    // conditions and data corruptions. The request to upload returns a 412 error if
+    // the object's generation number does not match your precondition.
+    Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+
+    storage.update(BlobInfo.newBuilder(blobId).setEventBasedHold(false).build(), precondition);
 
     System.out.println("Event-based hold was released for " + objectName);
   }
