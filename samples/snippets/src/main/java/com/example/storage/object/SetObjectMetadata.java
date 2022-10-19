@@ -41,7 +41,7 @@ public class SetObjectMetadata {
     newMetadata.put("keyToAddOrUpdate", "value");
     BlobId blobId = BlobId.of(bucketName, objectName);
     Blob blob = storage.get(blobId);
-    if(blob == null) {
+    if (blob == null) {
       System.out.println("The object " + objectName + " was not found in " + bucketName);
       return;
     }

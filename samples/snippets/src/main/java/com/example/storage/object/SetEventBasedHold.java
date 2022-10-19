@@ -40,7 +40,7 @@ public class SetEventBasedHold {
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     BlobId blobId = BlobId.of(bucketName, objectName);
     Blob blob = storage.get(blobId);
-    if(blob == null) {
+    if (blob == null) {
       System.out.println("The object " + objectName + " was not found in " + bucketName);
       return;
     }
