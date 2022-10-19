@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -40,7 +41,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   private Long position;
   private Long limit;
-  private int chunkSize = 16 * 1024 * 1024;
+  private int chunkSize = _16MiB;
 
   GrpcBlobReadChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
@@ -57,7 +58,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
                       .byteChannel(read)
                       .setHasher(Hasher.noop())
                       .setAutoGzipDecompression(autoGzipDecompression)
-                      .buffered(Buffers.allocate(chunkSize))
+                      .buffered(BufferHandle.allocate(chunkSize))
                       .setReadObjectRequest(req)
                       .build();
                 }));
