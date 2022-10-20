@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.13.1](https://github.com/googleapis/java-storage/compare/v2.13.0...v2.13.1) (2022-10-20)
+
+
+### Bug Fixes
+
+* Avoid unexpected initialization of `JacksonParser` in Graal 22.2 ([#1709](https://github.com/googleapis/java-storage/issues/1709)) ([eca1a03](https://github.com/googleapis/java-storage/commit/eca1a03c5d7656179a04058a2af94300f1dc0930))
+* Update BucketInfo.LifecycleRule#fromPb to wire through MatchesPrefix & MatchesSuffix ([#1717](https://github.com/googleapis/java-storage/issues/1717)) ([eae3cf2](https://github.com/googleapis/java-storage/commit/eae3cf2735cd4adab598d311fd64b8906972ffc3))
+
+
+### Dependencies
+
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.15 ([#1711](https://github.com/googleapis/java-storage/issues/1711)) ([f188a07](https://github.com/googleapis/java-storage/commit/f188a07b09e0787f958f714333337fc92657a824))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.16 ([#1721](https://github.com/googleapis/java-storage/issues/1721)) ([631b98d](https://github.com/googleapis/java-storage/commit/631b98df1a7d44358fbeacb95f2e2a3d590198d1))
+
 ## [2.13.0](https://github.com/googleapis/java-storage/compare/v2.12.0...v2.13.0) (2022-10-03)
 
 
