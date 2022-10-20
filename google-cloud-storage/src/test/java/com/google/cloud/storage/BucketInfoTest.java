@@ -344,7 +344,7 @@ public class BucketInfoTest {
     assertEquals(
             LifecycleRule.DeleteLifecycleAction.TYPE, lcr.getAction().getActionType());
     assertEquals(10, lcr.getCondition().getAge().intValue());
-    assertEquals(2, git .getCondition().getMatchesPrefix().size());
+    assertEquals(2, lcr.getCondition().getMatchesPrefix().size());
     assertEquals("abc", (String)lcr.getCondition().getMatchesPrefix().get(0));
     assertEquals("ijk", (String)lcr.getCondition().getMatchesPrefix().get(1));
     assertEquals(1, lcr.getCondition().getMatchesSuffix().size());
