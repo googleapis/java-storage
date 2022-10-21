@@ -301,14 +301,31 @@ public class BucketInfoTest {
             .encode(
                 new LifecycleRule(
                     LifecycleAction.newDeleteAction(),
-                    LifecycleCondition.newBuilder().setAge(10).build()));
+                    LifecycleCondition.newBuilder()
+                        .setAge(10)
+                        .setMatchesPrefix(Arrays.asList("abc", "ijk"))
+                        .setMatchesSuffix(Arrays.asList("xyz"))
+                        .build()));
 
     assertEquals(
         LifecycleRule.DeleteLifecycleAction.TYPE, deleteLifecycleRule.getAction().getType());
     assertEquals(10, deleteLifecycleRule.getCondition().getAge().intValue());
-    assertTrue(
-        Conversions.apiary().lifecycleRule().decode(deleteLifecycleRule).getAction()
-            instanceof DeleteLifecycleAction);
+    assertEquals(2, deleteLifecycleRule.getCondition().getMatchesPrefix().size());
+    assertEquals("abc", (String) deleteLifecycleRule.getCondition().getMatchesPrefix().get(0));
+    assertEquals("ijk", (String) deleteLifecycleRule.getCondition().getMatchesPrefix().get(1));
+    assertEquals(1, deleteLifecycleRule.getCondition().getMatchesSuffix().size());
+    assertEquals("xyz", deleteLifecycleRule.getCondition().getMatchesSuffix().get(0));
+
+    LifecycleRule lcr = Conversions.apiary().lifecycleRule().decode(deleteLifecycleRule);
+    assertEquals(LifecycleRule.DeleteLifecycleAction.TYPE, lcr.getAction().getActionType());
+    assertEquals(10, lcr.getCondition().getAge().intValue());
+    assertEquals(2, lcr.getCondition().getMatchesPrefix().size());
+    assertEquals("abc", (String) lcr.getCondition().getMatchesPrefix().get(0));
+    assertEquals("ijk", (String) lcr.getCondition().getMatchesPrefix().get(1));
+    assertEquals(1, lcr.getCondition().getMatchesSuffix().size());
+    assertEquals("xyz", lcr.getCondition().getMatchesSuffix().get(0));
+
+    assertTrue(lcr.getAction() instanceof DeleteLifecycleAction);
 
     Rule setStorageClassLifecycleRule =
         Conversions.apiary()

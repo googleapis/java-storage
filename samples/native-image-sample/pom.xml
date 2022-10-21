@@ -61,7 +61,7 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-pubsub</artifactId>
-      <version>1.120.20</version>
+      <version>1.120.22</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -134,7 +134,7 @@
           <plugin>
             <groupId>org.graalvm.buildtools</groupId>
             <artifactId>native-maven-plugin</artifactId>
-            <version>0.9.14</version>
+            <version>0.9.16</version>
             <extensions>true</extensions>
             <configuration>
               <mainClass>com.example.storage.NativeImageStorageSample</mainClass>
