@@ -94,8 +94,9 @@ public final class ITOptionRegressionTest {
           .setHandle(storageFixture::getInstance)
           .build();
 
-  private static final Content CONTENT = Content.of("Hello, World!");
-  private static final Content CONTENT2 = Content.of("Goodbye, World!");
+  private static final ChecksummedTestContent CONTENT = ChecksummedTestContent.of("Hello, World!");
+  private static final ChecksummedTestContent CONTENT2 =
+      ChecksummedTestContent.of("Goodbye, World!");
   private static final CSEKSupport csekSupport = CSEKSupport.create();
   private static final ServiceAccount SERVICE_ACCOUNT = ServiceAccount.of("x@y.z");
 
@@ -121,11 +122,11 @@ public final class ITOptionRegressionTest {
             .build()
             .getService();
     b = s.get(bucketFixture.getBucketInfo().getName());
-    o = s.create(BlobInfo.newBuilder(b, "ddeeffaauulltt").build(), CONTENT.bytes);
+    o = s.create(BlobInfo.newBuilder(b, "ddeeffaauulltt").build(), CONTENT.getBytes());
     e =
         s.create(
             BlobInfo.newBuilder(b, "encrypteddetpyrcne").build(),
-            CONTENT.bytes,
+            CONTENT.getBytes(),
             Storage.BlobTargetOption.encryptionKey(csekSupport.getTuple().getKey()));
   }
 
@@ -138,7 +139,7 @@ public final class ITOptionRegressionTest {
   public void storage_BucketTargetOption_predefinedAcl_PredefinedAcl() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ));
     requestAuditing.assertQueryParam("predefinedAcl", "publicRead");
   }
@@ -357,7 +358,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_predefinedAcl_PredefinedAcl() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ));
     requestAuditing.assertQueryParam("predefinedAcl", "publicRead");
   }
@@ -366,7 +367,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_doesNotExist_() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.doesNotExist());
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
@@ -384,9 +385,9 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_generationNotMatch_() {
     Blob blob1 = s.create(BlobInfo.newBuilder(b, objectName()).build());
     Blob updated = blob1.toBuilder().setMetadata(ImmutableMap.of("foo", "bar")).build();
-    s.create(updated, CONTENT2.bytes);
+    s.create(updated, CONTENT2.getBytes());
     requestAuditing.clear();
-    s.create(updated, CONTENT.bytes, Storage.BlobTargetOption.generationNotMatch());
+    s.create(updated, CONTENT.getBytes(), Storage.BlobTargetOption.generationNotMatch());
     requestAuditing.assertQueryParam("ifGenerationNotMatch", blob1.getGeneration().toString());
   }
 
@@ -415,7 +416,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_disableGzipContent_() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.disableGzipContent());
     requestAuditing.assertNoContentEncoding();
   }
@@ -424,7 +425,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_detectContentType_() {
     s.create(
         BlobInfo.newBuilder(b, objectName() + ".txt").build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.detectContentType());
     requestAuditing.assertMultipartContentJsonAndText();
   }
@@ -433,7 +434,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_encryptionKey_Key() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.encryptionKey(csekSupport.getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
@@ -442,7 +443,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_userProject_String() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
@@ -451,7 +452,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_encryptionKey_String() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.encryptionKey(csekSupport.getTuple().getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
@@ -460,7 +461,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobTargetOption_kmsKeyName_String() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         Storage.BlobTargetOption.kmsKeyName("kms-key"));
     requestAuditing.assertQueryParam("kmsKeyName", "kms-key");
   }
@@ -469,7 +470,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_predefinedAcl_PredefinedAcl() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.predefinedAcl(PredefinedAcl.PUBLIC_READ));
     requestAuditing.assertQueryParam("predefinedAcl", "publicRead");
   }
@@ -478,7 +479,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_doesNotExist_() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.doesNotExist());
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
@@ -493,7 +494,7 @@ public final class ITOptionRegressionTest {
             .setMd5(null)
             .setCrc32c(null)
             .build();
-    s.create(updated, CONTENT2.inputStream(), Storage.BlobWriteOption.generationMatch());
+    s.create(updated, CONTENT2.bytesAsInputStream(), Storage.BlobWriteOption.generationMatch());
     requestAuditing.assertQueryParam("ifGenerationMatch", blob.getGeneration().toString());
   }
 
@@ -507,9 +508,9 @@ public final class ITOptionRegressionTest {
             .setMd5(null)
             .setCrc32c(null)
             .build();
-    s.create(updated, CONTENT2.bytes);
+    s.create(updated, CONTENT2.getBytes());
     requestAuditing.clear();
-    s.create(updated, CONTENT.inputStream(), Storage.BlobWriteOption.generationNotMatch());
+    s.create(updated, CONTENT.bytesAsInputStream(), Storage.BlobWriteOption.generationNotMatch());
     requestAuditing.assertQueryParam("ifGenerationNotMatch", blob1.getGeneration().toString());
   }
 
@@ -523,7 +524,7 @@ public final class ITOptionRegressionTest {
             .setMd5(null)
             .setCrc32c(null)
             .build();
-    s.create(updated, CONTENT2.inputStream(), Storage.BlobWriteOption.metagenerationMatch());
+    s.create(updated, CONTENT2.bytesAsInputStream(), Storage.BlobWriteOption.metagenerationMatch());
     requestAuditing.assertQueryParam("ifMetagenerationMatch", blob.getMetageneration().toString());
   }
 
@@ -541,30 +542,31 @@ public final class ITOptionRegressionTest {
     requestAuditing.clear();
     s.create(
         updated.toBuilder().setStorageClass(StorageClass.COLDLINE).build(),
-        CONTENT2.inputStream(),
+        CONTENT2.bytesAsInputStream(),
         Storage.BlobWriteOption.metagenerationNotMatch());
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", "1");
   }
 
   @Test
   public void storage_BlobWriteOption_md5Match_() {
-    BlobInfo info = BlobInfo.newBuilder(b, objectName()).setMd5(CONTENT.md5Base64).build();
-    s.create(info, CONTENT.inputStream(), Storage.BlobWriteOption.md5Match());
-    requestAuditing.assertMultipartJsonField("md5Hash", CONTENT.md5Base64);
+    BlobInfo info = BlobInfo.newBuilder(b, objectName()).setMd5(CONTENT.getMd5Base64()).build();
+    s.create(info, CONTENT.bytesAsInputStream(), Storage.BlobWriteOption.md5Match());
+    requestAuditing.assertMultipartJsonField("md5Hash", CONTENT.getMd5Base64());
   }
 
   @Test
   public void storage_BlobWriteOption_crc32cMatch_() {
-    BlobInfo info = BlobInfo.newBuilder(b, objectName()).setCrc32c(CONTENT.crc32cBase64()).build();
-    s.create(info, CONTENT.inputStream(), Storage.BlobWriteOption.crc32cMatch());
-    requestAuditing.assertMultipartJsonField("crc32c", CONTENT.crc32cBase64());
+    BlobInfo info =
+        BlobInfo.newBuilder(b, objectName()).setCrc32c(CONTENT.getCrc32cBase64()).build();
+    s.create(info, CONTENT.bytesAsInputStream(), Storage.BlobWriteOption.crc32cMatch());
+    requestAuditing.assertMultipartJsonField("crc32c", CONTENT.getCrc32cBase64());
   }
 
   @Test
   public void storage_BlobWriteOption_encryptionKey_Key() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.encryptionKey(csekSupport.getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
@@ -573,7 +575,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_encryptionKey_String() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.encryptionKey(csekSupport.getTuple().getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
@@ -582,7 +584,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_kmsKeyName_String() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.kmsKeyName("kms-key"));
     requestAuditing.assertQueryParam("kmsKeyName", "kms-key");
   }
@@ -591,7 +593,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_userProject_String() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
@@ -600,7 +602,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_disableGzipContent_() {
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.disableGzipContent());
     requestAuditing.assertNoContentEncoding();
   }
@@ -609,7 +611,7 @@ public final class ITOptionRegressionTest {
   public void storage_BlobWriteOption_detectContentType_() {
     s.create(
         BlobInfo.newBuilder(b, objectName() + ".txt").build(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         Storage.BlobWriteOption.detectContentType());
     requestAuditing.assertMultipartContentJsonAndText();
   }
@@ -958,43 +960,46 @@ public final class ITOptionRegressionTest {
   @Test
   public void bucket_BlobTargetOption_predefinedAcl_PredefinedAcl() {
     b.create(
-        objectName(), CONTENT.bytes, BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ));
+        objectName(),
+        CONTENT.getBytes(),
+        BlobTargetOption.predefinedAcl(PredefinedAcl.PUBLIC_READ));
     requestAuditing.assertQueryParam("predefinedAcl", "publicRead");
   }
 
   @Test
   public void bucket_BlobTargetOption_doesNotExist_() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.doesNotExist());
+    b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.doesNotExist());
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
   @Test
   public void bucket_BlobTargetOption_generationMatch_long() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.generationMatch(0));
+    b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.generationMatch(0));
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
   @Test
   public void bucket_BlobTargetOption_generationNotMatch_long() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.generationNotMatch(1L));
+    b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.generationNotMatch(1L));
     requestAuditing.assertQueryParam("ifGenerationNotMatch", "1");
   }
 
   @Test
   public void bucket_BlobTargetOption_metagenerationMatch_long() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.metagenerationMatch(0));
+    b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.metagenerationMatch(0));
     requestAuditing.assertQueryParam("ifMetagenerationMatch", "0");
   }
 
   @Test
   public void bucket_BlobTargetOption_metagenerationNotMatch_long() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.metagenerationNotMatch(1L));
+    b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.metagenerationNotMatch(1L));
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", "1");
   }
 
   @Test
   public void bucket_BlobTargetOption_encryptionKey_Key() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.encryptionKey(csekSupport.getKey()));
+    b.create(
+        objectName(), CONTENT.getBytes(), BlobTargetOption.encryptionKey(csekSupport.getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
@@ -1002,20 +1007,20 @@ public final class ITOptionRegressionTest {
   public void bucket_BlobTargetOption_encryptionKey_String() {
     b.create(
         objectName(),
-        CONTENT.bytes,
+        CONTENT.getBytes(),
         BlobTargetOption.encryptionKey(csekSupport.getTuple().getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
   @Test
   public void bucket_BlobTargetOption_kmsKeyName_String() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.kmsKeyName("kms-key"));
+    b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.kmsKeyName("kms-key"));
     requestAuditing.assertQueryParam("kmsKeyName", "kms-key");
   }
 
   @Test
   public void bucket_BlobTargetOption_userProject_String() {
-    b.create(objectName(), CONTENT.bytes, BlobTargetOption.userProject("proj"));
+    b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
@@ -1023,58 +1028,66 @@ public final class ITOptionRegressionTest {
   public void bucket_BlobWriteOption_predefinedAcl_PredefinedAcl() {
     b.create(
         objectName(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         BlobWriteOption.predefinedAcl(PredefinedAcl.PUBLIC_READ));
     requestAuditing.assertQueryParam("predefinedAcl", "publicRead");
   }
 
   @Test
   public void bucket_BlobWriteOption_doesNotExist_() {
-    b.create(objectName(), CONTENT.inputStream(), BlobWriteOption.doesNotExist());
+    b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.doesNotExist());
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
   @Test
   public void bucket_BlobWriteOption_generationMatch_long() {
-    b.create(objectName(), CONTENT.inputStream(), BlobWriteOption.generationMatch(0));
+    b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.generationMatch(0));
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
   @Test
   public void bucket_BlobWriteOption_generationNotMatch_long() {
-    b.create(objectName(), CONTENT.inputStream(), BlobWriteOption.generationNotMatch(1L));
+    b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.generationNotMatch(1L));
     requestAuditing.assertQueryParam("ifGenerationNotMatch", "1");
   }
 
   @Test
   public void bucket_BlobWriteOption_metagenerationMatch_long() {
-    b.create(objectName(), CONTENT.inputStream(), BlobWriteOption.metagenerationMatch(0));
+    b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.metagenerationMatch(0));
     requestAuditing.assertQueryParam("ifMetagenerationMatch", "0");
   }
 
   @Test
   public void bucket_BlobWriteOption_metagenerationNotMatch_long() {
-    b.create(objectName(), CONTENT.inputStream(), BlobWriteOption.metagenerationNotMatch(1L));
+    b.create(
+        objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.metagenerationNotMatch(1L));
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", "1");
   }
 
   @Test
   public void bucket_BlobWriteOption_md5Match_String() {
-    b.create(objectName(), CONTENT.inputStream(), BlobWriteOption.md5Match(CONTENT.md5Base64));
-    requestAuditing.assertMultipartJsonField("md5Hash", CONTENT.md5Base64);
+    b.create(
+        objectName(),
+        CONTENT.bytesAsInputStream(),
+        BlobWriteOption.md5Match(CONTENT.getMd5Base64()));
+    requestAuditing.assertMultipartJsonField("md5Hash", CONTENT.getMd5Base64());
   }
 
   @Test
   public void bucket_BlobWriteOption_crc32cMatch_String() {
     b.create(
-        objectName(), CONTENT.inputStream(), BlobWriteOption.crc32cMatch(CONTENT.crc32cBase64()));
-    requestAuditing.assertMultipartJsonField("crc32c", CONTENT.crc32cBase64());
+        objectName(),
+        CONTENT.bytesAsInputStream(),
+        BlobWriteOption.crc32cMatch(CONTENT.getCrc32cBase64()));
+    requestAuditing.assertMultipartJsonField("crc32c", CONTENT.getCrc32cBase64());
   }
 
   @Test
   public void bucket_BlobWriteOption_encryptionKey_Key() {
     b.create(
-        objectName(), CONTENT.inputStream(), BlobWriteOption.encryptionKey(csekSupport.getKey()));
+        objectName(),
+        CONTENT.bytesAsInputStream(),
+        BlobWriteOption.encryptionKey(csekSupport.getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
@@ -1082,14 +1095,14 @@ public final class ITOptionRegressionTest {
   public void bucket_BlobWriteOption_encryptionKey_String() {
     b.create(
         objectName(),
-        CONTENT.inputStream(),
+        CONTENT.bytesAsInputStream(),
         BlobWriteOption.encryptionKey(csekSupport.getTuple().getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
   @Test
   public void bucket_BlobWriteOption_userProject_String() {
-    b.create(objectName(), CONTENT.inputStream(), BlobWriteOption.userProject("proj"));
+    b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
@@ -1166,7 +1179,7 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_ComposeRequest() {
-    Blob obj = b.create(objectName(), CONTENT.bytes, BlobTargetOption.doesNotExist());
+    Blob obj = b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.doesNotExist());
     requestAuditing.clear();
     Blob updated = obj.toBuilder().setMd5(null).setCrc32c(null).build();
     ComposeRequest request =
