@@ -654,10 +654,13 @@ final class GrpcConversions {
     if (condition.hasDaysSinceCustomTime()) {
       conditionBuilder.setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
     }
-    ifNonNull(
-        condition.getMatchesStorageClassList(),
-        toImmutableListOf(StorageClass::valueOf),
-        conditionBuilder::setMatchesStorageClass);
+    if (!condition.getMatchesStorageClassList().isEmpty()) {
+      ImmutableList<StorageClass> collect =
+          condition.getMatchesStorageClassList().stream()
+              .map(StorageClass::valueOf)
+              .collect(ImmutableList.toImmutableList());
+      conditionBuilder.setMatchesStorageClass(collect);
+    }
     conditionBuilder.setMatchesPrefix(condition.getMatchesPrefixList());
     conditionBuilder.setMatchesSuffix(condition.getMatchesSuffixList());
     return new BucketInfo.LifecycleRule(lifecycleAction, conditionBuilder.build());

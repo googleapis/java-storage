@@ -725,7 +725,9 @@ public class BucketInfo implements Serializable {
             && Objects.equals(daysSinceNoncurrentTime, that.daysSinceNoncurrentTime)
             && Objects.equals(noncurrentTimeBefore, that.noncurrentTimeBefore)
             && Objects.equals(customTimeBefore, that.customTimeBefore)
-            && Objects.equals(daysSinceCustomTime, that.daysSinceCustomTime);
+            && Objects.equals(daysSinceCustomTime, that.daysSinceCustomTime)
+            && Objects.equals(matchesPrefix, that.matchesPrefix)
+            && Objects.equals(matchesSuffix, that.matchesSuffix);
       }
 
       @Override
@@ -739,7 +741,9 @@ public class BucketInfo implements Serializable {
             daysSinceNoncurrentTime,
             noncurrentTimeBefore,
             customTimeBefore,
-            daysSinceCustomTime);
+            daysSinceCustomTime,
+            matchesPrefix,
+            matchesSuffix);
       }
 
       /** Builder for {@code LifecycleCondition}. */
