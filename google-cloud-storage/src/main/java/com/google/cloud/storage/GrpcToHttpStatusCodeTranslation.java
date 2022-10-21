@@ -63,7 +63,7 @@ final class GrpcToHttpStatusCodeTranslation {
           StatusCodeMapping.of(501, Code.UNIMPLEMENTED),
           StatusCodeMapping.of(503, Code.UNAVAILABLE),
           StatusCodeMapping.of(504, Code.DEADLINE_EXCEEDED),
-          StatusCodeMapping.of(0, Code.ABORTED),
+          StatusCodeMapping.of(409, Code.ABORTED),
           StatusCodeMapping.of(0, Code.CANCELLED),
           StatusCodeMapping.of(0, Code.UNKNOWN));
 

@@ -42,7 +42,7 @@ public final class GrpcToHttpStatusCodeTranslationTest {
     expected.put(Code.INTERNAL, 500);
     expected.put(Code.UNIMPLEMENTED, 501);
     expected.put(Code.UNAVAILABLE, 503);
-    expected.put(Code.ABORTED, 0);
+    expected.put(Code.ABORTED, 409);
     expected.put(Code.CANCELLED, 0);
     expected.put(Code.UNKNOWN, 0);
     expected.put(Code.DEADLINE_EXCEEDED, 504);

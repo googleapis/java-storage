@@ -81,7 +81,7 @@ public final class StorageExceptionGrpcCompatibilityTest {
 
   @Test
   public void testCoalesce_ABORTED() {
-    doTestCoalesce(0, Code.ABORTED);
+    doTestCoalesce(409, Code.ABORTED);
   }
 
   @Test
