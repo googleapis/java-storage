@@ -49,19 +49,18 @@ final class GrpcBlobReadChannel implements ReadChannel {
       boolean autoGzipDecompression) {
     this.lazyReadChannel =
         new LazyReadChannel(
-            Suppliers.memoize(
-                () -> {
-                  ReadObjectRequest req =
-                      seekReadObjectRequest(request, position, sub(limit, position));
-                  return ResumableMedia.gapic()
-                      .read()
-                      .byteChannel(read)
-                      .setHasher(Hasher.noop())
-                      .setAutoGzipDecompression(autoGzipDecompression)
-                      .buffered(BufferHandle.allocate(chunkSize))
-                      .setReadObjectRequest(req)
-                      .build();
-                }));
+            () -> {
+              ReadObjectRequest req =
+                  seekReadObjectRequest(request, position, sub(limit, position));
+              return ResumableMedia.gapic()
+                  .read()
+                  .byteChannel(read)
+                  .setHasher(Hasher.noop())
+                  .setAutoGzipDecompression(autoGzipDecompression)
+                  .buffered(BufferHandle.allocate(chunkSize))
+                  .setReadObjectRequest(req)
+                  .build();
+            });
   }
 
   @Override
@@ -72,7 +71,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   @Override
   public boolean isOpen() {
-    return false;
+    return lazyReadChannel.isOpen() && lazyReadChannel.getChannel().isOpen();
   }
 
   @Override
@@ -81,8 +80,8 @@ final class GrpcBlobReadChannel implements ReadChannel {
       try {
         lazyReadChannel.getChannel().close();
       } catch (IOException e) {
-        // TODO: why does ReadChannel remove IOException?!
-        throw new RuntimeException(e);
+        // why does ReadChannel remove IOException?!
+        throw StorageException.coalesce(e);
       }
     }
   }
@@ -149,13 +148,24 @@ final class GrpcBlobReadChannel implements ReadChannel {
     private final Supplier<BufferedReadableByteChannelSession<Object>> session;
     private final Supplier<BufferedReadableByteChannel> channel;
 
+    private boolean open = false;
+
     public LazyReadChannel(Supplier<BufferedReadableByteChannelSession<Object>> session) {
       this.session = session;
-      this.channel = Suppliers.memoize(() -> session.get().open());
+      this.channel =
+          Suppliers.memoize(
+              () -> {
+                open = true;
+                return session.get().open();
+              });
     }
 
     public BufferedReadableByteChannel getChannel() {
       return channel.get();
+    }
+
+    public boolean isOpen() {
+      return open;
     }
   }
 }
