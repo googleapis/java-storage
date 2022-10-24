@@ -183,7 +183,8 @@ public final class ITReadMaskTest {
                   BucketField.RPO,
                   (jsonT, grpcT) -> {
                     assertThat(jsonT.getRpo()).isEqualTo(Rpo.DEFAULT);
-                    assertThat(grpcT.getRpo()).isNull();
+                    // TODO: cleanup allowed null value in mid nov
+                    assertThat(grpcT.getRpo()).isAnyOf(Rpo.DEFAULT, null);
                   }),
               new Args<>(
                   BucketField.SELF_LINK,
