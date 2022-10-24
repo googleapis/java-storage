@@ -62,7 +62,7 @@ public final class DefaultRetryHandlingBehaviorTest {
   @SuppressWarnings("deprecation")
   public DefaultRetryHandlingBehaviorTest(Case c) {
     this.c = c;
-    defaultStrategy = new DefaultStorageRetryStrategy();
+    defaultStrategy = DefaultStorageRetryStrategy.INSTANCE;
     legacyStrategy = StorageRetryStrategy.getLegacyStorageRetryStrategy();
   }
 

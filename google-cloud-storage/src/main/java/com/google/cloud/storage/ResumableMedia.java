@@ -60,6 +60,10 @@ final class ResumableMedia {
     return GapicMediaSession.INSTANCE;
   }
 
+  static HttpMediaSession http() {
+    return HttpMediaSession.INSTANCE;
+  }
+
   private static boolean isValidSignedURL(String signedURLQuery) {
     boolean isValid = true;
     if (signedURLQuery.startsWith("X-Goog-Algorithm=")) {
@@ -91,6 +95,16 @@ final class ResumableMedia {
 
     GapicDownloadSessionBuilder read() {
       return GapicDownloadSessionBuilder.create();
+    }
+  }
+
+  static final class HttpMediaSession {
+    private static final HttpMediaSession INSTANCE = new HttpMediaSession();
+
+    private HttpMediaSession() {}
+
+    HttpDownloadSessionBuilder read() {
+      return HttpDownloadSessionBuilder.create();
     }
   }
 }

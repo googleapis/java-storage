@@ -18,7 +18,6 @@ package com.google.cloud.storage.it.runner.registry;
 
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.it.BucketCleaner;
 
 /** Shim to lift a BucketInfo to be a managed bucket instance */
 final class BucketInfoShim implements ManagedLifecycle {
@@ -49,6 +48,6 @@ final class BucketInfoShim implements ManagedLifecycle {
 
   @Override
   public void stop() {
-    BucketCleaner.doCleanup(bucketInfo.getName(), s);
+    // BucketCleaner.doCleanup(bucketInfo.getName(), s);
   }
 }

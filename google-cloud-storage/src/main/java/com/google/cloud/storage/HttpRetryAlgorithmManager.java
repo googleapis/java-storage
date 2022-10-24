@@ -26,9 +26,11 @@ import com.google.api.services.storage.model.Policy;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.RewriteRequest;
+import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 final class HttpRetryAlgorithmManager implements Serializable {
 
@@ -37,6 +39,14 @@ final class HttpRetryAlgorithmManager implements Serializable {
 
   HttpRetryAlgorithmManager(StorageRetryStrategy retryStrategy) {
     this.retryStrategy = retryStrategy;
+  }
+
+  /**
+   * Some operations are inherently idempotent after they're started (Resumable uploads, rewrites)
+   * provide access to the idempotent {@link ResultRetryAlgorithm} for those uses.
+   */
+  ResultRetryAlgorithm<?> idempotent() {
+    return retryStrategy.getIdempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getForBucketAclCreate(
@@ -259,5 +269,27 @@ final class HttpRetryAlgorithmManager implements Serializable {
 
   public ResultRetryAlgorithm<?> getForNotificationDelete(String bucket, String notificationId) {
     return retryStrategy.getIdempotentHandler();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof HttpRetryAlgorithmManager)) {
+      return false;
+    }
+    HttpRetryAlgorithmManager that = (HttpRetryAlgorithmManager) o;
+    return Objects.equals(retryStrategy, that.retryStrategy);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(retryStrategy);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("retryStrategy", retryStrategy).toString();
   }
 }

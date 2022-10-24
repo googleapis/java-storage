@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.testing;
 
+import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.HmacKey;
@@ -313,6 +314,11 @@ public class StorageRpcTestBase implements StorageRpc {
 
   @Override
   public ServiceAccount getServiceAccount(String projectId) {
+    throw new UnsupportedOperationException("Not implemented yet");
+  }
+
+  @Override
+  public Storage getStorage() {
     throw new UnsupportedOperationException("Not implemented yet");
   }
 }

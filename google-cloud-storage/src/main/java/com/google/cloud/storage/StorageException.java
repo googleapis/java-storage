@@ -164,6 +164,22 @@ public final class StorageException extends BaseHttpServiceException {
     }
   }
 
+  static <T> T wrapIOException(IOExceptionCallable<T> c) {
+    try {
+      return c.call();
+    } catch (IOException e) {
+      throw StorageException.coalesce(e);
+    }
+  }
+
+  static void wrapIOException(IOExceptionRunnable r) {
+    try {
+      r.run();
+    } catch (IOException e) {
+      throw StorageException.coalesce(e);
+    }
+  }
+
   @Nullable
   private static String getStatusExceptionMessage(ApiException apiEx) {
     Throwable cause = apiEx.getCause();
@@ -180,5 +196,15 @@ public final class StorageException extends BaseHttpServiceException {
     } else {
       return null;
     }
+  }
+
+  @FunctionalInterface
+  interface IOExceptionCallable<T> {
+    T call() throws IOException;
+  }
+
+  @FunctionalInterface
+  interface IOExceptionRunnable {
+    void run() throws IOException;
   }
 }

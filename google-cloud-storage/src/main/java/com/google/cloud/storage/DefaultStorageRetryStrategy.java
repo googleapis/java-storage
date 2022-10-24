@@ -28,6 +28,8 @@ import java.util.Set;
 
 final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
 
+  static final DefaultStorageRetryStrategy INSTANCE = new DefaultStorageRetryStrategy();
+
   private static final long serialVersionUID = 7928177703325504905L;
 
   private static final Interceptor INTERCEPTOR_IDEMPOTENT =
@@ -39,6 +41,8 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
       newHandler(new EmptyJsonParsingExceptionInterceptor(), INTERCEPTOR_IDEMPOTENT);
   private static final ExceptionHandler NON_IDEMPOTENT_HANDLER =
       newHandler(INTERCEPTOR_NON_IDEMPOTENT);
+
+  private DefaultStorageRetryStrategy() {}
 
   @Override
   public ExceptionHandler getIdempotentHandler() {
@@ -52,6 +56,11 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
 
   private static ExceptionHandler newHandler(Interceptor... interceptors) {
     return ExceptionHandler.newBuilder().addInterceptors(interceptors).build();
+  }
+
+  /** prevent java serialization from using a new instance */
+  private Object readResolve() {
+    return INSTANCE;
   }
 
   private static class InterceptorImpl implements BaseInterceptor {

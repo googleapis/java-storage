@@ -132,6 +132,10 @@ public class HttpStorageRpc implements StorageRpc {
             .build();
   }
 
+  public Storage getStorage() {
+    return storage;
+  }
+
   private static final class InvocationIdInitializer implements HttpRequestInitializer {
     @Nullable HttpRequestInitializer initializer;
 

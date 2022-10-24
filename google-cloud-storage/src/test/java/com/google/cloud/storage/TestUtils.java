@@ -40,11 +40,16 @@ import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.WriteObjectRequest;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
+import io.grpc.netty.shaded.io.netty.buffer.ByteBufUtil;
+import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -52,6 +57,8 @@ import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.function.ThrowingRunnable;
+import org.junit.runners.model.MultipleFailureException;
 
 public final class TestUtils {
 
@@ -189,5 +196,47 @@ public final class TestUtils {
   @NonNull
   public static Function<String, WriteObjectRequest> onlyUploadId() {
     return uId -> WriteObjectRequest.newBuilder().setUploadId(uId).build();
+  }
+
+  public static byte[] snapshotData(ByteBuffer buf) {
+    ByteBuffer dup = buf.duplicate();
+    dup.flip();
+    byte[] bytes = new byte[dup.remaining()];
+    dup.get(bytes);
+    return bytes;
+  }
+
+  public static byte[] slice(byte[] bs, int begin, int end) {
+    int len = end - begin;
+    byte[] dst = new byte[len];
+    System.arraycopy(bs, begin, dst, 0, len);
+    return dst;
+  }
+
+  public static String xxd(byte[] bytes) {
+    return ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(bytes));
+  }
+
+  public static String xxd(ByteBuffer bytes) {
+    ByteBuffer dup = bytes.duplicate();
+    dup.flip();
+    return ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(dup));
+  }
+
+  public static void assertAll(ThrowingRunnable... trs) throws Exception {
+    List<Throwable> x =
+        Arrays.stream(trs)
+            .map(
+                tr -> {
+                  try {
+                    tr.run();
+                    return null;
+                  } catch (Throwable e) {
+                    return e;
+                  }
+                })
+            .filter(Objects::nonNull)
+            .collect(ImmutableList.toImmutableList());
+    MultipleFailureException.assertEmpty(x);
   }
 }

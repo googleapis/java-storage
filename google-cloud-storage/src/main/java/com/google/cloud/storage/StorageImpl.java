@@ -37,6 +37,7 @@ import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.BlobReadChannelV2.ClientStuff;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -103,8 +104,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   private static final ApiaryConversions codecs = Conversions.apiary();
 
-  private final HttpRetryAlgorithmManager retryAlgorithmManager;
-  private final StorageRpc storageRpc;
+  final HttpRetryAlgorithmManager retryAlgorithmManager;
+  final StorageRpc storageRpc;
 
   StorageImpl(HttpStorageOptions options) {
     super(options);
@@ -581,15 +582,15 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public ReadChannel reader(String bucket, String blob, BlobSourceOption... options) {
-    ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
-    return new BlobReadChannel(getOptions(), BlobId.of(bucket, blob), optionsMap);
+    return reader(BlobId.of(bucket, blob), options);
   }
 
   @Override
   public ReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    return new BlobReadChannel(getOptions(), blob, optionsMap);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    StorageObject storageObject = Conversions.apiary().blobId().encode(blob);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    return new BlobReadChannelV2(storageObject, optionsMap, ClientStuff.from(this));
   }
 
   @Override

@@ -17,11 +17,23 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 
 interface UnbufferedReadableByteChannelSession<ResultT>
     extends ReadableByteChannelSession<UnbufferedReadableByteChannel, ResultT> {
 
-  interface UnbufferedReadableByteChannel extends ReadableByteChannel, ScatteringByteChannel {}
+  interface UnbufferedReadableByteChannel extends ReadableByteChannel, ScatteringByteChannel {
+    @Override
+    default int read(ByteBuffer dst) throws IOException {
+      return Math.toIntExact(read(new ByteBuffer[] {dst}, 0, 1));
+    }
+
+    @Override
+    default long read(ByteBuffer[] dsts) throws IOException {
+      return read(dsts, 0, dsts.length);
+    }
+  }
 }

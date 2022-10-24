@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._16MiB;
+import static com.google.cloud.storage.Maths.sub;
 import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -25,19 +26,15 @@ import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
-import com.google.common.base.Suppliers;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.function.Supplier;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class GrpcBlobReadChannel implements ReadChannel {
 
-  private final LazyReadChannel lazyReadChannel;
+  private final LazyReadChannel<Object> lazyReadChannel;
 
   private Long position;
   private Long limit;
@@ -48,7 +45,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
       ReadObjectRequest request,
       boolean autoGzipDecompression) {
     this.lazyReadChannel =
-        new LazyReadChannel(
+        new LazyReadChannel<>(
             () -> {
               ReadObjectRequest req =
                   seekReadObjectRequest(request, position, sub(limit, position));
@@ -76,7 +73,7 @@ final class GrpcBlobReadChannel implements ReadChannel {
 
   @Override
   public void close() {
-    if (isOpen()) {
+    if (lazyReadChannel.isOpen()) {
       try {
         lazyReadChannel.getChannel().close();
       } catch (IOException e) {
@@ -128,44 +125,6 @@ final class GrpcBlobReadChannel implements ReadChannel {
   }
 
   ApiFuture<Object> getResults() {
-    return lazyReadChannel.session.get().getResult();
-  }
-
-  /**
-   * Null aware subtraction. If both {@code l} and {@code r} are non-null, return {@code l - r}.
-   * Otherwise, return {@code null}.
-   */
-  @Nullable
-  private static Long sub(@Nullable Long l, @Nullable Long r) {
-    if (l == null || r == null) {
-      return null;
-    } else {
-      return l - r;
-    }
-  }
-
-  private static final class LazyReadChannel {
-    private final Supplier<BufferedReadableByteChannelSession<Object>> session;
-    private final Supplier<BufferedReadableByteChannel> channel;
-
-    private boolean open = false;
-
-    public LazyReadChannel(Supplier<BufferedReadableByteChannelSession<Object>> session) {
-      this.session = session;
-      this.channel =
-          Suppliers.memoize(
-              () -> {
-                open = true;
-                return session.get().open();
-              });
-    }
-
-    public BufferedReadableByteChannel getChannel() {
-      return channel.get();
-    }
-
-    public boolean isOpen() {
-      return open;
-    }
+    return lazyReadChannel.getSession().get().getResult();
   }
 }

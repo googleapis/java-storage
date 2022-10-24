@@ -20,12 +20,14 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static org.junit.Assert.assertEquals;
 
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.BaseSerializationTest;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.PageImpl;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.Restorable;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
+import com.google.cloud.storage.BlobReadChannelV2.ClientStuff;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.UnifiedOpts.Opt;
@@ -195,12 +197,17 @@ public class SerializationTest extends BaseSerializationTest {
     ResultRetryAlgorithm<?> algorithm =
         options.getRetryAlgorithmManager().getForResumableUploadSessionWrite(EMPTY_RPC_OPTIONS);
     ReadChannel reader = new BlobReadChannel(options, BlobId.of("b", "n"), EMPTY_RPC_OPTIONS);
+    ReadChannel readerV2 =
+        new BlobReadChannelV2(
+            new StorageObject().setBucket("b").setName("n"),
+            EMPTY_RPC_OPTIONS,
+            ClientStuff.from(options));
     // avoid closing when you don't want partial writes to GCS upon failure
     @SuppressWarnings("resource")
     BlobWriteChannel writer =
         new BlobWriteChannel(
             options, BlobInfo.newBuilder(BlobId.of("b", "n")).build(), "upload-id", algorithm);
-    return new Restorable<?>[] {reader, writer};
+    return new Restorable<?>[] {reader, readerV2, writer};
   }
 
   /**

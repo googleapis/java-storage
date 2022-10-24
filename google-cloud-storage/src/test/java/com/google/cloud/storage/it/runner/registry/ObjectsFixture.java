@@ -16,12 +16,15 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.ComposeRequest;
+import com.google.cloud.storage.it.ChecksummedTestContent;
 import com.google.common.collect.ImmutableMap;
 import java.nio.charset.StandardCharsets;
 
@@ -35,6 +38,7 @@ public final class ObjectsFixture implements ManagedLifecycle {
   private BlobInfo info2;
   private BlobInfo info3;
   private BlobInfo info4;
+  private ObjectAndContent obj512KiB;
 
   ObjectsFixture(Storage s, BucketInfo bucket) {
     this.s = s;
@@ -60,6 +64,10 @@ public final class ObjectsFixture implements ManagedLifecycle {
 
   public BlobInfo getInfo4() {
     return info4;
+  }
+
+  public ObjectAndContent getObj512KiB() {
+    return obj512KiB;
   }
 
   @Override
@@ -103,6 +111,14 @@ public final class ObjectsFixture implements ManagedLifecycle {
     this.info2 = s.get(blobId2).asBlobInfo();
     this.info3 = s.get(blobId3).asBlobInfo();
     this.info4 = s.get(blobId4).asBlobInfo();
+
+    byte[] bytes = DataGenerator.base64Characters().genBytes(512);
+    Blob obj512KiB =
+        s.create(
+            BlobInfo.newBuilder(bucket, "obj512KiB").build(),
+            bytes,
+            BlobTargetOption.doesNotExist());
+    this.obj512KiB = new ObjectAndContent(obj512KiB.asBlobInfo(), ChecksummedTestContent.of(bytes));
   }
 
   @Override
@@ -110,5 +126,23 @@ public final class ObjectsFixture implements ManagedLifecycle {
 
   private static String objName(String name) {
     return String.format("%s/%s", ObjectsFixture.class.getSimpleName(), name);
+  }
+
+  public static final class ObjectAndContent {
+    private final BlobInfo info;
+    private final ChecksummedTestContent content;
+
+    private ObjectAndContent(BlobInfo info, ChecksummedTestContent content) {
+      this.info = info;
+      this.content = content;
+    }
+
+    public BlobInfo getInfo() {
+      return info;
+    }
+
+    public ChecksummedTestContent getContent() {
+      return content;
+    }
   }
 }
