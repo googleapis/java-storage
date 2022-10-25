@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage.conformance.retry;
 
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.notificationSetup;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.pubsubTopicSetup;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.serviceAccount;
 import static com.google.common.base.Predicates.and;
@@ -36,6 +38,8 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.HttpMethod;
+import com.google.cloud.storage.NotificationInfo;
+import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
@@ -55,6 +59,7 @@ import com.google.cloud.storage.conformance.retry.RpcMethod.storage.bucket_acl;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.buckets;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.default_object_acl;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.hmacKey;
+import com.google.cloud.storage.conformance.retry.RpcMethod.storage.notifications;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.object_acl;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.objects;
 import com.google.cloud.storage.conformance.retry.RpcMethod.storage.serviceaccount;
@@ -89,6 +94,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -897,13 +904,86 @@ final class RpcMethodMappings {
 
     static final class Notification {
 
-      private static void delete(ArrayList<RpcMethodMapping> a) {}
+      private static void delete(ArrayList<RpcMethodMapping> a) {
+        a.add(RpcMethodMapping.newBuilder(248, notifications.delete)
+            .withSetup(notificationSetup)
+            .withTest(
+                (ctx, c) ->
+                    ctx.map(
+                        state -> {
+                          boolean success = ctx.getStorage().deleteNotification(
+                              state.getBucket().getName(),
+                              state.getNotification().getNotificationId()
+                          );
+                          assertTrue(success);
+                          return state.with(success);
+                        }
+                    )
+            )
+            .build());
+      }
 
-      private static void get(ArrayList<RpcMethodMapping> a) {}
+      private static void get(ArrayList<RpcMethodMapping> a) {
+        a.add(
+            RpcMethodMapping.newBuilder(246, notifications.get)
+                .withSetup(notificationSetup)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              com.google.cloud.storage.Notification notification =
+                                  ctx.getStorage().getNotification(
+                                      state.getBucket().getName(),
+                                      state.getNotification().getNotificationId());
+                                  return state.with(notification);
+                            }
+                        )
+                )
+                .build()
+        );
+      }
 
-      private static void insert(ArrayList<RpcMethodMapping> a) {}
+      private static void insert(ArrayList<RpcMethodMapping> a) {
+        a.add(
+            RpcMethodMapping.newBuilder(247, notifications.insert)
+                .withSetup(pubsubTopicSetup)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              PayloadFormat format = PayloadFormat.JSON_API_V1;
+                              Map<String, String> attributes = ImmutableMap.of("label1", "value1");
+                              NotificationInfo info = NotificationInfo.newBuilder(state.getTopic().toString())
+                                  .setPayloadFormat(format)
+                                  .setCustomAttributes(attributes)
+                                  .build();
+                              com.google.cloud.storage.Notification notification = ctx.getStorage()
+                                      .createNotification(state.getBucket().getName(), info);
+                              return state.with(notification);
+                            }
+                        )
+                )
+                .build()
+        );
+      }
 
-      private static void list(ArrayList<RpcMethodMapping> a) {}
+      private static void list(ArrayList<RpcMethodMapping> a) {
+        a.add(
+            RpcMethodMapping.newBuilder(249, notifications.list)
+                .withSetup(pubsubTopicSetup)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              List<com.google.cloud.storage.Notification> notifications =
+                                  ctx.getStorage().listNotifications(state.getBucket().getName());
+                              return state.with(notifications);
+                            }
+                        )
+                )
+                .build()
+        );
+      }
     }
 
     static final class ObjectAcl {

@@ -69,6 +69,7 @@ final class TestRetryConformance {
   private final String bucketName2;
   private final String userProject;
   private final String objectName;
+  private final String topicName;
 
   private final Supplier<byte[]> lazyHelloWorldUtf8Bytes;
   private final Path helloWorldFilePath = resolvePathForResource();
@@ -131,6 +132,10 @@ final class TestRetryConformance {
     this.objectName =
         String.format(
             "%s_s%03d-%s-m%03d_obj1",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
+    this.topicName =
+        String.format(
+            "%s_s%03d-%s-m%03d_top1",
             BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
     lazyHelloWorldUtf8Bytes =
         Suppliers.memoize(
@@ -255,5 +260,9 @@ final class TestRetryConformance {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public String getTopicName() {
+    return topicName;
   }
 }

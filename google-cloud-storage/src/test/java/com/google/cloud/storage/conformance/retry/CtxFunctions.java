@@ -16,6 +16,9 @@
 
 package com.google.cloud.storage.conformance.retry;
 
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.notification;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.pubsubTopic;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
 import static com.google.common.collect.Sets.newHashSet;
 
 import com.google.api.gax.paging.Page;
@@ -31,13 +34,18 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
+import com.google.cloud.storage.NotificationInfo;
+import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.pubsub.v1.TopicName;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Define a set of {@link CtxFunction} which are used in mappings as well as general setup/tear down
@@ -133,6 +141,34 @@ final class CtxFunctions {
         (ctx, c) -> ctx.map(state -> state.with(ctx.getStorage().create(state.getBlobInfo())));
   }
 
+  static final class Notification {
+    static final CtxFunction pubsubTopic =
+        (ctx, c) -> {
+          String projectId = c.getProjectId();
+          TopicName name = TopicName.of(projectId, c.getTopicName());
+          return ctx.map(s -> s.with(name));
+        };
+
+    static final CtxFunction notification =
+        (ctx, c) -> ctx.map(state -> {
+          PayloadFormat format = PayloadFormat.JSON_API_V1;
+          Map<String, String> attributes = ImmutableMap.of("label1", "value1");
+          NotificationInfo notificationInfo =
+              NotificationInfo.newBuilder(state.getTopic().toString())
+                  .setCustomAttributes(attributes)
+                  .setPayloadFormat(format)
+                  .build();
+          return state.with(
+              ctx.getStorage().createNotification(c.getBucketName(), notificationInfo));
+        });
+
+    static final CtxFunction pubsubTopicSetup =
+        defaultSetup.andThen(pubsubTopic);
+
+    static final CtxFunction notificationSetup =
+        pubsubTopicSetup.andThen(notification);
+  }
+
   static final class ResourceSetup {
     private static final CtxFunction bucket =
         (ctx, c) -> {
@@ -190,6 +226,11 @@ final class CtxFunctions {
           if (resources.contains(Resource.HMAC_KEY)) {
             f = f.andThen(serviceAccount).andThen(hmacKey);
             resources.remove(Resource.HMAC_KEY);
+          }
+
+          if (resources.contains(Resource.NOTIFICATION)) {
+            f = f.andThen(pubsubTopic).andThen(notification);
+            resources.remove(Resource.NOTIFICATION);
           }
 
           if (!resources.isEmpty()) {
