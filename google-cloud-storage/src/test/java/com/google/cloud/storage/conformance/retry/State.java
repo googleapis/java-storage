@@ -78,8 +78,10 @@ final class State {
   private static final Key<List<Acl>> KEY_ACLS = new Key<>("acls");
   private static final Key<byte[]> KEY_BYTES = new Key<>("bytes");
   private static final Key<ComposeRequest> KEY_COMPOSE_REQUEST = new Key<>("composeRequest");
-  private static final Key<TopicName> KEY_PUBSUB_TOPIC = new Key<>("pubsubTopic");
+  private static final Key<TopicName> KEY_PUBSUB_TOPIC = new Key<>("topicName");
   private static final Key<Notification> KEY_NOTIFICATION = new Key<>("notification");
+  private static final Key<List<Notification>> KEY_LIST_NOTIFICATION =
+      new Key<>("lise<notification>");
 
   private final ImmutableMap<Key<?>, Object> data;
 
@@ -293,10 +295,6 @@ final class State {
     return newStateWith(KEY_LIST_OBJECTS, collect);
   }
 
-  public <T> State with(List<T> listResult) {
-    return newStateWith(KEY_LIST_OBJECTS, listResult);
-  }
-
   public State with(ComposeRequest composeRequest) {
     return newStateWith(KEY_COMPOSE_REQUEST, composeRequest);
   }
@@ -309,11 +307,11 @@ final class State {
     return hasValue(KEY_COMPOSE_REQUEST);
   }
 
-  public boolean hasPubsubTopic() {
+  public boolean hasTopicName() {
     return hasValue(KEY_PUBSUB_TOPIC);
   }
 
-  public TopicName getTopic() {
+  public TopicName getTopicName() {
     return getValue(KEY_PUBSUB_TOPIC);
   }
 
@@ -331,6 +329,18 @@ final class State {
 
   public State with(Notification notification) {
     return newStateWith(KEY_NOTIFICATION, notification);
+  }
+
+  public boolean hasNotifications() {
+    return hasValue(KEY_LIST_NOTIFICATION);
+  }
+
+  public List<Notification> getNotifications() {
+    return getValue(KEY_LIST_NOTIFICATION);
+  }
+
+  public State with(List<Notification> notifications) {
+    return newStateWith(KEY_LIST_NOTIFICATION, notifications);
   }
 
   private <T> T getValue(Key<T> key) {

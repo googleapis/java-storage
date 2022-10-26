@@ -1488,8 +1488,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.createNotification(bucket, notificationPb),
-        codecs.notificationInfo()::decode
-    ).asNotification(this);
+        n -> codecs.notificationInfo().decode(n).asNotification(this));
   }
 
   @Override
@@ -1499,14 +1498,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.getNotification(bucket, notificationId),
-        codecs.notificationInfo()::decode
-    ).asNotification(this);
+        n -> codecs.notificationInfo().decode(n).asNotification(this));
   }
 
   @Override
   public List<Notification> listNotifications(final String bucket) {
     ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForNotificationList(bucket);
-    return run(
+    List<Notification> result = run(
         algorithm,
         () -> storageRpc.listNotifications(bucket),
         (answer) ->
@@ -1514,6 +1512,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                 .map(n -> codecs.notificationInfo().decode(n).asNotification(this))
                 .collect(ImmutableList.toImmutableList())
     );
+    return result == null ? ImmutableList.of() : result;
   }
 
   @Override

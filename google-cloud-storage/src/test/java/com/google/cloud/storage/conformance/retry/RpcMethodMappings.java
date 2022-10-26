@@ -16,9 +16,9 @@
 
 package com.google.cloud.storage.conformance.retry;
 
-import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.notificationSetup;
-import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.pubsubTopicSetup;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.notificationSetup;
+import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.pubsubTopicSetup;
 import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.serviceAccount;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.not;
@@ -953,7 +953,8 @@ final class RpcMethodMappings {
                             state -> {
                               PayloadFormat format = PayloadFormat.JSON_API_V1;
                               Map<String, String> attributes = ImmutableMap.of("label1", "value1");
-                              NotificationInfo info = NotificationInfo.newBuilder(state.getTopic().toString())
+                              NotificationInfo info =
+                                  NotificationInfo.newBuilder(state.getTopicName().toString())
                                   .setPayloadFormat(format)
                                   .setCustomAttributes(attributes)
                                   .build();

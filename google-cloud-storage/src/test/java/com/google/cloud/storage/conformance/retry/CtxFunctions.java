@@ -16,9 +16,6 @@
 
 package com.google.cloud.storage.conformance.retry;
 
-import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.notification;
-import static com.google.cloud.storage.conformance.retry.CtxFunctions.Notification.pubsubTopic;
-import static com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup.defaultSetup;
 import static com.google.common.collect.Sets.newHashSet;
 
 import com.google.api.gax.paging.Page;
@@ -141,34 +138,6 @@ final class CtxFunctions {
         (ctx, c) -> ctx.map(state -> state.with(ctx.getStorage().create(state.getBlobInfo())));
   }
 
-  static final class Notification {
-    static final CtxFunction pubsubTopic =
-        (ctx, c) -> {
-          String projectId = c.getProjectId();
-          TopicName name = TopicName.of(projectId, c.getTopicName());
-          return ctx.map(s -> s.with(name));
-        };
-
-    static final CtxFunction notification =
-        (ctx, c) -> ctx.map(state -> {
-          PayloadFormat format = PayloadFormat.JSON_API_V1;
-          Map<String, String> attributes = ImmutableMap.of("label1", "value1");
-          NotificationInfo notificationInfo =
-              NotificationInfo.newBuilder(state.getTopic().toString())
-                  .setCustomAttributes(attributes)
-                  .setPayloadFormat(format)
-                  .build();
-          return state.with(
-              ctx.getStorage().createNotification(c.getBucketName(), notificationInfo));
-        });
-
-    static final CtxFunction pubsubTopicSetup =
-        defaultSetup.andThen(pubsubTopic);
-
-    static final CtxFunction notificationSetup =
-        pubsubTopicSetup.andThen(notification);
-  }
-
   static final class ResourceSetup {
     private static final CtxFunction bucket =
         (ctx, c) -> {
@@ -209,6 +178,26 @@ final class CtxFunctions {
                   return s.withHmacKey(hmacKey1).with(hmacKey1.getMetadata());
                 });
 
+    static final CtxFunction pubsubTopic =
+        (ctx, c) -> {
+          String projectId = c.getProjectId();
+          TopicName name = TopicName.of(projectId, c.getTopicName());
+          return ctx.map(s -> s.with(name));
+        };
+
+    static final CtxFunction notification =
+        (ctx, c) -> ctx.map(state -> {
+          PayloadFormat format = PayloadFormat.JSON_API_V1;
+          Map<String, String> attributes = ImmutableMap.of("label1", "value1");
+          NotificationInfo notificationInfo =
+              NotificationInfo.newBuilder(state.getTopicName().toString())
+                  .setCustomAttributes(attributes)
+                  .setPayloadFormat(format)
+                  .build();
+          return state.with(
+              ctx.getStorage().createNotification(c.getBucketName(), notificationInfo));
+        });
+
     private static final CtxFunction processResources =
         (ctx, c) -> {
           HashSet<Resource> resources = newHashSet(c.getMethod().getResourcesList());
@@ -245,6 +234,13 @@ final class CtxFunctions {
         (ctx, c) -> ctx.map(s -> s.with(Acl.of(User.ofAllUsers(), Role.READER)));
 
     static final CtxFunction defaultSetup = processResources.andThen(allUsersReaderAcl);
+
+    static final CtxFunction pubsubTopicSetup =
+        defaultSetup.andThen(pubsubTopic);
+
+    static final CtxFunction notificationSetup =
+        pubsubTopicSetup.andThen(notification);
+
   }
 
   static final class ResourceTeardown {
