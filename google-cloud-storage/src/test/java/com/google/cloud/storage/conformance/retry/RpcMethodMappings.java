@@ -905,22 +905,22 @@ final class RpcMethodMappings {
     static final class Notification {
 
       private static void delete(ArrayList<RpcMethodMapping> a) {
-        a.add(RpcMethodMapping.newBuilder(248, notifications.delete)
-            .withSetup(notificationSetup)
-            .withTest(
-                (ctx, c) ->
-                    ctx.map(
-                        state -> {
-                          boolean success = ctx.getStorage().deleteNotification(
-                              state.getBucket().getName(),
-                              state.getNotification().getNotificationId()
-                          );
-                          assertTrue(success);
-                          return state.with(success);
-                        }
-                    )
-            )
-            .build());
+        a.add(
+            RpcMethodMapping.newBuilder(248, notifications.delete)
+                .withSetup(notificationSetup)
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state -> {
+                              boolean success =
+                                  ctx.getStorage()
+                                      .deleteNotification(
+                                          state.getBucket().getName(),
+                                          state.getNotification().getNotificationId());
+                              assertTrue(success);
+                              return state.with(success);
+                            }))
+                .build());
       }
 
       private static void get(ArrayList<RpcMethodMapping> a) {
@@ -932,15 +932,13 @@ final class RpcMethodMappings {
                         ctx.map(
                             state -> {
                               com.google.cloud.storage.Notification notification =
-                                  ctx.getStorage().getNotification(
-                                      state.getBucket().getName(),
-                                      state.getNotification().getNotificationId());
-                                  return state.with(notification);
-                            }
-                        )
-                )
-                .build()
-        );
+                                  ctx.getStorage()
+                                      .getNotification(
+                                          state.getBucket().getName(),
+                                          state.getNotification().getNotificationId());
+                              return state.with(notification);
+                            }))
+                .build());
       }
 
       private static void insert(ArrayList<RpcMethodMapping> a) {
@@ -955,17 +953,15 @@ final class RpcMethodMappings {
                               Map<String, String> attributes = ImmutableMap.of("label1", "value1");
                               NotificationInfo info =
                                   NotificationInfo.newBuilder(state.getTopicName().toString())
-                                  .setPayloadFormat(format)
-                                  .setCustomAttributes(attributes)
-                                  .build();
-                              com.google.cloud.storage.Notification notification = ctx.getStorage()
+                                      .setPayloadFormat(format)
+                                      .setCustomAttributes(attributes)
+                                      .build();
+                              com.google.cloud.storage.Notification notification =
+                                  ctx.getStorage()
                                       .createNotification(state.getBucket().getName(), info);
                               return state.with(notification);
-                            }
-                        )
-                )
-                .build()
-        );
+                            }))
+                .build());
       }
 
       private static void list(ArrayList<RpcMethodMapping> a) {
@@ -979,11 +975,8 @@ final class RpcMethodMappings {
                               List<com.google.cloud.storage.Notification> notifications =
                                   ctx.getStorage().listNotifications(state.getBucket().getName());
                               return state.with(notifications);
-                            }
-                        )
-                )
-                .build()
-        );
+                            }))
+                .build());
       }
     }
 

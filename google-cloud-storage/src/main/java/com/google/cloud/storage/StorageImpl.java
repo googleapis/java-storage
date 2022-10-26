@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.RetryHelper.runWithRetries;
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -36,7 +35,6 @@ import com.google.cloud.PageImpl;
 import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
-import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
@@ -1493,8 +1491,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public Notification getNotification(final String bucket, final String notificationId) {
-    ResultRetryAlgorithm<?> algorithm
-        = retryAlgorithmManager.getForNotificationGet(bucket, notificationId);
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForNotificationGet(bucket, notificationId);
     return run(
         algorithm,
         () -> storageRpc.getNotification(bucket, notificationId),
@@ -1504,26 +1502,25 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   @Override
   public List<Notification> listNotifications(final String bucket) {
     ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForNotificationList(bucket);
-    List<Notification> result = run(
-        algorithm,
-        () -> storageRpc.listNotifications(bucket),
-        (answer) ->
-            answer.stream()
-                .map(n -> codecs.notificationInfo().decode(n).asNotification(this))
-                .collect(ImmutableList.toImmutableList())
-    );
+    List<Notification> result =
+        run(
+            algorithm,
+            () -> storageRpc.listNotifications(bucket),
+            (answer) ->
+                answer.stream()
+                    .map(n -> codecs.notificationInfo().decode(n).asNotification(this))
+                    .collect(ImmutableList.toImmutableList()));
     return result == null ? ImmutableList.of() : result;
   }
 
   @Override
   public boolean deleteNotification(final String bucket, final String notificationId) {
-    ResultRetryAlgorithm<?> algorithm
-        = retryAlgorithmManager.getForNotificationDelete(bucket, notificationId);
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForNotificationDelete(bucket, notificationId);
     return run(
         algorithm,
         () -> storageRpc.deleteNotification(bucket, notificationId),
-        Function.identity()
-    );
+        Function.identity());
   }
 
   @Override

@@ -186,17 +186,19 @@ final class CtxFunctions {
         };
 
     static final CtxFunction notification =
-        (ctx, c) -> ctx.map(state -> {
-          PayloadFormat format = PayloadFormat.JSON_API_V1;
-          Map<String, String> attributes = ImmutableMap.of("label1", "value1");
-          NotificationInfo notificationInfo =
-              NotificationInfo.newBuilder(state.getTopicName().toString())
-                  .setCustomAttributes(attributes)
-                  .setPayloadFormat(format)
-                  .build();
-          return state.with(
-              ctx.getStorage().createNotification(c.getBucketName(), notificationInfo));
-        });
+        (ctx, c) ->
+            ctx.map(
+                state -> {
+                  PayloadFormat format = PayloadFormat.JSON_API_V1;
+                  Map<String, String> attributes = ImmutableMap.of("label1", "value1");
+                  NotificationInfo notificationInfo =
+                      NotificationInfo.newBuilder(state.getTopicName().toString())
+                          .setCustomAttributes(attributes)
+                          .setPayloadFormat(format)
+                          .build();
+                  return state.with(
+                      ctx.getStorage().createNotification(c.getBucketName(), notificationInfo));
+                });
 
     private static final CtxFunction processResources =
         (ctx, c) -> {
@@ -235,12 +237,9 @@ final class CtxFunctions {
 
     static final CtxFunction defaultSetup = processResources.andThen(allUsersReaderAcl);
 
-    static final CtxFunction pubsubTopicSetup =
-        defaultSetup.andThen(pubsubTopic);
+    static final CtxFunction pubsubTopicSetup = defaultSetup.andThen(pubsubTopic);
 
-    static final CtxFunction notificationSetup =
-        pubsubTopicSetup.andThen(notification);
-
+    static final CtxFunction notificationSetup = pubsubTopicSetup.andThen(notification);
   }
 
   static final class ResourceTeardown {
