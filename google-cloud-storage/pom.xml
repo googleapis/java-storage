@@ -17,6 +17,7 @@
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
     <kms.version>0.98.0</kms.version>
+    <pubsub-proto.version>1.102.22</pubsub-proto.version>
     <junit-platform.version>5.9.1</junit-platform.version>
   </properties>
   <dependencies>
@@ -184,6 +185,12 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>grpc-google-iam-v1</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.api.grpc</groupId>
+      <artifactId>proto-google-cloud-pubsub-v1</artifactId>
+      <scope>test</scope>
+      <version>${pubsub-proto.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
