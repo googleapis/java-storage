@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.14.0](https://github.com/googleapis/java-storage/compare/v2.13.1...v2.14.0) (2022-10-26)
+
+
+### Features
+
+* Initial preview implementation of Storage over gRPC ([#1740](https://github.com/googleapis/java-storage/issues/1740)) ([95d7ad9](https://github.com/googleapis/java-storage/commit/95d7ad9e5cd4106cadb23d9b2221419797fed5c1))
+
+
+### Bug Fixes
+
+* Properly implement GrpcBlobReadChannel#isOpen ([#1733](https://github.com/googleapis/java-storage/issues/1733)) ([04e5166](https://github.com/googleapis/java-storage/commit/04e51662d1f62d987e89ec4e221a3a02c02eaec1))
+* Update BucketInfo.LifecycleRule.LifecycleCondition equals and hashCode to include match prefix and suffix ([#1729](https://github.com/googleapis/java-storage/issues/1729)) ([9664e8a](https://github.com/googleapis/java-storage/commit/9664e8a776dc6c7c59e61c1e59333ba88731fe76))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.0.5 ([#1725](https://github.com/googleapis/java-storage/issues/1725)) ([09bc225](https://github.com/googleapis/java-storage/commit/09bc22534bb2a401507fa894123affb432a84350))
+
 ## [2.13.1](https://github.com/googleapis/java-storage/compare/v2.13.0...v2.13.1) (2022-10-20)
 
 
