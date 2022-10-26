@@ -2,6 +2,89 @@
 
 ## [2.14.0](https://github.com/googleapis/java-storage/compare/v2.13.1...v2.14.0) (2022-10-26)
 
+### Google Cloud Storage gRPC API Preview
+The first release of `google-cloud-storage` with support for a subset of the Google Cloud Storage gRPC API which is in private preview. The most common operations have all been implemented and are available for experimentation.
+
+Given not all public api surface of `google-cloud-storage` classes are supported for gRPC a new annotation `@TransportCompatibility` has been added to various classes, methods and fields/enum values to signal where that thing can be expected to work. As we implement more of the operations these annotations will be updated.
+
+All new gRPC related APIs are annotated with `@BetaApi` to denote they are in preview and the possibility of breaking change is present. At this time, opting to use any of the gRPC transport mode means you are okay with the possibility of a breaking change happening. When the APIs are out of preview, we will remove the `@BetaApi` annotation to signal they are now considered stable and will not break outside a major version.
+
+**_NOTICE_**: Using the gRPC transport is exclusive. Any operations which have not yet been implemented for gRPC will result in a runtime error. For those operations which are not yet implemented, please continue to use the existing HTTP transport.
+
+Special thanks (in alphabetical order) to @BenWhitehead, @frankyn, @jesselovelace and @sydney-munro for their hard work on this effort.
+
+#### Notable Improvements
+1. For all gRPC media related operations (upload/download) we are now more resource courteous then the corresponding HTTP counterpart. Buffers are fixed to their specified size (can't arbitrarily grow without bounds), are allocated lazily and only if necessary.
+    1. Investigation into the possibility of backporting these improvements to the HTTP counterparts is ongoing
+
+2. Preview support for Accessing GCS via gRPC
+    1. Set the environment variable `GOOGLE_CLOUD_ENABLE_DIRECT_PATH_XDS=true`, then run your program.
+    2. When configuring your `StorageOptions` mimic the following:
+       ```
+        StorageOptions.grpc()
+          .setAttemptDirectPath(true)
+          .build()
+       ```
+    3. Internally the default host endpoint `https://storage.googleapis.com:443` will be transformed to the applicable `google-c2p-experimental:///storage.googleapis.com`
+
+3. Support for `java.time` types on model classes
+    1. Points in time are now represented with `java.time.OffsetDateTime`, while durations are represented with `java.time.Duration`
+    2. All existing `Long` centric methods are still present, but have been deprecated in favor of their corresponding `java.time` variant
+    3. At the next major version, these deprecated methods will be replaced with types from `java.time` and the `java.time` variant methods will be deprecated
+
+4. `com.google.cloud.storage.Storage` now extends `java.lang.AutoClosable` thereby allowing it to be used in a try-with-resource block.
+    1. When using gRPC transport be sure to call `Storage#close()` when complete so it can clean up the gRPC middleware and resources.
+    2. When using HTTP transport calling `Storage#close()` will gracefully no-op, allowing for the same style of use regardless of transport.
+
+5. When downloading an object via gRPC idle stream detection is now present which will restart a stream if it is determined to be idle and has remaining retry budget
+6. Update equals()/hashCode() methods to follow the expected contract
+7. The new gRPC transport based implementation continues to provide idempotency aware automatic retries the same as HTTP
+8. Expanded test suite which should bring improved stability and reliability to both HTTP and gRPC transport implementations
+9. New `com.google.cloud:google-cloud-storage-bom` maven bom available to use for coordinated dependency version resolution for multiple storage artifacts
+
+#### Not yet implemented
+1. All ACL specific operations.
+    1. These will be implemented in the near future
+    2. In the interim, reading and setting of ACLs and Default Object ACLs can be performed via Object/Bucket operations
+
+2. All Notification related operations
+    1. These will be implemented in the near future
+    2. In the interim, please continue to use the HTTP transport
+
+3. `ReadChannel#capture()`, `RestorableState<ReadChannel>#restore()`, `WriteChannel#capture()`, `RestorableState<WriteChannel>#restore()`, `CopyWriter#capture()` and `RestorableState<CopyWriter>#capture()` are not yet implemented.
+   * These use cases will be implemented in the near future. We are still determining the route we want to take.
+
+4. Batch and "bulk" operations which depend on batch
+    1. GCS gRPC does not currently define a batch method whereas HTTP does. This means `Storage#batch()` is only supported for HTTP transport.
+    2. The following methods which currently depend on `Storage#batch()` are currently only supported for HTTP transport
+       * `com.google.cloud.storage.Storage#get(com.google.cloud.storage.BlobId...)`
+       * `com.google.cloud.storage.Storage#get(java.lang.Iterable<com.google.cloud.storage.BlobId>)`
+       * `com.google.cloud.storage.Storage#update(com.google.cloud.storage.BlobInfo...)`
+       * `com.google.cloud.storage.Storage#update(java.lang.Iterable<com.google.cloud.storage.BlobInfo>)`
+       * `com.google.cloud.storage.Storage#delete(com.google.cloud.storage.BlobId...)`
+       * `com.google.cloud.storage.Storage#delete(java.lang.Iterable<com.google.cloud.storage.BlobId>)`
+
+#### One-Time Inconveniences
+1. All classes under `com.google.cloud.storage` which are `Serializable` have new `serialVersionUIDs` and are incompatible with any previous version.
+    1. Several classes had to change in order to support both HTTP and gRPC at the same time. We were able to preserve Source and Binary runtime level compatibility but had to break Serialization across versions.
+    2. If you depend upon Java Serialization, please ensure you are using the same version of `google-cloud-storage` in both locations.
+
+2. The cause chains of some Exceptions have changed.
+    1. When using gRPC, `StorageException` causes will use the corresponding `com.google.api.gax.rpc.ApiException` for the failure type instead of the HTTP `com.google.api.client.googleapis.json.GoogleJsonError`
+        * In an effort to preserve compatibility of your existing error handling code, we will translate from the gRPC error code to the similar HTTP Status code before constructing the `StorageException` preserving the integrity of `StorageException#getCode()`
+    2. RetryHelper$RetryHelperException will no longer appear in exception cause chains for either HTTP or gRPC
+
+
+#### Not Supported
+Given the nature of the gRPC transport a few things are explicitly not supported when using gRPC, and require HTTP transport. Attempting to use any of the following methods will result in a runtime error stating they are not supported for gRPC transport.
+1. `Storage#writer(URL)` does not work for gRPC. gRPC does not provide a means of exchanging an HTTP url for a resumable session id
+2. `Storage#signUrl` is not supported for gRPC transport. Signed URLs explicitly generate HTTP urls and are only supported for the HTTP transport based implementation.
+3. `Storage#generateSignedPostPolicyV4` is not supported for gRPC transport. Signed URLs explicitly generate HTTP urls and are only supported for the HTTP transport based implementation.
+
+#### Known Issues
+1. https://github.com/googleapis/java-storage/issues/1736
+2. https://github.com/googleapis/java-storage/issues/1737
+
 
 ### Features
 
