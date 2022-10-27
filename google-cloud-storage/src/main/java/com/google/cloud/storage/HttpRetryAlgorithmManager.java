@@ -20,6 +20,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.HmacKeyMetadata;
+import com.google.api.services.storage.model.Notification;
 import com.google.api.services.storage.model.ObjectAccessControl;
 import com.google.api.services.storage.model.Policy;
 import com.google.api.services.storage.model.StorageObject;
@@ -241,6 +242,22 @@ final class HttpRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getForServiceAccountGet(String pb) {
+    return retryStrategy.getIdempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getForNotificationCreate(String bucket, Notification pb) {
+    return retryStrategy.getNonidempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getForNotificationGet(String bucket, String notificationId) {
+    return retryStrategy.getIdempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getForNotificationList(String bucket) {
+    return retryStrategy.getIdempotentHandler();
+  }
+
+  public ResultRetryAlgorithm<?> getForNotificationDelete(String bucket, String notificationId) {
     return retryStrategy.getIdempotentHandler();
   }
 }
