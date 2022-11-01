@@ -56,8 +56,9 @@ public class UploadKmsEncryptedObject {
     // precondition. This will cause the request to fail if the existing object's generation
     // changes before the request runs.
     if (storage.get(bucketName, objectName) != null) {
-      precondition = Storage.BlobTargetOption.generationMatch(
-          storage.get(bucketName, objectName).getGeneration());
+      precondition =
+          Storage.BlobTargetOption.generationMatch(
+              storage.get(bucketName, objectName).getGeneration());
     }
 
     storage.create(blobInfo, data, Storage.BlobTargetOption.kmsKeyName(kmsKeyName), precondition);

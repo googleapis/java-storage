@@ -56,8 +56,9 @@ public class ComposeObject {
     // precondition. This will cause the request to fail if the existing object's generation
     // changes before the request runs.
     if (storage.get(bucketName, targetObjectName) != null) {
-      precondition = Storage.BlobTargetOption.generationMatch(
-          storage.get(bucketName, targetObjectName).getGeneration());
+      precondition =
+          Storage.BlobTargetOption.generationMatch(
+              storage.get(bucketName, targetObjectName).getGeneration());
     }
 
     Storage.ComposeRequest composeRequest =

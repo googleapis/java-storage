@@ -55,8 +55,9 @@ public class CopyOldVersionOfObject {
     // precondition. This will cause the request to fail if the existing object's generation
     // changes before the request runs.
     if (storage.get(bucketName, newObjectName) != null) {
-      precondition = Storage.BlobTargetOption.generationMatch(
-          storage.get(bucketName, newObjectName).getGeneration());
+      precondition =
+          Storage.BlobTargetOption.generationMatch(
+              storage.get(bucketName, newObjectName).getGeneration());
     }
 
     Storage.CopyRequest copyRequest =

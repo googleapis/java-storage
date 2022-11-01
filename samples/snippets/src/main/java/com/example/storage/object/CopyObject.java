@@ -53,8 +53,9 @@ public class CopyObject {
     // precondition. This will cause the request to fail if the existing object's generation
     // changes before the request runs.
     if (storage.get(targetBucketName, objectName) != null) {
-      precondition = Storage.BlobTargetOption.generationMatch(
-          storage.get(targetBucketName, objectName).getGeneration());
+      precondition =
+          Storage.BlobTargetOption.generationMatch(
+              storage.get(targetBucketName, objectName).getGeneration());
     }
 
     storage.copy(
