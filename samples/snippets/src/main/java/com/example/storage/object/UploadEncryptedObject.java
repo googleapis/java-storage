@@ -58,7 +58,7 @@ public class UploadEncryptedObject {
     // If the destination already exists in your bucket, instead set a generation-match
     // precondition. This will cause the request to fail if the existing object's generation
     // changes before the request runs.
-    if(storage.get(bucketName, objectName) != null) {
+    if (storage.get(bucketName, objectName) != null) {
       precondition = Storage.BlobTargetOption.generationMatch(
           storage.get(bucketName, objectName).getGeneration());
     }
