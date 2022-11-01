@@ -58,9 +58,10 @@ public class MoveObject {
     // If the destination already exists in your bucket, instead set a generation-match
     // precondition. This will cause the request to fail if the existing object's generation
     // changes before the request runs.
-    if(storage.get(targetBucketName, targetObjectName) != null) {
-      precondition = Storage.BlobTargetOption.generationMatch(
-          storage.get(targetBucketName, targetObjectName).getGeneration());
+    if (storage.get(targetBucketName, targetObjectName) != null) {
+      precondition =
+          Storage.BlobTargetOption.generationMatch(
+              storage.get(targetBucketName, targetObjectName).getGeneration());
     }
 
     // Copy source object to target object
