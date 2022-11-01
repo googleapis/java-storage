@@ -50,10 +50,15 @@ public class ComposeObject {
     // conditions and data corruptions. The request returns a 412 error if the
     // preconditions are not met.
     // For a target object that does not yet exist, set the DoesNotExist precondition.
+    // This will cause the request to fail if the object is created before the request runs.
     Storage.BlobTargetOption precondition = Storage.BlobTargetOption.doesNotExist();
     // If the destination already exists in your bucket, instead set a generation-match
-    // precondition:
-    // Storage.BlobTargetOption precondition = Storage.BlobTargetOption.generationMatch();
+    // precondition. This will cause the request to fail if the existing object's generation
+    // changes before the request runs.
+    if(storage.get(bucketName, targetObjectName) != null) {
+      precondition = Storage.BlobTargetOption.generationMatch(
+          storage.get(bucketName, targetObjectName).getGeneration());
+    }
 
     Storage.ComposeRequest composeRequest =
         Storage.ComposeRequest.newBuilder()

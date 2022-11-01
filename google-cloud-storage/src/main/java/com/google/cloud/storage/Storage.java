@@ -624,6 +624,15 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option for blob's data generation match. If this option is used the request will
+     * fail if blob's generation does not match the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobTargetOption generationMatch(long generation) {
+      return new BlobTargetOption(UnifiedOpts.generationMatch(generation));
+    }
+
+    /**
      * Returns an option for blob's data generation mismatch. If this option is used the request
      * will fail if generation matches.
      */
@@ -639,6 +648,15 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption metagenerationMatch() {
       return new BlobTargetOption(UnifiedOpts.metagenerationMatchExtractor());
+    }
+
+    /**
+     * Returns an option for blob's metageneration match. If this option is used the request will
+     * fail if blob's metageneration does not match the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobTargetOption metaGenerationMatch(long metageneration) {
+      return new BlobTargetOption(UnifiedOpts.generationMatch(metageneration));
     }
 
     /**
