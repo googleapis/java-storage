@@ -137,11 +137,7 @@ import javax.annotation.Generated;
  * // - It may require correct/in-range values for request initialization.
  * // - It may require specifying regional endpoints when creating the service client as shown in
  * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
- * StorageSettings storageSettings =
- *     StorageSettings.newBuilder()
- *         .setTransportChannelProvider(
- *             StorageSettings.defaultHttpJsonTransportProviderBuilder().build())
- *         .build();
+ * StorageSettings storageSettings = StorageSettings.newHttpJsonBuilder().build();
  * StorageClient storageClient = StorageClient.create(storageSettings);
  * }</pre>
  *
