@@ -32,9 +32,10 @@ public class AutoclassTest extends TestBase {
   @Test
   public void testSetGetBucketAutoclass() {
     String autoclassBucket = RemoteStorageHelper.generateBucketName();
-    storage.create(BucketInfo.newBuilder(autoclassBucket)
-        .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
-        .build());
+    storage.create(
+        BucketInfo.newBuilder(autoclassBucket)
+            .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
+            .build());
     try {
       SetBucketAutoclass.setBucketAutoclass(PROJECT_ID, autoclassBucket);
       Autoclass autoclass = storage.get(autoclassBucket).getAutoclass();

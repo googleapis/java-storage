@@ -35,8 +35,13 @@ public class GetBucketAutoclass {
     String status = autoclass.getEnabled() ? "enabled" : "disabled";
     String toggleTime = autoclass.getToggleTime().toString();
 
-    System.out.println("Autoclass is currently " + status + " for bucket " + bucketName
-        + " and was last changed at " + toggleTime);
+    System.out.println(
+        "Autoclass is currently "
+            + status
+            + " for bucket "
+            + bucketName
+            + " and was last changed at "
+            + toggleTime);
   }
 }
 // [END storage_get_autoclass]

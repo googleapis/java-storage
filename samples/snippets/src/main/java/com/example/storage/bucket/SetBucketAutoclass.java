@@ -39,15 +39,14 @@ public class SetBucketAutoclass {
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
 
-    bucket.toBuilder()
-        .setAutoclass(Autoclass.newBuilder()
-            .setEnabled(enabled)
-            .build())
+    bucket
+        .toBuilder()
+        .setAutoclass(Autoclass.newBuilder().setEnabled(enabled).build())
         .build()
         .update();
 
-    System.out.println("Autoclass for bucket " + bucketName + " was "
-        + (enabled ? "enabled." : "disabled."));
+    System.out.println(
+        "Autoclass for bucket " + bucketName + " was " + (enabled ? "enabled." : "disabled."));
   }
 }
 // [END storage_set_autoclass]
