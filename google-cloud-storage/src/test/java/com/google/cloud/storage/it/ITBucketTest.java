@@ -20,6 +20,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -31,6 +32,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.HttpMethod;
@@ -44,6 +46,7 @@ import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -489,6 +492,40 @@ public class ITBucketTest {
       assertFalse(remoteBlob.getEventBasedHold());
       remoteBucket = remoteBucket.toBuilder().setDefaultEventBasedHold(false).build().update();
       assertFalse(remoteBucket.getDefaultEventBasedHold());
+    } finally {
+      RemoteStorageHelper.forceDelete(
+          storageFixtureHttp.getInstance(), bucketName, 5, TimeUnit.SECONDS);
+    }
+  }
+
+  @Test
+  public void testCreateBucketWithAutoclass() throws ExecutionException, InterruptedException {
+    String bucketName = bucketFixture.newBucketName();
+    storageFixtureHttp
+        .getInstance()
+        .create(
+            BucketInfo.newBuilder(bucketName)
+                .setAutoclass(Autoclass.newBuilder().setEnabled(true).build())
+                .build());
+    try {
+      Bucket remoteBucket = storageFixture.getInstance().get(bucketName);
+
+      assertNotNull(remoteBucket.getAutoclass());
+      assertTrue(remoteBucket.getAutoclass().getEnabled());
+      OffsetDateTime time = remoteBucket.getAutoclass().getToggleTime();
+      assertNotNull(time);
+
+      remoteBucket
+          .toBuilder()
+          .setAutoclass(Autoclass.newBuilder().setEnabled(false).build())
+          .build()
+          .update();
+
+      remoteBucket = storageFixture.getInstance().get(bucketName);
+      assertNotNull(remoteBucket.getAutoclass());
+      assertFalse(remoteBucket.getAutoclass().getEnabled());
+      assertNotNull(remoteBucket.getAutoclass().getToggleTime());
+      assertNotEquals(time, remoteBucket.getAutoclass().getToggleTime());
     } finally {
       RemoteStorageHelper.forceDelete(
           storageFixtureHttp.getInstance(), bucketName, 5, TimeUnit.SECONDS);

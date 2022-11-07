@@ -82,6 +82,8 @@ final class GrpcConversions {
       Codec.of(this::loggingEncode, this::loggingDecode);
   private final Codec<BucketInfo.IamConfiguration, Bucket.IamConfig> iamConfigurationCodec =
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
+  private final Codec<BucketInfo.Autoclass, Bucket.Autoclass> autoclassCodec =
+      Codec.of(this::autoclassEncode, this::autoclassDecode);
   private final Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
@@ -276,6 +278,9 @@ final class GrpcConversions {
     if (from.hasIamConfig()) {
       to.setIamConfiguration(iamConfigurationCodec.decode(from.getIamConfig()));
     }
+    if (from.hasAutoclass()) {
+      to.setAutoclass(autoclassCodec.decode(from.getAutoclass()));
+    }
     if (from.hasCustomPlacementConfig()) {
       Bucket.CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
       to.setCustomPlacementConfig(
@@ -364,6 +369,7 @@ final class GrpcConversions {
         to::addAllDefaultObjectAcl);
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAclCodec::encode), to::addAllAcl);
     ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
+    ifNonNull(from.getAutoclass(), autoclassCodec::encode, to::setAutoclass);
     CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
     if (customPlacementConfig != null && customPlacementConfig.getDataLocations() != null) {
       to.setCustomPlacementConfig(
@@ -513,6 +519,20 @@ final class GrpcConversions {
           timestampCodec::encode,
           to::setLockTime);
     }
+    return to.build();
+  }
+
+  private BucketInfo.Autoclass autoclassDecode(Bucket.Autoclass from) {
+    BucketInfo.Autoclass.Builder to = BucketInfo.Autoclass.newBuilder();
+    to.setEnabled(from.getEnabled());
+    ifNonNull(from.getToggleTime(), timestampCodec::decode, to::setToggleTime);
+    return to.build();
+  }
+
+  private Bucket.Autoclass autoclassEncode(BucketInfo.Autoclass from) {
+    Bucket.Autoclass.Builder to = Bucket.Autoclass.newBuilder();
+    ifNonNull(from.getEnabled(), to::setEnabled);
+    ifNonNull(from.getToggleTime(), timestampCodec::encode, to::setToggleTime);
     return to.build();
   }
 

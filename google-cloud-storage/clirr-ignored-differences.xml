@@ -8,6 +8,12 @@
   </difference>
 
   <difference>
+    <className>com/google/cloud/storage/BucketInfo*</className>
+    <differenceType>7013</differenceType>
+    <method>* setAutoclass(com.google.cloud.storage.BucketInfo$Autoclass)</method>
+  </difference>
+
+  <difference>
     <differenceType>7002</differenceType>
     <className>com/google/cloud/storage/HmacKey$HmacKeyMetadata</className>
     <method>* toPb()</method>
