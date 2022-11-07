@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.15.0](https://github.com/googleapis/java-storage/compare/v2.14.0...v2.15.0) (2022-11-07)
+
+
+### Features
+
+* Add Autoclass support and sample ([#1697](https://github.com/googleapis/java-storage/issues/1697)) ([82aacd7](https://github.com/googleapis/java-storage/commit/82aacd7922573d6f4779f21cdc83de10616d7a08))
+* Update retries for Notifications ([#1734](https://github.com/googleapis/java-storage/issues/1734)) ([0fb2f18](https://github.com/googleapis/java-storage/commit/0fb2f1823f9eff8534f15240321003f120fed3f4))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.0.6 ([#1761](https://github.com/googleapis/java-storage/issues/1761)) ([803a90b](https://github.com/googleapis/java-storage/commit/803a90b7747b8972f51d1407616c51084d97c589))
+* Update dependency net.jqwik:jqwik to v1.7.1 ([#1758](https://github.com/googleapis/java-storage/issues/1758)) ([140e909](https://github.com/googleapis/java-storage/commit/140e90911229c876de7b674dd1e61b278e8b07fd))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.17 ([#1759](https://github.com/googleapis/java-storage/issues/1759)) ([7e3175a](https://github.com/googleapis/java-storage/commit/7e3175a56a06dac0aa0841f221a486bb69b5c9bf))
+
 ## [2.14.0](https://github.com/googleapis/java-storage/compare/v2.13.1...v2.14.0) (2022-10-26)
 
 ### Google Cloud Storage gRPC API Preview
