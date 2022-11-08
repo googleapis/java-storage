@@ -23,15 +23,18 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.retrying.StreamResumptionStrategy;
 import com.google.api.gax.rpc.HeaderProvider;
+import com.google.api.gax.rpc.NoHeaderProvider;
 import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
+import com.google.cloud.ServiceOptions;
 import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.grpc.GrpcTransportOptions;
@@ -118,11 +121,21 @@ public final class GrpcStorageOptions extends StorageOptions
       credentialsProvider = FixedCredentialsProvider.create(credentials);
     }
 
+    HeaderProvider internalHeaderProvider =
+        StorageSettings.defaultApiClientHeaderProviderBuilder()
+            .setClientLibToken(
+                ServiceOptions.getGoogApiClientLibName(),
+                GaxProperties.getLibraryVersion(this.getClass()))
+            .build();
+
     StorageSettings.Builder builder =
-        StorageSettings.newBuilder()
+        new StorageSettingsBuilder(StorageSettings.newBuilder().build())
+            .setInternalHeaderProvider(internalHeaderProvider)
             .setEndpoint(endpoint)
             .setCredentialsProvider(credentialsProvider)
             .setClock(getClock());
+
+    builder.setHeaderProvider(this.getMergedHeaderProvider(new NoHeaderProvider()));
 
     InstantiatingGrpcChannelProvider.Builder channelProviderBuilder =
         InstantiatingGrpcChannelProvider.newBuilder()
@@ -576,6 +589,20 @@ public final class GrpcStorageOptions extends StorageOptions
     @Override
     public boolean canResume() {
       return true;
+    }
+  }
+
+  // setInternalHeaderProvider is protected so we need to open its scope in order to set it
+  // we are adding an entry for gccl which is set via this provider
+  private static final class StorageSettingsBuilder extends StorageSettings.Builder {
+    private StorageSettingsBuilder(StorageSettings settings) {
+      super(settings);
+    }
+
+    @Override
+    protected StorageSettings.Builder setInternalHeaderProvider(
+        HeaderProvider internalHeaderProvider) {
+      return super.setInternalHeaderProvider(internalHeaderProvider);
     }
   }
 }
