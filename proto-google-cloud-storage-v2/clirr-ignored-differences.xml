@@ -1,42 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- see http://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
-  <!-- CancelResumableWrite RPC has been introduced, cleanup old upload_id parameters from DeleteObjectRequest -->
-  <difference>
-    <differenceType>6011</differenceType>
-    <className>com/google/storage/v2/DeleteObjectRequest</className>
-    <field>UPLOAD_ID_FIELD_NUMBER</field>
-  </difference>
-  <difference>
-    <differenceType>7002</differenceType>
-    <className>com/google/storage/v2/**</className>
-    <method>* *UploadId*(*)</method>
-  </difference>
-
-  <!-- Allow WriteObjectSpec.object_size to be added -->
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/WriteObjectSpecOrBuilder</className>
-    <method>* *ObjectSize()</method>
-  </difference>
-
-  <!-- Allow adding new entity_alt field to Acls -->
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/BucketAccessControlOrBuilder</className>
-    <method>* *EntityAlt*()</method>
-  </difference>
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/ObjectAccessControlOrBuilder</className>
-    <method>* *EntityAlt*()</method>
-  </difference>
-
-  <!-- Allow Bucket.RetentionPolicy.retention_period to be optional -->
-  <difference>
-    <differenceType>7012</differenceType>
-    <className>com/google/storage/v2/Bucket$RetentionPolicyOrBuilder</className>
-    <method>boolean hasRetentionPeriod()</method>
-  </difference>
 
 </differences>
