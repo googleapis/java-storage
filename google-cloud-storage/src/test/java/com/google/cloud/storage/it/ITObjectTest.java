@@ -40,6 +40,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
+import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -486,6 +487,14 @@ public class ITObjectTest {
       assertTrue(blobSet.contains(remoteBlob.getName()));
       assertNull(remoteBlob.getContentType());
     }
+  }
+
+  @Test
+  public void getBlobReturnNullOn404() {
+    String bucketName = bucketFixture.getBucketInfo().getName();
+    BlobId id = BlobId.of(bucketName, "__d_o_e_s__n_o_t__e_x_i_s_t__");
+    Blob blob = storage.get(id);
+    assertThat(blob).isNull();
   }
 
   @Test(timeout = 7500)
@@ -1435,17 +1444,14 @@ public class ITObjectTest {
 
   @Test
   public void testBlobReload() throws Exception {
-    // GRPC Error Handling bug
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
-
     String blobName = "test-blob-reload";
     BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
     Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2});
 
     Blob blobUnchanged = blob.reload();
-    assertEquals(blob, blobUnchanged);
+    // gRPC and json have differing defaults on projections b/258835631
+    assertThat(blobUnchanged).isAnyOf(blob, PackagePrivateMethodWorkarounds.noAcl(blob));
 
     blob.writer().close();
     try {
@@ -1453,7 +1459,6 @@ public class ITObjectTest {
       fail("StorageException was expected");
     } catch (StorageException e) {
       assertEquals(412, e.getCode());
-      assertEquals("conditionNotMet", e.getReason());
     }
 
     Blob updated = blob.reload();

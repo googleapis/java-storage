@@ -417,7 +417,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getObjectCallable().call(req, grpcCallContext),
+        () -> {
+          try {
+            return storageClient.getObjectCallable().call(req, grpcCallContext);
+          } catch (NotFoundException ignore) {
+            return null;
+          }
+        },
         syntaxDecoders.blob.andThen(opts.clearBlobFields()));
   }
 
