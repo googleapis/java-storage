@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -72,5 +73,9 @@ public final class PackagePrivateMethodWorkarounds {
 
   public static <T1, T2> void ifNonNull(@Nullable T1 t, Function<T1, T2> map, Consumer<T2> c) {
     Utils.ifNonNull(t, map, c);
+  }
+
+  public static BlobInfo noAcl(BlobInfo bi) {
+    return bi.toBuilder().setOwner(null).setAcl(ImmutableList.of()).build();
   }
 }
