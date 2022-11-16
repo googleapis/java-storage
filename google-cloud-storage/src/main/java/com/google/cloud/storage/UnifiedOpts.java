@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Predicates.not;
+import static java.util.Objects.requireNonNull;
 
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.Conversions.Decoder;
@@ -72,6 +73,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.crypto.spec.SecretKeySpec;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.RequiresNonNull;
 
 /**
  * The set of all "Options" we currently support for per-call parameters.
@@ -82,6 +84,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * string parameters for JSON</a>. In the case of gRPC, sometimes the parameters are in the specific
  * request message or in grpc metadata.
  */
+@SuppressWarnings({"deprecation", "DeprecatedIsStillUsed"})
 final class UnifiedOpts {
 
   /** Base interface type for each of the new options we're supporting. */
@@ -335,24 +338,32 @@ final class UnifiedOpts {
     return new Crc32cMatch(i);
   }
 
-  static Crc32cMatch crc32cMatch(String i) {
-    return new Crc32cMatch(Utils.crc32cCodec.decode(i));
+  static Crc32cMatch crc32cMatch(@NonNull String crc32c) {
+    requireNonNull(crc32c, "crc32c must be non null");
+    return new Crc32cMatch(Utils.crc32cCodec.decode(crc32c));
   }
 
   static Delimiter currentDirectory() {
     return new Delimiter("/");
   }
 
-  static DecryptionKey decryptionKey(String s) {
-    return new DecryptionKey(new SecretKeySpec(BaseEncoding.base64().decode(s), "AES256"));
+  static DecryptionKey decryptionKey(@NonNull String decryptionKey) {
+    requireNonNull(decryptionKey, "decryptionKey must be non null");
+    return new DecryptionKey(
+        new SecretKeySpec(BaseEncoding.base64().decode(decryptionKey), "AES256"));
   }
 
-  static DecryptionKey decryptionKey(Key k) {
-    return new DecryptionKey(k);
+  @RequiresNonNull({"decryptionKey", "#1.getEncoded()", "#1.getAlgorithm()"})
+  static DecryptionKey decryptionKey(@NonNull Key decryptionKey) {
+    requireNonNull(decryptionKey, "decryptionKey must be non null");
+    requireNonNull(decryptionKey.getEncoded(), "decryptionKey.getEncoded() must be non null");
+    requireNonNull(decryptionKey.getAlgorithm(), "decryptionKey.getAlgorithm() must be non null");
+    return new DecryptionKey(decryptionKey);
   }
 
-  static Delimiter delimiter(String s) {
-    return new Delimiter(s);
+  static Delimiter delimiter(@NonNull String delimiter) {
+    requireNonNull(delimiter, "delimiter must be non null");
+    return new Delimiter(delimiter);
   }
 
   @Deprecated
@@ -368,20 +379,25 @@ final class UnifiedOpts {
     return new GenerationMatch(0);
   }
 
-  static EncryptionKey encryptionKey(String s) {
-    return new EncryptionKey(new SecretKeySpec(BaseEncoding.base64().decode(s), "AES256"));
+  static EncryptionKey encryptionKey(@NonNull String encryptionKey) {
+    requireNonNull(encryptionKey, "encryptionKey must be non null");
+    return new EncryptionKey(
+        new SecretKeySpec(BaseEncoding.base64().decode(encryptionKey), "AES256"));
   }
 
-  static EncryptionKey encryptionKey(Key k) {
-    return new EncryptionKey(k);
+  static EncryptionKey encryptionKey(@NonNull Key encryptionKey) {
+    requireNonNull(encryptionKey, "encryptionKey must be non null");
+    return new EncryptionKey(encryptionKey);
   }
 
-  static EndOffset endOffset(String s) {
-    return new EndOffset(s);
+  static EndOffset endOffset(@NonNull String endOffset) {
+    requireNonNull(endOffset, "endOffset must be non null");
+    return new EndOffset(endOffset);
   }
 
-  static Fields fields(ImmutableSet<NamedField> s) {
-    return new Fields(s);
+  static Fields fields(@NonNull ImmutableSet<NamedField> fields) {
+    requireNonNull(fields, "fields must be non null");
+    return new Fields(fields);
   }
 
   static GenerationMatch generationMatch(long l) {
@@ -392,12 +408,14 @@ final class UnifiedOpts {
     return new GenerationNotMatch(l);
   }
 
-  static KmsKeyName kmsKeyName(String s) {
-    return new KmsKeyName(s);
+  static KmsKeyName kmsKeyName(@NonNull String kmsKeyName) {
+    requireNonNull(kmsKeyName, "kmsKeyName must be non null");
+    return new KmsKeyName(kmsKeyName);
   }
 
-  static Md5Match md5Match(String s) {
-    return new Md5Match(s);
+  static Md5Match md5Match(@NonNull String md5) {
+    requireNonNull(md5, "md5 must be non null");
+    return new Md5Match(md5);
   }
 
   static MetagenerationMatch metagenerationMatch(long l) {
@@ -412,28 +430,35 @@ final class UnifiedOpts {
     return new PageSize(l);
   }
 
-  static PageToken pageToken(String s) {
-    return new PageToken(s);
+  static PageToken pageToken(@NonNull String pageToken) {
+    requireNonNull(pageToken, "pageToken must be non null");
+    return new PageToken(pageToken);
   }
 
-  static PredefinedAcl predefinedAcl(Storage.PredefinedAcl p) {
-    return new PredefinedAcl(p.getEntry());
+  static PredefinedAcl predefinedAcl(Storage.@NonNull PredefinedAcl predefinedAcl) {
+    requireNonNull(predefinedAcl, "predefinedAcl must be non null");
+    return new PredefinedAcl(predefinedAcl.getEntry());
   }
 
-  static PredefinedDefaultObjectAcl predefinedDefaultObjectAcl(Storage.PredefinedAcl p) {
-    return new PredefinedDefaultObjectAcl(p.getEntry());
+  static PredefinedDefaultObjectAcl predefinedDefaultObjectAcl(
+      Storage.@NonNull PredefinedAcl predefinedAcl) {
+    requireNonNull(predefinedAcl, "predefinedAcl must be non null");
+    return new PredefinedDefaultObjectAcl(predefinedAcl.getEntry());
   }
 
-  static Prefix prefix(String s) {
-    return new Prefix(s);
+  static Prefix prefix(@NonNull String prefix) {
+    requireNonNull(prefix, "prefix must be non null");
+    return new Prefix(prefix);
   }
 
-  static ProjectId projectId(String s) {
-    return new ProjectId(s);
+  static ProjectId projectId(@NonNull String projectId) {
+    requireNonNull(projectId, "projectId must be non null");
+    return new ProjectId(projectId);
   }
 
-  static Projection projection(String s) {
-    return new Projection(s);
+  static Projection projection(@NonNull String projection) {
+    requireNonNull(projection, "projection must be non null");
+    return new Projection(projection);
   }
 
   static RequestedPolicyVersion requestedPolicyVersion(long l) {
@@ -444,12 +469,17 @@ final class UnifiedOpts {
     return new ReturnRawInputStream(b);
   }
 
-  static ServiceAccount serviceAccount(com.google.cloud.storage.ServiceAccount s) {
-    return new ServiceAccount(s.getEmail());
+  @RequiresNonNull({"serviceAccount", "#1.getEmail()"})
+  static ServiceAccount serviceAccount(
+      com.google.cloud.storage.@NonNull ServiceAccount serviceAccount) {
+    requireNonNull(serviceAccount, "serviceAccount must be non null");
+    requireNonNull(serviceAccount.getEmail(), "serviceAccount.getEmail() must be non null");
+    return new ServiceAccount(serviceAccount.getEmail());
   }
 
   @VisibleForTesting
-  static SetContentType setContentType(String s) {
+  static SetContentType setContentType(@NonNull String s) {
+    requireNonNull(s, "s must be non null");
     return new SetContentType(s);
   }
 
@@ -457,12 +487,14 @@ final class UnifiedOpts {
     return new ShowDeletedKeys(b);
   }
 
-  static StartOffset startOffset(String s) {
-    return new StartOffset(s);
+  static StartOffset startOffset(@NonNull String startOffset) {
+    requireNonNull(startOffset, "startOffset must be non null");
+    return new StartOffset(startOffset);
   }
 
-  static UserProject userProject(String s) {
-    return new UserProject(s);
+  static UserProject userProject(@NonNull String userProject) {
+    requireNonNull(userProject, "userProject must be non null");
+    return new UserProject(userProject);
   }
 
   static VersionsFilter versionsFilter(boolean b) {
@@ -1969,8 +2001,8 @@ final class UnifiedOpts {
     protected final T val;
 
     private RpcOptVal(StorageRpc.Option key, T val) {
-      this.key = key;
-      this.val = val;
+      this.key = requireNonNull(key, "key must be non null");
+      this.val = requireNonNull(val, "val must be non null");
     }
 
     public Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> mapper() {

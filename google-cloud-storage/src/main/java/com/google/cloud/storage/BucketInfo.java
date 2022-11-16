@@ -1061,7 +1061,7 @@ public class BucketInfo implements Serializable {
        * @param storageClass The new storage class to use when conditions are met for this action.
        */
       public static SetStorageClassLifecycleAction newSetStorageClassAction(
-          StorageClass storageClass) {
+          @NonNull StorageClass storageClass) {
         return new SetStorageClassLifecycleAction(storageClass);
       }
 
@@ -1080,7 +1080,7 @@ public class BucketInfo implements Serializable {
        * generally not be used, instead use the supported actions, and upgrade the library if necessary
        * to get new supported actions.
        */
-      public static LifecycleAction newLifecycleAction(String actionType) {
+      public static LifecycleAction newLifecycleAction(@NonNull String actionType) {
         return new LifecycleAction(actionType);
       }
     }

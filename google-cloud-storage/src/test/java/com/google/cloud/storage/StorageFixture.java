@@ -68,7 +68,7 @@ public final class StorageFixture implements TestRule {
     return of(() -> opts.get().getService());
   }
 
-  public static StorageFixture of(Supplier<@NonNull Storage> s) {
+  public static StorageFixture of(@NonNull Supplier<@NonNull Storage> s) {
     return new StorageFixture(s);
   }
 }
