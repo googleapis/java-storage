@@ -17,7 +17,7 @@
   <properties>
     <site.installationModule>google-cloud-storage</site.installationModule>
     <pubsub-proto.version>1.102.25</pubsub-proto.version>
-    <kms.version>0.99.0</kms.version>
+    <kms.version>0.100.0</kms.version>
     <junit-platform.version>5.9.1</junit-platform.version>
   </properties>
   <dependencies>
