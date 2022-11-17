@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.15.1](https://github.com/googleapis/java-storage/compare/v2.15.0...v2.15.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* Disable REGAPIC transport in storage v2 ([#1762](https://github.com/googleapis/java-storage/issues/1762)) ([13d630e](https://github.com/googleapis/java-storage/commit/13d630e7ce89273c292acca7a7e048218ece4182))
+* Update GrpcStorageImpl#get(BlobId) to return null on 404 ([#1772](https://github.com/googleapis/java-storage/issues/1772)) ([8c59c64](https://github.com/googleapis/java-storage/commit/8c59c64ccf0dd7753467b4c0f0bcf5f4b49c5bf0))
+
+
+### Documentation
+
+* Annotate all Option factory methods with their Nullability bounds ([#1775](https://github.com/googleapis/java-storage/issues/1775)) ([3b8d137](https://github.com/googleapis/java-storage/commit/3b8d137a113376d7dac9010b9207d435df2622f7))
+
 ## [2.15.0](https://github.com/googleapis/java-storage/compare/v2.14.0...v2.15.0) (2022-11-07)
 
 
