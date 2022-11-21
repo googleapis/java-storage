@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
@@ -71,6 +72,15 @@ final class ChecksummedTestContent {
 
   public ByteArrayInputStream bytesAsInputStream() {
     return new ByteArrayInputStream(bytes);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("byteCount", bytes.length)
+        .add("crc32c", crc32c)
+        .add("md5Base64", md5Base64)
+        .toString();
   }
 
   public static ChecksummedTestContent of(String content) {
