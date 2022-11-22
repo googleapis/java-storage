@@ -21,59 +21,30 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.google.api.gax.paging.Page;
-import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.HmacKey;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.ServiceAccount;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.conformance.retry.ParallelParameterized;
-import com.google.cloud.storage.conformance.retry.TestBench;
-import java.util.Arrays;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
 import java.util.stream.StreamSupport;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
 import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
 
-@RunWith(ParallelParameterized.class)
+@RunWith(StorageITRunner.class)
+@CrossRun(
+    transports = {Transport.HTTP, Transport.GRPC},
+    backends = {Backend.TEST_BENCH})
 public class ITHmacTest {
-  @ClassRule(order = 0)
-  public static final TestBench TEST_BENCH =
-      TestBench.newBuilder().setContainerName("it-grpc").build();
 
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc =
-      StorageFixture.from(
-          () ->
-              StorageOptions.grpc()
-                  .setHost(TEST_BENCH.getGRPCBaseUri())
-                  .setCredentials(NoCredentials.getInstance())
-                  .setProjectId("test-project-id")
-                  .build());
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-
-  private final StorageFixture storageFixture;
-  private final String clientName;
-
-  public ITHmacTest(String clientName, StorageFixture storageFixture) {
-    this.storageFixture = storageFixture;
-    this.clientName = clientName;
-  }
-
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return Arrays.asList(
-        new Object[] {"JSON/Prod", storageFixtureHttp},
-        new Object[] {"GRPC/TestBench", storageFixtureGrpc});
-  }
+  @Inject public Storage storage;
 
   // when modifying this test or {@link #cleanUpHmacKeys} be sure to remember multiple simultaneous
   // runs of the integration suite can run with the same service account. Be sure to not clobber
@@ -85,7 +56,7 @@ public class ITHmacTest {
     ServiceAccount serviceAccount = ServiceAccount.of(serviceAccountEmail);
     cleanUpHmacKeys(serviceAccount);
 
-    HmacKey hmacKey = storageFixture.getInstance().createHmacKey(serviceAccount);
+    HmacKey hmacKey = storage.createHmacKey(serviceAccount);
     String secretKey = hmacKey.getSecretKey();
     assertNotNull(secretKey);
     HmacKey.HmacKeyMetadata metadata = hmacKey.getMetadata();
@@ -94,16 +65,14 @@ public class ITHmacTest {
     assertNotNull(accessId);
     assertNotNull(metadata.getEtag());
     assertNotNull(metadata.getId());
-    assertEquals(storageFixture.getInstance().getOptions().getProjectId(), metadata.getProjectId());
+    assertEquals(storage.getOptions().getProjectId(), metadata.getProjectId());
     assertEquals(serviceAccount.getEmail(), metadata.getServiceAccount().getEmail());
     assertEquals(HmacKey.HmacKeyState.ACTIVE, metadata.getState());
     assertNotNull(metadata.getCreateTime());
     assertNotNull(metadata.getUpdateTime());
 
     Page<HmacKeyMetadata> metadatas =
-        storageFixture
-            .getInstance()
-            .listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
+        storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
     boolean createdInList =
         StreamSupport.stream(metadatas.iterateAll().spliterator(), false)
             .map(HmacKey.HmacKeyMetadata::getAccessId)
@@ -113,17 +82,14 @@ public class ITHmacTest {
         .that(createdInList)
         .isTrue();
 
-    HmacKey.HmacKeyMetadata getResult = storageFixture.getInstance().getHmacKey(accessId);
+    HmacKey.HmacKeyMetadata getResult = storage.getHmacKey(accessId);
     assertEquals(metadata, getResult);
 
-    storageFixture.getInstance().updateHmacKeyState(metadata, HmacKey.HmacKeyState.INACTIVE);
+    storage.updateHmacKeyState(metadata, HmacKey.HmacKeyState.INACTIVE);
 
-    storageFixture.getInstance().deleteHmacKey(metadata);
+    storage.deleteHmacKey(metadata);
 
-    metadatas =
-        storageFixture
-            .getInstance()
-            .listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
+    metadatas = storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
     boolean deletedInList =
         StreamSupport.stream(metadatas.iterateAll().spliterator(), false)
             .map(HmacKey.HmacKeyMetadata::getAccessId)
@@ -139,23 +105,18 @@ public class ITHmacTest {
     Instant yesterday = now.minus(Duration.ofDays(1L));
 
     Page<HmacKey.HmacKeyMetadata> metadatas =
-        storageFixture
-            .getInstance()
-            .listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
+        storage.listHmacKeys(Storage.ListHmacKeysOption.serviceAccount(serviceAccount));
     for (HmacKey.HmacKeyMetadata hmacKeyMetadata : metadatas.iterateAll()) {
       Instant updated = Instant.ofEpochMilli(hmacKeyMetadata.getUpdateTime());
       if (updated.isBefore(yesterday)) {
 
         if (hmacKeyMetadata.getState() == HmacKeyState.ACTIVE) {
-          hmacKeyMetadata =
-              storageFixture
-                  .getInstance()
-                  .updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
+          hmacKeyMetadata = storage.updateHmacKeyState(hmacKeyMetadata, HmacKeyState.INACTIVE);
         }
 
         if (hmacKeyMetadata.getState() == HmacKeyState.INACTIVE) {
           try {
-            storageFixture.getInstance().deleteHmacKey(hmacKeyMetadata);
+            storage.deleteHmacKey(hmacKeyMetadata);
           } catch (StorageException e) {
             // attempted to delete concurrently, if the other succeeded swallow the error
             if (!(e.getReason().equals("invalid") && e.getMessage().contains("deleted"))) {
