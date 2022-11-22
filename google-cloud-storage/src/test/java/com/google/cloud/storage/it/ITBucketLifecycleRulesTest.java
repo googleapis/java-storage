@@ -25,41 +25,29 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketTargetOption;
-import com.google.cloud.storage.StorageFixture;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.util.UUID;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(StorageITRunner.class)
+@CrossRun(
+    transports = {Transport.HTTP, Transport.GRPC},
+    backends = {Backend.PROD})
 public final class ITBucketLifecycleRulesTest {
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
 
   @Rule public final TestName testName = new TestName();
 
-  private final Storage storage;
-
-  public ITBucketLifecycleRulesTest(String ignore, StorageFixture storageFixture) {
-    this.storage = storageFixture.getInstance();
-  }
-
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> parameters() {
-    return ImmutableList.of(
-        new Object[] {"JSON/Prod", storageFixtureHttp},
-        new Object[] {"GRPC/Prod", storageFixtureGrpc});
-  }
+  @Inject public Storage storage;
+  @Inject public Generator generator;
 
   @Test
   public void deleteRule_addingALabelToABucketWithASingleDeleteRuleOnlyModifiesTheLabels()
@@ -75,10 +63,7 @@ public final class ITBucketLifecycleRulesTest {
     BucketInfo info = baseInfo().setLifecycleRules(ImmutableList.of(d1)).build();
 
     try (TemporaryBucket tmp =
-        TemporaryBucket.newBuilder()
-            .setBucketInfo(info)
-            .setStorage(storageFixtureHttp.getInstance())
-            .build()) {
+        TemporaryBucket.newBuilder().setBucketInfo(info).setStorage(storage).build()) {
       BucketInfo bucket = tmp.getBucket();
       assertThat(bucket.getLabels()).isNull();
 
@@ -106,10 +91,7 @@ public final class ITBucketLifecycleRulesTest {
     }
 
     try (TemporaryBucket tmp =
-        TemporaryBucket.newBuilder()
-            .setBucketInfo(info)
-            .setStorage(storageFixtureHttp.getInstance())
-            .build()) {
+        TemporaryBucket.newBuilder().setBucketInfo(info).setStorage(storage).build()) {
       BucketInfo bucket = tmp.getBucket();
 
       ImmutableList<LifecycleRule> newRules =
@@ -142,7 +124,7 @@ public final class ITBucketLifecycleRulesTest {
     }
   }
 
-  private static BucketInfo.Builder baseInfo() {
-    return BucketInfo.newBuilder(String.format("java-storage-grpc-%s", UUID.randomUUID()));
+  private BucketInfo.Builder baseInfo() {
+    return BucketInfo.newBuilder(generator.randomBucketName());
   }
 }
