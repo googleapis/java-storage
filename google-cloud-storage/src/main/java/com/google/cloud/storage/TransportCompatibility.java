@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Documented
 @Inherited
-@interface TransportCompatibility {
+public @interface TransportCompatibility {
 
   Transport[] value();
 
