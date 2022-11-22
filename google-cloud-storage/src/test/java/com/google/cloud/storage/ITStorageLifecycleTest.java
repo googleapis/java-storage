@@ -20,11 +20,14 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.conformance.retry.TestBench;
-import java.util.List;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
  * The interaction of {@link com.google.cloud.ServiceOptions} instance caching has differing
@@ -34,16 +37,17 @@ import org.junit.Test;
  * <p>Define some tests to ensue we are correctly integrating with the caching lifecycle
  */
 // Not in com.google.cloud.storage.it because we're testing package local things
+@SuppressWarnings("ResultOfMethodCallIgnored")
+@RunWith(StorageITRunner.class)
+@SingleBackend(Backend.PROD)
 public final class ITStorageLifecycleTest {
-  @ClassRule(order = 1)
-  public static final TestBench TEST_BENCH =
-      TestBench.newBuilder().setContainerName("lifecycle-test").build();
+  @Inject public TestBench testBench;
 
   @Test
   public void grpc() throws Exception {
     GrpcStorageOptions options =
         StorageOptions.grpc()
-            .setHost(TEST_BENCH.getGRPCBaseUri())
+            .setHost(testBench.getGRPCBaseUri())
             .setCredentials(NoCredentials.getInstance())
             .setProjectId("test-project-id")
             .build();
@@ -54,15 +58,9 @@ public final class ITStorageLifecycleTest {
     // ensure both instances are the same
     assertThat(service2).isSameInstanceAs(service1);
 
-    // make sure and RPCs can be done
-    List<Bucket> buckets1 =
-        StreamSupport.stream(service1.list().iterateAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertThat(buckets1).isEmpty();
-    List<Bucket> buckets2 =
-        StreamSupport.stream(service2.list().iterateAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertThat(buckets2).isEmpty();
+    // make sure an RPC can be done
+    StreamSupport.stream(service1.list().iterateAll().spliterator(), false)
+        .collect(Collectors.toList());
 
     // close the instance
     service1.close();
@@ -71,18 +69,16 @@ public final class ITStorageLifecycleTest {
     Storage service3 = options.getService();
 
     assertThat(service3).isNotSameInstanceAs(service1);
-    // make sure and RPCs can be done
-    List<Bucket> buckets3 =
-        StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertThat(buckets3).isEmpty();
+    // make sure an RPC can be done
+    StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
+        .collect(Collectors.toList());
   }
 
   @Test
   public void http() throws Exception {
     HttpStorageOptions options =
         StorageOptions.http()
-            .setHost(TEST_BENCH.getBaseUri())
+            .setHost(testBench.getBaseUri())
             .setCredentials(NoCredentials.getInstance())
             .setProjectId("test-project-id")
             .build();
@@ -92,15 +88,9 @@ public final class ITStorageLifecycleTest {
 
     // ensure both instances are the same
     assertThat(service2).isSameInstanceAs(service1);
-    // make sure and RPCs can be done
-    List<Bucket> buckets1 =
-        StreamSupport.stream(service1.list().iterateAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertThat(buckets1).isEmpty();
-    List<Bucket> buckets2 =
-        StreamSupport.stream(service2.list().iterateAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertThat(buckets2).isEmpty();
+    // make sure an RPC can be done
+    StreamSupport.stream(service1.list().iterateAll().spliterator(), false)
+        .collect(Collectors.toList());
 
     service1.close(); // this should be a no-op for http
 
@@ -108,10 +98,8 @@ public final class ITStorageLifecycleTest {
     Storage service3 = options.getService();
 
     assertThat(service3).isSameInstanceAs(service1);
-    // make sure and RPCs can be done
-    List<Bucket> buckets3 =
-        StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
-            .collect(Collectors.toList());
-    assertThat(buckets3).isEmpty();
+    // make sure an RPC can be done
+    StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
+        .collect(Collectors.toList());
   }
 }
