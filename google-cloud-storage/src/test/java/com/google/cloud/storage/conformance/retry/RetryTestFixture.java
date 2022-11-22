@@ -25,11 +25,12 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.conformance.retry.TestBench.RetryTestResource;
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
 import java.util.logging.Logger;
 import org.junit.AssumptionViolatedException;
 import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 
 /**
  * A JUnit 4 {@link TestRule} which integrates with {@link TestBench} and {@link
@@ -39,12 +40,15 @@ import org.junit.runners.model.Statement;
  *
  * <p>Provides pre-configured instances of {@link Storage} for setup/teardown & test.
  */
-final class RetryTestFixture implements TestRule {
+final class RetryTestFixture extends TestWatcher {
   private static final Logger LOGGER = Logger.getLogger(RetryTestFixture.class.getName());
 
   private final CleanupStrategy cleanupStrategy;
   private final TestBench testBench;
   private final TestRetryConformance testRetryConformance;
+
+  boolean testSuccess = false;
+  boolean testSkipped = false;
 
   private RetryTestResource retryTest;
   private Storage nonTestStorage;
@@ -74,43 +78,50 @@ final class RetryTestFixture implements TestRule {
   }
 
   @Override
-  public Statement apply(final Statement base, Description description) {
-    return new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        boolean testSuccess = false;
-        boolean testSkipped = false;
-        try {
-          LOGGER.fine("Setting up retry_test resource...");
-          RetryTestResource retryTestResource =
-              RetryTestResource.newRetryTestResource(
-                  testRetryConformance.getMethod(), testRetryConformance.getInstruction());
-          retryTest = testBench.createRetryTest(retryTestResource);
-          LOGGER.fine("Setting up retry_test resource complete");
-          base.evaluate();
-          testSuccess = true;
-        } catch (AssumptionViolatedException e) {
-          testSkipped = true;
-          throw e;
-        } finally {
-          LOGGER.fine("Verifying end state of retry_test resource...");
-          try {
-            if (retryTest != null) {
-              RetryTestResource postTestState = testBench.getRetryTest(retryTest);
-              if (testSuccess) {
-                assertTrue("expected completed to be true, but was false", postTestState.completed);
-              }
-            }
-          } finally {
-            LOGGER.fine("Verifying end state of retry_test resource complete");
-            if ((shouldCleanup(testSuccess, testSkipped)) && retryTest != null) {
-              testBench.deleteRetryTest(retryTest);
-              retryTest = null;
-            }
+  protected void starting(Description description) {
+    LOGGER.fine("Setting up retry_test resource...");
+    RetryTestResource retryTestResource =
+        RetryTestResource.newRetryTestResource(
+            testRetryConformance.getMethod(), testRetryConformance.getInstruction());
+    try {
+      retryTest = testBench.createRetryTest(retryTestResource);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    LOGGER.fine("Setting up retry_test resource complete");
+  }
+
+  @Override
+  protected void finished(Description description) {
+    LOGGER.fine("Verifying end state of retry_test resource...");
+    try {
+      try {
+        if (retryTest != null) {
+          RetryTestResource postTestState = testBench.getRetryTest(retryTest);
+          if (testSuccess) {
+            assertTrue("expected completed to be true, but was false", postTestState.completed);
           }
         }
+      } finally {
+        LOGGER.fine("Verifying end state of retry_test resource complete");
+        if ((shouldCleanup(testSuccess, testSkipped)) && retryTest != null) {
+          testBench.deleteRetryTest(retryTest);
+          retryTest = null;
+        }
       }
-    };
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  protected void succeeded(Description description) {
+    testSuccess = true;
+  }
+
+  @Override
+  protected void skipped(AssumptionViolatedException e, Description description) {
+    testSkipped = true;
   }
 
   private boolean shouldCleanup(boolean testSuccess, boolean testSkipped) {

@@ -29,7 +29,17 @@ import com.google.cloud.conformance.storage.v1.Method;
 import com.google.cloud.conformance.storage.v1.RetryTest;
 import com.google.cloud.conformance.storage.v1.RetryTests;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
+import com.google.cloud.storage.conformance.retry.ITRetryConformanceTest.RetryConformanceParameterProvider;
+import com.google.cloud.storage.it.runner.StorageITParamRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
+import com.google.cloud.storage.it.runner.annotations.Parameterized;
+import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
+import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
@@ -43,7 +53,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -55,11 +64,8 @@ import java.util.stream.Collectors;
 import org.junit.After;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Load and dynamically generate a series of test cases to verify if the {@link Storage} and
@@ -69,37 +75,30 @@ import org.junit.runners.Parameterized.Parameters;
  * google-cloud-conformance-tests artifact and a set of defined mappings from {@link
  * RpcMethodMappings}.
  */
-@RunWith(ParallelParameterized.class)
+@RunWith(StorageITParamRunner.class)
+@CrossRun(transports = Transport.HTTP, backends = Backend.TEST_BENCH)
+@Parameterized(RetryConformanceParameterProvider.class)
+@ParallelFriendly
 public class ITRetryConformanceTest {
   private static final Logger LOGGER = Logger.getLogger(ITRetryConformanceTest.class.getName());
 
-  @ClassRule public static final TestBench TEST_BENCH = TestBench.newBuilder().build();
+  private RetryTestFixture retryTestFixture;
 
-  @Rule(order = 1)
-  public final GracefulConformanceEnforcement gracefulConformanceEnforcement;
+  @Parameter public RetryParameter retryParameter;
 
-  @Rule(order = 2)
-  public final RetryTestFixture retryTestFixture;
-
-  private final TestRetryConformance testRetryConformance;
-  private final RpcMethodMapping mapping;
+  private TestRetryConformance testRetryConformance;
+  private RpcMethodMapping mapping;
   private Storage nonTestStorage;
   private Storage testStorage;
   private Ctx ctx;
 
-  public ITRetryConformanceTest(
-      TestRetryConformance testRetryConformance, RpcMethodMapping mapping) {
-    this.testRetryConformance = testRetryConformance;
-    this.mapping = mapping;
-    this.gracefulConformanceEnforcement =
-        new GracefulConformanceEnforcement(testRetryConformance.getTestName());
-    this.retryTestFixture =
-        new RetryTestFixture(CleanupStrategy.ALWAYS, TEST_BENCH, testRetryConformance);
-  }
-
   @Before
   public void setUp() throws Throwable {
     LOGGER.fine("Running setup...");
+    retryTestFixture = retryParameter.retryTestFixture;
+    testRetryConformance = retryParameter.testRetryConformance;
+    mapping = retryParameter.rpcMethodMapping;
+    retryTestFixture.starting(null);
     nonTestStorage = retryTestFixture.getNonTestStorage();
     testStorage = retryTestFixture.getTestStorage();
     // it's important to keep these two ctx assignments separate to allow for teardown to work in
@@ -115,6 +114,7 @@ public class ITRetryConformanceTest {
     getReplaceStorageInObjectsFromCtx()
         .andThen(mapping.getTearDown())
         .apply(ctx, testRetryConformance);
+    retryTestFixture.finished(null);
     LOGGER.fine("Running teardown complete");
   }
 
@@ -140,30 +140,44 @@ public class ITRetryConformanceTest {
    *
    * <p>The results of this method will then be run by JUnit's Parameterized test runner
    */
-  @Parameters(name = "{0}")
-  public static Collection<Object[]> testCases() throws IOException {
-    RetryTestCaseResolver resolver =
-        RetryTestCaseResolver.newBuilder()
-            .setRetryTestsJsonResourcePath(
-                "com/google/cloud/conformance/storage/v1/retry_tests.json")
-            .setMappings(new RpcMethodMappings())
-            .setProjectId("conformance-tests")
-            .setHost(TEST_BENCH.getBaseUri().replaceAll("https?://", ""))
-            .setTestAllowFilter(
-                RetryTestCaseResolver.includeAll()
-                    // .and(RetryTestCaseResolver.specificMappings(44, 45))
-                    .and(
-                        (m, trc) ->
-                            trc.getScenarioId()
-                                != 7) // Temporarily exclude resumable upload scenarios
-                )
-            .build();
+  public static final class RetryConformanceParameterProvider implements ParametersProvider {
+    @Inject public TestBench testBench;
 
-    List<RetryTestCase> retryTestCases = resolver.getRetryTestCases();
-    assertThat(retryTestCases).isNotEmpty();
-    return retryTestCases.stream()
-        .map(rtc -> new Object[] {rtc.testRetryConformance, rtc.rpcMethodMapping})
-        .collect(ImmutableList.toImmutableList());
+    @Override
+    public ImmutableList<?> parameters() {
+      RetryTestCaseResolver resolver =
+          RetryTestCaseResolver.newBuilder()
+              .setRetryTestsJsonResourcePath(
+                  "com/google/cloud/conformance/storage/v1/retry_tests.json")
+              .setMappings(new RpcMethodMappings())
+              .setProjectId("conformance-tests")
+              .setHost(testBench.getBaseUri().replaceAll("https?://", ""))
+              .setTestAllowFilter(
+                  RetryTestCaseResolver.includeAll()
+                      // .and(RetryTestCaseResolver.specificMappings(44, 45))
+                      .and(
+                          (m, trc) ->
+                              trc.getScenarioId()
+                                  != 7) // Temporarily exclude resumable upload scenarios
+                  )
+              .build();
+
+      List<RetryTestCase> retryTestCases;
+      try {
+        retryTestCases = resolver.getRetryTestCases();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+      assertThat(retryTestCases).isNotEmpty();
+      return retryTestCases.stream()
+          .map(
+              rtc ->
+                  RetryParameter.of(
+                      rtc,
+                      new RetryTestFixture(
+                          CleanupStrategy.ALWAYS, testBench, rtc.testRetryConformance)))
+          .collect(ImmutableList.toImmutableList());
+    }
   }
 
   /**
@@ -473,6 +487,30 @@ public class ITRetryConformanceTest {
     RetryTestCase(TestRetryConformance testRetryConformance, RpcMethodMapping rpcMethodMapping) {
       this.testRetryConformance = testRetryConformance;
       this.rpcMethodMapping = rpcMethodMapping;
+    }
+  }
+
+  private static final class RetryParameter {
+    private final TestRetryConformance testRetryConformance;
+    private final RpcMethodMapping rpcMethodMapping;
+    private final RetryTestFixture retryTestFixture;
+
+    private RetryParameter(
+        TestRetryConformance testRetryConformance,
+        RpcMethodMapping rpcMethodMapping,
+        RetryTestFixture retryTestFixture) {
+      this.testRetryConformance = testRetryConformance;
+      this.rpcMethodMapping = rpcMethodMapping;
+      this.retryTestFixture = retryTestFixture;
+    }
+
+    public static RetryParameter of(RetryTestCase rtc, RetryTestFixture retryTestFixture) {
+      return new RetryParameter(rtc.testRetryConformance, rtc.rpcMethodMapping, retryTestFixture);
+    }
+
+    @Override
+    public String toString() {
+      return testRetryConformance.toString();
     }
   }
 }
