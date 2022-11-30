@@ -32,7 +32,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.cloud.storage.conformance.retry.ITRetryConformanceTest.RetryConformanceParameterProvider;
-import com.google.cloud.storage.it.runner.StorageITParamRunner;
+import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
@@ -75,7 +75,7 @@ import org.junit.runner.RunWith;
  * google-cloud-conformance-tests artifact and a set of defined mappings from {@link
  * RpcMethodMappings}.
  */
-@RunWith(StorageITParamRunner.class)
+@RunWith(StorageITRunner.class)
 @CrossRun(transports = Transport.HTTP, backends = Backend.TEST_BENCH)
 @Parameterized(RetryConformanceParameterProvider.class)
 @ParallelFriendly

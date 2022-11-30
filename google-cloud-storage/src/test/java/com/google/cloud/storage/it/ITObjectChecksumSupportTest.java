@@ -31,7 +31,7 @@ import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.ITObjectChecksumSupportTest.ChecksummedTestContentProvider;
-import com.google.cloud.storage.it.runner.StorageITParamRunner;
+import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
@@ -49,7 +49,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
-@RunWith(StorageITParamRunner.class)
+@RunWith(StorageITRunner.class)
 @CrossRun(
     transports = {Transport.HTTP, Transport.GRPC},
     backends = Backend.PROD)

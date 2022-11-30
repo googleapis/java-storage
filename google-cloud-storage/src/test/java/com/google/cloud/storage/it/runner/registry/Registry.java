@@ -46,8 +46,7 @@ import org.junit.runners.model.TestClass;
  * <p>All resources are lazily initialized and will live until the registry is shutdown.
  *
  * <p>All resources registered here are available for field {@code @}{@link Inject}ion when run via
- * {@link com.google.cloud.storage.it.runner.StorageITRunner} or {@link
- * com.google.cloud.storage.it.runner.StorageITParamRunner}.
+ * {@link com.google.cloud.storage.it.runner.StorageITRunner}.
  *
  * <p>This class shouldn't be used outside of {@code com.google.cloud.storage.it.runner}. When we
  * have access to java modules this will be enforced.

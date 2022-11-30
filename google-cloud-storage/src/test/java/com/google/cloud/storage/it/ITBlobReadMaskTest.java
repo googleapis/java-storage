@@ -30,7 +30,7 @@ import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.ITBlobReadMaskTest.BlobReadMaskTestParameters;
 import com.google.cloud.storage.it.ReadMaskTestUtils.Args;
 import com.google.cloud.storage.it.ReadMaskTestUtils.LazyAssertion;
-import com.google.cloud.storage.it.runner.StorageITParamRunner;
+import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
@@ -48,7 +48,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith(StorageITParamRunner.class)
+@RunWith(StorageITRunner.class)
 @Parameterized(BlobReadMaskTestParameters.class)
 @SingleBackend(Backend.PROD)
 @ParallelFriendly

@@ -23,14 +23,12 @@ import java.lang.annotation.Target;
 
 /**
  * Denote a field which should have it's value injected by either {@link
- * com.google.cloud.storage.it.runner.StorageITRunner} or {@link
- * com.google.cloud.storage.it.runner.StorageITParamRunner} when running each test in the suite.
+ * com.google.cloud.storage.it.runner.StorageITRunner} when running each test in the suite.
  *
  * <p>If the receiver type of the field is not currently supported an error will be raised with a
  * list supported types.
  *
  * @see com.google.cloud.storage.it.runner.StorageITRunner
- * @see com.google.cloud.storage.it.runner.StorageITParamRunner
  * @see BucketFixture
  * @see StorageFixture
  */
