@@ -18,14 +18,16 @@ package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.cloud.ServiceOptions;
 import com.google.cloud.pubsub.v1.TopicAdminClient;
-import com.google.cloud.storage.BucketFixture;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Notification;
 import com.google.cloud.storage.NotificationInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageFixture;
-import com.google.common.collect.ImmutableList;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.common.collect.ImmutableMap;
 import com.google.iam.v1.Binding;
 import com.google.iam.v1.GetIamPolicyRequest;
@@ -36,80 +38,59 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(StorageITRunner.class)
+@CrossRun(
+    transports = {Transport.HTTP},
+    backends = {Backend.PROD})
 public class ITNotificationTest {
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-
-  /*
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-   */
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureHttp =
-      BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
-
-  /*
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureGrpc =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-grpc-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
-   */
-
-  private static final String PROJECT = ServiceOptions.getDefaultProjectId();
-  private static final String ID = UUID.randomUUID().toString().substring(0, 8);
-  private static final String TOPIC =
-      String.format("projects/%s/topics/test_topic_foo_%s", PROJECT, ID).trim();
   private static final Notification.PayloadFormat PAYLOAD_FORMAT =
       Notification.PayloadFormat.JSON_API_V1.JSON_API_V1;
   private static final Map<String, String> CUSTOM_ATTRIBUTES = ImmutableMap.of("label1", "value1");
   private static final Logger log = Logger.getLogger(ITNotificationTest.class.getName());
 
-  private final Storage storage;
-  private final BucketFixture bucketFixture;
-  private final String clientName;
-  private static TopicAdminClient topicAdminClient;
+  @Inject public Storage storage;
+  @Inject public BucketInfo bucket;
 
-  public ITNotificationTest(
-      String clientName, StorageFixture storageFixture, BucketFixture bucketFixture) {
-    this.clientName = clientName;
-    this.storage = storageFixture.getInstance();
-    this.bucketFixture = bucketFixture;
-  }
+  private TopicAdminClient topicAdminClient;
+  private String topic;
 
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return ImmutableList.of(new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp});
-    /*
-    return ImmutableList.of(
-        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
-        new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
-     */
-  }
-
-  @BeforeClass
-  public static void setup() throws IOException {
+  @Before
+  public void setup() throws IOException {
     // Configure topic admin client for notification.
-    topicAdminClient = configureTopicAdminClient();
+    topicAdminClient = TopicAdminClient.create();
+    String projectId = storage.getOptions().getProjectId();
+    String id = UUID.randomUUID().toString().substring(0, 8);
+    topic = String.format("projects/%s/topics/test_topic_foo_%s", projectId, id).trim();
+
+    topicAdminClient.createTopic(this.topic);
+
+    GetIamPolicyRequest getIamPolicyRequest =
+        GetIamPolicyRequest.newBuilder().setResource(this.topic).build();
+
+    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
+
+    Binding binding =
+        Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
+
+    SetIamPolicyRequest setIamPolicyRequest =
+        SetIamPolicyRequest.newBuilder()
+            .setResource(this.topic)
+            .setPolicy(policy.toBuilder().addBindings(binding).build())
+            .build();
+    topicAdminClient.setIamPolicy(setIamPolicyRequest);
   }
 
-  @AfterClass
-  public static void cleanup() {
+  @After
+  public void cleanup() {
     /* Delete the Pub/Sub topic */
     if (topicAdminClient != null) {
       try {
-        topicAdminClient.deleteTopic(TOPIC);
+        topicAdminClient.deleteTopic(topic);
         topicAdminClient.close();
       } catch (Exception e) {
         log.log(Level.WARNING, "Error while trying to delete topic and shutdown topic client", e);
@@ -118,43 +99,24 @@ public class ITNotificationTest {
     }
   }
 
-  private static TopicAdminClient configureTopicAdminClient() throws IOException {
-    TopicAdminClient topicAdminClient = TopicAdminClient.create();
-    topicAdminClient.createTopic(TOPIC);
-    GetIamPolicyRequest getIamPolicyRequest =
-        GetIamPolicyRequest.newBuilder().setResource(TOPIC).build();
-    com.google.iam.v1.Policy policy = topicAdminClient.getIamPolicy(getIamPolicyRequest);
-    Binding binding =
-        Binding.newBuilder().setRole("roles/owner").addMembers("allAuthenticatedUsers").build();
-    SetIamPolicyRequest setIamPolicyRequest =
-        SetIamPolicyRequest.newBuilder()
-            .setResource(TOPIC)
-            .setPolicy(policy.toBuilder().addBindings(binding).build())
-            .build();
-    topicAdminClient.setIamPolicy(setIamPolicyRequest);
-    return topicAdminClient;
-  }
-
   @Test
   public void testNotification() {
     NotificationInfo notificationInfo =
-        NotificationInfo.newBuilder(TOPIC)
+        NotificationInfo.newBuilder(topic)
             .setCustomAttributes(CUSTOM_ATTRIBUTES)
             .setPayloadFormat(PAYLOAD_FORMAT)
             .build();
     try {
-      assertThat(storage.listNotifications(bucketFixture.getBucketInfo().getName())).isEmpty();
-      Notification notification =
-          storage.createNotification(bucketFixture.getBucketInfo().getName(), notificationInfo);
+      assertThat(storage.listNotifications(bucket.getName())).isEmpty();
+      Notification notification = storage.createNotification(bucket.getName(), notificationInfo);
       assertThat(notification.getNotificationId()).isNotNull();
       assertThat(CUSTOM_ATTRIBUTES).isEqualTo(notification.getCustomAttributes());
       assertThat(PAYLOAD_FORMAT.name()).isEqualTo(notification.getPayloadFormat().name());
-      assertThat(notification.getTopic().contains(TOPIC)).isTrue();
+      assertThat(notification.getTopic().contains(topic)).isTrue();
 
       // Gets the notification with the specified id.
       Notification actualNotification =
-          storage.getNotification(
-              bucketFixture.getBucketInfo().getName(), notification.getNotificationId());
+          storage.getNotification(bucket.getName(), notification.getNotificationId());
       assertThat(actualNotification.getNotificationId())
           .isEqualTo(notification.getNotificationId());
       assertThat(actualNotification.getTopic().trim()).isEqualTo(notification.getTopic().trim());
@@ -166,26 +128,19 @@ public class ITNotificationTest {
           .isEqualTo(notification.getCustomAttributes());
 
       // Retrieves the list of notifications associated with the bucket.
-      List<Notification> notifications =
-          storage.listNotifications(bucketFixture.getBucketInfo().getName());
+      List<Notification> notifications = storage.listNotifications(bucket.getName());
       assertThat(notifications.size()).isEqualTo(1);
       assertThat(notifications.get(0).getNotificationId())
           .isEqualTo(actualNotification.getNotificationId());
 
       // Deletes the notification with the specified id.
-      assertThat(
-              storage.deleteNotification(
-                  bucketFixture.getBucketInfo().getName(), notification.getNotificationId()))
+      assertThat(storage.deleteNotification(bucket.getName(), notification.getNotificationId()))
           .isTrue();
-      assertThat(
-              storage.deleteNotification(
-                  bucketFixture.getBucketInfo().getName(), notification.getNotificationId()))
+      assertThat(storage.deleteNotification(bucket.getName(), notification.getNotificationId()))
           .isFalse();
-      assertThat(
-              storage.getNotification(
-                  bucketFixture.getBucketInfo().getName(), notification.getNotificationId()))
+      assertThat(storage.getNotification(bucket.getName(), notification.getNotificationId()))
           .isNull();
-      assertThat(storage.listNotifications(bucketFixture.getBucketInfo().getName())).isEmpty();
+      assertThat(storage.listNotifications(bucket.getName())).isEmpty();
     } finally {
       // delete is taken care of by BucketFixture now
     }

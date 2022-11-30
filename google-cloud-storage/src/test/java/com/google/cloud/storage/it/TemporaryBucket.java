@@ -22,10 +22,8 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.conformance.retry.CleanupStrategy;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.common.base.Preconditions;
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 final class TemporaryBucket implements AutoCloseable {
 
@@ -53,8 +51,7 @@ final class TemporaryBucket implements AutoCloseable {
   @Override
   public void close() throws Exception {
     if (cleanupStrategy == CleanupStrategy.ALWAYS) {
-      RemoteStorageHelper.forceDelete(
-          storage, bucket.getName(), cleanupTimeout.toMillis(), TimeUnit.MILLISECONDS);
+      BucketCleaner.doCleanup(bucket.getName(), storage);
     }
   }
 

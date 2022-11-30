@@ -500,11 +500,10 @@ final class GrpcConversions {
   }
 
   private com.google.storage.v2.BucketAccessControl bucketAclEncode(Acl from) {
-    BucketAccessControl.Builder to =
-        BucketAccessControl.newBuilder()
-            .setEntity(from.getEntity().toString())
-            .setRole(from.getRole().toString())
-            .setId(from.getId());
+    BucketAccessControl.Builder to = BucketAccessControl.newBuilder();
+    ifNonNull(from.getEntity(), entityCodec::encode, to::setEntity);
+    ifNonNull(from.getRole(), Role::toString, to::setRole);
+    ifNonNull(from.getId(), to::setId);
     ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
   }
@@ -512,7 +511,7 @@ final class GrpcConversions {
   private Bucket.IamConfig.UniformBucketLevelAccess ublaEncode(BucketInfo.IamConfiguration from) {
     Bucket.IamConfig.UniformBucketLevelAccess.Builder to =
         Bucket.IamConfig.UniformBucketLevelAccess.newBuilder();
-    to.setEnabled(from.isUniformBucketLevelAccessEnabled());
+    ifNonNull(from.isUniformBucketLevelAccessEnabled(), to::setEnabled);
     if (from.isUniformBucketLevelAccessEnabled() == Boolean.TRUE) {
       ifNonNull(
           from.getUniformBucketLevelAccessLockedTimeOffsetDateTime(),

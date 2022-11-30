@@ -22,40 +22,34 @@ import static org.junit.Assume.assumeFalse;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BucketFixture;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
 import java.util.Iterator;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(StorageITRunner.class)
+@CrossRun(transports = Transport.HTTP, backends = Backend.PROD)
 public class ITDownloadBlobWithoutAuth {
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixture =
-      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
-
   private static final boolean IS_VPC_TEST =
       System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC") != null
           && System.getenv("GOOGLE_CLOUD_TESTS_IN_VPCSC").equalsIgnoreCase("true");
 
-  private static Storage storage;
-  private static String bucketName;
+  @Inject public Storage storage;
 
-  @BeforeClass
-  public static void setup() {
-    storage = storageFixture.getInstance();
-    bucketName = bucketFixture.getBucketInfo().getName();
-  }
+  @Inject public BucketInfo bucket;
 
   @Test
   public void testDownloadPublicBlobWithoutAuthentication() {
     assumeFalse(IS_VPC_TEST);
+    String bucketName = bucket.getName();
     // create an unauthorized user
     Storage unauthorizedStorage = StorageOptions.getUnauthenticatedInstance().getService();
 

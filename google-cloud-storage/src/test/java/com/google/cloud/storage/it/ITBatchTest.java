@@ -27,36 +27,40 @@ import static org.junit.Assert.fail;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BucketFixture;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageBatch;
 import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageFixture;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.common.collect.Lists;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(StorageITRunner.class)
+@SingleBackend(Backend.PROD)
 public class ITBatchTest {
   private static final int MAX_BATCH_SIZE = 100;
   private static final String CONTENT_TYPE = "text/plain";
 
-  private static Storage storage;
-  private static String bucketName;
+  @Inject
+  @StorageFixture(Transport.HTTP)
+  public Storage storage;
 
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixture = StorageFixture.defaultHttp();
+  @Inject public BucketInfo bucket;
 
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixture =
-      BucketFixture.newBuilder().setHandle(storageFixture::getInstance).build();
+  private String bucketName;
 
-  @BeforeClass
-  public static void setUp() {
-    storage = storageFixture.getInstance();
-    bucketName = bucketFixture.getBucketInfo().getName();
+  @Before
+  public void setUp() throws Exception {
+    bucketName = bucket.getName();
   }
 
   @Test
