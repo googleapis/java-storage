@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- see http://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
+  <!-- Allow addition of new Bucket.RetentionPolicy.retention_duration field -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *RetentionDuration*(*)</method>
+  </difference>
+  <!-- Allow addition of new object_checksums to ComposeObjectRequest, RewriteObjectRequest, StartResumableWriteRequest -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *ObjectChecksums*(*)</method>
+  </difference>
 
 </differences>
