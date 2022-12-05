@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.bucketNameCodec;
-import static com.google.cloud.storage.Utils.durationSecondsCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.projectNameCodec;
@@ -56,6 +55,7 @@ import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.Owner;
 import com.google.type.Date;
 import com.google.type.Expr;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -117,6 +117,17 @@ final class GrpcConversions {
               Instant.ofEpochSecond(t.getSeconds())
                   .plusNanos(t.getNanos())
                   .atOffset(ZoneOffset.UTC));
+
+  @VisibleForTesting
+  final Codec<Duration, com.google.protobuf.Duration> durationCodec =
+      Codec.of(
+          javaDuration ->
+              com.google.protobuf.Duration.newBuilder()
+                  .setSeconds(javaDuration.getSeconds())
+                  .setNanos(javaDuration.getNano())
+                  .build(),
+          protoDuration ->
+              Duration.ofSeconds(protoDuration.getSeconds()).plusNanos(protoDuration.getNanos()));
 
   @VisibleForTesting
   final Codec<OffsetDateTime, Date> odtDateCodec =
@@ -200,18 +211,7 @@ final class GrpcConversions {
     BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketNameCodec.decode(from.getName()));
     to.setProject(from.getProject());
     to.setGeneratedId(from.getBucketId());
-    if (from.hasRetentionPolicy()) {
-      Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
-      to.setRetentionPolicyIsLocked(retentionPolicy.getIsLocked());
-      if (retentionPolicy.hasRetentionPeriod()) {
-        to.setRetentionPeriodDuration(
-            durationSecondsCodec.decode(retentionPolicy.getRetentionPeriod()));
-      }
-      if (retentionPolicy.hasEffectiveTime()) {
-        to.setRetentionEffectiveTimeOffsetDateTime(
-            timestampCodec.decode(retentionPolicy.getEffectiveTime()));
-      }
-    }
+    maybeDecodeRetentionPolicy(from, to);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
@@ -303,21 +303,7 @@ final class GrpcConversions {
     Bucket.Builder to = Bucket.newBuilder();
     to.setName(bucketNameCodec.encode(from.getName()));
     ifNonNull(from.getGeneratedId(), to::setBucketId);
-    if (from.getRetentionPeriodDuration() != null) {
-      Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
-      ifNonNull(
-          from.getRetentionPeriodDuration(),
-          durationSecondsCodec::encode,
-          retentionPolicyBuilder::setRetentionPeriod);
-      ifNonNull(from.retentionPolicyIsLocked(), retentionPolicyBuilder::setIsLocked);
-      if (from.retentionPolicyIsLocked() == Boolean.TRUE) {
-        ifNonNull(
-            from.getRetentionEffectiveTimeOffsetDateTime(),
-            timestampCodec::encode,
-            retentionPolicyBuilder::setEffectiveTime);
-      }
-      to.setRetentionPolicy(retentionPolicyBuilder.build());
-    }
+    maybeEncodeRetentionPolicy(from, to);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
@@ -393,6 +379,38 @@ final class GrpcConversions {
     // TODO(frankyn): Add SelfLink when the field is available
     ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
+  }
+
+  private void maybeEncodeRetentionPolicy(BucketInfo from, Bucket.Builder to) {
+    if (from.getRetentionPeriodDuration() != null
+        || from.retentionPolicyIsLocked() != null
+        || from.getRetentionEffectiveTimeOffsetDateTime() != null) {
+      Bucket.RetentionPolicy.Builder retentionPolicyBuilder = to.getRetentionPolicyBuilder();
+      ifNonNull(
+          from.getRetentionPeriodDuration(),
+          durationCodec::encode,
+          retentionPolicyBuilder::setRetentionDuration);
+      ifNonNull(from.retentionPolicyIsLocked(), retentionPolicyBuilder::setIsLocked);
+      ifNonNull(
+          from.getRetentionEffectiveTimeOffsetDateTime(),
+          timestampCodec::encode,
+          retentionPolicyBuilder::setEffectiveTime);
+      to.setRetentionPolicy(retentionPolicyBuilder.build());
+    }
+  }
+
+  private void maybeDecodeRetentionPolicy(Bucket from, BucketInfo.Builder to) {
+    if (from.hasRetentionPolicy()) {
+      Bucket.RetentionPolicy retentionPolicy = from.getRetentionPolicy();
+      to.setRetentionPolicyIsLocked(retentionPolicy.getIsLocked());
+      if (retentionPolicy.hasRetentionDuration()) {
+        to.setRetentionPeriodDuration(durationCodec.decode(retentionPolicy.getRetentionDuration()));
+      }
+      if (retentionPolicy.hasEffectiveTime()) {
+        to.setRetentionEffectiveTimeOffsetDateTime(
+            timestampCodec.decode(retentionPolicy.getEffectiveTime()));
+      }
+    }
   }
 
   private Bucket.Logging loggingEncode(BucketInfo.Logging from) {

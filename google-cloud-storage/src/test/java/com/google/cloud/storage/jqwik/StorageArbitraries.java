@@ -78,6 +78,12 @@ public final class StorageArbitraries {
                 Timestamp.newBuilder().setSeconds(odt.toEpochSecond()).setNanos(nanos).build());
   }
 
+  public static Arbitrary<com.google.protobuf.Duration> duration() {
+    return Arbitraries.longs()
+        .between(0, 315_576_000_000L)
+        .map(seconds -> com.google.protobuf.Duration.newBuilder().setSeconds(seconds).build());
+  }
+
   public static Arbitrary<Date> date() {
     return DateTimes.offsetDateTimes()
         .offsetBetween(ZoneOffset.UTC, ZoneOffset.UTC)
@@ -384,11 +390,11 @@ public final class StorageArbitraries {
     }
 
     public Arbitrary<Bucket.RetentionPolicy> retentionPolicy() {
-      return Combinators.combine(bool(), Arbitraries.longs().greaterOrEqual(0), timestamp())
+      return Combinators.combine(bool(), duration().injectNull(0.25), timestamp())
           .as(
-              (locked, period, effectiveTime) -> {
+              (locked, duration, effectiveTime) -> {
                 RetentionPolicy.Builder retentionBuilder = RetentionPolicy.newBuilder();
-                retentionBuilder.setRetentionPeriod(period);
+                ifNonNull(duration, retentionBuilder::setRetentionDuration);
                 retentionBuilder.setIsLocked(locked);
                 if (locked) {
                   retentionBuilder.setEffectiveTime(effectiveTime);
