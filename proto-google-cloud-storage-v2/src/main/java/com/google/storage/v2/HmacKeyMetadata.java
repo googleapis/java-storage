@@ -180,9 +180,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Immutable. Identifies the project that owns the service account of the specified HMAC
-   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-   * be the project ID or project number.
+   * Immutable. Identifies the project that owns the service account of the
+   * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -207,9 +207,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * Immutable. Identifies the project that owns the service account of the specified HMAC
-   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-   * be the project ID or project number.
+   * Immutable. Identifies the project that owns the service account of the
+   * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -1210,9 +1210,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Immutable. Identifies the project that owns the service account of the specified HMAC
-     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-     * be the project ID or project number.
+     * Immutable. Identifies the project that owns the service account of the
+     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1236,9 +1236,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Immutable. Identifies the project that owns the service account of the specified HMAC
-     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-     * be the project ID or project number.
+     * Immutable. Identifies the project that owns the service account of the
+     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1262,9 +1262,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Immutable. Identifies the project that owns the service account of the specified HMAC
-     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-     * be the project ID or project number.
+     * Immutable. Identifies the project that owns the service account of the
+     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1287,9 +1287,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Immutable. Identifies the project that owns the service account of the specified HMAC
-     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-     * be the project ID or project number.
+     * Immutable. Identifies the project that owns the service account of the
+     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1308,9 +1308,9 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * Immutable. Identifies the project that owns the service account of the specified HMAC
-     * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-     * be the project ID or project number.
+     * Immutable. Identifies the project that owns the service account of the
+     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+     * &lt;projectIdentifier&gt; can be the project ID or project number.
      * </pre>
      *
      * <code>

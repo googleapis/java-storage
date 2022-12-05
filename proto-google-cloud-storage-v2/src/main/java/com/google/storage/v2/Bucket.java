@@ -3014,8 +3014,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-       * Mutable until the specified deadline is reached, but not afterward.
+       * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+       * `false`. Mutable until the specified deadline is reached, but not
+       * afterward.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3028,8 +3029,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-       * Mutable until the specified deadline is reached, but not afterward.
+       * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+       * `false`. Mutable until the specified deadline is reached, but not
+       * afterward.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3042,8 +3044,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-       * Mutable until the specified deadline is reached, but not afterward.
+       * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+       * `false`. Mutable until the specified deadline is reached, but not
+       * afterward.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3124,8 +3127,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-       * Mutable until the specified deadline is reached, but not afterward.
+       * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+       * `false`. Mutable until the specified deadline is reached, but not
+       * afterward.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3141,8 +3145,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-       * Mutable until the specified deadline is reached, but not afterward.
+       * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+       * `false`. Mutable until the specified deadline is reached, but not
+       * afterward.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3158,8 +3163,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        * <pre>
        * The deadline time for changing
-       * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-       * Mutable until the specified deadline is reached, but not afterward.
+       * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+       * `false`. Mutable until the specified deadline is reached, but not
+       * afterward.
        * </pre>
        *
        * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3609,8 +3615,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3625,8 +3632,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3647,8 +3655,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3671,8 +3680,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3692,8 +3702,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3720,8 +3731,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3742,8 +3754,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3758,8 +3771,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -3778,8 +3792,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
          *
          * <pre>
          * The deadline time for changing
-         * `iamConfig.uniformBucketLevelAccess.enabled` from `true` to `false`.
-         * Mutable until the specified deadline is reached, but not afterward.
+         * `iam_config.uniform_bucket_level_access.enabled` from `true` to
+         * `false`. Mutable until the specified deadline is reached, but not
+         * afterward.
          * </pre>
          *
          * <code>.google.protobuf.Timestamp lock_time = 2;</code>
@@ -11877,6 +11892,53 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * @return The retentionPeriod.
      */
     long getRetentionPeriod();
+
+    /**
+     *
+     *
+     * <pre>
+     * The duration that objects need to be retained. Retention duration must be
+     * greater than zero and less than 100 years. Note that enforcement of
+     * retention periods less than a day is not guaranteed. Such periods should
+     * only be used for testing purposes. Any `nanos` value specified will be
+     * rounded down to the nearest second.
+     * </pre>
+     *
+     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     *
+     * @return Whether the retentionDuration field is set.
+     */
+    boolean hasRetentionDuration();
+    /**
+     *
+     *
+     * <pre>
+     * The duration that objects need to be retained. Retention duration must be
+     * greater than zero and less than 100 years. Note that enforcement of
+     * retention periods less than a day is not guaranteed. Such periods should
+     * only be used for testing purposes. Any `nanos` value specified will be
+     * rounded down to the nearest second.
+     * </pre>
+     *
+     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     *
+     * @return The retentionDuration.
+     */
+    com.google.protobuf.Duration getRetentionDuration();
+    /**
+     *
+     *
+     * <pre>
+     * The duration that objects need to be retained. Retention duration must be
+     * greater than zero and less than 100 years. Note that enforcement of
+     * retention periods less than a day is not guaranteed. Such periods should
+     * only be used for testing purposes. Any `nanos` value specified will be
+     * rounded down to the nearest second.
+     * </pre>
+     *
+     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     */
+    com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder();
   }
   /**
    *
@@ -12034,6 +12096,66 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return retentionPeriod_;
     }
 
+    public static final int RETENTION_DURATION_FIELD_NUMBER = 4;
+    private com.google.protobuf.Duration retentionDuration_;
+    /**
+     *
+     *
+     * <pre>
+     * The duration that objects need to be retained. Retention duration must be
+     * greater than zero and less than 100 years. Note that enforcement of
+     * retention periods less than a day is not guaranteed. Such periods should
+     * only be used for testing purposes. Any `nanos` value specified will be
+     * rounded down to the nearest second.
+     * </pre>
+     *
+     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     *
+     * @return Whether the retentionDuration field is set.
+     */
+    @java.lang.Override
+    public boolean hasRetentionDuration() {
+      return retentionDuration_ != null;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The duration that objects need to be retained. Retention duration must be
+     * greater than zero and less than 100 years. Note that enforcement of
+     * retention periods less than a day is not guaranteed. Such periods should
+     * only be used for testing purposes. Any `nanos` value specified will be
+     * rounded down to the nearest second.
+     * </pre>
+     *
+     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     *
+     * @return The retentionDuration.
+     */
+    @java.lang.Override
+    public com.google.protobuf.Duration getRetentionDuration() {
+      return retentionDuration_ == null
+          ? com.google.protobuf.Duration.getDefaultInstance()
+          : retentionDuration_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The duration that objects need to be retained. Retention duration must be
+     * greater than zero and less than 100 years. Note that enforcement of
+     * retention periods less than a day is not guaranteed. Such periods should
+     * only be used for testing purposes. Any `nanos` value specified will be
+     * rounded down to the nearest second.
+     * </pre>
+     *
+     * <code>.google.protobuf.Duration retention_duration = 4;</code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder() {
+      return getRetentionDuration();
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -12057,6 +12179,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (((bitField0_ & 0x00000001) != 0)) {
         output.writeInt64(3, retentionPeriod_);
       }
+      if (retentionDuration_ != null) {
+        output.writeMessage(4, getRetentionDuration());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -12074,6 +12199,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (((bitField0_ & 0x00000001) != 0)) {
         size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, retentionPeriod_);
+      }
+      if (retentionDuration_ != null) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, getRetentionDuration());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -12100,6 +12228,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (hasRetentionPeriod()) {
         if (getRetentionPeriod() != other.getRetentionPeriod()) return false;
       }
+      if (hasRetentionDuration() != other.hasRetentionDuration()) return false;
+      if (hasRetentionDuration()) {
+        if (!getRetentionDuration().equals(other.getRetentionDuration())) return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -12120,6 +12252,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (hasRetentionPeriod()) {
         hash = (37 * hash) + RETENTION_PERIOD_FIELD_NUMBER;
         hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getRetentionPeriod());
+      }
+      if (hasRetentionDuration()) {
+        hash = (37 * hash) + RETENTION_DURATION_FIELD_NUMBER;
+        hash = (53 * hash) + getRetentionDuration().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -12271,6 +12407,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
 
         retentionPeriod_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000001);
+        if (retentionDurationBuilder_ == null) {
+          retentionDuration_ = null;
+        } else {
+          retentionDuration_ = null;
+          retentionDurationBuilder_ = null;
+        }
         return this;
       }
 
@@ -12309,6 +12451,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (((from_bitField0_ & 0x00000001) != 0)) {
           result.retentionPeriod_ = retentionPeriod_;
           to_bitField0_ |= 0x00000001;
+        }
+        if (retentionDurationBuilder_ == null) {
+          result.retentionDuration_ = retentionDuration_;
+        } else {
+          result.retentionDuration_ = retentionDurationBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -12371,6 +12518,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (other.hasRetentionPeriod()) {
           setRetentionPeriod(other.getRetentionPeriod());
         }
+        if (other.hasRetentionDuration()) {
+          mergeRetentionDuration(other.getRetentionDuration());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -12415,6 +12565,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   bitField0_ |= 0x00000001;
                   break;
                 } // case 24
+              case 34:
+                {
+                  input.readMessage(
+                      getRetentionDurationFieldBuilder().getBuilder(), extensionRegistry);
+
+                  break;
+                } // case 34
               default:
                 {
                   if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -12757,6 +12914,227 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         retentionPeriod_ = 0L;
         onChanged();
         return this;
+      }
+
+      private com.google.protobuf.Duration retentionDuration_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Duration,
+              com.google.protobuf.Duration.Builder,
+              com.google.protobuf.DurationOrBuilder>
+          retentionDurationBuilder_;
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       *
+       * @return Whether the retentionDuration field is set.
+       */
+      public boolean hasRetentionDuration() {
+        return retentionDurationBuilder_ != null || retentionDuration_ != null;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       *
+       * @return The retentionDuration.
+       */
+      public com.google.protobuf.Duration getRetentionDuration() {
+        if (retentionDurationBuilder_ == null) {
+          return retentionDuration_ == null
+              ? com.google.protobuf.Duration.getDefaultInstance()
+              : retentionDuration_;
+        } else {
+          return retentionDurationBuilder_.getMessage();
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       */
+      public Builder setRetentionDuration(com.google.protobuf.Duration value) {
+        if (retentionDurationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          retentionDuration_ = value;
+          onChanged();
+        } else {
+          retentionDurationBuilder_.setMessage(value);
+        }
+
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       */
+      public Builder setRetentionDuration(com.google.protobuf.Duration.Builder builderForValue) {
+        if (retentionDurationBuilder_ == null) {
+          retentionDuration_ = builderForValue.build();
+          onChanged();
+        } else {
+          retentionDurationBuilder_.setMessage(builderForValue.build());
+        }
+
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       */
+      public Builder mergeRetentionDuration(com.google.protobuf.Duration value) {
+        if (retentionDurationBuilder_ == null) {
+          if (retentionDuration_ != null) {
+            retentionDuration_ =
+                com.google.protobuf.Duration.newBuilder(retentionDuration_)
+                    .mergeFrom(value)
+                    .buildPartial();
+          } else {
+            retentionDuration_ = value;
+          }
+          onChanged();
+        } else {
+          retentionDurationBuilder_.mergeFrom(value);
+        }
+
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       */
+      public Builder clearRetentionDuration() {
+        if (retentionDurationBuilder_ == null) {
+          retentionDuration_ = null;
+          onChanged();
+        } else {
+          retentionDuration_ = null;
+          retentionDurationBuilder_ = null;
+        }
+
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       */
+      public com.google.protobuf.Duration.Builder getRetentionDurationBuilder() {
+
+        onChanged();
+        return getRetentionDurationFieldBuilder().getBuilder();
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       */
+      public com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder() {
+        if (retentionDurationBuilder_ != null) {
+          return retentionDurationBuilder_.getMessageOrBuilder();
+        } else {
+          return retentionDuration_ == null
+              ? com.google.protobuf.Duration.getDefaultInstance()
+              : retentionDuration_;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The duration that objects need to be retained. Retention duration must be
+       * greater than zero and less than 100 years. Note that enforcement of
+       * retention periods less than a day is not guaranteed. Such periods should
+       * only be used for testing purposes. Any `nanos` value specified will be
+       * rounded down to the nearest second.
+       * </pre>
+       *
+       * <code>.google.protobuf.Duration retention_duration = 4;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Duration,
+              com.google.protobuf.Duration.Builder,
+              com.google.protobuf.DurationOrBuilder>
+          getRetentionDurationFieldBuilder() {
+        if (retentionDurationBuilder_ == null) {
+          retentionDurationBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.protobuf.Duration,
+                  com.google.protobuf.Duration.Builder,
+                  com.google.protobuf.DurationOrBuilder>(
+                  getRetentionDuration(), getParentForChildren(), isClean());
+          retentionDuration_ = null;
+        }
+        return retentionDurationBuilder_;
       }
 
       @java.lang.Override
@@ -15036,10 +15414,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Latest instant at which the `enabled` field was set to true after being
-     * disabled/unconfigured or set to false after being enabled. If Autoclass
-     * is enabled when the bucket is created, the toggle_time is set to the
-     * bucket creation time.
+     * Output only. Latest instant at which the `enabled` field was set to true
+     * after being disabled/unconfigured or set to false after being enabled. If
+     * Autoclass is enabled when the bucket is created, the toggle_time is set
+     * to the bucket creation time.
      * </pre>
      *
      * <code>
@@ -15053,10 +15431,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Latest instant at which the `enabled` field was set to true after being
-     * disabled/unconfigured or set to false after being enabled. If Autoclass
-     * is enabled when the bucket is created, the toggle_time is set to the
-     * bucket creation time.
+     * Output only. Latest instant at which the `enabled` field was set to true
+     * after being disabled/unconfigured or set to false after being enabled. If
+     * Autoclass is enabled when the bucket is created, the toggle_time is set
+     * to the bucket creation time.
      * </pre>
      *
      * <code>
@@ -15070,10 +15448,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Latest instant at which the `enabled` field was set to true after being
-     * disabled/unconfigured or set to false after being enabled. If Autoclass
-     * is enabled when the bucket is created, the toggle_time is set to the
-     * bucket creation time.
+     * Output only. Latest instant at which the `enabled` field was set to true
+     * after being disabled/unconfigured or set to false after being enabled. If
+     * Autoclass is enabled when the bucket is created, the toggle_time is set
+     * to the bucket creation time.
      * </pre>
      *
      * <code>
@@ -15153,10 +15531,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Latest instant at which the `enabled` field was set to true after being
-     * disabled/unconfigured or set to false after being enabled. If Autoclass
-     * is enabled when the bucket is created, the toggle_time is set to the
-     * bucket creation time.
+     * Output only. Latest instant at which the `enabled` field was set to true
+     * after being disabled/unconfigured or set to false after being enabled. If
+     * Autoclass is enabled when the bucket is created, the toggle_time is set
+     * to the bucket creation time.
      * </pre>
      *
      * <code>
@@ -15173,10 +15551,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Latest instant at which the `enabled` field was set to true after being
-     * disabled/unconfigured or set to false after being enabled. If Autoclass
-     * is enabled when the bucket is created, the toggle_time is set to the
-     * bucket creation time.
+     * Output only. Latest instant at which the `enabled` field was set to true
+     * after being disabled/unconfigured or set to false after being enabled. If
+     * Autoclass is enabled when the bucket is created, the toggle_time is set
+     * to the bucket creation time.
      * </pre>
      *
      * <code>
@@ -15193,10 +15571,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Latest instant at which the `enabled` field was set to true after being
-     * disabled/unconfigured or set to false after being enabled. If Autoclass
-     * is enabled when the bucket is created, the toggle_time is set to the
-     * bucket creation time.
+     * Output only. Latest instant at which the `enabled` field was set to true
+     * after being disabled/unconfigured or set to false after being enabled. If
+     * Autoclass is enabled when the bucket is created, the toggle_time is set
+     * to the bucket creation time.
      * </pre>
      *
      * <code>
@@ -15635,10 +16013,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15654,10 +16032,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15679,10 +16057,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15706,10 +16084,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15730,10 +16108,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15761,10 +16139,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15786,10 +16164,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15805,10 +16183,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15828,10 +16206,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Output only. Latest instant at which the `enabled` field was set to true after being
-       * disabled/unconfigured or set to false after being enabled. If Autoclass
-       * is enabled when the bucket is created, the toggle_time is set to the
-       * bucket creation time.
+       * Output only. Latest instant at which the `enabled` field was set to true
+       * after being disabled/unconfigured or set to false after being enabled. If
+       * Autoclass is enabled when the bucket is created, the toggle_time is set
+       * to the bucket creation time.
        * </pre>
        *
        * <code>
@@ -15974,9 +16352,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-   * `name` field. For globally unique buckets, this is equal to the "bucket
-   * name" of other Cloud Storage APIs. Example: "pub".
+   * Output only. The user-chosen part of the bucket name. The `{bucket}`
+   * portion of the `name` field. For globally unique buckets, this is equal to
+   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -15999,9 +16377,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-   * `name` field. For globally unique buckets, this is equal to the "bucket
-   * name" of other Cloud Storage APIs. Example: "pub".
+   * Output only. The user-chosen part of the bucket name. The `{bucket}`
+   * portion of the `name` field. For globally unique buckets, this is equal to
+   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -16157,8 +16535,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The location of the bucket. Object data for objects in the bucket resides
-   * in physical storage within this region.  Defaults to `US`. See the
+   * Immutable. The location of the bucket. Object data for objects in the
+   * bucket resides in physical storage within this region.  Defaults to `US`.
+   * See the
    * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
    * guide] for the authoritative list. Attempting to update this field after
    * the bucket is created will result in an error.
@@ -16184,8 +16563,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The location of the bucket. Object data for objects in the bucket resides
-   * in physical storage within this region.  Defaults to `US`. See the
+   * Immutable. The location of the bucket. Object data for objects in the
+   * bucket resides in physical storage within this region.  Defaults to `US`.
+   * See the
    * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
    * guide] for the authoritative list. Attempting to update this field after
    * the bucket is created will result in an error.
@@ -16214,7 +16594,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+   * Output only. The location type of the bucket (region, dual-region,
+   * multi-region, etc).
    * </pre>
    *
    * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -16237,7 +16618,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+   * Output only. The location type of the bucket (region, dual-region,
+   * multi-region, etc).
    * </pre>
    *
    * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -16382,7 +16764,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16397,7 +16779,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16413,7 +16795,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16428,7 +16810,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16443,7 +16825,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16461,7 +16843,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16476,7 +16858,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16492,7 +16874,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16507,7 +16889,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -16522,7 +16904,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -17058,7 +17440,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the bucket. This is always the project team's owner group.
+   * Output only. The owner of the bucket. This is always the project team's
+   * owner group.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -17073,7 +17456,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the bucket. This is always the project team's owner group.
+   * Output only. The owner of the bucket. This is always the project team's
+   * owner group.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -17088,7 +17472,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the bucket. This is always the project team's owner group.
+   * Output only. The owner of the bucket. This is always the project team's
+   * owner group.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -18784,9 +19169,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-     * `name` field. For globally unique buckets, this is equal to the "bucket
-     * name" of other Cloud Storage APIs. Example: "pub".
+     * Output only. The user-chosen part of the bucket name. The `{bucket}`
+     * portion of the `name` field. For globally unique buckets, this is equal to
+     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -18808,9 +19193,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-     * `name` field. For globally unique buckets, this is equal to the "bucket
-     * name" of other Cloud Storage APIs. Example: "pub".
+     * Output only. The user-chosen part of the bucket name. The `{bucket}`
+     * portion of the `name` field. For globally unique buckets, this is equal to
+     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -18832,9 +19217,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-     * `name` field. For globally unique buckets, this is equal to the "bucket
-     * name" of other Cloud Storage APIs. Example: "pub".
+     * Output only. The user-chosen part of the bucket name. The `{bucket}`
+     * portion of the `name` field. For globally unique buckets, this is equal to
+     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -18855,9 +19240,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-     * `name` field. For globally unique buckets, this is equal to the "bucket
-     * name" of other Cloud Storage APIs. Example: "pub".
+     * Output only. The user-chosen part of the bucket name. The `{bucket}`
+     * portion of the `name` field. For globally unique buckets, this is equal to
+     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -18874,9 +19259,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-     * `name` field. For globally unique buckets, this is equal to the "bucket
-     * name" of other Cloud Storage APIs. Example: "pub".
+     * Output only. The user-chosen part of the bucket name. The `{bucket}`
+     * portion of the `name` field. For globally unique buckets, this is equal to
+     * the "bucket name" of other Cloud Storage APIs. Example: "pub".
      * </pre>
      *
      * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -19200,8 +19585,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The location of the bucket. Object data for objects in the bucket resides
-     * in physical storage within this region.  Defaults to `US`. See the
+     * Immutable. The location of the bucket. Object data for objects in the
+     * bucket resides in physical storage within this region.  Defaults to `US`.
+     * See the
      * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
      * guide] for the authoritative list. Attempting to update this field after
      * the bucket is created will result in an error.
@@ -19226,8 +19612,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The location of the bucket. Object data for objects in the bucket resides
-     * in physical storage within this region.  Defaults to `US`. See the
+     * Immutable. The location of the bucket. Object data for objects in the
+     * bucket resides in physical storage within this region.  Defaults to `US`.
+     * See the
      * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
      * guide] for the authoritative list. Attempting to update this field after
      * the bucket is created will result in an error.
@@ -19252,8 +19639,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The location of the bucket. Object data for objects in the bucket resides
-     * in physical storage within this region.  Defaults to `US`. See the
+     * Immutable. The location of the bucket. Object data for objects in the
+     * bucket resides in physical storage within this region.  Defaults to `US`.
+     * See the
      * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
      * guide] for the authoritative list. Attempting to update this field after
      * the bucket is created will result in an error.
@@ -19277,8 +19665,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The location of the bucket. Object data for objects in the bucket resides
-     * in physical storage within this region.  Defaults to `US`. See the
+     * Immutable. The location of the bucket. Object data for objects in the
+     * bucket resides in physical storage within this region.  Defaults to `US`.
+     * See the
      * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
      * guide] for the authoritative list. Attempting to update this field after
      * the bucket is created will result in an error.
@@ -19298,8 +19687,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The location of the bucket. Object data for objects in the bucket resides
-     * in physical storage within this region.  Defaults to `US`. See the
+     * Immutable. The location of the bucket. Object data for objects in the
+     * bucket resides in physical storage within this region.  Defaults to `US`.
+     * See the
      * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
      * guide] for the authoritative list. Attempting to update this field after
      * the bucket is created will result in an error.
@@ -19326,7 +19716,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+     * Output only. The location type of the bucket (region, dual-region,
+     * multi-region, etc).
      * </pre>
      *
      * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -19348,7 +19739,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+     * Output only. The location type of the bucket (region, dual-region,
+     * multi-region, etc).
      * </pre>
      *
      * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -19370,7 +19762,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+     * Output only. The location type of the bucket (region, dual-region,
+     * multi-region, etc).
      * </pre>
      *
      * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -19391,7 +19784,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+     * Output only. The location type of the bucket (region, dual-region,
+     * multi-region, etc).
      * </pre>
      *
      * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -19408,7 +19802,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+     * Output only. The location type of the bucket (region, dual-region,
+     * multi-region, etc).
      * </pre>
      *
      * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -19710,7 +20105,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19728,7 +20123,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19746,7 +20141,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19764,7 +20159,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19788,7 +20183,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19810,7 +20205,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19834,7 +20229,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19858,7 +20253,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19879,7 +20274,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19901,7 +20296,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19923,7 +20318,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19944,7 +20339,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19965,7 +20360,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19979,7 +20374,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -19997,7 +20392,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20016,7 +20411,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20031,7 +20426,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20046,7 +20441,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the bucket.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20095,7 +20490,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20113,7 +20508,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20131,7 +20526,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20149,7 +20544,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20173,7 +20568,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20195,7 +20590,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20219,7 +20614,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20243,7 +20638,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20265,7 +20660,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20287,7 +20682,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20309,7 +20704,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20330,7 +20725,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20351,7 +20746,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20365,7 +20760,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20384,7 +20779,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20403,7 +20798,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20418,7 +20813,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -20433,7 +20828,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Default access controls to apply to new objects when no ACL is provided.
-     * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+     * If iam_config.uniform_bucket_level_access is enabled on this bucket,
      * requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -22316,7 +22711,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22331,7 +22727,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22350,7 +22747,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22373,7 +22771,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22393,7 +22792,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22417,7 +22817,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22438,7 +22839,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22453,7 +22855,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -22470,7 +22873,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the bucket. This is always the project team's owner group.
+     * Output only. The owner of the bucket. This is always the project team's
+     * owner group.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];

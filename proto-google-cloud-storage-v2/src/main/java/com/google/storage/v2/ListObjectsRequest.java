@@ -408,13 +408,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Filter results to objects whose names are lexicographically equal to or
-   * after lexicographic_start. If lexicographic_end is also set, the objects
-   * listed have names between lexicographic_start (inclusive) and
+   * Optional. Filter results to objects whose names are lexicographically equal
+   * to or after lexicographic_start. If lexicographic_end is also set, the
+   * objects listed have names between lexicographic_start (inclusive) and
    * lexicographic_end (exclusive).
    * </pre>
    *
-   * <code>string lexicographic_start = 10;</code>
+   * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The lexicographicStart.
    */
@@ -434,13 +434,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Filter results to objects whose names are lexicographically equal to or
-   * after lexicographic_start. If lexicographic_end is also set, the objects
-   * listed have names between lexicographic_start (inclusive) and
+   * Optional. Filter results to objects whose names are lexicographically equal
+   * to or after lexicographic_start. If lexicographic_end is also set, the
+   * objects listed have names between lexicographic_start (inclusive) and
    * lexicographic_end (exclusive).
    * </pre>
    *
-   * <code>string lexicographic_start = 10;</code>
+   * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for lexicographicStart.
    */
@@ -463,13 +463,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Filter results to objects whose names are lexicographically before
-   * lexicographic_end. If lexicographic_start is also set, the objects listed
-   * have names between lexicographic_start (inclusive) and lexicographic_end
-   * (exclusive).
+   * Optional. Filter results to objects whose names are lexicographically
+   * before lexicographic_end. If lexicographic_start is also set, the objects
+   * listed have names between lexicographic_start (inclusive) and
+   * lexicographic_end (exclusive).
    * </pre>
    *
-   * <code>string lexicographic_end = 11;</code>
+   * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The lexicographicEnd.
    */
@@ -489,13 +489,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Filter results to objects whose names are lexicographically before
-   * lexicographic_end. If lexicographic_start is also set, the objects listed
-   * have names between lexicographic_start (inclusive) and lexicographic_end
-   * (exclusive).
+   * Optional. Filter results to objects whose names are lexicographically
+   * before lexicographic_end. If lexicographic_start is also set, the objects
+   * listed have names between lexicographic_start (inclusive) and
+   * lexicographic_end (exclusive).
    * </pre>
    *
-   * <code>string lexicographic_end = 11;</code>
+   * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The bytes for lexicographicEnd.
    */
@@ -1920,13 +1920,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically equal to or
-     * after lexicographic_start. If lexicographic_end is also set, the objects
-     * listed have names between lexicographic_start (inclusive) and
+     * Optional. Filter results to objects whose names are lexicographically equal
+     * to or after lexicographic_start. If lexicographic_end is also set, the
+     * objects listed have names between lexicographic_start (inclusive) and
      * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_start = 10;</code>
+     * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The lexicographicStart.
      */
@@ -1945,13 +1945,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically equal to or
-     * after lexicographic_start. If lexicographic_end is also set, the objects
-     * listed have names between lexicographic_start (inclusive) and
+     * Optional. Filter results to objects whose names are lexicographically equal
+     * to or after lexicographic_start. If lexicographic_end is also set, the
+     * objects listed have names between lexicographic_start (inclusive) and
      * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_start = 10;</code>
+     * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for lexicographicStart.
      */
@@ -1970,13 +1970,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically equal to or
-     * after lexicographic_start. If lexicographic_end is also set, the objects
-     * listed have names between lexicographic_start (inclusive) and
+     * Optional. Filter results to objects whose names are lexicographically equal
+     * to or after lexicographic_start. If lexicographic_end is also set, the
+     * objects listed have names between lexicographic_start (inclusive) and
      * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_start = 10;</code>
+     * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The lexicographicStart to set.
      * @return This builder for chaining.
@@ -1994,13 +1994,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically equal to or
-     * after lexicographic_start. If lexicographic_end is also set, the objects
-     * listed have names between lexicographic_start (inclusive) and
+     * Optional. Filter results to objects whose names are lexicographically equal
+     * to or after lexicographic_start. If lexicographic_end is also set, the
+     * objects listed have names between lexicographic_start (inclusive) and
      * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_start = 10;</code>
+     * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -2014,13 +2014,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically equal to or
-     * after lexicographic_start. If lexicographic_end is also set, the objects
-     * listed have names between lexicographic_start (inclusive) and
+     * Optional. Filter results to objects whose names are lexicographically equal
+     * to or after lexicographic_start. If lexicographic_end is also set, the
+     * objects listed have names between lexicographic_start (inclusive) and
      * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_start = 10;</code>
+     * <code>string lexicographic_start = 10 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for lexicographicStart to set.
      * @return This builder for chaining.
@@ -2041,13 +2041,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically before
-     * lexicographic_end. If lexicographic_start is also set, the objects listed
-     * have names between lexicographic_start (inclusive) and lexicographic_end
-     * (exclusive).
+     * Optional. Filter results to objects whose names are lexicographically
+     * before lexicographic_end. If lexicographic_start is also set, the objects
+     * listed have names between lexicographic_start (inclusive) and
+     * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_end = 11;</code>
+     * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The lexicographicEnd.
      */
@@ -2066,13 +2066,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically before
-     * lexicographic_end. If lexicographic_start is also set, the objects listed
-     * have names between lexicographic_start (inclusive) and lexicographic_end
-     * (exclusive).
+     * Optional. Filter results to objects whose names are lexicographically
+     * before lexicographic_end. If lexicographic_start is also set, the objects
+     * listed have names between lexicographic_start (inclusive) and
+     * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_end = 11;</code>
+     * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The bytes for lexicographicEnd.
      */
@@ -2091,13 +2091,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically before
-     * lexicographic_end. If lexicographic_start is also set, the objects listed
-     * have names between lexicographic_start (inclusive) and lexicographic_end
-     * (exclusive).
+     * Optional. Filter results to objects whose names are lexicographically
+     * before lexicographic_end. If lexicographic_start is also set, the objects
+     * listed have names between lexicographic_start (inclusive) and
+     * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_end = 11;</code>
+     * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The lexicographicEnd to set.
      * @return This builder for chaining.
@@ -2115,13 +2115,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically before
-     * lexicographic_end. If lexicographic_start is also set, the objects listed
-     * have names between lexicographic_start (inclusive) and lexicographic_end
-     * (exclusive).
+     * Optional. Filter results to objects whose names are lexicographically
+     * before lexicographic_end. If lexicographic_start is also set, the objects
+     * listed have names between lexicographic_start (inclusive) and
+     * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_end = 11;</code>
+     * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */
@@ -2135,13 +2135,13 @@ public final class ListObjectsRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Filter results to objects whose names are lexicographically before
-     * lexicographic_end. If lexicographic_start is also set, the objects listed
-     * have names between lexicographic_start (inclusive) and lexicographic_end
-     * (exclusive).
+     * Optional. Filter results to objects whose names are lexicographically
+     * before lexicographic_end. If lexicographic_start is also set, the objects
+     * listed have names between lexicographic_start (inclusive) and
+     * lexicographic_end (exclusive).
      * </pre>
      *
-     * <code>string lexicographic_end = 11;</code>
+     * <code>string lexicographic_end = 11 [(.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The bytes for lexicographicEnd to set.
      * @return This builder for chaining.

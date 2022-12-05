@@ -136,8 +136,8 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * Output only. The alternative entity format, if exists. For project entities,
-   * `project-{team}-{projectid}` format will be returned on response.
+   * Output only. The alternative entity format, if exists. For project
+   * entities, `project-{team}-{projectid}` format will be returned on response.
    * </pre>
    *
    * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -149,8 +149,8 @@ public interface BucketAccessControlOrBuilder
    *
    *
    * <pre>
-   * Output only. The alternative entity format, if exists. For project entities,
-   * `project-{team}-{projectid}` format will be returned on response.
+   * Output only. The alternative entity format, if exists. For project
+   * entities, `project-{team}-{projectid}` format will be returned on response.
    * </pre>
    *
    * <code>string entity_alt = 9 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>

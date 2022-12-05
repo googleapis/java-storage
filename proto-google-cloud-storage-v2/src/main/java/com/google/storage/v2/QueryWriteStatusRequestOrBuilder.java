@@ -27,8 +27,8 @@ public interface QueryWriteStatusRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The name of the resume token for the object whose write status is being
-   * requested.
+   * Required. The name of the resume token for the object whose write status is
+   * being requested.
    * </pre>
    *
    * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -40,8 +40,8 @@ public interface QueryWriteStatusRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The name of the resume token for the object whose write status is being
-   * requested.
+   * Required. The name of the resume token for the object whose write status is
+   * being requested.
    * </pre>
    *
    * <code>string upload_id = 1 [(.google.api.field_behavior) = REQUIRED];</code>

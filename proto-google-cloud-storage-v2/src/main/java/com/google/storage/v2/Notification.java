@@ -144,7 +144,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+   * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+   * as:
    * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
    * </pre>
    *
@@ -168,7 +169,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+   * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+   * as:
    * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
    * </pre>
    *
@@ -1148,7 +1150,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+     * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+     * as:
      * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
      * </pre>
      *
@@ -1171,7 +1174,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+     * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+     * as:
      * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
      * </pre>
      *
@@ -1194,7 +1198,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+     * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+     * as:
      * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
      * </pre>
      *
@@ -1216,7 +1221,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+     * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+     * as:
      * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
      * </pre>
      *
@@ -1234,7 +1240,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+     * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+     * as:
      * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
      * </pre>
      *

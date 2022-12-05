@@ -829,7 +829,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object.
+   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -860,7 +862,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object.
+   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -888,7 +892,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object.
+   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -919,7 +925,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Gets the IAM policy for a specified bucket or object.
+   * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -949,7 +957,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object.
+   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -985,7 +995,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object.
+   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -1018,7 +1030,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object.
+   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -1050,7 +1064,9 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Updates an IAM policy for the specified bucket or object.
+   * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
+   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
    *
    * <p>Sample code:
    *
@@ -1082,7 +1098,9 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller.
+   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
+   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
+   * object.
    *
    * <p>Sample code:
    *
@@ -1120,7 +1138,9 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller.
+   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
+   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
+   * object.
    *
    * <p>Sample code:
    *
@@ -1158,7 +1178,9 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller.
+   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
+   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
+   * object.
    *
    * <p>Sample code:
    *
@@ -1190,7 +1212,9 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller.
+   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
+   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
+   * object.
    *
    * <p>Sample code:
    *
@@ -1861,6 +1885,7 @@ public class StorageClient implements BackgroundResource {
    *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
    *                   .toString())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
    *           .build();
    *   Object response = storageClient.composeObject(request);
    * }
@@ -1897,6 +1922,7 @@ public class StorageClient implements BackgroundResource {
    *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
    *                   .toString())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
    *           .build();
    *   ApiFuture<Object> future = storageClient.composeObjectCallable().futureCall(request);
    *   // Do something.
@@ -1929,7 +1955,8 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param bucket Required. Name of the bucket in which the object resides.
-   * @param object Required. The name of the object to delete (when not using a resumable write).
+   * @param object Required. The name of the finalized object to delete. Note: If you want to delete
+   *     an unfinalized resumable upload please use `CancelResumableWrite`.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteObject(String bucket, String object) {
@@ -1960,7 +1987,8 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param bucket Required. Name of the bucket in which the object resides.
-   * @param object Required. The name of the object to delete (when not using a resumable write).
+   * @param object Required. The name of the finalized object to delete. Note: If you want to delete
+   *     an unfinalized resumable upload please use `CancelResumableWrite`.
    * @param generation If present, permanently deletes a specific revision of this object (as
    *     opposed to the latest version, the default).
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
@@ -2717,6 +2745,7 @@ public class StorageClient implements BackgroundResource {
    *           .setCopySourceEncryptionKeyBytes(ByteString.EMPTY)
    *           .setCopySourceEncryptionKeySha256Bytes(ByteString.EMPTY)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
    *           .build();
    *   RewriteResponse response = storageClient.rewriteObject(request);
    * }
@@ -2768,6 +2797,7 @@ public class StorageClient implements BackgroundResource {
    *           .setCopySourceEncryptionKeyBytes(ByteString.EMPTY)
    *           .setCopySourceEncryptionKeySha256Bytes(ByteString.EMPTY)
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
    *           .build();
    *   ApiFuture<RewriteResponse> future = storageClient.rewriteObjectCallable().futureCall(request);
    *   // Do something.
@@ -2797,6 +2827,7 @@ public class StorageClient implements BackgroundResource {
    *       StartResumableWriteRequest.newBuilder()
    *           .setWriteObjectSpec(WriteObjectSpec.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
    *           .build();
    *   StartResumableWriteResponse response = storageClient.startResumableWrite(request);
    * }
@@ -2827,6 +2858,7 @@ public class StorageClient implements BackgroundResource {
    *       StartResumableWriteRequest.newBuilder()
    *           .setWriteObjectSpec(WriteObjectSpec.newBuilder().build())
    *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
    *           .build();
    *   ApiFuture<StartResumableWriteResponse> future =
    *       storageClient.startResumableWriteCallable().futureCall(request);

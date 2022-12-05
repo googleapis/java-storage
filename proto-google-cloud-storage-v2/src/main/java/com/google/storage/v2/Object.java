@@ -93,9 +93,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The name of this object. Nearly any sequence of unicode characters is
-   * valid. See
-   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Immutable. The name of this object. Nearly any sequence of unicode
+   * characters is valid. See
+   * [Guidelines](https://cloud.google.com/storage/docs/objects#naming).
    * Example: `test.txt`
    * The `name` field by itself does not uniquely identify a Cloud Storage
    * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -122,9 +122,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The name of this object. Nearly any sequence of unicode characters is
-   * valid. See
-   * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * Immutable. The name of this object. Nearly any sequence of unicode
+   * characters is valid. See
+   * [Guidelines](https://cloud.google.com/storage/docs/objects#naming).
    * Example: `test.txt`
    * The `name` field by itself does not uniquely identify a Cloud Storage
    * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -262,8 +262,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Immutable. The content generation of this object. Used for object versioning.
-   * Attempting to set or update this field will result in a
+   * Immutable. The content generation of this object. Used for object
+   * versioning. Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -282,12 +282,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The version of the metadata for this generation of this object. Used for
-   * preconditions and for detecting changes in metadata. A metageneration
-   * number is only meaningful in the context of a particular generation of a
-   * particular object.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * Output only. The version of the metadata for this generation of this
+   * object. Used for preconditions and for detecting changes in metadata. A
+   * metageneration number is only meaningful in the context of a particular
+   * generation of a particular object. Attempting to set or update this field
+   * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -533,7 +532,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the object.
-   * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+   * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -548,7 +547,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the object.
-   * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+   * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -564,7 +563,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the object.
-   * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+   * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -579,7 +578,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the object.
-   * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+   * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -594,7 +593,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Access controls on the object.
-   * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+   * If iam_config.uniform_bucket_level_access is enabled on the parent
    * bucket, requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -662,9 +661,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The deletion time of the object. Will be returned if and only if this
-   * version of the object has been deleted.
-   * Attempting to set or update this field will result in a
+   * Output only. The deletion time of the object. Will be returned if and only
+   * if this version of the object has been deleted. Attempting to set or update
+   * this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -681,9 +680,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The deletion time of the object. Will be returned if and only if this
-   * version of the object has been deleted.
-   * Attempting to set or update this field will result in a
+   * Output only. The deletion time of the object. Will be returned if and only
+   * if this version of the object has been deleted. Attempting to set or update
+   * this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -700,9 +699,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The deletion time of the object. Will be returned if and only if this
-   * version of the object has been deleted.
-   * Attempting to set or update this field will result in a
+   * Output only. The deletion time of the object. Will be returned if and only
+   * if this version of the object has been deleted. Attempting to set or update
+   * this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -830,9 +829,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. Number of underlying components that make up this object. Components are
-   * accumulated by compose operations.
-   * Attempting to set or update this field will result in a
+   * Output only. Number of underlying components that make up this object.
+   * Components are accumulated by compose operations. Attempting to set or
+   * update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -851,7 +850,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. Hashes for the data part of this object.
+   * Output only. Hashes for the data part of this object. This field is used
+   * for output only and will be silently ignored if provided in requests.
    * </pre>
    *
    * <code>
@@ -868,7 +868,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. Hashes for the data part of this object.
+   * Output only. Hashes for the data part of this object. This field is used
+   * for output only and will be silently ignored if provided in requests.
    * </pre>
    *
    * <code>
@@ -887,7 +888,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. Hashes for the data part of this object.
+   * Output only. Hashes for the data part of this object. This field is used
+   * for output only and will be silently ignored if provided in requests.
    * </pre>
    *
    * <code>
@@ -1026,8 +1028,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The time at which the object's storage class was last changed. When the
-   * object is initially created, it will be set to time_created.
+   * Output only. The time at which the object's storage class was last changed.
+   * When the object is initially created, it will be set to time_created.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -1046,8 +1048,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The time at which the object's storage class was last changed. When the
-   * object is initially created, it will be set to time_created.
+   * Output only. The time at which the object's storage class was last changed.
+   * When the object is initially created, it will be set to time_created.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -1068,8 +1070,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The time at which the object's storage class was last changed. When the
-   * object is initially created, it will be set to time_created.
+   * Output only. The time at which the object's storage class was last changed.
+   * When the object is initially created, it will be set to time_created.
    * Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
@@ -1327,8 +1329,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the object. This will always be the uploader of the object.
-   * Attempting to set or update this field will result in a
+   * Output only. The owner of the object. This will always be the uploader of
+   * the object. Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -1344,8 +1346,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the object. This will always be the uploader of the object.
-   * Attempting to set or update this field will result in a
+   * Output only. The owner of the object. This will always be the uploader of
+   * the object. Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -1361,8 +1363,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The owner of the object. This will always be the uploader of the object.
-   * Attempting to set or update this field will result in a
+   * Output only. The owner of the object. This will always be the uploader of
+   * the object. Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -2565,9 +2567,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of this object. Nearly any sequence of unicode characters is
-     * valid. See
-     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Immutable. The name of this object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/objects#naming).
      * Example: `test.txt`
      * The `name` field by itself does not uniquely identify a Cloud Storage
      * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -2593,9 +2595,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of this object. Nearly any sequence of unicode characters is
-     * valid. See
-     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Immutable. The name of this object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/objects#naming).
      * Example: `test.txt`
      * The `name` field by itself does not uniquely identify a Cloud Storage
      * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -2621,9 +2623,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of this object. Nearly any sequence of unicode characters is
-     * valid. See
-     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Immutable. The name of this object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/objects#naming).
      * Example: `test.txt`
      * The `name` field by itself does not uniquely identify a Cloud Storage
      * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -2648,9 +2650,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of this object. Nearly any sequence of unicode characters is
-     * valid. See
-     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Immutable. The name of this object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/objects#naming).
      * Example: `test.txt`
      * The `name` field by itself does not uniquely identify a Cloud Storage
      * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -2671,9 +2673,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The name of this object. Nearly any sequence of unicode characters is
-     * valid. See
-     * [Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+     * Immutable. The name of this object. Nearly any sequence of unicode
+     * characters is valid. See
+     * [Guidelines](https://cloud.google.com/storage/docs/objects#naming).
      * Example: `test.txt`
      * The `name` field by itself does not uniquely identify a Cloud Storage
      * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -2938,8 +2940,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The content generation of this object. Used for object versioning.
-     * Attempting to set or update this field will result in a
+     * Immutable. The content generation of this object. Used for object
+     * versioning. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -2955,8 +2957,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The content generation of this object. Used for object versioning.
-     * Attempting to set or update this field will result in a
+     * Immutable. The content generation of this object. Used for object
+     * versioning. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -2975,8 +2977,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Immutable. The content generation of this object. Used for object versioning.
-     * Attempting to set or update this field will result in a
+     * Immutable. The content generation of this object. Used for object
+     * versioning. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -2996,12 +2998,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The version of the metadata for this generation of this object. Used for
-     * preconditions and for detecting changes in metadata. A metageneration
-     * number is only meaningful in the context of a particular generation of a
-     * particular object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * Output only. The version of the metadata for this generation of this
+     * object. Used for preconditions and for detecting changes in metadata. A
+     * metageneration number is only meaningful in the context of a particular
+     * generation of a particular object. Attempting to set or update this field
+     * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3016,12 +3017,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The version of the metadata for this generation of this object. Used for
-     * preconditions and for detecting changes in metadata. A metageneration
-     * number is only meaningful in the context of a particular generation of a
-     * particular object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * Output only. The version of the metadata for this generation of this
+     * object. Used for preconditions and for detecting changes in metadata. A
+     * metageneration number is only meaningful in the context of a particular
+     * generation of a particular object. Attempting to set or update this field
+     * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3039,12 +3039,11 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The version of the metadata for this generation of this object. Used for
-     * preconditions and for detecting changes in metadata. A metageneration
-     * number is only meaningful in the context of a particular generation of a
-     * particular object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * Output only. The version of the metadata for this generation of this
+     * object. Used for preconditions and for detecting changes in metadata. A
+     * metageneration number is only meaningful in the context of a particular
+     * generation of a particular object. Attempting to set or update this field
+     * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3589,7 +3588,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3607,7 +3606,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3625,7 +3624,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3643,7 +3642,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3667,7 +3666,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3689,7 +3688,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3713,7 +3712,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3737,7 +3736,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3758,7 +3757,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3780,7 +3779,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3802,7 +3801,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3823,7 +3822,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3844,7 +3843,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3858,7 +3857,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3876,7 +3875,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3895,7 +3894,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3910,7 +3909,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -3925,7 +3924,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Access controls on the object.
-     * If iamConfig.uniformBucketLevelAccess is enabled on the parent
+     * If iam_config.uniform_bucket_level_access is enabled on the parent
      * bucket, requests to set, read, or modify acl is an error.
      * </pre>
      *
@@ -4073,9 +4072,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4092,9 +4091,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4117,9 +4116,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4144,9 +4143,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4168,9 +4167,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4197,9 +4196,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4222,9 +4221,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4241,9 +4240,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4264,9 +4263,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only if this
-     * version of the object has been deleted.
-     * Attempting to set or update this field will result in a
+     * Output only. The deletion time of the object. Will be returned if and only
+     * if this version of the object has been deleted. Attempting to set or update
+     * this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4636,9 +4635,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Number of underlying components that make up this object. Components are
-     * accumulated by compose operations.
-     * Attempting to set or update this field will result in a
+     * Output only. Number of underlying components that make up this object.
+     * Components are accumulated by compose operations. Attempting to set or
+     * update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4654,9 +4653,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Number of underlying components that make up this object. Components are
-     * accumulated by compose operations.
-     * Attempting to set or update this field will result in a
+     * Output only. Number of underlying components that make up this object.
+     * Components are accumulated by compose operations. Attempting to set or
+     * update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4675,9 +4674,9 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Number of underlying components that make up this object. Components are
-     * accumulated by compose operations.
-     * Attempting to set or update this field will result in a
+     * Output only. Number of underlying components that make up this object.
+     * Components are accumulated by compose operations. Attempting to set or
+     * update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4702,7 +4701,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4718,7 +4718,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4740,7 +4741,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4764,7 +4766,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4785,7 +4788,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4813,7 +4817,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4835,7 +4840,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4851,7 +4857,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -4871,7 +4878,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. Hashes for the data part of this object.
+     * Output only. Hashes for the data part of this object. This field is used
+     * for output only and will be silently ignored if provided in requests.
      * </pre>
      *
      * <code>
@@ -5280,8 +5288,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5299,8 +5307,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5324,8 +5332,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5351,8 +5359,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5376,8 +5384,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5407,8 +5415,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5432,8 +5440,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5451,8 +5459,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -5474,8 +5482,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The time at which the object's storage class was last changed. When the
-     * object is initially created, it will be set to time_created.
+     * Output only. The time at which the object's storage class was last changed.
+     * When the object is initially created, it will be set to time_created.
      * Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
@@ -6076,8 +6084,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6093,8 +6101,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6114,8 +6122,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6139,8 +6147,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6161,8 +6169,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6187,8 +6195,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6210,8 +6218,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6227,8 +6235,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6246,8 +6254,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The owner of the object. This will always be the uploader of the object.
-     * Attempting to set or update this field will result in a
+     * Output only. The owner of the object. This will always be the uploader of
+     * the object. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *

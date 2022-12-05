@@ -52,9 +52,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-   * `name` field. For globally unique buckets, this is equal to the "bucket
-   * name" of other Cloud Storage APIs. Example: "pub".
+   * Output only. The user-chosen part of the bucket name. The `{bucket}`
+   * portion of the `name` field. For globally unique buckets, this is equal to
+   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -66,9 +66,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The user-chosen part of the bucket name. The `{bucket}` portion of the
-   * `name` field. For globally unique buckets, this is equal to the "bucket
-   * name" of other Cloud Storage APIs. Example: "pub".
+   * Output only. The user-chosen part of the bucket name. The `{bucket}`
+   * portion of the `name` field. For globally unique buckets, this is equal to
+   * the "bucket name" of other Cloud Storage APIs. Example: "pub".
    * </pre>
    *
    * <code>string bucket_id = 2 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -158,8 +158,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Immutable. The location of the bucket. Object data for objects in the bucket resides
-   * in physical storage within this region.  Defaults to `US`. See the
+   * Immutable. The location of the bucket. Object data for objects in the
+   * bucket resides in physical storage within this region.  Defaults to `US`.
+   * See the
    * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
    * guide] for the authoritative list. Attempting to update this field after
    * the bucket is created will result in an error.
@@ -174,8 +175,9 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Immutable. The location of the bucket. Object data for objects in the bucket resides
-   * in physical storage within this region.  Defaults to `US`. See the
+   * Immutable. The location of the bucket. Object data for objects in the
+   * bucket resides in physical storage within this region.  Defaults to `US`.
+   * See the
    * [https://developers.google.com/storage/docs/concepts-techniques#specifyinglocations"][developer's
    * guide] for the authoritative list. Attempting to update this field after
    * the bucket is created will result in an error.
@@ -191,7 +193,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+   * Output only. The location type of the bucket (region, dual-region,
+   * multi-region, etc).
    * </pre>
    *
    * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -203,7 +206,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The location type of the bucket (region, dual-region, multi-region, etc).
+   * Output only. The location type of the bucket (region, dual-region,
+   * multi-region, etc).
    * </pre>
    *
    * <code>string location_type = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -287,7 +291,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -299,7 +303,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -311,7 +315,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -323,7 +327,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -336,7 +340,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Access controls on the bucket.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -349,7 +353,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -361,7 +365,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -373,7 +377,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -385,7 +389,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -398,7 +402,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Default access controls to apply to new objects when no ACL is provided.
-   * If iamConfig.uniformBucketLevelAccess is enabled on this bucket,
+   * If iam_config.uniform_bucket_level_access is enabled on this bucket,
    * requests to set, read, or modify acl is an error.
    * </pre>
    *
@@ -796,7 +800,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The owner of the bucket. This is always the project team's owner group.
+   * Output only. The owner of the bucket. This is always the project team's
+   * owner group.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -808,7 +813,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The owner of the bucket. This is always the project team's owner group.
+   * Output only. The owner of the bucket. This is always the project team's
+   * owner group.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -820,7 +826,8 @@ public interface BucketOrBuilder
    *
    *
    * <pre>
-   * Output only. The owner of the bucket. This is always the project team's owner group.
+   * Output only. The owner of the bucket. This is always the project team's
+   * owner group.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 19 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>

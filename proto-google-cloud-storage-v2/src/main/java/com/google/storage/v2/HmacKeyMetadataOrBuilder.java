@@ -81,9 +81,9 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Immutable. Identifies the project that owns the service account of the specified HMAC
-   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-   * be the project ID or project number.
+   * Immutable. Identifies the project that owns the service account of the
+   * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -97,9 +97,9 @@ public interface HmacKeyMetadataOrBuilder
    *
    *
    * <pre>
-   * Immutable. Identifies the project that owns the service account of the specified HMAC
-   * key, in the format "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can
-   * be the project ID or project number.
+   * Immutable. Identifies the project that owns the service account of the
+   * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
+   * &lt;projectIdentifier&gt; can be the project ID or project number.
    * </pre>
    *
    * <code>
