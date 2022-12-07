@@ -1,5 +1,36 @@
 # Changelog
 
+## [2.16.0](https://github.com/googleapis/java-storage/compare/v2.15.1...v2.16.0) (2022-12-06)
+
+
+### Features
+
+* Add {Compose,Rewrite,StartResumableWrite}Request.object_checksums and Bucket.RetentionPolicy.retention_duration ([#1790](https://github.com/googleapis/java-storage/issues/1790)) ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Added a new retention_duration field of Duration type ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Added object_checksums for compose/rewrite/startResumableWrite request ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+
+
+### Bug Fixes
+
+* Removed WriteObject routing annotations ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+
+
+### Documentation
+
+* Clarified relative resource names in gRPC IAM RPCs ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Clarified the object can be deleted via DeleteObject ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Updated the document link for `Naming Guidelines` ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.1.0 ([#1797](https://github.com/googleapis/java-storage/issues/1797)) ([b1d0266](https://github.com/googleapis/java-storage/commit/b1d026608a5e3772e8bf77f25f1daf68b007427a))
+* Update dependency org.apache.httpcomponents:httpclient to v4.5.14 ([#1795](https://github.com/googleapis/java-storage/issues/1795)) ([cf900f4](https://github.com/googleapis/java-storage/commit/cf900f4139f30f89e3c0784467ddc12cc00cf81c))
+* Update dependency org.apache.httpcomponents:httpcore to v4.4.16 ([#1786](https://github.com/googleapis/java-storage/issues/1786)) ([3bf403e](https://github.com/googleapis/java-storage/commit/3bf403e94c035e6cf936e062a1ced2b5221b3912))
+* Update dependency org.apache.httpcomponents:httpmime to v4.5.14 ([#1796](https://github.com/googleapis/java-storage/issues/1796)) ([c9ee3ca](https://github.com/googleapis/java-storage/commit/c9ee3ca8820531cd709bb8f8a58a736813346861))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.18 ([#1782](https://github.com/googleapis/java-storage/issues/1782)) ([5bc5176](https://github.com/googleapis/java-storage/commit/5bc517623ef04bdb9a71a51666754b9f753f4c69))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.19 ([#1791](https://github.com/googleapis/java-storage/issues/1791)) ([3184d65](https://github.com/googleapis/java-storage/commit/3184d65cce1368c2f39ff85a6ed02cf536902244))
+
 ## [2.15.1](https://github.com/googleapis/java-storage/compare/v2.15.0...v2.15.1) (2022-11-17)
 
 
