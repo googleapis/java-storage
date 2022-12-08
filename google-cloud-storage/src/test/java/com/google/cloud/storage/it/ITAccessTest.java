@@ -43,6 +43,7 @@ import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
@@ -126,10 +127,42 @@ public class ITAccessTest {
   }
 
   @Test
+  public void bucket_defaultAcl_get() {
+    String bucketName = bucket.getName();
+    // lookup an entity from the bucket which is known to exist
+    Bucket bucketWithAcls =
+        storage.get(
+            bucketName, BucketGetOption.fields(BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
+
+    Acl actual = bucketWithAcls.getDefaultAcl().iterator().next();
+
+    Acl acl = retry429s(() -> storage.getDefaultAcl(bucketName, actual.getEntity()), storage);
+
+    assertThat(acl).isEqualTo(actual);
+  }
+
+  /** When a bucket does exist, but an acl for the specified entity is not defined return null */
+  @Test
+  public void bucket_defaultAcl_get_notFoundReturnsNull() {
+    Acl acl = retry429s(() -> storage.getDefaultAcl(bucket.getName(), User.ofAllUsers()), storage);
+
+    assertThat(acl).isNull();
+  }
+
+  /** When a bucket doesn't exist, return null for the acl value */
+  @Test
+  public void bucket_defaultAcl_get_bucket404() {
+    Acl acl =
+        retry429s(() -> storage.getDefaultAcl(bucket.getName() + "x", User.ofAllUsers()), storage);
+
+    assertThat(acl).isNull();
+  }
+
+  @Test
   @CrossRun.Ignore(transports = Transport.GRPC)
   public void testBucketDefaultAcl() {
     // TODO: break this test up into each of the respective scenarios
-    //   1. get default ACL for specific entity
+    //   DONE ~1. get default ACL for specific entity~
     //   2. Delete a default ACL for a specific entity
     //   3. Create a default ACL for specific entity
     //   4. Update default ACL to change role of a specific entity

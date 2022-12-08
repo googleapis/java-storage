@@ -113,7 +113,7 @@ public final class ITBucketReadMaskTest {
                   BucketField.DEFAULT_OBJECT_ACL,
                   (jsonT, grpcT) -> {
                     assertThat(jsonT.getDefaultAcl()).isNotEmpty();
-                    assertThat(grpcT.getDefaultAcl()).isNull();
+                    assertThat(grpcT.getDefaultAcl()).isNull(); // workaround for b/261771961
                   }),
               new Args<>(BucketField.ENCRYPTION, LazyAssertion.equal()),
               new Args<>(

@@ -1241,7 +1241,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl getDefaultAcl(Entity entity) {
     return storage.getDefaultAcl(getName(), entity);
   }
