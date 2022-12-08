@@ -473,7 +473,10 @@ final class GrpcConversions {
   private Acl objectAclDecode(ObjectAccessControl from) {
     Acl.Role role = Acl.Role.valueOf(from.getRole());
     Acl.Entity entity = entityCodec.decode(from.getEntity());
-    Acl.Builder to = Acl.newBuilder(entity, role).setId(from.getId());
+    Acl.Builder to = Acl.newBuilder(entity, role);
+    if (!from.getId().isEmpty()) {
+      to.setId(from.getId());
+    }
     if (!from.getEtag().isEmpty()) {
       to.setEtag(from.getEtag());
     }

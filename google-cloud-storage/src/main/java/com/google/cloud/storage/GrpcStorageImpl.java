@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.GrpcToHttpStatusCodeTranslation.resultRetryAlgorithmToCodes;
+import static com.google.cloud.storage.StorageV2ProtoUtils.objectAclEntityOrAltEq;
 import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.projectNameCodec;
@@ -54,6 +55,7 @@ import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedW
 import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
 import com.google.cloud.storage.UnifiedOpts.BucketSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.Fields;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
@@ -89,6 +91,7 @@ import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
@@ -125,6 +128,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
@@ -903,7 +907,45 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Acl getDefaultAcl(String bucket, Entity entity) {
-    return throwNotYetImplemented(fmtMethodName("getDefaultAcl", String.class, Entity.class));
+    // Specify the read-mask to explicitly include defaultObjectAcl
+    Fields fields =
+        UnifiedOpts.fields(
+            ImmutableSet.of(
+                BucketField.ACL, // workaround for b/261771961
+                BucketField.DEFAULT_OBJECT_ACL));
+    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
+    GetBucketRequest req =
+        fields
+            .getBucket()
+            .apply(GetBucketRequest.newBuilder())
+            .setName(bucketNameCodec.encode(bucket))
+            .build();
+    try {
+      com.google.storage.v2.Bucket resp =
+          Retrying.run(
+              getOptions(),
+              retryAlgorithmManager.getFor(req),
+              () -> storageClient.getBucketCallable().call(req, grpcCallContext),
+              Decoder.identity());
+
+      Predicate<ObjectAccessControl> entityPredicate =
+          objectAclEntityOrAltEq(codecs.entity().encode(entity));
+
+      //noinspection DataFlowIssue
+      Optional<ObjectAccessControl> first =
+          resp.getDefaultObjectAclList().stream().filter(entityPredicate).findFirst();
+
+      // HttpStorageRpc defaults to null if Not Found
+      return first.map(codecs.objectAcl()::decode).orElse(null);
+    } catch (NotFoundException e) {
+      return null;
+    } catch (StorageException se) {
+      if (se.getCode() == 404) {
+        return null;
+      } else {
+        throw se;
+      }
+    }
   }
 
   @Override

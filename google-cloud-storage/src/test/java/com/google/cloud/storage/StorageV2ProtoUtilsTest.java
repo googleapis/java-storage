@@ -22,7 +22,9 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.cloud.storage.jqwik.StorageArbitraries;
+import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
+import java.util.function.Predicate;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
@@ -64,6 +66,20 @@ public final class StorageV2ProtoUtilsTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), null, -1L));
+  }
+
+  @Example
+  void objectAclEntityIdOrAltEq() {
+    String entity = "project-viewer-123123";
+    Predicate<ObjectAccessControl> p = StorageV2ProtoUtils.objectAclEntityOrAltEq(entity);
+
+    ObjectAccessControl inAlt =
+        ObjectAccessControl.newBuilder().setEntity("something").setEntityAlt(entity).build();
+    ObjectAccessControl inPrimary =
+        ObjectAccessControl.newBuilder().setEntity(entity).setEntityAlt("something-else").build();
+
+    assertThat(p.test(inAlt)).isTrue();
+    assertThat(p.test(inPrimary)).isTrue();
   }
 
   @Property(tries = 100_000)
