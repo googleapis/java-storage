@@ -907,31 +907,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Acl getDefaultAcl(String bucket, Entity entity) {
-    // Specify the read-mask to explicitly include defaultObjectAcl
-    Fields fields =
-        UnifiedOpts.fields(
-            ImmutableSet.of(
-                BucketField.ACL, // workaround for b/261771961
-                BucketField.DEFAULT_OBJECT_ACL));
-    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
-    GetBucketRequest req =
-        fields
-            .getBucket()
-            .apply(GetBucketRequest.newBuilder())
-            .setName(bucketNameCodec.encode(bucket))
-            .build();
     try {
-      com.google.storage.v2.Bucket resp =
-          Retrying.run(
-              getOptions(),
-              retryAlgorithmManager.getFor(req),
-              () -> storageClient.getBucketCallable().call(req, grpcCallContext),
-              Decoder.identity());
+      com.google.storage.v2.Bucket resp = getBucketDefaultAcls(bucket);
 
       Predicate<ObjectAccessControl> entityPredicate =
           objectAclEntityOrAltEq(codecs.entity().encode(entity));
 
-      //noinspection DataFlowIssue
       Optional<ObjectAccessControl> first =
           resp.getDefaultObjectAclList().stream().filter(entityPredicate).findFirst();
 
@@ -965,7 +946,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public List<Acl> listDefaultAcls(String bucket) {
-    return throwNotYetImplemented(fmtMethodName("listDefaultAcls", String.class));
+    try {
+      com.google.storage.v2.Bucket resp = getBucketDefaultAcls(bucket);
+      return resp.getDefaultObjectAclList().stream()
+          .map(codecs.objectAcl()::decode)
+          .collect(ImmutableList.toImmutableList());
+    } catch (NotFoundException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
@@ -1429,5 +1417,27 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     to.setName(from.getName());
     ifNonNull(from.getGeneration(), to::setGeneration);
     return to.build();
+  }
+
+  private com.google.storage.v2.Bucket getBucketDefaultAcls(String bucketName) {
+    Fields fields =
+        UnifiedOpts.fields(
+            ImmutableSet.of(
+                BucketField.ACL, // workaround for b/261771961
+                BucketField.DEFAULT_OBJECT_ACL,
+                BucketField.METAGENERATION));
+    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
+    GetBucketRequest req =
+        fields
+            .getBucket()
+            .apply(GetBucketRequest.newBuilder())
+            .setName(bucketNameCodec.encode(bucketName))
+            .build();
+
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
+        Decoder.identity());
   }
 }

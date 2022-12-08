@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,6 +30,7 @@ import com.google.cloud.Condition;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
 import com.google.cloud.RetryHelper;
+import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Role;
@@ -159,14 +161,37 @@ public class ITAccessTest {
   }
 
   @Test
+  public void bucket_defaultAcl_list() {
+    String bucketName = bucket.getName();
+    // lookup an entity from the bucket which is known to exist
+    Bucket bucketWithAcls =
+        storage.get(
+            bucketName, BucketGetOption.fields(BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
+
+    Acl actual = bucketWithAcls.getDefaultAcl().iterator().next();
+
+    List<Acl> acls = retry429s(() -> storage.listDefaultAcls(bucketName), storage);
+
+    assertThat(acls).contains(actual);
+  }
+
+  @Test
+  public void bucket_defaultAcl_list_bucket404() {
+    StorageException storageException =
+        assertThrows(
+            StorageException.class,
+            () -> retry429s(() -> storage.listDefaultAcls(bucket.getName() + "x"), storage));
+
+    assertThat(storageException.getCode()).isEqualTo(404);
+  }
+
+  @Test
   @CrossRun.Ignore(transports = Transport.GRPC)
   public void testBucketDefaultAcl() {
     // TODO: break this test up into each of the respective scenarios
-    //   DONE ~1. get default ACL for specific entity~
     //   2. Delete a default ACL for a specific entity
     //   3. Create a default ACL for specific entity
     //   4. Update default ACL to change role of a specific entity
-    //   5. List default ACLs
 
     // according to https://cloud.google.com/storage/docs/access-control/lists#default
     // it can take up to 30 seconds for default acl updates to propagate
@@ -976,19 +1001,29 @@ public class ITAccessTest {
   }
 
   static <T> T retry429s(Callable<T> c, Storage storage) {
-    return RetryHelper.runWithRetries(
-        c,
-        storage.getOptions().getRetrySettings(),
-        new BasicResultRetryAlgorithm<Object>() {
-          @Override
-          public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
-            if (previousThrowable instanceof BaseHttpServiceException) {
-              BaseHttpServiceException httpException = (BaseHttpServiceException) previousThrowable;
-              return httpException.getCode() == 429;
+    try {
+      return RetryHelper.runWithRetries(
+          c,
+          storage.getOptions().getRetrySettings(),
+          new BasicResultRetryAlgorithm<Object>() {
+            @Override
+            public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+              if (previousThrowable instanceof BaseHttpServiceException) {
+                BaseHttpServiceException httpException =
+                    (BaseHttpServiceException) previousThrowable;
+                return httpException.getCode() == 429;
+              }
+              return false;
             }
-            return false;
-          }
-        },
-        storage.getOptions().getClock());
+          },
+          storage.getOptions().getClock());
+    } catch (RetryHelperException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof RuntimeException) {
+        throw (RuntimeException) cause;
+      } else {
+        throw e;
+      }
+    }
   }
 }
