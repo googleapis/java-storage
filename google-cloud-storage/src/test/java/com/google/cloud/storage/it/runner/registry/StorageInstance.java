@@ -126,6 +126,42 @@ final class StorageInstance implements ManagedLifecycle {
     }
 
     @Override
+    public boolean deleteAcl(String bucket, Entity entity, BucketSourceOption... options) {
+      checkBucketProtected(bucket);
+      return super.deleteAcl(bucket, entity, options);
+    }
+
+    @Override
+    public boolean deleteAcl(String bucket, Entity entity) {
+      checkBucketProtected(bucket);
+      return super.deleteAcl(bucket, entity);
+    }
+
+    @Override
+    public Acl createAcl(String bucket, Acl acl, BucketSourceOption... options) {
+      checkBucketProtected(bucket);
+      return super.createAcl(bucket, acl, options);
+    }
+
+    @Override
+    public Acl createAcl(String bucket, Acl acl) {
+      checkBucketProtected(bucket);
+      return super.createAcl(bucket, acl);
+    }
+
+    @Override
+    public Acl updateAcl(String bucket, Acl acl, BucketSourceOption... options) {
+      checkBucketProtected(bucket);
+      return super.updateAcl(bucket, acl, options);
+    }
+
+    @Override
+    public Acl updateAcl(String bucket, Acl acl) {
+      checkBucketProtected(bucket);
+      return super.updateAcl(bucket, acl);
+    }
+
+    @Override
     public void close() throws Exception {
       throw new VetoException("Called #close() on global Storage instance");
     }
