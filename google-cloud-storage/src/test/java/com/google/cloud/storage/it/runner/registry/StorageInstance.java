@@ -16,14 +16,11 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
+import com.google.cloud.Policy;
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.Storage.BucketSourceOption;
-import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageOptions;
-import com.google.common.reflect.Reflection;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 final class StorageInstance implements ManagedLifecycle {
 
@@ -48,45 +45,10 @@ final class StorageInstance implements ManagedLifecycle {
     return proxy;
   }
 
-  private static final Object[] updateParameters = {BucketInfo.class, BucketTargetOption[].class};
-  private static final Object[] deleteParameters = {String.class, BucketSourceOption[].class};
-
   @Override
   public void start() {
     storage = options.getService();
-    // Define a proxy which can veto calls which attempt to mutate protected buckets
-    //   this helps guard against a test trying to mutate the global bucket rather than creating its
-    //   own bucket.
-    proxy =
-        Reflection.newProxy(
-            Storage.class,
-            ((proxy1, method, args) -> {
-              String methodName = method.getName();
-              Class<?>[] parameterTypes = method.getParameterTypes();
-              if (methodName.equals("update")
-                  && Arrays.deepEquals(parameterTypes, updateParameters)) {
-                BucketInfo bucketInfo = (BucketInfo) args[0];
-                if (protectedBucketNames.isProtected(bucketInfo.getName())) {
-                  throw err(bucketInfo.getName());
-                }
-              } else if (methodName.equals("delete")
-                  && Arrays.deepEquals(parameterTypes, deleteParameters)) {
-                String bucketName = (String) args[0];
-                if (protectedBucketNames.isProtected(bucketName)) {
-                  throw err(bucketName);
-                }
-              } else if (methodName.equals("setIamPolicy")) {
-                String bucketName = (String) args[0];
-                if (protectedBucketNames.isProtected(bucketName)) {
-                  throw err(bucketName);
-                }
-              }
-              try {
-                return method.invoke(storage, args);
-              } catch (InvocationTargetException e) {
-                throw e.getCause();
-              }
-            }));
+    proxy = new VetoingStorageProxy();
   }
 
   @Override
@@ -103,9 +65,59 @@ final class StorageInstance implements ManagedLifecycle {
     return new VetoedBucketUpdateException("Attempted to modify global bucket: " + bucketName);
   }
 
-  private static final class VetoedBucketUpdateException extends RuntimeException {
+  private static class VetoException extends RuntimeException {
+    private VetoException(String message) {
+      super(message);
+    }
+  }
+
+  private static final class VetoedBucketUpdateException extends VetoException {
     private VetoedBucketUpdateException(String message) {
       super(message);
+    }
+  }
+
+  /**
+   * Define a proxy which can veto calls attempting to mutate protected buckets. this helps guard
+   * against a test trying to mutate the global bucket rather than creating its own bucket.
+   */
+  private final class VetoingStorageProxy extends AbstractStorageProxy {
+
+    private VetoingStorageProxy() {
+      super(storage);
+    }
+
+    @Override
+    public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
+      checkBucketProtected(bucketInfo);
+      return super.update(bucketInfo, options);
+    }
+
+    @Override
+    public boolean delete(String bucket, BucketSourceOption... options) {
+      checkBucketProtected(bucket);
+      return super.delete(bucket, options);
+    }
+
+    @Override
+    public Policy setIamPolicy(String bucket, Policy policy, BucketSourceOption... options) {
+      checkBucketProtected(bucket);
+      return super.setIamPolicy(bucket, policy, options);
+    }
+
+    @Override
+    public void close() throws Exception {
+      throw new VetoException("Called #close() on global Storage instance");
+    }
+
+    private void checkBucketProtected(BucketInfo bucket) {
+      checkBucketProtected(bucket.getName());
+    }
+
+    private void checkBucketProtected(String bucketName) {
+      if (protectedBucketNames.isProtected(bucketName)) {
+        throw err(bucketName);
+      }
     }
   }
 }

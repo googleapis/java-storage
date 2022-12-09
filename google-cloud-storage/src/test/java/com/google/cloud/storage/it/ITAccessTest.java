@@ -35,7 +35,6 @@ import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
@@ -45,7 +44,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketGetOption;
-import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageRoles;
@@ -63,7 +61,6 @@ import com.google.common.collect.ImmutableSet;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -96,37 +93,6 @@ public class ITAccessTest {
   public BucketInfo requesterPaysBucket;
 
   @Inject public Generator generator;
-
-  @Test
-  @CrossRun.Ignore(transports = Transport.GRPC)
-  public void bucketAcl_requesterPays_true() {
-    String projectId = storage.getOptions().getProjectId();
-    testBucketAclRequesterPays(requesterPaysBucket, BucketSourceOption.userProject(projectId));
-  }
-
-  @Test
-  @CrossRun.Ignore(transports = Transport.GRPC)
-  public void bucketAcl_requesterPays_false() {
-    testBucketAclRequesterPays(bucket);
-  }
-
-  private void testBucketAclRequesterPays(
-      BucketInfo bucket, Storage.BucketSourceOption... bucketOptions) {
-    // TODO: break into individual tests
-    assertNull(storage.getAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
-    assertFalse(storage.deleteAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
-    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(storage.createAcl(bucket.getName(), acl, bucketOptions));
-    Acl updatedAcl =
-        storage.updateAcl(
-            bucket.getName(), acl.toBuilder().setRole(Role.WRITER).build(), bucketOptions);
-    assertEquals(Role.WRITER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>();
-    acls.addAll(storage.listAcls(bucket.getName(), bucketOptions));
-    assertTrue(acls.contains(updatedAcl));
-    assertTrue(storage.deleteAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
-    assertNull(storage.getAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
-  }
 
   @Test
   public void bucket_defaultAcl_get() {
@@ -1058,68 +1024,6 @@ public class ITAccessTest {
       assertEquals(Role.READER, remoteBucket.getDefaultAcl().get(0).getRole());
       assertEquals(User.ofAllAuthenticatedUsers(), remoteBucket.getAcl().get(0).getEntity());
       assertEquals(Role.READER, remoteBucket.getAcl().get(0).getRole());
-    }
-  }
-
-  @Test
-  @CrossRun.Ignore(transports = Transport.GRPC)
-  public void testBlobAcl() {
-    // TODO: break this test up into each of the respective scenarios
-    //   1. get ACL for specific entity
-    //   2. Create an ACL for specific entity
-    //   3. Update ACL to change role of a specific entity
-    //   4. List ACLs for an object
-    //   5. Delete an ACL for a specific entity
-    //   6. Attempt to get an acl for an object that doesn't exist
-    //   7. Attempt to delete an acl for an object that doesn't exist
-    //   8. Attempt to create an acl for an object that doesn't exist
-    //   9. Attempt to update an acl for an object that doesn't exist
-    //   10. Attempt to list acls for an object that doesn't exist
-    BlobId blobId = BlobId.of(bucket.getName(), "test-blob-acl");
-    BlobInfo blob = BlobInfo.newBuilder(blobId).build();
-    storage.create(blob);
-    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
-    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(storage.createAcl(blobId, acl));
-    Acl updatedAcl = storage.updateAcl(blobId, acl.toBuilder().setRole(Role.OWNER).build());
-    assertEquals(Role.OWNER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>(storage.listAcls(blobId));
-    assertTrue(acls.contains(updatedAcl));
-    assertTrue(storage.deleteAcl(blobId, User.ofAllAuthenticatedUsers()));
-    assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
-    // test non-existing blob
-    BlobId otherBlobId = BlobId.of(bucket.getName(), "test-blob-acl", -1L);
-    try {
-      assertNull(storage.getAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
-      fail("Expected an 'Invalid argument' exception");
-    } catch (StorageException e) {
-      assertThat(e.getMessage()).contains("Invalid argument");
-    }
-
-    try {
-      assertFalse(storage.deleteAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
-      fail("Expected an 'Invalid argument' exception");
-    } catch (StorageException e) {
-      assertThat(e.getMessage()).contains("Invalid argument");
-    }
-
-    try {
-      storage.createAcl(otherBlobId, acl);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    try {
-      storage.updateAcl(otherBlobId, acl);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
-    }
-    try {
-      storage.listAcls(otherBlobId);
-      fail("Expected StorageException");
-    } catch (StorageException ex) {
-      // expected
     }
   }
 
