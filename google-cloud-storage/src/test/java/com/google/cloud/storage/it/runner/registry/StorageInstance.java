@@ -17,6 +17,8 @@
 package com.google.cloud.storage.it.runner.registry;
 
 import com.google.cloud.Policy;
+import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
@@ -103,6 +105,24 @@ final class StorageInstance implements ManagedLifecycle {
     public Policy setIamPolicy(String bucket, Policy policy, BucketSourceOption... options) {
       checkBucketProtected(bucket);
       return super.setIamPolicy(bucket, policy, options);
+    }
+
+    @Override
+    public boolean deleteDefaultAcl(String bucket, Entity entity) {
+      checkBucketProtected(bucket);
+      return super.deleteDefaultAcl(bucket, entity);
+    }
+
+    @Override
+    public Acl createDefaultAcl(String bucket, Acl acl) {
+      checkBucketProtected(bucket);
+      return super.createDefaultAcl(bucket, acl);
+    }
+
+    @Override
+    public Acl updateDefaultAcl(String bucket, Acl acl) {
+      checkBucketProtected(bucket);
+      return super.updateDefaultAcl(bucket, acl);
     }
 
     @Override
