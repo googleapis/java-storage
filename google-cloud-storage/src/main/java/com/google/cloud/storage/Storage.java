@@ -3511,7 +3511,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteDefaultAcl(String bucket, Entity entity);
 
   /**

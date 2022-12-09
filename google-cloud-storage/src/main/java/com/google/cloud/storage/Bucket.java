@@ -1266,7 +1266,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean deleteDefaultAcl(Entity entity) {
     return storage.deleteDefaultAcl(getName(), entity);
   }
