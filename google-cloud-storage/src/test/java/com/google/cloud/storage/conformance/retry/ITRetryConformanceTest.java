@@ -28,6 +28,7 @@ import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
 import com.google.cloud.conformance.storage.v1.RetryTest;
 import com.google.cloud.conformance.storage.v1.RetryTests;
+import com.google.cloud.storage.CIUtils;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
@@ -289,7 +290,7 @@ public class ITRetryConformanceTest {
             // if we don't have any mappings defined for the provide key, generate a case that when
             // run reports an ignored test. This is done for the sake of completeness and to be
             // aware of a lack of mapping.
-            if (mappings.isEmpty()) {
+            if (mappings.isEmpty() && CIUtils.verbose()) {
               TestRetryConformance testRetryConformance =
                   new TestRetryConformance(
                       projectId,
@@ -321,7 +322,7 @@ public class ITRetryConformanceTest {
                   // Many mappings are conditionally valid and depend on the defined case.
                   if (mapping.getApplicable().test(testRetryConformance)) {
                     testCases.add(new RetryTestCase(testRetryConformance, mapping));
-                  } else {
+                  } else if (CIUtils.verbose()) {
                     // when the mapping is determined to not be applicable to this case, generate
                     // a synthetic mapping which  will report as an ignored test. This is done for
                     // the sake of completeness.

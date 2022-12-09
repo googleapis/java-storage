@@ -37,7 +37,7 @@ final class TimestampCodecPropertyTest {
     report(TypeUsage.of(Timestamp.class), StorageArbitraries.timestamp());
   }
 
-  @Property(tries = 50_000)
+  @Property
   void timestampCodecShouldRoundTrip(@ForAll(supplier = Supp.class) Timestamp ts) {
     Codec<OffsetDateTime, Timestamp> codec = GrpcConversions.INSTANCE.timestampCodec;
     OffsetDateTime decode = codec.decode(ts);

@@ -33,7 +33,7 @@ public final class BucketCleaner {
   private static final Logger LOGGER = Logger.getLogger(BucketCleaner.class.getName());
 
   public static void doCleanup(String bucketName, Storage s) {
-    LOGGER.info("Starting bucket cleanup...");
+    LOGGER.fine("Starting bucket cleanup...");
     String projectId = s.getOptions().getProjectId();
     try {
       // TODO: probe bucket existence, a bad test could have deleted the bucket
@@ -58,7 +58,7 @@ public final class BucketCleaner {
       } else {
         LOGGER.warning("Unable to delete bucket due to previous failed object deletes");
       }
-      LOGGER.info("Bucket cleanup complete");
+      LOGGER.fine("Bucket cleanup complete");
     } catch (Exception e) {
       LOGGER.log(Level.SEVERE, e, () -> "Error during bucket cleanup.");
     }

@@ -190,7 +190,7 @@ public final class ITBlobWriteChannelTest {
                     FixedHeaderProvider.create(ImmutableMap.of("x-retry-test-id", retryTest.id)))
                 .build()
                 .getRpc();
-    //noinspection UnstableApiUsage
+
     StorageOptions storageOptions =
         baseOptions
             .toBuilder()
@@ -202,7 +202,7 @@ public final class ITBlobWriteChannelTest {
                           try {
                             if ("writeWithResponse".equals(method.getName())) {
                               boolean lastChunk = (boolean) args[5];
-                              LOGGER.info(
+                              LOGGER.fine(
                                   String.format(
                                       "writeWithResponse called. (lastChunk = %b)", lastChunk));
                               if (lastChunk) {
