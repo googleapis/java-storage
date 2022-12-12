@@ -904,7 +904,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       }
       long metageneration = resp.getMetageneration();
 
-      UpdateBucketRequest req = createUpdateAclRequest(bucket, newAcls, metageneration);
+      UpdateBucketRequest req = createUpdateBucketAclRequest(bucket, newAcls, metageneration);
 
       com.google.storage.v2.Bucket updateResult = updateBucket(req);
       // read the response to ensure there is no longer an acl for the specified entity
@@ -954,7 +954,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
               .collect(ImmutableList.toImmutableList());
 
       UpdateBucketRequest req =
-          createUpdateAclRequest(bucket, newDefaultAcls, resp.getMetageneration());
+          createUpdateBucketAclRequest(bucket, newDefaultAcls, resp.getMetageneration());
 
       com.google.storage.v2.Bucket updateResult = updateBucket(req);
 
@@ -1109,27 +1109,117 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Acl getAcl(BlobId blob, Entity entity) {
-    return throwNotYetImplemented(fmtMethodName("getAcl", BlobId.class, Entity.class));
+    try {
+      Object req = codecs.blobId().encode(blob);
+      Object resp = getObjectWithAcls(req);
+
+      Predicate<ObjectAccessControl> entityPredicate =
+          objectAclEntityOrAltEq(codecs.entity().encode(entity));
+
+      Optional<ObjectAccessControl> first =
+          resp.getAclList().stream().filter(entityPredicate).findFirst();
+
+      // HttpStorageRpc defaults to null if Not Found
+      return first.map(codecs.objectAcl()::decode).orElse(null);
+    } catch (NotFoundException e) {
+      return null;
+    } catch (StorageException se) {
+      if (se.getCode() == 404) {
+        return null;
+      } else {
+        throw se;
+      }
+    }
   }
 
   @Override
   public boolean deleteAcl(BlobId blob, Entity entity) {
-    return throwNotYetImplemented(fmtMethodName("deleteAcl", BlobId.class, Entity.class));
+    try {
+      Object obj = codecs.blobId().encode(blob);
+      Object resp = getObjectWithAcls(obj);
+      String encode = codecs.entity().encode(entity);
+
+      Predicate<ObjectAccessControl> entityPredicate = objectAclEntityOrAltEq(encode);
+
+      List<ObjectAccessControl> currentDefaultAcls = resp.getAclList();
+      ImmutableList<ObjectAccessControl> newDefaultAcls =
+          currentDefaultAcls.stream()
+              .filter(entityPredicate.negate())
+              .collect(ImmutableList.toImmutableList());
+      if (newDefaultAcls.equals(currentDefaultAcls)) {
+        // we didn't actually filter anything out, no need to send an RPC, simply return false
+        return false;
+      }
+      long metageneration = resp.getMetageneration();
+
+      UpdateObjectRequest req = createUpdateObjectAclRequest(obj, newDefaultAcls, metageneration);
+
+      Object updateResult = updateObject(req);
+      // read the response to ensure there is no longer an acl for the specified entity
+      Optional<ObjectAccessControl> first =
+          updateResult.getAclList().stream().filter(entityPredicate).findFirst();
+      return !first.isPresent();
+    } catch (NotFoundException e) {
+      // HttpStorageRpc returns false if the bucket doesn't exist :(
+      return false;
+    } catch (StorageException se) {
+      if (se.getCode() == 404) {
+        return false;
+      } else {
+        throw se;
+      }
+    }
   }
 
   @Override
   public Acl createAcl(BlobId blob, Acl acl) {
-    return throwNotYetImplemented(fmtMethodName("createAcl", BlobId.class, Acl.class));
+    return updateAcl(blob, acl);
   }
 
   @Override
   public Acl updateAcl(BlobId blob, Acl acl) {
-    return throwNotYetImplemented(fmtMethodName("updateAcl", BlobId.class, Acl.class));
+    try {
+      Object obj = codecs.blobId().encode(blob);
+      Object resp = getObjectWithAcls(obj);
+      ObjectAccessControl encode = codecs.objectAcl().encode(acl);
+      String entity = encode.getEntity();
+
+      Predicate<ObjectAccessControl> entityPredicate = objectAclEntityOrAltEq(entity);
+
+      ImmutableList<ObjectAccessControl> newDefaultAcls =
+          Streams.concat(
+                  resp.getAclList().stream().filter(entityPredicate.negate()), Stream.of(encode))
+              .collect(ImmutableList.toImmutableList());
+
+      UpdateObjectRequest req =
+          createUpdateObjectAclRequest(obj, newDefaultAcls, resp.getMetageneration());
+
+      Object updateResult = updateObject(req);
+
+      Optional<Acl> first =
+          updateResult.getAclList().stream()
+              .filter(entityPredicate)
+              .findFirst()
+              .map(codecs.objectAcl()::decode);
+
+      return first.orElseThrow(
+          () -> new StorageException(0, "Acl update call success, but not in response"));
+    } catch (NotFoundException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
   public List<Acl> listAcls(BlobId blob) {
-    return throwNotYetImplemented(fmtMethodName("listAcls", BlobId.class));
+    try {
+      Object req = codecs.blobId().encode(blob);
+      Object resp = getObjectWithAcls(req);
+      return resp.getAclList().stream()
+          .map(codecs.objectAcl()::decode)
+          .collect(ImmutableList.toImmutableList());
+    } catch (NotFoundException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override
@@ -1637,7 +1727,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .build();
   }
 
-  private static UpdateBucketRequest createUpdateAclRequest(
+  private static UpdateBucketRequest createUpdateBucketAclRequest(
       String bucket, ImmutableList<BucketAccessControl> newDefaultAcls, long metageneration) {
     com.google.storage.v2.Bucket update =
         com.google.storage.v2.Bucket.newBuilder()
@@ -1652,5 +1742,51 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .apply(UpdateBucketRequest.newBuilder())
         .setBucket(update)
         .build();
+  }
+
+  private Object getObjectWithAcls(Object obj) {
+    Fields fields =
+        UnifiedOpts.fields(ImmutableSet.of(BucketField.ACL, BucketField.METAGENERATION));
+    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
+    GetObjectRequest req =
+        fields
+            .getObject()
+            .apply(GetObjectRequest.newBuilder())
+            .setBucket(obj.getBucket())
+            .setObject(obj.getName())
+            .build();
+
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.getObjectCallable().call(req, grpcCallContext),
+        Decoder.identity());
+  }
+
+  private static UpdateObjectRequest createUpdateObjectAclRequest(
+      Object obj, ImmutableList<ObjectAccessControl> newAcls, long metageneration) {
+    Object update =
+        Object.newBuilder()
+            .setBucket(obj.getBucket())
+            .setName(obj.getName())
+            .addAllAcl(newAcls)
+            .build();
+    Opts<BucketTargetOpt> opts =
+        Opts.from(
+            UnifiedOpts.fields(ImmutableSet.of(BlobField.ACL)),
+            UnifiedOpts.metagenerationMatch(metageneration));
+    return opts.updateObjectsRequest()
+        .apply(UpdateObjectRequest.newBuilder())
+        .setObject(update)
+        .build();
+  }
+
+  private Object updateObject(UpdateObjectRequest req) {
+    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.updateObjectCallable().call(req, grpcCallContext),
+        Decoder.identity());
   }
 }
