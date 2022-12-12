@@ -3332,11 +3332,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getAcl(String bucket, Entity entity, BucketSourceOption... options);
 
   /** @see #getAcl(String, Entity, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getAcl(String bucket, Entity entity);
 
   /**
@@ -3369,11 +3369,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteAcl(String bucket, Entity entity, BucketSourceOption... options);
 
   /** @see #deleteAcl(String, Entity, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteAcl(String bucket, Entity entity);
 
   /**
@@ -3399,11 +3399,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createAcl(String bucket, Acl acl, BucketSourceOption... options);
 
   /** @see #createAcl(String, Acl, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createAcl(String bucket, Acl acl);
 
   /**
@@ -3429,11 +3429,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateAcl(String bucket, Acl acl, BucketSourceOption... options);
 
   /** @see #updateAcl(String, Acl, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateAcl(String bucket, Acl acl);
 
   /**
@@ -3464,11 +3464,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options any number of BucketSourceOptions to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listAcls(String bucket, BucketSourceOption... options);
 
   /** @see #listAcls(String, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listAcls(String bucket);
 
   /**

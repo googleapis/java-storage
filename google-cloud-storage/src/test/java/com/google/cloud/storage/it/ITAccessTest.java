@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.retry429s;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,13 +26,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.cloud.Condition;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
-import com.google.cloud.RetryHelper;
-import com.google.cloud.RetryHelper.RetryHelperException;
-import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
@@ -72,7 +69,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -1127,44 +1123,17 @@ public class ITAccessTest {
     }
   }
 
-  static <T> T retry429s(Callable<T> c, Storage storage) {
-    try {
-      return RetryHelper.runWithRetries(
-          c,
-          storage.getOptions().getRetrySettings(),
-          new BasicResultRetryAlgorithm<Object>() {
-            @Override
-            public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
-              if (previousThrowable instanceof BaseHttpServiceException) {
-                BaseHttpServiceException httpException =
-                    (BaseHttpServiceException) previousThrowable;
-                return httpException.getCode() == 429;
-              }
-              return false;
-            }
-          },
-          storage.getOptions().getClock());
-    } catch (RetryHelperException e) {
-      Throwable cause = e.getCause();
-      if (cause instanceof RuntimeException) {
-        throw (RuntimeException) cause;
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  private static ImmutableList<Acl> dropEtags(List<Acl> defaultAcls) {
+  static ImmutableList<Acl> dropEtags(List<Acl> defaultAcls) {
     return defaultAcls.stream()
         .map(acl -> Acl.of(acl.getEntity(), acl.getRole()))
         .collect(ImmutableList.toImmutableList());
   }
 
-  private static Predicate<Acl> hasRole(Acl.Role expected) {
+  static Predicate<Acl> hasRole(Acl.Role expected) {
     return acl -> acl.getRole().equals(expected);
   }
 
-  private static Predicate<Acl> hasProjectRole(Acl.Project.ProjectRole expected) {
+  static Predicate<Acl> hasProjectRole(Acl.Project.ProjectRole expected) {
     return acl -> {
       Entity entity = acl.getEntity();
       if (entity.getType().equals(Entity.Type.PROJECT)) {
