@@ -22,7 +22,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRequest;
-import com.google.cloud.storage.BlobReadChannelV2.ClientStuff;
+import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import java.nio.ByteBuffer;
@@ -42,20 +42,21 @@ final class HttpDownloadSessionBuilder {
     return INSTANCE;
   }
 
-  public ReadableByteChannelSessionBuilder byteChannel(ClientStuff clientStuff) {
-    // TODO: refactor ClientStuff to push retry to a lower individual config
+  public ReadableByteChannelSessionBuilder byteChannel(
+      BlobReadChannelContext blobReadChannelContext) {
+    // TODO: refactor BlobReadChannelContext to push retry to a lower individual config
     //   similar to GapicWritableByteChannelSessionBuilder.ResumableUploadBuilder.withRetryConfig
-    return new ReadableByteChannelSessionBuilder(clientStuff);
+    return new ReadableByteChannelSessionBuilder(blobReadChannelContext);
   }
 
   public static final class ReadableByteChannelSessionBuilder {
 
-    private final ClientStuff clientStuff;
+    private final BlobReadChannelContext blobReadChannelContext;
     // private Hasher hasher; // TODO: wire in Hasher
     private Consumer<StorageObject> callback;
 
-    private ReadableByteChannelSessionBuilder(ClientStuff clientStuff) {
-      this.clientStuff = clientStuff;
+    private ReadableByteChannelSessionBuilder(BlobReadChannelContext blobReadChannelContext) {
+      this.blobReadChannelContext = blobReadChannelContext;
     }
 
     public ReadableByteChannelSessionBuilder setCallback(Consumer<StorageObject> callback) {
@@ -86,10 +87,10 @@ final class HttpDownloadSessionBuilder {
       return (request, resultFuture) ->
           new ApiaryUnbufferedReadableByteChannel(
               request,
-              clientStuff.getApiaryClient(),
+              blobReadChannelContext.getApiaryClient(),
               resultFuture,
-              clientStuff.getStorageOptions(),
-              clientStuff.getRetryAlgorithmManager().idempotent(),
+              blobReadChannelContext.getStorageOptions(),
+              blobReadChannelContext.getRetryAlgorithmManager().idempotent(),
               callback);
     }
 

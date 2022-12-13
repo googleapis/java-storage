@@ -28,7 +28,6 @@ import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReada
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Map;
@@ -38,7 +37,7 @@ final class BlobReadChannelV2 implements StorageReadChannel {
 
   private final StorageObject storageObject;
   private final Map<StorageRpc.Option, ?> opts;
-  private final ClientStuff clientStuff;
+  private final BlobReadChannelContext blobReadChannelContext;
 
   private LazyReadChannel<StorageObject> lazyReadChannel;
   private StorageObject resolvedObject;
@@ -48,10 +47,12 @@ final class BlobReadChannelV2 implements StorageReadChannel {
   private BufferHandle bufferHandle;
 
   BlobReadChannelV2(
-      StorageObject storageObject, Map<StorageRpc.Option, ?> opts, ClientStuff clientStuff) {
+      StorageObject storageObject,
+      Map<StorageRpc.Option, ?> opts,
+      BlobReadChannelContext blobReadChannelContext) {
     this.storageObject = storageObject;
     this.opts = opts;
-    this.clientStuff = clientStuff;
+    this.blobReadChannelContext = blobReadChannelContext;
     this.byteRangeSpec = ByteRangeSpec.nullRange();
   }
 
@@ -116,7 +117,8 @@ final class BlobReadChannelV2 implements StorageReadChannel {
   @Override
   public RestorableState<ReadChannel> capture() {
     ApiaryReadRequest apiaryReadRequest = getApiaryReadRequest();
-    return new BlobReadChannelV2State(apiaryReadRequest, clientStuff, chunkSize);
+    return new BlobReadChannelV2State(
+        apiaryReadRequest, blobReadChannelContext.getStorageOptions(), chunkSize);
   }
 
   private void maybeResetChannel(boolean umallocBuffer) throws IOException {
@@ -147,7 +149,7 @@ final class BlobReadChannelV2 implements StorageReadChannel {
           }
           return ResumableMedia.http()
               .read()
-              .byteChannel(clientStuff)
+              .byteChannel(blobReadChannelContext)
               .setCallback(this::setResolvedObject)
               .buffered(bufferHandle)
               .setApiaryReadRequest(getApiaryReadRequest())
@@ -170,21 +172,22 @@ final class BlobReadChannelV2 implements StorageReadChannel {
     private static final long serialVersionUID = -7595661593080505431L;
 
     private final ApiaryReadRequest request;
-    private final ClientStuff clientStuff;
+    private final HttpStorageOptions options;
 
     private final Integer chunkSize;
 
     private BlobReadChannelV2State(
-        ApiaryReadRequest request, ClientStuff clientStuff, Integer chunkSize) {
+        ApiaryReadRequest request, HttpStorageOptions options, Integer chunkSize) {
       this.request = request;
-      this.clientStuff = clientStuff;
+      this.options = options;
       this.chunkSize = chunkSize;
     }
 
     @Override
     public ReadChannel restore() {
       BlobReadChannelV2 channel =
-          new BlobReadChannelV2(request.getObject(), request.getOptions(), clientStuff);
+          new BlobReadChannelV2(
+              request.getObject(), request.getOptions(), BlobReadChannelContext.from(options));
       channel.setByteRangeSpec(request.getByteRangeSpec());
       if (chunkSize != null) {
         channel.setChunkSize(chunkSize);
@@ -202,32 +205,31 @@ final class BlobReadChannelV2 implements StorageReadChannel {
       }
       BlobReadChannelV2State that = (BlobReadChannelV2State) o;
       return Objects.equals(request, that.request)
-          && Objects.equals(clientStuff, that.clientStuff)
+          && Objects.equals(options, that.options)
           && Objects.equals(chunkSize, that.chunkSize);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(request, clientStuff, chunkSize);
+      return Objects.hash(request, options, chunkSize);
     }
 
     @Override
     public String toString() {
       return MoreObjects.toStringHelper(this)
-          .add("\nrequest", request)
-          .add("\nclientStuff", clientStuff)
-          .add("\nchunkSize", chunkSize)
+          .add("request", request)
+          .add("options", options)
+          .add("chunkSize", chunkSize)
           .toString();
     }
   }
 
-  static final class ClientStuff implements Serializable {
-    private static final long serialVersionUID = 4244938428650333730L;
+  static final class BlobReadChannelContext {
     private final HttpStorageOptions storageOptions;
     private final HttpRetryAlgorithmManager retryAlgorithmManager;
-    private transient Storage apiaryClient;
+    private final Storage apiaryClient;
 
-    private ClientStuff(
+    private BlobReadChannelContext(
         HttpStorageOptions storageOptions,
         Storage apiaryClient,
         HttpRetryAlgorithmManager retryAlgorithmManager) {
@@ -248,20 +250,16 @@ final class BlobReadChannelV2 implements StorageReadChannel {
       return apiaryClient;
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-      in.defaultReadObject();
-      this.apiaryClient = storageOptions.getStorageRpcV1().getStorage();
-    }
-
-    static ClientStuff from(HttpStorageOptions options) {
-      return new ClientStuff(
+    static BlobReadChannelContext from(HttpStorageOptions options) {
+      return new BlobReadChannelContext(
           options, options.getStorageRpcV1().getStorage(), options.getRetryAlgorithmManager());
     }
 
-    static ClientStuff from(com.google.cloud.storage.Storage s) {
-      if (s instanceof StorageImpl) {
-        StorageImpl impl = (StorageImpl) s;
-        return from(impl.getOptions());
+    static BlobReadChannelContext from(com.google.cloud.storage.Storage s) {
+      StorageOptions options = s.getOptions();
+      if (options instanceof HttpStorageOptions) {
+        HttpStorageOptions httpStorageOptions = (HttpStorageOptions) options;
+        return from(httpStorageOptions);
       }
       throw new IllegalArgumentException("Only HttpStorageOptions based instance supported");
     }
@@ -271,10 +269,10 @@ final class BlobReadChannelV2 implements StorageReadChannel {
       if (this == o) {
         return true;
       }
-      if (!(o instanceof ClientStuff)) {
+      if (!(o instanceof BlobReadChannelContext)) {
         return false;
       }
-      ClientStuff that = (ClientStuff) o;
+      BlobReadChannelContext that = (BlobReadChannelContext) o;
       return Objects.equals(storageOptions, that.storageOptions)
           && Objects.equals(retryAlgorithmManager, that.retryAlgorithmManager);
     }
@@ -286,10 +284,7 @@ final class BlobReadChannelV2 implements StorageReadChannel {
 
     @Override
     public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("\nstorageOptions", storageOptions)
-          .add("\nretryAlgorithmManager", retryAlgorithmManager)
-          .toString();
+      return MoreObjects.toStringHelper(this).add("storageOptions", storageOptions).toString();
     }
   }
 }

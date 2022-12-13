@@ -27,7 +27,7 @@ import com.google.cloud.PageImpl;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.Restorable;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
-import com.google.cloud.storage.BlobReadChannelV2.ClientStuff;
+import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.UnifiedOpts.Opt;
@@ -192,6 +192,7 @@ public class SerializationTest extends BaseSerializationTest {
   }
 
   @Override
+  @SuppressWarnings("resource")
   protected Restorable<?>[] restorableObjects() {
     HttpStorageOptions options = HttpStorageOptions.newBuilder().setProjectId("p2").build();
     ResultRetryAlgorithm<?> algorithm =
@@ -201,9 +202,7 @@ public class SerializationTest extends BaseSerializationTest {
         new BlobReadChannelV2(
             new StorageObject().setBucket("b").setName("n"),
             EMPTY_RPC_OPTIONS,
-            ClientStuff.from(options));
-    // avoid closing when you don't want partial writes to GCS upon failure
-    @SuppressWarnings("resource")
+            BlobReadChannelContext.from(options));
     BlobWriteChannel writer =
         new BlobWriteChannel(
             options, BlobInfo.newBuilder(BlobId.of("b", "n")).build(), "upload-id", algorithm);

@@ -37,7 +37,7 @@ import com.google.cloud.Policy;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
-import com.google.cloud.storage.BlobReadChannelV2.ClientStuff;
+import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -590,7 +590,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
     StorageObject storageObject = Conversions.apiary().blobId().encode(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
-    return new BlobReadChannelV2(storageObject, optionsMap, ClientStuff.from(this));
+    return new BlobReadChannelV2(storageObject, optionsMap, BlobReadChannelContext.from(this));
   }
 
   @Override
