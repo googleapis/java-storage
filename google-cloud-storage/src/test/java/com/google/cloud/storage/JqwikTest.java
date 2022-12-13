@@ -52,6 +52,9 @@ public class JqwikTest {
   }
 
   public static void report(TypeUsage t, Arbitrary<?> objectArbitrary) {
+    if (!CIUtils.verbose()) {
+      return;
+    }
     EdgeCases<?> cases = objectArbitrary.edgeCases();
     // inspired from net.jqwik.engine.properties.arbitraries.EdgeCasesSupport$1#toString()
     String formattedCases =

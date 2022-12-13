@@ -38,7 +38,9 @@ final class ChunkSegmenterTest {
 
   @Property
   void chunkIt(@ForAll("TestData") TestData td) {
-    System.out.println("td = " + td);
+    if (CIUtils.verbose()) {
+      System.out.println("td = " + td);
+    }
 
     ChunkSegment[] data =
         new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.noCopy(), td.chunkSize)

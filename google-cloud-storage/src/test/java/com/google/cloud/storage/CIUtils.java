@@ -18,7 +18,17 @@ package com.google.cloud.storage;
 
 public final class CIUtils {
 
+  private static final String CI_VERBOSE_RUN_KEY = "CI_VERBOSE_RUN";
+
   private CIUtils() {}
+
+  public static boolean verbose() {
+    String ciVerboseRun = System.getenv(CI_VERBOSE_RUN_KEY);
+    if (ciVerboseRun == null) {
+      ciVerboseRun = System.getProperty(CI_VERBOSE_RUN_KEY);
+    }
+    return Boolean.parseBoolean(ciVerboseRun);
+  }
 
   public static boolean isRunningInCI() {
     return isJobTypeUnit() || isJobTypeIntegration();
