@@ -19,11 +19,11 @@ package com.google.cloud.storage;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.NoCredentials;
-import com.google.cloud.storage.conformance.retry.TestBench;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.registry.TestBench;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.junit.Test;

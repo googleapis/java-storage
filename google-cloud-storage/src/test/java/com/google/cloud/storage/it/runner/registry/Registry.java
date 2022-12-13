@@ -17,7 +17,6 @@
 package com.google.cloud.storage.it.runner.registry;
 
 import com.google.cloud.storage.TransportCompatibility.Transport;
-import com.google.cloud.storage.conformance.retry.TestBench;
 import com.google.cloud.storage.it.runner.CrossRunIntersection;
 import com.google.cloud.storage.it.runner.TestInitializer;
 import com.google.cloud.storage.it.runner.annotations.Backend;

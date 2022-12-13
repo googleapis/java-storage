@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.conformance.retry;
+package com.google.cloud.storage.it.runner.registry;
 
 import static com.google.cloud.RetryHelper.runWithRetries;
 import static java.util.Objects.requireNonNull;
@@ -32,7 +32,6 @@ import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
-import com.google.cloud.storage.it.runner.registry.ManagedLifecycle;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -51,20 +50,33 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.threeten.bp.Duration;
 
 /**
- * A JUnit 4 {@link TestRule} which integrates with the <a target="_blank" rel="noopener noreferrer"
+ * A {@link ManagedLifecycle} which integrates with the <a target="_blank" rel="noopener noreferrer"
  * href="https://github.com/googleapis/storage-testbench">storage-testbench</a> by pulling the
  * docker image, starting the container, providing methods for interacting with the {@code
  * /retry_test} rest api, stopping the container.
  *
- * <p>This rule can be bound as an {@link org.junit.ClassRule @ClassRule} field.
+ * <p>A single instance of the testbench is expected to be managed by the {@link
+ * com.google.cloud.storage.it.runner.registry.Registry} which is used by {@link
+ * com.google.cloud.storage.it.runner.StorageITRunner}. Accessing the testbench can be accomplished
+ * by doing the following:
+ *
+ * <ol>
+ *   <li>Annotating your test class {@code @RunWith(StorageITRunner.class)}
+ *   <li>Configuring the backend for your integration tests to be {@link
+ *       com.google.cloud.storage.it.runner.annotations.Backend#TEST_BENCH} by doing either
+ *       <ol>
+ *         <li>Annotating your test class with {@code @SingleBackend(Backend.TEST_BENCH)}
+ *         <li>Annotating your test class with {@code @CrossRun} and ensuring {@code
+ *             Backend.TEST_BENCH} is included in the {@code backends} parameter
+ *       </ol>
+ *   <li>Specifying {@code @Inject public TestBench testBench;} as a field for the instance of
+ *       testbench to be injected to your test
+ * </ol>
  */
-public final class TestBench extends TestWatcher implements ManagedLifecycle {
+public final class TestBench implements ManagedLifecycle {
 
   private static final Logger LOGGER = Logger.getLogger(TestBench.class.getName());
 
@@ -73,14 +85,12 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
   private final String gRPCBaseUri;
   private final String dockerImageName;
   private final String dockerImageTag;
-  private final CleanupStrategy cleanupStrategy;
   private final String containerName;
 
   private final Gson gson;
   private final HttpRequestFactory requestFactory;
 
   private Process process;
-  private boolean success;
   private Path tempDirectory;
   private Path outPath;
   private Path errPath;
@@ -91,14 +101,12 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
       String gRPCBaseUri,
       String dockerImageName,
       String dockerImageTag,
-      CleanupStrategy cleanupStrategy,
       String containerName) {
     this.ignorePullError = ignorePullError;
     this.baseUri = baseUri;
     this.gRPCBaseUri = gRPCBaseUri;
     this.dockerImageName = dockerImageName;
     this.dockerImageTag = dockerImageTag;
-    this.cleanupStrategy = cleanupStrategy;
     this.containerName = containerName;
     this.gson = new Gson();
     this.requestFactory =
@@ -112,8 +120,6 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
                       .getHeaders()
                       .setUserAgent(String.format("%s/ test-bench/", this.containerName));
                 });
-
-    this.success = true;
   }
 
   public String getBaseUri() {
@@ -172,21 +178,6 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
     HttpResponse resp = req.execute();
     resp.disconnect();
     return resp.getStatusCode() == 200;
-  }
-
-  @Override
-  protected void failed(Throwable e, Description description) {
-    success = false;
-  }
-
-  @Override
-  protected void starting(Description description) {
-    start();
-  }
-
-  @Override
-  protected void finished(Description description) {
-    stop();
   }
 
   @Override
@@ -331,15 +322,12 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
             }
           },
           NanoClock.getDefaultClock());
-      if (cleanupStrategy == CleanupStrategy.ALWAYS
-          || (success && cleanupStrategy == CleanupStrategy.ONLY_ON_SUCCESS)) {
-        try {
-          Files.delete(errPath);
-          Files.delete(outPath);
-          Files.delete(tempDirectory);
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
+      try {
+        Files.delete(errPath);
+        Files.delete(outPath);
+        Files.delete(tempDirectory);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
@@ -365,7 +353,7 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
     }
   }
 
-  public static Builder newBuilder() {
+  static Builder newBuilder() {
     return new Builder();
   }
 
@@ -405,7 +393,7 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
     }
   }
 
-  public static final class Builder {
+  static final class Builder {
     private static final String DEFAULT_BASE_URI = "http://localhost:9000";
     private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
@@ -418,7 +406,6 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
     private String gRPCBaseUri;
     private String dockerImageName;
     private String dockerImageTag;
-    private CleanupStrategy cleanupStrategy;
     private String containerName;
 
     private Builder() {
@@ -428,7 +415,6 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
           DEFAULT_GRPC_BASE_URI,
           DEFAULT_IMAGE_NAME,
           DEFAULT_IMAGE_TAG,
-          CleanupStrategy.ALWAYS,
           DEFAULT_CONTAINER_NAME);
     }
 
@@ -438,20 +424,13 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
         String gRPCBaseUri,
         String dockerImageName,
         String dockerImageTag,
-        CleanupStrategy cleanupStrategy,
         String containerName) {
       this.ignorePullError = ignorePullError;
       this.baseUri = baseUri;
       this.gRPCBaseUri = gRPCBaseUri;
       this.dockerImageName = dockerImageName;
       this.dockerImageTag = dockerImageTag;
-      this.cleanupStrategy = cleanupStrategy;
       this.containerName = containerName;
-    }
-
-    public Builder setCleanupStrategy(CleanupStrategy cleanupStrategy) {
-      this.cleanupStrategy = requireNonNull(cleanupStrategy, "cleanupStrategy must be non null");
-      return this;
     }
 
     public Builder setIgnorePullError(boolean ignorePullError) {
@@ -486,13 +465,7 @@ public final class TestBench extends TestWatcher implements ManagedLifecycle {
 
     public TestBench build() {
       return new TestBench(
-          ignorePullError,
-          baseUri,
-          gRPCBaseUri,
-          dockerImageName,
-          dockerImageTag,
-          cleanupStrategy,
-          containerName);
+          ignorePullError, baseUri, gRPCBaseUri, dockerImageName, dockerImageTag, containerName);
     }
   }
 

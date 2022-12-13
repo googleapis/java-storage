@@ -41,6 +41,7 @@ import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.Parameterized;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
+import com.google.cloud.storage.it.runner.registry.TestBench;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
