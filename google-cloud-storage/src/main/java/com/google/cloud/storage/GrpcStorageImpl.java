@@ -68,6 +68,7 @@ import com.google.cloud.storage.UnifiedOpts.ProjectId;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Streams;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import com.google.iam.v1.GetIamPolicyRequest;
@@ -936,12 +937,59 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Acl createDefaultAcl(String bucket, Acl acl) {
-    return throwNotYetImplemented(fmtMethodName("createDefaultAcl", String.class, Acl.class));
+    return updateDefaultAcl(bucket, acl);
   }
 
   @Override
   public Acl updateDefaultAcl(String bucket, Acl acl) {
-    return throwNotYetImplemented(fmtMethodName("updateDefaultAcl", String.class, Acl.class));
+    try {
+      com.google.storage.v2.Bucket resp = getBucketDefaultAcls(bucket);
+      ObjectAccessControl encode = codecs.objectAcl().encode(acl);
+      String entity = encode.getEntity();
+
+      Predicate<ObjectAccessControl> entityPredicate = objectAclEntityOrAltEq(entity);
+
+      ImmutableList<ObjectAccessControl> collect =
+          Streams.concat(
+                  resp.getDefaultObjectAclList().stream().filter(entityPredicate.negate()),
+                  Stream.of(encode))
+              .collect(ImmutableList.toImmutableList());
+
+      com.google.storage.v2.Bucket update =
+          com.google.storage.v2.Bucket.newBuilder()
+              .setName(bucketNameCodec.encode(bucket))
+              .addAllDefaultObjectAcl(collect)
+              .build();
+      Opts<BucketTargetOpt> opts =
+          Opts.from(
+              UnifiedOpts.fields(ImmutableSet.of(BucketField.DEFAULT_OBJECT_ACL)),
+              UnifiedOpts.metagenerationMatch(resp.getMetageneration()));
+      UpdateBucketRequest req =
+          opts.updateBucketsRequest()
+              .apply(UpdateBucketRequest.newBuilder())
+              .setBucket(update)
+              .build();
+
+      GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
+      com.google.storage.v2.Bucket updateResult =
+          Retrying.run(
+              getOptions(),
+              retryAlgorithmManager.getFor(req),
+              () -> storageClient.updateBucketCallable().call(req, grpcCallContext),
+              Decoder.identity());
+
+      //noinspection DataFlowIssue
+      Optional<Acl> first =
+          updateResult.getDefaultObjectAclList().stream()
+              .filter(entityPredicate)
+              .findFirst()
+              .map(codecs.objectAcl()::decode);
+
+      return first.orElseThrow(
+          () -> new StorageException(0, "Acl update call success, but not in response"));
+    } catch (NotFoundException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   @Override

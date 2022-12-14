@@ -33,6 +33,8 @@ import com.google.cloud.RetryHelper;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
@@ -70,6 +72,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.junit.Ignore;
@@ -186,11 +189,107 @@ public class ITAccessTest {
   }
 
   @Test
+  public void bucket_defaultAcl_create() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+
+      Acl readAll = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+      Acl actual = retry429s(() -> storage.createDefaultAcl(bucket.getName(), readAll), storage);
+
+      assertThat(actual.getEntity()).isEqualTo(readAll.getEntity());
+      assertThat(actual.getRole()).isEqualTo(readAll.getRole());
+      assertThat(actual.getEtag()).isNotEmpty();
+
+      Bucket bucketUpdated =
+          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+      assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
+
+      // etags change when updates happen, drop before our comparison
+      List<Acl> expectedAcls = dropEtags(bucket.getDefaultAcl());
+      List<Acl> actualAcls = dropEtags(bucketUpdated.getDefaultAcl());
+      assertThat(actualAcls).containsAtLeastElementsIn(expectedAcls);
+      assertThat(actualAcls).contains(readAll);
+    }
+  }
+
+  @Test
+  public void bucket_defaultAcl_create_bucket404() {
+    Acl readAll = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+    StorageException storageException =
+        assertThrows(
+            StorageException.class,
+            () ->
+                retry429s(
+                    () -> storage.createDefaultAcl(bucket.getName() + "x", readAll), storage));
+
+    assertThat(storageException.getCode()).isEqualTo(404);
+  }
+
+  @Test
+  public void bucket_defaultAcl_update() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+
+      List<Acl> defaultAcls = bucket.getDefaultAcl();
+      assertThat(defaultAcls).isNotEmpty();
+
+      Predicate<Acl> isProjectEditor = hasProjectRole(ProjectRole.EDITORS);
+
+      //noinspection OptionalGetWithoutIsPresent
+      Acl projectEditorAsOwner =
+          defaultAcls.stream().filter(hasRole(Role.OWNER).and(isProjectEditor)).findFirst().get();
+
+      // lower the privileges of project editors to writer from owner
+      Entity entity = projectEditorAsOwner.getEntity();
+      Acl projectEditorAsReader = Acl.of(entity, Role.READER);
+
+      Acl actual =
+          retry429s(
+              () -> storage.updateDefaultAcl(bucket.getName(), projectEditorAsReader), storage);
+
+      assertThat(actual.getEntity()).isEqualTo(projectEditorAsReader.getEntity());
+      assertThat(actual.getRole()).isEqualTo(projectEditorAsReader.getRole());
+      assertThat(actual.getEtag()).isNotEmpty();
+
+      Bucket bucketUpdated =
+          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+      assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
+
+      // etags change when updates happen, drop before our comparison
+      List<Acl> expectedAcls =
+          dropEtags(
+              bucket.getDefaultAcl().stream()
+                  .filter(isProjectEditor.negate())
+                  .collect(Collectors.toList()));
+      List<Acl> actualAcls = dropEtags(bucketUpdated.getDefaultAcl());
+      assertThat(actualAcls).containsAtLeastElementsIn(expectedAcls);
+      assertThat(actualAcls).doesNotContain(projectEditorAsOwner);
+      assertThat(actualAcls).contains(projectEditorAsReader);
+    }
+  }
+
+  @Test
+  public void bucket_defaultAcl_update_bucket404() {
+    Acl readAll = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+    StorageException storageException =
+        assertThrows(
+            StorageException.class,
+            () ->
+                retry429s(
+                    () -> storage.updateDefaultAcl(bucket.getName() + "x", readAll), storage));
+
+    assertThat(storageException.getCode()).isEqualTo(404);
+  }
+
+  @Test
   @CrossRun.Ignore(transports = Transport.GRPC)
   public void testBucketDefaultAcl() {
     // TODO: break this test up into each of the respective scenarios
     //   2. Delete a default ACL for a specific entity
-    //   3. Create a default ACL for specific entity
     //   4. Update default ACL to change role of a specific entity
 
     // according to https://cloud.google.com/storage/docs/access-control/lists#default
@@ -1025,5 +1124,25 @@ public class ITAccessTest {
         throw e;
       }
     }
+  }
+
+  private static ImmutableList<Acl> dropEtags(List<Acl> defaultAcls) {
+    return defaultAcls.stream()
+        .map(acl -> Acl.of(acl.getEntity(), acl.getRole()))
+        .collect(ImmutableList.toImmutableList());
+  }
+
+  private static Predicate<Acl> hasRole(Acl.Role expected) {
+    return acl -> acl.getRole().equals(expected);
+  }
+
+  private static Predicate<Acl> hasProjectRole(Acl.Project.ProjectRole expected) {
+    return acl -> {
+      Entity entity = acl.getEntity();
+      if (entity.getType().equals(Entity.Type.PROJECT)) {
+        return ((Acl.Project) entity).getProjectRole().equals(expected);
+      }
+      return false;
+    };
   }
 }

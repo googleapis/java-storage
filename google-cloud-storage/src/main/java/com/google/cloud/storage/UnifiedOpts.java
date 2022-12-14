@@ -713,7 +713,7 @@ final class UnifiedOpts {
   }
 
   static final class Fields extends RpcOptVal<ImmutableSet<NamedField>>
-      implements ObjectSourceOpt, ObjectListOpt, BucketSourceOpt, BucketListOpt {
+      implements ObjectSourceOpt, ObjectListOpt, BucketSourceOpt, BucketTargetOpt, BucketListOpt {
 
     /**
      * Apiary and gRPC have differing handling of where the field selector is evaluated relative to
@@ -750,6 +750,11 @@ final class UnifiedOpts {
     @Override
     public Mapper<ListBucketsRequest.Builder> listBuckets() {
       return b -> b.setReadMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
+    }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return b -> b.setUpdateMask(FieldMask.newBuilder().addAllPaths(getPaths()).build());
     }
 
     @Override

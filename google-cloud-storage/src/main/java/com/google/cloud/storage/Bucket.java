@@ -1285,7 +1285,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl createDefaultAcl(Acl acl) {
     return storage.createDefaultAcl(getName(), acl);
   }
@@ -1304,7 +1304,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl updateDefaultAcl(Acl acl) {
     return storage.updateDefaultAcl(getName(), acl);
   }
