@@ -986,7 +986,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
               .map(codecs.objectAcl()::decode);
 
       return first.orElseThrow(
-          () -> new StorageException(404, "Acl update call success, but not in response"));
+          () -> new StorageException(0, "Acl update call success, but not in response"));
     } catch (NotFoundException e) {
       throw StorageException.coalesce(e);
     }
