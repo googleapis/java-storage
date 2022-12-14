@@ -18,7 +18,6 @@ package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
 
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
@@ -60,6 +59,8 @@ public final class ITObjectChecksumSupportTest {
 
   @Inject public Storage storage;
   @Inject public BucketInfo bucket;
+
+  @Inject public Transport transport;
 
   @Parameter public ChecksummedTestContent content;
 
@@ -158,18 +159,76 @@ public final class ITObjectChecksumSupportTest {
   }
 
   @Test
-  // Error Handling for GRPC not complete b/247621346
-  @CrossRun.Exclude(transports = Transport.GRPC)
-  public void testCreateBlobMd5Fail() {
+  public void testMd5Validated_createFrom_expectFailure() {
     String blobName = testName.getMethodName();
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucket, blobName).setMd5("O1R4G1HJSDUISJjoIYmVhQ==").build();
-    ByteArrayInputStream stream = content.bytesAsInputStream();
-    try {
-      storage.create(blob, stream, Storage.BlobWriteOption.md5Match());
-      fail("StorageException was expected");
-    } catch (StorageException ex) {
-      // expected
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
+
+    byte[] bytes = content.concat('x');
+    StorageException expected =
+        assertThrows(
+            StorageException.class,
+            () ->
+                storage.createFrom(
+                    blobInfo,
+                    new ByteArrayInputStream(bytes),
+                    BlobWriteOption.doesNotExist(),
+                    BlobWriteOption.md5Match()));
+    assertThat(expected.getCode()).isEqualTo(400);
+  }
+
+  @Test
+  public void testMd5Validated_createFrom_expectSuccess() throws IOException {
+    String blobName = testName.getMethodName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
+
+    byte[] bytes = content.getBytes();
+    Blob blob =
+        storage.createFrom(
+            blobInfo,
+            new ByteArrayInputStream(bytes),
+            BlobWriteOption.doesNotExist(),
+            BlobWriteOption.md5Match());
+    assertThat(blob.getMd5()).isEqualTo(content.getMd5Base64());
+  }
+
+  @Test
+  public void testMd5Validated_writer_expectFailure() {
+    String blobName = testName.getMethodName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
+
+    byte[] bytes = content.concat('x');
+    StorageException expected =
+        assertThrows(
+            StorageException.class,
+            () -> {
+              try (ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(bytes));
+                  WriteChannel dst =
+                      storage.writer(
+                          blobInfo, BlobWriteOption.doesNotExist(), BlobWriteOption.md5Match())) {
+                ByteStreams.copy(src, dst);
+              }
+            });
+    assertThat(expected.getCode()).isEqualTo(400);
+  }
+
+  @Test
+  public void testMd5Validated_writer_expectSuccess() throws IOException {
+    String blobName = testName.getMethodName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
+
+    byte[] bytes = content.getBytes();
+
+    try (ReadableByteChannel src = Channels.newChannel(new ByteArrayInputStream(bytes));
+        WriteChannel dst =
+            storage.writer(blobInfo, BlobWriteOption.doesNotExist(), BlobWriteOption.md5Match())) {
+      ByteStreams.copy(src, dst);
     }
+
+    Blob blob = storage.get(blobId);
+    assertThat(blob.getMd5()).isEqualTo(content.getMd5Base64());
   }
 }

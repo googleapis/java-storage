@@ -33,14 +33,13 @@ final class ResumableWrite implements WriteObjectRequestBuilderFactory {
 
   private final WriteObjectRequest writeRequest;
 
-  public ResumableWrite(StartResumableWriteRequest req, StartResumableWriteResponse res) {
+  public ResumableWrite(
+      StartResumableWriteRequest req,
+      StartResumableWriteResponse res,
+      Function<String, WriteObjectRequest> f) {
     this.req = req;
     this.res = res;
-    WriteObjectRequest.Builder b = WriteObjectRequest.newBuilder().setUploadId(res.getUploadId());
-    if (req.hasCommonObjectRequestParams()) {
-      b.setCommonObjectRequestParams(req.getCommonObjectRequestParams());
-    }
-    this.writeRequest = b.build();
+    this.writeRequest = f.apply(res.getUploadId());
   }
 
   public StartResumableWriteRequest getReq() {

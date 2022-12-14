@@ -37,6 +37,7 @@ import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.rpc.DebugInfo;
 import com.google.storage.v2.ChecksummedData;
+import com.google.storage.v2.WriteObjectRequest;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 import java.io.ByteArrayOutputStream;
@@ -49,6 +50,7 @@ import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public final class TestUtils {
@@ -178,5 +180,14 @@ public final class TestUtils {
         throw e;
       }
     }
+  }
+
+  /**
+   * Return a function which when provided an {@code uploadId} will create a {@link
+   * WriteObjectRequest} with that {@code uploadId}
+   */
+  @NonNull
+  public static Function<String, WriteObjectRequest> onlyUploadId() {
+    return uId -> WriteObjectRequest.newBuilder().setUploadId(uId).build();
   }
 }

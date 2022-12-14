@@ -2,4 +2,9 @@
 <!-- see https://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
 
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/cloud/storage/Hasher$ConstantConcatValueHasher</className>
+  </difference>
+
 </differences>
