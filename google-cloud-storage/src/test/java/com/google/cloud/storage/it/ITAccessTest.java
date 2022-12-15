@@ -70,6 +70,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -286,40 +287,65 @@ public class ITAccessTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC)
-  public void testBucketDefaultAcl() {
-    // TODO: break this test up into each of the respective scenarios
-    //   2. Delete a default ACL for a specific entity
-    //   4. Update default ACL to change role of a specific entity
+  public void bucket_defaultAcl_delete() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
 
-    // according to https://cloud.google.com/storage/docs/access-control/lists#default
-    // it can take up to 30 seconds for default acl updates to propagate
-    // Since this test is performing so many mutations to default acls there are several calls
-    // that are otherwise non-idempotent wrapped with retries.
-    assertNull(
+      List<Acl> defaultAcls = bucket.getDefaultAcl();
+      assertThat(defaultAcls).isNotEmpty();
+
+      Predicate<Acl> isProjectEditor = hasProjectRole(ProjectRole.VIEWERS);
+
+      //noinspection OptionalGetWithoutIsPresent
+      Acl projectViewerAsReader =
+          defaultAcls.stream().filter(hasRole(Role.READER).and(isProjectEditor)).findFirst().get();
+
+      Entity entity = projectViewerAsReader.getEntity();
+
+      boolean actual = retry429s(() -> storage.deleteDefaultAcl(bucket.getName(), entity), storage);
+
+      assertThat(actual).isTrue();
+
+      Bucket bucketUpdated =
+          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+      assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
+
+      // etags change when deletes happen, drop before our comparison
+      List<Acl> expectedAcls =
+          dropEtags(
+              bucket.getDefaultAcl().stream()
+                  .filter(isProjectEditor.negate())
+                  .collect(Collectors.toList()));
+      List<Acl> actualAcls = dropEtags(bucketUpdated.getDefaultAcl());
+      assertThat(actualAcls).containsAtLeastElementsIn(expectedAcls);
+      Optional<Entity> search =
+          actualAcls.stream().map(Acl::getEntity).filter(e -> e.equals(entity)).findAny();
+      assertThat(search.isPresent()).isFalse();
+    }
+  }
+
+  @Test
+  public void bucket_defaultAcl_delete_bucket404() {
+    boolean actual =
         retry429s(
-            () -> storage.getDefaultAcl(bucket.getName(), User.ofAllAuthenticatedUsers()),
-            storage));
-    assertFalse(
-        retry429s(
-            () -> storage.deleteDefaultAcl(bucket.getName(), User.ofAllAuthenticatedUsers()),
-            storage));
-    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(retry429s(() -> storage.createDefaultAcl(bucket.getName(), acl), storage));
-    Acl updatedAcl =
-        retry429s(
-            () ->
-                storage.updateDefaultAcl(
-                    bucket.getName(), acl.toBuilder().setRole(Role.OWNER).build()),
-            storage);
-    assertEquals(Role.OWNER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>(storage.listDefaultAcls(bucket.getName()));
-    assertTrue(acls.contains(updatedAcl));
-    assertTrue(
-        retry429s(
-            () -> storage.deleteDefaultAcl(bucket.getName(), User.ofAllAuthenticatedUsers()),
-            storage));
-    assertNull(storage.getDefaultAcl(bucket.getName(), User.ofAllAuthenticatedUsers()));
+            () -> storage.deleteDefaultAcl(bucket.getName() + "x", User.ofAllUsers()), storage);
+
+    assertThat(actual).isEqualTo(false);
+  }
+
+  @Test
+  public void bucket_defaultAcl_delete_noExistingAcl() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+      boolean actual =
+          retry429s(() -> storage.deleteDefaultAcl(bucket.getName(), User.ofAllUsers()), storage);
+
+      assertThat(actual).isEqualTo(false);
+    }
   }
 
   @Test
