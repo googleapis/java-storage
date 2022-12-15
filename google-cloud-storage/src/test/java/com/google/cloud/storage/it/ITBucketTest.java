@@ -38,6 +38,7 @@ import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -130,38 +131,45 @@ public class ITBucketTest {
   @Test
   // Cannot turn on for GRPC until b/246634709 is resolved, verified locally.
   @CrossRun.Exclude(transports = Transport.GRPC)
-  public void testBucketLocationType() {
+  public void testBucketLocationType() throws Exception {
     String bucketName = generator.randomBucketName();
-    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName).setLocation("us").build());
+    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName).setLocation("us").build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
 
-    assertEquals("multi-region", bucket.getLocationType());
+      assertEquals("multi-region", bucket.getLocationType());
+    }
   }
 
   @Test
   // Cannot turn on for GRPC until creation bug b/246634709 is resolved, verified locally.
   @CrossRun.Exclude(transports = Transport.GRPC)
-  public void testBucketCustomPlacmentConfigDualRegion() {
+  public void testBucketCustomPlacmentConfigDualRegion() throws Exception {
     String bucketName = generator.randomBucketName();
     List<String> locations = new ArrayList<>();
     locations.add("US-EAST1");
     locations.add("US-WEST1");
     CustomPlacementConfig customPlacementConfig =
         CustomPlacementConfig.newBuilder().setDataLocations(locations).build();
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setCustomPlacementConfig(customPlacementConfig)
-                .setLocation("us")
-                .build());
-    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST1"));
-    assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST1"));
-    assertTrue(bucket.getLocation().equalsIgnoreCase("us"));
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setCustomPlacementConfig(customPlacementConfig)
+            .setLocation("us")
+            .build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+      assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-EAST1"));
+      assertTrue(bucket.getCustomPlacementConfig().getDataLocations().contains("US-WEST1"));
+      assertTrue(bucket.getLocation().equalsIgnoreCase("us"));
+    }
   }
 
   @Test
   // Cannot turn on until GRPC Update logic bug is fixed b/247133805
   @CrossRun.Exclude(transports = Transport.GRPC)
-  public void testBucketLogging() {
+  public void testBucketLogging() throws Exception {
     String logsBucketName = generator.randomBucketName();
     String loggingBucketName = generator.randomBucketName();
 
@@ -176,29 +184,28 @@ public class ITBucketTest {
                     .build())
             .build();
 
-    Bucket logsBucket = null;
-    Bucket loggingBucket = null;
-    try {
-      logsBucket = storage.create(logsBucketInfo);
+    try (TemporaryBucket tempLogsB =
+            TemporaryBucket.newBuilder().setBucketInfo(logsBucketInfo).setStorage(storage).build();
+        TemporaryBucket tempLoggingB =
+            TemporaryBucket.newBuilder()
+                .setBucketInfo(loggingBucketInfo)
+                .setStorage(storage)
+                .build(); ) {
+      BucketInfo logsBucket = tempLogsB.getBucket();
+      BucketInfo loggingBucket = tempLoggingB.getBucket();
       assertNotNull(logsBucket);
 
       Policy policy = storage.getIamPolicy(logsBucketName);
       assertNotNull(policy);
-      loggingBucket = storage.create(loggingBucketInfo);
       assertEquals(logsBucketName, loggingBucket.getLogging().getLogBucket());
       assertEquals("test-logs", loggingBucket.getLogging().getLogObjectPrefix());
 
       // Disable bucket logging.
-      Bucket updatedBucket = loggingBucket.toBuilder().setLogging(null).build().update();
+      Bucket updatedBucket =
+          storage.update(
+              loggingBucket.toBuilder().setLogging(null).build(),
+              BucketTargetOption.metagenerationMatch());
       assertNull(updatedBucket.getLogging());
-
-    } finally {
-      if (logsBucket != null) {
-        BucketCleaner.doCleanup(logsBucketName, storage);
-      }
-      if (loggingBucket != null) {
-        BucketCleaner.doCleanup(loggingBucketName, storage);
-      }
     }
   }
 
@@ -267,7 +274,7 @@ public class ITBucketTest {
 
       assertEquals("DEFAULT", storage.get(rpoBucket).getRpo().toString());
     } finally {
-      storage.delete(rpoBucket);
+      BucketCleaner.doCleanup(rpoBucket, storage);
     }
   }
 

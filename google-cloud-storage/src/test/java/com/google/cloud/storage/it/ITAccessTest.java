@@ -611,8 +611,8 @@ public class ITAccessTest {
     //   4. Expect failure when attempting to list default ACLs for BucketPolicyOnly bucket
 
     // TODO: temp bucket
+    String randBucketName = generator.randomBucketName();
     try {
-      String randBucketName = generator.randomBucketName();
       storage.create(
           Bucket.newBuilder(randBucketName)
               .setIamConfiguration(
@@ -640,6 +640,7 @@ public class ITAccessTest {
         // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
       }
     } finally {
+      BucketCleaner.doCleanup(randBucketName, storage);
     }
   }
 
@@ -653,8 +654,8 @@ public class ITAccessTest {
     //   4. Expect failure when attempting to list default ACLs for UniformBucketLevelAccess bucket
 
     // TODO: temp bucket
+    String randBucketName = generator.randomBucketName();
     try {
-      String randBucketName = generator.randomBucketName();
       storage.create(
           Bucket.newBuilder(randBucketName)
               .setIamConfiguration(
@@ -681,6 +682,7 @@ public class ITAccessTest {
         // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
       }
     } finally {
+      BucketCleaner.doCleanup(randBucketName, storage);
     }
   }
 
