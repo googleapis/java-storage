@@ -1148,7 +1148,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl getAcl(Entity entity) {
     return storage.getAcl(getName(), entity);
   }
@@ -1170,7 +1170,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean deleteAcl(Entity entity) {
     return storage.deleteAcl(getName(), entity);
   }
@@ -1186,7 +1186,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl createAcl(Acl acl) {
     return storage.createAcl(getName(), acl);
   }
@@ -1202,7 +1202,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl updateAcl(Acl acl) {
     return storage.updateAcl(getName(), acl);
   }
@@ -1221,7 +1221,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public List<Acl> listAcls() {
     return storage.listAcls(getName());
   }

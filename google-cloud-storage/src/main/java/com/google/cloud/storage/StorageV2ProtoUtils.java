@@ -22,6 +22,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.JsonFormat.Printer;
+import com.google.storage.v2.BucketAccessControl;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
 import java.util.function.Predicate;
@@ -90,6 +91,14 @@ final class StorageV2ProtoUtils {
    * project number format) and {@code entity_alt} (generally project id format).
    */
   static Predicate<ObjectAccessControl> objectAclEntityOrAltEq(String s) {
+    return oAcl -> oAcl.getEntity().equals(s) || oAcl.getEntityAlt().equals(s);
+  }
+
+  /**
+   * When evaluating an {@link BucketAccessControl} entity, look at both {@code entity} (generally
+   * project number format) and {@code entity_alt} (generally project id format).
+   */
+  static Predicate<BucketAccessControl> bucketAclEntityOrAltEq(String s) {
     return oAcl -> oAcl.getEntity().equals(s) || oAcl.getEntityAlt().equals(s);
   }
 }

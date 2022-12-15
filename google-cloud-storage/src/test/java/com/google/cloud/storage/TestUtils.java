@@ -20,11 +20,15 @@ import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.grpc.GrpcStatusCode;
+import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptionFactory;
 import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StatusCode;
+import com.google.cloud.RetryHelper;
+import com.google.cloud.RetryHelper.RetryHelperException;
+import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
@@ -40,6 +44,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -146,5 +151,32 @@ public final class TestUtils {
       }
     }
     return found;
+  }
+
+  public static <T> T retry429s(Callable<T> c, Storage storage) {
+    try {
+      return RetryHelper.runWithRetries(
+          c,
+          storage.getOptions().getRetrySettings(),
+          new BasicResultRetryAlgorithm<Object>() {
+            @Override
+            public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
+              if (previousThrowable instanceof BaseHttpServiceException) {
+                BaseHttpServiceException httpException =
+                    (BaseHttpServiceException) previousThrowable;
+                return httpException.getCode() == 429;
+              }
+              return false;
+            }
+          },
+          storage.getOptions().getClock());
+    } catch (RetryHelperException e) {
+      Throwable cause = e.getCause();
+      if (cause instanceof RuntimeException) {
+        throw (RuntimeException) cause;
+      } else {
+        throw e;
+      }
+    }
   }
 }
