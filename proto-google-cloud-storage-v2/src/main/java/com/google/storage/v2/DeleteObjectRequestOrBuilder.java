@@ -52,7 +52,9 @@ public interface DeleteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The name of the object to delete (when not using a resumable write).
+   * Required. The name of the finalized object to delete.
+   * Note: If you want to delete an unfinalized resumable upload please use
+   * `CancelResumableWrite`.
    * </pre>
    *
    * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -64,7 +66,9 @@ public interface DeleteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The name of the object to delete (when not using a resumable write).
+   * Required. The name of the finalized object to delete.
+   * Note: If you want to delete an unfinalized resumable upload please use
+   * `CancelResumableWrite`.
    * </pre>
    *
    * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>

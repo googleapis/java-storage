@@ -29,7 +29,7 @@ public interface RewriteObjectRequestOrBuilder
    * <pre>
    * Required. Immutable. The name of the destination object.
    * See the
-   * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * [Naming Guidelines](https://cloud.google.com/storage/docs/objects#naming).
    * Example: `test.txt`
    * The `name` field by itself does not uniquely identify a Cloud Storage
    * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -49,7 +49,7 @@ public interface RewriteObjectRequestOrBuilder
    * <pre>
    * Required. Immutable. The name of the destination object.
    * See the
-   * [Naming Guidelines](https://cloud.google.com/storage/docs/naming-objects).
+   * [Naming Guidelines](https://cloud.google.com/storage/docs/objects#naming).
    * Example: `test.txt`
    * The `name` field by itself does not uniquely identify a Cloud Storage
    * object. A Cloud Storage object is uniquely identified by the tuple of
@@ -68,7 +68,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Immutable. The name of the bucket containing the destination object.
+   * Required. Immutable. The name of the bucket containing the destination
+   * object.
    * </pre>
    *
    * <code>
@@ -82,7 +83,8 @@ public interface RewriteObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Immutable. The name of the bucket containing the destination object.
+   * Required. Immutable. The name of the bucket containing the destination
+   * object.
    * </pre>
    *
    * <code>
@@ -638,4 +640,42 @@ public interface RewriteObjectRequestOrBuilder
    * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * destination object after rewriting.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+   *
+   * @return Whether the objectChecksums field is set.
+   */
+  boolean hasObjectChecksums();
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * destination object after rewriting.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+   *
+   * @return The objectChecksums.
+   */
+  com.google.storage.v2.ObjectChecksums getObjectChecksums();
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * destination object after rewriting.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
+   */
+  com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
 }

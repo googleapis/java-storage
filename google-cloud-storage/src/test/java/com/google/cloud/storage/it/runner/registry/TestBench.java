@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2022 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.conformance.retry;
+package com.google.cloud.storage.it.runner.registry;
 
 import static com.google.cloud.RetryHelper.runWithRetries;
 import static java.util.Objects.requireNonNull;
@@ -50,20 +50,33 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import org.threeten.bp.Duration;
 
 /**
- * A JUnit 4 {@link TestRule} which integrates with the <a target="_blank" rel="noopener noreferrer"
+ * A {@link ManagedLifecycle} which integrates with the <a target="_blank" rel="noopener noreferrer"
  * href="https://github.com/googleapis/storage-testbench">storage-testbench</a> by pulling the
  * docker image, starting the container, providing methods for interacting with the {@code
  * /retry_test} rest api, stopping the container.
  *
- * <p>This rule expects to be bound as an {@link org.junit.ClassRule @ClassRule} field.
+ * <p>A single instance of the testbench is expected to be managed by the {@link
+ * com.google.cloud.storage.it.runner.registry.Registry} which is used by {@link
+ * com.google.cloud.storage.it.runner.StorageITRunner}. Accessing the testbench can be accomplished
+ * by doing the following:
+ *
+ * <ol>
+ *   <li>Annotating your test class {@code @RunWith(StorageITRunner.class)}
+ *   <li>Configuring the backend for your integration tests to be {@link
+ *       com.google.cloud.storage.it.runner.annotations.Backend#TEST_BENCH} by doing either
+ *       <ol>
+ *         <li>Annotating your test class with {@code @SingleBackend(Backend.TEST_BENCH)}
+ *         <li>Annotating your test class with {@code @CrossRun} and ensuring {@code
+ *             Backend.TEST_BENCH} is included in the {@code backends} parameter
+ *       </ol>
+ *   <li>Specifying {@code @Inject public TestBench testBench;} as a field for the instance of
+ *       testbench to be injected to your test
+ * </ol>
  */
-public final class TestBench implements TestRule {
+public final class TestBench implements ManagedLifecycle {
 
   private static final Logger LOGGER = Logger.getLogger(TestBench.class.getName());
 
@@ -72,11 +85,15 @@ public final class TestBench implements TestRule {
   private final String gRPCBaseUri;
   private final String dockerImageName;
   private final String dockerImageTag;
-  private final CleanupStrategy cleanupStrategy;
   private final String containerName;
 
   private final Gson gson;
   private final HttpRequestFactory requestFactory;
+
+  private Process process;
+  private Path tempDirectory;
+  private Path outPath;
+  private Path errPath;
 
   private TestBench(
       boolean ignorePullError,
@@ -84,14 +101,12 @@ public final class TestBench implements TestRule {
       String gRPCBaseUri,
       String dockerImageName,
       String dockerImageTag,
-      CleanupStrategy cleanupStrategy,
       String containerName) {
     this.ignorePullError = ignorePullError;
     this.baseUri = baseUri;
     this.gRPCBaseUri = gRPCBaseUri;
     this.dockerImageName = dockerImageName;
     this.dockerImageTag = dockerImageTag;
-    this.cleanupStrategy = cleanupStrategy;
     this.containerName = containerName;
     this.gson = new Gson();
     this.requestFactory =
@@ -166,149 +181,166 @@ public final class TestBench implements TestRule {
   }
 
   @Override
-  public Statement apply(final Statement base, Description description) {
-    return new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        String fullContainerName = String.format("storage-testbench_%s", containerName);
-        Path tempDirectory = Files.createTempDirectory(fullContainerName);
-        Path outPath = tempDirectory.resolve("stdout");
-        Path errPath = tempDirectory.resolve("stderr");
+  public Object get() {
+    return this;
+  }
 
-        File outFile = outPath.toFile();
-        File errFile = errPath.toFile();
-        LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
-        LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
-        String dockerImage = String.format("%s:%s", dockerImageName, dockerImageTag);
-        // First try and pull the docker image, this validates docker is available and running
-        // on the host, as well as gives time for the image to be downloaded independently of
-        // trying to start the container. (Below, when we first start the container we then attempt
-        // to issue a call against the api before we yield to run our tests.)
-        try {
-          Process p =
-              new ProcessBuilder()
-                  .command("docker", "pull", dockerImage)
-                  .redirectOutput(outFile)
-                  .redirectError(errFile)
-                  .start();
-          p.waitFor(5, TimeUnit.MINUTES);
-          if (!ignorePullError && p.exitValue() != 0) {
-            dumpServerLogs(outFile, errFile);
-            throw new IllegalStateException(
-                String.format(
-                    "Non-zero status while attempting to pull docker image '%s'", dockerImage));
-          }
-        } catch (InterruptedException | IllegalThreadStateException e) {
-          dumpServerLogs(outFile, errFile);
-          throw new IllegalStateException(
-              String.format("Timeout while attempting to pull docker image '%s'", dockerImage));
-        }
+  @Override
+  public void start() {
+    try {
+      String fullContainerName = String.format("storage-testbench_%s", containerName);
+      tempDirectory = Files.createTempDirectory(fullContainerName);
+      outPath = tempDirectory.resolve("stdout");
+      errPath = tempDirectory.resolve("stderr");
 
-        int port = URI.create(baseUri).getPort();
-        int gRPCPort = URI.create(gRPCBaseUri).getPort();
-        final List<String> command =
-            ImmutableList.of(
-                "docker",
-                "run",
-                "-i",
-                "--rm",
-                "--publish",
-                port + ":9000",
-                "--publish",
-                gRPCPort + ":9090",
-                String.format("--name=%s", fullContainerName),
-                dockerImage);
-        final Process process =
+      File outFile = outPath.toFile();
+      File errFile = errPath.toFile();
+      LOGGER.info("Redirecting server stdout to: " + outFile.getAbsolutePath());
+      LOGGER.info("Redirecting server stderr to: " + errFile.getAbsolutePath());
+      String dockerImage = String.format("%s:%s", dockerImageName, dockerImageTag);
+      // First try and pull the docker image, this validates docker is available and running
+      // on the host, as well as gives time for the image to be downloaded independently of
+      // trying to start the container. (Below, when we first start the container we then attempt
+      // to issue a call against the api before we yield to run our tests.)
+      try {
+        Process p =
             new ProcessBuilder()
-                .command(command)
+                .command("docker", "pull", dockerImage)
                 .redirectOutput(outFile)
                 .redirectError(errFile)
                 .start();
-        LOGGER.log(Level.INFO, command.toString());
-        boolean success = false;
-        try {
-          // wait a small amount of time for the server to come up before probing
-          Thread.sleep(500);
-          // wait for the server to come up
-          List<RetryTestResource> existingResources =
-              runWithRetries(
-                  TestBench.this::listRetryTests,
-                  RetrySettings.newBuilder()
-                      .setTotalTimeout(Duration.ofSeconds(30))
-                      .setInitialRetryDelay(Duration.ofMillis(500))
-                      .setRetryDelayMultiplier(1.5)
-                      .setMaxRetryDelay(Duration.ofSeconds(5))
-                      .build(),
-                  new BasicResultRetryAlgorithm<List<RetryTestResource>>() {
-                    @Override
-                    public boolean shouldRetry(
-                        Throwable previousThrowable, List<RetryTestResource> previousResponse) {
-                      return previousThrowable instanceof SocketException;
-                    }
-                  },
-                  NanoClock.getDefaultClock());
-          if (!existingResources.isEmpty()) {
-            LOGGER.info(
-                "Test Server already has retry tests in it, is it running outside the tests?");
-          }
-          // Start gRPC Service
-          if (!startGRPCServer(gRPCPort)) {
-            throw new IllegalStateException(
-                "Failed to start server within a reasonable amount of time. Host url(gRPC): "
-                    + gRPCBaseUri);
-          }
-          base.evaluate();
-          success = true;
-        } catch (RetryHelperException e) {
-          dumpServerLogs(outFile, errFile);
+        p.waitFor(5, TimeUnit.MINUTES);
+        if (!ignorePullError && p.exitValue() != 0) {
+          dumpServerLogs(outPath, errPath);
           throw new IllegalStateException(
-              "Failed to connect to server within a reasonable amount of time. Host url: "
-                  + baseUri,
-              e.getCause());
-        } finally {
-          process.destroy();
-          // wait for the server to shutdown
-          runWithRetries(
-              () -> {
-                try {
-                  listRetryTests();
-                } catch (SocketException e) {
-                  // desired result
-                  return null;
-                }
-                throw new NotShutdownException();
-              },
-              RetrySettings.newBuilder()
-                  .setTotalTimeout(Duration.ofSeconds(30))
-                  .setInitialRetryDelay(Duration.ofMillis(500))
-                  .setRetryDelayMultiplier(1.5)
-                  .setMaxRetryDelay(Duration.ofSeconds(5))
-                  .build(),
-              new BasicResultRetryAlgorithm<List<?>>() {
-                @Override
-                public boolean shouldRetry(Throwable previousThrowable, List<?> previousResponse) {
-                  return previousThrowable instanceof NotShutdownException;
-                }
-              },
-              NanoClock.getDefaultClock());
-          if (cleanupStrategy == CleanupStrategy.ALWAYS
-              || (success && cleanupStrategy == CleanupStrategy.ONLY_ON_SUCCESS)) {
-            Files.delete(errPath);
-            Files.delete(outPath);
-            Files.delete(tempDirectory);
-          }
+              String.format(
+                  "Non-zero status while attempting to pull docker image '%s'", dockerImage));
         }
+      } catch (InterruptedException | IllegalThreadStateException e) {
+        dumpServerLogs(outPath, errPath);
+        throw new IllegalStateException(
+            String.format("Timeout while attempting to pull docker image '%s'", dockerImage));
       }
-    };
+
+      int port = URI.create(baseUri).getPort();
+      int gRPCPort = URI.create(gRPCBaseUri).getPort();
+      final List<String> command =
+          ImmutableList.of(
+              "docker",
+              "run",
+              "-i",
+              "--rm",
+              "--publish",
+              port + ":9000",
+              "--publish",
+              gRPCPort + ":9090",
+              String.format("--name=%s", fullContainerName),
+              dockerImage);
+      process =
+          new ProcessBuilder()
+              .command(command)
+              .redirectOutput(outFile)
+              .redirectError(errFile)
+              .start();
+      LOGGER.log(Level.INFO, command.toString());
+      try {
+        // wait a small amount of time for the server to come up before probing
+        Thread.sleep(500);
+        // wait for the server to come up
+        List<RetryTestResource> existingResources =
+            runWithRetries(
+                TestBench.this::listRetryTests,
+                RetrySettings.newBuilder()
+                    .setTotalTimeout(Duration.ofSeconds(30))
+                    .setInitialRetryDelay(Duration.ofMillis(500))
+                    .setRetryDelayMultiplier(1.5)
+                    .setMaxRetryDelay(Duration.ofSeconds(5))
+                    .build(),
+                new BasicResultRetryAlgorithm<List<RetryTestResource>>() {
+                  @Override
+                  public boolean shouldRetry(
+                      Throwable previousThrowable, List<RetryTestResource> previousResponse) {
+                    return previousThrowable instanceof SocketException;
+                  }
+                },
+                NanoClock.getDefaultClock());
+        if (!existingResources.isEmpty()) {
+          LOGGER.info(
+              "Test Server already has retry tests in it, is it running outside the tests?");
+        }
+        // Start gRPC Service
+        if (!startGRPCServer(gRPCPort)) {
+          throw new IllegalStateException(
+              "Failed to start server within a reasonable amount of time. Host url(gRPC): "
+                  + gRPCBaseUri);
+        }
+      } catch (RetryHelperException e) {
+        dumpServerLogs(outPath, errPath);
+        throw new IllegalStateException(
+            "Failed to connect to server within a reasonable amount of time. Host url: " + baseUri,
+            e.getCause());
+      }
+    } catch (IOException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
   }
 
-  private void dumpServerLogs(File outFile, File errFile) throws IOException {
+  @Override
+  public void stop() {
+    try {
+      process.destroy();
+      process.waitFor(5, TimeUnit.SECONDS);
+      int processExitValue = process.exitValue();
+      LOGGER.warning("Container exit value = " + processExitValue);
+
+      // Process shutdownProcess = new ProcessBuilder(ImmutableList.of("docker", "kill",
+      // containerName)).start();
+      // shutdownProcess.waitFor(5, TimeUnit.SECONDS);
+      // int shutdownProcessExitValue = shutdownProcess.exitValue();
+      // LOGGER1.info("shutdownProcessExitValue = {}", shutdownProcessExitValue);
+      // wait for the server to shutdown
+      runWithRetries(
+          () -> {
+            try {
+              listRetryTests();
+            } catch (SocketException e) {
+              // desired result
+              return null;
+            }
+            throw new NotShutdownException();
+          },
+          RetrySettings.newBuilder()
+              .setTotalTimeout(Duration.ofSeconds(30))
+              .setInitialRetryDelay(Duration.ofMillis(500))
+              .setRetryDelayMultiplier(1.5)
+              .setMaxRetryDelay(Duration.ofSeconds(5))
+              .build(),
+          new BasicResultRetryAlgorithm<List<?>>() {
+            @Override
+            public boolean shouldRetry(Throwable previousThrowable, List<?> previousResponse) {
+              return previousThrowable instanceof NotShutdownException;
+            }
+          },
+          NanoClock.getDefaultClock());
+      try {
+        Files.delete(errPath);
+        Files.delete(outPath);
+        Files.delete(tempDirectory);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void dumpServerLogs(Path outFile, Path errFile) throws IOException {
     try {
       LOGGER.warning("Dumping contents of stdout");
-      dumpServerLog("stdout", outFile);
+      dumpServerLog("stdout", outFile.toFile());
     } finally {
       LOGGER.warning("Dumping contents of stderr");
-      dumpServerLog("stderr", errFile);
+      dumpServerLog("stderr", errFile.toFile());
     }
   }
 
@@ -321,7 +353,7 @@ public final class TestBench implements TestRule {
     }
   }
 
-  public static Builder newBuilder() {
+  static Builder newBuilder() {
     return new Builder();
   }
 
@@ -361,12 +393,12 @@ public final class TestBench implements TestRule {
     }
   }
 
-  public static final class Builder {
+  static final class Builder {
     private static final String DEFAULT_BASE_URI = "http://localhost:9000";
     private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
-    private static final String DEFAULT_IMAGE_TAG = "v0.28.0";
+    private static final String DEFAULT_IMAGE_TAG = "v0.32.0";
     private static final String DEFAULT_CONTAINER_NAME = "default";
 
     private boolean ignorePullError;
@@ -374,7 +406,6 @@ public final class TestBench implements TestRule {
     private String gRPCBaseUri;
     private String dockerImageName;
     private String dockerImageTag;
-    private CleanupStrategy cleanupStrategy;
     private String containerName;
 
     private Builder() {
@@ -384,7 +415,6 @@ public final class TestBench implements TestRule {
           DEFAULT_GRPC_BASE_URI,
           DEFAULT_IMAGE_NAME,
           DEFAULT_IMAGE_TAG,
-          CleanupStrategy.ALWAYS,
           DEFAULT_CONTAINER_NAME);
     }
 
@@ -394,20 +424,13 @@ public final class TestBench implements TestRule {
         String gRPCBaseUri,
         String dockerImageName,
         String dockerImageTag,
-        CleanupStrategy cleanupStrategy,
         String containerName) {
       this.ignorePullError = ignorePullError;
       this.baseUri = baseUri;
       this.gRPCBaseUri = gRPCBaseUri;
       this.dockerImageName = dockerImageName;
       this.dockerImageTag = dockerImageTag;
-      this.cleanupStrategy = cleanupStrategy;
       this.containerName = containerName;
-    }
-
-    public Builder setCleanupStrategy(CleanupStrategy cleanupStrategy) {
-      this.cleanupStrategy = requireNonNull(cleanupStrategy, "cleanupStrategy must be non null");
-      return this;
     }
 
     public Builder setIgnorePullError(boolean ignorePullError) {
@@ -442,13 +465,7 @@ public final class TestBench implements TestRule {
 
     public TestBench build() {
       return new TestBench(
-          ignorePullError,
-          baseUri,
-          gRPCBaseUri,
-          dockerImageName,
-          dockerImageTag,
-          cleanupStrategy,
-          containerName);
+          ignorePullError, baseUri, gRPCBaseUri, dockerImageName, dockerImageTag, containerName);
     }
   }
 

@@ -289,8 +289,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Required. The offset from the beginning of the object at which the data should be
-   * written.
+   * Required. The offset from the beginning of the object at which the data
+   * should be written.
    * In the first `WriteObjectRequest` of a `WriteObject()` action, it
    * indicates the initial offset for the `Write()` call. The value **must** be
    * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
@@ -1443,8 +1443,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The offset from the beginning of the object at which the data should be
-     * written.
+     * Required. The offset from the beginning of the object at which the data
+     * should be written.
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
      * indicates the initial offset for the `Write()` call. The value **must** be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
@@ -1467,8 +1467,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The offset from the beginning of the object at which the data should be
-     * written.
+     * Required. The offset from the beginning of the object at which the data
+     * should be written.
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
      * indicates the initial offset for the `Write()` call. The value **must** be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
@@ -1494,8 +1494,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The offset from the beginning of the object at which the data should be
-     * written.
+     * Required. The offset from the beginning of the object at which the data
+     * should be written.
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
      * indicates the initial offset for the `Write()` call. The value **must** be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would

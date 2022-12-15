@@ -20,52 +20,31 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import com.google.cloud.NoCredentials;
-import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
+import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.StorageClass;
-import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.conformance.retry.ParallelParameterized;
-import com.google.cloud.storage.conformance.retry.TestBench;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(ParallelParameterized.class)
+@RunWith(StorageITRunner.class)
+@CrossRun(
+    transports = {Transport.HTTP, Transport.GRPC},
+    backends = {Backend.PROD})
 public class ITBucketLifecycleTest {
-
-  @ClassRule(order = 0)
-  public static final TestBench TEST_BENCH =
-      TestBench.newBuilder().setContainerName("it-grpc").build();
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc =
-      StorageFixture.from(
-          () ->
-              StorageOptions.grpc()
-                  .setHost(TEST_BENCH.getGRPCBaseUri())
-                  .setCredentials(NoCredentials.getInstance())
-                  .setProjectId("test-project-id")
-                  .build());
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
 
   private static final LifecycleRule LIFECYCLE_RULE_1 =
       new LifecycleRule(
@@ -82,56 +61,37 @@ public class ITBucketLifecycleTest {
   private static final ImmutableList<LifecycleRule> LIFECYCLE_RULES =
       ImmutableList.of(LIFECYCLE_RULE_1, LIFECYCLE_RULE_2);
 
-  private final StorageFixture storageFixture;
-  private final String clientName;
-
-  public ITBucketLifecycleTest(String clientName, StorageFixture storageFixture) {
-    this.clientName = clientName;
-    this.storageFixture = storageFixture;
-  }
-
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return Arrays.asList(
-        new Object[] {"JSON/Prod", storageFixtureHttp},
-        new Object[] {"GRPC/TestBench", storageFixtureGrpc});
-  }
+  @Inject public Storage storage;
+  @Inject public Generator generator;
 
   @Test
-  public void testGetBucketLifecycleRules() {
-    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
-    storageFixture
-        .getInstance()
-        .create(
-            BucketInfo.newBuilder(lifecycleTestBucketName)
-                .setLocation("us")
-                .setLifecycleRules(
-                    ImmutableList.of(
-                        new LifecycleRule(
-                            LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
-                            LifecycleCondition.newBuilder()
-                                .setAge(1)
-                                .setNumberOfNewerVersions(3)
-                                .setIsLive(false)
-                                .setCreatedBeforeOffsetDateTime(OffsetDateTime.now())
-                                .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
-                                .setDaysSinceNoncurrentTime(30)
-                                .setNoncurrentTimeBeforeOffsetDateTime(OffsetDateTime.now())
-                                .setCustomTimeBeforeOffsetDateTime(OffsetDateTime.now())
-                                .setDaysSinceCustomTime(30)
-                                .build())))
-                .build());
-    Bucket remoteBucket =
-        storageFixture
-            .getInstance()
-            .get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
-    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
-    try {
-      assertTrue(
-          lifecycleRule
-              .getAction()
-              .getActionType()
-              .equals(LifecycleRule.SetStorageClassLifecycleAction.TYPE));
+  public void testGetBucketLifecycleRules() throws Exception {
+    String lifecycleTestBucketName = generator.randomBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(lifecycleTestBucketName)
+            .setLocation("us")
+            .setLifecycleRules(
+                ImmutableList.of(
+                    new LifecycleRule(
+                        LifecycleAction.newSetStorageClassAction(StorageClass.COLDLINE),
+                        LifecycleCondition.newBuilder()
+                            .setAge(1)
+                            .setNumberOfNewerVersions(3)
+                            .setIsLive(false)
+                            .setCreatedBeforeOffsetDateTime(OffsetDateTime.now())
+                            .setMatchesStorageClass(ImmutableList.of(StorageClass.COLDLINE))
+                            .setDaysSinceNoncurrentTime(30)
+                            .setNoncurrentTimeBeforeOffsetDateTime(OffsetDateTime.now())
+                            .setCustomTimeBeforeOffsetDateTime(OffsetDateTime.now())
+                            .setDaysSinceCustomTime(30)
+                            .build())))
+            .build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo remoteBucket = tempB.getBucket();
+      LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
+      assertThat(lifecycleRule.getAction().getActionType())
+          .isEqualTo(SetStorageClassLifecycleAction.TYPE);
       assertEquals(3, lifecycleRule.getCondition().getNumberOfNewerVersions().intValue());
       assertNotNull(lifecycleRule.getCondition().getCreatedBeforeOffsetDateTime());
       assertFalse(lifecycleRule.getCondition().getIsLive());
@@ -141,58 +101,46 @@ public class ITBucketLifecycleTest {
       assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBeforeOffsetDateTime());
       assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
       assertNotNull(lifecycleRule.getCondition().getCustomTimeBeforeOffsetDateTime());
-    } finally {
-      storageFixture.getInstance().delete(lifecycleTestBucketName);
     }
   }
 
   @Test
-  public void testGetBucketAbortMPULifecycle() {
-    String lifecycleTestBucketName = RemoteStorageHelper.generateBucketName();
-    storageFixture
-        .getInstance()
-        .create(
-            BucketInfo.newBuilder(lifecycleTestBucketName)
-                .setLocation("us")
-                .setLifecycleRules(
-                    ImmutableList.of(
-                        new LifecycleRule(
-                            LifecycleAction.newAbortIncompleteMPUploadAction(),
-                            LifecycleCondition.newBuilder().setAge(1).build())))
-                .build());
-    Bucket remoteBucket =
-        storageFixture
-            .getInstance()
-            .get(lifecycleTestBucketName, Storage.BucketGetOption.fields(BucketField.LIFECYCLE));
-    LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
-    try {
+  public void testGetBucketAbortMPULifecycle() throws Exception {
+    String lifecycleTestBucketName = generator.randomBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(lifecycleTestBucketName)
+            .setLocation("us")
+            .setLifecycleRules(
+                ImmutableList.of(
+                    new LifecycleRule(
+                        LifecycleAction.newAbortIncompleteMPUploadAction(),
+                        LifecycleCondition.newBuilder().setAge(1).build())))
+            .build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo remoteBucket = tempB.getBucket();
+      LifecycleRule lifecycleRule = remoteBucket.getLifecycleRules().get(0);
       assertEquals(AbortIncompleteMPUAction.TYPE, lifecycleRule.getAction().getActionType());
       assertEquals(1, lifecycleRule.getCondition().getAge().intValue());
-    } finally {
-      storageFixture.getInstance().delete(lifecycleTestBucketName);
     }
   }
 
   @Test
-  public void testDeleteLifecycleRules() throws ExecutionException, InterruptedException {
-    String bucketName = RemoteStorageHelper.generateBucketName();
-    Bucket bucket =
-        storageFixture
-            .getInstance()
-            .create(
-                BucketInfo.newBuilder(bucketName)
-                    .setLocation("us")
-                    .setLifecycleRules(LIFECYCLE_RULES)
-                    .build());
-    assertThat(bucket.getLifecycleRules()).isNotNull();
-    assertThat(bucket.getLifecycleRules()).hasSize(2);
-    try {
-      Bucket updatedBucket = bucket.toBuilder().deleteLifecycleRules().build();
-      storageFixture.getInstance().update(updatedBucket);
+  public void testDeleteLifecycleRules() throws Exception {
+    String bucketName = generator.randomBucketName();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(bucketName)
+            .setLocation("us")
+            .setLifecycleRules(LIFECYCLE_RULES)
+            .build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+      assertThat(bucket.getLifecycleRules()).isNotNull();
+      assertThat(bucket.getLifecycleRules()).hasSize(2);
+      BucketInfo updatedBucket = bucket.toBuilder().deleteLifecycleRules().build();
+      storage.update(updatedBucket);
       assertThat(updatedBucket.getLifecycleRules()).hasSize(0);
-    } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixture.getInstance(), bucketName, 5, TimeUnit.SECONDS);
     }
   }
 }

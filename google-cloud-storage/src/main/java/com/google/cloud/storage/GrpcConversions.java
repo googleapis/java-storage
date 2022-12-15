@@ -82,6 +82,8 @@ final class GrpcConversions {
       Codec.of(this::loggingEncode, this::loggingDecode);
   private final Codec<BucketInfo.IamConfiguration, Bucket.IamConfig> iamConfigurationCodec =
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
+  private final Codec<BucketInfo.Autoclass, Bucket.Autoclass> autoclassCodec =
+      Codec.of(this::autoclassEncode, this::autoclassDecode);
   private final Codec<BucketInfo.LifecycleRule, Bucket.Lifecycle.Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<BucketInfo, Bucket> bucketInfoCodec =
@@ -276,6 +278,9 @@ final class GrpcConversions {
     if (from.hasIamConfig()) {
       to.setIamConfiguration(iamConfigurationCodec.decode(from.getIamConfig()));
     }
+    if (from.hasAutoclass()) {
+      to.setAutoclass(autoclassCodec.decode(from.getAutoclass()));
+    }
     if (from.hasCustomPlacementConfig()) {
       Bucket.CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
       to.setCustomPlacementConfig(
@@ -364,6 +369,7 @@ final class GrpcConversions {
         to::addAllDefaultObjectAcl);
     ifNonNull(from.getAcl(), toImmutableListOf(bucketAclCodec::encode), to::addAllAcl);
     ifNonNull(from.getIamConfiguration(), iamConfigurationCodec::encode, to::setIamConfig);
+    ifNonNull(from.getAutoclass(), autoclassCodec::encode, to::setAutoclass);
     CustomPlacementConfig customPlacementConfig = from.getCustomPlacementConfig();
     if (customPlacementConfig != null && customPlacementConfig.getDataLocations() != null) {
       to.setCustomPlacementConfig(
@@ -467,7 +473,10 @@ final class GrpcConversions {
   private Acl objectAclDecode(ObjectAccessControl from) {
     Acl.Role role = Acl.Role.valueOf(from.getRole());
     Acl.Entity entity = entityCodec.decode(from.getEntity());
-    Acl.Builder to = Acl.newBuilder(entity, role).setId(from.getId());
+    Acl.Builder to = Acl.newBuilder(entity, role);
+    if (!from.getId().isEmpty()) {
+      to.setId(from.getId());
+    }
     if (!from.getEtag().isEmpty()) {
       to.setEtag(from.getEtag());
     }
@@ -494,11 +503,10 @@ final class GrpcConversions {
   }
 
   private com.google.storage.v2.BucketAccessControl bucketAclEncode(Acl from) {
-    BucketAccessControl.Builder to =
-        BucketAccessControl.newBuilder()
-            .setEntity(from.getEntity().toString())
-            .setRole(from.getRole().toString())
-            .setId(from.getId());
+    BucketAccessControl.Builder to = BucketAccessControl.newBuilder();
+    ifNonNull(from.getEntity(), entityCodec::encode, to::setEntity);
+    ifNonNull(from.getRole(), Role::toString, to::setRole);
+    ifNonNull(from.getId(), to::setId);
     ifNonNull(from.getEtag(), to::setEtag);
     return to.build();
   }
@@ -506,13 +514,27 @@ final class GrpcConversions {
   private Bucket.IamConfig.UniformBucketLevelAccess ublaEncode(BucketInfo.IamConfiguration from) {
     Bucket.IamConfig.UniformBucketLevelAccess.Builder to =
         Bucket.IamConfig.UniformBucketLevelAccess.newBuilder();
-    to.setEnabled(from.isUniformBucketLevelAccessEnabled());
+    ifNonNull(from.isUniformBucketLevelAccessEnabled(), to::setEnabled);
     if (from.isUniformBucketLevelAccessEnabled() == Boolean.TRUE) {
       ifNonNull(
           from.getUniformBucketLevelAccessLockedTimeOffsetDateTime(),
           timestampCodec::encode,
           to::setLockTime);
     }
+    return to.build();
+  }
+
+  private BucketInfo.Autoclass autoclassDecode(Bucket.Autoclass from) {
+    BucketInfo.Autoclass.Builder to = BucketInfo.Autoclass.newBuilder();
+    to.setEnabled(from.getEnabled());
+    ifNonNull(from.getToggleTime(), timestampCodec::decode, to::setToggleTime);
+    return to.build();
+  }
+
+  private Bucket.Autoclass autoclassEncode(BucketInfo.Autoclass from) {
+    Bucket.Autoclass.Builder to = Bucket.Autoclass.newBuilder();
+    ifNonNull(from.getEnabled(), to::setEnabled);
+    ifNonNull(from.getToggleTime(), timestampCodec::encode, to::setToggleTime);
     return to.build();
   }
 

@@ -19,14 +19,12 @@ package com.google.cloud.storage.it;
 import static org.junit.Assume.assumeTrue;
 
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Bucket.BlobTargetOption;
 import com.google.cloud.storage.Bucket.BlobWriteOption;
-import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
@@ -52,47 +50,24 @@ import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.Storage.UpdateHmacKeyOption;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.conformance.retry.CleanupStrategy;
-import com.google.cloud.storage.conformance.retry.TestBench;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.hash.Hashing;
-import com.google.common.primitives.Ints;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.Set;
 import java.util.function.Function;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 @SuppressWarnings("ConstantConditions")
+@RunWith(StorageITRunner.class)
+@SingleBackend(Backend.TEST_BENCH)
 public final class ITOptionRegressionTest {
-  @ClassRule(order = 1)
-  public static final TestBench TEST_BENCH =
-      TestBench.newBuilder().setContainerName("it-options").build();
-
-  @ClassRule(order = 2)
-  public static final StorageFixture storageFixture =
-      StorageFixture.from(
-          () ->
-              StorageOptions.http()
-                  .setHost(TEST_BENCH.getBaseUri())
-                  .setCredentials(NoCredentials.getInstance())
-                  .setProjectId("test-project-id")
-                  .build());
-
-  @ClassRule(order = 3)
-  public static final BucketFixture bucketFixture =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("options-%s")
-          .setCleanupStrategy(CleanupStrategy.NEVER) // just let testbench shutdown
-          .setHandle(storageFixture::getInstance)
-          .build();
 
   private static final ChecksummedTestContent CONTENT = ChecksummedTestContent.of("Hello, World!");
   private static final ChecksummedTestContent CONTENT2 =
@@ -100,38 +75,38 @@ public final class ITOptionRegressionTest {
   private static final CSEKSupport csekSupport = CSEKSupport.create();
   private static final ServiceAccount SERVICE_ACCOUNT = ServiceAccount.of("x@y.z");
 
-  private static RequestAuditing requestAuditing;
-  private static Storage s;
-  private static Bucket b;
-  private static Blob o;
-  private static Blob e;
+  @Inject
+  @StorageFixture(Transport.HTTP)
+  public Storage storageFixture;
+
+  @Inject public BucketInfo bucket;
+  private Storage s;
+  private RequestAuditing requestAuditing;
+  private Bucket b;
+  private Blob o;
+  private Blob e;
 
   private static int bucketCounter = 0;
   private static int objectCounter = 0;
 
-  @BeforeClass
-  public static void beforeClass() {
+  @Before
+  public void setUp() throws Exception {
     requestAuditing = new RequestAuditing();
     s =
         storageFixture
-            .getInstance()
             .getOptions()
             .toBuilder()
             .setTransportOptions(requestAuditing)
             .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
             .build()
             .getService();
-    b = s.get(bucketFixture.getBucketInfo().getName());
+    b = s.get(bucket.getName());
     o = s.create(BlobInfo.newBuilder(b, "ddeeffaauulltt").build(), CONTENT.getBytes());
     e =
         s.create(
             BlobInfo.newBuilder(b, "encrypteddetpyrcne").build(),
             CONTENT.getBytes(),
             Storage.BlobTargetOption.encryptionKey(csekSupport.getTuple().getKey()));
-  }
-
-  @Before
-  public void setUp() throws Exception {
     requestAuditing.clear();
   }
 
@@ -1204,33 +1179,5 @@ public final class ITOptionRegressionTest {
 
   private static Function<String, Set<String>> splitOnCommaToSet() {
     return s -> ImmutableSet.copyOf(s.split(","));
-  }
-
-  private static final class Content {
-    private final byte[] bytes;
-    private final int crc32c;
-    private final String md5Base64;
-
-    private Content(byte[] bytes, int crc32c, String md5Base64) {
-      this.bytes = bytes;
-      this.crc32c = crc32c;
-      this.md5Base64 = md5Base64;
-    }
-
-    ByteArrayInputStream inputStream() {
-      return new ByteArrayInputStream(bytes);
-    }
-
-    String crc32cBase64() {
-      return Base64.getEncoder().encodeToString(Ints.toByteArray(crc32c));
-    }
-
-    static Content of(String content) {
-      byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
-      int crc32c = Hashing.crc32c().hashBytes(bytes).asInt();
-      String md5Base64 =
-          Base64.getEncoder().encodeToString(Hashing.md5().hashBytes(bytes).asBytes());
-      return new Content(bytes, crc32c, md5Base64);
-    }
   }
 }

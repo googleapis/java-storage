@@ -71,7 +71,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any
+   * preconditions.
    * </pre>
    *
    * <code>
@@ -88,7 +89,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any
+   * preconditions.
    * </pre>
    *
    * <code>
@@ -107,7 +109,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any
+   * preconditions.
    * </pre>
    *
    * <code>
@@ -168,6 +171,63 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     return getCommonObjectRequestParams();
   }
 
+  public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 5;
+  private com.google.storage.v2.ObjectChecksums objectChecksums_;
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * uploaded object. For each upload, object_checksums can be provided with
+   * either StartResumableWriteRequest or the WriteObjectRequest with
+   * finish_write set to `true`.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   *
+   * @return Whether the objectChecksums field is set.
+   */
+  @java.lang.Override
+  public boolean hasObjectChecksums() {
+    return objectChecksums_ != null;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * uploaded object. For each upload, object_checksums can be provided with
+   * either StartResumableWriteRequest or the WriteObjectRequest with
+   * finish_write set to `true`.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   *
+   * @return The objectChecksums.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.ObjectChecksums getObjectChecksums() {
+    return objectChecksums_ == null
+        ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
+        : objectChecksums_;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * uploaded object. For each upload, object_checksums can be provided with
+   * either StartResumableWriteRequest or the WriteObjectRequest with
+   * finish_write set to `true`.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
+    return getObjectChecksums();
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -188,6 +248,9 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     if (commonObjectRequestParams_ != null) {
       output.writeMessage(3, getCommonObjectRequestParams());
     }
+    if (objectChecksums_ != null) {
+      output.writeMessage(5, getObjectChecksums());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -204,6 +267,9 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       size +=
           com.google.protobuf.CodedOutputStream.computeMessageSize(
               3, getCommonObjectRequestParams());
+    }
+    if (objectChecksums_ != null) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(5, getObjectChecksums());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -230,6 +296,10 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       if (!getCommonObjectRequestParams().equals(other.getCommonObjectRequestParams()))
         return false;
     }
+    if (hasObjectChecksums() != other.hasObjectChecksums()) return false;
+    if (hasObjectChecksums()) {
+      if (!getObjectChecksums().equals(other.getObjectChecksums())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -248,6 +318,10 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     if (hasCommonObjectRequestParams()) {
       hash = (37 * hash) + COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER;
       hash = (53 * hash) + getCommonObjectRequestParams().hashCode();
+    }
+    if (hasObjectChecksums()) {
+      hash = (37 * hash) + OBJECT_CHECKSUMS_FIELD_NUMBER;
+      hash = (53 * hash) + getObjectChecksums().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -399,6 +473,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         commonObjectRequestParams_ = null;
         commonObjectRequestParamsBuilder_ = null;
       }
+      if (objectChecksumsBuilder_ == null) {
+        objectChecksums_ = null;
+      } else {
+        objectChecksums_ = null;
+        objectChecksumsBuilder_ = null;
+      }
       return this;
     }
 
@@ -435,6 +515,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         result.commonObjectRequestParams_ = commonObjectRequestParams_;
       } else {
         result.commonObjectRequestParams_ = commonObjectRequestParamsBuilder_.build();
+      }
+      if (objectChecksumsBuilder_ == null) {
+        result.objectChecksums_ = objectChecksums_;
+      } else {
+        result.objectChecksums_ = objectChecksumsBuilder_.build();
       }
       onBuilt();
       return result;
@@ -492,6 +577,9 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       if (other.hasCommonObjectRequestParams()) {
         mergeCommonObjectRequestParams(other.getCommonObjectRequestParams());
       }
+      if (other.hasObjectChecksums()) {
+        mergeObjectChecksums(other.getObjectChecksums());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -531,6 +619,12 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
 
                 break;
               } // case 26
+            case 42:
+              {
+                input.readMessage(getObjectChecksumsFieldBuilder().getBuilder(), extensionRegistry);
+
+                break;
+              } // case 42
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -558,7 +652,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -574,7 +669,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -596,7 +692,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -620,7 +717,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -642,7 +740,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -670,7 +769,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -692,7 +792,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -708,7 +809,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -728,7 +830,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      *
      *
      * <pre>
-     * Required. The destination bucket, object, and metadata, as well as any preconditions.
+     * Required. The destination bucket, object, and metadata, as well as any
+     * preconditions.
      * </pre>
      *
      * <code>
@@ -940,6 +1043,219 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         commonObjectRequestParams_ = null;
       }
       return commonObjectRequestParamsBuilder_;
+    }
+
+    private com.google.storage.v2.ObjectChecksums objectChecksums_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.ObjectChecksums,
+            com.google.storage.v2.ObjectChecksums.Builder,
+            com.google.storage.v2.ObjectChecksumsOrBuilder>
+        objectChecksumsBuilder_;
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     *
+     * @return Whether the objectChecksums field is set.
+     */
+    public boolean hasObjectChecksums() {
+      return objectChecksumsBuilder_ != null || objectChecksums_ != null;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     *
+     * @return The objectChecksums.
+     */
+    public com.google.storage.v2.ObjectChecksums getObjectChecksums() {
+      if (objectChecksumsBuilder_ == null) {
+        return objectChecksums_ == null
+            ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
+            : objectChecksums_;
+      } else {
+        return objectChecksumsBuilder_.getMessage();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     */
+    public Builder setObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
+      if (objectChecksumsBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        objectChecksums_ = value;
+        onChanged();
+      } else {
+        objectChecksumsBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     */
+    public Builder setObjectChecksums(
+        com.google.storage.v2.ObjectChecksums.Builder builderForValue) {
+      if (objectChecksumsBuilder_ == null) {
+        objectChecksums_ = builderForValue.build();
+        onChanged();
+      } else {
+        objectChecksumsBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     */
+    public Builder mergeObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
+      if (objectChecksumsBuilder_ == null) {
+        if (objectChecksums_ != null) {
+          objectChecksums_ =
+              com.google.storage.v2.ObjectChecksums.newBuilder(objectChecksums_)
+                  .mergeFrom(value)
+                  .buildPartial();
+        } else {
+          objectChecksums_ = value;
+        }
+        onChanged();
+      } else {
+        objectChecksumsBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     */
+    public Builder clearObjectChecksums() {
+      if (objectChecksumsBuilder_ == null) {
+        objectChecksums_ = null;
+        onChanged();
+      } else {
+        objectChecksums_ = null;
+        objectChecksumsBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     */
+    public com.google.storage.v2.ObjectChecksums.Builder getObjectChecksumsBuilder() {
+
+      onChanged();
+      return getObjectChecksumsFieldBuilder().getBuilder();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     */
+    public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
+      if (objectChecksumsBuilder_ != null) {
+        return objectChecksumsBuilder_.getMessageOrBuilder();
+      } else {
+        return objectChecksums_ == null
+            ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
+            : objectChecksums_;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The checksums of the complete object. This will be used to validate the
+     * uploaded object. For each upload, object_checksums can be provided with
+     * either StartResumableWriteRequest or the WriteObjectRequest with
+     * finish_write set to `true`.
+     * </pre>
+     *
+     * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.ObjectChecksums,
+            com.google.storage.v2.ObjectChecksums.Builder,
+            com.google.storage.v2.ObjectChecksumsOrBuilder>
+        getObjectChecksumsFieldBuilder() {
+      if (objectChecksumsBuilder_ == null) {
+        objectChecksumsBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.ObjectChecksums,
+                com.google.storage.v2.ObjectChecksums.Builder,
+                com.google.storage.v2.ObjectChecksumsOrBuilder>(
+                getObjectChecksums(), getParentForChildren(), isClean());
+        objectChecksums_ = null;
+      }
+      return objectChecksumsBuilder_;
     }
 
     @java.lang.Override

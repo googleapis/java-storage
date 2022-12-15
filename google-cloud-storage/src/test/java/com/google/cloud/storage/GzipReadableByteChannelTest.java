@@ -185,8 +185,8 @@ public class GzipReadableByteChannelTest {
             () -> StorageClient.create(fakeServer.getInstance().storageSettings()));
 
     @ClassRule(order = 3)
-    public static final StorageFixture storageFixture =
-        StorageFixture.of(() -> fakeServer.getInstance().getGrpcStorageOptions().getService());
+    public static final AutoClosableFixture<Storage> storageFixture =
+        AutoClosableFixture.of(() -> fakeServer.getInstance().getGrpcStorageOptions().getService());
 
     @Test
     public void autoGzipDecompress_true() throws IOException {

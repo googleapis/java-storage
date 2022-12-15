@@ -471,10 +471,6 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate UPDATE_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
-  private static final PathTemplate WRITE_OBJECT_0_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=**}");
-  private static final PathTemplate WRITE_OBJECT_1_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate LIST_OBJECTS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate REWRITE_OBJECT_0_PATH_TEMPLATE =
@@ -751,19 +747,6 @@ public class GrpcStorageStub extends StorageStub {
     GrpcCallSettings<WriteObjectRequest, WriteObjectResponse> writeObjectTransportSettings =
         GrpcCallSettings.<WriteObjectRequest, WriteObjectResponse>newBuilder()
             .setMethodDescriptor(writeObjectMethodDescriptor)
-            .setParamsExtractor(
-                request -> {
-                  RequestParamsBuilder builder = RequestParamsBuilder.create();
-                  if (request.getWriteObjectSpec() != null
-                      && request.getWriteObjectSpec().getResource() != null) {
-                    builder.add(
-                        request.getWriteObjectSpec().getResource().getBucket(),
-                        "bucket",
-                        WRITE_OBJECT_0_PATH_TEMPLATE);
-                  }
-                  builder.add(request.getUploadId(), "bucket", WRITE_OBJECT_1_PATH_TEMPLATE);
-                  return builder.build();
-                })
             .build();
     GrpcCallSettings<ListObjectsRequest, ListObjectsResponse> listObjectsTransportSettings =
         GrpcCallSettings.<ListObjectsRequest, ListObjectsResponse>newBuilder()

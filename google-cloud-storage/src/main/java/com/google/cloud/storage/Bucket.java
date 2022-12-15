@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A Google cloud storage bucket.
@@ -93,7 +94,7 @@ public class Bucket extends BucketInfo {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketSourceOption userProject(String userProject) {
+    public static BucketSourceOption userProject(@NonNull String userProject) {
       return new BucketSourceOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -142,7 +143,7 @@ public class Bucket extends BucketInfo {
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption predefinedAcl(Storage.PredefinedAcl acl) {
+    public static BlobTargetOption predefinedAcl(Storage.@NonNull PredefinedAcl acl) {
       return new BlobTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
 
@@ -201,7 +202,7 @@ public class Bucket extends BucketInfo {
      * blob.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption encryptionKey(Key key) {
+    public static BlobTargetOption encryptionKey(@NonNull Key key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
 
@@ -212,7 +213,7 @@ public class Bucket extends BucketInfo {
      * @param key the AES256 encoded in base64
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption encryptionKey(String key) {
+    public static BlobTargetOption encryptionKey(@NonNull String key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
 
@@ -222,7 +223,7 @@ public class Bucket extends BucketInfo {
      * @param kmsKeyName the KMS key resource id
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption kmsKeyName(String kmsKeyName) {
+    public static BlobTargetOption kmsKeyName(@NonNull String kmsKeyName) {
       return new BlobTargetOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
 
@@ -231,7 +232,7 @@ public class Bucket extends BucketInfo {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption userProject(String userProject) {
+    public static BlobTargetOption userProject(@NonNull String userProject) {
       return new BlobTargetOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -263,7 +264,7 @@ public class Bucket extends BucketInfo {
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption predefinedAcl(Storage.PredefinedAcl acl) {
+    public static BlobWriteOption predefinedAcl(Storage.@NonNull PredefinedAcl acl) {
       return new BlobWriteOption(UnifiedOpts.predefinedAcl(acl));
     }
 
@@ -322,7 +323,7 @@ public class Bucket extends BucketInfo {
      * fail if blobs' data MD5 hash does not match the provided value.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption md5Match(String md5) {
+    public static BlobWriteOption md5Match(@NonNull String md5) {
       return new BlobWriteOption(UnifiedOpts.md5Match(md5));
     }
 
@@ -331,7 +332,7 @@ public class Bucket extends BucketInfo {
      * will fail if blobs' data CRC32C checksum does not match the provided value.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption crc32cMatch(String crc32c) {
+    public static BlobWriteOption crc32cMatch(@NonNull String crc32c) {
       return new BlobWriteOption(UnifiedOpts.crc32cMatch(crc32c));
     }
 
@@ -340,7 +341,7 @@ public class Bucket extends BucketInfo {
      * blob.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption encryptionKey(Key key) {
+    public static BlobWriteOption encryptionKey(@NonNull Key key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
 
@@ -351,7 +352,7 @@ public class Bucket extends BucketInfo {
      * @param key the AES256 encoded in base64
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption encryptionKey(String key) {
+    public static BlobWriteOption encryptionKey(@NonNull String key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
 
@@ -360,7 +361,7 @@ public class Bucket extends BucketInfo {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption userProject(String userProject) {
+    public static BlobWriteOption userProject(@NonNull String userProject) {
       return new BlobWriteOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -600,6 +601,12 @@ public class Bucket extends BucketInfo {
     @Override
     public Builder setIamConfiguration(IamConfiguration iamConfiguration) {
       infoBuilder.setIamConfiguration(iamConfiguration);
+      return this;
+    }
+
+    @Override
+    public Builder setAutoclass(Autoclass autoclass) {
+      infoBuilder.setAutoclass(autoclass);
       return this;
     }
 
@@ -1141,7 +1148,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl getAcl(Entity entity) {
     return storage.getAcl(getName(), entity);
   }
@@ -1163,7 +1170,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean deleteAcl(Entity entity) {
     return storage.deleteAcl(getName(), entity);
   }
@@ -1179,7 +1186,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl createAcl(Acl acl) {
     return storage.createAcl(getName(), acl);
   }
@@ -1195,7 +1202,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl updateAcl(Acl acl) {
     return storage.updateAcl(getName(), acl);
   }
@@ -1214,7 +1221,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public List<Acl> listAcls() {
     return storage.listAcls(getName());
   }
@@ -1234,7 +1241,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl getDefaultAcl(Entity entity) {
     return storage.getDefaultAcl(getName(), entity);
   }
@@ -1259,7 +1266,7 @@ public class Bucket extends BucketInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean deleteDefaultAcl(Entity entity) {
     return storage.deleteDefaultAcl(getName(), entity);
   }
@@ -1278,7 +1285,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl createDefaultAcl(Acl acl) {
     return storage.createDefaultAcl(getName(), acl);
   }
@@ -1297,7 +1304,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl updateDefaultAcl(Acl acl) {
     return storage.updateDefaultAcl(getName(), acl);
   }
@@ -1319,7 +1326,7 @@ public class Bucket extends BucketInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public List<Acl> listDefaultAcls() {
     return storage.listDefaultAcls(getName());
   }

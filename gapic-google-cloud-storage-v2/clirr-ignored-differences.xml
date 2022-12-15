@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- see http://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
+<differences>
+  <!-- Remove REGAPIC client which GCS does not support -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/StorageSettings</className>
+    <method>* *HttpJson*Builder()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/stub/StorageStubSettings</className>
+    <method>* *HttpJson*Builder()</method>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/stub/StorageStubSettings</className>
+    <method>* defaultGrpcApiClientHeaderProviderBuilder()</method>
+  </difference>
+
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/storage/v2/stub/HttpJsonStorageCallableFactory</className>
+  </difference>
+  <difference>
+    <differenceType>8001</differenceType>
+    <className>com/google/storage/v2/stub/HttpJsonStorageStub</className>
+  </difference>
+
+</differences>

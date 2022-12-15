@@ -79,7 +79,9 @@ public final class DefaultBufferedReadableByteChannelTest {
 
   @Property
   void bufferingOnlyRequiresExpectedReads(@ForAll("ReadOps") ReadOps readOps) throws IOException {
-    System.out.println("readOps = " + readOps);
+    if (CIUtils.verbose()) {
+      System.out.println("readOps = " + readOps);
+    }
     byte[] bytes = readOps.bytes;
 
     ByteBuffer buf = ByteBuffer.allocate(readOps.readSize);

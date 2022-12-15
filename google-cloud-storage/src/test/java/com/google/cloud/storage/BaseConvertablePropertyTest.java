@@ -64,9 +64,7 @@ abstract class BaseConvertablePropertyTest<
   final void edgeCases() {
     TypeUsage baseTypeUsage = findBaseTypeUsage(this.getClass());
     TypeUsage protoTType = baseTypeUsage.getTypeArgument(1);
-    if (!CIUtils.isRunningOnGitHubActions() || CIUtils.isJobTypeIntegration()) {
-      report(protoTType);
-    }
+    report(protoTType);
   }
 
   /**

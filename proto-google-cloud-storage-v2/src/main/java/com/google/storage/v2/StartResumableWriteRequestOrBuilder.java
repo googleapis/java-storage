@@ -27,7 +27,8 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any
+   * preconditions.
    * </pre>
    *
    * <code>
@@ -41,7 +42,8 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any
+   * preconditions.
    * </pre>
    *
    * <code>
@@ -55,7 +57,8 @@ public interface StartResumableWriteRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The destination bucket, object, and metadata, as well as any preconditions.
+   * Required. The destination bucket, object, and metadata, as well as any
+   * preconditions.
    * </pre>
    *
    * <code>
@@ -98,4 +101,48 @@ public interface StartResumableWriteRequestOrBuilder
    * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * uploaded object. For each upload, object_checksums can be provided with
+   * either StartResumableWriteRequest or the WriteObjectRequest with
+   * finish_write set to `true`.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   *
+   * @return Whether the objectChecksums field is set.
+   */
+  boolean hasObjectChecksums();
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * uploaded object. For each upload, object_checksums can be provided with
+   * either StartResumableWriteRequest or the WriteObjectRequest with
+   * finish_write set to `true`.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   *
+   * @return The objectChecksums.
+   */
+  com.google.storage.v2.ObjectChecksums getObjectChecksums();
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be used to validate the
+   * uploaded object. For each upload, object_checksums can be provided with
+   * either StartResumableWriteRequest or the WriteObjectRequest with
+   * finish_write set to `true`.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
+   */
+  com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
 }

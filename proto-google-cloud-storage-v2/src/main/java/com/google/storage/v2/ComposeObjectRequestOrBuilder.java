@@ -264,4 +264,42 @@ public interface ComposeObjectRequestOrBuilder
    * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 7;</code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be validated against the
+   * combined checksums of the component objects.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   *
+   * @return Whether the objectChecksums field is set.
+   */
+  boolean hasObjectChecksums();
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be validated against the
+   * combined checksums of the component objects.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   *
+   * @return The objectChecksums.
+   */
+  com.google.storage.v2.ObjectChecksums getObjectChecksums();
+  /**
+   *
+   *
+   * <pre>
+   * The checksums of the complete object. This will be validated against the
+   * combined checksums of the component objects.
+   * </pre>
+   *
+   * <code>.google.storage.v2.ObjectChecksums object_checksums = 10;</code>
+   */
+  com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder();
 }

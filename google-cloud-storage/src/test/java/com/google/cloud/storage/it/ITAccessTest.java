@@ -16,260 +16,337 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.retry429s;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
-import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.cloud.Condition;
 import com.google.cloud.Identity;
 import com.google.cloud.Policy;
-import com.google.cloud.RetryHelper;
-import com.google.cloud.http.BaseHttpServiceException;
 import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketGetOption;
+import com.google.cloud.storage.Storage.BucketSourceOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageFixture;
 import com.google.cloud.storage.StorageRoles;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.BucketFixture;
+import com.google.cloud.storage.it.runner.annotations.BucketType;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-import org.junit.ClassRule;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(StorageITRunner.class)
+@CrossRun(
+    transports = {Transport.HTTP, Transport.GRPC},
+    backends = {Backend.PROD})
 public class ITAccessTest {
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureHttp =
-      BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
-
-  @ClassRule(order = 3)
-  public static final BucketFixture requesterPaysFixtureHttp =
-      BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureGrpc =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-grpc-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture requesterPaysFixtureGrpc =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-grpc-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
 
   private static final Long RETENTION_PERIOD = 5L;
   private static final Duration RETENTION_PERIOD_DURATION = Duration.ofSeconds(5);
 
-  private final Storage storage;
-  private final BucketFixture bucketFixture;
-  private final BucketFixture requesterPaysFixture;
-  private final String clientName;
+  @Inject public Storage storage;
 
-  public ITAccessTest(
-      String clientName,
-      StorageFixture storageFixture,
-      BucketFixture bucketFixture,
-      BucketFixture requesterPaysFixture) {
-    this.clientName = clientName;
-    this.storage = storageFixture.getInstance();
-    this.bucketFixture = bucketFixture;
-    this.requesterPaysFixture = requesterPaysFixture;
-  }
+  @Inject
+  @BucketFixture(BucketType.DEFAULT)
+  public BucketInfo bucket;
 
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return ImmutableList.of(
-        new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysFixtureHttp},
-        new Object[] {
-          "GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc, requesterPaysFixtureGrpc
-        });
-  }
+  @Inject
+  @BucketFixture(BucketType.REQUESTER_PAYS)
+  public BucketInfo requesterPaysBucket;
+
+  @Inject public Generator generator;
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC)
   public void bucketAcl_requesterPays_true() {
-    assumeTrue(clientName.startsWith("JSON"));
-    unsetRequesterPays(storage, requesterPaysFixture);
-    testBucketAclRequesterPays(true);
+    String projectId = storage.getOptions().getProjectId();
+    testBucketAclRequesterPays(requesterPaysBucket, BucketSourceOption.userProject(projectId));
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC)
   public void bucketAcl_requesterPays_false() {
-    assumeTrue(clientName.startsWith("JSON"));
-    unsetRequesterPays(storage, requesterPaysFixture);
-    testBucketAclRequesterPays(false);
+    testBucketAclRequesterPays(bucket);
   }
 
-  private void testBucketAclRequesterPays(boolean requesterPays) {
-    if (requesterPays) {
-      Bucket remoteBucket =
-          storage.get(
-              requesterPaysFixture.getBucketInfo().getName(),
-              Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-      assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
-      remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-      Bucket updatedBucket = storage.update(remoteBucket);
-      assertTrue(updatedBucket.requesterPays());
-    }
-
-    String projectId = storage.getOptions().getProjectId();
-
-    Storage.BucketSourceOption[] bucketOptions =
-        requesterPays
-            ? new Storage.BucketSourceOption[] {Storage.BucketSourceOption.userProject(projectId)}
-            : new Storage.BucketSourceOption[] {};
-
-    assertNull(
-        storage.getAcl(
-            requesterPaysFixture.getBucketInfo().getName(),
-            User.ofAllAuthenticatedUsers(),
-            bucketOptions));
-    assertFalse(
-        storage.deleteAcl(
-            requesterPaysFixture.getBucketInfo().getName(),
-            User.ofAllAuthenticatedUsers(),
-            bucketOptions));
+  private void testBucketAclRequesterPays(
+      BucketInfo bucket, Storage.BucketSourceOption... bucketOptions) {
+    // TODO: break into individual tests
+    assertNull(storage.getAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
+    assertFalse(storage.deleteAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
     Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(
-        storage.createAcl(requesterPaysFixture.getBucketInfo().getName(), acl, bucketOptions));
+    assertNotNull(storage.createAcl(bucket.getName(), acl, bucketOptions));
     Acl updatedAcl =
         storage.updateAcl(
-            requesterPaysFixture.getBucketInfo().getName(),
-            acl.toBuilder().setRole(Role.WRITER).build(),
-            bucketOptions);
+            bucket.getName(), acl.toBuilder().setRole(Role.WRITER).build(), bucketOptions);
     assertEquals(Role.WRITER, updatedAcl.getRole());
     Set<Acl> acls = new HashSet<>();
-    acls.addAll(storage.listAcls(requesterPaysFixture.getBucketInfo().getName(), bucketOptions));
+    acls.addAll(storage.listAcls(bucket.getName(), bucketOptions));
     assertTrue(acls.contains(updatedAcl));
-    assertTrue(
-        storage.deleteAcl(
-            requesterPaysFixture.getBucketInfo().getName(),
-            User.ofAllAuthenticatedUsers(),
-            bucketOptions));
-    assertNull(
-        storage.getAcl(
-            requesterPaysFixture.getBucketInfo().getName(),
-            User.ofAllAuthenticatedUsers(),
-            bucketOptions));
-    if (requesterPays) {
-      Bucket remoteBucket =
-          storage.get(
-              requesterPaysFixture.getBucketInfo().getName(),
-              Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
-              Storage.BucketGetOption.userProject(projectId));
-      assertTrue(remoteBucket.requesterPays());
-      remoteBucket = remoteBucket.toBuilder().setRequesterPays(false).build();
-      Bucket updatedBucket =
-          storage.update(remoteBucket, Storage.BucketTargetOption.userProject(projectId));
-      assertFalse(updatedBucket.requesterPays());
+    assertTrue(storage.deleteAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
+    assertNull(storage.getAcl(bucket.getName(), User.ofAllAuthenticatedUsers(), bucketOptions));
+  }
+
+  @Test
+  public void bucket_defaultAcl_get() {
+    String bucketName = bucket.getName();
+    // lookup an entity from the bucket which is known to exist
+    Bucket bucketWithAcls =
+        storage.get(
+            bucketName, BucketGetOption.fields(BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
+
+    Acl actual = bucketWithAcls.getDefaultAcl().iterator().next();
+
+    Acl acl = retry429s(() -> storage.getDefaultAcl(bucketName, actual.getEntity()), storage);
+
+    assertThat(acl).isEqualTo(actual);
+  }
+
+  /** When a bucket does exist, but an acl for the specified entity is not defined return null */
+  @Test
+  public void bucket_defaultAcl_get_notFoundReturnsNull() {
+    Acl acl = retry429s(() -> storage.getDefaultAcl(bucket.getName(), User.ofAllUsers()), storage);
+
+    assertThat(acl).isNull();
+  }
+
+  /** When a bucket doesn't exist, return null for the acl value */
+  @Test
+  public void bucket_defaultAcl_get_bucket404() {
+    Acl acl =
+        retry429s(() -> storage.getDefaultAcl(bucket.getName() + "x", User.ofAllUsers()), storage);
+
+    assertThat(acl).isNull();
+  }
+
+  @Test
+  public void bucket_defaultAcl_list() {
+    String bucketName = bucket.getName();
+    // lookup an entity from the bucket which is known to exist
+    Bucket bucketWithAcls =
+        storage.get(
+            bucketName, BucketGetOption.fields(BucketField.ACL, BucketField.DEFAULT_OBJECT_ACL));
+
+    Acl actual = bucketWithAcls.getDefaultAcl().iterator().next();
+
+    List<Acl> acls = retry429s(() -> storage.listDefaultAcls(bucketName), storage);
+
+    assertThat(acls).contains(actual);
+  }
+
+  @Test
+  public void bucket_defaultAcl_list_bucket404() {
+    StorageException storageException =
+        assertThrows(
+            StorageException.class,
+            () -> retry429s(() -> storage.listDefaultAcls(bucket.getName() + "x"), storage));
+
+    assertThat(storageException.getCode()).isEqualTo(404);
+  }
+
+  @Test
+  public void bucket_defaultAcl_create() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+
+      Acl readAll = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+      Acl actual = retry429s(() -> storage.createDefaultAcl(bucket.getName(), readAll), storage);
+
+      assertThat(actual.getEntity()).isEqualTo(readAll.getEntity());
+      assertThat(actual.getRole()).isEqualTo(readAll.getRole());
+      assertThat(actual.getEtag()).isNotEmpty();
+
+      Bucket bucketUpdated =
+          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+      assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
+
+      // etags change when updates happen, drop before our comparison
+      List<Acl> expectedAcls = dropEtags(bucket.getDefaultAcl());
+      List<Acl> actualAcls = dropEtags(bucketUpdated.getDefaultAcl());
+      assertThat(actualAcls).containsAtLeastElementsIn(expectedAcls);
+      assertThat(actualAcls).contains(readAll);
     }
   }
 
   @Test
-  public void testBucketDefaultAcl() {
-    assumeTrue(clientName.startsWith("JSON"));
-    // TODO: break this test up into each of the respective scenarios
-    //   1. get default ACL for specific entity
-    //   2. Delete a default ACL for a specific entity
-    //   3. Create a default ACL for specific entity
-    //   4. Update default ACL to change role of a specific entity
-    //   5. List default ACLs
+  public void bucket_defaultAcl_create_bucket404() {
+    Acl readAll = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+    StorageException storageException =
+        assertThrows(
+            StorageException.class,
+            () ->
+                retry429s(
+                    () -> storage.createDefaultAcl(bucket.getName() + "x", readAll), storage));
 
-    // according to https://cloud.google.com/storage/docs/access-control/lists#default
-    // it can take up to 30 seconds for default acl updates to propagate
-    // Since this test is performing so many mutations to default acls there are several calls
-    // that are otherwise non-idempotent wrapped with retries.
-    assertNull(
-        retry429s(
-            () ->
-                storage.getDefaultAcl(
-                    bucketFixture.getBucketInfo().getName(), User.ofAllAuthenticatedUsers()),
-            storage));
-    assertFalse(
-        retry429s(
-            () ->
-                storage.deleteDefaultAcl(
-                    bucketFixture.getBucketInfo().getName(), User.ofAllAuthenticatedUsers()),
-            storage));
-    Acl acl = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
-    assertNotNull(
-        retry429s(
-            () -> storage.createDefaultAcl(bucketFixture.getBucketInfo().getName(), acl), storage));
-    Acl updatedAcl =
-        retry429s(
-            () ->
-                storage.updateDefaultAcl(
-                    bucketFixture.getBucketInfo().getName(),
-                    acl.toBuilder().setRole(Role.OWNER).build()),
-            storage);
-    assertEquals(Role.OWNER, updatedAcl.getRole());
-    Set<Acl> acls = new HashSet<>(storage.listDefaultAcls(bucketFixture.getBucketInfo().getName()));
-    assertTrue(acls.contains(updatedAcl));
-    assertTrue(
-        retry429s(
-            () ->
-                storage.deleteDefaultAcl(
-                    bucketFixture.getBucketInfo().getName(), User.ofAllAuthenticatedUsers()),
-            storage));
-    assertNull(
-        storage.getDefaultAcl(
-            bucketFixture.getBucketInfo().getName(), User.ofAllAuthenticatedUsers()));
+    assertThat(storageException.getCode()).isEqualTo(404);
   }
 
   @Test
+  public void bucket_defaultAcl_update() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+
+      List<Acl> defaultAcls = bucket.getDefaultAcl();
+      assertThat(defaultAcls).isNotEmpty();
+
+      Predicate<Acl> isProjectEditor = hasProjectRole(ProjectRole.EDITORS);
+
+      //noinspection OptionalGetWithoutIsPresent
+      Acl projectEditorAsOwner =
+          defaultAcls.stream().filter(hasRole(Role.OWNER).and(isProjectEditor)).findFirst().get();
+
+      // lower the privileges of project editors to writer from owner
+      Entity entity = projectEditorAsOwner.getEntity();
+      Acl projectEditorAsReader = Acl.of(entity, Role.READER);
+
+      Acl actual =
+          retry429s(
+              () -> storage.updateDefaultAcl(bucket.getName(), projectEditorAsReader), storage);
+
+      assertThat(actual.getEntity()).isEqualTo(projectEditorAsReader.getEntity());
+      assertThat(actual.getRole()).isEqualTo(projectEditorAsReader.getRole());
+      assertThat(actual.getEtag()).isNotEmpty();
+
+      Bucket bucketUpdated =
+          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+      assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
+
+      // etags change when updates happen, drop before our comparison
+      List<Acl> expectedAcls =
+          dropEtags(
+              bucket.getDefaultAcl().stream()
+                  .filter(isProjectEditor.negate())
+                  .collect(Collectors.toList()));
+      List<Acl> actualAcls = dropEtags(bucketUpdated.getDefaultAcl());
+      assertThat(actualAcls).containsAtLeastElementsIn(expectedAcls);
+      assertThat(actualAcls).doesNotContain(projectEditorAsOwner);
+      assertThat(actualAcls).contains(projectEditorAsReader);
+    }
+  }
+
+  @Test
+  public void bucket_defaultAcl_update_bucket404() {
+    Acl readAll = Acl.of(User.ofAllAuthenticatedUsers(), Role.READER);
+    StorageException storageException =
+        assertThrows(
+            StorageException.class,
+            () ->
+                retry429s(
+                    () -> storage.updateDefaultAcl(bucket.getName() + "x", readAll), storage));
+
+    assertThat(storageException.getCode()).isEqualTo(404);
+  }
+
+  @Test
+  public void bucket_defaultAcl_delete() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+
+      List<Acl> defaultAcls = bucket.getDefaultAcl();
+      assertThat(defaultAcls).isNotEmpty();
+
+      Predicate<Acl> isProjectEditor = hasProjectRole(ProjectRole.VIEWERS);
+
+      //noinspection OptionalGetWithoutIsPresent
+      Acl projectViewerAsReader =
+          defaultAcls.stream().filter(hasRole(Role.READER).and(isProjectEditor)).findFirst().get();
+
+      Entity entity = projectViewerAsReader.getEntity();
+
+      boolean actual = retry429s(() -> storage.deleteDefaultAcl(bucket.getName(), entity), storage);
+
+      assertThat(actual).isTrue();
+
+      Bucket bucketUpdated =
+          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+      assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
+
+      // etags change when deletes happen, drop before our comparison
+      List<Acl> expectedAcls =
+          dropEtags(
+              bucket.getDefaultAcl().stream()
+                  .filter(isProjectEditor.negate())
+                  .collect(Collectors.toList()));
+      List<Acl> actualAcls = dropEtags(bucketUpdated.getDefaultAcl());
+      assertThat(actualAcls).containsAtLeastElementsIn(expectedAcls);
+      Optional<Entity> search =
+          actualAcls.stream().map(Acl::getEntity).filter(e -> e.equals(entity)).findAny();
+      assertThat(search.isPresent()).isFalse();
+    }
+  }
+
+  @Test
+  public void bucket_defaultAcl_delete_bucket404() {
+    boolean actual =
+        retry429s(
+            () -> storage.deleteDefaultAcl(bucket.getName() + "x", User.ofAllUsers()), storage);
+
+    assertThat(actual).isEqualTo(false);
+  }
+
+  @Test
+  public void bucket_defaultAcl_delete_noExistingAcl() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
+      boolean actual =
+          retry429s(() -> storage.deleteDefaultAcl(bucket.getName(), User.ofAllUsers()), storage);
+
+      assertThat(actual).isEqualTo(false);
+    }
+  }
+
+  @Test
+  @Ignore("Make hermetic, previously dependant on external transitive state")
   public void testBucketPolicyV1RequesterPays() {
-    unsetRequesterPays(storage, requesterPaysFixture);
-    Bucket bucketDefault =
-        storage.get(
-            requesterPaysFixture.getBucketInfo().getName(),
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
-    assertTrue(bucketDefault.requesterPays() == null || !bucketDefault.requesterPays());
-
-    Bucket bucketTrue = storage.update(bucketDefault.toBuilder().setRequesterPays(true).build());
-    assertTrue(bucketTrue.requesterPays());
-
     String projectId = storage.getOptions().getProjectId();
 
     Storage.BucketSourceOption[] bucketOptions =
@@ -280,27 +357,26 @@ public class ITAccessTest {
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithoutPublicRead =
         ImmutableMap.of(
             StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            ImmutableSet.of(projectOwner, projectEditor),
             StorageRoles.legacyBucketReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(projectViewer)));
+            ImmutableSet.of(projectViewer));
     Map<com.google.cloud.Role, Set<Identity>> bindingsWithPublicRead =
         ImmutableMap.of(
             StorageRoles.legacyBucketOwner(),
-            new HashSet<>(Arrays.asList(projectOwner, projectEditor)),
+            ImmutableSet.of(projectOwner, projectEditor),
             StorageRoles.legacyBucketReader(),
-            new HashSet<>(Collections.singleton(projectViewer)),
+            ImmutableSet.of(projectViewer),
             StorageRoles.legacyObjectReader(),
-            (Set<Identity>) new HashSet<>(Collections.singleton(Identity.allUsers())));
+            ImmutableSet.of(Identity.allUsers()));
 
     // Validate getting policy.
-    Policy currentPolicy =
-        storage.getIamPolicy(requesterPaysFixture.getBucketInfo().getName(), bucketOptions);
+    Policy currentPolicy = storage.getIamPolicy(requesterPaysBucket.getName(), bucketOptions);
     assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
 
     // Validate updating policy.
     Policy updatedPolicy =
         storage.setIamPolicy(
-            requesterPaysFixture.getBucketInfo().getName(),
+            requesterPaysBucket.getName(),
             currentPolicy
                 .toBuilder()
                 .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
@@ -309,7 +385,7 @@ public class ITAccessTest {
     assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
     Policy revertedPolicy =
         storage.setIamPolicy(
-            requesterPaysFixture.getBucketInfo().getName(),
+            requesterPaysBucket.getName(),
             updatedPolicy
                 .toBuilder()
                 .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
@@ -322,17 +398,13 @@ public class ITAccessTest {
     assertEquals(
         expectedPermissions,
         storage.testIamPermissions(
-            requesterPaysFixture.getBucketInfo().getName(),
+            requesterPaysBucket.getName(),
             ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
             bucketOptions));
-    Bucket bucketFalse =
-        storage.update(
-            bucketTrue.toBuilder().setRequesterPays(false).build(),
-            Storage.BucketTargetOption.userProject(projectId));
-    assertFalse(bucketFalse.requesterPays());
   }
 
   @Test
+  @Ignore("Make hermetic, previously dependant on external transitive state")
   public void testBucketPolicyV1() {
     String projectId = storage.getOptions().getProjectId();
 
@@ -356,14 +428,13 @@ public class ITAccessTest {
             ImmutableSet.of(Identity.allUsers()));
 
     // Validate getting policy.
-    Policy currentPolicy =
-        storage.getIamPolicy(bucketFixture.getBucketInfo().getName(), bucketOptions);
+    Policy currentPolicy = storage.getIamPolicy(bucket.getName(), bucketOptions);
     assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindings());
 
     // Validate updating policy.
     Policy updatedPolicy =
         storage.setIamPolicy(
-            bucketFixture.getBucketInfo().getName(),
+            bucket.getName(),
             currentPolicy
                 .toBuilder()
                 .addIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
@@ -372,7 +443,7 @@ public class ITAccessTest {
     assertEquals(bindingsWithPublicRead, updatedPolicy.getBindings());
     Policy revertedPolicy =
         storage.setIamPolicy(
-            bucketFixture.getBucketInfo().getName(),
+            bucket.getName(),
             updatedPolicy
                 .toBuilder()
                 .removeIdentity(StorageRoles.legacyObjectReader(), Identity.allUsers())
@@ -385,23 +456,22 @@ public class ITAccessTest {
     assertEquals(
         expectedPermissions,
         storage.testIamPermissions(
-            bucketFixture.getBucketInfo().getName(),
+            bucket.getName(),
             ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
             bucketOptions));
   }
 
   @Test
-  public void testBucketPolicyV3() {
-    // Enable Uniform Bucket-Level Access
-    storage.update(
-        BucketInfo.newBuilder(bucketFixture.getBucketInfo().getName())
+  @Ignore("Make hermetic, previously dependant on external transitive state")
+  public void testBucketPolicyV3() throws Exception {
+    String projectId = storage.getOptions().getProjectId();
+    BucketInfo bucketInfo =
+        BucketInfo.newBuilder(generator.randomBucketName())
             .setIamConfiguration(
                 BucketInfo.IamConfiguration.newBuilder()
                     .setIsUniformBucketLevelAccessEnabled(true)
                     .build())
-            .build());
-    String projectId = storage.getOptions().getProjectId();
-
+            .build();
     Storage.BucketSourceOption[] bucketOptions =
         new Storage.BucketSourceOption[] {Storage.BucketSourceOption.requestedPolicyVersion(3)};
     Identity projectOwner = Identity.projectOwner(projectId);
@@ -456,115 +526,117 @@ public class ITAccessTest {
                         .build())
                 .build());
 
-    // Validate getting policy.
-    Policy currentPolicy =
-        storage.getIamPolicy(bucketFixture.getBucketInfo().getName(), bucketOptions);
-    assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindingsList());
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempB.getBucket();
 
-    // Validate updating policy.
-    List<com.google.cloud.Binding> currentBindings = new ArrayList(currentPolicy.getBindingsList());
-    currentBindings.add(
-        com.google.cloud.Binding.newBuilder()
-            .setRole(StorageRoles.legacyObjectReader().getValue())
-            .addMembers(Identity.allUsers().strValue())
-            .build());
-    Policy updatedPolicy =
-        storage.setIamPolicy(
-            bucketFixture.getBucketInfo().getName(),
-            currentPolicy.toBuilder().setBindings(currentBindings).build(),
-            bucketOptions);
-    assertTrue(
-        bindingsWithPublicRead.size() == updatedPolicy.getBindingsList().size()
-            && bindingsWithPublicRead.containsAll(updatedPolicy.getBindingsList()));
+      // Validate getting policy.
+      Policy currentPolicy = storage.getIamPolicy(bucket.getName(), bucketOptions);
+      Collector<CharSequence, ?, String> joining = Collectors.joining(",\n\t", "[\n\t", "\n]");
+      String s = currentPolicy.getBindingsList().stream().map(Object::toString).collect(joining);
+      String ss = bindingsWithoutPublicRead.stream().map(Object::toString).collect(joining);
+      assertThat(s).isEqualTo(ss);
+      // assertEquals(bindingsWithoutPublicRead, currentPolicy.getBindingsList());
 
-    // Remove a member
-    List<com.google.cloud.Binding> updatedBindings = new ArrayList(updatedPolicy.getBindingsList());
-    for (int i = 0; i < updatedBindings.size(); i++) {
-      com.google.cloud.Binding binding = updatedBindings.get(i);
-      if (binding.getRole().equals(StorageRoles.legacyObjectReader().toString())) {
-        List<String> members = new ArrayList(binding.getMembers());
-        members.remove(Identity.allUsers().strValue());
-        updatedBindings.set(i, binding.toBuilder().setMembers(members).build());
-        break;
+      // Validate updating policy.
+      List<com.google.cloud.Binding> currentBindings =
+          new ArrayList(currentPolicy.getBindingsList());
+      currentBindings.add(
+          com.google.cloud.Binding.newBuilder()
+              .setRole(StorageRoles.legacyObjectReader().getValue())
+              .addMembers(Identity.allUsers().strValue())
+              .build());
+      Policy updatedPolicy =
+          storage.setIamPolicy(
+              bucket.getName(),
+              currentPolicy.toBuilder().setBindings(currentBindings).build(),
+              bucketOptions);
+      assertTrue(
+          bindingsWithPublicRead.size() == updatedPolicy.getBindingsList().size()
+              && bindingsWithPublicRead.containsAll(updatedPolicy.getBindingsList()));
+
+      // Remove a member
+      List<com.google.cloud.Binding> updatedBindings =
+          new ArrayList(updatedPolicy.getBindingsList());
+      for (int i = 0; i < updatedBindings.size(); i++) {
+        com.google.cloud.Binding binding = updatedBindings.get(i);
+        if (binding.getRole().equals(StorageRoles.legacyObjectReader().toString())) {
+          List<String> members = new ArrayList(binding.getMembers());
+          members.remove(Identity.allUsers().strValue());
+          updatedBindings.set(i, binding.toBuilder().setMembers(members).build());
+          break;
+        }
       }
+
+      Policy revertedPolicy =
+          storage.setIamPolicy(
+              bucket.getName(),
+              updatedPolicy.toBuilder().setBindings(updatedBindings).build(),
+              bucketOptions);
+
+      assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindingsList());
+      assertTrue(
+          bindingsWithoutPublicRead.size() == revertedPolicy.getBindingsList().size()
+              && bindingsWithoutPublicRead.containsAll(revertedPolicy.getBindingsList()));
+
+      // Add Conditional Policy
+      List<com.google.cloud.Binding> conditionalBindings =
+          new ArrayList(revertedPolicy.getBindingsList());
+      conditionalBindings.add(
+          com.google.cloud.Binding.newBuilder()
+              .setRole(StorageRoles.legacyObjectReader().toString())
+              .addMembers(
+                  "serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com")
+              .setCondition(
+                  Condition.newBuilder()
+                      .setTitle("Title")
+                      .setDescription("Description")
+                      .setExpression(
+                          "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")")
+                      .build())
+              .build());
+      Policy conditionalPolicy =
+          storage.setIamPolicy(
+              bucket.getName(),
+              revertedPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
+              bucketOptions);
+      assertTrue(
+          bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size()
+              && bindingsWithConditionalPolicy.containsAll(conditionalPolicy.getBindingsList()));
+
+      // Remove Conditional Policy
+      conditionalPolicy =
+          storage.setIamPolicy(
+              bucket.getName(),
+              conditionalPolicy.toBuilder().setBindings(updatedBindings).setVersion(3).build(),
+              bucketOptions);
+
+      // Validate testing permissions.
+      List<Boolean> expectedPermissions = ImmutableList.of(true, true);
+      assertEquals(
+          expectedPermissions,
+          storage.testIamPermissions(
+              bucket.getName(),
+              ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
+              bucketOptions));
     }
-
-    Policy revertedPolicy =
-        storage.setIamPolicy(
-            bucketFixture.getBucketInfo().getName(),
-            updatedPolicy.toBuilder().setBindings(updatedBindings).build(),
-            bucketOptions);
-
-    assertEquals(bindingsWithoutPublicRead, revertedPolicy.getBindingsList());
-    assertTrue(
-        bindingsWithoutPublicRead.size() == revertedPolicy.getBindingsList().size()
-            && bindingsWithoutPublicRead.containsAll(revertedPolicy.getBindingsList()));
-
-    // Add Conditional Policy
-    List<com.google.cloud.Binding> conditionalBindings =
-        new ArrayList(revertedPolicy.getBindingsList());
-    conditionalBindings.add(
-        com.google.cloud.Binding.newBuilder()
-            .setRole(StorageRoles.legacyObjectReader().toString())
-            .addMembers(
-                "serviceAccount:storage-python@spec-test-ruby-samples.iam.gserviceaccount.com")
-            .setCondition(
-                Condition.newBuilder()
-                    .setTitle("Title")
-                    .setDescription("Description")
-                    .setExpression(
-                        "resource.name.startsWith(\"projects/_/buckets/bucket-name/objects/prefix-a-\")")
-                    .build())
-            .build());
-    Policy conditionalPolicy =
-        storage.setIamPolicy(
-            bucketFixture.getBucketInfo().getName(),
-            revertedPolicy.toBuilder().setBindings(conditionalBindings).setVersion(3).build(),
-            bucketOptions);
-    assertTrue(
-        bindingsWithConditionalPolicy.size() == conditionalPolicy.getBindingsList().size()
-            && bindingsWithConditionalPolicy.containsAll(conditionalPolicy.getBindingsList()));
-
-    // Remove Conditional Policy
-    conditionalPolicy =
-        storage.setIamPolicy(
-            bucketFixture.getBucketInfo().getName(),
-            conditionalPolicy.toBuilder().setBindings(updatedBindings).setVersion(3).build(),
-            bucketOptions);
-
-    // Validate testing permissions.
-    List<Boolean> expectedPermissions = ImmutableList.of(true, true);
-    assertEquals(
-        expectedPermissions,
-        storage.testIamPermissions(
-            bucketFixture.getBucketInfo().getName(),
-            ImmutableList.of("storage.buckets.getIamPolicy", "storage.buckets.setIamPolicy"),
-            bucketOptions));
-
-    // Disable Uniform Bucket-Level Access
-    storage.update(
-        BucketInfo.newBuilder(bucketFixture.getBucketInfo().getName())
-            .setIamConfiguration(
-                BucketInfo.IamConfiguration.newBuilder()
-                    .setIsUniformBucketLevelAccessEnabled(false)
-                    .build())
-            .build());
   }
 
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
+  @CrossRun.Ignore(transports = Transport.GRPC)
   public void testBucketWithBucketPolicyOnlyEnabled() throws Exception {
-    assumeTrue(clientName.startsWith("JSON"));
     // TODO: break this test up into each of the respective scenarios
     //   1. Create bucket with BucketPolicyOnly enabled
     //   2. Get bucket with BucketPolicyOnly enabled
     //   3. Expect failure when attempting to list ACLs for BucketPolicyOnly bucket
     //   4. Expect failure when attempting to list default ACLs for BucketPolicyOnly bucket
 
-    String bucket = bucketFixture.newBucketName();
+    // TODO: temp bucket
+    String randBucketName = generator.randomBucketName();
     try {
       storage.create(
-          Bucket.newBuilder(bucket)
+          Bucket.newBuilder(randBucketName)
               .setIamConfiguration(
                   BucketInfo.IamConfiguration.newBuilder()
                       .setIsBucketPolicyOnlyEnabled(true)
@@ -572,7 +644,7 @@ public class ITAccessTest {
               .build());
 
       Bucket remoteBucket =
-          storage.get(bucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+          storage.get(randBucketName, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
 
       assertTrue(remoteBucket.getIamConfiguration().isBucketPolicyOnlyEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getBucketPolicyOnlyLockedTime());
@@ -590,24 +662,24 @@ public class ITAccessTest {
         // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
       }
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bucket, 1, TimeUnit.MINUTES);
+      BucketCleaner.doCleanup(randBucketName, storage);
     }
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC)
   public void testBucketWithUniformBucketLevelAccessEnabled() throws Exception {
-    assumeTrue(clientName.startsWith("JSON"));
     // TODO: break this test up into each of the respective scenarios
     //   1. Create bucket with UniformBucketLevelAccess enabled
     //   2. Get bucket with UniformBucketLevelAccess enabled
     //   3. Expect failure when attempting to list ACLs for UniformBucketLevelAccess bucket
     //   4. Expect failure when attempting to list default ACLs for UniformBucketLevelAccess bucket
 
-    String bucket = bucketFixture.newBucketName();
+    // TODO: temp bucket
+    String randBucketName = generator.randomBucketName();
     try {
       storage.create(
-          Bucket.newBuilder(bucket)
+          Bucket.newBuilder(randBucketName)
               .setIamConfiguration(
                   BucketInfo.IamConfiguration.newBuilder()
                       .setIsUniformBucketLevelAccessEnabled(true)
@@ -615,7 +687,7 @@ public class ITAccessTest {
               .build());
 
       Bucket remoteBucket =
-          storage.get(bucket, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
+          storage.get(randBucketName, Storage.BucketGetOption.fields(BucketField.IAMCONFIGURATION));
 
       assertTrue(remoteBucket.getIamConfiguration().isUniformBucketLevelAccessEnabled());
       assertNotNull(remoteBucket.getIamConfiguration().getUniformBucketLevelAccessLockedTime());
@@ -632,14 +704,13 @@ public class ITAccessTest {
         // Expected: Listing legacy ACLs should fail on a BPO enabled bucket
       }
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bucket, 1, TimeUnit.MINUTES);
+      BucketCleaner.doCleanup(randBucketName, storage);
     }
   }
 
   @Test
   public void testEnableAndDisableUniformBucketLevelAccessOnExistingBucket() throws Exception {
-    String bpoBucket = bucketFixture.newBucketName();
+    String bpoBucket = generator.randomBucketName();
     BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
         BucketInfo.IamConfiguration.newBuilder()
             .setIsUniformBucketLevelAccessEnabled(false)
@@ -651,10 +722,7 @@ public class ITAccessTest {
             .setDefaultAcl(ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
             .build();
     try (TemporaryBucket tempB =
-        TemporaryBucket.newBuilder()
-            .setBucketInfo(bucketInfo)
-            .setStorage(storageFixtureHttp.getInstance())
-            .build()) {
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
       // BPO is disabled by default.
       BucketInfo bucket = tempB.getBucket();
       assertThat(bucket.getIamConfiguration().isUniformBucketLevelAccessEnabled()).isFalse();
@@ -696,7 +764,7 @@ public class ITAccessTest {
 
   @Test
   public void testEnforcedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = bucketFixture.newBucketName();
+    String papBucket = generator.randomBucketName();
     BucketInfo bucketInfo =
         BucketInfo.newBuilder(papBucket)
             .setIamConfiguration(
@@ -706,10 +774,7 @@ public class ITAccessTest {
             .build();
 
     try (TemporaryBucket tempB =
-        TemporaryBucket.newBuilder()
-            .setBucketInfo(bucketInfo)
-            .setStorage(storageFixtureHttp.getInstance())
-            .build()) {
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
       BucketInfo bucket = tempB.getBucket();
       // Making bucket public should fail.
       try {
@@ -748,7 +813,7 @@ public class ITAccessTest {
 
   @Test
   public void testUnspecifiedPublicAccessPreventionOnBucket() throws Exception {
-    String papBucket = bucketFixture.newBucketName();
+    String papBucket = generator.randomBucketName();
     BucketInfo bucketInfo =
         BucketInfo.newBuilder(papBucket)
             .setIamConfiguration(
@@ -758,10 +823,7 @@ public class ITAccessTest {
             .build();
 
     try (TemporaryBucket tempB =
-        TemporaryBucket.newBuilder()
-            .setBucketInfo(bucketInfo)
-            .setStorage(storageFixtureHttp.getInstance())
-            .build()) {
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
       BucketInfo bucket = tempB.getBucket();
 
       // Now, making object public or making bucket public should succeed.
@@ -795,7 +857,7 @@ public class ITAccessTest {
 
   @Test
   public void changingPAPDoesNotAffectUBLA() throws Exception {
-    String bucketName = bucketFixture.newBucketName();
+    String bucketName = generator.randomBucketName();
     try (TemporaryBucket tempB =
         TemporaryBucket.newBuilder()
             .setBucketInfo(
@@ -806,7 +868,7 @@ public class ITAccessTest {
                             .setIsUniformBucketLevelAccessEnabled(false)
                             .build())
                     .build())
-            .setStorage(storageFixtureHttp.getInstance())
+            .setStorage(storage)
             .build()) {
       BucketInfo bucket = tempB.getBucket();
       assertEquals(
@@ -837,7 +899,7 @@ public class ITAccessTest {
 
   @Test
   public void changingUBLADoesNotAffectPAP() throws Exception {
-    String bucketName = bucketFixture.newBucketName();
+    String bucketName = generator.randomBucketName();
     try (TemporaryBucket tempB =
         TemporaryBucket.newBuilder()
             .setBucketInfo(
@@ -848,7 +910,7 @@ public class ITAccessTest {
                             .setIsUniformBucketLevelAccessEnabled(false)
                             .build())
                     .build())
-            .setStorage(storageFixtureHttp.getInstance())
+            .setStorage(storage)
             .build()) {
       BucketInfo bucket = tempB.getBucket();
       assertEquals(
@@ -888,7 +950,7 @@ public class ITAccessTest {
     Iterator<Bucket> bucketIterator =
         storage
             .list(
-                Storage.BucketListOption.prefix(bucketFixture.getBucketInfo().getName()),
+                Storage.BucketListOption.prefix(bucket.getName()),
                 Storage.BucketListOption.fields(),
                 Storage.BucketListOption.userProject(projectId))
             .iterateAll()
@@ -898,14 +960,14 @@ public class ITAccessTest {
       bucketIterator =
           storage
               .list(
-                  Storage.BucketListOption.prefix(bucketFixture.getBucketInfo().getName()),
+                  Storage.BucketListOption.prefix(bucket.getName()),
                   Storage.BucketListOption.fields())
               .iterateAll()
               .iterator();
     }
     while (bucketIterator.hasNext()) {
       Bucket remoteBucket = bucketIterator.next();
-      assertTrue(remoteBucket.getName().startsWith(bucketFixture.getBucketInfo().getName()));
+      assertTrue(remoteBucket.getName().startsWith(bucket.getName()));
       assertNull(remoteBucket.getCreateTime());
       assertNull(remoteBucket.getSelfLink());
     }
@@ -913,12 +975,12 @@ public class ITAccessTest {
 
   @Test
   public void testRetentionPolicyNoLock() throws Exception {
-    String bucketName = bucketFixture.newBucketName();
+    String bucketName = generator.randomBucketName();
     try (TemporaryBucket tempB =
         TemporaryBucket.newBuilder()
             .setBucketInfo(
                 BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build())
-            .setStorage(storageFixtureHttp.getInstance())
+            .setStorage(storage)
             .build()) {
       BucketInfo remoteBucket = tempB.getBucket();
 
@@ -944,26 +1006,10 @@ public class ITAccessTest {
     }
   }
 
-  private static void unsetRequesterPays(Storage storage, BucketFixture requesterPaysFixture) {
-    Bucket remoteBucket =
-        storage.get(
-            requesterPaysFixture.getBucketInfo().getName(),
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
-            Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
-    // Disable requester pays in case a test fails to clean up.
-    if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
-      remoteBucket
-          .toBuilder()
-          .setRequesterPays(false)
-          .build()
-          .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
-    }
-  }
-
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
-    String bpoBucket = bucketFixture.newBucketName();
+    String bpoBucket = generator.randomBucketName();
     try (TemporaryBucket tempB =
         TemporaryBucket.newBuilder()
             .setBucketInfo(
@@ -972,7 +1018,7 @@ public class ITAccessTest {
                     .setDefaultAcl(
                         ImmutableList.of(Acl.of(User.ofAllAuthenticatedUsers(), Role.READER)))
                     .build())
-            .setStorage(storageFixtureHttp.getInstance())
+            .setStorage(storage)
             .build()) {
       // BPO is disabled by default.
       BucketInfo bucket = tempB.getBucket();
@@ -1016,8 +1062,8 @@ public class ITAccessTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC)
   public void testBlobAcl() {
-    assumeTrue(clientName.startsWith("JSON"));
     // TODO: break this test up into each of the respective scenarios
     //   1. get ACL for specific entity
     //   2. Create an ACL for specific entity
@@ -1029,7 +1075,7 @@ public class ITAccessTest {
     //   8. Attempt to create an acl for an object that doesn't exist
     //   9. Attempt to update an acl for an object that doesn't exist
     //   10. Attempt to list acls for an object that doesn't exist
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "test-blob-acl");
+    BlobId blobId = BlobId.of(bucket.getName(), "test-blob-acl");
     BlobInfo blob = BlobInfo.newBuilder(blobId).build();
     storage.create(blob);
     assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
@@ -1042,7 +1088,7 @@ public class ITAccessTest {
     assertTrue(storage.deleteAcl(blobId, User.ofAllAuthenticatedUsers()));
     assertNull(storage.getAcl(blobId, User.ofAllAuthenticatedUsers()));
     // test non-existing blob
-    BlobId otherBlobId = BlobId.of(bucketFixture.getBucketInfo().getName(), "test-blob-acl", -1L);
+    BlobId otherBlobId = BlobId.of(bucket.getName(), "test-blob-acl", -1L);
     try {
       assertNull(storage.getAcl(otherBlobId, User.ofAllAuthenticatedUsers()));
       fail("Expected an 'Invalid argument' exception");
@@ -1077,20 +1123,23 @@ public class ITAccessTest {
     }
   }
 
-  static <T> T retry429s(Callable<T> c, Storage storage) {
-    return RetryHelper.runWithRetries(
-        c,
-        storage.getOptions().getRetrySettings(),
-        new BasicResultRetryAlgorithm<Object>() {
-          @Override
-          public boolean shouldRetry(Throwable previousThrowable, Object previousResponse) {
-            if (previousThrowable instanceof BaseHttpServiceException) {
-              BaseHttpServiceException httpException = (BaseHttpServiceException) previousThrowable;
-              return httpException.getCode() == 429;
-            }
-            return false;
-          }
-        },
-        storage.getOptions().getClock());
+  static ImmutableList<Acl> dropEtags(List<Acl> defaultAcls) {
+    return defaultAcls.stream()
+        .map(acl -> Acl.of(acl.getEntity(), acl.getRole()))
+        .collect(ImmutableList.toImmutableList());
+  }
+
+  static Predicate<Acl> hasRole(Acl.Role expected) {
+    return acl -> acl.getRole().equals(expected);
+  }
+
+  static Predicate<Acl> hasProjectRole(Acl.Project.ProjectRole expected) {
+    return acl -> {
+      Entity entity = acl.getEntity();
+      if (entity.getType().equals(Entity.Type.PROJECT)) {
+        return ((Acl.Project) entity).getProjectRole().equals(expected);
+      }
+      return false;
+    };
   }
 }

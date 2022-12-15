@@ -41,8 +41,12 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.conformance.retry.TestBench;
-import com.google.cloud.storage.conformance.retry.TestBench.RetryTestResource;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.registry.TestBench;
+import com.google.cloud.storage.it.runner.registry.TestBench.RetryTestResource;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc.Option;
@@ -56,16 +60,18 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
 import org.threeten.bp.Clock;
 import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZoneOffset;
 import org.threeten.bp.format.DateTimeFormatter;
 
+@RunWith(StorageITRunner.class)
+@SingleBackend(Backend.TEST_BENCH)
 public final class ITBlobWriteChannelTest {
   private static final Logger LOGGER = Logger.getLogger(ITBlobWriteChannelTest.class.getName());
   private static final String NOW_STRING;
@@ -78,9 +84,7 @@ public final class ITBlobWriteChannelTest {
     NOW_STRING = formatter.format(now);
   }
 
-  @ClassRule
-  public static final TestBench testBench =
-      TestBench.newBuilder().setContainerName("blob-write-channel-test").build();
+  @Inject public TestBench testBench;
 
   @Rule public final TestName testName = new TestName();
 
@@ -186,7 +190,7 @@ public final class ITBlobWriteChannelTest {
                     FixedHeaderProvider.create(ImmutableMap.of("x-retry-test-id", retryTest.id)))
                 .build()
                 .getRpc();
-    //noinspection UnstableApiUsage
+
     StorageOptions storageOptions =
         baseOptions
             .toBuilder()
@@ -198,7 +202,7 @@ public final class ITBlobWriteChannelTest {
                           try {
                             if ("writeWithResponse".equals(method.getName())) {
                               boolean lastChunk = (boolean) args[5];
-                              LOGGER.info(
+                              LOGGER.fine(
                                   String.format(
                                       "writeWithResponse called. (lastChunk = %b)", lastChunk));
                               if (lastChunk) {

@@ -58,7 +58,8 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+   * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+   * as:
    * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
    * </pre>
    *
@@ -71,7 +72,8 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * Required. The Pub/Sub topic to which this subscription publishes. Formatted as:
+   * Required. The Pub/Sub topic to which this subscription publishes. Formatted
+   * as:
    * '//pubsub.googleapis.com/projects/{project-identifier}/topics/{my-topic}'
    * </pre>
    *

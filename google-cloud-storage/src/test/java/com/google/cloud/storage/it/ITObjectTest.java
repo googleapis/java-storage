@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 import com.google.api.gax.paging.Page;
 import com.google.cloud.ReadChannel;
@@ -37,22 +36,29 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketFixture;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
+import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
+import com.google.cloud.storage.Storage.BlobListOption;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageFixture;
-import com.google.cloud.storage.testing.RemoteStorageHelper;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.BucketType;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
@@ -70,18 +76,17 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.StreamSupport;
 import javax.crypto.spec.SecretKeySpec;
-import org.junit.AfterClass;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(StorageITRunner.class)
+@CrossRun(
+    transports = {Transport.HTTP, Transport.GRPC},
+    backends = {Backend.PROD})
 public class ITObjectTest {
   private static final String CONTENT_TYPE = "text/plain";
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
@@ -99,102 +104,30 @@ public class ITObjectTest {
   private static final Long RETENTION_PERIOD = 5L;
   private static final Long RETENTION_PERIOD_IN_MILLISECONDS = RETENTION_PERIOD * 1000;
 
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureHttp =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-http-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture requesterPaysBucketFixtureHttp =
-      BucketFixture.newBuilder().setHandle(storageFixtureHttp::getInstance).build();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureGrpc =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-grpc-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture requesterPaysBucketFixtureGrpc =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-grpc-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
-
   @Rule public final TestName testName = new TestName();
 
-  private final BucketFixture bucketFixture;
-  private final BucketFixture requesterPaysBucketFixture;
-  private final String clientName;
-  private final Storage storage;
+  @Inject
+  @com.google.cloud.storage.it.runner.annotations.BucketFixture(BucketType.DEFAULT)
+  public BucketInfo bucket;
 
-  public ITObjectTest(
-      String clientName,
-      StorageFixture storageFixture,
-      BucketFixture bucketFixture,
-      BucketFixture requesterPaysBucketFixture) {
-    this.storage = storageFixture.getInstance();
-    this.bucketFixture = bucketFixture;
-    this.requesterPaysBucketFixture = requesterPaysBucketFixture;
-    this.clientName = clientName;
-  }
+  @Inject
+  @com.google.cloud.storage.it.runner.annotations.BucketFixture(BucketType.REQUESTER_PAYS)
+  public BucketInfo requesterPaysBucket;
 
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return Arrays.asList(
-        new Object[] {
-          "JSON/Prod", storageFixtureHttp, bucketFixtureHttp, requesterPaysBucketFixtureHttp
-        },
-        new Object[] {
-          "GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc, requesterPaysBucketFixtureGrpc
-        });
-  }
-
-  private static void unsetRequesterPays(
-      Storage storage, BucketFixture requesterPaysBucketFixture) {
-    Bucket remoteBucket =
-        storage.get(
-            requesterPaysBucketFixture.getBucketInfo().getName(),
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
-            Storage.BucketGetOption.userProject(storage.getOptions().getProjectId()));
-    // Disable requester pays in case a test fails to clean up.
-    if (remoteBucket.requesterPays() != null && remoteBucket.requesterPays() == true) {
-      remoteBucket
-          .toBuilder()
-          .setRequesterPays(false)
-          .build()
-          .update(Storage.BucketTargetOption.userProject(storage.getOptions().getProjectId()));
-    }
-  }
-
-  @AfterClass
-  public static void afterClass() {
-    unsetRequesterPays(storageFixtureHttp.getInstance(), requesterPaysBucketFixtureHttp);
-    unsetRequesterPays(storageFixtureGrpc.getInstance(), requesterPaysBucketFixtureGrpc);
-  }
+  @Inject public Storage storage;
+  @Inject public Generator generator;
 
   @Test
   public void testCreateBlob() {
     String blobName = "test-create-blob";
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
-            .setCustomTime(System.currentTimeMillis())
-            .build();
+        BlobInfo.newBuilder(bucket, blobName).setCustomTime(System.currentTimeMillis()).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
     assertNotNull(remoteBlob.getCustomTime());
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
-    byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
     assertTrue(remoteBlob.delete());
   }
@@ -203,7 +136,7 @@ public class ITObjectTest {
   public void testCreateBlobMd5Crc32cFromHexString() {
     String blobName = "test-create-blob-md5-crc32c-from-hex-string";
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+        BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
             .setMd5FromHexString("3b54781b51c94835084898e821899585")
             .setCrc32cFromHexString("f4ddc43d")
@@ -214,7 +147,7 @@ public class ITObjectTest {
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getMd5ToHexString(), remoteBlob.getMd5ToHexString());
     assertEquals(blob.getCrc32cToHexString(), remoteBlob.getCrc32cToHexString());
-    byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
     assertTrue(remoteBlob.delete());
   }
@@ -222,7 +155,7 @@ public class ITObjectTest {
   @Test
   public void testCreateGetBlobWithEncryptionKey() {
     String blobName = "test-create-with-customer-key-blob";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob =
         storage.create(blob, BLOB_BYTE_CONTENT, Storage.BlobTargetOption.encryptionKey(KEY));
     assertNotNull(remoteBlob);
@@ -230,9 +163,7 @@ public class ITObjectTest {
     assertEquals(blob.getName(), remoteBlob.getName());
     byte[] readBytes =
         storage.readAllBytes(
-            bucketFixture.getBucketInfo().getName(),
-            blobName,
-            Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
+            bucket.getName(), blobName, Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes);
     remoteBlob =
         storage.get(
@@ -246,12 +177,12 @@ public class ITObjectTest {
   @Test
   public void testCreateEmptyBlob() {
     String blobName = "test-create-empty-blob";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
-    byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
     assertArrayEquals(new byte[0], readBytes);
   }
 
@@ -259,17 +190,14 @@ public class ITObjectTest {
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStream() {
     String blobName = "test-create-blob-stream";
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
-            .setContentType(CONTENT_TYPE)
-            .build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob remoteBlob = storage.create(blob, stream);
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getContentType(), remoteBlob.getContentType());
-    byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
     assertEquals(BLOB_STRING_CONTENT, new String(readBytes, UTF_8));
   }
 
@@ -277,28 +205,24 @@ public class ITObjectTest {
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStreamDisableGzipContent() {
     String blobName = "test-create-blob-stream-disable-gzip-compression";
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
-            .setContentType(CONTENT_TYPE)
-            .build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob remoteBlob = storage.create(blob, stream, BlobWriteOption.disableGzipContent());
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(blob.getContentType(), remoteBlob.getContentType());
-    byte[] readBytes = storage.readAllBytes(bucketFixture.getBucketInfo().getName(), blobName);
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
     assertEquals(BLOB_STRING_CONTENT, new String(readBytes, UTF_8));
   }
 
   @Test
   public void testCreateBlobFail() {
     String blobName = "test-create-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
-    BlobInfo wrongGenerationBlob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName, -1L).build();
+    BlobInfo wrongGenerationBlob = BlobInfo.newBuilder(bucket, blobName, -1L).build();
     try {
       storage.create(
           wrongGenerationBlob, BLOB_BYTE_CONTENT, Storage.BlobTargetOption.generationMatch());
@@ -309,15 +233,12 @@ public class ITObjectTest {
   }
 
   @Test
+  // FieldMask on get not supported by GRPC yet.
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobEmptySelectedFields() {
-    // FieldMask on get not supported by GRPC yet.
-    assumeTrue(clientName.startsWith("JSON"));
 
     String blobName = "test-get-empty-selected-fields-blob";
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
-            .setContentType(CONTENT_TYPE)
-            .build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     assertNotNull(storage.create(blob));
     Blob remoteBlob = storage.get(blob.getBlobId(), Storage.BlobGetOption.fields());
     assertEquals(blob.getBlobId(), remoteBlob.getBlobId());
@@ -325,13 +246,13 @@ public class ITObjectTest {
   }
 
   @Test
+  // FieldMask on get not supported by GRPC yet.
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobSelectedFields() {
-    // FieldMask on get not supported by GRPC yet.
-    assumeTrue(clientName.startsWith("JSON"));
 
     String blobName = "test-get-selected-fields-blob";
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+        BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(ImmutableMap.of("k", "v"))
             .build();
@@ -344,13 +265,13 @@ public class ITObjectTest {
   }
 
   @Test
+  // FieldMask on get not supported by GRPC yet.
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobAllSelectedFields() {
-    // FieldMask on get not supported by GRPC yet.
-    assumeTrue(clientName.startsWith("JSON"));
 
     String blobName = "test-get-all-selected-fields-blob";
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+        BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(ImmutableMap.of("k", "v"))
             .build();
@@ -367,10 +288,10 @@ public class ITObjectTest {
   @Test
   public void testGetBlobFail() {
     String blobName = "test-get-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
-    BlobId wrongGenerationBlob = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId wrongGenerationBlob = BlobId.of(bucket.getName(), blobName);
     try {
       storage.get(wrongGenerationBlob, Storage.BlobGetOption.generationMatch(-1));
       fail("StorageException was expected");
@@ -382,10 +303,10 @@ public class ITObjectTest {
   @Test
   public void testGetBlobFailNonExistingGeneration() {
     String blobName = "test-get-blob-fail-non-existing-generation";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
-    BlobId wrongGenerationBlob = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName, -1L);
+    BlobId wrongGenerationBlob = BlobId.of(bucket.getName(), blobName, -1L);
     try {
       assertNull(storage.get(wrongGenerationBlob));
       fail("Expected an 'Invalid argument' exception");
@@ -395,21 +316,21 @@ public class ITObjectTest {
   }
 
   @Test(timeout = 5000)
+  // FieldMask on get not supported by GRPC yet.
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testListBlobsSelectedFields() throws InterruptedException {
-    // FieldMask on list not supported by GRPC yet.
-    assumeTrue(clientName.startsWith("JSON"));
 
     String[] blobNames = {
       "test-list-blobs-selected-fields-blob1", "test-list-blobs-selected-fields-blob2"
     };
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo blob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobNames[0])
+        BlobInfo.newBuilder(bucket, blobNames[0])
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
     BlobInfo blob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobNames[1])
+        BlobInfo.newBuilder(bucket, blobNames[1])
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
@@ -419,7 +340,7 @@ public class ITObjectTest {
     assertNotNull(remoteBlob2);
     Page<Blob> page =
         storage.list(
-            bucketFixture.getBucketInfo().getName(),
+            bucket.getName(),
             Storage.BlobListOption.prefix("test-list-blobs-selected-fields-blob"),
             Storage.BlobListOption.fields(BlobField.METADATA));
     // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
@@ -428,7 +349,7 @@ public class ITObjectTest {
       Thread.sleep(500);
       page =
           storage.list(
-              bucketFixture.getBucketInfo().getName(),
+              bucket.getName(),
               Storage.BlobListOption.prefix("test-list-blobs-selected-fields-blob"),
               Storage.BlobListOption.fields(BlobField.METADATA));
     }
@@ -436,7 +357,7 @@ public class ITObjectTest {
     Iterator<Blob> iterator = page.iterateAll().iterator();
     while (iterator.hasNext()) {
       Blob remoteBlob = iterator.next();
-      assertEquals(bucketFixture.getBucketInfo().getName(), remoteBlob.getBucket());
+      assertEquals(bucket.getName(), remoteBlob.getBucket());
       assertTrue(blobSet.contains(remoteBlob.getName()));
       assertEquals(metadata, remoteBlob.getMetadata());
       assertNull(remoteBlob.getContentType());
@@ -444,28 +365,22 @@ public class ITObjectTest {
   }
 
   @Test(timeout = 5000)
+  // FieldMask on get not supported by GRPC yet.
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testListBlobsEmptySelectedFields() throws InterruptedException {
-    // FieldMask on list not supported by GRPC yet.
-    assumeTrue(clientName.startsWith("JSON"));
 
     String[] blobNames = {
       "test-list-blobs-empty-selected-fields-blob1", "test-list-blobs-empty-selected-fields-blob2"
     };
-    BlobInfo blob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobNames[0])
-            .setContentType(CONTENT_TYPE)
-            .build();
-    BlobInfo blob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobNames[1])
-            .setContentType(CONTENT_TYPE)
-            .build();
+    BlobInfo blob1 = BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
+    BlobInfo blob2 = BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
     Blob remoteBlob1 = storage.create(blob1);
     Blob remoteBlob2 = storage.create(blob2);
     assertNotNull(remoteBlob1);
     assertNotNull(remoteBlob2);
     Page<Blob> page =
         storage.list(
-            bucketFixture.getBucketInfo().getName(),
+            bucket.getName(),
             Storage.BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
             Storage.BlobListOption.fields());
     // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
@@ -474,7 +389,7 @@ public class ITObjectTest {
       Thread.sleep(500);
       page =
           storage.list(
-              bucketFixture.getBucketInfo().getName(),
+              bucket.getName(),
               Storage.BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
               Storage.BlobListOption.fields());
     }
@@ -482,36 +397,46 @@ public class ITObjectTest {
     Iterator<Blob> iterator = page.iterateAll().iterator();
     while (iterator.hasNext()) {
       Blob remoteBlob = iterator.next();
-      assertEquals(bucketFixture.getBucketInfo().getName(), remoteBlob.getBucket());
+      assertEquals(bucket.getName(), remoteBlob.getBucket());
       assertTrue(blobSet.contains(remoteBlob.getName()));
       assertNull(remoteBlob.getContentType());
     }
   }
 
+  @Test
+  public void getBlobReturnNullOn404() {
+    String bucketName = bucket.getName();
+    BlobId id = BlobId.of(bucketName, "__d_o_e_s__n_o_t__e_x_i_s_t__");
+    Blob blob = storage.get(id);
+    assertThat(blob).isNull();
+  }
+
   @Test(timeout = 7500)
   public void testListBlobRequesterPays() throws InterruptedException {
-    unsetRequesterPays(storage, requesterPaysBucketFixture);
-    BlobInfo blob1 =
+    String projectId = storage.getOptions().getProjectId();
+
+    BlobInfo blobInfo1 =
         BlobInfo.newBuilder(
-                requesterPaysBucketFixture.getBucketInfo().getName(),
-                "test-list-blobs-empty-selected-fields-blob1")
+                requesterPaysBucket.getName(), "test-list-blobs-empty-selected-fields-blob1")
             .setContentType(CONTENT_TYPE)
             .build();
-    assertNotNull(storage.create(blob1));
+    Blob blob1 = storage.create(blobInfo1, BlobTargetOption.userProject(projectId));
+    assertNotNull(blob1);
 
     // Test listing a Requester Pays bucket.
     Bucket remoteBucket =
         storage.get(
-            requesterPaysBucketFixture.getBucketInfo().getName(),
-            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING));
+            requesterPaysBucket.getName(),
+            Storage.BucketGetOption.fields(BucketField.ID, BucketField.BILLING),
+            BucketGetOption.userProject(projectId));
 
-    assertTrue(remoteBucket.requesterPays() == null || !remoteBucket.requesterPays());
-    remoteBucket = remoteBucket.toBuilder().setRequesterPays(true).build();
-    Bucket updatedBucket = storage.update(remoteBucket);
-    assertTrue(updatedBucket.requesterPays());
+    assertTrue(remoteBucket.requesterPays());
+    // TODO: split to own test which modifies a temp bucket
+    // Bucket updatedBucket = storage.update(remoteBucket);
+    // assertTrue(updatedBucket.requesterPays());
     try {
       storage.list(
-          requesterPaysBucketFixture.getBucketInfo().getName(),
+          requesterPaysBucket.getName(),
           Storage.BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
           Storage.BlobListOption.fields(),
           Storage.BlobListOption.userProject("fakeBillingProjectId"));
@@ -520,32 +445,24 @@ public class ITObjectTest {
       assertTrue(e.getMessage().contains("User project specified in the request is invalid"));
     }
 
-    String projectId = storage.getOptions().getProjectId();
-    while (true) {
-      Page<Blob> page =
-          storage.list(
-              requesterPaysBucketFixture.getBucketInfo().getName(),
-              Storage.BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
-              Storage.BlobListOption.fields(),
-              Storage.BlobListOption.userProject(projectId));
-      List<Blob> blobs = Lists.newArrayList(page.iterateAll());
-      // If the list is empty, maybe the blob isn't visible yet; wait and try again.
-      // Otherwise, expect one blob, since we only put in one above.
-      if (!blobs.isEmpty()) {
-        assertThat(blobs).hasSize(1);
-        break;
-      }
-      Thread.sleep(500);
-    }
+    Page<Blob> page =
+        storage.list(
+            requesterPaysBucket.getName(),
+            BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
+            BlobListOption.userProject(projectId));
+    List<BlobInfo> blobs =
+        StreamSupport.stream(page.iterateAll().spliterator(), false)
+            .map(PackagePrivateMethodWorkarounds::noAcl)
+            .collect(ImmutableList.toImmutableList());
+    // gRPC and json have differing defaults on projections b/258835631
+    assertThat(blobs).contains(PackagePrivateMethodWorkarounds.noAcl(blob1));
   }
 
   @Test(timeout = 15000)
   public void testListBlobsVersioned() throws ExecutionException, InterruptedException {
-    String bucketName = bucketFixture.newBucketName();
+    String bucketName = generator.randomBucketName();
     Bucket bucket =
-        storageFixtureHttp
-            .getInstance()
-            .create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
+        storage.create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
     try {
       String[] blobNames = {"test-list-blobs-versioned-blob1", "test-list-blobs-versioned-blob2"};
       BlobInfo blob1 =
@@ -563,6 +480,11 @@ public class ITObjectTest {
               bucketName,
               Storage.BlobListOption.prefix("test-list-blobs-versioned-blob"),
               Storage.BlobListOption.versions(true));
+      // https://cloud.google.com/storage/docs/consistency#strongly_consistent_operations
+      // enabling versioning on an existing bucket seems to have some backpressure on when new
+      // versions can safely be made, but listing is not eventually consistent.
+
+      // TODO: make hermetic
       // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
       // test fails if timeout is reached.
       while (Iterators.size(page.iterateAll().iterator()) != 3) {
@@ -582,18 +504,15 @@ public class ITObjectTest {
         assertNotNull(remoteBlob.getGeneration());
       }
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bucketName, 5, TimeUnit.SECONDS);
+      BucketCleaner.doCleanup(bucketName, storage);
     }
   }
 
   @Test
   public void testListBlobsWithOffset() throws ExecutionException, InterruptedException {
-    String bucketName = bucketFixture.newBucketName();
+    String bucketName = generator.randomBucketName();
     Bucket bucket =
-        storageFixtureHttp
-            .getInstance()
-            .create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
+        storage.create(BucketInfo.newBuilder(bucketName).setVersioningEnabled(true).build());
     try {
       List<String> blobNames =
           ImmutableList.of("startOffset_blob1", "startOffset_blob2", "blob3_endOffset");
@@ -632,34 +551,27 @@ public class ITObjectTest {
               Storage.BlobListOption.endOffset("endOffset"));
       assertEquals(0, Iterators.size(page4.iterateAll().iterator()));
     } finally {
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bucketName, 5, TimeUnit.SECONDS);
+      BucketCleaner.doCleanup(bucketName, storage);
     }
   }
 
   @Test(timeout = 5000)
+  // This test is currently timing out for GRPC
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testListBlobsCurrentDirectory() throws InterruptedException {
-    // This test is currently timing out for GRPC
-    assumeTrue(clientName.startsWith("JSON"));
 
     String directoryName = "test-list-blobs-current-directory/";
     String subdirectoryName = "subdirectory/";
     String[] blobNames = {directoryName + subdirectoryName + "blob1", directoryName + "blob2"};
-    BlobInfo blob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobNames[0])
-            .setContentType(CONTENT_TYPE)
-            .build();
-    BlobInfo blob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobNames[1])
-            .setContentType(CONTENT_TYPE)
-            .build();
+    BlobInfo blob1 = BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
+    BlobInfo blob2 = BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
     Blob remoteBlob1 = storage.create(blob1, BLOB_BYTE_CONTENT);
     Blob remoteBlob2 = storage.create(blob2, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob1);
     assertNotNull(remoteBlob2);
     Page<Blob> page =
         storage.list(
-            bucketFixture.getBucketInfo().getName(),
+            bucket.getName(),
             Storage.BlobListOption.prefix("test-list-blobs-current-directory/"),
             Storage.BlobListOption.currentDirectory());
     // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
@@ -668,14 +580,14 @@ public class ITObjectTest {
       Thread.sleep(500);
       page =
           storage.list(
-              bucketFixture.getBucketInfo().getName(),
+              bucket.getName(),
               Storage.BlobListOption.prefix("test-list-blobs-current-directory/"),
               Storage.BlobListOption.currentDirectory());
     }
     Iterator<Blob> iterator = page.iterateAll().iterator();
     while (iterator.hasNext()) {
       Blob remoteBlob = iterator.next();
-      assertEquals(bucketFixture.getBucketInfo().getName(), remoteBlob.getBucket());
+      assertEquals(bucket.getName(), remoteBlob.getBucket());
       if (remoteBlob.getName().equals(blobNames[1])) {
         assertEquals(CONTENT_TYPE, remoteBlob.getContentType());
         assertEquals(BLOB_BYTE_CONTENT.length, (long) remoteBlob.getSize());
@@ -692,7 +604,7 @@ public class ITObjectTest {
   @Test
   public void testUpdateBlob() {
     String blobName = "test-update-blob";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     Blob updatedBlob = remoteBlob.toBuilder().setContentType(CONTENT_TYPE).build().update();
@@ -708,7 +620,7 @@ public class ITObjectTest {
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
     ImmutableMap<String, String> newMetadata = ImmutableMap.of("k2", "b");
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+        BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
@@ -730,7 +642,7 @@ public class ITObjectTest {
     ImmutableMap<String, String> newMetadata = ImmutableMap.of("k2", "b");
     ImmutableMap<String, String> expectedMetadata = ImmutableMap.of("k1", "a", "k2", "b");
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+        BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
@@ -744,9 +656,9 @@ public class ITObjectTest {
   }
 
   @Test
+  // Metadata update bug b/230510191
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testUpdateBlobUnsetMetadata() {
-    // Metadata update bug b/230510191
-    assumeTrue(clientName.startsWith("JSON"));
 
     String blobName = "test-update-blob-unset-metadata";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a", "k2", "b");
@@ -755,7 +667,7 @@ public class ITObjectTest {
     newMetadata.put("k2", null);
     ImmutableMap<String, String> expectedMetadata = ImmutableMap.of("k1", "a");
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
+        BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
@@ -771,13 +683,11 @@ public class ITObjectTest {
   @Test
   public void testUpdateBlobFail() {
     String blobName = "test-update-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     BlobInfo wrongGenerationBlob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName, -1L)
-            .setContentType(CONTENT_TYPE)
-            .build();
+        BlobInfo.newBuilder(bucket, blobName, -1L).setContentType(CONTENT_TYPE).build();
     try {
       storage.update(wrongGenerationBlob, Storage.BlobTargetOption.generationMatch());
       fail("StorageException was expected");
@@ -789,17 +699,16 @@ public class ITObjectTest {
   @Test
   public void testDeleteNonExistingBlob() {
     String blobName = "test-delete-non-existing-blob";
-    assertFalse(storage.delete(bucketFixture.getBucketInfo().getName(), blobName));
+    assertFalse(storage.delete(bucket.getName(), blobName));
   }
 
   @Test
   public void testDeleteBlobNonExistingGeneration() {
     String blobName = "test-delete-blob-non-existing-generation";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     assertNotNull(storage.create(blob));
     try {
-      assertFalse(
-          storage.delete(BlobId.of(bucketFixture.getBucketInfo().getName(), blobName, -1L)));
+      assertFalse(storage.delete(BlobId.of(bucket.getName(), blobName, -1L)));
       fail("Expected an 'Invalid argument' exception");
     } catch (StorageException e) {
       assertThat(e.getMessage()).contains("Invalid argument");
@@ -809,14 +718,12 @@ public class ITObjectTest {
   @Test
   public void testDeleteBlobFail() {
     String blobName = "test-delete-blob-fail";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     try {
       storage.delete(
-          bucketFixture.getBucketInfo().getName(),
-          blob.getName(),
-          Storage.BlobSourceOption.generationMatch(-1L));
+          bucket.getName(), blob.getName(), Storage.BlobSourceOption.generationMatch(-1L));
       fail("StorageException was expected");
     } catch (StorageException ex) {
       // expected
@@ -828,25 +735,21 @@ public class ITObjectTest {
   public void testComposeBlob() {
     String sourceBlobName1 = "test-compose-blob-source-1";
     String sourceBlobName2 = "test-compose-blob-source-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteSourceBlob1 = storage.create(sourceBlob1, BLOB_BYTE_CONTENT);
     Blob remoteSourceBlob2 = storage.create(sourceBlob2, BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob1);
     assertNotNull(remoteSourceBlob2);
     String targetBlobName = "test-compose-blob-target";
-    BlobInfo targetBlob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName).build();
+    BlobInfo targetBlob = BlobInfo.newBuilder(bucket, targetBlobName).build();
     Storage.ComposeRequest req =
         Storage.ComposeRequest.of(ImmutableList.of(sourceBlobName1, sourceBlobName2), targetBlob);
     Blob remoteTargetBlob = storage.compose(req);
     assertNotNull(remoteTargetBlob);
     assertEquals(targetBlob.getName(), remoteTargetBlob.getName());
     assertEquals(targetBlob.getBucket(), remoteTargetBlob.getBucket());
-    byte[] readBytes =
-        storage.readAllBytes(bucketFixture.getBucketInfo().getName(), targetBlobName);
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), targetBlobName);
     byte[] composedBytes = Arrays.copyOf(BLOB_BYTE_CONTENT, BLOB_BYTE_CONTENT.length * 2);
     System.arraycopy(
         BLOB_BYTE_CONTENT, 0, composedBytes, BLOB_BYTE_CONTENT.length, BLOB_BYTE_CONTENT.length);
@@ -857,19 +760,15 @@ public class ITObjectTest {
   public void testComposeBlobWithContentType() {
     String sourceBlobName1 = "test-compose-blob-with-content-type-source-1";
     String sourceBlobName2 = "test-compose-blob-with-content-type-source-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteSourceBlob1 = storage.create(sourceBlob1, BLOB_BYTE_CONTENT);
     Blob remoteSourceBlob2 = storage.create(sourceBlob2, BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob1);
     assertNotNull(remoteSourceBlob2);
     String targetBlobName = "test-compose-blob-with-content-type-target";
     BlobInfo targetBlob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName)
-            .setContentType(CONTENT_TYPE)
-            .build();
+        BlobInfo.newBuilder(bucket, targetBlobName).setContentType(CONTENT_TYPE).build();
     Storage.ComposeRequest req =
         Storage.ComposeRequest.of(ImmutableList.of(sourceBlobName1, sourceBlobName2), targetBlob);
     Blob remoteTargetBlob = storage.compose(req);
@@ -877,8 +776,7 @@ public class ITObjectTest {
     assertEquals(targetBlob.getName(), remoteTargetBlob.getName());
     assertEquals(targetBlob.getBucket(), remoteTargetBlob.getBucket());
     assertEquals(CONTENT_TYPE, remoteTargetBlob.getContentType());
-    byte[] readBytes =
-        storage.readAllBytes(bucketFixture.getBucketInfo().getName(), targetBlobName);
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), targetBlobName);
     byte[] composedBytes = Arrays.copyOf(BLOB_BYTE_CONTENT, BLOB_BYTE_CONTENT.length * 2);
     System.arraycopy(
         BLOB_BYTE_CONTENT, 0, composedBytes, BLOB_BYTE_CONTENT.length, BLOB_BYTE_CONTENT.length);
@@ -889,17 +787,14 @@ public class ITObjectTest {
   public void testComposeBlobFail() {
     String sourceBlobName1 = "test-compose-blob-fail-source-1";
     String sourceBlobName2 = "test-compose-blob-fail-source-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteSourceBlob1 = storage.create(sourceBlob1);
     Blob remoteSourceBlob2 = storage.create(sourceBlob2);
     assertNotNull(remoteSourceBlob1);
     assertNotNull(remoteSourceBlob2);
     String targetBlobName = "test-compose-blob-fail-target";
-    BlobInfo targetBlob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName).build();
+    BlobInfo targetBlob = BlobInfo.newBuilder(bucket, targetBlobName).build();
     Storage.ComposeRequest req =
         Storage.ComposeRequest.newBuilder()
             .addSource(sourceBlobName1, -1L)
@@ -915,12 +810,12 @@ public class ITObjectTest {
   }
 
   @Test
+  // Bucket attribute extration on allowlist bug b/246634709
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCopyBlob() {
-    // Bucket attribute extration on allowlist bug b/246634709
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-source";
-    BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName);
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo blob =
         BlobInfo.newBuilder(source).setContentType(CONTENT_TYPE).setMetadata(metadata).build();
@@ -928,25 +823,24 @@ public class ITObjectTest {
     assertNotNull(remoteBlob);
     String targetBlobName = "test-copy-blob-target";
     Storage.CopyRequest req =
-        Storage.CopyRequest.of(
-            source, BlobId.of(bucketFixture.getBucketInfo().getName(), targetBlobName));
+        Storage.CopyRequest.of(source, BlobId.of(bucket.getName(), targetBlobName));
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
+    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteBlob.delete());
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), targetBlobName));
+    assertTrue(storage.delete(bucket.getName(), targetBlobName));
   }
 
   @Test
+  // Bucket attribute extration on allowlist bug b/246634709
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCopyBlobWithPredefinedAcl() {
-    // Bucket attribute extration on allowlist bug b/246634709
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-source";
-    BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName);
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo blob =
         BlobInfo.newBuilder(source).setContentType(CONTENT_TYPE).setMetadata(metadata).build();
@@ -957,27 +851,27 @@ public class ITObjectTest {
         Storage.CopyRequest.newBuilder()
             .setSource(source)
             .setTarget(
-                BlobId.of(bucketFixture.getBucketInfo().getName(), targetBlobName),
+                BlobId.of(bucket.getName(), targetBlobName),
                 Storage.BlobTargetOption.predefinedAcl(Storage.PredefinedAcl.PUBLIC_READ))
             .build();
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
+    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
     assertNotNull(copyWriter.getResult().getAcl(User.ofAllUsers()));
     assertTrue(copyWriter.isDone());
     assertTrue(remoteBlob.delete());
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), targetBlobName));
+    assertTrue(storage.delete(bucket.getName(), targetBlobName));
   }
 
   @Test
+  // Bucket attribute extration on allowlist bug b/246634709
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCopyBlobWithEncryptionKeys() {
-    // Bucket attribute extration on allowlist bug b/246634709
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-encryption-key-source";
-    BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName);
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     Blob remoteBlob =
         storage.create(
@@ -987,7 +881,7 @@ public class ITObjectTest {
     assertNotNull(remoteBlob);
     String targetBlobName = "test-copy-blob-encryption-key-target";
     BlobInfo target =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName)
+        BlobInfo.newBuilder(bucket, targetBlobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
@@ -998,7 +892,7 @@ public class ITObjectTest {
             .setSourceOptions(Storage.BlobSourceOption.decryptionKey(BASE64_KEY))
             .build();
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
+    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertArrayEquals(
@@ -1013,48 +907,49 @@ public class ITObjectTest {
             .setSourceOptions(Storage.BlobSourceOption.decryptionKey(BASE64_KEY))
             .build();
     copyWriter = storage.copy(req);
-    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
+    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertArrayEquals(BLOB_BYTE_CONTENT, copyWriter.getResult().getContent());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteBlob.delete());
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), targetBlobName));
+    assertTrue(storage.delete(bucket.getName(), targetBlobName));
   }
 
   @Test
+  // Bucket attribute extration on allowlist bug b/246634709
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCopyBlobUpdateMetadata() {
-    // Bucket attribute extration on allowlist bug b/246634709
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-update-metadata-source";
-    BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName);
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     Blob remoteSourceBlob = storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob);
     String targetBlobName = "test-copy-blob-update-metadata-target";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo target =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName)
+        BlobInfo.newBuilder(bucket, targetBlobName)
             .setContentType(CONTENT_TYPE)
             .setMetadata(metadata)
             .build();
     Storage.CopyRequest req = Storage.CopyRequest.of(source, target);
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
+    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(CONTENT_TYPE, copyWriter.getResult().getContentType());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), targetBlobName));
+    assertTrue(storage.delete(bucket.getName(), targetBlobName));
   }
 
   // Re-enable this test when it stops failing
   // @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCopyBlobUpdateStorageClass() {
     String sourceBlobName = "test-copy-blob-update-storage-class-source";
-    BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName);
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     BlobInfo sourceInfo =
         BlobInfo.newBuilder(source).setStorageClass(StorageClass.STANDARD).build();
     Blob remoteSourceBlob = storage.create(sourceInfo, BLOB_BYTE_CONTENT);
@@ -1063,63 +958,56 @@ public class ITObjectTest {
 
     String targetBlobName = "test-copy-blob-update-storage-class-target";
     BlobInfo targetInfo =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName)
-            .setStorageClass(StorageClass.COLDLINE)
-            .build();
+        BlobInfo.newBuilder(bucket, targetBlobName).setStorageClass(StorageClass.COLDLINE).build();
     Storage.CopyRequest req = Storage.CopyRequest.of(source, targetInfo);
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
+    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertEquals(StorageClass.COLDLINE, copyWriter.getResult().getStorageClass());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), targetBlobName));
+    assertTrue(storage.delete(bucket.getName(), targetBlobName));
   }
 
   @Test
+  // Bucket attribute extration on allowlist bug b/246634709
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCopyBlobNoContentType() {
-    // Bucket attribute extration on allowlist bug b/246634709
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-no-content-type-source";
-    BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName);
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     Blob remoteSourceBlob = storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob);
     String targetBlobName = "test-copy-blob-no-content-type-target";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
-    BlobInfo target =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName)
-            .setMetadata(metadata)
-            .build();
+    BlobInfo target = BlobInfo.newBuilder(bucket, targetBlobName).setMetadata(metadata).build();
     Storage.CopyRequest req = Storage.CopyRequest.of(source, target);
     CopyWriter copyWriter = storage.copy(req);
-    assertEquals(bucketFixture.getBucketInfo().getName(), copyWriter.getResult().getBucket());
+    assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
     assertEquals(targetBlobName, copyWriter.getResult().getName());
     assertNull(copyWriter.getResult().getContentType());
     assertEquals(metadata, copyWriter.getResult().getMetadata());
     assertTrue(copyWriter.isDone());
     assertTrue(remoteSourceBlob.delete());
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), targetBlobName));
+    assertTrue(storage.delete(bucket.getName(), targetBlobName));
   }
 
   @Test
+  // Verified against testbench
+  // Bucket attribute extration on allowlist bug b/246634709
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCopyBlobFail() {
-    // Verified against testbench
-    // Bucket attribute extration on allowlist bug b/246634709
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName = "test-copy-blob-source-fail";
-    BlobId source = BlobId.of(bucketFixture.getBucketInfo().getName(), sourceBlobName, -1L);
+    BlobId source = BlobId.of(bucket.getName(), sourceBlobName, -1L);
     Blob remoteSourceBlob = storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob);
     String targetBlobName = "test-copy-blob-target-fail";
     BlobInfo target =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), targetBlobName)
-            .setContentType(CONTENT_TYPE)
-            .build();
+        BlobInfo.newBuilder(bucket, targetBlobName).setContentType(CONTENT_TYPE).build();
     Storage.CopyRequest req =
         Storage.CopyRequest.newBuilder()
-            .setSource(bucketFixture.getBucketInfo().getName(), sourceBlobName)
+            .setSource(bucket.getName(), sourceBlobName)
             .setSourceOptions(Storage.BlobSourceOption.generationMatch(-1L))
             .setTarget(target)
             .build();
@@ -1146,7 +1034,7 @@ public class ITObjectTest {
   @Test
   public void testReadAndWriteChannelWithEncryptionKey() throws IOException {
     String blobName = "test-read-write-channel-with-customer-key-blob";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     byte[] stringBytes;
     try (WriteChannel writer =
         storage.writer(blob, Storage.BlobWriteOption.encryptionKey(BASE64_KEY))) {
@@ -1165,7 +1053,7 @@ public class ITObjectTest {
     }
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes.array());
     assertEquals(BLOB_STRING_CONTENT, new String(readStringBytes.array(), UTF_8));
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), blobName));
+    assertTrue(storage.delete(bucket.getName(), blobName));
   }
 
   @Test
@@ -1175,7 +1063,7 @@ public class ITObjectTest {
     Random rnd = new Random();
     for (int blobSize : blobSizes) {
       String blobName = blobNamePrefix + blobSize;
-      BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+      BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
       byte[] bytes = new byte[blobSize];
       rnd.nextBytes(bytes);
       try (WriteChannel writer = storage.writer(blob)) {
@@ -1191,17 +1079,17 @@ public class ITObjectTest {
         }
       }
       assertArrayEquals(bytes, output.toByteArray());
-      assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), blobName));
+      assertTrue(storage.delete(bucket.getName(), blobName));
     }
   }
 
   @Test
+  // Capture not implemented yet
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testReadAndWriteCaptureChannels() throws IOException {
-    // Capture not implemented yet
-    assumeTrue(clientName.startsWith("JSON"));
 
     String blobName = "test-read-and-write-capture-channels-blob";
-    BlobInfo blob = BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     byte[] stringBytes;
     WriteChannel writer = storage.writer(blob);
     stringBytes = BLOB_STRING_CONTENT.getBytes(UTF_8);
@@ -1224,19 +1112,17 @@ public class ITObjectTest {
     secondReader.close();
     assertArrayEquals(BLOB_BYTE_CONTENT, readBytes.array());
     assertEquals(BLOB_STRING_CONTENT, new String(readStringBytes.array(), UTF_8));
-    assertTrue(storage.delete(bucketFixture.getBucketInfo().getName(), blobName));
+    assertTrue(storage.delete(bucket.getName(), blobName));
   }
 
   @Test
+  // Only supported in JSON right now
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobs() {
-    // Only supported in JSON right now
-    assumeTrue(clientName.startsWith("JSON"));
     String sourceBlobName1 = "test-get-blobs-1";
     String sourceBlobName2 = "test-get-blobs-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
     assertNotNull(storage.create(sourceBlob2));
     List<Blob> remoteBlobs = storage.get(sourceBlob1.getBlobId(), sourceBlob2.getBlobId());
@@ -1247,16 +1133,14 @@ public class ITObjectTest {
   }
 
   @Test
+  // Only supported in JSON right now
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobsFail() {
-    // Only supported in JSON right now
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName1 = "test-get-blobs-fail-1";
     String sourceBlobName2 = "test-get-blobs-fail-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
     List<Blob> remoteBlobs = storage.get(sourceBlob1.getBlobId(), sourceBlob2.getBlobId());
     assertEquals(sourceBlob1.getBucket(), remoteBlobs.get(0).getBucket());
@@ -1265,16 +1149,14 @@ public class ITObjectTest {
   }
 
   @Test
+  // Only supported in JSON right now
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testDeleteBlobs() {
-    // Only supported in JSON right now
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName1 = "test-delete-blobs-1";
     String sourceBlobName2 = "test-delete-blobs-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
     assertNotNull(storage.create(sourceBlob2));
     List<Boolean> deleteStatus = storage.delete(sourceBlob1.getBlobId(), sourceBlob2.getBlobId());
@@ -1283,15 +1165,13 @@ public class ITObjectTest {
   }
 
   @Test
+  // Only supported in JSON right now
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testDeleteBlobsFail() {
-    // Only supported in JSON right now
-    assumeTrue(clientName.startsWith("JSON"));
     String sourceBlobName1 = "test-delete-blobs-fail-1";
     String sourceBlobName2 = "test-delete-blobs-fail-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
     List<Boolean> deleteStatus = storage.delete(sourceBlob1.getBlobId(), sourceBlob2.getBlobId());
     assertTrue(deleteStatus.get(0));
@@ -1301,24 +1181,21 @@ public class ITObjectTest {
   @Test
   public void testDeleteBlob() {
     String sourceBlobName = "test-delete-one-success";
-    BlobInfo sourceBlob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName).build();
+    BlobInfo sourceBlob = BlobInfo.newBuilder(bucket, sourceBlobName).build();
     assertNotNull(storage.create(sourceBlob));
     boolean result = storage.delete(sourceBlob.getBlobId());
     assertTrue(result);
   }
 
   @Test
+  // Only supported in JSON right now
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testUpdateBlobs() {
-    // Only supported in JSON right now
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName1 = "test-update-blobs-1";
     String sourceBlobName2 = "test-update-blobs-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteBlob1 = storage.create(sourceBlob1);
     Blob remoteBlob2 = storage.create(sourceBlob2);
     assertNotNull(remoteBlob1);
@@ -1336,16 +1213,14 @@ public class ITObjectTest {
   }
 
   @Test
+  // Only supported in JSON right now
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testUpdateBlobsFail() {
-    // Only supported in JSON right now
-    assumeTrue(clientName.startsWith("JSON"));
 
     String sourceBlobName1 = "test-update-blobs-fail-1";
     String sourceBlobName2 = "test-update-blobs-fail-2";
-    BlobInfo sourceBlob1 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName1).build();
-    BlobInfo sourceBlob2 =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), sourceBlobName2).build();
+    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
+    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     BlobInfo remoteBlob1 = storage.create(sourceBlob1);
     assertNotNull(remoteBlob1);
     List<Blob> updatedBlobs =
@@ -1361,11 +1236,10 @@ public class ITObjectTest {
   @Test
   public void testAttemptObjectDeleteWithRetentionPolicy()
       throws ExecutionException, InterruptedException {
-    String bucketName = bucketFixture.newBucketName();
+    String bucketName = generator.randomBucketName();
     Bucket remoteBucket =
-        storageFixtureHttp
-            .getInstance()
-            .create(BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build());
+        storage.create(
+            BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build());
     assertEquals(RETENTION_PERIOD, remoteBucket.getRetentionPeriod());
     String blobName = "test-create-with-retention-policy";
     BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
@@ -1378,16 +1252,14 @@ public class ITObjectTest {
       // expected
     } finally {
       Thread.sleep(RETENTION_PERIOD_IN_MILLISECONDS);
-      RemoteStorageHelper.forceDelete(
-          storageFixtureHttp.getInstance(), bucketName, 5, TimeUnit.SECONDS);
+      BucketCleaner.doCleanup(bucketName, storage);
     }
   }
 
   @Test
   public void testEnableDisableTemporaryHold() {
     String blobName = "test-create-with-temporary-hold";
-    BlobInfo blobInfo =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).setTemporaryHold(true).build();
+    BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
     Blob remoteBlob = storage.create(blobInfo);
     assertTrue(remoteBlob.getTemporaryHold());
     remoteBlob =
@@ -1400,10 +1272,7 @@ public class ITObjectTest {
   @Test
   public void testAttemptObjectDeleteWithEventBasedHold() {
     String blobName = "test-create-with-event-based-hold";
-    BlobInfo blobInfo =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
-            .setEventBasedHold(true)
-            .build();
+    BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setEventBasedHold(true).build();
     Blob remoteBlob = storage.create(blobInfo);
     assertTrue(remoteBlob.getEventBasedHold());
     try {
@@ -1419,8 +1288,7 @@ public class ITObjectTest {
   @Test
   public void testAttemptDeletionObjectTemporaryHold() {
     String blobName = "test-create-with-temporary-hold";
-    BlobInfo blobInfo =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName).setTemporaryHold(true).build();
+    BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
     Blob remoteBlob = storage.create(blobInfo);
     assertTrue(remoteBlob.getTemporaryHold());
     try {
@@ -1435,17 +1303,14 @@ public class ITObjectTest {
 
   @Test
   public void testBlobReload() throws Exception {
-    // GRPC Error Handling bug
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
-
     String blobName = "test-blob-reload";
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
     Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2});
 
     Blob blobUnchanged = blob.reload();
-    assertEquals(blob, blobUnchanged);
+    // gRPC and json have differing defaults on projections b/258835631
+    assertThat(blobUnchanged).isAnyOf(blob, PackagePrivateMethodWorkarounds.noAcl(blob));
 
     blob.writer().close();
     try {
@@ -1453,7 +1318,6 @@ public class ITObjectTest {
       fail("StorageException was expected");
     } catch (StorageException e) {
       assertEquals(412, e.getCode());
-      assertEquals("conditionNotMet", e.getReason());
     }
 
     Blob updated = blob.reload();
@@ -1469,7 +1333,7 @@ public class ITObjectTest {
   @Test
   public void testUploadWithEncryption() throws Exception {
     String blobName = "test-upload-withEncryption";
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
     ByteArrayInputStream content = new ByteArrayInputStream(BLOB_BYTE_CONTENT);
@@ -1515,7 +1379,7 @@ public class ITObjectTest {
     String[] names = {"file1.txt", "dir with spaces/Pic.Jpg", "no_extension"};
     String[] types = {"text/plain", "image/jpeg", "application/octet-stream"};
     for (int i = 0; i < names.length; i++) {
-      BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), names[i]);
+      BlobId blobId = BlobId.of(bucket.getName(), names[i]);
       BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
       Blob blob_true = createBlob(method, blobInfo, true);
       assertEquals(types[i], blob_true.getContentType());
@@ -1524,7 +1388,7 @@ public class ITObjectTest {
       assertThat(blob_false.getContentType()).isAnyOf("application/octet-stream", "");
     }
     String customType = "custom/type";
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), names[0]);
+    BlobId blobId = BlobId.of(bucket.getName(), names[0]);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(customType).build();
     Blob blob = createBlob(method, blobInfo, true);
     assertEquals(customType, blob.getContentType());
@@ -1546,16 +1410,13 @@ public class ITObjectTest {
   }
 
   @Test
+  // Bucket attribute extration on allowlist bug b/246634709
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testBlobTimeStorageClassUpdated() {
-    // Bucket attribute extration on allowlist bug b/246634709
-    assumeTrue(clientName.startsWith("JSON"));
 
     String blobName = "test-blob-with-storage-class";
     StorageClass storageClass = StorageClass.COLDLINE;
-    BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
-            .setStorageClass(storageClass)
-            .build();
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setStorageClass(storageClass).build();
     Blob remoteBlob = storage.create(blob);
     assertThat(remoteBlob).isNotNull();
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
@@ -1566,7 +1427,7 @@ public class ITObjectTest {
 
     // We can't change an object's storage class directly, the only way is to rewrite the object
     // with the desired storage class.
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
     Storage.CopyRequest request =
         Storage.CopyRequest.newBuilder()
             .setSource(blobId)

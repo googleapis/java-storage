@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An object in Google Cloud Storage. A {@code Blob} object includes the {@code BlobId} instance,
@@ -128,7 +129,7 @@ public class Blob extends BlobInfo {
      * blob.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobSourceOption decryptionKey(Key key) {
+    public static BlobSourceOption decryptionKey(@NonNull Key key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
@@ -139,7 +140,7 @@ public class Blob extends BlobInfo {
      * @param key the AES256 encoded in base64
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobSourceOption decryptionKey(String key) {
+    public static BlobSourceOption decryptionKey(@NonNull String key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
@@ -148,7 +149,7 @@ public class Blob extends BlobInfo {
      * bucket has requester_pays flag enabled.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobSourceOption userProject(String userProject) {
+    public static BlobSourceOption userProject(@NonNull String userProject) {
       return new BlobSourceOption(UnifiedOpts.userProject(userProject));
     }
 

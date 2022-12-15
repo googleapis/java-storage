@@ -1430,6 +1430,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Gets the IAM policy for a specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public void getIamPolicy(
@@ -1444,6 +1447,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an IAM policy for the specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public void setIamPolicy(
@@ -1459,6 +1465,9 @@ public final class StorageGrpc {
      * <pre>
      * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public void testIamPermissions(
@@ -2152,6 +2161,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Gets the IAM policy for a specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public void getIamPolicy(
@@ -2168,6 +2180,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an IAM policy for the specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public void setIamPolicy(
@@ -2185,6 +2200,9 @@ public final class StorageGrpc {
      * <pre>
      * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public void testIamPermissions(
@@ -2715,6 +2733,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Gets the IAM policy for a specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public com.google.iam.v1.Policy getIamPolicy(com.google.iam.v1.GetIamPolicyRequest request) {
@@ -2727,6 +2748,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an IAM policy for the specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public com.google.iam.v1.Policy setIamPolicy(com.google.iam.v1.SetIamPolicyRequest request) {
@@ -2740,6 +2764,9 @@ public final class StorageGrpc {
      * <pre>
      * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public com.google.iam.v1.TestIamPermissionsResponse testIamPermissions(
@@ -3146,6 +3173,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Gets the IAM policy for a specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
@@ -3159,6 +3189,9 @@ public final class StorageGrpc {
      *
      * <pre>
      * Updates an IAM policy for the specified bucket or object.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.iam.v1.Policy>
@@ -3173,6 +3206,9 @@ public final class StorageGrpc {
      * <pre>
      * Tests a set of permissions on the given bucket or object to see which, if
      * any, are held by the caller.
+     * The `resource` field in the request should be
+     * projects/_/buckets/&lt;bucket_name&gt; for a bucket or
+     * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<

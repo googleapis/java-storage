@@ -19,105 +19,71 @@ package com.google.cloud.storage.it;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
 
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BucketFixture;
+import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
-import com.google.cloud.storage.StorageFixture;
+import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.it.ITObjectChecksumSupportTest.ChecksummedTestContentProvider;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.annotations.Parameterized;
+import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
+import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(StorageITRunner.class)
+@CrossRun(
+    transports = {Transport.HTTP, Transport.GRPC},
+    backends = Backend.PROD)
+@Parameterized(ChecksummedTestContentProvider.class)
 public final class ITObjectChecksumSupportTest {
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureHttp = StorageFixture.defaultHttp();
-
-  @ClassRule(order = 1)
-  public static final StorageFixture storageFixtureGrpc = StorageFixture.defaultGrpc();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureHttp =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-http-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
-
-  @ClassRule(order = 2)
-  public static final BucketFixture bucketFixtureGrpc =
-      BucketFixture.newBuilder()
-          .setBucketNameFmtString("java-storage-grpc-%s")
-          .setHandle(storageFixtureHttp::getInstance)
-          .build();
 
   @Rule public final TestName testName = new TestName();
 
-  private final String clientName;
-  private final Storage storage;
-  private final BucketFixture bucketFixture;
-  private final ChecksummedTestContent content;
+  @Inject public Storage storage;
+  @Inject public BucketInfo bucket;
 
-  public ITObjectChecksumSupportTest(
-      String clientName,
-      StorageFixture storageFixture,
-      BucketFixture bucketFixture,
-      ChecksummedTestContent content) {
-    this.clientName = clientName;
-    this.storage = storageFixture.getInstance();
-    this.bucketFixture = bucketFixture;
-    this.content = content;
-  }
+  @Parameter public ChecksummedTestContent content;
 
-  @Parameters(name = "{0}")
-  public static Iterable<Object[]> parameters() {
-    ImmutableList<Object[]> clientsAndBuckets =
-        ImmutableList.of(
-            new Object[] {"JSON/Prod", storageFixtureHttp, bucketFixtureHttp},
-            new Object[] {"GRPC/Prod", storageFixtureGrpc, bucketFixtureGrpc});
+  public static final class ChecksummedTestContentProvider implements ParametersProvider {
+    @Override
+    public ImmutableList<?> parameters() {
+      DataGenerator gen = DataGenerator.base64Characters();
+      int _2MiB = 2 * 1024 * 1024;
+      int _24MiB = 24 * 1024 * 1024;
 
-    DataGenerator gen = DataGenerator.base64Characters();
-    int _2MiB = 2 * 1024 * 1024;
-    int _24MiB = 24 * 1024 * 1024;
-    ImmutableList<ChecksummedTestContent> contents =
-        ImmutableList.of(
-            // small, single message single stream when resumable
-            ChecksummedTestContent.of(gen.genBytes(15)),
-            // med, multiple messages single stream when resumable
-            ChecksummedTestContent.of(gen.genBytes(_2MiB + 3)),
-            // large, multiple messages and multiple streams when resumable
-            ChecksummedTestContent.of(gen.genBytes(_24MiB + 5)));
-
-    ImmutableList.Builder<Object[]> cross = ImmutableList.builder();
-    for (Object[] cab : clientsAndBuckets) {
-      for (ChecksummedTestContent content : contents) {
-        cross.add(new Object[] {cab[0] + "/" + content.getBytes().length, cab[1], cab[2], content});
-      }
+      return ImmutableList.of(
+          // small, single message single stream when resumable
+          ChecksummedTestContent.of(gen.genBytes(15)),
+          // med, multiple messages single stream when resumable
+          ChecksummedTestContent.of(gen.genBytes(_2MiB + 3)),
+          // large, multiple messages and multiple streams when resumable
+          ChecksummedTestContent.of(gen.genBytes(_24MiB + 5)));
     }
-    return cross.build();
   }
 
   @Test
   public void testCrc32cValidated_createFrom_expectFailure() {
     String blobName = testName.getMethodName();
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
     byte[] bytes = content.concat('x');
@@ -136,7 +102,7 @@ public final class ITObjectChecksumSupportTest {
   @Test
   public void testCrc32cValidated_createFrom_expectSuccess() throws IOException {
     String blobName = testName.getMethodName();
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
     byte[] bytes = content.getBytes();
@@ -152,7 +118,7 @@ public final class ITObjectChecksumSupportTest {
   @Test
   public void testCrc32cValidated_writer_expectFailure() {
     String blobName = testName.getMethodName();
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
     byte[] bytes = content.concat('x');
@@ -175,7 +141,7 @@ public final class ITObjectChecksumSupportTest {
   @Test
   public void testCrc32cValidated_writer_expectSuccess() throws IOException {
     String blobName = testName.getMethodName();
-    BlobId blobId = BlobId.of(bucketFixture.getBucketInfo().getName(), blobName);
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
     byte[] bytes = content.getBytes();
@@ -192,17 +158,12 @@ public final class ITObjectChecksumSupportTest {
   }
 
   @Test
-  @SuppressWarnings({"deprecation"})
+  // Error Handling for GRPC not complete b/247621346
+  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testCreateBlobMd5Fail() {
-    // Error Handling for GRPC not complete
-    // b/247621346
-    assumeTrue(clientName.startsWith("JSON"));
-
     String blobName = testName.getMethodName();
     BlobInfo blob =
-        BlobInfo.newBuilder(bucketFixture.getBucketInfo(), blobName)
-            .setMd5("O1R4G1HJSDUISJjoIYmVhQ==")
-            .build();
+        BlobInfo.newBuilder(bucket, blobName).setMd5("O1R4G1HJSDUISJjoIYmVhQ==").build();
     ByteArrayInputStream stream = content.bytesAsInputStream();
     try {
       storage.create(blob, stream, Storage.BlobWriteOption.md5Match());

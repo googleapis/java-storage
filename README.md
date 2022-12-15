@@ -19,7 +19,7 @@ If you are using Maven with [BOM][libraries-bom], add this to your pom.xml file:
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>libraries-bom</artifactId>
-      <version>26.1.3</version>
+      <version>26.2.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -41,7 +41,7 @@ If you are using Maven without BOM, add this to your dependencies:
 <dependency>
   <groupId>com.google.cloud</groupId>
   <artifactId>google-cloud-storage</artifactId>
-  <version>2.14.0</version>
+  <version>2.16.0</version>
 </dependency>
 
 ```
@@ -49,20 +49,20 @@ If you are using Maven without BOM, add this to your dependencies:
 If you are using Gradle 5.x or later, add this to your dependencies:
 
 ```Groovy
-implementation platform('com.google.cloud:libraries-bom:26.1.4')
+implementation platform('com.google.cloud:libraries-bom:26.2.0')
 
 implementation 'com.google.cloud:google-cloud-storage'
 ```
 If you are using Gradle without BOM, add this to your dependencies:
 
 ```Groovy
-implementation 'com.google.cloud:google-cloud-storage:2.14.0'
+implementation 'com.google.cloud:google-cloud-storage:2.16.0'
 ```
 
 If you are using SBT, add this to your dependencies:
 
 ```Scala
-libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.14.0"
+libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.16.0"
 ```
 
 ## Authentication
@@ -247,6 +247,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Enable Lifecycle Management | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/EnableLifecycleManagement.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/EnableLifecycleManagement.java) |
 | Enable Requester Pays | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/EnableRequesterPays.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/EnableRequesterPays.java) |
 | Enable Uniform Bucket Level Access | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/EnableUniformBucketLevelAccess.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/EnableUniformBucketLevelAccess.java) |
+| Get Bucket Autoclass | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/GetBucketAutoclass.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/GetBucketAutoclass.java) |
 | Get Bucket Metadata | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/GetBucketMetadata.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/GetBucketMetadata.java) |
 | Get Bucket Rpo | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/GetBucketRpo.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/GetBucketRpo.java) |
 | Get Default Event Based Hold | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/GetDefaultEventBasedHold.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/GetDefaultEventBasedHold.java) |
@@ -271,6 +272,7 @@ Samples are in the [`samples/`](https://github.com/googleapis/java-storage/tree/
 | Remove Bucket Owner | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/RemoveBucketOwner.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/RemoveBucketOwner.java) |
 | Remove Retention Policy | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/RemoveRetentionPolicy.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/RemoveRetentionPolicy.java) |
 | Set Async Turbo Rpo | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetAsyncTurboRpo.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetAsyncTurboRpo.java) |
+| Set Bucket Autoclass | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetBucketAutoclass.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetBucketAutoclass.java) |
 | Set Bucket Default Kms Key | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetBucketDefaultKmsKey.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetBucketDefaultKmsKey.java) |
 | Set Bucket Website Info | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetBucketWebsiteInfo.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetBucketWebsiteInfo.java) |
 | Set Client Endpoint | [source code](https://github.com/googleapis/java-storage/blob/main/samples/snippets/src/main/java/com/example/storage/bucket/SetClientEndpoint.java) | [![Open in Cloud Shell][shell_img]](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/googleapis/java-storage&page=editor&open_in_editor=samples/snippets/src/main/java/com/example/storage/bucket/SetClientEndpoint.java) |

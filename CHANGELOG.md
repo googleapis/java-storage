@@ -1,5 +1,64 @@
 # Changelog
 
+## [2.16.0](https://github.com/googleapis/java-storage/compare/v2.15.1...v2.16.0) (2022-12-06)
+
+
+### Features
+
+* Add {Compose,Rewrite,StartResumableWrite}Request.object_checksums and Bucket.RetentionPolicy.retention_duration ([#1790](https://github.com/googleapis/java-storage/issues/1790)) ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Added a new retention_duration field of Duration type ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Added object_checksums for compose/rewrite/startResumableWrite request ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+
+
+### Bug Fixes
+
+* Removed WriteObject routing annotations ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+
+
+### Documentation
+
+* Clarified relative resource names in gRPC IAM RPCs ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Clarified the object can be deleted via DeleteObject ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+* Updated the document link for `Naming Guidelines` ([31c1b18](https://github.com/googleapis/java-storage/commit/31c1b18acc3c118e39eb613a82ee292f3e246b8f))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.1.0 ([#1797](https://github.com/googleapis/java-storage/issues/1797)) ([b1d0266](https://github.com/googleapis/java-storage/commit/b1d026608a5e3772e8bf77f25f1daf68b007427a))
+* Update dependency org.apache.httpcomponents:httpclient to v4.5.14 ([#1795](https://github.com/googleapis/java-storage/issues/1795)) ([cf900f4](https://github.com/googleapis/java-storage/commit/cf900f4139f30f89e3c0784467ddc12cc00cf81c))
+* Update dependency org.apache.httpcomponents:httpcore to v4.4.16 ([#1786](https://github.com/googleapis/java-storage/issues/1786)) ([3bf403e](https://github.com/googleapis/java-storage/commit/3bf403e94c035e6cf936e062a1ced2b5221b3912))
+* Update dependency org.apache.httpcomponents:httpmime to v4.5.14 ([#1796](https://github.com/googleapis/java-storage/issues/1796)) ([c9ee3ca](https://github.com/googleapis/java-storage/commit/c9ee3ca8820531cd709bb8f8a58a736813346861))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.18 ([#1782](https://github.com/googleapis/java-storage/issues/1782)) ([5bc5176](https://github.com/googleapis/java-storage/commit/5bc517623ef04bdb9a71a51666754b9f753f4c69))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.19 ([#1791](https://github.com/googleapis/java-storage/issues/1791)) ([3184d65](https://github.com/googleapis/java-storage/commit/3184d65cce1368c2f39ff85a6ed02cf536902244))
+
+## [2.15.1](https://github.com/googleapis/java-storage/compare/v2.15.0...v2.15.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* Disable REGAPIC transport in storage v2 ([#1762](https://github.com/googleapis/java-storage/issues/1762)) ([13d630e](https://github.com/googleapis/java-storage/commit/13d630e7ce89273c292acca7a7e048218ece4182))
+* Update GrpcStorageImpl#get(BlobId) to return null on 404 ([#1772](https://github.com/googleapis/java-storage/issues/1772)) ([8c59c64](https://github.com/googleapis/java-storage/commit/8c59c64ccf0dd7753467b4c0f0bcf5f4b49c5bf0))
+
+
+### Documentation
+
+* Annotate all Option factory methods with their Nullability bounds ([#1775](https://github.com/googleapis/java-storage/issues/1775)) ([3b8d137](https://github.com/googleapis/java-storage/commit/3b8d137a113376d7dac9010b9207d435df2622f7))
+
+## [2.15.0](https://github.com/googleapis/java-storage/compare/v2.14.0...v2.15.0) (2022-11-07)
+
+
+### Features
+
+* Add Autoclass support and sample ([#1697](https://github.com/googleapis/java-storage/issues/1697)) ([82aacd7](https://github.com/googleapis/java-storage/commit/82aacd7922573d6f4779f21cdc83de10616d7a08))
+* Update retries for Notifications ([#1734](https://github.com/googleapis/java-storage/issues/1734)) ([0fb2f18](https://github.com/googleapis/java-storage/commit/0fb2f1823f9eff8534f15240321003f120fed3f4))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.0.6 ([#1761](https://github.com/googleapis/java-storage/issues/1761)) ([803a90b](https://github.com/googleapis/java-storage/commit/803a90b7747b8972f51d1407616c51084d97c589))
+* Update dependency net.jqwik:jqwik to v1.7.1 ([#1758](https://github.com/googleapis/java-storage/issues/1758)) ([140e909](https://github.com/googleapis/java-storage/commit/140e90911229c876de7b674dd1e61b278e8b07fd))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.17 ([#1759](https://github.com/googleapis/java-storage/issues/1759)) ([7e3175a](https://github.com/googleapis/java-storage/commit/7e3175a56a06dac0aa0841f221a486bb69b5c9bf))
+
 ## [2.14.0](https://github.com/googleapis/java-storage/compare/v2.13.1...v2.14.0) (2022-10-26)
 
 ### Google Cloud Storage gRPC API Preview

@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.InternalExtensionOnly;
 import com.google.api.gax.paging.Page;
@@ -65,6 +66,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * An interface for Google Cloud Storage.
@@ -306,13 +308,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     /** Returns an option for specifying bucket's predefined ACL configuration. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketTargetOption predefinedAcl(PredefinedAcl acl) {
+    public static BucketTargetOption predefinedAcl(@NonNull PredefinedAcl acl) {
       return new BucketTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
 
     /** Returns an option for specifying bucket's default ACL configuration for blobs. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketTargetOption predefinedDefaultObjectAcl(PredefinedAcl acl) {
+    public static BucketTargetOption predefinedDefaultObjectAcl(@NonNull PredefinedAcl acl) {
       return new BucketTargetOption(UnifiedOpts.predefinedDefaultObjectAcl(acl));
     }
 
@@ -339,7 +341,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * `requester_pays` flag enabled to assign operation costs.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketTargetOption userProject(String userProject) {
+    public static BucketTargetOption userProject(@NonNull String userProject) {
       return new BucketTargetOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -352,7 +354,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     patch</a>
      */
     @TransportCompatibility({Transport.HTTP})
-    public static BucketTargetOption projection(String projection) {
+    public static BucketTargetOption projection(@NonNull String projection) {
       return new BucketTargetOption(UnifiedOpts.projection(projection));
     }
   }
@@ -389,7 +391,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketSourceOption userProject(String userProject) {
+    public static BucketSourceOption userProject(@NonNull String userProject) {
       return new BucketSourceOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -411,7 +413,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * keys for all accounts will be listed.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static ListHmacKeysOption serviceAccount(ServiceAccount serviceAccount) {
+    public static ListHmacKeysOption serviceAccount(@NonNull ServiceAccount serviceAccount) {
       return new ListHmacKeysOption(UnifiedOpts.serviceAccount(serviceAccount));
     }
 
@@ -423,7 +425,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     /** Returns an option to specify the page token from which to start listing HMAC keys. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static ListHmacKeysOption pageToken(String pageToken) {
+    public static ListHmacKeysOption pageToken(@NonNull String pageToken) {
       return new ListHmacKeysOption(UnifiedOpts.pageToken(pageToken));
     }
 
@@ -441,7 +443,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static ListHmacKeysOption userProject(String userProject) {
+    public static ListHmacKeysOption userProject(@NonNull String userProject) {
       return new ListHmacKeysOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -450,7 +452,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Application Default Credentials.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static ListHmacKeysOption projectId(String projectId) {
+    public static ListHmacKeysOption projectId(@NonNull String projectId) {
       return new ListHmacKeysOption(UnifiedOpts.projectId(projectId));
     }
   }
@@ -467,7 +469,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static CreateHmacKeyOption userProject(String userProject) {
+    public static CreateHmacKeyOption userProject(@NonNull String userProject) {
       return new CreateHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -476,7 +478,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Application Default Credentials.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static CreateHmacKeyOption projectId(String projectId) {
+    public static CreateHmacKeyOption projectId(@NonNull String projectId) {
       return new CreateHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
   }
@@ -492,7 +494,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static GetHmacKeyOption userProject(String userProject) {
+    public static GetHmacKeyOption userProject(@NonNull String userProject) {
       return new GetHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -501,7 +503,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Application Default Credentials.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static GetHmacKeyOption projectId(String projectId) {
+    public static GetHmacKeyOption projectId(@NonNull String projectId) {
       return new GetHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
   }
@@ -517,7 +519,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static DeleteHmacKeyOption userProject(String userProject) {
+    public static DeleteHmacKeyOption userProject(@NonNull String userProject) {
       return new DeleteHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
   }
@@ -533,7 +535,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * Requester Pays buckets.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static UpdateHmacKeyOption userProject(String userProject) {
+    public static UpdateHmacKeyOption userProject(@NonNull String userProject) {
       return new UpdateHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
   }
@@ -570,7 +572,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketGetOption userProject(String userProject) {
+    public static BucketGetOption userProject(@NonNull String userProject) {
       return new BucketGetOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -582,6 +584,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketGetOption fields(BucketField... fields) {
+      requireNonNull(fields, "fields must be non null");
       ImmutableSet<NamedField> set =
           ImmutableSet.<NamedField>builder()
               .addAll(BucketField.REQUIRED_FIELDS)
@@ -602,7 +605,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption predefinedAcl(PredefinedAcl acl) {
+    public static BlobTargetOption predefinedAcl(@NonNull PredefinedAcl acl) {
       return new BlobTargetOption(UnifiedOpts.predefinedAcl(acl));
     }
 
@@ -692,7 +695,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption encryptionKey(Key key) {
+    public static BlobTargetOption encryptionKey(@NonNull Key key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
 
@@ -701,7 +704,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption userProject(String userProject) {
+    public static BlobTargetOption userProject(@NonNull String userProject) {
       return new BlobTargetOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -712,13 +715,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption encryptionKey(String key) {
+    public static BlobTargetOption encryptionKey(@NonNull String key) {
       return new BlobTargetOption(UnifiedOpts.encryptionKey(key));
     }
 
     /** Returns an option to set a customer-managed key for server-side encryption of the blob. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobTargetOption kmsKeyName(String kmsKeyName) {
+    public static BlobTargetOption kmsKeyName(@NonNull String kmsKeyName) {
       return new BlobTargetOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
   }
@@ -734,7 +737,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     /** Returns an option for specifying blob's predefined ACL configuration. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption predefinedAcl(PredefinedAcl acl) {
+    public static BlobWriteOption predefinedAcl(@NonNull PredefinedAcl acl) {
       return new BlobWriteOption(UnifiedOpts.predefinedAcl(acl));
     }
 
@@ -808,7 +811,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption encryptionKey(Key key) {
+    public static BlobWriteOption encryptionKey(@NonNull Key key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
 
@@ -819,7 +822,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption encryptionKey(String key) {
+    public static BlobWriteOption encryptionKey(@NonNull String key) {
       return new BlobWriteOption(UnifiedOpts.encryptionKey(key));
     }
 
@@ -829,7 +832,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param kmsKeyName the KMS key resource id
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption kmsKeyName(String kmsKeyName) {
+    public static BlobWriteOption kmsKeyName(@NonNull String kmsKeyName) {
       return new BlobWriteOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
 
@@ -838,7 +841,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption userProject(String userProject) {
+    public static BlobWriteOption userProject(@NonNull String userProject) {
       return new BlobWriteOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -943,7 +946,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobSourceOption decryptionKey(Key key) {
+    public static BlobSourceOption decryptionKey(@NonNull Key key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
@@ -954,7 +957,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobSourceOption decryptionKey(String key) {
+    public static BlobSourceOption decryptionKey(@NonNull String key) {
       return new BlobSourceOption(UnifiedOpts.decryptionKey(key));
     }
 
@@ -963,7 +966,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobSourceOption userProject(String userProject) {
+    public static BlobSourceOption userProject(@NonNull String userProject) {
       return new BlobSourceOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -1059,6 +1062,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobGetOption fields(BlobField... fields) {
+      requireNonNull(fields, "fields must be non null");
       ImmutableSet<NamedField> set =
           ImmutableSet.<NamedField>builder().addAll(BlobField.REQUIRED_FIELDS).add(fields).build();
       return new BlobGetOption(UnifiedOpts.fields(set));
@@ -1069,7 +1073,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobGetOption userProject(String userProject) {
+    public static BlobGetOption userProject(@NonNull String userProject) {
       return new BlobGetOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -1078,7 +1082,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * blob.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobGetOption decryptionKey(Key key) {
+    public static BlobGetOption decryptionKey(@NonNull Key key) {
       return new BlobGetOption(UnifiedOpts.decryptionKey(key));
     }
 
@@ -1089,7 +1093,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param key the AES256 encoded in base64
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobGetOption decryptionKey(String key) {
+    public static BlobGetOption decryptionKey(@NonNull String key) {
       return new BlobGetOption(UnifiedOpts.decryptionKey(key));
     }
 
@@ -1121,7 +1125,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     /** Returns an option to specify the page token from which to start listing buckets. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketListOption pageToken(String pageToken) {
+    public static BucketListOption pageToken(@NonNull String pageToken) {
       return new BucketListOption(UnifiedOpts.pageToken(pageToken));
     }
 
@@ -1130,7 +1134,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * prefix.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketListOption prefix(String prefix) {
+    public static BucketListOption prefix(@NonNull String prefix) {
       return new BucketListOption(UnifiedOpts.prefix(prefix));
     }
 
@@ -1139,7 +1143,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * with 'requester_pays' flag.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BucketListOption userProject(String userProject) {
+    public static BucketListOption userProject(@NonNull String userProject) {
       return new BucketListOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -1151,6 +1155,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketListOption fields(BucketField... fields) {
+      requireNonNull(fields, "fields must be non null");
       ImmutableSet<NamedField> set =
           Streams.concat(
                   Stream.of(NamedField.literal("nextPageToken")),
@@ -1178,7 +1183,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
 
     /** Returns an option to specify the page token from which to start listing blobs. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption pageToken(String pageToken) {
+    public static BlobListOption pageToken(@NonNull String pageToken) {
       return new BlobListOption(UnifiedOpts.pageToken(pageToken));
     }
 
@@ -1187,7 +1192,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * prefix.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption prefix(String prefix) {
+    public static BlobListOption prefix(@NonNull String prefix) {
       return new BlobListOption(UnifiedOpts.prefix(prefix));
     }
 
@@ -1213,7 +1218,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      *     as well.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption delimiter(String delimiter) {
+    public static BlobListOption delimiter(@NonNull String delimiter) {
       return new BlobListOption(UnifiedOpts.delimiter(delimiter));
     }
 
@@ -1225,7 +1230,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param startOffset startOffset to filter the results
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption startOffset(String startOffset) {
+    public static BlobListOption startOffset(@NonNull String startOffset) {
       return new BlobListOption(UnifiedOpts.startOffset(startOffset));
     }
 
@@ -1237,7 +1242,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param endOffset endOffset to filter the results
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption endOffset(String endOffset) {
+    public static BlobListOption endOffset(@NonNull String endOffset) {
       return new BlobListOption(UnifiedOpts.endOffset(endOffset));
     }
 
@@ -1248,7 +1253,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param userProject projectId of the billing user project.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobListOption userProject(String userProject) {
+    public static BlobListOption userProject(@NonNull String userProject) {
       return new BlobListOption(UnifiedOpts.userProject(userProject));
     }
 
@@ -1270,6 +1275,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption fields(BlobField... fields) {
+      requireNonNull(fields, "fields must be non null");
       ImmutableSet<NamedField> set =
           Streams.concat(
                   Stream.of(NamedField.literal("nextPageToken"), NamedField.literal("prefixes")),
@@ -3344,11 +3350,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getAcl(String bucket, Entity entity, BucketSourceOption... options);
 
   /** @see #getAcl(String, Entity, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getAcl(String bucket, Entity entity);
 
   /**
@@ -3381,11 +3387,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteAcl(String bucket, Entity entity, BucketSourceOption... options);
 
   /** @see #deleteAcl(String, Entity, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteAcl(String bucket, Entity entity);
 
   /**
@@ -3411,11 +3417,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createAcl(String bucket, Acl acl, BucketSourceOption... options);
 
   /** @see #createAcl(String, Acl, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createAcl(String bucket, Acl acl);
 
   /**
@@ -3441,11 +3447,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options extra parameters to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateAcl(String bucket, Acl acl, BucketSourceOption... options);
 
   /** @see #updateAcl(String, Acl, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateAcl(String bucket, Acl acl);
 
   /**
@@ -3476,11 +3482,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @param options any number of BucketSourceOptions to apply to this operation
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listAcls(String bucket, BucketSourceOption... options);
 
   /** @see #listAcls(String, BucketSourceOption...) */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listAcls(String bucket);
 
   /**
@@ -3499,7 +3505,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getDefaultAcl(String bucket, Entity entity);
 
   /**
@@ -3523,7 +3529,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteDefaultAcl(String bucket, Entity entity);
 
   /**
@@ -3542,7 +3548,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createDefaultAcl(String bucket, Acl acl);
 
   /**
@@ -3561,7 +3567,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateDefaultAcl(String bucket, Acl acl);
 
   /**
@@ -3582,7 +3588,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listDefaultAcls(String bucket);
 
   /**
