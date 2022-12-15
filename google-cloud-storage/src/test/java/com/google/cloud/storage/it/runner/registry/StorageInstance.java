@@ -40,7 +40,7 @@ final class StorageInstance implements ManagedLifecycle {
   }
 
   Storage getStorage() {
-    return proxy;
+    return storage;
   }
 
   @Override
