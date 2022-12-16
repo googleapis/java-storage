@@ -1063,7 +1063,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl getAcl(Entity entity) {
     return storage.getAcl(getBlobId(), entity);
   }
@@ -1085,7 +1085,7 @@ public class Blob extends BlobInfo {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public boolean deleteAcl(Entity entity) {
     return storage.deleteAcl(getBlobId(), entity);
   }
@@ -1101,7 +1101,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl createAcl(Acl acl) {
     return storage.createAcl(getBlobId(), acl);
   }
@@ -1117,7 +1117,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public Acl updateAcl(Acl acl) {
     return storage.updateAcl(getBlobId(), acl);
   }
@@ -1136,7 +1136,7 @@ public class Blob extends BlobInfo {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   public List<Acl> listAcls() {
     return storage.listAcls(getBlobId());
   }

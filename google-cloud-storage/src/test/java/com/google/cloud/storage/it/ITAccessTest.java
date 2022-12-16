@@ -1125,8 +1125,12 @@ public class ITAccessTest {
 
   static ImmutableList<Acl> dropEtags(List<Acl> defaultAcls) {
     return defaultAcls.stream()
-        .map(acl -> Acl.of(acl.getEntity(), acl.getRole()))
+        .map(ITAccessTest::dropEtag)
         .collect(ImmutableList.toImmutableList());
+  }
+
+  static Acl dropEtag(Acl acl) {
+    return Acl.of(acl.getEntity(), acl.getRole());
   }
 
   static Predicate<Acl> hasRole(Acl.Role expected) {

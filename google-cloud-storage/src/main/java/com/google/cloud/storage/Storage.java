@@ -3599,7 +3599,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl getAcl(BlobId blob, Entity entity);
 
   /**
@@ -3623,7 +3623,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the ACL was deleted, {@code false} if it was not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteAcl(BlobId blob, Entity entity);
 
   /**
@@ -3651,7 +3651,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl createAcl(BlobId blob, Acl acl);
 
   /**
@@ -3669,7 +3669,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Acl updateAcl(BlobId blob, Acl acl);
 
   /**
@@ -3690,7 +3690,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Acl> listAcls(BlobId blob);
 
   /**
