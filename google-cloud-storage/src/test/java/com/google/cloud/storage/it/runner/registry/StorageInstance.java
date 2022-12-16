@@ -162,6 +162,12 @@ final class StorageInstance implements ManagedLifecycle {
     }
 
     @Override
+    public Bucket lockRetentionPolicy(BucketInfo bucket, BucketTargetOption... options) {
+      checkBucketProtected(bucket);
+      return super.lockRetentionPolicy(bucket, options);
+    }
+
+    @Override
     public void close() throws Exception {
       throw new VetoException("Called #close() on global Storage instance");
     }
