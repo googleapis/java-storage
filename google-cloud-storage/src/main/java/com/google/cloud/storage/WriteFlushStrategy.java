@@ -89,6 +89,28 @@ final class WriteFlushStrategy {
     return ret;
   }
 
+  /**
+   * Several fields of a WriteObjectRequest are only allowed on the "first" message sent to gcs,
+   * this utility method centralizes the logic necessary to clear those fields for use by subsequent
+   * messages.
+   */
+  private static WriteObjectRequest possiblyPairDownRequest(
+      WriteObjectRequest message, boolean firstMessageOfStream) {
+    if (firstMessageOfStream && message.getWriteOffset() == 0) {
+      return message;
+    }
+
+    WriteObjectRequest.Builder b = message.toBuilder();
+    if (!firstMessageOfStream) {
+      b.clearUploadId();
+    }
+
+    if (message.getWriteOffset() > 0) {
+      b.clearWriteObjectSpec().clearObjectChecksums();
+    }
+    return b.build();
+  }
+
   @FunctionalInterface
   interface FlusherFactory {
     /**
@@ -144,9 +166,7 @@ final class WriteFlushStrategy {
 
             boolean first = true;
             for (WriteObjectRequest message : segments) {
-              if (!first) {
-                message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
-              }
+              message = possiblyPairDownRequest(message, first);
 
               write.onNext(message);
               first = false;
@@ -188,9 +208,7 @@ final class WriteFlushStrategy {
     public void flush(@NonNull List<WriteObjectRequest> segments) {
       ensureOpen();
       for (WriteObjectRequest message : segments) {
-        if (!first) {
-          message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
-        }
+        message = possiblyPairDownRequest(message, first);
 
         stream.onNext(message);
         first = false;
@@ -201,9 +219,7 @@ final class WriteFlushStrategy {
     public void close(@Nullable WriteObjectRequest message) {
       ensureOpen();
       if (message != null) {
-        if (!first) {
-          message = message.toBuilder().clearUploadId().clearWriteObjectSpec().build();
-        }
+        message = possiblyPairDownRequest(message, first);
         stream.onNext(message);
       }
       stream.onCompleted();
