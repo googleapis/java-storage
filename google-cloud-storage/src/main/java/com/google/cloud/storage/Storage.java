@@ -627,6 +627,24 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option for blob's data generation match. If this option is used the request will
+     * fail if blob's generation does not match the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobTargetOption generationMatch(long generation) {
+      return new BlobTargetOption(UnifiedOpts.generationMatch(generation));
+    }
+
+    /**
+     * Returns an option for blob's data generation mismatch. If this option is used the request
+     * will fail if generation matches the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobTargetOption generationNotMatch(long generation) {
+      return new BlobTargetOption(UnifiedOpts.generationNotMatch(generation));
+    }
+
+    /**
      * Returns an option for blob's data generation mismatch. If this option is used the request
      * will fail if generation matches.
      */
@@ -642,6 +660,24 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption metagenerationMatch() {
       return new BlobTargetOption(UnifiedOpts.metagenerationMatchExtractor());
+    }
+
+    /**
+     * Returns an option for blob's metageneration match. If this option is used the request will
+     * fail if blob's metageneration does not match the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobTargetOption metagenerationMatch(long metageneration) {
+      return new BlobTargetOption(UnifiedOpts.metagenerationMatch(metageneration));
+    }
+
+    /**
+     * Returns an option for blob's metageneration mismatch. If this option is used the request will
+     * fail if metageneration matches the provided value.
+     */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
+    public static BlobTargetOption metagenerationNotMatch(long metageneration) {
+      return new BlobTargetOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
 
     /**
