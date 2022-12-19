@@ -449,6 +449,31 @@ public final class ITBlobReadChannelTest {
     }
   }
 
+  /**
+   * This is specifically in place for compatibility with BlobReadChannelV1.
+   *
+   * <p>This is behavior is a bug, and should be fixed at the next major version
+   */
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void responseWith416ReturnsZeroAndLeavesTheChannelOpen() throws IOException {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
+      reader.seek(length);
+      ByteBuffer buf = ByteBuffer.allocate(1);
+      int read = reader.read(buf);
+      assertThat(read).isEqualTo(-1);
+      assertThat(reader.isOpen()).isTrue();
+      int read2 = reader.read(buf);
+      assertThat(read2).isEqualTo(-1);
+    }
+  }
+
   private void captureAndRestoreTest(@Nullable Integer position, @Nullable Integer endOffset)
       throws IOException {
     ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
