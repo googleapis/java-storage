@@ -31,6 +31,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGeneration;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
@@ -400,6 +401,51 @@ public final class ITBlobReadChannelTest {
       reader.read(ByteBuffer.wrap(bytes2));
       String xxd2 = xxd(bytes2);
       assertThat(xxd2).isEqualTo(xxdExpected2);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void readingLastByteReturnsOneByte_seekOnly() throws IOException {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    byte[] expected1 = Arrays.copyOfRange(bytes, 9, 10);
+    String xxdExpected1 = xxd(expected1);
+    try (ReadChannel reader = storage.reader(gen1.getBlobId());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        WritableByteChannel writer = Channels.newChannel(baos)) {
+      reader.seek(length - 1);
+      ByteStreams.copy(reader, writer);
+      byte[] bytes1 = baos.toByteArray();
+      String xxd1 = xxd(bytes1);
+      assertThat(xxd1).isEqualTo(xxdExpected1);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void readingLastByteReturnsOneByte_seekAndLimit() throws IOException {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    byte[] expected1 = Arrays.copyOfRange(bytes, 9, 10);
+    String xxdExpected1 = xxd(expected1);
+    try (ReadChannel reader = storage.reader(gen1.getBlobId());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        WritableByteChannel writer = Channels.newChannel(baos)) {
+      reader.seek(length - 1);
+      reader.limit(length);
+      ByteStreams.copy(reader, writer);
+      byte[] bytes1 = baos.toByteArray();
+      String xxd1 = xxd(bytes1);
+      assertThat(xxd1).isEqualTo(xxdExpected1);
     }
   }
 

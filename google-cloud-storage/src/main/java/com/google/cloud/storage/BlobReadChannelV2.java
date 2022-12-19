@@ -162,7 +162,6 @@ final class BlobReadChannelV2 implements StorageReadChannel {
   }
 
   private ApiaryReadRequest getApiaryReadRequest() {
-    // TODO: test what happens if you try to read from the last byte of an object
     StorageObject object = resolvedObject != null ? resolvedObject : storageObject;
     return new ApiaryReadRequest(object, opts, byteRangeSpec);
   }
