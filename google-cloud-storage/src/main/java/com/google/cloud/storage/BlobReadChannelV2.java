@@ -107,6 +107,16 @@ final class BlobReadChannelV2 implements StorageReadChannel {
         close();
       }
       return read;
+    } catch (StorageException e) {
+      if (e.getCode() == 416) {
+        // HttpStorageRpc turns 416 into a null etag with an empty byte array, leading
+        // BlobReadChannel to believe it read 0 bytes, returning -1 and leaving the channel open.
+        // Emulate that same behavior here to preserve behavior compatibility, though this should
+        // be removed in the next major version.
+        return -1;
+      } else {
+        throw new IOException(e);
+      }
     } catch (IOException e) {
       throw e;
     } catch (Exception e) {
