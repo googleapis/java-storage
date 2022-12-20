@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage.it;
 
-import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpContent;
@@ -65,21 +65,33 @@ final class RequestAuditing extends HttpTransportOptions {
   }
 
   void assertQueryParam(String paramName, String expectedValue) {
+    assertQueryParam(paramName, ImmutableList.of(expectedValue), Function.identity());
+  }
+
+  void assertQueryParam(String paramName, ImmutableList<String> expectedValue) {
     assertQueryParam(paramName, expectedValue, Function.identity());
   }
 
-  <T> void assertQueryParam(String paramName, T expectedValue, Function<String, T> transform) {
+  <T> void assertQueryParam(String paramName, T expected, Function<String, T> transform) {
+    assertQueryParam(paramName, ImmutableList.of(expected), transform);
+  }
+
+  private <T> void assertQueryParam(
+      String paramName, ImmutableList<T> expected, Function<String, T> transform) {
     ImmutableList<HttpRequest> requests = getRequests();
 
     List<T> actual =
         requests.stream()
             .map(HttpRequest::getUrl)
-            .distinct() // todo: figure out why requests seem to be recorded twice for blob create
+            // When a multipart (http, not MPU) request is sent it will show up as multiple requests
+            // de-dupe before processing
+            .distinct()
             .map(u -> (String) u.getFirst(paramName))
+            .filter(Objects::nonNull)
             .map(transform)
             .collect(Collectors.toList());
 
-    assertThat(actual).isEqualTo(ImmutableList.of(expectedValue));
+    assertWithMessage("Query Param " + paramName).that(actual).isEqualTo(expected);
   }
 
   void assertPathParam(String resourceName, String expectedValue) {
@@ -88,7 +100,9 @@ final class RequestAuditing extends HttpTransportOptions {
     List<String> actual =
         requests.stream()
             .map(HttpRequest::getUrl)
-            .distinct() // todo: figure out why requests seem to be recorded twice for blob create
+            // When a multipart (http, not MPU) request is sent it will show up as multiple requests
+            // de-dupe before processing
+            .distinct()
             .map(GenericUrl::getRawPath)
             .map(
                 s -> {
@@ -109,7 +123,9 @@ final class RequestAuditing extends HttpTransportOptions {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-    assertThat(actual).isEqualTo(ImmutableList.of(expectedValue));
+    assertWithMessage("Path Param " + resourceName)
+        .that(actual)
+        .isEqualTo(ImmutableList.of(expectedValue));
   }
 
   void assertNoContentEncoding() {
@@ -122,7 +138,7 @@ final class RequestAuditing extends HttpTransportOptions {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-    assertThat(actual).isEmpty();
+    assertWithMessage("Header Content-Encoding").that(actual).isEmpty();
   }
 
   void assertEncryptionKeyHeaders(EncryptionKeyTuple tuple) {
@@ -139,8 +155,11 @@ final class RequestAuditing extends HttpTransportOptions {
                         (String) h.get("x-goog-encryption-key-sha256")))
             .collect(Collectors.toList());
 
-    // todo: figure out why requests seem to be recorded twice for blob create
-    assertThat(actual).containsAtLeastElementsIn(ImmutableList.of(tuple));
+    // When a multipart (http, not MPU) request is sent it will show up as multiple requests,
+    // constrain our assertion to contains rather than exact matching
+    assertWithMessage("Headers x-goog-encryption-*")
+        .that(actual)
+        .containsAtLeastElementsIn(ImmutableList.of(tuple));
   }
 
   void assertMultipartContentJsonAndText() {
@@ -153,7 +172,9 @@ final class RequestAuditing extends HttpTransportOptions {
             .map(HttpContent::getType)
             .collect(Collectors.toList());
 
-    assertThat(actual).isEqualTo(ImmutableList.of("application/json; charset=UTF-8", "text/plain"));
+    assertWithMessage("Multipart Content-Type")
+        .that(actual)
+        .isEqualTo(ImmutableList.of("application/json; charset=UTF-8", "text/plain"));
   }
 
   void assertMultipartJsonField(String jsonField, Object expectedValue) {
@@ -169,6 +190,8 @@ final class RequestAuditing extends HttpTransportOptions {
             .map(c -> (GenericJson) c.getData())
             .map(json -> json.get(jsonField))
             .collect(Collectors.toList());
-    assertThat(collect).isEqualTo(ImmutableList.of(expectedValue));
+    assertWithMessage("Multipart json field " + jsonField)
+        .that(collect)
+        .isEqualTo(ImmutableList.of(expectedValue));
   }
 }

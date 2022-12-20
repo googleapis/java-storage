@@ -221,6 +221,7 @@ final class StorageByteChannels {
       long totalBytesRead = 0;
       for (int i = offset; i < length; i++) {
         ByteBuffer dst = dsts[i];
+        int goal = dst.remaining();
         if (dst.hasRemaining()) {
           int read = c.read(dst);
           if (read == -1) {
@@ -230,6 +231,10 @@ final class StorageByteChannels {
             } else {
               break;
             }
+          } else if (read != goal) {
+            // if we weren't able to fill up the current buffer with this last read, return so we
+            // don't block and wait for another read call.
+            return totalBytesRead + read;
           }
           totalBytesRead += read;
         }

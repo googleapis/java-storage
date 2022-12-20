@@ -28,6 +28,7 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Storage.BlobGetOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.RpcBatch;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableMap;
@@ -56,7 +57,7 @@ public class StorageBatchTest {
       HttpStorageOptions.getDefaultInstance().getRetryAlgorithmManager();
 
   private HttpStorageOptions optionsMock;
-  private StorageRpc storageRpcMock;
+  private HttpStorageRpc storageRpcMock;
   private RpcBatch batchMock;
   private StorageBatch storageBatch;
   private final Storage storage = EasyMock.createStrictMock(Storage.class);
@@ -64,7 +65,7 @@ public class StorageBatchTest {
   @Before
   public void setUp() {
     optionsMock = EasyMock.createMock(HttpStorageOptions.class);
-    storageRpcMock = EasyMock.createMock(StorageRpc.class);
+    storageRpcMock = EasyMock.createMock(HttpStorageRpc.class);
     batchMock = EasyMock.createMock(RpcBatch.class);
     EasyMock.expect(optionsMock.getStorageRpcV1()).andReturn(storageRpcMock);
     EasyMock.expect(optionsMock.getRetryAlgorithmManager())

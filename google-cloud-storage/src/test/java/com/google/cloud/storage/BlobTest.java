@@ -42,6 +42,7 @@ import com.google.cloud.storage.Blob.BlobSourceOption;
 import com.google.cloud.storage.BlobInfo.BuilderImpl;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.CopyRequest;
+import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -610,7 +611,7 @@ public class BlobTest {
   }
 
   private StorageRpc prepareForDownload() {
-    StorageRpc mockStorageRpc = createNiceMock(StorageRpc.class);
+    HttpStorageRpc mockStorageRpc = createNiceMock(HttpStorageRpc.class);
     expect(storage.getOptions()).andReturn(mockOptions).anyTimes();
     replay(storage);
     expect(mockOptions.getStorageRpcV1()).andReturn(mockStorageRpc);

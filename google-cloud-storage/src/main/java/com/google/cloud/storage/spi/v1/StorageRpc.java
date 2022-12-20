@@ -17,6 +17,7 @@
 package com.google.cloud.storage.spi.v1;
 
 import com.google.api.core.InternalApi;
+import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.Bucket;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.HmacKey;
@@ -607,4 +608,7 @@ public interface StorageRpc extends ServiceRpc {
    * @throws StorageException upon failure
    */
   ServiceAccount getServiceAccount(String projectId);
+
+  @InternalApi
+  Storage getStorage();
 }

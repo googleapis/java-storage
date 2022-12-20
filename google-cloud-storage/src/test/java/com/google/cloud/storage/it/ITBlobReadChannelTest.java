@@ -16,27 +16,33 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.ReadChannel;
+import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGeneration;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
+import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
+import com.google.cloud.storage.it.runner.registry.ObjectsFixture.ObjectAndContent;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
@@ -46,12 +52,15 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -79,6 +88,7 @@ public final class ITBlobReadChannelTest {
 
   @Inject public Storage storage;
   @Inject public BucketInfo bucket;
+  @Inject public ObjectsFixture objectsFixture;
 
   @Test
   public void testLimit_smallerThanOneChunk() throws IOException {
@@ -86,6 +96,15 @@ public final class ITBlobReadChannelTest {
     int rangeBegin = 57;
     int rangeEnd = 2384;
     int chunkSize = _16MiB;
+    doLimitTest(srcContentSize, rangeBegin, rangeEnd, chunkSize);
+  }
+
+  @Test
+  public void testLimit_noSeek() throws IOException {
+    int srcContentSize = 16;
+    int rangeBegin = 0;
+    int rangeEnd = 10;
+    int chunkSize = _256KiB;
     doLimitTest(srcContentSize, rangeBegin, rangeEnd, chunkSize);
   }
 
@@ -198,43 +217,6 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
-  public void testReadChannelFailUpdatedGeneration() throws IOException {
-    // this test scenario is valid for both grpc and json, however the current semantics of actual
-    // request interleaving are very different, so this specific test is only applicable to json.
-    String blobName = "test-read-blob-fail-updated-generation";
-    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
-    Random random = new Random();
-    int chunkSize = 1024;
-    int blobSize = 2 * chunkSize;
-    byte[] content = new byte[blobSize];
-    random.nextBytes(content);
-    Blob remoteBlob = storage.create(blob, content);
-    assertNotNull(remoteBlob);
-    assertEquals(blobSize, (long) remoteBlob.getSize());
-    try (ReadChannel reader = storage.reader(blob.getBlobId())) {
-      reader.setChunkSize(chunkSize);
-      ByteBuffer readBytes = ByteBuffer.allocate(chunkSize);
-      int numReadBytes = reader.read(readBytes);
-      assertEquals(chunkSize, numReadBytes);
-      assertArrayEquals(Arrays.copyOf(content, chunkSize), readBytes.array());
-      try (WriteChannel writer = storage.writer(blob)) {
-        byte[] newContent = new byte[blobSize];
-        random.nextBytes(newContent);
-        int numWrittenBytes = writer.write(ByteBuffer.wrap(newContent));
-        assertEquals(blobSize, numWrittenBytes);
-      }
-      readBytes = ByteBuffer.allocate(chunkSize);
-      reader.read(readBytes);
-      fail("StorageException was expected");
-    } catch (IOException ex) {
-      StringBuilder messageBuilder = new StringBuilder();
-      messageBuilder.append("Blob ").append(blob.getBlobId()).append(" was updated while reading");
-      assertEquals(messageBuilder.toString(), ex.getMessage());
-    }
-  }
-
-  @Test
   public void ensureReaderReturnsCompressedBytesByDefault() throws IOException {
     String blobName = testName.getMethodName();
     BlobInfo blobInfo =
@@ -310,6 +292,232 @@ public final class ITBlobReadChannelTest {
     }
   }
 
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void channelIsConsideredOpenUponConstruction() {
+    ReadChannel reader = storage.reader(objectsFixture.getInfo1().getBlobId());
+    assertThat(reader.isOpen()).isTrue();
+    reader.close();
+  }
+
+  @Test
+  public void optionsWork() {
+    byte[] bytes1 = "A".getBytes(StandardCharsets.UTF_8);
+
+    BlobInfo info = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    Blob gen1 = storage.create(info, bytes1, BlobTargetOption.doesNotExist());
+
+    // attempt to read generation=1 && ifGenerationNotMatch=1
+    try (ReadChannel r =
+        storage.reader(
+            gen1.getBlobId(), BlobSourceOption.generationNotMatch(gen1.getGeneration()))) {
+      r.read(ByteBuffer.allocate(1));
+    } catch (IOException e) {
+      assertThat(e).hasCauseThat().isInstanceOf(StorageException.class);
+      StorageException se = (StorageException) e.getCause();
+      // b/261214971 for differing response code
+      assertThat(se.getCode()).isAnyOf(/*json*/ 304, /*grpc*/ 409);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void captureAndRestore_position_Limit() throws IOException {
+    captureAndRestoreTest(26, 51);
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void captureAndRestore_position_noLimit() throws IOException {
+    captureAndRestoreTest(26, null);
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void captureAndRestore_noPosition_limit() throws IOException {
+    captureAndRestoreTest(null, 51);
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void captureAndRestore_noPosition_noLimit() throws IOException {
+    captureAndRestoreTest(null, null);
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void seekAfterReadWorks() throws IOException {
+    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
+    BlobInfo gen1 = obj512KiB.getInfo();
+    byte[] bytes = obj512KiB.getContent().getBytes();
+
+    byte[] expected1 = Arrays.copyOfRange(bytes, 0, 4);
+    byte[] expected2 = Arrays.copyOfRange(bytes, 8, 13);
+
+    String xxdExpected1 = xxd(expected1);
+    String xxdExpected2 = xxd(expected2);
+    try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
+      // read some bytes
+      byte[] bytes1 = new byte[expected1.length];
+      reader.read(ByteBuffer.wrap(bytes1));
+      String xxd1 = xxd(bytes1);
+      assertThat(xxd1).isEqualTo(xxdExpected1);
+
+      // seek forward to a new offset
+      reader.seek(8);
+
+      // read again
+      byte[] bytes2 = new byte[expected2.length];
+      reader.read(ByteBuffer.wrap(bytes2));
+      String xxd2 = xxd(bytes2);
+      assertThat(xxd2).isEqualTo(xxdExpected2);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void limitAfterReadWorks() throws IOException {
+    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
+    BlobInfo gen1 = obj512KiB.getInfo();
+    byte[] bytes = obj512KiB.getContent().getBytes();
+
+    byte[] expected1 = Arrays.copyOfRange(bytes, 0, 4);
+    byte[] expected2 = Arrays.copyOfRange(bytes, 4, 10);
+
+    String xxdExpected1 = xxd(expected1);
+    String xxdExpected2 = xxd(expected2);
+    try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
+      // read some bytes
+      byte[] bytes1 = new byte[expected1.length];
+      reader.read(ByteBuffer.wrap(bytes1));
+      String xxd1 = xxd(bytes1);
+      assertThat(xxd1).isEqualTo(xxdExpected1);
+
+      // seek forward to a new offset
+      reader.limit(10);
+
+      // read again
+      byte[] bytes2 = new byte[expected2.length];
+      reader.read(ByteBuffer.wrap(bytes2));
+      String xxd2 = xxd(bytes2);
+      assertThat(xxd2).isEqualTo(xxdExpected2);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void readingLastByteReturnsOneByte_seekOnly() throws IOException {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    byte[] expected1 = Arrays.copyOfRange(bytes, 9, 10);
+    String xxdExpected1 = xxd(expected1);
+    try (ReadChannel reader = storage.reader(gen1.getBlobId());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        WritableByteChannel writer = Channels.newChannel(baos)) {
+      reader.seek(length - 1);
+      ByteStreams.copy(reader, writer);
+      byte[] bytes1 = baos.toByteArray();
+      String xxd1 = xxd(bytes1);
+      assertThat(xxd1).isEqualTo(xxdExpected1);
+    }
+  }
+
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void readingLastByteReturnsOneByte_seekAndLimit() throws IOException {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    byte[] expected1 = Arrays.copyOfRange(bytes, 9, 10);
+    String xxdExpected1 = xxd(expected1);
+    try (ReadChannel reader = storage.reader(gen1.getBlobId());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        WritableByteChannel writer = Channels.newChannel(baos)) {
+      reader.seek(length - 1);
+      reader.limit(length);
+      ByteStreams.copy(reader, writer);
+      byte[] bytes1 = baos.toByteArray();
+      String xxd1 = xxd(bytes1);
+      assertThat(xxd1).isEqualTo(xxdExpected1);
+    }
+  }
+
+  /**
+   * This is specifically in place for compatibility with BlobReadChannelV1.
+   *
+   * <p>This is behavior is a bug, and should be fixed at the next major version
+   */
+  @Test
+  @CrossRun.Exclude(transports = Transport.GRPC)
+  public void responseWith416ReturnsZeroAndLeavesTheChannelOpen() throws IOException {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
+      reader.seek(length);
+      ByteBuffer buf = ByteBuffer.allocate(1);
+      int read = reader.read(buf);
+      assertThat(read).isEqualTo(-1);
+      assertThat(reader.isOpen()).isTrue();
+      int read2 = reader.read(buf);
+      assertThat(read2).isEqualTo(-1);
+    }
+  }
+
+  private void captureAndRestoreTest(@Nullable Integer position, @Nullable Integer endOffset)
+      throws IOException {
+    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
+    BlobInfo gen1 = obj512KiB.getInfo();
+    byte[] bytes = obj512KiB.getContent().getBytes();
+
+    String xxdExpected1;
+    String xxdExpected2;
+    {
+      int begin = position != null ? position : 0;
+      int end = endOffset != null ? endOffset : bytes.length;
+      byte[] expected1 = Arrays.copyOfRange(bytes, begin, begin + 10);
+      byte[] expected2 = Arrays.copyOfRange(bytes, begin, end);
+      xxdExpected1 = xxd(expected1);
+      xxdExpected2 = xxd(expected2);
+    }
+
+    ReadChannel reader = storage.reader(gen1.getBlobId());
+    if (position != null) {
+      reader.seek(position);
+    }
+    if (endOffset != null) {
+      reader.limit(endOffset);
+    }
+
+    ByteBuffer buf = ByteBuffer.allocate(bytes.length);
+    buf.limit(10);
+
+    int read1 = reader.read(buf);
+    assertThat(read1).isEqualTo(10);
+    String xxd1 = xxd(buf);
+    assertThat(xxd1).isEqualTo(xxdExpected1);
+    buf.limit(buf.capacity());
+
+    RestorableState<ReadChannel> capture = reader.capture();
+    reader.close();
+
+    try (ReadChannel restore = capture.restore()) {
+      restore.read(buf);
+      String xxd2 = xxd(buf);
+      assertThat(xxd2).isEqualTo(xxdExpected2);
+    }
+  }
+
   private void doLimitTest(int srcContentSize, int rangeBegin, int rangeEnd, int chunkSize)
       throws IOException {
     String blobName = String.format("%s/src", testName.getMethodName());
@@ -317,7 +525,8 @@ public final class ITBlobReadChannelTest {
     ByteBuffer content = dataGeneration.randByteBuffer(srcContentSize);
     ByteBuffer dup = content.duplicate();
     dup.position(rangeBegin);
-    dup.limit(Math.min(dup.capacity(), rangeEnd));
+    int newLimit = Math.min(dup.capacity(), rangeEnd);
+    dup.limit(newLimit);
     byte[] expectedSubContent = new byte[dup.remaining()];
     dup.get(expectedSubContent);
 
@@ -325,19 +534,18 @@ public final class ITBlobReadChannelTest {
       writer.write(content);
     }
 
-    ByteBuffer buffer = ByteBuffer.allocate(srcContentSize);
-
-    try (ReadChannel reader = storage.reader(src.getBlobId())) {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    try (ReadChannel reader = storage.reader(src.getBlobId());
+        WritableByteChannel writer = Channels.newChannel(baos)) {
       reader.setChunkSize(chunkSize);
-      reader.seek(rangeBegin);
+      if (rangeBegin > 0) {
+        reader.seek(rangeBegin);
+      }
       reader.limit(rangeEnd);
-      reader.read(buffer);
-      buffer.flip();
+      ByteStreams.copy(reader, writer);
     }
 
-    byte[] actual = new byte[buffer.limit()];
-    buffer.get(actual);
-
-    assertThat(actual).isEqualTo(expectedSubContent);
+    byte[] actual = baos.toByteArray();
+    assertThat(xxd(actual)).isEqualTo(xxd(expectedSubContent));
   }
 }

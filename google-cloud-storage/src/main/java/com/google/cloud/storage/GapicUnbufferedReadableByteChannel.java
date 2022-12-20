@@ -73,16 +73,6 @@ final class GapicUnbufferedReadableByteChannel
   }
 
   @Override
-  public int read(ByteBuffer dst) throws IOException {
-    return Math.toIntExact(read(new ByteBuffer[] {dst}));
-  }
-
-  @Override
-  public long read(ByteBuffer[] dsts) throws IOException {
-    return read(dsts, 0, dsts.length);
-  }
-
-  @Override
   public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
     if (complete && open) {
       close();

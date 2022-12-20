@@ -30,7 +30,6 @@ import static org.mockito.Mockito.mock;
 import com.google.api.core.ApiClock;
 import com.google.api.gax.paging.Page;
 import com.google.api.services.storage.model.StorageObject;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.WriteChannel;
@@ -45,7 +44,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Key;
@@ -305,6 +303,7 @@ public class StorageImplMockitoTest {
   private StorageRpcFactory rpcFactoryMock;
   private StorageRpc storageRpcMock;
   private Storage storage;
+  private com.google.api.services.storage.Storage apiary;
 
   private Blob expectedBlob1, expectedBlob2, expectedBlob3, expectedUpdated;
   private Bucket expectedBucket1, expectedBucket2, expectedBucket3;
@@ -338,7 +337,9 @@ public class StorageImplMockitoTest {
   public void setUp() {
     rpcFactoryMock = mock(StorageRpcFactory.class, UNEXPECTED_CALL_ANSWER);
     storageRpcMock = mock(StorageRpc.class, UNEXPECTED_CALL_ANSWER);
+    apiary = mock(com.google.api.services.storage.Storage.class, UNEXPECTED_CALL_ANSWER);
     doReturn(storageRpcMock).when(rpcFactoryMock).create(Mockito.any(StorageOptions.class));
+    doReturn(apiary).when(storageRpcMock).getStorage();
     options =
         StorageOptions.http()
             .setProjectId("projectId")
@@ -1316,113 +1317,6 @@ public class StorageImplMockitoTest {
       fail();
     } catch (StorageException e) {
       assertEquals(STORAGE_FAILURE.toString(), e.getMessage());
-    }
-  }
-
-  private void verifyChannelRead(ReadChannel channel, byte[] bytes) throws IOException {
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-
-    ByteBuffer buffer = ByteBuffer.allocate(42);
-    byte[] expectedBytes = new byte[buffer.capacity()];
-    System.arraycopy(bytes, 0, expectedBytes, 0, bytes.length);
-
-    int size = channel.read(buffer);
-    assertEquals(bytes.length, size);
-    assertEquals(bytes.length, buffer.position());
-    assertArrayEquals(expectedBytes, buffer.array());
-  }
-
-  @Test
-  public void testReader() {
-    initializeService();
-    ReadChannel channel = storage.reader(BUCKET_NAME1, BLOB_NAME1);
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-    // Storage.reader() does not issue any RPC, channel.read() does
-    try {
-      channel.read(ByteBuffer.allocate(100));
-      fail();
-    } catch (IOException e) {
-      assertTrue(e.getMessage().contains("java.lang.IllegalArgumentException: Unexpected call"));
-    }
-  }
-
-  @Test
-  public void testReaderWithOptions() throws IOException {
-    doReturn(Tuple.of("etag", BLOB_CONTENT))
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .read(
-            Conversions.apiary().blobInfo().encode(BLOB_INFO2),
-            BLOB_SOURCE_OPTIONS,
-            0,
-            DEFAULT_CHUNK_SIZE);
-    initializeService();
-    ReadChannel channel =
-        storage.reader(
-            BUCKET_NAME1, BLOB_NAME2, BLOB_SOURCE_GENERATION, BLOB_SOURCE_METAGENERATION);
-    verifyChannelRead(channel, BLOB_CONTENT);
-  }
-
-  @Test
-  public void testReaderWithDecryptionKey() throws IOException {
-    doReturn(Tuple.of("a", BLOB_CONTENT), Tuple.of("b", BLOB_SUB_CONTENT))
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .read(
-            Conversions.apiary().blobInfo().encode(BLOB_INFO2),
-            ENCRYPTION_KEY_OPTIONS,
-            0,
-            DEFAULT_CHUNK_SIZE);
-    initializeService();
-    ReadChannel channel =
-        storage.reader(BUCKET_NAME1, BLOB_NAME2, Storage.BlobSourceOption.decryptionKey(KEY));
-
-    verifyChannelRead(channel, BLOB_CONTENT);
-    channel =
-        storage.reader(
-            BUCKET_NAME1, BLOB_NAME2, Storage.BlobSourceOption.decryptionKey(BASE64_KEY));
-    verifyChannelRead(channel, BLOB_SUB_CONTENT);
-  }
-
-  @Test
-  public void testReaderWithOptionsFromBlobId() throws IOException {
-    doReturn(Tuple.of("etag", BLOB_CONTENT))
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .read(
-            Conversions.apiary().blobId().encode(BLOB_INFO1.getBlobId()),
-            BLOB_SOURCE_OPTIONS,
-            0,
-            DEFAULT_CHUNK_SIZE);
-    initializeService();
-    ReadChannel channel =
-        storage.reader(
-            BLOB_INFO1.getBlobId(),
-            BLOB_SOURCE_GENERATION_FROM_BLOB_ID,
-            BLOB_SOURCE_METAGENERATION);
-    verifyChannelRead(channel, BLOB_CONTENT);
-  }
-
-  @Test
-  public void testReaderFailure() throws IOException {
-    doThrow(STORAGE_FAILURE)
-        .when(storageRpcMock)
-        .read(
-            Conversions.apiary().blobId().encode(BLOB_INFO2.getBlobId()),
-            EMPTY_RPC_OPTIONS,
-            0,
-            DEFAULT_CHUNK_SIZE);
-    initializeService();
-    ReadChannel channel = storage.reader(BUCKET_NAME1, BLOB_NAME2);
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-    try {
-      channel.read(ByteBuffer.allocate(42));
-      fail();
-    } catch (IOException e) {
-      assertTrue(e.getMessage().contains(STORAGE_FAILURE.toString()));
     }
   }
 

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- see https://www.mojohaus.org/clirr-maven-plugin/examples/ignored-differences.html -->
 <differences>
+  <!-- Not breaking, internal only interface and the new methods have default implementations -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/UnbufferedReadableByteChannelSession$UnbufferedReadableByteChannel</className>
+    <method>* read(*)</method>
+  </difference>
+  <!-- Allow accessing the underlying Apiary instance -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/spi/v1/StorageRpc</className>
+    <method>* getStorage()</method>
+  </difference>
 
   <difference>
     <differenceType>8001</differenceType>

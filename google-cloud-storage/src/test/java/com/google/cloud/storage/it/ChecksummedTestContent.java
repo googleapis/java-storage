@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
-final class ChecksummedTestContent {
+public final class ChecksummedTestContent {
 
   private final byte[] bytes;
   private final int crc32c;

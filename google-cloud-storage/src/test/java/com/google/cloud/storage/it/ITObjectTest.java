@@ -61,12 +61,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
+import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1057,30 +1059,56 @@ public class ITObjectTest {
   }
 
   @Test
-  public void testReadAndWriteChannelsWithDifferentFileSize() throws IOException {
-    String blobNamePrefix = "test-read-and-write-channels-blob-";
-    int[] blobSizes = {0, 700, 1024 * 256, 2 * 1024 * 1024, 4 * 1024 * 1024, 4 * 1024 * 1024 + 1};
+  public void testReadAndWriteChannelsWithDifferentFileSize_0B() throws IOException {
+    doTestReadAndWriteChannelsWithSize(0);
+  }
+
+  @Test
+  public void testReadAndWriteChannelsWithDifferentFileSize_700B() throws IOException {
+    doTestReadAndWriteChannelsWithSize(700);
+  }
+
+  @Test
+  public void testReadAndWriteChannelsWithDifferentFileSize_8193B() throws IOException {
+    doTestReadAndWriteChannelsWithSize(4 * 1024);
+  }
+
+  @Test
+  public void testReadAndWriteChannelsWithDifferentFileSize_256KiB() throws IOException {
+    doTestReadAndWriteChannelsWithSize(256 * 1024);
+  }
+
+  @Test
+  public void testReadAndWriteChannelsWithDifferentFileSize_2MiB() throws IOException {
+    doTestReadAndWriteChannelsWithSize(2 * 1024 * 1024);
+  }
+
+  @Test
+  public void testReadAndWriteChannelsWithDifferentFileSize_4MiB() throws IOException {
+    doTestReadAndWriteChannelsWithSize(4 * 1024 * 1024);
+  }
+
+  @Test
+  public void testReadAndWriteChannelsWithDifferentFileSize_4MiB_plus1() throws IOException {
+    doTestReadAndWriteChannelsWithSize((4 * 1024 * 1024) + 1);
+  }
+
+  private void doTestReadAndWriteChannelsWithSize(int blobSize) throws IOException {
+    String blobName = String.format("test-read-and-write-channels-blob-%d", blobSize);
+    BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Random rnd = new Random();
-    for (int blobSize : blobSizes) {
-      String blobName = blobNamePrefix + blobSize;
-      BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
-      byte[] bytes = new byte[blobSize];
-      rnd.nextBytes(bytes);
-      try (WriteChannel writer = storage.writer(blob)) {
-        writer.write(ByteBuffer.wrap(bytes));
-      }
-      ByteArrayOutputStream output = new ByteArrayOutputStream();
-      try (ReadChannel reader = storage.reader(blob.getBlobId())) {
-        ByteBuffer buffer = ByteBuffer.allocate(64 * 1024);
-        while (reader.read(buffer) > 0) {
-          buffer.flip();
-          output.write(buffer.array(), 0, buffer.limit());
-          buffer.clear();
-        }
-      }
-      assertArrayEquals(bytes, output.toByteArray());
-      assertTrue(storage.delete(bucket.getName(), blobName));
+    byte[] bytes = new byte[blobSize];
+    rnd.nextBytes(bytes);
+    try (WriteChannel writer = storage.writer(blob)) {
+      writer.write(ByteBuffer.wrap(bytes));
     }
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    try (ReadChannel reader = storage.reader(blob.getBlobId())) {
+      ByteStreams.copy(reader, Channels.newChannel(output));
+    }
+    byte[] actual = output.toByteArray();
+    assertThat(actual).isEqualTo(bytes);
+    assertTrue(storage.delete(bucket.getName(), blobName));
   }
 
   @Test

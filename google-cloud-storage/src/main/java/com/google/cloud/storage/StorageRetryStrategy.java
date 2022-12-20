@@ -88,7 +88,7 @@ public interface StorageRetryStrategy extends Serializable {
    * @see #getUniformStorageRetryStrategy()
    */
   static StorageRetryStrategy getDefaultStorageRetryStrategy() {
-    return new DefaultStorageRetryStrategy();
+    return DefaultStorageRetryStrategy.INSTANCE;
   }
 
   /**
