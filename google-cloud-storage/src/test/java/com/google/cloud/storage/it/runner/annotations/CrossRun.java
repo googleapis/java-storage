@@ -70,4 +70,18 @@ public @interface CrossRun {
 
     TransportCompatibility.Transport[] transports() default {};
   }
+
+  /**
+   * When using {@link CrossRun} a class scope will be created for each permutation, this can break
+   * expectations of scope/lifecycle for {@link org.junit.ClassRule}s. In an abundance of caution,
+   * we consider the use of a {@link org.junit.ClassRule} along with {@link CrossRun} an invalid
+   * class definition.
+   *
+   * <p>In order to allow the use of a {@link org.junit.ClassRule} along with the caveats mentioned
+   * above, a class can be annotated with {@link AllowClassRule} to suppress the error and proceed
+   * running the test class with the rule.
+   */
+  @Target({ElementType.TYPE})
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface AllowClassRule {}
 }
