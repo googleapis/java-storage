@@ -72,6 +72,7 @@
     {
       "groupName": "cross product test dependencies",
       "packagePatterns": [
+        "^com.google.cloud:google-cloud-kms",
         "^com.google.cloud:google-cloud-pubsub",
         "^com.google.api.grpc:grpc-google-cloud-kms-v1",
         "^com.google.api.grpc:proto-google-cloud-kms-v1",
