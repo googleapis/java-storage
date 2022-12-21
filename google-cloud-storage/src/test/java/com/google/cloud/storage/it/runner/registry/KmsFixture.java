@@ -16,8 +16,6 @@
 
 package com.google.cloud.storage.it.runner.registry;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.cloud.kms.v1.CreateCryptoKeyRequest;
 import com.google.cloud.kms.v1.CreateKeyRingRequest;
@@ -109,7 +107,6 @@ public class KmsFixture implements ManagedLifecycle {
   }
 
   private KeyRing resolveKeyRing(KeyManagementServiceClient kms) throws StatusRuntimeException {
-    checkState(kms != null, "kms must be configured before resolving key ring");
     String projectId = storage.getOptions().getProjectId();
     KeyRingName ringName = KeyRingName.of(projectId, keyRingLocation, keyRingName);
     try {
@@ -127,8 +124,6 @@ public class KmsFixture implements ManagedLifecycle {
   }
 
   private Policy grantStorageServiceAccountRolesToKeyRing(KeyManagementServiceClient kms) {
-    checkState(kms != null, "kms must be configured before granting permissions");
-    checkState(keyRing != null, "keyRing must be resolved before granting permissions");
     String projectId = storage.getOptions().getProjectId();
     ServiceAccount serviceAccount = storage.getServiceAccount(projectId);
     Binding binding =
@@ -146,8 +141,6 @@ public class KmsFixture implements ManagedLifecycle {
   }
 
   private CryptoKey resolveKey(KeyManagementServiceClient kms, String keyName) {
-    checkState(kms != null, "kms must be configured before resolving key '%s'", keyName);
-    checkState(keyRing != null, "keyRing must be resolved before resolving key '%s'", keyName);
     CryptoKeyName cryptoKeyName = cryptoKeyNameOnRing(keyRing, keyName);
     try {
       return kms.getCryptoKey(cryptoKeyName);
