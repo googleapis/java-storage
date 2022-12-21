@@ -101,10 +101,6 @@ import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
-import com.google.storage.v2.StorageClient.ListBucketsPage;
-import com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
-import com.google.storage.v2.StorageClient.ListHmacKeysPage;
-import com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
 import com.google.storage.v2.StorageClient.ListObjectsPage;
 import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 import com.google.storage.v2.UpdateBucketRequest;
@@ -438,8 +434,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<Bucket> list(BucketListOption... options) {
-    UnaryCallable<ListBucketsRequest, ListBucketsPagedResponse> listBucketsCallable =
-        storageClient.listBucketsPagedCallable();
     Opts<BucketListOpt> opts = Opts.unwrap(options);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -449,14 +443,17 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .andThen(opts.listBucketsRequest())
             .apply(ListBucketsRequest.newBuilder())
             .build();
-    ListBucketsPagedResponse call = listBucketsCallable.call(request, grpcCallContext);
     try {
-      ListBucketsPage page = call.getPage();
-      return new TransformingPageDecorator<>(
-          page,
-          syntaxDecoders.bucket.andThen(opts.clearBucketFields()),
+      return Retrying.run(
           getOptions(),
-          retryAlgorithmManager.getFor(request));
+          retryAlgorithmManager.getFor(request),
+          () -> storageClient.listBucketsPagedCallable().call(request, grpcCallContext),
+          resp ->
+              new TransformingPageDecorator<>(
+                  resp.getPage(),
+                  syntaxDecoders.bucket.andThen(opts.clearBucketFields()),
+                  getOptions(),
+                  retryAlgorithmManager.getFor(request)));
     } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
@@ -1242,8 +1239,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
-    UnaryCallable<ListHmacKeysRequest, ListHmacKeysPagedResponse> listHmacKeysCallable =
-        storageClient.listHmacKeysPagedCallable();
     Opts<HmacKeyListOpt> opts = Opts.unwrap(options);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -1255,10 +1250,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .apply(ListHmacKeysRequest.newBuilder())
             .build();
     try {
-      ListHmacKeysPagedResponse call = listHmacKeysCallable.call(request, grpcCallContext);
-      ListHmacKeysPage page = call.getPage();
-      return new TransformingPageDecorator<>(
-          page, codecs.hmacKeyMetadata(), getOptions(), retryAlgorithmManager.getFor(request));
+      return Retrying.run(
+          getOptions(),
+          retryAlgorithmManager.getFor(request),
+          () -> storageClient.listHmacKeysPagedCallable().call(request, grpcCallContext),
+          resp ->
+              new TransformingPageDecorator<>(
+                  resp.getPage(),
+                  codecs.hmacKeyMetadata(),
+                  getOptions(),
+                  retryAlgorithmManager.getFor(request)));
     } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
