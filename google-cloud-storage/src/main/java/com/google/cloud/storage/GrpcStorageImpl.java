@@ -92,6 +92,7 @@ import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListObjectsRequest;
+import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
@@ -101,8 +102,6 @@ import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
-import com.google.storage.v2.StorageClient.ListObjectsPage;
-import com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
@@ -127,6 +126,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -461,8 +461,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<Blob> list(String bucket, BlobListOption... options) {
-    UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsCallable =
-        storageClient.listObjectsPagedCallable();
     Opts<ObjectListOpt> opts = Opts.unwrap(options);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
@@ -470,13 +468,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         ListObjectsRequest.newBuilder().setParent(bucketNameCodec.encode(bucket));
     ListObjectsRequest req = opts.listObjectsRequest().apply(builder).build();
     try {
-      ListObjectsPagedResponse call = listObjectsCallable.call(req, grpcCallContext);
-      ListObjectsPage page = call.getPage();
-      return new TransformingPageDecorator<>(
-          page,
-          syntaxDecoders.blob.andThen(opts.clearBlobFields()),
+      return Retrying.run(
           getOptions(),
-          retryAlgorithmManager.getFor(req));
+          retryAlgorithmManager.getFor(req),
+          () -> storageClient.listObjectsCallable().call(req, grpcCallContext),
+          resp -> new ListObjectsWithSyntheticDirectoriesPage(grpcCallContext, req, resp));
     } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
@@ -1440,6 +1436,95 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
   }
 
+  /**
+   * Today {@link com.google.cloud.storage.spi.v1.HttpStorageRpc#list(String, Map)} creates
+   * synthetic objects to represent {@code prefixes} ("directories") returned as part of a list
+   * objects response. Specifically, a StorageObject with an `isDirectory` attribute added.
+   *
+   * <p>This approach is not sound, and presents an otherwise ephemeral piece of metadata as an
+   * actual piece of data. (A {@code prefix} is not actually an object, and therefor can't be
+   * queried for other object metadata.)
+   *
+   * <p>In an effort to preserve compatibility with the current public API, this class attempts to
+   * encapsulate the process of producing these Synthetic Directory Objects and lifting them into
+   * the Page.
+   *
+   * <p>This behavior should NOT be carried forward to any possible new API for the storage client.
+   */
+  private final class ListObjectsWithSyntheticDirectoriesPage implements Page<Blob> {
+
+    private final GrpcCallContext ctx;
+    private final ListObjectsRequest req;
+    private final ListObjectsResponse resp;
+
+    private ListObjectsWithSyntheticDirectoriesPage(
+        GrpcCallContext ctx, ListObjectsRequest req, ListObjectsResponse resp) {
+      this.ctx = ctx;
+      this.req = req;
+      this.resp = resp;
+    }
+
+    @Override
+    public boolean hasNextPage() {
+      return !resp.getNextPageToken().isEmpty();
+    }
+
+    @Override
+    public String getNextPageToken() {
+      return resp.getNextPageToken();
+    }
+
+    @Override
+    public Page<Blob> getNextPage() {
+      ListObjectsRequest nextPageReq =
+          req.toBuilder().setPageToken(resp.getNextPageToken()).build();
+      try {
+        ListObjectsResponse nextPageResp =
+            Retrying.run(
+                GrpcStorageImpl.this.getOptions(),
+                retryAlgorithmManager.getFor(nextPageReq),
+                () -> storageClient.listObjectsCallable().call(nextPageReq, ctx),
+                Decoder.identity());
+        return new ListObjectsWithSyntheticDirectoriesPage(ctx, nextPageReq, nextPageResp);
+      } catch (Exception e) {
+        throw StorageException.coalesce(e);
+      }
+    }
+
+    @Override
+    public Iterable<Blob> iterateAll() {
+      // drop to our interface type to help type inference below with the stream.
+      Page<Blob> curr = this;
+      Predicate<Page<Blob>> exhausted = p -> p != null && p.hasNextPage();
+      // Create a stream which will attempt to call getNextPage repeatedly until we meet our
+      // condition of exhaustion. By doing this we are able to rely on the retry logic in
+      // getNextPage
+      return () ->
+          streamIterate(curr, exhausted, Page::getNextPage)
+              .filter(Objects::nonNull)
+              .flatMap(p -> StreamSupport.stream(p.getValues().spliterator(), false))
+              .iterator();
+    }
+
+    @Override
+    public Iterable<Blob> getValues() {
+      return () -> {
+        String bucketName = bucketNameCodec.decode(req.getParent());
+        return Streams.concat(
+                resp.getObjectsList().stream().map(syntaxDecoders.blob::decode),
+                resp.getPrefixesList().stream()
+                    .map(
+                        prefix ->
+                            BlobInfo.newBuilder(bucketName, prefix)
+                                .setSize(0L)
+                                .setIsDirectory(true)
+                                .build())
+                    .map(info -> info.asBlob(GrpcStorageImpl.this)))
+            .iterator();
+      };
+    }
+  }
+
   static final class TransformingPageDecorator<
           RequestT,
           ResponseT,
@@ -1511,50 +1596,50 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
               .map(translator::decode)
               .iterator();
     }
+  }
 
-    private static <T> Stream<T> streamIterate(
-        T seed, Predicate<? super T> shouldComputeNext, UnaryOperator<T> computeNext) {
-      requireNonNull(seed, "seed must be non null");
-      requireNonNull(shouldComputeNext, "shouldComputeNext must be non null");
-      requireNonNull(computeNext, "computeNext must be non null");
-      Spliterator<T> spliterator =
-          new AbstractSpliterator<T>(Long.MAX_VALUE, 0) {
-            T prev;
-            boolean started = false;
-            boolean done = false;
+  private static <T> Stream<T> streamIterate(
+      T seed, Predicate<? super T> shouldComputeNext, UnaryOperator<T> computeNext) {
+    requireNonNull(seed, "seed must be non null");
+    requireNonNull(shouldComputeNext, "shouldComputeNext must be non null");
+    requireNonNull(computeNext, "computeNext must be non null");
+    Spliterator<T> spliterator =
+        new AbstractSpliterator<T>(Long.MAX_VALUE, 0) {
+          T prev;
+          boolean started = false;
+          boolean done = false;
 
-            @Override
-            public boolean tryAdvance(Consumer<? super T> action) {
-              // if we haven't started, emit our seed and return
-              if (!started) {
-                started = true;
-                action.accept(seed);
-                prev = seed;
-                return true;
-              }
-              // if we've previously finished quickly return
-              if (done) {
-                return false;
-              }
-              // test whether we should try and compute the next value
-              if (shouldComputeNext.test(prev)) {
-                // compute the next value and figure out if we can use it
-                T next = computeNext.apply(prev);
-                if (next != null) {
-                  action.accept(next);
-                  prev = next;
-                  return true;
-                }
-              }
-
-              // fallthrough, if we haven't taken an action by now consider the stream done and
-              // return
-              done = true;
+          @Override
+          public boolean tryAdvance(Consumer<? super T> action) {
+            // if we haven't started, emit our seed and return
+            if (!started) {
+              started = true;
+              action.accept(seed);
+              prev = seed;
+              return true;
+            }
+            // if we've previously finished quickly return
+            if (done) {
               return false;
             }
-          };
-      return StreamSupport.stream(spliterator, false);
-    }
+            // test whether we should try and compute the next value
+            if (shouldComputeNext.test(prev)) {
+              // compute the next value and figure out if we can use it
+              T next = computeNext.apply(prev);
+              if (next != null) {
+                action.accept(next);
+                prev = next;
+                return true;
+              }
+            }
+
+            // fallthrough, if we haven't taken an action by now consider the stream done and
+            // return
+            done = true;
+            return false;
+          }
+        };
+    return StreamSupport.stream(spliterator, false);
   }
 
   static <T> T throwHttpJsonOnly(String methodName) {
