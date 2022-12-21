@@ -107,8 +107,6 @@ public class ITBucketTest {
   }
 
   @Test
-  // FieldMask not supported in GRPC get currently.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBucketSelectedFields() {
     Bucket remoteBucket =
         storage.get(bucket.getName(), Storage.BucketGetOption.fields(BucketField.ID));
@@ -118,19 +116,14 @@ public class ITBucketTest {
   }
 
   @Test
-  // FieldMask not supported in GRPC currently.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBucketAllSelectedFields() {
     Bucket remoteBucket =
         storage.get(bucket.getName(), Storage.BucketGetOption.fields(BucketField.values()));
     assertEquals(bucket.getName(), remoteBucket.getName());
     assertNotNull(remoteBucket.getCreateTime());
-    assertNotNull(remoteBucket.getSelfLink());
   }
 
   @Test
-  // Cannot turn on for GRPC until b/246634709 is resolved, verified locally.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testBucketLocationType() throws Exception {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName).setLocation("us").build();
@@ -143,8 +136,6 @@ public class ITBucketTest {
   }
 
   @Test
-  // Cannot turn on for GRPC until creation bug b/246634709 is resolved, verified locally.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testBucketCustomPlacmentConfigDualRegion() throws Exception {
     String bucketName = generator.randomBucketName();
     List<String> locations = new ArrayList<>();
@@ -167,8 +158,6 @@ public class ITBucketTest {
   }
 
   @Test
-  // Cannot turn on until GRPC Update logic bug is fixed b/247133805
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testBucketLogging() throws Exception {
     String logsBucketName = generator.randomBucketName();
     String loggingBucketName = generator.randomBucketName();
@@ -210,8 +199,6 @@ public class ITBucketTest {
   }
 
   @Test
-  // GRPC Update logic bug b/247133805
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testRemoveBucketCORS() {
     String bucketName = generator.randomBucketName();
     List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
@@ -260,8 +247,6 @@ public class ITBucketTest {
   }
 
   @Test
-  // Cannot turn on for GRPC until b/246634709 is resolved, verified locally.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testRpoConfig() {
     String rpoBucket = generator.randomBucketName();
     try {
@@ -383,7 +368,6 @@ public class ITBucketTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testEnableDisableBucketDefaultEventBasedHold() {
     String bucketName = generator.randomBucketName();
     Bucket remoteBucket =

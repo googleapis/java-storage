@@ -33,6 +33,7 @@ import com.google.cloud.storage.BlobInfo.CustomerEncryption;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.LifecycleRule;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.AbortIncompleteMPUAction;
+import com.google.cloud.storage.BucketInfo.Logging;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.HmacKey.HmacKeyState;
@@ -261,7 +262,10 @@ final class GrpcConversions {
       to.setCors(toImmutableListOf(corsCodec::decode).apply(corsList));
     }
     if (from.hasLogging()) {
-      to.setLogging(loggingCodec.decode(from.getLogging()));
+      Bucket.Logging logging = from.getLogging();
+      if (!logging.getLogBucket().isEmpty() || !logging.getLogObjectPrefix().isEmpty()) {
+        to.setLogging(loggingCodec.decode(logging));
+      }
     }
     if (from.hasOwner()) {
       to.setOwner(entityCodec.decode(from.getOwner().getEntity()));
@@ -357,7 +361,16 @@ final class GrpcConversions {
       }
       to.setLifecycle(lifecycleBuilder.build());
     }
-    ifNonNull(from.getLogging(), loggingCodec::encode, to::setLogging);
+
+    Logging logging = from.getLogging();
+    if (logging != null) {
+      // an empty bucket name is invalid, don't even attempt to encode if neither name or prefix
+      // are both empty
+      if ((logging.getLogBucket() != null && !logging.getLogBucket().isEmpty())
+          || (logging.getLogObjectPrefix() != null && !logging.getLogObjectPrefix().isEmpty())) {
+        to.setLogging(loggingCodec.encode(logging));
+      }
+    }
     ifNonNull(from.getCors(), toImmutableListOf(corsCodec::encode), to::addAllCors);
     ifNonNull(
         from.getOwner(),

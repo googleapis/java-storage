@@ -430,9 +430,7 @@ public class ITKmsTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testRotateFromCustomerEncryptionToKmsKey() {
-    // Bucket attribute extration on allowlist bug b/246634709
     String sourceBlobName = "test-copy-blob-encryption-key-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");

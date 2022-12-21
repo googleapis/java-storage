@@ -51,6 +51,7 @@ import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.BucketFixture;
 import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
@@ -109,11 +110,11 @@ public class ITObjectTest {
   @Rule public final TestName testName = new TestName();
 
   @Inject
-  @com.google.cloud.storage.it.runner.annotations.BucketFixture(BucketType.DEFAULT)
+  @BucketFixture(BucketType.DEFAULT)
   public BucketInfo bucket;
 
   @Inject
-  @com.google.cloud.storage.it.runner.annotations.BucketFixture(BucketType.REQUESTER_PAYS)
+  @BucketFixture(BucketType.REQUESTER_PAYS)
   public BucketInfo requesterPaysBucket;
 
   @Inject public Storage storage;
@@ -235,8 +236,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // FieldMask on get not supported by GRPC yet.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobEmptySelectedFields() {
 
     String blobName = "test-get-empty-selected-fields-blob";
@@ -248,8 +247,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // FieldMask on get not supported by GRPC yet.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobSelectedFields() {
 
     String blobName = "test-get-selected-fields-blob";
@@ -267,8 +264,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // FieldMask on get not supported by GRPC yet.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testGetBlobAllSelectedFields() {
 
     String blobName = "test-get-all-selected-fields-blob";
@@ -283,8 +278,6 @@ public class ITObjectTest {
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
     assertEquals(ImmutableMap.of("k", "v"), remoteBlob.getMetadata());
-    assertNotNull(remoteBlob.getGeneratedId());
-    assertNotNull(remoteBlob.getSelfLink());
   }
 
   @Test
@@ -318,8 +311,6 @@ public class ITObjectTest {
   }
 
   @Test(timeout = 5000)
-  // FieldMask on get not supported by GRPC yet.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testListBlobsSelectedFields() throws InterruptedException {
 
     String[] blobNames = {
@@ -367,8 +358,6 @@ public class ITObjectTest {
   }
 
   @Test(timeout = 5000)
-  // FieldMask on get not supported by GRPC yet.
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testListBlobsEmptySelectedFields() throws InterruptedException {
 
     String[] blobNames = {
@@ -1438,8 +1427,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Bucket attribute extration on allowlist bug b/246634709
-  @CrossRun.Exclude(transports = Transport.GRPC)
   public void testBlobTimeStorageClassUpdated() {
 
     String blobName = "test-blob-with-storage-class";
