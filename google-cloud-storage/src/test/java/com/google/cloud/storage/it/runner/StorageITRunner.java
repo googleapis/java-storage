@@ -18,6 +18,7 @@ package com.google.cloud.storage.it.runner;
 
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.CrossRun.AllowClassRule;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.Parameterized;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
@@ -31,6 +32,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Stream;
+import org.junit.ClassRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -136,9 +138,13 @@ public final class StorageITRunner extends Suite {
     }
 
     if (crossRun != null) {
-      // TODO
-      //   add warning message if @ClassRule or @BeforeClass/AfterClass are used, as these will run
-      //   multiple times due to the class being run for each crossRun result.
+      List<FrameworkField> classRules = testClass.getAnnotatedFields(ClassRule.class);
+      AllowClassRule allowClassRule = testClass.getAnnotation(AllowClassRule.class);
+      if (allowClassRule == null && !classRules.isEmpty()) {
+        String msg =
+            "@CrossRun used along with @ClassRule. This can be dangerous, multiple class scopes will be created for cross running, possibly breaking expectations on rule scope. If the use of a @ClassRule is still desirable, please annotate your class with @CrossRun.AllowClassRule";
+        throw new InitializationError(msg);
+      }
       return SneakyException.unwrap(
           () ->
               ImmutableSet.copyOf(crossRun.backends()).stream()
