@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.runner.Description;
 import org.junit.runner.notification.RunListener;
 import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.RunnerScheduler;
@@ -85,6 +87,7 @@ public final class Registry extends RunListener {
   private final ImmutableSet<Class<?>> injectableTypes =
       entries.stream().map(RegistryEntry::getType).collect(ImmutableSet.toImmutableSet());
   private final String injectableTypesString = Joiner.on("|").join(injectableTypes);
+  private final ThreadLocal<Description> currentTest = new ThreadLocal<>();
 
   private Registry() {}
 
@@ -110,6 +113,21 @@ public final class Registry extends RunListener {
 
   TestBench testBench() {
     return testBench.get();
+  }
+
+  @Nullable
+  public Description getCurrentTest() {
+    return currentTest.get();
+  }
+
+  @Override
+  public void testStarted(Description description) {
+    currentTest.set(description);
+  }
+
+  @Override
+  public void testFinished(Description description) {
+    currentTest.remove();
   }
 
   public RunnerScheduler parallelScheduler() {
