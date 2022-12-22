@@ -25,7 +25,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.Timeout;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
@@ -79,6 +84,31 @@ final class StorageITLeafRunner extends BlockJUnit4ClassRunner {
           .filter(Objects::nonNull)
           .forEach(errors::add);
     }
+  }
+
+  @Override
+  protected void validateTestMethods(List<Throwable> errors) {
+    TestClass testClass = getTestClass();
+    if (testClass != null) {
+      boolean anyTestWithTimeout =
+          testClass.getAnnotatedMethods(Test.class).stream()
+              .anyMatch(fm -> fm.getAnnotation(Test.class).timeout() > 0);
+
+      boolean timeoutRule =
+          testClass.getAnnotatedFields(Rule.class).stream()
+              .anyMatch(ff -> ff.getType().isAssignableFrom(Timeout.class));
+
+      boolean timeoutClassRule =
+          testClass.getAnnotatedFields(ClassRule.class).stream()
+              .anyMatch(ff -> ff.getType().isAssignableFrom(Timeout.class));
+
+      if (anyTestWithTimeout || timeoutRule || timeoutClassRule) {
+        String msg =
+            "Using @Test(timeout = 1), @Rule Timeout or @ClassRule Timeout can break multi-thread and Fixture support of StorageITRunner. Please refactor your test to detect a timeout in the test itself.";
+        Logger.getLogger(StorageITRunner.class.getName()).warning(msg);
+      }
+    }
+    super.validateTestMethods(errors);
   }
 
   @Override

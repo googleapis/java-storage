@@ -32,6 +32,7 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import org.apache.http.impl.client.HttpClients;
@@ -46,6 +47,7 @@ public class ITWriteChannelConnectionPoolTest {
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
 
   @Inject public BucketInfo bucket;
+  @Inject public Generator generator;
 
   private static class CustomHttpTransportFactory implements HttpTransportFactory {
     @Override
@@ -57,7 +59,7 @@ public class ITWriteChannelConnectionPoolTest {
     }
   }
 
-  @Test(timeout = 5000)
+  @Test
   public void testWriteChannelWithConnectionPool() throws IOException {
     TransportOptions transportOptions =
         HttpTransportOptions.newBuilder()
@@ -65,7 +67,7 @@ public class ITWriteChannelConnectionPoolTest {
             .build();
     Storage storageWithPool =
         StorageOptions.http().setTransportOptions(transportOptions).build().getService();
-    String blobName = "test-custom-pool-management";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket.getName(), blobName).build();
     byte[] stringBytes;
     try (WriteChannel writer = storageWithPool.writer(blob)) {
