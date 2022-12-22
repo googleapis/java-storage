@@ -129,7 +129,7 @@ public class ITObjectTest {
 
   @Test
   public void testCreateBlob() {
-    String blobName = "test-create-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob =
         BlobInfo.newBuilder(bucket, blobName).setCustomTime(System.currentTimeMillis()).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
@@ -144,7 +144,7 @@ public class ITObjectTest {
 
   @Test
   public void testCreateBlobMd5Crc32cFromHexString() {
-    String blobName = "test-create-blob-md5-crc32c-from-hex-string";
+    String blobName = generator.randomObjectName();
     BlobInfo blob =
         BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
@@ -164,7 +164,7 @@ public class ITObjectTest {
 
   @Test
   public void testCreateGetBlobWithEncryptionKey() {
-    String blobName = "test-create-with-customer-key-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT, BlobTargetOption.encryptionKey(KEY));
     assertNotNull(remoteBlob);
@@ -185,7 +185,7 @@ public class ITObjectTest {
 
   @Test
   public void testCreateEmptyBlob() {
-    String blobName = "test-create-empty-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
@@ -198,7 +198,7 @@ public class ITObjectTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStream() {
-    String blobName = "test-create-blob-stream";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob remoteBlob = storage.create(blob, stream);
@@ -213,7 +213,7 @@ public class ITObjectTest {
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
   public void testCreateBlobStreamDisableGzipContent() {
-    String blobName = "test-create-blob-stream-disable-gzip-compression";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     ByteArrayInputStream stream = new ByteArrayInputStream(BLOB_STRING_CONTENT.getBytes(UTF_8));
     Blob remoteBlob = storage.create(blob, stream, BlobWriteOption.disableGzipContent());
@@ -227,7 +227,7 @@ public class ITObjectTest {
 
   @Test
   public void testCreateBlobFail() {
-    String blobName = "test-create-blob-fail";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
@@ -243,7 +243,7 @@ public class ITObjectTest {
   @Test
   public void testGetBlobEmptySelectedFields() {
 
-    String blobName = "test-get-empty-selected-fields-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     assertNotNull(storage.create(blob));
     Blob remoteBlob = storage.get(blob.getBlobId(), BlobGetOption.fields());
@@ -254,7 +254,7 @@ public class ITObjectTest {
   @Test
   public void testGetBlobSelectedFields() {
 
-    String blobName = "test-get-selected-fields-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob =
         BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
@@ -270,7 +270,7 @@ public class ITObjectTest {
   @Test
   public void testGetBlobAllSelectedFields() {
 
-    String blobName = "test-get-all-selected-fields-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob =
         BlobInfo.newBuilder(bucket, blobName)
             .setContentType(CONTENT_TYPE)
@@ -285,7 +285,7 @@ public class ITObjectTest {
 
   @Test
   public void testGetBlobFail() {
-    String blobName = "test-get-blob-fail";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
@@ -348,18 +348,19 @@ public class ITObjectTest {
   @Test
   public void getBlobReturnNullOn404() {
     String bucketName = bucket.getName();
-    BlobId id = BlobId.of(bucketName, "__d_o_e_s__n_o_t__e_x_i_s_t__");
+    String objectName = generator.randomObjectName() + "__d_o_e_s__n_o_t__e_x_i_s_t__";
+    BlobId id = BlobId.of(bucketName, objectName);
     Blob blob = storage.get(id);
     assertThat(blob).isNull();
   }
 
-  @Test(timeout = 7500)
+  @Test
   public void testListBlobRequesterPays() throws InterruptedException {
     String projectId = storage.getOptions().getProjectId();
 
+    String prefix = generator.randomObjectName();
     BlobInfo blobInfo1 =
-        BlobInfo.newBuilder(
-                requesterPaysBucket.getName(), "test-list-blobs-empty-selected-fields-blob1")
+        BlobInfo.newBuilder(requesterPaysBucket.getName(), prefix + "1")
             .setContentType(CONTENT_TYPE)
             .build();
     Blob blob1 = storage.create(blobInfo1, BlobTargetOption.userProject(projectId));
@@ -379,7 +380,7 @@ public class ITObjectTest {
     try {
       storage.list(
           requesterPaysBucket.getName(),
-          BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
+          BlobListOption.prefix(prefix),
           BlobListOption.fields(),
           BlobListOption.userProject("fakeBillingProjectId"));
       fail("Expected bad user project error.");
@@ -390,7 +391,7 @@ public class ITObjectTest {
     Page<Blob> page =
         storage.list(
             requesterPaysBucket.getName(),
-            BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
+            BlobListOption.prefix(prefix),
             BlobListOption.userProject(projectId));
     List<BlobInfo> blobs =
         StreamSupport.stream(page.iterateAll().spliterator(), false)
@@ -400,7 +401,7 @@ public class ITObjectTest {
     assertThat(blobs).contains(PackagePrivateMethodWorkarounds.noAcl(blob1));
   }
 
-  @Test(timeout = 15000)
+  @Test
   public void testListBlobsVersioned() throws ExecutionException, InterruptedException {
     String bucketName = generator.randomBucketName();
     Bucket bucket =
@@ -781,14 +782,14 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testCopyBlob() {
 
-    String sourceBlobName = "test-copy-blob-source";
+    String sourceBlobName = generator.randomObjectName() + "-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo blob =
         BlobInfo.newBuilder(source).setContentType(CONTENT_TYPE).setMetadata(metadata).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
-    String targetBlobName = "test-copy-blob-target";
+    String targetBlobName = generator.randomObjectName() + "-target";
     CopyRequest req = CopyRequest.of(source, BlobId.of(bucket.getName(), targetBlobName));
     CopyWriter copyWriter = storage.copy(req);
     assertEquals(bucket.getName(), copyWriter.getResult().getBucket());
@@ -805,14 +806,14 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testCopyBlobWithPredefinedAcl() {
 
-    String sourceBlobName = "test-copy-blob-source";
+    String sourceBlobName = generator.randomObjectName() + "-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo blob =
         BlobInfo.newBuilder(source).setContentType(CONTENT_TYPE).setMetadata(metadata).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
-    String targetBlobName = "test-copy-blob-target";
+    String targetBlobName = generator.randomObjectName() + "-target";
     CopyRequest req =
         CopyRequest.newBuilder()
             .setSource(source)
@@ -836,7 +837,7 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testCopyBlobWithEncryptionKeys() {
 
-    String sourceBlobName = "test-copy-blob-encryption-key-source";
+    String sourceBlobName = generator.randomObjectName() + "-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     Blob remoteBlob =
@@ -845,7 +846,7 @@ public class ITObjectTest {
             BLOB_BYTE_CONTENT,
             BlobTargetOption.encryptionKey(KEY));
     assertNotNull(remoteBlob);
-    String targetBlobName = "test-copy-blob-encryption-key-target";
+    String targetBlobName = generator.randomObjectName() + "-target";
     BlobInfo target =
         BlobInfo.newBuilder(bucket, targetBlobName)
             .setContentType(CONTENT_TYPE)
@@ -888,11 +889,11 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testCopyBlobUpdateMetadata() {
 
-    String sourceBlobName = "test-copy-blob-update-metadata-source";
+    String sourceBlobName = generator.randomObjectName() + "-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     Blob remoteSourceBlob = storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob);
-    String targetBlobName = "test-copy-blob-update-metadata-target";
+    String targetBlobName = generator.randomObjectName() + "-target";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo target =
         BlobInfo.newBuilder(bucket, targetBlobName)
@@ -914,7 +915,7 @@ public class ITObjectTest {
   // @Test
   @Exclude(transports = Transport.GRPC)
   public void testCopyBlobUpdateStorageClass() {
-    String sourceBlobName = "test-copy-blob-update-storage-class-source";
+    String sourceBlobName = generator.randomObjectName() + "-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     BlobInfo sourceInfo =
         BlobInfo.newBuilder(source).setStorageClass(StorageClass.STANDARD).build();
@@ -922,7 +923,7 @@ public class ITObjectTest {
     assertNotNull(remoteSourceBlob);
     assertEquals(StorageClass.STANDARD, remoteSourceBlob.getStorageClass());
 
-    String targetBlobName = "test-copy-blob-update-storage-class-target";
+    String targetBlobName = generator.randomObjectName() + "-target";
     BlobInfo targetInfo =
         BlobInfo.newBuilder(bucket, targetBlobName).setStorageClass(StorageClass.COLDLINE).build();
     CopyRequest req = CopyRequest.of(source, targetInfo);
@@ -940,11 +941,11 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testCopyBlobNoContentType() {
 
-    String sourceBlobName = "test-copy-blob-no-content-type-source";
+    String sourceBlobName = generator.randomObjectName() + "-source";
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     Blob remoteSourceBlob = storage.create(BlobInfo.newBuilder(source).build(), BLOB_BYTE_CONTENT);
     assertNotNull(remoteSourceBlob);
-    String targetBlobName = "test-copy-blob-no-content-type-target";
+    String targetBlobName = generator.randomObjectName() + "-target";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     BlobInfo target = BlobInfo.newBuilder(bucket, targetBlobName).setMetadata(metadata).build();
     CopyRequest req = CopyRequest.of(source, target);
@@ -1057,7 +1058,7 @@ public class ITObjectTest {
   }
 
   private void doTestReadAndWriteChannelsWithSize(int blobSize) throws IOException {
-    String blobName = String.format("test-read-and-write-channels-blob-%d", blobSize);
+    String blobName = String.format("%s-%d", generator.randomObjectName(), blobSize);
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Random rnd = new Random();
     byte[] bytes = new byte[blobSize];
@@ -1079,7 +1080,7 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testReadAndWriteCaptureChannels() throws IOException {
 
-    String blobName = "test-read-and-write-capture-channels-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     byte[] stringBytes;
     WriteChannel writer = storage.writer(blob);
@@ -1110,8 +1111,8 @@ public class ITObjectTest {
   // Only supported in JSON right now
   @Exclude(transports = Transport.GRPC)
   public void testGetBlobs() {
-    String sourceBlobName1 = "test-get-blobs-1";
-    String sourceBlobName2 = "test-get-blobs-2";
+    String sourceBlobName1 = generator.randomObjectName();
+    String sourceBlobName2 = generator.randomObjectName();
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
@@ -1128,8 +1129,8 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testGetBlobsFail() {
 
-    String sourceBlobName1 = "test-get-blobs-fail-1";
-    String sourceBlobName2 = "test-get-blobs-fail-2";
+    String sourceBlobName1 = generator.randomObjectName();
+    String sourceBlobName2 = generator.randomObjectName();
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
@@ -1144,8 +1145,8 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testDeleteBlobs() {
 
-    String sourceBlobName1 = "test-delete-blobs-1";
-    String sourceBlobName2 = "test-delete-blobs-2";
+    String sourceBlobName1 = generator.randomObjectName();
+    String sourceBlobName2 = generator.randomObjectName();
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
@@ -1159,8 +1160,8 @@ public class ITObjectTest {
   // Only supported in JSON right now
   @Exclude(transports = Transport.GRPC)
   public void testDeleteBlobsFail() {
-    String sourceBlobName1 = "test-delete-blobs-fail-1";
-    String sourceBlobName2 = "test-delete-blobs-fail-2";
+    String sourceBlobName1 = generator.randomObjectName();
+    String sourceBlobName2 = generator.randomObjectName();
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     assertNotNull(storage.create(sourceBlob1));
@@ -1171,7 +1172,7 @@ public class ITObjectTest {
 
   @Test
   public void testDeleteBlob() {
-    String sourceBlobName = "test-delete-one-success";
+    String sourceBlobName = generator.randomObjectName();
     BlobInfo sourceBlob = BlobInfo.newBuilder(bucket, sourceBlobName).build();
     assertNotNull(storage.create(sourceBlob));
     boolean result = storage.delete(sourceBlob.getBlobId());
@@ -1183,8 +1184,8 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testUpdateBlobs() {
 
-    String sourceBlobName1 = "test-update-blobs-1";
-    String sourceBlobName2 = "test-update-blobs-2";
+    String sourceBlobName1 = generator.randomObjectName();
+    String sourceBlobName2 = generator.randomObjectName();
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     Blob remoteBlob1 = storage.create(sourceBlob1);
@@ -1208,8 +1209,8 @@ public class ITObjectTest {
   @Exclude(transports = Transport.GRPC)
   public void testUpdateBlobsFail() {
 
-    String sourceBlobName1 = "test-update-blobs-fail-1";
-    String sourceBlobName2 = "test-update-blobs-fail-2";
+    String sourceBlobName1 = generator.randomObjectName();
+    String sourceBlobName2 = generator.randomObjectName();
     BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucket, sourceBlobName1).build();
     BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucket, sourceBlobName2).build();
     BlobInfo remoteBlob1 = storage.create(sourceBlob1);
@@ -1232,7 +1233,7 @@ public class ITObjectTest {
         storage.create(
             BucketInfo.newBuilder(bucketName).setRetentionPeriod(RETENTION_PERIOD).build());
     assertEquals(RETENTION_PERIOD, remoteBucket.getRetentionPeriod());
-    String blobName = "test-create-with-retention-policy";
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob = storage.create(blobInfo);
     assertNotNull(remoteBlob.getRetentionExpirationTime());
@@ -1249,7 +1250,7 @@ public class ITObjectTest {
 
   @Test
   public void testEnableDisableTemporaryHold() {
-    String blobName = "test-create-with-temporary-hold";
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
     Blob remoteBlob = storage.create(blobInfo);
     assertTrue(remoteBlob.getTemporaryHold());
@@ -1262,7 +1263,7 @@ public class ITObjectTest {
 
   @Test
   public void testAttemptObjectDeleteWithEventBasedHold() {
-    String blobName = "test-create-with-event-based-hold";
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setEventBasedHold(true).build();
     Blob remoteBlob = storage.create(blobInfo);
     assertTrue(remoteBlob.getEventBasedHold());
@@ -1278,7 +1279,7 @@ public class ITObjectTest {
 
   @Test
   public void testAttemptDeletionObjectTemporaryHold() {
-    String blobName = "test-create-with-temporary-hold";
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
     Blob remoteBlob = storage.create(blobInfo);
     assertTrue(remoteBlob.getTemporaryHold());
@@ -1294,7 +1295,7 @@ public class ITObjectTest {
 
   @Test
   public void testBlobReload() throws Exception {
-    String blobName = "test-blob-reload";
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
     Blob blob = storage.create(blobInfo, new byte[] {0, 1, 2});
@@ -1323,7 +1324,7 @@ public class ITObjectTest {
 
   @Test
   public void testUploadWithEncryption() throws Exception {
-    String blobName = "test-upload-withEncryption";
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
@@ -1367,7 +1368,11 @@ public class ITObjectTest {
   }
 
   private void testAutoContentType(String method) throws IOException {
-    String[] names = {"file1.txt", "dir with spaces/Pic.Jpg", "no_extension"};
+    String[] names = {
+      generator.randomObjectName() + ".txt",
+      generator.randomObjectName() + "with space/Pic.Jpg",
+      generator.randomObjectName() + "no_extension"
+    };
     String[] types = {"text/plain", "image/jpeg", "application/octet-stream"};
     for (int i = 0; i < names.length; i++) {
       BlobId blobId = BlobId.of(bucket.getName(), names[i]);
@@ -1403,7 +1408,7 @@ public class ITObjectTest {
   @Test
   public void testBlobTimeStorageClassUpdated() {
 
-    String blobName = "test-blob-with-storage-class";
+    String blobName = generator.randomObjectName();
     StorageClass storageClass = StorageClass.COLDLINE;
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setStorageClass(storageClass).build();
     Blob remoteBlob = storage.create(blob);
