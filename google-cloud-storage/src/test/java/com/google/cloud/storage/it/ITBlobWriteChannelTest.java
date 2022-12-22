@@ -45,6 +45,7 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.TestBench;
 import com.google.cloud.storage.it.runner.registry.TestBench.RetryTestResource;
 import com.google.cloud.storage.spi.StorageRpcFactory;
@@ -62,7 +63,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.threeten.bp.Clock;
 import org.threeten.bp.Instant;
@@ -73,6 +73,7 @@ import org.threeten.bp.format.DateTimeFormatter;
 @RunWith(StorageITRunner.class)
 @SingleBackend(Backend.TEST_BENCH)
 public final class ITBlobWriteChannelTest {
+
   private static final Logger LOGGER = Logger.getLogger(ITBlobWriteChannelTest.class.getName());
   private static final String NOW_STRING;
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
@@ -86,7 +87,7 @@ public final class ITBlobWriteChannelTest {
 
   @Inject public TestBench testBench;
 
-  @Rule public final TestName testName = new TestName();
+  @Inject public Generator generator;
 
   @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
 
@@ -146,7 +147,7 @@ public final class ITBlobWriteChannelTest {
         DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
     String nowString = formatter.format(now);
     BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
-    String blobPath = String.format("%s/%s/blob", testName.getMethodName(), nowString);
+    String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), nowString);
     BlobId blobId = BlobId.of(dataGeneration.getBucketName(), blobPath);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
     storage.create(bucketInfo);
@@ -161,7 +162,7 @@ public final class ITBlobWriteChannelTest {
   }
 
   private void doJsonUnexpectedEOFTest(int contentSize, int cappedByteCount) throws IOException {
-    String blobPath = String.format("%s/%s/blob", testName.getMethodName(), NOW_STRING);
+    String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), NOW_STRING);
 
     BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
     BlobInfo blobInfoGen0 = BlobInfo.newBuilder(bucketInfo, blobPath, 0L).build();
@@ -260,7 +261,7 @@ public final class ITBlobWriteChannelTest {
         DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
     String nowString = formatter.format(now);
     BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
-    String blobPath = String.format("%s/%s/blob", testName.getMethodName(), nowString);
+    String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), nowString);
     BlobId blobId = BlobId.of(dataGeneration.getBucketName(), blobPath);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 

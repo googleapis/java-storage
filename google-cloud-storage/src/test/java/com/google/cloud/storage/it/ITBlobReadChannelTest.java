@@ -40,7 +40,9 @@ import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
+import com.google.cloud.storage.it.runner.annotations.CrossRun.Exclude;
 import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
 import com.google.cloud.storage.it.runner.registry.ObjectsFixture.ObjectAndContent;
 import com.google.common.io.BaseEncoding;
@@ -53,7 +55,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -64,7 +65,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
@@ -80,8 +80,6 @@ public final class ITBlobReadChannelTest {
       BaseEncoding.base64()
           .decode("H4sIAAAAAAAAAPNIzcnJV3DPz0/PSVVwzskvTVEILskvSkxPVQQA/LySchsAAAA=");
 
-  @Rule public final TestName testName = new TestName();
-
   @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(872364872));
 
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
@@ -89,6 +87,7 @@ public final class ITBlobReadChannelTest {
   @Inject public Storage storage;
   @Inject public BucketInfo bucket;
   @Inject public ObjectsFixture objectsFixture;
+  @Inject public Generator generator;
 
   @Test
   public void testLimit_smallerThanOneChunk() throws IOException {
@@ -138,7 +137,7 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void testLimit_downloadToFile() throws IOException {
-    String blobName = String.format("%s/src", testName.getMethodName());
+    String blobName = String.format("%s/src", generator.randomObjectName());
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     ByteBuffer content = dataGeneration.randByteBuffer(108);
     try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
@@ -172,12 +171,12 @@ public final class ITBlobReadChannelTest {
   @Test
   public void
       testReadChannel_preconditionFailureResultsInIOException_metagenerationMatch_specified() {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     try (ReadChannel reader =
-        storage.reader(blob.getBlobId(), Storage.BlobSourceOption.metagenerationMatch(-1L))) {
+        storage.reader(blob.getBlobId(), BlobSourceOption.metagenerationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
       fail("IOException was expected");
     } catch (IOException ex) {
@@ -187,12 +186,12 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void testReadChannel_preconditionFailureResultsInIOException_generationMatch_specified() {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     try (ReadChannel reader =
-        storage.reader(blob.getBlobId(), Storage.BlobSourceOption.generationMatch(-1L))) {
+        storage.reader(blob.getBlobId(), BlobSourceOption.generationMatch(-1L))) {
       reader.read(ByteBuffer.allocate(42));
       fail("IOException was expected");
     } catch (IOException ex) {
@@ -202,13 +201,13 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void testReadChannel_preconditionFailureResultsInIOException_generationMatch_extractor() {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
     BlobId blobIdWrongGeneration = BlobId.of(bucket.getName(), blobName, -1L);
     try (ReadChannel reader =
-        storage.reader(blobIdWrongGeneration, Storage.BlobSourceOption.generationMatch())) {
+        storage.reader(blobIdWrongGeneration, BlobSourceOption.generationMatch())) {
       reader.read(ByteBuffer.allocate(42));
       fail("IOException was expected");
     } catch (IOException ex) {
@@ -218,7 +217,7 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void ensureReaderReturnsCompressedBytesByDefault() throws IOException {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo =
         BlobInfo.newBuilder(bucket, blobName)
             .setContentType("text/plain")
@@ -244,7 +243,7 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void ensureReaderCanAutoDecompressWhenReturnRawInputStream_false() throws IOException {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo =
         BlobInfo.newBuilder(bucket, blobName)
             .setContentType("text/plain")
@@ -265,7 +264,7 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void returnRawInputStream_true() throws IOException {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo =
         BlobInfo.newBuilder(bucket, blobName)
             .setContentType("text/plain")
@@ -293,7 +292,7 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void channelIsConsideredOpenUponConstruction() {
     ReadChannel reader = storage.reader(objectsFixture.getInfo1().getBlobId());
     assertThat(reader.isOpen()).isTrue();
@@ -302,9 +301,9 @@ public final class ITBlobReadChannelTest {
 
   @Test
   public void optionsWork() {
-    byte[] bytes1 = "A".getBytes(StandardCharsets.UTF_8);
+    byte[] bytes1 = "A".getBytes(UTF_8);
 
-    BlobInfo info = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
     Blob gen1 = storage.create(info, bytes1, BlobTargetOption.doesNotExist());
 
     // attempt to read generation=1 && ifGenerationNotMatch=1
@@ -321,31 +320,31 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void captureAndRestore_position_Limit() throws IOException {
     captureAndRestoreTest(26, 51);
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void captureAndRestore_position_noLimit() throws IOException {
     captureAndRestoreTest(26, null);
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void captureAndRestore_noPosition_limit() throws IOException {
     captureAndRestoreTest(null, 51);
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void captureAndRestore_noPosition_noLimit() throws IOException {
     captureAndRestoreTest(null, null);
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void seekAfterReadWorks() throws IOException {
     ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
     BlobInfo gen1 = obj512KiB.getInfo();
@@ -375,7 +374,7 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void limitAfterReadWorks() throws IOException {
     ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
     BlobInfo gen1 = obj512KiB.getInfo();
@@ -405,12 +404,12 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void readingLastByteReturnsOneByte_seekOnly() throws IOException {
     int length = 10;
     byte[] bytes = DataGenerator.base64Characters().genBytes(length);
 
-    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
     Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
 
     byte[] expected1 = Arrays.copyOfRange(bytes, 9, 10);
@@ -427,12 +426,12 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void readingLastByteReturnsOneByte_seekAndLimit() throws IOException {
     int length = 10;
     byte[] bytes = DataGenerator.base64Characters().genBytes(length);
 
-    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
     Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
 
     byte[] expected1 = Arrays.copyOfRange(bytes, 9, 10);
@@ -455,12 +454,12 @@ public final class ITBlobReadChannelTest {
    * <p>This is behavior is a bug, and should be fixed at the next major version
    */
   @Test
-  @CrossRun.Exclude(transports = Transport.GRPC)
+  @Exclude(transports = Transport.GRPC)
   public void responseWith416ReturnsZeroAndLeavesTheChannelOpen() throws IOException {
     int length = 10;
     byte[] bytes = DataGenerator.base64Characters().genBytes(length);
 
-    BlobInfo info1 = BlobInfo.newBuilder(bucket, testName.getMethodName()).build();
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
     Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
 
     try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
@@ -520,7 +519,7 @@ public final class ITBlobReadChannelTest {
 
   private void doLimitTest(int srcContentSize, int rangeBegin, int rangeEnd, int chunkSize)
       throws IOException {
-    String blobName = String.format("%s/src", testName.getMethodName());
+    String blobName = String.format("%s/src", generator.randomObjectName());
     BlobInfo src = BlobInfo.newBuilder(bucket, blobName).build();
     ByteBuffer content = dataGeneration.randByteBuffer(srcContentSize);
     ByteBuffer dup = content.duplicate();

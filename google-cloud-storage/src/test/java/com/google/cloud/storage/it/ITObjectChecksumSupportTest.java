@@ -37,15 +37,14 @@ import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.Parameterized;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
@@ -55,7 +54,7 @@ import org.junit.runner.RunWith;
 @Parameterized(ChecksummedTestContentProvider.class)
 public final class ITObjectChecksumSupportTest {
 
-  @Rule public final TestName testName = new TestName();
+  @Inject public Generator generator;
 
   @Inject public Storage storage;
   @Inject public BucketInfo bucket;
@@ -65,6 +64,7 @@ public final class ITObjectChecksumSupportTest {
   @Parameter public ChecksummedTestContent content;
 
   public static final class ChecksummedTestContentProvider implements ParametersProvider {
+
     @Override
     public ImmutableList<?> parameters() {
       DataGenerator gen = DataGenerator.base64Characters();
@@ -83,7 +83,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testCrc32cValidated_createFrom_expectFailure() {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
@@ -102,7 +102,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testCrc32cValidated_createFrom_expectSuccess() throws IOException {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
@@ -118,7 +118,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testCrc32cValidated_writer_expectFailure() {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
@@ -141,7 +141,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testCrc32cValidated_writer_expectSuccess() throws IOException {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
 
@@ -160,7 +160,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testMd5Validated_createFrom_expectFailure() {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
 
@@ -179,7 +179,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testMd5Validated_createFrom_expectSuccess() throws IOException {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
 
@@ -195,7 +195,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testMd5Validated_writer_expectFailure() {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
 
@@ -216,7 +216,7 @@ public final class ITObjectChecksumSupportTest {
 
   @Test
   public void testMd5Validated_writer_expectSuccess() throws IOException {
-    String blobName = testName.getMethodName();
+    String blobName = generator.randomObjectName();
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setMd5(content.getMd5Base64()).build();
 

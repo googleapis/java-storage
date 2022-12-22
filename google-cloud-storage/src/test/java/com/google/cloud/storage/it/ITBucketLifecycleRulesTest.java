@@ -33,9 +33,7 @@ import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
@@ -44,10 +42,9 @@ import org.junit.runner.RunWith;
     backends = {Backend.PROD})
 public final class ITBucketLifecycleRulesTest {
 
-  @Rule public final TestName testName = new TestName();
+  @Inject public Generator generator;
 
   @Inject public Storage storage;
-  @Inject public Generator generator;
 
   @Test
   public void deleteRule_addingALabelToABucketWithASingleDeleteRuleOnlyModifiesTheLabels()

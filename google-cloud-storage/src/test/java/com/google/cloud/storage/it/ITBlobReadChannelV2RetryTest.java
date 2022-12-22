@@ -36,6 +36,7 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.TestBench;
 import com.google.cloud.storage.it.runner.registry.TestBench.RetryTestResource;
 import com.google.common.collect.ImmutableList;
@@ -44,9 +45,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
@@ -55,8 +54,6 @@ public final class ITBlobReadChannelV2RetryTest {
 
   private static final int _512KiB = 512 * 1024;
 
-  @Rule public TestName testName = new TestName();
-
   @Inject public TestBench testBench;
 
   @Inject
@@ -64,6 +61,7 @@ public final class ITBlobReadChannelV2RetryTest {
   public Storage storage;
 
   @Inject public BucketInfo bucket;
+  @Inject public Generator generator;
 
   @Test
   public void generationIsLockedForRetries() throws Exception {
@@ -71,7 +69,7 @@ public final class ITBlobReadChannelV2RetryTest {
     StorageOptions baseOptions = storage.getOptions();
     byte[] bytes = DataGenerator.base64Characters().genBytes(_512KiB);
 
-    BlobId id = BlobId.of(bucket.getName(), testName.getMethodName());
+    BlobId id = BlobId.of(bucket.getName(), generator.randomObjectName());
     Blob gen1 =
         storage.create(BlobInfo.newBuilder(id).build(), bytes, BlobTargetOption.doesNotExist());
 

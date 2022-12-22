@@ -44,15 +44,14 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
@@ -62,7 +61,7 @@ import org.junit.runner.RunWith;
 @ParallelFriendly
 public final class ITObjectAclTest {
 
-  @Rule public final TestName testName = new TestName();
+  @Inject public Generator generator;
 
   @Inject public Storage storage;
 
@@ -325,7 +324,7 @@ public final class ITObjectAclTest {
   }
 
   private BlobId tmpId() {
-    return BlobId.of(bucketInfo.getName(), testName.getMethodName());
+    return BlobId.of(bucketInfo.getName(), generator.randomObjectName());
   }
 
   private Blob tmpObject() {
