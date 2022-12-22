@@ -113,7 +113,7 @@ public class ITKmsTest {
 
   @Test
   public void testCreateBlobWithKmsKeyName() {
-    String blobName = "test-create-with-kms-key-name-blob";
+    String blobName = generator.randomObjectName();
     String bucketName = bucket.getName();
     BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob =
@@ -130,7 +130,7 @@ public class ITKmsTest {
 
   @Test(expected = StorageException.class)
   public void testCreateBlobWithKmsKeyNameAndCustomerSuppliedKeyFails() {
-    String blobName = "test-create-with-kms-key-name-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
     storage.create(
         blob,
@@ -168,7 +168,7 @@ public class ITKmsTest {
 
   @Test
   public void testGetBlobKmsKeyNameField() {
-    String blobName = "test-get-selected-kms-key-name-field-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).setContentType(CONTENT_TYPE).build();
     assertNotNull(
         storage.create(blob, Storage.BlobTargetOption.kmsKeyName(kms.getKey1().getName())));
@@ -181,7 +181,7 @@ public class ITKmsTest {
 
   @Test
   public void testRotateFromCustomerEncryptionToKmsKey() {
-    String sourceBlobName = "test-copy-blob-encryption-key-source";
+    String sourceBlobName = generator.randomObjectName();
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     Blob remoteBlob =
@@ -190,7 +190,7 @@ public class ITKmsTest {
             BLOB_BYTE_CONTENT,
             Storage.BlobTargetOption.encryptionKey(KEY));
     assertNotNull(remoteBlob);
-    String targetBlobName = "test-copy-blob-kms-key-target";
+    String targetBlobName = generator.randomObjectName();
     BlobInfo target =
         BlobInfo.newBuilder(bucket, targetBlobName)
             .setContentType(CONTENT_TYPE)
@@ -216,7 +216,7 @@ public class ITKmsTest {
 
   @Test(expected = StorageException.class)
   public void testRotateFromCustomerEncryptionToKmsKeyWithCustomerEncryption() {
-    String sourceBlobName = "test-copy-blob-encryption-key-source";
+    String sourceBlobName = generator.randomObjectName();
     BlobId source = BlobId.of(bucket.getName(), sourceBlobName);
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
     Blob remoteBlob =
@@ -225,7 +225,7 @@ public class ITKmsTest {
             BLOB_BYTE_CONTENT,
             Storage.BlobTargetOption.encryptionKey(KEY));
     assertNotNull(remoteBlob);
-    String targetBlobName = "test-copy-blob-kms-key-target";
+    String targetBlobName = generator.randomObjectName();
     BlobInfo target =
         BlobInfo.newBuilder(bucket, targetBlobName)
             .setContentType(CONTENT_TYPE)
@@ -246,7 +246,7 @@ public class ITKmsTest {
   @Test
   public void testWriterWithKmsKeyName() throws IOException {
     // Write an empty object with a kmsKeyName.
-    String blobName = "test-empty-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).build();
     Blob blob =
         storage.create(blobInfo, Storage.BlobTargetOption.kmsKeyName(kms.getKey1().getName()));
