@@ -29,6 +29,7 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,10 +50,14 @@ public final class ITDownloadToTest {
 
   @Inject public Storage storage;
   @Inject public BucketInfo bucket;
+  @Inject public Generator generator;
+
+  private BlobId blobId;
 
   @Before
   public void before() {
-    BlobId blobId = BlobId.of(bucket.getName(), "zipped_blob");
+    String objectString = generator.randomObjectName();
+    blobId = BlobId.of(bucket.getName(), objectString);
     BlobInfo blobInfo =
         BlobInfo.newBuilder(blobId).setContentEncoding("gzip").setContentType("text/plain").build();
     storage.create(blobInfo, helloWorldGzipBytes);
@@ -60,8 +65,7 @@ public final class ITDownloadToTest {
 
   @Test
   public void downloadTo_returnRawInputStream_yes() throws IOException {
-    BlobId blobId = BlobId.of(bucket.getName(), "zipped_blob");
-    Path helloWorldTxtGz = File.createTempFile("helloWorld", ".txt.gz").toPath();
+    Path helloWorldTxtGz = File.createTempFile(blobId.getName(), ".txt.gz").toPath();
     storage.downloadTo(
         blobId, helloWorldTxtGz, Storage.BlobSourceOption.shouldReturnRawInputStream(true));
 
@@ -74,8 +78,7 @@ public final class ITDownloadToTest {
 
   @Test
   public void downloadTo_returnRawInputStream_no() throws IOException {
-    BlobId blobId = BlobId.of(bucket.getName(), "zipped_blob");
-    Path helloWorldTxt = File.createTempFile("helloWorld", ".txt").toPath();
+    Path helloWorldTxt = File.createTempFile(blobId.getName(), ".txt").toPath();
     storage.downloadTo(
         blobId, helloWorldTxt, Storage.BlobSourceOption.shouldReturnRawInputStream(false));
     byte[] actualTxtBytes = Files.readAllBytes(helloWorldTxt);
