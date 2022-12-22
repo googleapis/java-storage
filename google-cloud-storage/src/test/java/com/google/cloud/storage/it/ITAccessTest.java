@@ -962,7 +962,7 @@ public class ITAccessTest {
       assertNotNull(remoteBucket2.getRetentionEffectiveTime());
       assertThat(remoteBucket2.retentionPolicyIsLocked()).isAnyOf(null, false);
 
-      String blobName = "test-create-with-retention-policy-hold";
+      String blobName = generator.randomObjectName();
       BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
       Blob remoteBlob = storage.create(blobInfo);
       assertNotNull(remoteBlob.getRetentionExpirationTime());
