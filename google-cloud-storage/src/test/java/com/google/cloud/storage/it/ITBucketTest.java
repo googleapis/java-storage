@@ -378,7 +378,7 @@ public class ITBucketTest {
           storage.get(
               bucketName, Storage.BucketGetOption.fields(BucketField.DEFAULT_EVENT_BASED_HOLD));
       assertTrue(remoteBucket.getDefaultEventBasedHold());
-      String blobName = "test-create-with-event-based-hold";
+      String blobName = generator.randomObjectName();
       BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, blobName).build();
       Blob remoteBlob = storage.create(blobInfo);
       assertTrue(remoteBlob.getEventBasedHold());
