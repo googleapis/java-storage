@@ -97,8 +97,7 @@ public final class ITBucketReadMaskTest {
     public ImmutableList<?> parameters() {
       ImmutableList<Args<BucketField, BucketInfo>> args =
           ImmutableList.of(
-              new Args<>(
-                  BucketField.ACL, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
+              new Args<>(BucketField.ACL, LazyAssertion.equal()),
               new Args<>(BucketField.AUTOCLASS, LazyAssertion.equal()),
               new Args<>(BucketField.BILLING, LazyAssertion.equal()),
               new Args<>(BucketField.CORS, LazyAssertion.equal()),
@@ -116,8 +115,7 @@ public final class ITBucketReadMaskTest {
                     assertThat(grpcT.getDefaultAcl()).isNull(); // workaround for b/261771961
                   }),
               new Args<>(BucketField.ENCRYPTION, LazyAssertion.equal()),
-              new Args<>(
-                  BucketField.ETAG, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
+              new Args<>(BucketField.ETAG, LazyAssertion.equal()),
               new Args<>(BucketField.IAMCONFIGURATION, LazyAssertion.equal()),
               new Args<>(BucketField.ID, LazyAssertion.equal()),
               new Args<>(BucketField.LABELS, LazyAssertion.equal()),
