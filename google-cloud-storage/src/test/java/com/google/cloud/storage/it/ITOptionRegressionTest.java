@@ -16,7 +16,7 @@
 
 package com.google.cloud.storage.it;
 
-import static org.junit.Assume.assumeTrue;
+import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.storage.Blob;
@@ -929,7 +929,10 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void bucket_BucketSourceOption_userProject_String() {
-    assumeTrue(false);
+    // attempt to delete a bucket that doesn't exist
+    boolean delete = s.delete(bucketName(), BucketSourceOption.userProject("proj"));
+    assertThat(delete).isFalse();
+    requestAuditing.assertQueryParam("userProject", "proj");
   }
 
   @Test

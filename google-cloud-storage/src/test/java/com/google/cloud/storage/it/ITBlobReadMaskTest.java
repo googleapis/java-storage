@@ -114,7 +114,7 @@ public final class ITBlobReadMaskTest {
     public ImmutableList<?> parameters() {
       ImmutableList<Args<BlobField, BlobInfo>> args =
           ImmutableList.of(
-              new Args<>(BlobField.ACL, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
+              new Args<>(BlobField.ACL, LazyAssertion.equal()),
               new Args<>(BlobField.BUCKET, LazyAssertion.equal()),
               new Args<>(
                   BlobField.CACHE_CONTROL,
@@ -155,7 +155,7 @@ public final class ITBlobReadMaskTest {
               new Args<>(BlobField.CRC32C, LazyAssertion.equal()),
               new Args<>(BlobField.CUSTOMER_ENCRYPTION, LazyAssertion.equal()),
               new Args<>(BlobField.CUSTOM_TIME, LazyAssertion.equal()),
-              new Args<>(BlobField.ETAG, LazyAssertion.skip("Waiting for b/217922398 to be fixed")),
+              new Args<>(BlobField.ETAG, LazyAssertion.equal()),
               new Args<>(
                   BlobField.EVENT_BASED_HOLD,
                   LazyAssertion.apiaryNullGrpcDefault(false, BlobInfo::getEventBasedHold)),
