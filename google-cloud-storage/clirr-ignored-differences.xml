@@ -19,4 +19,15 @@
     <className>com/google/cloud/storage/Hasher$ConstantConcatValueHasher</className>
   </difference>
 
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BlobInfo$Builder</className>
+    <method>* addAllMetadata(java.util.Map)</method>
+  </difference>
+  <difference>
+    <differenceType>7013</differenceType>
+    <className>com/google/cloud/storage/BucketInfo$Builder</className>
+    <method>* addAllLabels(java.util.Map)</method>
+  </difference>
+
 </differences>

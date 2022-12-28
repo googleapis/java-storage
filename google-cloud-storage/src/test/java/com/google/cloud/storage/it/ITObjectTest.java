@@ -638,7 +638,7 @@ public class ITObjectTest {
             .build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
-    Blob updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
+    Blob updatedBlob = remoteBlob.toBuilder().addAllMetadata(newMetadata).build().update();
     assertNotNull(updatedBlob);
     assertEquals(blob.getName(), updatedBlob.getName());
     assertEquals(blob.getBucket(), updatedBlob.getBucket());
@@ -646,8 +646,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Metadata update bug b/230510191
-  @Exclude(transports = Transport.GRPC)
   public void testUpdateBlobUnsetMetadata() {
 
     String blobName = "test-update-blob-unset-metadata";
@@ -663,7 +661,7 @@ public class ITObjectTest {
             .build();
     Blob remoteBlob = storage.create(blob);
     assertNotNull(remoteBlob);
-    Blob updatedBlob = remoteBlob.toBuilder().setMetadata(newMetadata).build().update();
+    Blob updatedBlob = remoteBlob.toBuilder().addAllMetadata(newMetadata).build().update();
     assertNotNull(updatedBlob);
     assertEquals(blob.getName(), updatedBlob.getName());
     assertEquals(blob.getBucket(), updatedBlob.getBucket());

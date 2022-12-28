@@ -44,7 +44,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nonnull;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * An object in Google Cloud Storage. A {@code Blob} object includes the {@code BlobId} instance,
@@ -360,7 +362,14 @@ public class Blob extends BlobInfo {
     }
 
     @Override
-    public Builder setMetadata(Map<String, String> metadata) {
+    @BetaApi
+    public Builder addAllMetadata(@Nonnull Map<@NonNull String, @Nullable String> newMetadata) {
+      infoBuilder.addAllMetadata(newMetadata);
+      return this;
+    }
+
+    @Override
+    public Builder setMetadata(@Nullable Map<@NonNull String, @Nullable String> metadata) {
       infoBuilder.setMetadata(metadata);
       return this;
     }

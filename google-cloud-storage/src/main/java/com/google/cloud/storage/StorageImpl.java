@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.Executors.callable;
 
+import com.google.api.client.json.GenericJson;
+import com.google.api.client.util.Data;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.BucketAccessControl;
@@ -43,6 +45,8 @@ import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.PostPolicyV4.PostPolicyV4Document;
+import com.google.cloud.storage.UnifiedOpts.BucketTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
@@ -86,7 +90,9 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
@@ -103,6 +109,22 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
   private static final ApiaryConversions codecs = Conversions.apiary();
+  private static final JsonTrimmer<StorageObject> STORAGE_OBJECT_JSON_TRIMMER =
+      new JsonTrimmer<>(
+          ImmutableSet.copyOf(BlobField.REQUIRED_FIELDS),
+          BlobField.METADATA,
+          StorageObject::new,
+          StorageObject::getMetadata,
+          StorageObject::setMetadata);
+
+  private static final JsonTrimmer<com.google.api.services.storage.model.Bucket>
+      BUCKET_JSON_TRIMMER =
+          new JsonTrimmer<>(
+              ImmutableSet.copyOf(BucketField.REQUIRED_FIELDS),
+              BucketField.LABELS,
+              com.google.api.services.storage.model.Bucket::new,
+              com.google.api.services.storage.model.Bucket::getLabels,
+              com.google.api.services.storage.model.Bucket::setLabels);
 
   final HttpRetryAlgorithmManager retryAlgorithmManager;
   final StorageRpc storageRpc;
@@ -438,15 +460,16 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
-    final com.google.api.services.storage.model.Bucket bucketPb =
-        codecs.bucketInfo().encode(bucketInfo);
-    final Map<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(bucketInfo).getRpcOptions();
+    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo);
+    Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    com.google.api.services.storage.model.Bucket pb = codecs.bucketInfo().encode(bucketInfo);
+    com.google.api.services.storage.model.Bucket trimPb =
+        BUCKET_JSON_TRIMMER.trim(pb, bucketInfo.getModifiedFields());
     ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForBucketsUpdate(bucketPb, optionsMap);
+        retryAlgorithmManager.getForBucketsUpdate(trimPb, optionsMap);
     return run(
         algorithm,
-        () -> storageRpc.patch(bucketPb, optionsMap),
+        () -> storageRpc.patch(trimPb, optionsMap),
         (x) -> Conversions.apiary().bucketInfo().decode(x).asBucket(this));
   }
 
@@ -456,14 +479,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     BlobInfo updated = opts.blobInfoMapper().apply(blobInfo.toBuilder()).build();
     StorageObject pb = codecs.blobInfo().encode(updated);
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsUpdate(pb, optionsMap);
+    StorageObject trimPb = STORAGE_OBJECT_JSON_TRIMMER.trim(pb, blobInfo.getModifiedFields());
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForObjectsUpdate(trimPb, optionsMap);
     return run(
         algorithm,
-        () -> storageRpc.patch(pb, optionsMap),
-        (x) -> {
-          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
-          return info.asBlob(this);
-        });
+        () -> storageRpc.patch(trimPb, optionsMap),
+        (x) -> Conversions.apiary().blobInfo().decode(x).asBlob(this));
   }
 
   @Override
@@ -1527,5 +1549,78 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   @Override
   public HttpStorageOptions getOptions() {
     return (HttpStorageOptions) super.getOptions();
+  }
+
+  /**
+   * Our "Update" methods actually issue {@code PATCH} requests. Historically, all fields present in
+   * the respective {@link BlobInfo} or {@link BucketInfo} would all be sent to the backend at which
+   * point the backend would perform some diffing to determine what to change. With the addition of
+   * gRPC support, our models now track field level modification allowing for fine-grained requests.
+   * Unfortunately, this fine-grained tracking does not yet extend to the actual encoding/decoding
+   * of messages to models. As such, this class encapsulates the logic of performing a postprocess
+   * step of trimming down a json object to only those fields which are required or modified.
+   *
+   * <p>An additional consideration is fields which provide nested keys {@link
+   * BlobInfo#getMetadata()} and {@link BucketInfo#getLabels()}. As they have special logic in how
+   * {@code PATCH} is handled.
+   *
+   * <p>As part of defining a trimmer, an accessor/consumer pair is defined representing the get/set
+   * method pair for the nested keys handling.
+   *
+   * <p>One note: this class is not fully generic with respect to deeply nested definitions, only
+   * what is needed specifically for {@link BucketInfo#getLabels()} and {@link
+   * BlobInfo#getMetadata()}.
+   */
+  private static final class JsonTrimmer<T extends GenericJson> {
+    private final ImmutableSet<NamedField> requiredFields;
+    private final Supplier<T> constructor;
+    private final Function<T, Map<String, String>> metadataAccessor;
+    private final BiConsumer<T, Map<String, String>> metadataConsumer;
+    private final NamedField metadataNamedField;
+
+    private JsonTrimmer(
+        ImmutableSet<NamedField> requiredFields,
+        NamedField metadataNamedField,
+        Supplier<T> constructor,
+        Function<T, Map<String, String>> metadataAccessor,
+        BiConsumer<T, Map<String, String>> metadataConsumer) {
+      this.requiredFields = requiredFields;
+      this.constructor = constructor;
+      this.metadataAccessor = metadataAccessor;
+      this.metadataConsumer = metadataConsumer;
+      this.metadataNamedField = metadataNamedField;
+    }
+
+    T trim(T base, ImmutableSet<NamedField> modifiedFields) {
+      if (modifiedFields.isEmpty()) {
+        return base;
+      }
+
+      T trimPb = constructor.get();
+
+      Map<String, String> metadata = new HashMap<>();
+      Iterable<NamedField> concat = Iterables.concat(requiredFields, modifiedFields);
+      for (NamedField nf : concat) {
+        String apiaryName = nf.getApiaryName();
+
+        String metadataApiaryName = metadataNamedField.getApiaryName();
+        if (apiaryName.startsWith(metadataApiaryName)) {
+          String key = apiaryName.substring(metadataApiaryName.length() + 1);
+          Map<String, String> map = getOrEmpty(metadataAccessor.apply(base));
+          String s = map.get(key);
+          metadata.put(key, firstNonNull(s, Data.nullOf(String.class)));
+        } else {
+          trimPb.put(apiaryName, base.get(apiaryName));
+        }
+      }
+      if (!metadata.isEmpty()) {
+        metadataConsumer.accept(trimPb, metadata);
+      }
+      return trimPb;
+    }
+
+    private static Map<String, String> getOrEmpty(Map<String, String> map) {
+      return map != null ? map : Collections.emptyMap();
+    }
   }
 }

@@ -53,7 +53,7 @@ public class SetObjectMetadata {
 
     // Does an upsert operation, if the key already exists it's replaced by the new value, otherwise
     // it's added.
-    blob.toBuilder().setMetadata(newMetadata).build().update(precondition);
+    blob.toBuilder().addAllMetadata(newMetadata).build().update(precondition);
 
     System.out.println(
         "Updated custom metadata for object " + objectName + " in bucket " + bucketName);

@@ -41,14 +41,7 @@ public class RemoveBucketLabel {
     labelsToRemove.put(labelKey, null);
 
     Bucket bucket = storage.get(bucketName);
-    Map<String, String> labels;
-    if (bucket.getLabels() == null) {
-      labels = new HashMap<>();
-    } else {
-      labels = new HashMap(bucket.getLabels());
-    }
-    labels.putAll(labelsToRemove);
-    bucket.toBuilder().setLabels(labels).build().update();
+    bucket.toBuilder().addAllLabels(labelsToRemove).build().update();
 
     System.out.println("Removed label " + labelKey + " from bucket " + bucketName);
   }

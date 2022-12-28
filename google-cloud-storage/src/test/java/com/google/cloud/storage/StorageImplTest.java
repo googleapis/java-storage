@@ -350,62 +350,6 @@ public class StorageImplTest {
   }
 
   @Test
-  public void testUpdateBucket() {
-    BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
-    EasyMock.expect(
-            storageRpcMock.patch(
-                Conversions.apiary().bucketInfo().encode(updatedBucketInfo), EMPTY_RPC_OPTIONS))
-        .andReturn(Conversions.apiary().bucketInfo().encode(updatedBucketInfo));
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    Bucket bucket = storage.update(updatedBucketInfo);
-    assertEquals(new Bucket(storage, new BucketInfo.BuilderImpl(updatedBucketInfo)), bucket);
-  }
-
-  @Test
-  public void testUpdateBucketWithOptions() {
-    BucketInfo updatedBucketInfo = BUCKET_INFO1.toBuilder().setIndexPage("some-page").build();
-    EasyMock.expect(
-            storageRpcMock.patch(
-                Conversions.apiary().bucketInfo().encode(updatedBucketInfo), BUCKET_TARGET_OPTIONS))
-        .andReturn(Conversions.apiary().bucketInfo().encode(updatedBucketInfo));
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    Bucket bucket =
-        storage.update(
-            updatedBucketInfo, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_PREDEFINED_ACL);
-    assertEquals(new Bucket(storage, new BucketInfo.BuilderImpl(updatedBucketInfo)), bucket);
-  }
-
-  @Test
-  public void testUpdateBlob() {
-    BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
-    EasyMock.expect(
-            storageRpcMock.patch(
-                Conversions.apiary().blobInfo().encode(updatedBlobInfo), EMPTY_RPC_OPTIONS))
-        .andReturn(Conversions.apiary().blobInfo().encode(updatedBlobInfo));
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    Blob blob = storage.update(updatedBlobInfo);
-    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(updatedBlobInfo)), blob);
-  }
-
-  @Test
-  public void testUpdateBlobWithOptions() {
-    BlobInfo updatedBlobInfo = BLOB_INFO1.toBuilder().setContentType("some-content-type").build();
-    EasyMock.expect(
-            storageRpcMock.patch(
-                Conversions.apiary().blobInfo().encode(updatedBlobInfo),
-                BLOB_TARGET_OPTIONS_UPDATE))
-        .andReturn(Conversions.apiary().blobInfo().encode(updatedBlobInfo));
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    Blob blob =
-        storage.update(updatedBlobInfo, BLOB_TARGET_METAGENERATION, BLOB_TARGET_PREDEFINED_ACL);
-    assertEquals(new Blob(storage, new BlobInfo.BuilderImpl(updatedBlobInfo)), blob);
-  }
-
-  @Test
   public void testDeleteBucket() {
     EasyMock.expect(
             storageRpcMock.delete(

@@ -50,7 +50,7 @@ public class BatchSetObjectMetadata {
 
     // Add all blobs with the given prefix to the batch request
     for (Blob blob : blobs.iterateAll()) {
-      batchRequest.update(blob.toBuilder().setMetadata(newMetadata).build());
+      batchRequest.update(blob.toBuilder().addAllMetadata(newMetadata).build());
     }
 
     // Execute the batch request

@@ -21,8 +21,11 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.client.util.DateTime;
 import com.google.api.core.InternalApi;
 import com.google.cloud.storage.Conversions.Codec;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.google.common.primitives.Ints;
 import com.google.storage.v2.BucketName;
@@ -33,11 +36,14 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -232,6 +238,49 @@ final class Utils {
       }
     }
     throw new IllegalStateException("Unable to resolve non-null value");
+  }
+
+  /**
+   * Diff two maps, and append each differing key to {@code sink} with the parent of {{@code parent}
+   */
+  @SuppressWarnings("ConstantValue")
+  static void diffMaps(
+      NamedField parent,
+      Map<String, String> left,
+      Map<String, String> right,
+      Consumer<NamedField> sink) {
+    final Stream<String> keys;
+    if (left != null && right == null) {
+      keys = left.keySet().stream();
+    } else if (left == null && right != null) {
+      keys = right.keySet().stream();
+    } else if (left != null && right != null) {
+      MapDifference<String, String> difference = Maps.difference(left, right);
+      keys =
+          Stream.of(
+                  // keys with modified values
+                  difference.entriesDiffering().keySet().stream(),
+                  // removed keys
+                  difference.entriesOnlyOnLeft().keySet().stream(),
+                  // new keys
+                  difference.entriesOnlyOnRight().keySet().stream())
+              .flatMap(x -> x);
+    } else {
+      keys = Stream.empty();
+    }
+    keys.map(NamedField::literal).map(k -> NamedField.nested(parent, k)).forEach(sink);
+  }
+
+  /**
+   * Null friendly alternative to {@link Maps#newHashMap(Map)}. If {@code baseMap} is null, a new
+   * HashMap will still be returned.
+   */
+  static <K, V> HashMap<K, V> newHashMap(@Nullable Map<K, V> baseMap) {
+    HashMap<K, V> map = new HashMap<>();
+    if (baseMap != null) {
+      map.putAll(baseMap);
+    }
+    return map;
   }
 
   private static int crc32cDecode(String from) {

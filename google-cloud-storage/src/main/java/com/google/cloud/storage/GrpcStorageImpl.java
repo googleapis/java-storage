@@ -61,6 +61,7 @@ import com.google.cloud.storage.UnifiedOpts.HmacKeyListOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeySourceOpt;
 import com.google.cloud.storage.UnifiedOpts.HmacKeyTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Mapper;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
@@ -494,7 +495,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .getUpdateMaskBuilder()
         .addAllPaths(
             bucketInfo.getModifiedFields().stream()
-                .map(BucketField::getGrpcName)
+                .map(NamedField::getGrpcName)
                 .collect(ImmutableList.toImmutableList()));
     UpdateBucketRequest req = builder.build();
     return Retrying.run(
@@ -516,7 +517,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         .getUpdateMaskBuilder()
         .addAllPaths(
             blobInfo.getModifiedFields().stream()
-                .map(BlobField::getGrpcName)
+                .map(NamedField::getGrpcName)
                 .collect(ImmutableList.toImmutableList()));
     UpdateObjectRequest req = builder.build();
     return Retrying.run(

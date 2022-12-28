@@ -44,11 +44,7 @@ public class AddBucketLabel {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
     Bucket bucket = storage.get(bucketName);
-    Map<String, String> labels = bucket.getLabels();
-    if (labels != null) {
-      newLabels.putAll(labels);
-    }
-    bucket.toBuilder().setLabels(newLabels).build().update();
+    bucket.toBuilder().addAllLabels(newLabels).build().update();
 
     System.out.println(
         "Added label " + labelKey + " with value " + labelValue + " to bucket " + bucketName + ".");
