@@ -52,9 +52,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
@@ -69,8 +67,6 @@ public final class ITGrpcTest {
 
   @Inject public Generator generator;
 
-  @Rule public final TestName testName = new TestName();
-
   @Test
   public void testCreateBucket() {
     String bucketName = generator.randomBucketName();
@@ -81,7 +77,7 @@ public final class ITGrpcTest {
   @Test
   public void listBlobs() {
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
-    String prefix = testName.getMethodName();
+    String prefix = generator.randomObjectName();
     List<Blob> blobs =
         IntStream.rangeClosed(1, 10)
             .mapToObj(i -> String.format("%s/%02d", prefix, i))
@@ -182,7 +178,7 @@ public final class ITGrpcTest {
 
   @Test
   public void objectWrite_storage_create() {
-    BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
+    BlobInfo info = BlobInfo.newBuilder(bucketInfo, generator.randomObjectName()).build();
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
     Blob blob = storage.create(info, content, BlobTargetOption.doesNotExist());
     byte[] actual = blob.getContent();
@@ -191,7 +187,7 @@ public final class ITGrpcTest {
 
   @Test
   public void objectWrite_storage_create_stream() {
-    BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
+    BlobInfo info = BlobInfo.newBuilder(bucketInfo, generator.randomObjectName()).build();
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
     Blob blob =
         storage.create(info, new ByteArrayInputStream(content), BlobWriteOption.doesNotExist());
@@ -201,7 +197,7 @@ public final class ITGrpcTest {
 
   @Test
   public void objectWrite_storage_writer() throws IOException {
-    BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName()).build();
+    BlobInfo info = BlobInfo.newBuilder(bucketInfo, generator.randomObjectName()).build();
     byte[] content = "Hello, World!".getBytes(StandardCharsets.UTF_8);
     try (WriteChannel c = storage.writer(info, BlobWriteOption.doesNotExist())) {
       c.write(ByteBuffer.wrap(content));
@@ -216,10 +212,12 @@ public final class ITGrpcTest {
 
     byte[] expected = "Hello, World!".getBytes(StandardCharsets.UTF_8);
 
-    BlobInfo info = BlobInfo.newBuilder(bucketInfo, testName.getMethodName() + "copy/src").build();
+    BlobInfo info =
+        BlobInfo.newBuilder(bucketInfo, generator.randomObjectName() + "copy/src").build();
     Blob cpySrc = s.create(info, expected, BlobTargetOption.doesNotExist());
 
-    BlobInfo dst = BlobInfo.newBuilder(bucketInfo, testName.getMethodName() + "copy/dst").build();
+    BlobInfo dst =
+        BlobInfo.newBuilder(bucketInfo, generator.randomObjectName() + "copy/dst").build();
 
     CopyRequest copyRequest =
         CopyRequest.newBuilder()

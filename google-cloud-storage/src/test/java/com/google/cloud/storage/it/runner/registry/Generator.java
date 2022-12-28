@@ -17,18 +17,35 @@
 package com.google.cloud.storage.it.runner.registry;
 
 import java.util.UUID;
+import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.junit.runner.Description;
 
 /** Scoped instance of a class which generates common things for tests. */
 public final class Generator implements ManagedLifecycle {
 
-  /**
-   * Generate a new random bucket name
-   *
-   * @return
-   */
+  private final WeakHashMap<Description, AtomicInteger> counters;
+
+  Generator() {
+    counters = new WeakHashMap<>();
+  }
+
+  /** Generate a new random bucket name */
+  @NonNull
   public String randomBucketName() {
     // TODO: track their creation and detect if the bucket is "leaked" and fail the test
     return "java-storage-grpc-rand-" + UUID.randomUUID();
+  }
+
+  @NonNull
+  public String randomObjectName() {
+    Description currentTest = Registry.getInstance().getCurrentTest();
+    if (currentTest == null) {
+      throw new IllegalStateException("No actively running test in registry.");
+    }
+    AtomicInteger counter = counters.computeIfAbsent(currentTest, (d) -> new AtomicInteger(1));
+    return String.format("%s-%04d", currentTest.getMethodName(), counter.getAndIncrement());
   }
 
   @Override
