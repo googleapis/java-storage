@@ -134,14 +134,9 @@ public final class ITBucketIamPolicyTest {
       assertPolicyEqual(policy, actual);
     }
   }
-  /**
-   * In order to define an IAM Condition, policy version 3 and Uniform Bucket Level Access must both
-   * be used.
-   *
-   * <p>Define a policy with a condition and verify it can be read back and decoded equivalently.
-   */
+
   @Test
-  public void iamPolicyV1() throws Exception {
+  public void iamPolicyWithoutCondition() throws Exception {
     BucketSourceOption opt = BucketSourceOption.requestedPolicyVersion(1);
     Policy policy =
         Policy.newBuilder()
