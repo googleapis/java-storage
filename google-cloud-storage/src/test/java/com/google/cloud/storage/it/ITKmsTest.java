@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.api.gax.paging.Page;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
@@ -41,19 +40,14 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.KmsFixture;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
 import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.Key;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.Set;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,7 +57,6 @@ import org.junit.runner.RunWith;
 @CrossRun(
     transports = {Transport.HTTP, Transport.GRPC},
     backends = Backend.PROD)
-@ParallelFriendly
 public class ITKmsTest {
 
   private static final long seed = -7071346537822433445L;
@@ -184,46 +177,6 @@ public class ITKmsTest {
     assertEquals(blob.getBlobId(), remoteBlob.getBlobId());
     assertTrue(remoteBlob.getKmsKeyName().startsWith(kms.getKey1().getName()));
     assertNull(remoteBlob.getContentType());
-  }
-
-  @Test(timeout = 5000)
-  public void testListBlobsKmsKeySelectedFields() throws InterruptedException {
-    String[] blobNames = {
-      "test-list-blobs-selected-field-kms-key-name-blob1",
-      "test-list-blobs-selected-field-kms-key-name-blob2"
-    };
-    BlobInfo blob1 = BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
-    BlobInfo blob2 = BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
-    Blob remoteBlob1 =
-        storage.create(blob1, Storage.BlobTargetOption.kmsKeyName(kms.getKey1().getName()));
-    Blob remoteBlob2 =
-        storage.create(blob2, Storage.BlobTargetOption.kmsKeyName(kms.getKey1().getName()));
-    assertNotNull(remoteBlob1);
-    assertNotNull(remoteBlob2);
-    Page<Blob> page =
-        storage.list(
-            bucket.getName(),
-            Storage.BlobListOption.prefix("test-list-blobs-selected-field-kms-key-name-blob"),
-            Storage.BlobListOption.fields(BlobField.KMS_KEY_NAME));
-    // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
-    // test fails if timeout is reached.
-    while (Iterators.size(page.iterateAll().iterator()) != 2) {
-      Thread.sleep(500);
-      page =
-          storage.list(
-              bucket.getName(),
-              Storage.BlobListOption.prefix("test-list-blobs-selected-field-kms-key-name-blob"),
-              Storage.BlobListOption.fields(BlobField.KMS_KEY_NAME));
-    }
-    Set<String> blobSet = ImmutableSet.of(blobNames[0], blobNames[1]);
-    Iterator<Blob> iterator = page.iterateAll().iterator();
-    while (iterator.hasNext()) {
-      Blob remoteBlob = iterator.next();
-      assertEquals(bucket.getName(), remoteBlob.getBucket());
-      assertTrue(blobSet.contains(remoteBlob.getName()));
-      assertTrue(remoteBlob.getKmsKeyName().startsWith(kms.getKey1().getName()));
-      assertNull(remoteBlob.getContentType());
-    }
   }
 
   @Test

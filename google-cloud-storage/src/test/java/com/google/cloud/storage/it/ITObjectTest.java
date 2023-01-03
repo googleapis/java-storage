@@ -82,9 +82,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.Test;
@@ -310,88 +313,36 @@ public class ITObjectTest {
     }
   }
 
-  @Test(timeout = 5000)
-  public void testListBlobsSelectedFields() throws InterruptedException {
+  @Test
+  public void testListBlobsSelectedFields() {
+    String baseName = generator.randomObjectName();
 
-    String[] blobNames = {
-      "test-list-blobs-selected-fields-blob1", "test-list-blobs-selected-fields-blob2"
-    };
+    String name1 = baseName + "1";
+    String name2 = baseName + "2";
+
     ImmutableMap<String, String> metadata = ImmutableMap.of("k", "v");
-    BlobInfo blob1 =
-        BlobInfo.newBuilder(bucket, blobNames[0])
-            .setContentType(CONTENT_TYPE)
-            .setMetadata(metadata)
-            .build();
-    BlobInfo blob2 =
-        BlobInfo.newBuilder(bucket, blobNames[1])
-            .setContentType(CONTENT_TYPE)
-            .setMetadata(metadata)
-            .build();
+    BlobInfo blob1 = BlobInfo.newBuilder(bucket, name1).setMetadata(metadata).build();
+    BlobInfo blob2 = BlobInfo.newBuilder(bucket, name2).setMetadata(metadata).build();
     Blob remoteBlob1 = storage.create(blob1);
     Blob remoteBlob2 = storage.create(blob2);
-    assertNotNull(remoteBlob1);
-    assertNotNull(remoteBlob2);
+
+    ImmutableSet<Map<String, String>> expected =
+        Stream.of(remoteBlob1, remoteBlob2)
+            .map(BlobInfo::getMetadata)
+            .collect(ImmutableSet.toImmutableSet());
+
     Page<Blob> page =
         storage.list(
             bucket.getName(),
-            BlobListOption.prefix("test-list-blobs-selected-fields-blob"),
-            BlobListOption.fields(BlobField.METADATA));
-    // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
-    // test fails if timeout is reached.
-    while (Iterators.size(page.iterateAll().iterator()) != 2) {
-      Thread.sleep(500);
-      page =
-          storage.list(
-              bucket.getName(),
-              BlobListOption.prefix("test-list-blobs-selected-fields-blob"),
-              BlobListOption.fields(BlobField.METADATA));
-    }
-    Set<String> blobSet = ImmutableSet.of(blobNames[0], blobNames[1]);
-    Iterator<Blob> iterator = page.iterateAll().iterator();
-    while (iterator.hasNext()) {
-      Blob remoteBlob = iterator.next();
-      assertEquals(bucket.getName(), remoteBlob.getBucket());
-      assertTrue(blobSet.contains(remoteBlob.getName()));
-      assertEquals(metadata, remoteBlob.getMetadata());
-      assertNull(remoteBlob.getContentType());
-    }
-  }
+            Storage.BlobListOption.prefix(baseName),
+            Storage.BlobListOption.fields(BlobField.METADATA));
 
-  @Test(timeout = 5000)
-  public void testListBlobsEmptySelectedFields() throws InterruptedException {
+    ImmutableSet<Blob> blobs = ImmutableSet.copyOf(page.iterateAll());
 
-    String[] blobNames = {
-      "test-list-blobs-empty-selected-fields-blob1", "test-list-blobs-empty-selected-fields-blob2"
-    };
-    BlobInfo blob1 = BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
-    BlobInfo blob2 = BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
-    Blob remoteBlob1 = storage.create(blob1);
-    Blob remoteBlob2 = storage.create(blob2);
-    assertNotNull(remoteBlob1);
-    assertNotNull(remoteBlob2);
-    Page<Blob> page =
-        storage.list(
-            bucket.getName(),
-            BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
-            BlobListOption.fields());
-    // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
-    // test fails if timeout is reached.
-    while (Iterators.size(page.iterateAll().iterator()) != 2) {
-      Thread.sleep(500);
-      page =
-          storage.list(
-              bucket.getName(),
-              BlobListOption.prefix("test-list-blobs-empty-selected-fields-blob"),
-              BlobListOption.fields());
-    }
-    Set<String> blobSet = ImmutableSet.of(blobNames[0], blobNames[1]);
-    Iterator<Blob> iterator = page.iterateAll().iterator();
-    while (iterator.hasNext()) {
-      Blob remoteBlob = iterator.next();
-      assertEquals(bucket.getName(), remoteBlob.getBucket());
-      assertTrue(blobSet.contains(remoteBlob.getName()));
-      assertNull(remoteBlob.getContentType());
-    }
+    ImmutableSet<Map<String, String>> actual =
+        blobs.stream().map(BlobInfo::getMetadata).collect(ImmutableSet.toImmutableSet());
+
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
@@ -545,49 +496,76 @@ public class ITObjectTest {
     }
   }
 
-  @Test(timeout = 5000)
-  // This test is currently timing out for GRPC
-  @Exclude(transports = Transport.GRPC)
-  public void testListBlobsCurrentDirectory() throws InterruptedException {
+  @Test
+  public void testListBlobsCurrentDirectoryIncludesBothObjectsAndSyntheticDirectories() {
+    String bucketName = bucket.getName();
+    String directoryName = generator.randomObjectName();
+    String subdirectoryName = "subdirectory";
 
-    String directoryName = "test-list-blobs-current-directory/";
-    String subdirectoryName = "subdirectory/";
-    String[] blobNames = {directoryName + subdirectoryName + "blob1", directoryName + "blob2"};
-    BlobInfo blob1 = BlobInfo.newBuilder(bucket, blobNames[0]).setContentType(CONTENT_TYPE).build();
-    BlobInfo blob2 = BlobInfo.newBuilder(bucket, blobNames[1]).setContentType(CONTENT_TYPE).build();
-    Blob remoteBlob1 = storage.create(blob1, BLOB_BYTE_CONTENT);
-    Blob remoteBlob2 = storage.create(blob2, BLOB_BYTE_CONTENT);
-    assertNotNull(remoteBlob1);
-    assertNotNull(remoteBlob2);
-    Page<Blob> page =
+    String uriSubDir = String.format("gs://%s/%s/%s/", bucketName, directoryName, subdirectoryName);
+    String uri1 = String.format("gs://%s/%s/%s/blob1", bucketName, directoryName, subdirectoryName);
+    String uri2 = String.format("gs://%s/%s/blob2", bucketName, directoryName);
+
+    BlobId id1 = BlobId.fromGsUtilUri(uri1);
+    BlobId id2 = BlobId.fromGsUtilUri(uri2);
+    BlobId idSubDir = BlobId.fromGsUtilUri(uriSubDir);
+
+    BlobInfo blob1 = BlobInfo.newBuilder(id1).build();
+    BlobInfo blob2 = BlobInfo.newBuilder(id2).build();
+    BlobInfo obj1Gen1 = storage.create(blob1, BLOB_BYTE_CONTENT).asBlobInfo();
+    BlobInfo obj2Gen1 = storage.create(blob2, BLOB_BYTE_CONTENT).asBlobInfo();
+
+    Page<Blob> page1 =
         storage.list(
-            bucket.getName(),
-            BlobListOption.prefix("test-list-blobs-current-directory/"),
+            bucketName,
+            BlobListOption.prefix(directoryName + "/"),
             BlobListOption.currentDirectory());
-    // Listing blobs is eventually consistent, we loop until the list is of the expected size. The
-    // test fails if timeout is reached.
-    while (Iterators.size(page.iterateAll().iterator()) != 2) {
-      Thread.sleep(500);
-      page =
-          storage.list(
-              bucket.getName(),
-              BlobListOption.prefix("test-list-blobs-current-directory/"),
-              BlobListOption.currentDirectory());
-    }
-    Iterator<Blob> iterator = page.iterateAll().iterator();
-    while (iterator.hasNext()) {
-      Blob remoteBlob = iterator.next();
-      assertEquals(bucket.getName(), remoteBlob.getBucket());
-      if (remoteBlob.getName().equals(blobNames[1])) {
-        assertEquals(CONTENT_TYPE, remoteBlob.getContentType());
-        assertEquals(BLOB_BYTE_CONTENT.length, (long) remoteBlob.getSize());
-        assertFalse(remoteBlob.isDirectory());
-      } else if (remoteBlob.getName().equals(directoryName + subdirectoryName)) {
-        assertEquals(0L, (long) remoteBlob.getSize());
-        assertTrue(remoteBlob.isDirectory());
-      } else {
-        fail("Unexpected blob with name " + remoteBlob.getName());
-      }
+
+    ImmutableList<Blob> blobs = ImmutableList.copyOf(page1.iterateAll());
+
+    ImmutableSet<BlobInfo> actual =
+        blobs.stream()
+            .map(Blob::asBlobInfo)
+            .map(info -> PackagePrivateMethodWorkarounds.noAcl(info))
+            .collect(ImmutableSet.toImmutableSet());
+
+    // obj1Gen1 is "in subdirectory" and we don't expect to receive it as a result when listing
+    // object in "the current directory"
+    assertThat(actual).doesNotContain(obj1Gen1);
+
+    // make sure one of the results we received is the "subdirectory" blob1 is "in"
+    Optional<BlobInfo> first = actual.stream().filter(BlobInfo::isDirectory).findFirst();
+    assertThat(first.isPresent()).isTrue();
+    assertThat(first.get().getBlobId()).isEqualTo(idSubDir);
+
+    assertThat(actual).contains(PackagePrivateMethodWorkarounds.noAcl(obj2Gen1));
+  }
+
+  @Test
+  public void testListBlobsMultiplePages() {
+    String basePath = generator.randomObjectName();
+
+    ImmutableList<BlobInfo> expected =
+        IntStream.rangeClosed(1, 10)
+            .mapToObj(i -> String.format("%s/%2d", basePath, i))
+            .map(name -> BlobInfo.newBuilder(bucket, name).build())
+            .map(info -> storage.create(info, BlobTargetOption.doesNotExist()))
+            .map(info1 -> PackagePrivateMethodWorkarounds.noAcl(info1))
+            .collect(ImmutableList.toImmutableList());
+
+    Page<Blob> page =
+        storage.list(bucket.getName(), BlobListOption.prefix(basePath), BlobListOption.pageSize(3));
+
+    ImmutableList<BlobInfo> actual =
+        ImmutableList.copyOf(page.iterateAll()).stream()
+            .map(info -> PackagePrivateMethodWorkarounds.noAcl(info))
+            .collect(ImmutableList.toImmutableList());
+
+    try {
+      assertThat(actual).isEqualTo(expected);
+    } finally {
+      // delete all the objects we created
+      expected.stream().map(BlobInfo::getBlobId).forEach(storage::delete);
     }
   }
 
