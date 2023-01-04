@@ -16,11 +16,10 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,6 +28,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.StorageBatch;
 import com.google.cloud.storage.StorageBatchResult;
 import com.google.cloud.storage.StorageException;
@@ -38,8 +38,8 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
-import com.google.common.collect.Lists;
-import java.util.List;
+import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +47,6 @@ import org.junit.runner.RunWith;
 @RunWith(StorageITRunner.class)
 @SingleBackend(Backend.PROD)
 public class ITBatchTest {
-  private static final int MAX_BATCH_SIZE = 100;
   private static final String CONTENT_TYPE = "text/plain";
 
   @Inject
@@ -55,6 +54,7 @@ public class ITBatchTest {
   public Storage storage;
 
   @Inject public BucketInfo bucket;
+  @Inject public Generator generator;
 
   private String bucketName;
 
@@ -108,67 +108,56 @@ public class ITBatchTest {
   }
 
   @Test
-  public void testBatchRequestManyOperations() {
-    List<StorageBatchResult<Boolean>> deleteResults =
-        Lists.newArrayListWithCapacity(MAX_BATCH_SIZE);
-    List<StorageBatchResult<Blob>> getResults = Lists.newArrayListWithCapacity(MAX_BATCH_SIZE / 2);
-    List<StorageBatchResult<Blob>> updateResults =
-        Lists.newArrayListWithCapacity(MAX_BATCH_SIZE / 2);
+  public void testBatchRequestManyOperations() throws Exception {
+    // define some object ids for use in the batch operations
+    BlobId id1 = BlobId.of(bucketName, generator.randomObjectName());
+    BlobId id2 = BlobId.of(bucketName, generator.randomObjectName());
+    BlobId id3 = BlobId.of(bucketName, generator.randomObjectName());
+    BlobId id4 = BlobId.of(bucketName, generator.randomObjectName());
+    BlobId id5 = BlobId.of(bucketName, generator.randomObjectName());
+
+    ImmutableMap<String, String> ka = ImmutableMap.of("k", "a");
+    ImmutableMap<String, String> kB = ImmutableMap.of("k", "B");
+
+    // Create objects which exist before the batch operations
+    BlobInfo info1 = BlobInfo.newBuilder(id1).setMetadata(ka).build();
+    BlobInfo info2 = BlobInfo.newBuilder(id2).setMetadata(ka).build();
+    BlobInfo info3 = BlobInfo.newBuilder(id3).setMetadata(ka).build();
+    Blob obj1 = storage.create(info1, BlobTargetOption.doesNotExist());
+    Blob obj2 = storage.create(info2, BlobTargetOption.doesNotExist());
+    Blob obj3 = storage.create(info3, BlobTargetOption.doesNotExist());
+
+    // Define our batch operations
     StorageBatch batch = storage.batch();
-    for (int i = 0; i < MAX_BATCH_SIZE; i++) {
-      BlobId blobId = BlobId.of(bucketName, "test-batch-request-many-operations-blob-" + i);
-      deleteResults.add(batch.delete(blobId));
-    }
-    for (int i = 0; i < MAX_BATCH_SIZE / 2; i++) {
-      BlobId blobId = BlobId.of(bucketName, "test-batch-request-many-operations-blob-" + i);
-      getResults.add(batch.get(blobId));
-    }
-    for (int i = 0; i < MAX_BATCH_SIZE / 2; i++) {
-      BlobInfo blob =
-          BlobInfo.newBuilder(BlobId.of(bucketName, "test-batch-request-many-operations-blob-" + i))
-              .build();
-      updateResults.add(batch.update(blob));
-    }
 
-    String sourceBlobName1 = "test-batch-request-many-operations-source-blob-1";
-    String sourceBlobName2 = "test-batch-request-many-operations-source-blob-2";
-    BlobInfo sourceBlob1 = BlobInfo.newBuilder(bucketName, sourceBlobName1).build();
-    BlobInfo sourceBlob2 = BlobInfo.newBuilder(bucketName, sourceBlobName2).build();
-    assertNotNull(storage.create(sourceBlob1));
-    assertNotNull(storage.create(sourceBlob2));
-    BlobInfo updatedBlob2 = sourceBlob2.toBuilder().setContentType(CONTENT_TYPE).build();
+    StorageBatchResult<Blob> get1Success = batch.get(id1);
+    StorageBatchResult<Blob> update2Success =
+        batch.update(
+            obj2.toBuilder().setMetadata(kB).build(), BlobTargetOption.metagenerationMatch());
+    StorageBatchResult<Boolean> delete3Success = batch.delete(id3);
+    StorageBatchResult<Blob> get4Error = batch.get(id4);
+    StorageBatchResult<Boolean> delete5Error = batch.delete(id5);
 
-    StorageBatchResult<Blob> getResult = batch.get(bucketName, sourceBlobName1);
-    StorageBatchResult<Blob> updateResult = batch.update(updatedBlob2);
-
+    // submit the batch
     batch.submit();
 
-    // Check deletes
-    for (StorageBatchResult<Boolean> failedDeleteResult : deleteResults) {
-      assertFalse(failedDeleteResult.get());
-    }
-
-    // Check gets
-    for (StorageBatchResult<Blob> failedGetResult : getResults) {
-      assertNull(failedGetResult.get());
-    }
-    Blob remoteBlob1 = getResult.get();
-    assertEquals(sourceBlob1.getBucket(), remoteBlob1.getBucket());
-    assertEquals(sourceBlob1.getName(), remoteBlob1.getName());
-
-    // Check updates
-    for (StorageBatchResult<Blob> failedUpdateResult : updateResults) {
-      try {
-        failedUpdateResult.get();
-        fail("Expected StorageException");
-      } catch (StorageException ex) {
-        // expected
-      }
-    }
-    Blob remoteUpdatedBlob2 = updateResult.get();
-    assertEquals(sourceBlob2.getBucket(), remoteUpdatedBlob2.getBucket());
-    assertEquals(sourceBlob2.getName(), remoteUpdatedBlob2.getName());
-    assertEquals(updatedBlob2.getContentType(), remoteUpdatedBlob2.getContentType());
+    // verify our expected results
+    assertAll(
+        () -> {
+          Blob blob = get1Success.get();
+          assertThat(blob.getBucket()).isEqualTo(bucketName);
+          assertThat(blob.getName()).isEqualTo(id1.getName());
+          assertThat(blob.getMetadata()).isEqualTo(ka);
+        },
+        () -> {
+          Blob blob = update2Success.get();
+          assertThat(blob.getBucket()).isEqualTo(bucketName);
+          assertThat(blob.getName()).isEqualTo(id2.getName());
+          assertThat(blob.getMetadata()).isEqualTo(kB);
+        },
+        () -> assertThat(delete3Success.get()).isTrue(),
+        () -> assertThat(get4Error.get()).isNull(),
+        () -> assertThat(delete5Error.get()).isFalse());
   }
 
   @Test

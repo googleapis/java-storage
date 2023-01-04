@@ -31,6 +31,7 @@ import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import java.util.Iterator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,7 @@ public class ITDownloadBlobWithoutAuth {
   @Inject public Storage storage;
 
   @Inject public BucketInfo bucket;
+  @Inject public Generator generator;
 
   @Test
   public void testDownloadPublicBlobWithoutAuthentication() {
@@ -75,7 +77,7 @@ public class ITDownloadBlobWithoutAuth {
     // try to download blobs from a bucket that requires authentication
     // authenticated client will succeed
     // unauthenticated client will receive an exception
-    String sourceBlobName = "source-blob-name";
+    String sourceBlobName = generator.randomObjectName();
     BlobInfo sourceBlob = BlobInfo.newBuilder(bucketName, sourceBlobName).build();
     assertThat(storage.create(sourceBlob)).isNotNull();
     assertThat(storage.readAllBytes(bucketName, sourceBlobName)).isNotNull();

@@ -40,23 +40,23 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
+import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableMap;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +74,7 @@ public class ITSignedUrlTest {
   public Storage storage;
 
   @Inject public BucketInfo bucket;
+  @Inject public Generator generator;
 
   private String bucketName;
 
@@ -87,7 +88,7 @@ public class ITSignedUrlTest {
     if (storage.getOptions().getCredentials() != null) {
       assumeTrue(storage.getOptions().getCredentials() instanceof ServiceAccountSigner);
     }
-    String blobName = "test-get-signed-url-blob/with/slashes/and?special=!#$&'()*+,:;=?@[]";
+    String blobName = generator.randomObjectName() + "/with/slashes/and?special=!#$&'()*+,:;=?@[]";
     BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
@@ -110,7 +111,7 @@ public class ITSignedUrlTest {
     if (storage.getOptions().getCredentials() != null) {
       assumeTrue(storage.getOptions().getCredentials() instanceof ServiceAccountSigner);
     }
-    String blobName = "test-get-v2-with-generation-param";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
@@ -142,7 +143,7 @@ public class ITSignedUrlTest {
     if (storage.getOptions().getCredentials() != null) {
       assumeTrue(storage.getOptions().getCredentials() instanceof ServiceAccountSigner);
     }
-    String blobName = "test-post-signed-url-blob";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     assertNotNull(storage.create(blob));
     for (Storage.SignUrlOption urlStyle :
@@ -169,7 +170,7 @@ public class ITSignedUrlTest {
       assumeTrue(storage.getOptions().getCredentials() instanceof ServiceAccountSigner);
     }
 
-    String blobName = "test-get-signed-url-blob/with/slashes/and?special=!#$&'()*+,:;=?@[]";
+    String blobName = generator.randomObjectName() + "/with/slashes/and?special=!#$&'()*+,:;=?@[]";
     BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     Blob remoteBlob = storage.create(blob, BLOB_BYTE_CONTENT);
     assertNotNull(remoteBlob);
@@ -194,30 +195,38 @@ public class ITSignedUrlTest {
   public void testSignedPostPolicyV4() throws Exception {
     PostFieldsV4 fields = PostFieldsV4.newBuilder().setAcl("public-read").build();
 
+    BlobId id = BlobId.of(bucketName, generator.randomObjectName());
+
     PostPolicyV4 policy =
         storage.generateSignedPostPolicyV4(
-            BlobInfo.newBuilder(bucketName, "my-object").build(), 7, TimeUnit.DAYS, fields);
+            BlobInfo.newBuilder(id).build(), 7, TimeUnit.DAYS, fields);
 
-    HttpClient client = HttpClientBuilder.create().build();
-    HttpPost request = new HttpPost(policy.getUrl());
-    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+    String content = "Hello, World!";
+    try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
+      HttpPost request = new HttpPost(policy.getUrl());
+      MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-    for (Map.Entry<String, String> entry : policy.getFields().entrySet()) {
-      builder.addTextBody(entry.getKey(), entry.getValue());
+      for (Map.Entry<String, String> entry : policy.getFields().entrySet()) {
+        builder.addTextBody(entry.getKey(), entry.getValue());
+      }
+      builder.addBinaryBody(
+          "file",
+          new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)),
+          ContentType.APPLICATION_OCTET_STREAM,
+          id.getName());
+      request.setEntity(builder.build());
+      client.execute(request);
     }
-    File file = File.createTempFile("temp", "file");
-    Files.write(file.toPath(), "hello world".getBytes());
-    builder.addBinaryBody(
-        "file", new FileInputStream(file), ContentType.APPLICATION_OCTET_STREAM, file.getName());
-    request.setEntity(builder.build());
-    client.execute(request);
 
-    assertEquals("hello world", new String(storage.get(bucketName, "my-object").getContent()));
+    Blob blob = storage.get(id);
+    byte[] actualContent = blob.getContent();
+    String actual = new String(actualContent, StandardCharsets.UTF_8);
+    assertEquals(content, actual);
   }
 
   @Test
   public void testUploadUsingSignedURL() throws Exception {
-    String blobName = "test-signed-url-upload";
+    String blobName = generator.randomObjectName();
     BlobInfo blob = BlobInfo.newBuilder(bucketName, blobName).build();
     assertNotNull(storage.create(blob));
     Map<String, String> extensionHeaders = new HashMap<>();
