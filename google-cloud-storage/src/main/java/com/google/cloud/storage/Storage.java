@@ -3363,6 +3363,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * Acl acl = storage.getAcl(bucketName, new User(userEmail), userProjectOption);
    * }</pre>
    *
+   * <h4>Behavioral Differences between HTTP and gRPC</h4>
+   *
+   * <ol>
+   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
+   *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
+   *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for
+   *       gRPC, an empty list will be returned.
+   * </ol>
+   *
    * @param bucket name of the bucket where the getAcl operation takes place
    * @param entity ACL entity to fetch
    * @param options extra parameters to apply to this operation
@@ -3496,6 +3506,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * }
    * }</pre>
    *
+   * <h4>Behavioral Differences between HTTP and gRPC</h4>
+   *
+   * <ol>
+   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
+   *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
+   *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for
+   *       gRPC, an empty list will be returned.
+   * </ol>
+   *
    * @param bucket the name of the bucket to list ACLs for
    * @param options any number of BucketSourceOptions to apply to this operation
    * @throws StorageException upon failure
@@ -3520,6 +3540,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * String bucketName = "my-unique-bucket";
    * Acl acl = storage.getDefaultAcl(bucketName, User.ofAllAuthenticatedUsers());
    * }</pre>
+   *
+   * <h4>Behavioral Differences between HTTP and gRPC</h4>
+   *
+   * <ol>
+   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
+   *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
+   *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for
+   *       gRPC, an empty list will be returned.
+   * </ol>
    *
    * @throws StorageException upon failure
    */
@@ -3603,6 +3633,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    *   // do something with ACL entry
    * }
    * }</pre>
+   *
+   * <h4>Behavioral Differences between HTTP and gRPC</h4>
+   *
+   * <ol>
+   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
+   *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
+   *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for
+   *       gRPC, an empty list will be returned.
+   * </ol>
    *
    * @throws StorageException upon failure
    */
