@@ -17,9 +17,11 @@
 package com.google.cloud.storage;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
+import com.google.api.core.ApiFuture;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiException;
+import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.RetryHelper.RetryHelperException;
@@ -176,6 +178,14 @@ public final class StorageException extends BaseHttpServiceException {
     try {
       r.run();
     } catch (IOException e) {
+      throw StorageException.coalesce(e);
+    }
+  }
+
+  static <T> T wrapFutureGet(ApiFuture<T> f) {
+    try {
+      return ApiExceptions.callAndTranslateApiException(f);
+    } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
   }

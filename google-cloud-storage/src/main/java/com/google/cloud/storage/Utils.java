@@ -23,7 +23,6 @@ import com.google.api.core.InternalApi;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
@@ -36,7 +35,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -210,15 +208,6 @@ final class Utils {
   @InternalApi
   static <T1, T2> Function<T1, T2> lift(Function<T1, T2> f) {
     return f;
-  }
-
-  /**
-   * Several properties are translating lists of one type to another. This convenience method allows
-   * specifying a mapping function and composing as part of an {@code #isNonNull} definition.
-   */
-  @InternalApi
-  static <T1, T2> Function<List<T1>, ImmutableList<T2>> toImmutableListOf(Function<T1, T2> f) {
-    return l -> l.stream().map(f).collect(ImmutableList.toImmutableList());
   }
 
   /**

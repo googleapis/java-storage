@@ -34,6 +34,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       ReadObjectRequest request,
       boolean autoGzipDecompression) {
+    super(Conversions.grpc().blobInfo());
     this.read = read;
     this.request = request;
     this.autoGzipDecompression = autoGzipDecompression;

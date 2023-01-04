@@ -20,7 +20,6 @@ import static com.google.cloud.storage.Utils.bucketNameCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.projectNameCodec;
-import static com.google.cloud.storage.Utils.toImmutableListOf;
 
 import com.google.api.pathtemplate.PathTemplate;
 import com.google.cloud.Binding;
@@ -64,6 +63,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 final class GrpcConversions {
   static final GrpcConversions INSTANCE = new GrpcConversions();
@@ -1022,5 +1022,14 @@ final class GrpcConversions {
 
   private static <T> T todo() {
     throw new IllegalStateException("Not yet implemented");
+  }
+
+  /**
+   * Several properties are translating lists of one type to another. This convenience method allows
+   * specifying a mapping function and composing as part of an {@code #isNonNull} definition.
+   */
+  private static <T1, T2> Function<List<T1>, ImmutableList<T2>> toImmutableListOf(
+      Function<T1, T2> f) {
+    return l -> l.stream().map(f).collect(ImmutableList.toImmutableList());
   }
 }

@@ -112,7 +112,7 @@ public final class ObjectsFixture implements ManagedLifecycle {
     this.info3 = s.get(blobId3).asBlobInfo();
     this.info4 = s.get(blobId4).asBlobInfo();
 
-    byte[] bytes = DataGenerator.base64Characters().genBytes(512);
+    byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
     Blob obj512KiB =
         s.create(
             BlobInfo.newBuilder(bucket, "obj512KiB").build(),

@@ -21,7 +21,6 @@ import static com.google.cloud.storage.Utils.durationSecondsCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.nullableDateTimeCodec;
-import static com.google.cloud.storage.Utils.toImmutableListOf;
 import static com.google.common.base.MoreObjects.firstNonNull;
 
 import com.google.api.client.util.Data;
@@ -80,6 +79,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @InternalApi
 final class ApiaryConversions {
@@ -207,7 +207,7 @@ final class ApiaryConversions {
 
   private StorageObject blobInfoEncode(BlobInfo from) {
     StorageObject to = blobIdEncode(from.getBlobId());
-    ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::encode), to::setAcl);
+    ifNonNull(from.getAcl(), toListOf(objectAcl()::encode), to::setAcl);
     ifNonNull(from.getDeleteTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeDeleted);
     ifNonNull(from.getUpdateTimeOffsetDateTime(), dateTimeCodec::encode, to::setUpdated);
     ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
@@ -278,7 +278,7 @@ final class ApiaryConversions {
     ifNonNull(from.getCustomTime(), dateTimeCodec::decode, to::setCustomTimeOffsetDateTime);
     ifNonNull(from.getSize(), BigInteger::longValue, to::setSize);
     ifNonNull(from.getOwner(), lift(Owner::getEntity).andThen(this::entityDecode), to::setOwner);
-    ifNonNull(from.getAcl(), toImmutableListOf(objectAcl()::decode), to::setAcl);
+    ifNonNull(from.getAcl(), toListOf(objectAcl()::decode), to::setAcl);
     if (from.containsKey("isDirectory")) {
       to.setIsDirectory(Boolean.TRUE);
     }
@@ -323,11 +323,10 @@ final class ApiaryConversions {
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket to = new Bucket();
-    ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::encode), to::setAcl);
-    ifNonNull(from.getCors(), toImmutableListOf(cors()::encode), to::setCors);
+    ifNonNull(from.getAcl(), toListOf(bucketAcl()::encode), to::setAcl);
+    ifNonNull(from.getCors(), toListOf(cors()::encode), to::setCors);
     ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
-    ifNonNull(
-        from.getDefaultAcl(), toImmutableListOf(objectAcl()::encode), to::setDefaultObjectAcl);
+    ifNonNull(from.getDefaultAcl(), toListOf(objectAcl()::encode), to::setDefaultObjectAcl);
     ifNonNull(from.getLocation(), to::setLocation);
     ifNonNull(from.getLocationType(), to::setLocationType);
     ifNonNull(from.getMetageneration(), to::setMetageneration);
@@ -396,10 +395,9 @@ final class ApiaryConversions {
   @SuppressWarnings("deprecation")
   private BucketInfo bucketInfoDecode(com.google.api.services.storage.model.Bucket from) {
     BucketInfo.Builder to = new BucketInfo.BuilderImpl(from.getName());
-    ifNonNull(from.getAcl(), toImmutableListOf(bucketAcl()::decode), to::setAcl);
-    ifNonNull(from.getCors(), toImmutableListOf(cors()::decode), to::setCors);
-    ifNonNull(
-        from.getDefaultObjectAcl(), toImmutableListOf(objectAcl()::decode), to::setDefaultAcl);
+    ifNonNull(from.getAcl(), toListOf(bucketAcl()::decode), to::setAcl);
+    ifNonNull(from.getCors(), toListOf(cors()::decode), to::setCors);
+    ifNonNull(from.getDefaultObjectAcl(), toListOf(objectAcl()::decode), to::setDefaultAcl);
     ifNonNull(from.getEtag(), to::setEtag);
     ifNonNull(from.getId(), to::setGeneratedId);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -417,7 +415,7 @@ final class ApiaryConversions {
     ifNonNull(from.getWebsite(), Website::getNotFoundPage, to::setNotFoundPage);
     ifNonNull(
         from.getLifecycle(),
-        lift(Lifecycle::getRule).andThen(toImmutableListOf(lifecycleRule()::decode)),
+        lift(Lifecycle::getRule).andThen(toListOf(lifecycleRule()::decode)),
         to::setLifecycleRules);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
     ifNonNull(from.getLabels(), ApiaryConversions::replaceDataNullValuesWithNull, to::setLabels);
@@ -518,9 +516,7 @@ final class ApiaryConversions {
     ifNonNull(
         from.getCustomTimeBeforeOffsetDateTime(), truncatingDateFunction, to::setCustomTimeBefore);
     ifNonNull(
-        from.getMatchesStorageClass(),
-        toImmutableListOf(Object::toString),
-        to::setMatchesStorageClass);
+        from.getMatchesStorageClass(), toListOf(Object::toString), to::setMatchesStorageClass);
     ifNonNull(from.getMatchesPrefix(), to::setMatchesPrefix);
     ifNonNull(from.getMatchesSuffix(), to::setMatchesSuffix);
     return to;
@@ -546,7 +542,7 @@ final class ApiaryConversions {
             .setDaysSinceCustomTime(condition.getDaysSinceCustomTime());
     ifNonNull(
         condition.getMatchesStorageClass(),
-        toImmutableListOf(StorageClass::valueOf),
+        toListOf(StorageClass::valueOf),
         conditionBuilder::setMatchesStorageClass);
     ifNonNull(condition.getMatchesPrefix(), conditionBuilder::setMatchesPrefix);
     ifNonNull(condition.getMatchesSuffix(), conditionBuilder::setMatchesSuffix);
@@ -616,8 +612,8 @@ final class ApiaryConversions {
     Bucket.Cors to = new Bucket.Cors();
     to.setMaxAgeSeconds(from.getMaxAgeSeconds());
     to.setResponseHeader(from.getResponseHeaders());
-    ifNonNull(from.getMethods(), toImmutableListOf(Object::toString), to::setMethod);
-    ifNonNull(from.getOrigins(), toImmutableListOf(Object::toString), to::setOrigin);
+    ifNonNull(from.getMethods(), toListOf(Object::toString), to::setMethod);
+    ifNonNull(from.getOrigins(), toListOf(Object::toString), to::setOrigin);
     return to;
   }
 
@@ -631,7 +627,7 @@ final class ApiaryConversions {
                 .map(HttpMethod::valueOf)
                 .collect(ImmutableList.toImmutableList()),
         to::setMethods);
-    ifNonNull(from.getOrigin(), toImmutableListOf(Origin::of), to::setOrigins);
+    ifNonNull(from.getOrigin(), toListOf(Origin::of), to::setOrigins);
     to.setResponseHeaders(from.getResponseHeader());
     return to.build();
   }
@@ -941,5 +937,18 @@ final class ApiaryConversions {
     } else {
       return labels;
     }
+  }
+
+  /**
+   * Several properties are translating lists of one type to another. This convenience method allows
+   * specifying a mapping function and composing as part of an {@code #isNonNull} definition.
+   *
+   * <p>Apiary specific utility method to convert from one list to another for specific Function
+   */
+  private static <T1, T2> Function<List<T1>, List<T2>> toListOf(Function<T1, T2> f) {
+    // various data level methods in the apiary model are hostile to ImmutableList, as it does not
+    // provide a public default no args constructor. Instead, apiary uses ArrayList for all internal
+    // representations of JSON Arrays.
+    return l -> l.stream().map(f).collect(Collectors.toList());
   }
 }

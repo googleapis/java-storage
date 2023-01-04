@@ -17,35 +17,53 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
-import com.google.common.base.Suppliers;
 import java.util.function.Supplier;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class LazyReadChannel<T> {
 
-  private final Supplier<BufferedReadableByteChannelSession<T>> session;
-  private final Supplier<BufferedReadableByteChannel> channel;
+  private final Supplier<BufferedReadableByteChannelSession<T>> sessionSupplier;
+
+  @MonotonicNonNull private volatile BufferedReadableByteChannelSession<T> session;
+  @MonotonicNonNull private volatile BufferedReadableByteChannel channel;
 
   private boolean open = false;
 
-  LazyReadChannel(Supplier<BufferedReadableByteChannelSession<T>> session) {
-    this.session = session;
-    this.channel =
-        Suppliers.memoize(
-            () -> {
-              open = true;
-              return session.get().open();
-            });
+  LazyReadChannel(Supplier<BufferedReadableByteChannelSession<T>> sessionSupplier) {
+    this.sessionSupplier = sessionSupplier;
   }
 
+  @NonNull
   BufferedReadableByteChannel getChannel() {
-    return channel.get();
+    if (channel != null) {
+      return channel;
+    } else {
+      synchronized (this) {
+        if (channel == null) {
+          open = true;
+          channel = getSession().open();
+        }
+        return channel;
+      }
+    }
   }
 
-  Supplier<BufferedReadableByteChannelSession<T>> getSession() {
-    return session;
+  @NonNull
+  BufferedReadableByteChannelSession<T> getSession() {
+    if (session != null) {
+      return session;
+    } else {
+      synchronized (this) {
+        if (session == null) {
+          session = sessionSupplier.get();
+        }
+        return session;
+      }
+    }
   }
 
   boolean isOpen() {
-    return open && channel.get().isOpen();
+    return open && getChannel().isOpen();
   }
 }
