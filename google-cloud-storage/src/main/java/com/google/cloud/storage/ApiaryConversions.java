@@ -73,7 +73,6 @@ import com.google.cloud.storage.NotificationInfo.PayloadFormat;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import java.math.BigInteger;
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -375,19 +374,7 @@ final class ApiaryConversions {
         k -> new Encryption().setDefaultKmsKeyName(k),
         to::setEncryption);
     ifNonNull(from.getLabels(), to::setLabels);
-    Duration retentionPeriod = from.getRetentionPeriodDuration();
-    if (retentionPeriod == null) {
-      to.setRetentionPolicy(Data.nullOf(Bucket.RetentionPolicy.class));
-    } else {
-      Bucket.RetentionPolicy retentionPolicy = new Bucket.RetentionPolicy();
-      retentionPolicy.setRetentionPeriod(durationSecondsCodec.encode(retentionPeriod));
-      ifNonNull(
-          from.getRetentionEffectiveTimeOffsetDateTime(),
-          dateTimeCodec::encode,
-          retentionPolicy::setEffectiveTime);
-      ifNonNull(from.retentionPolicyIsLocked(), retentionPolicy::setIsLocked);
-      to.setRetentionPolicy(retentionPolicy);
-    }
+    maybeEncodeRetentionPolicy(from, to);
     ifNonNull(from.getIamConfiguration(), this::iamConfigEncode, to::setIamConfiguration);
     ifNonNull(from.getAutoclass(), this::autoclassEncode, to::setAutoclass);
     ifNonNull(from.getLogging(), this::loggingEncode, to::setLogging);
@@ -434,13 +421,7 @@ final class ApiaryConversions {
       to.setDefaultKmsKeyName(encryption.getDefaultKmsKeyName());
     }
 
-    RetentionPolicy retentionPolicy = from.getRetentionPolicy();
-    if (retentionPolicy != null && retentionPolicy.getEffectiveTime() != null) {
-      to.setRetentionEffectiveTimeOffsetDateTime(
-          dateTimeCodec.decode(retentionPolicy.getEffectiveTime()));
-    }
-    ifNonNull(retentionPolicy, RetentionPolicy::getIsLocked, to::setRetentionPolicyIsLocked);
-    ifNonNull(retentionPolicy, RetentionPolicy::getRetentionPeriod, to::setRetentionPeriod);
+    maybeDecodeRetentionPolicy(from, to);
     ifNonNull(from.getIamConfiguration(), this::iamConfigDecode, to::setIamConfiguration);
     ifNonNull(from.getAutoclass(), this::autoclassDecode, to::setAutoclass);
     ifNonNull(from.getLogging(), this::loggingDecode, to::setLogging);
@@ -900,5 +881,40 @@ final class ApiaryConversions {
 
   private CustomPlacementConfig customPlacementConfigDecode(Bucket.CustomPlacementConfig from) {
     return CustomPlacementConfig.newBuilder().setDataLocations(from.getDataLocations()).build();
+  }
+
+  private static void maybeEncodeRetentionPolicy(BucketInfo from, Bucket to) {
+    if (from.getRetentionPeriodDuration() != null
+        || from.retentionPolicyIsLocked() != null
+        || from.getRetentionEffectiveTimeOffsetDateTime() != null) {
+      RetentionPolicy retentionPolicy = new RetentionPolicy();
+      ifNonNull(
+          from.getRetentionPeriodDuration(),
+          durationSecondsCodec::encode,
+          retentionPolicy::setRetentionPeriod);
+      ifNonNull(from.retentionPolicyIsLocked(), retentionPolicy::setIsLocked);
+      ifNonNull(
+          from.getRetentionEffectiveTimeOffsetDateTime(),
+          dateTimeCodec::encode,
+          retentionPolicy::setEffectiveTime);
+      to.setRetentionPolicy(retentionPolicy);
+    } else {
+      to.setRetentionPolicy(Data.nullOf(Bucket.RetentionPolicy.class));
+    }
+  }
+
+  private static void maybeDecodeRetentionPolicy(Bucket from, BucketInfo.Builder to) {
+    RetentionPolicy retentionPolicy = from.getRetentionPolicy();
+    if (retentionPolicy != null && retentionPolicy.getEffectiveTime() != null) {
+      to.setRetentionEffectiveTimeOffsetDateTime(
+          dateTimeCodec.decode(retentionPolicy.getEffectiveTime()));
+    }
+    if (retentionPolicy != null) {
+      ifNonNull(retentionPolicy.getIsLocked(), to::setRetentionPolicyIsLocked);
+      ifNonNull(
+          retentionPolicy.getRetentionPeriod(),
+          durationSecondsCodec::decode,
+          to::setRetentionPeriodDuration);
+    }
   }
 }

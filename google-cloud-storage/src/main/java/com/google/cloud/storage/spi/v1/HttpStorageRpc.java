@@ -41,10 +41,12 @@ import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Data;
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.Storage.Objects.Insert;
 import com.google.api.services.storage.model.Bucket;
+import com.google.api.services.storage.model.Bucket.RetentionPolicy;
 import com.google.api.services.storage.model.BucketAccessControl;
 import com.google.api.services.storage.model.Buckets;
 import com.google.api.services.storage.model.ComposeRequest;
@@ -534,6 +536,18 @@ public class HttpStorageRpc implements StorageRpc {
     Span span = startSpan(HttpStorageRpcSpans.SPAN_NAME_PATCH_BUCKET);
     Scope scope = tracer.withSpan(span);
     try {
+      RetentionPolicy retentionPolicy = bucket.getRetentionPolicy();
+      if (retentionPolicy != null) {
+        // according to https://cloud.google.com/storage/docs/json_api/v1/buckets both effectiveTime
+        // and isLocked are output_only. If retentionPeriod is null, null out the whole
+        // RetentionPolicy.
+        if (retentionPolicy.getRetentionPeriod() == null) {
+          // Using Data.nullOf here is important here so the null value is written into the request
+          // json. The explicit null values tells the backend to remove the policy.
+          bucket.setRetentionPolicy(Data.nullOf(RetentionPolicy.class));
+        }
+      }
+
       String projection = Option.PROJECTION.getString(options);
       if (bucket.getIamConfiguration() != null
           && bucket.getIamConfiguration().getBucketPolicyOnly() != null
