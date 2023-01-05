@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Acl.Project.ProjectRole.VIEWERS;
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -45,12 +46,10 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycl
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
@@ -100,16 +99,9 @@ public class BucketInfoTest {
   private static final String DEFAULT_KMS_KEY_NAME =
       "projects/p/locations/kr-loc/keyRings/kr/cryptoKeys/key";
   private static final Boolean VERSIONING_ENABLED = true;
-  private static final Map<String, String> BUCKET_LABELS;
+  private static final Map<String, String> BUCKET_LABELS =
+      TestUtils.hashMapOf("label1", "value1", "label2", null);
 
-  static {
-    BUCKET_LABELS = new HashMap<>();
-    BUCKET_LABELS.put("label1", "value1");
-    BUCKET_LABELS.put("label2", null);
-  }
-
-  private static final Map<String, String> BUCKET_LABELS_TARGET =
-      ImmutableMap.of("label1", "value1", "label2", "");
   private static final Boolean REQUESTER_PAYS = true;
   private static final Boolean DEFAULT_EVENT_BASED_HOLD = true;
   private static final Long RETENTION_EFFECTIVE_TIME = 10L;
@@ -186,7 +178,7 @@ public class BucketInfoTest {
   private static final Lifecycle EMPTY_LIFECYCLE = lifecycle(Collections.emptyList());
 
   @Test
-  public void testToBuilder() {
+  public void testToBuilder() throws Exception {
     compareBuckets(BUCKET_INFO, BUCKET_INFO.toBuilder().build());
     BucketInfo bucketInfo = BUCKET_INFO.toBuilder().setName("B").setGeneratedId("id").build();
     assertEquals("B", bucketInfo.getName());
@@ -197,7 +189,7 @@ public class BucketInfoTest {
   }
 
   @Test
-  public void testToBuilderIncomplete() {
+  public void testToBuilderIncomplete() throws Exception {
     BucketInfo incompleteBucketInfo = BucketInfo.newBuilder("b").build();
     compareBuckets(incompleteBucketInfo, incompleteBucketInfo.toBuilder().build());
   }
@@ -210,39 +202,40 @@ public class BucketInfoTest {
 
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
-  public void testBuilder() {
-    assertEquals("b", BUCKET_INFO.getName());
-    assertEquals(ACL, BUCKET_INFO.getAcl());
-    assertEquals(ETAG, BUCKET_INFO.getEtag());
-    assertEquals(GENERATED_ID, BUCKET_INFO.getGeneratedId());
-    assertEquals(META_GENERATION, BUCKET_INFO.getMetageneration());
-    assertEquals(OWNER, BUCKET_INFO.getOwner());
-    assertEquals(SELF_LINK, BUCKET_INFO.getSelfLink());
-    assertEquals(CREATE_TIME, BUCKET_INFO.getCreateTime());
-    assertEquals(UPDATE_TIME, BUCKET_INFO.getUpdateTime());
-    assertEquals(CORS, BUCKET_INFO.getCors());
-    assertEquals(DEFAULT_ACL, BUCKET_INFO.getDefaultAcl());
-    assertEquals(DELETE_RULES, BUCKET_INFO.getDeleteRules());
-    assertEquals(INDEX_PAGE, BUCKET_INFO.getIndexPage());
-    assertEquals(IAM_CONFIGURATION, BUCKET_INFO.getIamConfiguration());
-    assertEquals(NOT_FOUND_PAGE, BUCKET_INFO.getNotFoundPage());
-    assertEquals(LOCATION, BUCKET_INFO.getLocation());
-    assertEquals(STORAGE_CLASS, BUCKET_INFO.getStorageClass());
-    assertEquals(DEFAULT_KMS_KEY_NAME, BUCKET_INFO.getDefaultKmsKeyName());
-    assertEquals(VERSIONING_ENABLED, BUCKET_INFO.versioningEnabled());
-    assertEquals(BUCKET_LABELS_TARGET, BUCKET_INFO.getLabels());
-    assertEquals(REQUESTER_PAYS, BUCKET_INFO.requesterPays());
-    assertEquals(DEFAULT_EVENT_BASED_HOLD, BUCKET_INFO.getDefaultEventBasedHold());
-    assertEquals(RETENTION_EFFECTIVE_TIME, BUCKET_INFO.getRetentionEffectiveTime());
-    assertEquals(RETENTION_PERIOD, BUCKET_INFO.getRetentionPeriod());
-    assertEquals(RETENTION_POLICY_IS_LOCKED, BUCKET_INFO.retentionPolicyIsLocked());
-    assertTrue(LOCATION_TYPES.contains(BUCKET_INFO.getLocationType()));
-    assertEquals(LOGGING, BUCKET_INFO.getLogging());
+  public void testBuilder() throws Exception {
+    assertAll(
+        () -> assertEquals("b", BUCKET_INFO.getName()),
+        () -> assertEquals(ACL, BUCKET_INFO.getAcl()),
+        () -> assertEquals(ETAG, BUCKET_INFO.getEtag()),
+        () -> assertEquals(GENERATED_ID, BUCKET_INFO.getGeneratedId()),
+        () -> assertEquals(META_GENERATION, BUCKET_INFO.getMetageneration()),
+        () -> assertEquals(OWNER, BUCKET_INFO.getOwner()),
+        () -> assertEquals(SELF_LINK, BUCKET_INFO.getSelfLink()),
+        () -> assertEquals(CREATE_TIME, BUCKET_INFO.getCreateTime()),
+        () -> assertEquals(UPDATE_TIME, BUCKET_INFO.getUpdateTime()),
+        () -> assertEquals(CORS, BUCKET_INFO.getCors()),
+        () -> assertEquals(DEFAULT_ACL, BUCKET_INFO.getDefaultAcl()),
+        () -> assertEquals(DELETE_RULES, BUCKET_INFO.getDeleteRules()),
+        () -> assertEquals(INDEX_PAGE, BUCKET_INFO.getIndexPage()),
+        () -> assertEquals(IAM_CONFIGURATION, BUCKET_INFO.getIamConfiguration()),
+        () -> assertEquals(NOT_FOUND_PAGE, BUCKET_INFO.getNotFoundPage()),
+        () -> assertEquals(LOCATION, BUCKET_INFO.getLocation()),
+        () -> assertEquals(STORAGE_CLASS, BUCKET_INFO.getStorageClass()),
+        () -> assertEquals(DEFAULT_KMS_KEY_NAME, BUCKET_INFO.getDefaultKmsKeyName()),
+        () -> assertEquals(VERSIONING_ENABLED, BUCKET_INFO.versioningEnabled()),
+        () -> assertEquals(BUCKET_LABELS, BUCKET_INFO.getLabels()),
+        () -> assertEquals(REQUESTER_PAYS, BUCKET_INFO.requesterPays()),
+        () -> assertEquals(DEFAULT_EVENT_BASED_HOLD, BUCKET_INFO.getDefaultEventBasedHold()),
+        () -> assertEquals(RETENTION_EFFECTIVE_TIME, BUCKET_INFO.getRetentionEffectiveTime()),
+        () -> assertEquals(RETENTION_PERIOD, BUCKET_INFO.getRetentionPeriod()),
+        () -> assertEquals(RETENTION_POLICY_IS_LOCKED, BUCKET_INFO.retentionPolicyIsLocked()),
+        () -> assertTrue(LOCATION_TYPES.contains(BUCKET_INFO.getLocationType())),
+        () -> assertEquals(LOGGING, BUCKET_INFO.getLogging()));
   }
 
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
-  public void testToPbAndFromPb() {
+  public void testToPbAndFromPb() throws Exception {
     Codec<BucketInfo, Bucket> codec = Conversions.apiary().bucketInfo();
 
     Bucket encode1 = codec.encode(BUCKET_INFO);
@@ -260,37 +253,44 @@ public class BucketInfoTest {
     compareBuckets(bucketInfo, decode2);
   }
 
-  private void compareBuckets(BucketInfo expected, BucketInfo value) {
-    assertEquals(expected.getName(), value.getName());
-    assertEquals(expected.getAcl(), value.getAcl());
-    assertEquals(expected.getEtag(), value.getEtag());
-    assertEquals(expected.getGeneratedId(), value.getGeneratedId());
-    assertEquals(expected.getMetageneration(), value.getMetageneration());
-    assertEquals(expected.getOwner(), value.getOwner());
-    assertEquals(expected.getSelfLink(), value.getSelfLink());
-    assertEquals(expected.getCreateTimeOffsetDateTime(), value.getCreateTimeOffsetDateTime());
-    assertEquals(expected.getUpdateTimeOffsetDateTime(), value.getUpdateTimeOffsetDateTime());
-    assertEquals(expected.getCors(), value.getCors());
-    assertEquals(expected.getDefaultAcl(), value.getDefaultAcl());
-    assertEquals(expected.getDeleteRules(), value.getDeleteRules());
-    assertEquals(expected.getLifecycleRules(), value.getLifecycleRules());
-    assertEquals(expected.getIndexPage(), value.getIndexPage());
-    assertEquals(expected.getIamConfiguration(), value.getIamConfiguration());
-    assertEquals(expected.getNotFoundPage(), value.getNotFoundPage());
-    assertEquals(expected.getLocation(), value.getLocation());
-    assertEquals(expected.getStorageClass(), value.getStorageClass());
-    assertEquals(expected.getDefaultKmsKeyName(), value.getDefaultKmsKeyName());
-    assertEquals(expected.versioningEnabled(), value.versioningEnabled());
-    assertEquals(expected.getLabels(), value.getLabels());
-    assertEquals(expected.requesterPays(), value.requesterPays());
-    assertEquals(expected.getDefaultEventBasedHold(), value.getDefaultEventBasedHold());
-    assertEquals(
-        expected.getRetentionEffectiveTimeOffsetDateTime(),
-        value.getRetentionEffectiveTimeOffsetDateTime());
-    assertEquals(expected.getRetentionPeriodDuration(), value.getRetentionPeriodDuration());
-    assertEquals(expected.retentionPolicyIsLocked(), value.retentionPolicyIsLocked());
-    assertEquals(expected.getLogging(), value.getLogging());
-    assertEquals(expected, value);
+  private void compareBuckets(BucketInfo expected, BucketInfo value) throws Exception {
+    assertAll(
+        () -> assertEquals(expected.getName(), value.getName()),
+        () -> assertEquals(expected.getAcl(), value.getAcl()),
+        () -> assertEquals(expected.getEtag(), value.getEtag()),
+        () -> assertEquals(expected.getGeneratedId(), value.getGeneratedId()),
+        () -> assertEquals(expected.getMetageneration(), value.getMetageneration()),
+        () -> assertEquals(expected.getOwner(), value.getOwner()),
+        () -> assertEquals(expected.getSelfLink(), value.getSelfLink()),
+        () ->
+            assertEquals(
+                expected.getCreateTimeOffsetDateTime(), value.getCreateTimeOffsetDateTime()),
+        () ->
+            assertEquals(
+                expected.getUpdateTimeOffsetDateTime(), value.getUpdateTimeOffsetDateTime()),
+        () -> assertEquals(expected.getCors(), value.getCors()),
+        () -> assertEquals(expected.getDefaultAcl(), value.getDefaultAcl()),
+        () -> assertEquals(expected.getDeleteRules(), value.getDeleteRules()),
+        () -> assertEquals(expected.getLifecycleRules(), value.getLifecycleRules()),
+        () -> assertEquals(expected.getIndexPage(), value.getIndexPage()),
+        () -> assertEquals(expected.getIamConfiguration(), value.getIamConfiguration()),
+        () -> assertEquals(expected.getNotFoundPage(), value.getNotFoundPage()),
+        () -> assertEquals(expected.getLocation(), value.getLocation()),
+        () -> assertEquals(expected.getStorageClass(), value.getStorageClass()),
+        () -> assertEquals(expected.getDefaultKmsKeyName(), value.getDefaultKmsKeyName()),
+        () -> assertEquals(expected.versioningEnabled(), value.versioningEnabled()),
+        () -> assertEquals(expected.getLabels(), value.getLabels()),
+        () -> assertEquals(expected.requesterPays(), value.requesterPays()),
+        () -> assertEquals(expected.getDefaultEventBasedHold(), value.getDefaultEventBasedHold()),
+        () ->
+            assertEquals(
+                expected.getRetentionEffectiveTimeOffsetDateTime(),
+                value.getRetentionEffectiveTimeOffsetDateTime()),
+        () ->
+            assertEquals(expected.getRetentionPeriodDuration(), value.getRetentionPeriodDuration()),
+        () -> assertEquals(expected.retentionPolicyIsLocked(), value.retentionPolicyIsLocked()),
+        () -> assertEquals(expected.getLogging(), value.getLogging()),
+        () -> assertEquals(expected, value));
   }
 
   @Test

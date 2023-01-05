@@ -30,6 +30,7 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.Logging;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -64,7 +65,7 @@ public final class UpdateMaskTest {
       UpdateObjectRequest expected =
           UpdateObjectRequest.newBuilder()
               .setObject(expectedObject)
-              .setUpdateMask(FieldMask.newBuilder().addPaths("metadata").build())
+              .setUpdateMask(FieldMask.newBuilder().addPaths("metadata.x").build())
               .build();
 
       AtomicReference<UpdateObjectRequest> actualRequest = new AtomicReference<>();
@@ -95,7 +96,9 @@ public final class UpdateMaskTest {
 
     @Test
     public void blobInfo_field_metadata() {
-      testBlobField(b -> b.setMetadata(ImmutableMap.of("x", "X")), BlobField.METADATA);
+      testBlobField(
+          b -> b.setMetadata(ImmutableMap.of("x", "X")),
+          NamedField.nested(BlobField.METADATA, NamedField.literal("x")));
     }
 
     @Test
@@ -239,7 +242,7 @@ public final class UpdateMaskTest {
     }
 
     private static void testBlobField(
-        UnaryOperator<BlobInfo.Builder> f, BlobField... expectedModified) {
+        UnaryOperator<BlobInfo.Builder> f, NamedField... expectedModified) {
       BlobInfo actual1 = f.apply(base().toBuilder()).build();
       assertThat(actual1.getModifiedFields()).isEqualTo(ImmutableSet.copyOf(expectedModified));
       // verify that nothing is carried through from a previous state, and that setting the same
@@ -262,7 +265,7 @@ public final class UpdateMaskTest {
       UpdateBucketRequest expected =
           UpdateBucketRequest.newBuilder()
               .setBucket(expectedBucket)
-              .setUpdateMask(FieldMask.newBuilder().addPaths("labels").build())
+              .setUpdateMask(FieldMask.newBuilder().addPaths("labels.x").build())
               .build();
 
       AtomicReference<UpdateBucketRequest> actualRequest = new AtomicReference<>();
@@ -381,7 +384,9 @@ public final class UpdateMaskTest {
 
     @Test
     public void bucketInfo_field_setLabels() {
-      testBucketField(b -> b.setLabels(ImmutableMap.of("x", "X")), BucketField.LABELS);
+      testBucketField(
+          b -> b.setLabels(ImmutableMap.of("x", "X")),
+          NamedField.nested(BucketField.LABELS, NamedField.literal("x")));
     }
 
     @Test
@@ -445,7 +450,7 @@ public final class UpdateMaskTest {
     }
 
     private static void testBucketField(
-        UnaryOperator<BucketInfo.Builder> f, BucketField... expectedModified) {
+        UnaryOperator<BucketInfo.Builder> f, NamedField... expectedModified) {
       BucketInfo actual1 = f.apply(base().toBuilder()).build();
       assertThat(actual1.getModifiedFields()).isEqualTo(ImmutableSet.copyOf(expectedModified));
       // verify that nothing is carried through from a previous state, and that setting the same

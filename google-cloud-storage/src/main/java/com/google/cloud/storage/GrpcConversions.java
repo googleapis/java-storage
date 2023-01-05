@@ -333,7 +333,7 @@ final class GrpcConversions {
       to.setVersioning(versioningBuilder.build());
     }
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
-    ifNonNull(from.getLabels(), to::putAllLabels);
+    ifNonNull(from.getLabels(), this::removeNullValues, to::putAllLabels);
     // Do not use, #getLifecycleRules, it can not return null, which is important to our logic here
     List<? extends LifecycleRule> lifecycleRules = from.lifecycleRules;
     if (lifecycleRules != null) {

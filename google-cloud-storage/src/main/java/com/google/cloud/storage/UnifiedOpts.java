@@ -2361,6 +2361,10 @@ final class UnifiedOpts {
     static NamedField literal(String name) {
       return new LiteralNamedField(name);
     }
+
+    static NamedField nested(NamedField parent, NamedField child) {
+      return new NestedNamedField(parent, child);
+    }
   }
 
   private static CommonObjectRequestParams.Builder customerSuppliedKey(
@@ -2376,7 +2380,7 @@ final class UnifiedOpts {
     private final String prefix;
     private final NamedField delegate;
 
-    public PrefixedNamedField(String prefix, NamedField delegate) {
+    private PrefixedNamedField(String prefix, NamedField delegate) {
       this.prefix = prefix;
       this.delegate = delegate;
     }
@@ -2417,11 +2421,11 @@ final class UnifiedOpts {
     }
   }
 
-  private static class LiteralNamedField implements NamedField {
+  private static final class LiteralNamedField implements NamedField {
 
     private final String name;
 
-    LiteralNamedField(String name) {
+    private LiteralNamedField(String name) {
       this.name = name;
     }
 
@@ -2455,6 +2459,48 @@ final class UnifiedOpts {
     @Override
     public String toString() {
       return MoreObjects.toStringHelper(this).add("name", name).toString();
+    }
+  }
+
+  private static final class NestedNamedField implements NamedField {
+    private final NamedField parent;
+    private final NamedField child;
+
+    private NestedNamedField(NamedField parent, NamedField child) {
+      this.parent = parent;
+      this.child = child;
+    }
+
+    @Override
+    public String getApiaryName() {
+      return parent.getApiaryName() + "." + child.getApiaryName();
+    }
+
+    @Override
+    public String getGrpcName() {
+      return parent.getGrpcName() + "." + child.getGrpcName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof NestedNamedField)) {
+        return false;
+      }
+      NestedNamedField that = (NestedNamedField) o;
+      return Objects.equals(parent, that.parent) && Objects.equals(child, that.child);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(parent, child);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("parent", parent).add("child", child).toString();
     }
   }
 }

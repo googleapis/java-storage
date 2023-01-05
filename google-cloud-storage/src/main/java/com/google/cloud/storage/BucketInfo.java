@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.BackwardCompatibilityUtils.millisOffsetDateTimeCodec;
 import static com.google.cloud.storage.BackwardCompatibilityUtils.millisUtcCodec;
 import static com.google.cloud.storage.BackwardCompatibilityUtils.nullableDurationSecondsCodec;
+import static com.google.cloud.storage.Utils.diffMaps;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;
@@ -29,12 +30,13 @@ import com.google.api.client.util.DateTime;
 import com.google.api.core.BetaApi;
 import com.google.api.services.storage.model.Bucket.Lifecycle.Rule;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.BlobInfo.ImmutableEmptyMap;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Streams;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -43,6 +45,7 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -100,7 +103,7 @@ public class BucketInfo implements Serializable {
   private final String location;
   private final Rpo rpo;
   private final StorageClass storageClass;
-  private final Map<String, String> labels;
+  @Nullable private final Map<String, String> labels;
   private final String defaultKmsKeyName;
   private final Boolean defaultEventBasedHold;
   private final OffsetDateTime retentionEffectiveTime;
@@ -111,7 +114,7 @@ public class BucketInfo implements Serializable {
   private final String locationType;
   private final Logging logging;
   private final CustomPlacementConfig customPlacementConfig;
-  private final transient ImmutableSet<Storage.BucketField> modifiedFields;
+  private final transient ImmutableSet<NamedField> modifiedFields;
 
   /**
    * non-private for backward compatibility on message class. log messages are now emitted from
@@ -1477,7 +1480,7 @@ public class BucketInfo implements Serializable {
     public abstract Builder setDefaultAcl(Iterable<Acl> acl);
 
     /** Sets the label of this bucket. */
-    public abstract Builder setLabels(Map<String, String> labels);
+    public abstract Builder setLabels(@Nullable Map<@NonNull String, @Nullable String> labels);
 
     /** Sets the default Cloud KMS key name for this bucket. */
     public abstract Builder setDefaultKmsKeyName(String defaultKmsKeyName);
@@ -1630,7 +1633,7 @@ public class BucketInfo implements Serializable {
     private String locationType;
     private Logging logging;
     private CustomPlacementConfig customPlacementConfig;
-    private final ImmutableSet.Builder<Storage.BucketField> modifiedFields = ImmutableSet.builder();
+    private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(String name) {
       this.name = name;
@@ -1909,20 +1912,18 @@ public class BucketInfo implements Serializable {
       return this;
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     @Override
-    public Builder setLabels(Map<String, String> labels) {
-      if (labels != null) {
-        Map<String, String> tmp =
-            Maps.transformValues(
-                labels,
-                input -> {
-                  // replace null values with empty strings
-                  return input == null ? Data.nullOf(String.class) : input;
-                });
-        if (!Objects.equals(this.labels, tmp)) {
-          modifiedFields.add(BucketField.LABELS);
+    public Builder setLabels(@Nullable Map<@NonNull String, @Nullable String> labels) {
+      Map<String, String> left = this.labels;
+      Map<String, String> right = labels;
+      if (!Objects.equals(left, right)) {
+        diffMaps(BucketField.LABELS, left, right, modifiedFields::add);
+        if (right != null) {
+          this.labels = new HashMap<>(right);
+        } else {
+          this.labels = (Map<String, String>) Data.nullOf(ImmutableEmptyMap.class);
         }
-        this.labels = tmp;
       }
       return this;
     }
@@ -2483,7 +2484,8 @@ public class BucketInfo implements Serializable {
   }
 
   /** Returns the labels for this bucket. */
-  public Map<String, String> getLabels() {
+  @Nullable
+  public Map<@NonNull String, @Nullable String> getLabels() {
     return labels;
   }
 
@@ -2692,7 +2694,7 @@ public class BucketInfo implements Serializable {
     return new Bucket(storage, new BucketInfo.BuilderImpl(this));
   }
 
-  ImmutableSet<BucketField> getModifiedFields() {
+  ImmutableSet<NamedField> getModifiedFields() {
     return modifiedFields;
   }
 
