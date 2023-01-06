@@ -16,8 +16,10 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteRangeSpec.EFFECTIVE_INFINITY;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -27,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.stream.Stream;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
@@ -172,19 +175,19 @@ public final class ByteRangeSpecTest {
     @Test
     public void withNewEndOffset_sameInstanceIfNotDifferent_null() {
       ByteRangeSpec spec = ByteRangeSpec.relativeLength(null, null);
-      assertThat(spec.withNewEndOffset(RangeScenarios.INF)).isSameInstanceAs(spec);
+      assertThat(spec.withNewEndOffset(EFFECTIVE_INFINITY)).isSameInstanceAs(spec);
     }
 
     @Test
     public void withNewEndOffsetClosed_sameInstanceIfNotDifferent_null() {
       ByteRangeSpec spec = ByteRangeSpec.relativeLength(null, null);
-      assertThat(spec.withNewEndOffsetClosed(RangeScenarios.INF)).isSameInstanceAs(spec);
+      assertThat(spec.withNewEndOffsetClosed(EFFECTIVE_INFINITY)).isSameInstanceAs(spec);
     }
 
     @Test
     public void withNewRelativeLength_sameInstanceIfNotDifferent_null() {
       ByteRangeSpec spec = ByteRangeSpec.relativeLength(null, null);
-      assertThat(spec.withNewRelativeLength(RangeScenarios.INF)).isSameInstanceAs(spec);
+      assertThat(spec.withNewRelativeLength(EFFECTIVE_INFINITY)).isSameInstanceAs(spec);
     }
 
     @Test
@@ -320,7 +323,7 @@ public final class ByteRangeSpecTest {
       ByteRangeSpec actual = spec.withNewEndOffsetClosed(4L);
       assertAll(
           () -> assertThat(actual.beginOffset()).isEqualTo(3),
-          () -> assertThat(actual.endOffset()).isEqualTo(4));
+          () -> assertThat(actual.endOffsetInclusive()).isEqualTo(4));
     }
 
     @Test
@@ -329,7 +332,7 @@ public final class ByteRangeSpecTest {
       ByteRangeSpec actual = spec.withNewEndOffsetClosed(4L);
       assertAll(
           () -> assertThat(actual.beginOffset()).isEqualTo(0),
-          () -> assertThat(actual.endOffset()).isEqualTo(4));
+          () -> assertThat(actual.endOffsetInclusive()).isEqualTo(4));
     }
 
     @Test
@@ -338,7 +341,7 @@ public final class ByteRangeSpecTest {
       ByteRangeSpec actual = spec.withNewEndOffsetClosed(4L);
       assertAll(
           () -> assertThat(actual.beginOffset()).isEqualTo(3),
-          () -> assertThat(actual.endOffset()).isEqualTo(4));
+          () -> assertThat(actual.endOffsetInclusive()).isEqualTo(4));
     }
 
     @Test
@@ -347,7 +350,7 @@ public final class ByteRangeSpecTest {
       ByteRangeSpec actual = spec.withNewEndOffsetClosed(4L);
       assertAll(
           () -> assertThat(actual.beginOffset()).isEqualTo(3),
-          () -> assertThat(actual.endOffset()).isEqualTo(4));
+          () -> assertThat(actual.endOffsetInclusive()).isEqualTo(4));
     }
 
     @Test
@@ -356,7 +359,7 @@ public final class ByteRangeSpecTest {
       ByteRangeSpec actual = spec.withNewEndOffsetClosed(4L);
       assertAll(
           () -> assertThat(actual.beginOffset()).isEqualTo(3),
-          () -> assertThat(actual.endOffset()).isEqualTo(4));
+          () -> assertThat(actual.endOffsetInclusive()).isEqualTo(4));
     }
 
     @Test
@@ -441,129 +444,168 @@ public final class ByteRangeSpecTest {
   @RunWith(Parameterized.class)
   public static final class RangeScenarios {
 
-    private static final long INF = Long.MAX_VALUE;
     private final RangeScenario rs;
+    private final RangeScenario.Expectations expect;
 
     public RangeScenarios(RangeScenario rs) {
       this.rs = rs;
+      this.expect = rs.getExpectations();
     }
 
     @Test
     public void httpRangeHeader() {
-      assertThat(rs.getSpec().getHttpRangeHeader()).isEqualTo(rs.getExpectedHttpRange());
+      assertThat(rs.getSpec().getHttpRangeHeader()).isEqualTo(expect.getHttpRange());
     }
 
     @Test
     public void beginOffset() {
-      assertThat(rs.getSpec().beginOffset()).isEqualTo(rs.getExpectedBeginOffset());
+      assertThat(rs.getSpec().beginOffset()).isEqualTo(expect.getBeginOffset());
     }
 
     @Test
     public void endOffset() {
-      assertThat(rs.getSpec().endOffset()).isEqualTo(rs.getExpectedEndOffset());
+      assertThat(rs.getSpec().endOffset()).isEqualTo(expect.getEndOffset());
+    }
+
+    @Test
+    public void endOffsetInclusive() {
+      assertThat(rs.getSpec().endOffsetInclusive()).isEqualTo(expect.getEndOffsetInclusive());
     }
 
     @Test
     public void length() {
-      assertThat(rs.getSpec().length()).isEqualTo(rs.getExpectedLength());
+      assertThat(rs.getSpec().length()).isEqualTo(expect.getLength());
     }
 
     @Parameters(name = "{0}")
     public static Iterable<Object[]> testCases() {
+      // expect that by default, a range should be from zero to infinity
       Stream<RangeScenario> bothNullOrEmpty =
-          Stream.of(
+          RangeScenario.expectThat()
+              .beginOffset(0L)
+              .endOffset(EFFECTIVE_INFINITY)
+              .endOffsetInclusive(EFFECTIVE_INFINITY)
+              .length(EFFECTIVE_INFINITY)
+              .httpRange(null)
+              .isApplicableTo(
                   ByteRangeSpec.relativeLength(null, null),
                   ByteRangeSpec.explicit(null, null),
                   ByteRangeSpec.explicitClosed(null, null),
                   ByteRangeSpec.relativeLength(0L, null),
                   ByteRangeSpec.explicit(0L, null),
                   ByteRangeSpec.explicitClosed(0L, null),
-                  ByteRangeSpec.relativeLength(null, INF),
-                  ByteRangeSpec.explicit(null, INF),
-                  ByteRangeSpec.explicitClosed(null, INF),
-                  ByteRangeSpec.relativeLength(0L, INF),
-                  ByteRangeSpec.explicit(0L, INF),
-                  ByteRangeSpec.explicitClosed(0L, INF))
-              .map(brs -> RangeScenario.of(brs, 0, INF, INF, null));
+                  ByteRangeSpec.relativeLength(null, EFFECTIVE_INFINITY),
+                  ByteRangeSpec.explicit(null, EFFECTIVE_INFINITY),
+                  ByteRangeSpec.explicitClosed(null, EFFECTIVE_INFINITY),
+                  ByteRangeSpec.relativeLength(0L, EFFECTIVE_INFINITY),
+                  ByteRangeSpec.explicit(0L, EFFECTIVE_INFINITY),
+                  ByteRangeSpec.explicitClosed(0L, EFFECTIVE_INFINITY));
+      // expect that, if the range is effectively LeftClosed only, all upper bounds should
+      // be EFFECTIVE_INFINITY and the requests should be open-ended
       Stream<RangeScenario> effectivelyOnlyBegin =
-          Stream.of(
+          RangeScenario.expectThat()
+              .beginOffset(3L)
+              .endOffset(EFFECTIVE_INFINITY)
+              .endOffsetInclusive(EFFECTIVE_INFINITY)
+              .length(EFFECTIVE_INFINITY)
+              .httpRange(headerRangeOpen(3))
+              .isApplicableTo(
                   ByteRangeSpec.relativeLength(3L, null),
                   ByteRangeSpec.explicit(3L, null),
                   ByteRangeSpec.explicitClosed(3L, null),
                   // effective infinity means it should not impact things
-                  ByteRangeSpec.relativeLength(3L, INF),
-                  ByteRangeSpec.explicit(3L, INF),
-                  ByteRangeSpec.explicitClosed(3L, INF))
-              .map(brs -> RangeScenario.of(brs, 3, INF, INF, rangeOpen(3)));
+                  ByteRangeSpec.relativeLength(3L, EFFECTIVE_INFINITY),
+                  ByteRangeSpec.explicit(3L, EFFECTIVE_INFINITY),
+                  ByteRangeSpec.explicitClosed(3L, EFFECTIVE_INFINITY));
+      // expect that, if the range is effectively Right{Closed,Open} only, lower bounds should
+      // be zero and the requests should be bounded from 0-N
       Stream<RangeScenario> effectivelyOnlyEnd =
-          Stream.of(
-              RangeScenario.of(
-                  ByteRangeSpec.relativeLength(null, 31L), 0L, 30L, 31L, rangeClosed(0, 30)),
-              RangeScenario.of(ByteRangeSpec.explicit(null, 31L), 0L, 31L, 31L, rangeClosed(0, 30)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicitClosed(null, 31L), 0L, 31L, 31L, rangeClosed(0, 31)),
-              RangeScenario.of(
-                  ByteRangeSpec.relativeLength(0L, 31L), 0L, 30L, 31L, rangeClosed(0, 30)),
-              RangeScenario.of(ByteRangeSpec.explicit(0L, 31L), 0L, 31L, 31L, rangeClosed(0, 30)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicitClosed(0L, 31L), 0L, 31L, 31L, rangeClosed(0, 31)));
+          Stream.concat(
+              RangeScenario.expectThat()
+                  .beginOffset(0L)
+                  .endOffset(131L)
+                  .endOffsetInclusive(130L)
+                  .length(131L)
+                  .bounded()
+                  .isApplicableTo(
+                      ByteRangeSpec.relativeLength(null, 131L),
+                      ByteRangeSpec.explicit(null, 131L),
+                      ByteRangeSpec.explicitClosed(null, 130L)),
+              RangeScenario.expectThat()
+                  .beginOffset(0L)
+                  .endOffset(251L)
+                  .endOffsetInclusive(250L)
+                  .length(251L)
+                  .bounded()
+                  .isApplicableTo(
+                      ByteRangeSpec.relativeLength(0L, 251L),
+                      ByteRangeSpec.explicit(0L, 251L),
+                      ByteRangeSpec.explicitClosed(0L, 250L)));
 
+      // expect that, when a range has both a lower and upper bound, all values match along with
+      // requests being bounded
       Stream<RangeScenario> bothSpecified =
-          Stream.of(
-              RangeScenario.of(
-                  ByteRangeSpec.relativeLength(3L, 15L), 3L, 17L, 15L, rangeClosed(3, 17)),
-              RangeScenario.of(ByteRangeSpec.explicit(3L, 15L), 3L, 15L, 12L, rangeClosed(3, 14)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicitClosed(3L, 15L), 3L, 15L, 12L, rangeClosed(3, 15)));
+          RangeScenario.expectThat()
+              .beginOffset(4L)
+              .endOffset(10L)
+              .endOffsetInclusive(9L)
+              .length(6L)
+              .bounded()
+              .isApplicableTo(
+                  ByteRangeSpec.relativeLength(4L, 6L),
+                  ByteRangeSpec.explicit(4L, 10L),
+                  ByteRangeSpec.explicitClosed(4L, 9L));
 
-      long effectiveMax = INF - 1;
+      long effectiveMax_0 = EFFECTIVE_INFINITY - 1;
+      long effectiveMax_1 = effectiveMax_0 - 1;
+      // edge cases near default values
       Stream<RangeScenario> edgeCases =
-          Stream.of(
-              // edge cases near default values
-              RangeScenario.of(ByteRangeSpec.relativeLength(1L, null), 1L, INF, INF, rangeOpen(1)),
-              RangeScenario.of(
-                  ByteRangeSpec.relativeLength(null, effectiveMax),
-                  0,
-                  effectiveMax - 1,
-                  effectiveMax,
-                  rangeClosed(0, effectiveMax - 1)),
-              RangeScenario.of(
-                  ByteRangeSpec.relativeLength(INF, null), INF, INF, INF, rangeOpen(INF)),
-              RangeScenario.of(
-                  ByteRangeSpec.relativeLength(1L, effectiveMax),
-                  1L,
-                  effectiveMax,
-                  effectiveMax,
-                  rangeClosed(1L, effectiveMax)),
-              RangeScenario.of(ByteRangeSpec.explicit(1L, null), 1L, INF, INF, rangeOpen(1)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicit(null, effectiveMax),
-                  0,
-                  effectiveMax,
-                  effectiveMax,
-                  rangeClosed(0, effectiveMax - 1)),
-              RangeScenario.of(ByteRangeSpec.explicit(INF, null), INF, INF, INF, rangeOpen(INF)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicit(1L, effectiveMax),
-                  1L,
-                  effectiveMax,
-                  effectiveMax - 1,
-                  rangeClosed(1L, effectiveMax - 1)),
-              RangeScenario.of(ByteRangeSpec.explicitClosed(1L, null), 1L, INF, INF, rangeOpen(1)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicitClosed(null, effectiveMax),
-                  0,
-                  effectiveMax,
-                  effectiveMax,
-                  rangeClosed(0, effectiveMax)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicitClosed(INF, null), INF, INF, INF, rangeOpen(INF)),
-              RangeScenario.of(
-                  ByteRangeSpec.explicitClosed(1L, effectiveMax),
-                  1L,
-                  effectiveMax,
-                  effectiveMax - 1,
-                  rangeClosed(1L, effectiveMax)));
+          Streams.concat(
+              // expect that, if the range is effectively LeftClosed only, all upper bounds should
+              // be EFFECTIVE_INFINITY and the requests should be open-ended
+              RangeScenario.expectThat()
+                  .beginOffset(1L)
+                  .endOffset(EFFECTIVE_INFINITY)
+                  .endOffsetInclusive(EFFECTIVE_INFINITY)
+                  .length(EFFECTIVE_INFINITY)
+                  .httpRange(headerRangeOpen(1L))
+                  .isApplicableTo(
+                      ByteRangeSpec.relativeLength(1L, null),
+                      ByteRangeSpec.explicit(1L, null),
+                      ByteRangeSpec.explicitClosed(1L, null)),
+              // expect that, we can start reading from effective_infinity with not upper bound
+              RangeScenario.expectThat()
+                  .beginOffset(EFFECTIVE_INFINITY)
+                  .endOffset(EFFECTIVE_INFINITY)
+                  .endOffsetInclusive(EFFECTIVE_INFINITY)
+                  .length(EFFECTIVE_INFINITY)
+                  .httpRange(headerRangeOpen(EFFECTIVE_INFINITY))
+                  .isApplicableTo(
+                      ByteRangeSpec.relativeLength(EFFECTIVE_INFINITY, null),
+                      ByteRangeSpec.explicit(EFFECTIVE_INFINITY, null),
+                      ByteRangeSpec.explicitClosed(EFFECTIVE_INFINITY, null)),
+              // expect that, we can read up to Long.MAX_VALUE - 1
+              RangeScenario.expectThat()
+                  .beginOffset(0L)
+                  .endOffset(effectiveMax_0)
+                  .endOffsetInclusive(effectiveMax_1)
+                  .length(effectiveMax_0)
+                  .bounded()
+                  .isApplicableTo(
+                      ByteRangeSpec.relativeLength(null, effectiveMax_0),
+                      ByteRangeSpec.explicit(null, effectiveMax_0),
+                      ByteRangeSpec.explicitClosed(null, effectiveMax_1)),
+              // expect that, we can read from 1 up to Long.MAX_VALUE - 1
+              RangeScenario.expectThat()
+                  .beginOffset(1L)
+                  .endOffset(effectiveMax_0)
+                  .endOffsetInclusive(effectiveMax_1)
+                  .length(effectiveMax_1)
+                  .bounded()
+                  .isApplicableTo(
+                      ByteRangeSpec.relativeLength(1L, effectiveMax_1),
+                      ByteRangeSpec.explicit(1L, effectiveMax_0),
+                      ByteRangeSpec.explicitClosed(1L, effectiveMax_1)));
 
       return Streams.concat(
               bothNullOrEmpty, effectivelyOnlyBegin, effectivelyOnlyEnd, bothSpecified, edgeCases)
@@ -572,80 +614,166 @@ public final class ByteRangeSpecTest {
     }
   }
 
-  private static String rangeOpen(long min) {
+  private static String headerRangeOpen(long min) {
     return String.format("bytes=%d-", min);
   }
 
-  private static String rangeClosed(long min, long max) {
+  private static String headerRangeClosed(long min, long max) {
     return String.format("bytes=%d-%d", min, max);
   }
 
   private static final class RangeScenario {
     private final ByteRangeSpec spec;
-    private final long expectedBeginOffset;
-    private final long expectedEndOffset;
-    private final long expectedLength;
-    @Nullable private final String expectedHttpRange;
+    private final Expectations expectations;
 
-    private RangeScenario(
-        ByteRangeSpec spec,
-        long expectedBeginOffset,
-        long expectedEndOffset,
-        long expectedLength,
-        @Nullable String expectedHttpRange) {
+    private RangeScenario(ByteRangeSpec spec, Expectations expectations) {
       this.spec = spec;
-      this.expectedBeginOffset = expectedBeginOffset;
-      this.expectedEndOffset = expectedEndOffset;
-      this.expectedLength = expectedLength;
-      this.expectedHttpRange = expectedHttpRange;
+      this.expectations = expectations;
     }
 
     public ByteRangeSpec getSpec() {
       return spec;
     }
 
-    public long getExpectedBeginOffset() {
-      return expectedBeginOffset;
-    }
-
-    public long getExpectedEndOffset() {
-      return expectedEndOffset;
-    }
-
-    public long getExpectedLength() {
-      return expectedLength;
-    }
-
-    public @Nullable String getExpectedHttpRange() {
-      return expectedHttpRange;
+    public Expectations getExpectations() {
+      return expectations;
     }
 
     @Override
     public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("spec", spec)
-          .add("expectedBeginOffset", fmt(expectedBeginOffset))
-          .add("expectedEndOffset", fmt(expectedEndOffset))
-          .add("expectedLength", fmt(expectedLength))
-          .add("expectedHttpRange", expectedHttpRange)
-          .toString();
+      return String.format(
+          "Expect that %s is applicable to %s", expectations.testNameFormat(), spec);
     }
 
-    static RangeScenario of(
-        ByteRangeSpec spec,
-        long expectedBeginOffset,
-        long expectedEndOffset,
-        long expectedLength,
-        @Nullable String expectedHttpRange) {
-      return new RangeScenario(
-          spec, expectedBeginOffset, expectedEndOffset, expectedLength, expectedHttpRange);
+    static ExpectationsBuilder expectThat() {
+      return new ExpectationsBuilder();
     }
 
-    private static String fmt(@Nullable Long l) {
-      if (l == null) {
-        return null;
+    private static final class Expectations {
+      private final long beginOffset;
+      private final long endOffset;
+      private final long endOffsetInclusive;
+      private final long length;
+      @Nullable private final String httpRange;
+
+      private Expectations(
+          long beginOffset,
+          long endOffset,
+          long endOffsetInclusive,
+          long length,
+          @Nullable String httpRange) {
+        this.beginOffset = beginOffset;
+        this.endOffset = endOffset;
+        this.endOffsetInclusive = endOffsetInclusive;
+        this.length = length;
+        this.httpRange = httpRange;
       }
-      return l == Long.MAX_VALUE ? "Long.MAX_VALUE" : l.toString();
+
+      public long getBeginOffset() {
+        return beginOffset;
+      }
+
+      public long getEndOffset() {
+        return endOffset;
+      }
+
+      public long getEndOffsetInclusive() {
+        return endOffsetInclusive;
+      }
+
+      public long getLength() {
+        return length;
+      }
+
+      public @Nullable String getHttpRange() {
+        return httpRange;
+      }
+
+      String testNameFormat() {
+        return MoreObjects.toStringHelper("")
+            .add("bo", fmt(beginOffset))
+            .add("eo", fmt(endOffset))
+            .add("eoi", fmt(endOffsetInclusive))
+            .add("l", fmt(length))
+            .toString();
+      }
+
+      @Override
+      public String toString() {
+        return MoreObjects.toStringHelper(this)
+            .add("beginOffset", fmt(beginOffset))
+            .add("endOffset", fmt(endOffset))
+            .add("endOffsetInclusive", fmt(endOffsetInclusive))
+            .add("length", fmt(length))
+            .add("httpRange", httpRange)
+            .toString();
+      }
+
+      private static String fmt(@Nullable Long l) {
+        if (l == null) {
+          return null;
+        } else if (l == Long.MAX_VALUE) {
+          return "Long.MAX_VALUE";
+        } else {
+          long diff = Long.MAX_VALUE - l;
+          if (diff <= 20) {
+            return String.format("(Long.MAX_VALUE - %d)", diff);
+          } else {
+            return l.toString();
+          }
+        }
+      }
+    }
+
+    private static final class ExpectationsBuilder {
+      private Long beginOffset;
+      private Long endOffset;
+      private Long endOffsetInclusive;
+      private Long length;
+      @Nullable private String httpRange;
+
+      public ExpectationsBuilder beginOffset(Long beginOffset) {
+        this.beginOffset = beginOffset;
+        return this;
+      }
+
+      public ExpectationsBuilder endOffset(Long endOffset) {
+        this.endOffset = endOffset;
+        return this;
+      }
+
+      public ExpectationsBuilder endOffsetInclusive(Long endOffsetInclusive) {
+        this.endOffsetInclusive = endOffsetInclusive;
+        return this;
+      }
+
+      public ExpectationsBuilder length(Long length) {
+        this.length = length;
+        return this;
+      }
+
+      public ExpectationsBuilder httpRange(String httpRange) {
+        this.httpRange = httpRange;
+        return this;
+      }
+
+      public ExpectationsBuilder bounded() {
+        return this.httpRange(headerRangeClosed(beginOffset, endOffsetInclusive));
+      }
+
+      public Stream<RangeScenario> isApplicableTo(ByteRangeSpec... brss) {
+        Expectations expectations = this.build();
+        return Arrays.stream(brss).map(brs -> new RangeScenario(brs, expectations));
+      }
+
+      private Expectations build() {
+        return new Expectations(
+            requireNonNull(beginOffset, "beginOffset must be non null"),
+            requireNonNull(endOffset, "endOffset must be non null"),
+            requireNonNull(endOffsetInclusive, "endOffsetInclusive must be non null"),
+            requireNonNull(length, "length must be non null"),
+            httpRange);
+      }
     }
   }
 }
