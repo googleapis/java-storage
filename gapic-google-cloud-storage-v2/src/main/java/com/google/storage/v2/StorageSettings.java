@@ -72,7 +72,10 @@ import javax.annotation.Generated;
  * storageSettingsBuilder
  *     .deleteBucketSettings()
  *     .setRetrySettings(
- *         storageSettingsBuilder.deleteBucketSettings().getRetrySettings().toBuilder()
+ *         storageSettingsBuilder
+ *             .deleteBucketSettings()
+ *             .getRetrySettings()
+ *             .toBuilder()
  *             .setTotalTimeout(Duration.ofSeconds(30))
  *             .build());
  * StorageSettings storageSettings = storageSettingsBuilder.build();

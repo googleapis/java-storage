@@ -130,7 +130,10 @@ import org.threeten.bp.Duration;
  * storageSettingsBuilder
  *     .deleteBucketSettings()
  *     .setRetrySettings(
- *         storageSettingsBuilder.deleteBucketSettings().getRetrySettings().toBuilder()
+ *         storageSettingsBuilder
+ *             .deleteBucketSettings()
+ *             .getRetrySettings()
+ *             .toBuilder()
  *             .setTotalTimeout(Duration.ofSeconds(30))
  *             .build());
  * StorageStubSettings storageSettings = storageSettingsBuilder.build();
