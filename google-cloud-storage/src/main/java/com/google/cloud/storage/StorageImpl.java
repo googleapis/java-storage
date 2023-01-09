@@ -34,7 +34,6 @@ import com.google.cloud.BatchResult;
 import com.google.cloud.PageImpl;
 import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
@@ -581,12 +580,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public ReadChannel reader(String bucket, String blob, BlobSourceOption... options) {
+  public StorageReadChannel reader(String bucket, String blob, BlobSourceOption... options) {
     return reader(BlobId.of(bucket, blob), options);
   }
 
   @Override
-  public ReadChannel reader(BlobId blob, BlobSourceOption... options) {
+  public StorageReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
     StorageObject storageObject = Conversions.apiary().blobId().encode(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();

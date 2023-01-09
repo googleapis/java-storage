@@ -16,35 +16,22 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteSizeConstants._2MiB;
-import static java.util.Objects.requireNonNull;
-
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRequest;
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Objects;
 
-final class BlobReadChannelV2 implements StorageReadChannel {
+final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
 
   private final StorageObject storageObject;
   private final Map<StorageRpc.Option, ?> opts;
   private final BlobReadChannelContext blobReadChannelContext;
-
-  private LazyReadChannel<StorageObject> lazyReadChannel;
-  private StorageObject resolvedObject;
-  private ByteRangeSpec byteRangeSpec;
-
-  private int chunkSize = _2MiB;
-  private BufferHandle bufferHandle;
 
   BlobReadChannelV2(
       StorageObject storageObject,
@@ -53,127 +40,30 @@ final class BlobReadChannelV2 implements StorageReadChannel {
     this.storageObject = storageObject;
     this.opts = opts;
     this.blobReadChannelContext = blobReadChannelContext;
-    this.byteRangeSpec = ByteRangeSpec.nullRange();
-  }
-
-  @Override
-  public synchronized void setChunkSize(int chunkSize) {
-    StorageException.wrapIOException(() -> maybeResetChannel(true));
-    this.chunkSize = chunkSize;
-  }
-
-  @Override
-  public synchronized boolean isOpen() {
-    if (lazyReadChannel == null) {
-      return true;
-    } else {
-      LazyReadChannel<StorageObject> tmp = internalGetLazyChannel();
-      return tmp.isOpen();
-    }
-  }
-
-  @Override
-  public synchronized void close() {
-    if (internalGetLazyChannel().isOpen()) {
-      StorageException.wrapIOException(internalGetLazyChannel().getChannel()::close);
-    }
-  }
-
-  @Override
-  public synchronized StorageReadChannel setByteRangeSpec(ByteRangeSpec byteRangeSpec) {
-    requireNonNull(byteRangeSpec, "byteRangeSpec must be non null");
-    StorageException.wrapIOException(() -> maybeResetChannel(false));
-    this.byteRangeSpec = byteRangeSpec;
-    return this;
-  }
-
-  @Override
-  public ByteRangeSpec getByteRangeSpec() {
-    return byteRangeSpec;
-  }
-
-  @Override
-  public synchronized int read(ByteBuffer dst) throws IOException {
-    long diff = byteRangeSpec.length();
-    if (diff <= 0) {
-      close();
-      return -1;
-    }
-    try {
-      int read = internalGetLazyChannel().getChannel().read(dst);
-      if (read != -1) {
-        byteRangeSpec = byteRangeSpec.withShiftBeginOffset(read);
-      } else {
-        close();
-      }
-      return read;
-    } catch (StorageException e) {
-      if (e.getCode() == 416) {
-        // HttpStorageRpc turns 416 into a null etag with an empty byte array, leading
-        // BlobReadChannel to believe it read 0 bytes, returning -1 and leaving the channel open.
-        // Emulate that same behavior here to preserve behavior compatibility, though this should
-        // be removed in the next major version.
-        return -1;
-      } else {
-        throw new IOException(e);
-      }
-    } catch (IOException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new IOException(StorageException.coalesce(e));
-    }
   }
 
   @Override
   public RestorableState<ReadChannel> capture() {
     ApiaryReadRequest apiaryReadRequest = getApiaryReadRequest();
     return new BlobReadChannelV2State(
-        apiaryReadRequest, blobReadChannelContext.getStorageOptions(), chunkSize);
+        apiaryReadRequest, blobReadChannelContext.getStorageOptions(), getChunkSize());
   }
 
-  private void maybeResetChannel(boolean umallocBuffer) throws IOException {
-    if (lazyReadChannel != null && lazyReadChannel.isOpen()) {
-      try (BufferedReadableByteChannel ignore = lazyReadChannel.getChannel()) {
-        if (bufferHandle != null && !umallocBuffer) {
-          bufferHandle.get().clear();
-        } else if (umallocBuffer) {
-          bufferHandle = null;
-        }
-        lazyReadChannel = null;
-      }
-    }
-  }
-
-  private LazyReadChannel<StorageObject> internalGetLazyChannel() {
-    if (lazyReadChannel == null) {
-      lazyReadChannel = newLazyReadChannel();
-    }
-    return lazyReadChannel;
-  }
-
-  private LazyReadChannel<StorageObject> newLazyReadChannel() {
+  protected LazyReadChannel<StorageObject> newLazyReadChannel() {
     return new LazyReadChannel<>(
-        () -> {
-          if (bufferHandle == null) {
-            bufferHandle = BufferHandle.allocate(chunkSize);
-          }
-          return ResumableMedia.http()
-              .read()
-              .byteChannel(blobReadChannelContext)
-              .setCallback(this::setResolvedObject)
-              .buffered(bufferHandle)
-              .setApiaryReadRequest(getApiaryReadRequest())
-              .build();
-        });
-  }
-
-  private void setResolvedObject(StorageObject resolvedObject) {
-    this.resolvedObject = resolvedObject;
+        () ->
+            ResumableMedia.http()
+                .read()
+                .byteChannel(blobReadChannelContext)
+                .setCallback(this::setResolvedObject)
+                .buffered(getBufferHandle())
+                .setApiaryReadRequest(getApiaryReadRequest())
+                .build());
   }
 
   private ApiaryReadRequest getApiaryReadRequest() {
-    StorageObject object = resolvedObject != null ? resolvedObject : storageObject;
-    return new ApiaryReadRequest(object, opts, byteRangeSpec);
+    StorageObject object = getResolvedObject() != null ? getResolvedObject() : storageObject;
+    return new ApiaryReadRequest(object, opts, getByteRangeSpec());
   }
 
   static class BlobReadChannelV2State implements RestorableState<ReadChannel>, Serializable {
