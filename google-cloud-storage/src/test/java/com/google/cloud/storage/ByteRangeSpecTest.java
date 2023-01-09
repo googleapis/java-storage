@@ -556,7 +556,9 @@ public final class ByteRangeSpecTest {
                   ByteRangeSpec.explicit(4L, 10L),
                   ByteRangeSpec.explicitClosed(4L, 9L));
 
+      // variable name should be read as "effective max minus zero"
       long effectiveMax_0 = EFFECTIVE_INFINITY - 1;
+      // variable name should be read as "effective max minus one"
       long effectiveMax_1 = effectiveMax_0 - 1;
       // edge cases near default values
       Stream<RangeScenario> edgeCases =
@@ -716,6 +718,9 @@ public final class ByteRangeSpecTest {
           return "Long.MAX_VALUE";
         } else {
           long diff = Long.MAX_VALUE - l;
+          // When testing near the upperbound of Long it can be challenging to read how close we are
+          // to the max value at a glance. In an effort to help this, for any value that is within
+          // 20 of Long.MAX_VALUE format it as a difference.
           if (diff <= 20) {
             return String.format("(Long.MAX_VALUE - %d)", diff);
           } else {
