@@ -1780,7 +1780,8 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(118, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(
+                    and(TestRetryConformance::isPreconditionsProvided, not(groupIsResumableUpload)))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -1795,7 +1796,8 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(119, objects.insert)
-                .withApplicable(TestRetryConformance::isPreconditionsProvided)
+                .withApplicable(
+                    and(TestRetryConformance::isPreconditionsProvided, not(groupIsResumableUpload)))
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
@@ -1806,7 +1808,7 @@ final class RpcMethodMappings {
                                         .create(
                                             c.getObjectName(),
                                             c.getHelloWorldUtf8Bytes(),
-                                            "text/plain);charset=utf-8",
+                                            "text/plain;charset=utf-8",
                                             Bucket.BlobTargetOption.doesNotExist()))))
                 .build());
         a.add(

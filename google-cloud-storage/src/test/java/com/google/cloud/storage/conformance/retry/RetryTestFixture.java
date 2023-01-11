@@ -121,6 +121,11 @@ final class RetryTestFixture extends TestWatcher {
   }
 
   @Override
+  protected void failed(Throwable e, Description description) {
+    super.failed(e, description);
+  }
+
+  @Override
   protected void skipped(AssumptionViolatedException e, Description description) {
     testSkipped = true;
   }

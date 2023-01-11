@@ -30,17 +30,16 @@ import com.google.cloud.conformance.storage.v1.RetryTest;
 import com.google.cloud.conformance.storage.v1.RetryTests;
 import com.google.cloud.storage.CIUtils;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.cloud.storage.conformance.retry.ITRetryConformanceTest.RetryConformanceParameterProvider;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
-import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.ParallelFriendly;
 import com.google.cloud.storage.it.runner.annotations.Parameterized;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.registry.TestBench;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
@@ -78,7 +77,8 @@ import org.junit.runner.RunWith;
  * RpcMethodMappings}.
  */
 @RunWith(StorageITRunner.class)
-@CrossRun(transports = Transport.HTTP, backends = Backend.TEST_BENCH)
+// @CrossRun(transports = Transport.HTTP, backends = Backend.TEST_BENCH)
+@SingleBackend(Backend.TEST_BENCH)
 @Parameterized(RetryConformanceParameterProvider.class)
 @ParallelFriendly
 public class ITRetryConformanceTest {
@@ -127,11 +127,17 @@ public class ITRetryConformanceTest {
   @Test
   public void test() throws Throwable {
     LOGGER.fine("Running test...");
-    ctx =
-        getReplaceStorageInObjectsFromCtx()
-            .andThen(mapping.getTest())
-            .apply(ctx, testRetryConformance)
-            .leftMap(s -> nonTestStorage);
+    try {
+      ctx =
+          getReplaceStorageInObjectsFromCtx()
+              .andThen(mapping.getTest())
+              .apply(ctx, testRetryConformance)
+              .leftMap(s -> nonTestStorage);
+      retryTestFixture.succeeded(null);
+    } catch (Throwable e) {
+      retryTestFixture.failed(e, null);
+      throw e;
+    }
     LOGGER.fine("Running test complete");
   }
 
@@ -154,14 +160,7 @@ public class ITRetryConformanceTest {
               .setMappings(new RpcMethodMappings())
               .setProjectId("conformance-tests")
               .setHost(testBench.getBaseUri().replaceAll("https?://", ""))
-              .setTestAllowFilter(
-                  RetryTestCaseResolver.includeAll()
-                      // .and(RetryTestCaseResolver.specificMappings(44, 45))
-                      .and(
-                          (m, trc) ->
-                              trc.getScenarioId()
-                                  != 7) // Temporarily exclude resumable upload scenarios
-                  )
+              .setTestAllowFilter(RetryTestCaseResolver.includeAll())
               .build();
 
       List<RetryTestCase> retryTestCases;
@@ -382,6 +381,15 @@ public class ITRetryConformanceTest {
       ImmutableSet<Integer> set =
           Arrays.stream(mappingIds).boxed().collect(ImmutableSet.toImmutableSet());
       return (m, c) -> set.contains(c.getMappingId());
+    }
+
+    static BiPredicate<RpcMethod, TestRetryConformance> instructionsAre(String... instructions) {
+      return (m, trc) ->
+          trc.getInstruction().getInstructionsList().equals(ImmutableList.copyOf(instructions));
+    }
+
+    static BiPredicate<RpcMethod, TestRetryConformance> scenarioIdIs(int scenarioId) {
+      return (m, trc) -> trc.getScenarioId() == scenarioId;
     }
 
     static final class Builder {
