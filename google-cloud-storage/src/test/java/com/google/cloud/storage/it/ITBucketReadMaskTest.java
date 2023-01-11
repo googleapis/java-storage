@@ -19,6 +19,7 @@ package com.google.cloud.storage.it;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.gax.paging.Page;
+import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Rpo;
@@ -111,8 +112,15 @@ public final class ITBucketReadMaskTest {
               new Args<>(
                   BucketField.DEFAULT_OBJECT_ACL,
                   (jsonT, grpcT) -> {
-                    assertThat(jsonT.getDefaultAcl()).isNotEmpty();
-                    assertThat(grpcT.getDefaultAcl()).isNull(); // workaround for b/261771961
+                    List<Acl> jsonDefaultAcl = jsonT.getDefaultAcl();
+                    List<Acl> grpcDefaultAcl = grpcT.getDefaultAcl();
+                    if (!(jsonDefaultAcl == null || jsonDefaultAcl.isEmpty())
+                        && !(grpcDefaultAcl == null || grpcDefaultAcl.isEmpty())) {
+                      assertThat(grpcDefaultAcl).isEqualTo(jsonDefaultAcl);
+                    } else {
+                      assertThat(jsonDefaultAcl).isNotEmpty();
+                      assertThat(grpcDefaultAcl).isNull(); // workaround for b/261771961
+                    }
                   }),
               new Args<>(BucketField.ENCRYPTION, LazyAssertion.equal()),
               new Args<>(BucketField.ETAG, LazyAssertion.equal()),
