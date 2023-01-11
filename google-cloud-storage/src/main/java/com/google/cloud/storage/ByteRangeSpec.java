@@ -50,6 +50,8 @@ abstract class ByteRangeSpec implements Serializable {
 
   abstract long endOffset() throws ArithmeticException;
 
+  abstract long endOffsetInclusive() throws ArithmeticException;
+
   abstract long length() throws ArithmeticException;
 
   // TODO: add validation to this if it ever becomes public
@@ -97,9 +99,7 @@ abstract class ByteRangeSpec implements Serializable {
 
   @Override
   public String toString() {
-    return append(MoreObjects.toStringHelper(""))
-        .add("httpRangeHeader", getHttpRangeHeader())
-        .toString();
+    return append(MoreObjects.toStringHelper("ByteRangeSpec")).toString();
   }
 
   protected abstract MoreObjects.ToStringHelper append(MoreObjects.ToStringHelper tsh);
@@ -162,6 +162,11 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     long endOffset() throws ArithmeticException {
+      return Math.addExact(beginOffset, length);
+    }
+
+    @Override
+    long endOffsetInclusive() throws ArithmeticException {
       return Math.addExact(beginOffset, length) - 1;
     }
 
@@ -209,7 +214,7 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
-      return String.format("bytes=%d-%d", beginOffset, endOffset());
+      return String.format("bytes=%d-%d", beginOffset, endOffsetInclusive());
     }
 
     @Override
@@ -240,8 +245,13 @@ abstract class ByteRangeSpec implements Serializable {
     }
 
     @Override
+    long endOffsetInclusive() throws ArithmeticException {
+      return Math.subtractExact(endOffsetExclusive, 1);
+    }
+
+    @Override
     long length() throws ArithmeticException {
-      return endOffsetExclusive - beginOffset;
+      return Math.subtractExact(endOffsetExclusive, beginOffset);
     }
 
     @Override
@@ -284,7 +294,7 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
-      return String.format("bytes=%d-%d", beginOffset, endOffsetExclusive - 1);
+      return String.format("bytes=%d-%d", beginOffset, endOffsetInclusive());
     }
 
     @Override
@@ -311,12 +321,17 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     long endOffset() throws ArithmeticException {
+      return Math.addExact(endOffsetInclusive, 1L);
+    }
+
+    @Override
+    long endOffsetInclusive() throws ArithmeticException {
       return endOffsetInclusive;
     }
 
     @Override
     long length() throws ArithmeticException {
-      return endOffsetInclusive - beginOffset;
+      return Math.addExact(Math.subtractExact(endOffsetInclusive, beginOffset), 1);
     }
 
     @Override
@@ -346,7 +361,7 @@ abstract class ByteRangeSpec implements Serializable {
     @Override
     ByteRangeSpec withNewEndOffsetClosed(long endOffsetInclusive) {
       if (endOffsetInclusive != this.endOffsetInclusive) {
-        return new LeftClosedRightOpenByteRangeSpec(beginOffset, endOffsetInclusive);
+        return new LeftClosedRightClosedByteRangeSpec(beginOffset, endOffsetInclusive);
       } else {
         return this;
       }
@@ -384,6 +399,11 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     long endOffset() throws ArithmeticException {
+      return EFFECTIVE_INFINITY;
+    }
+
+    @Override
+    long endOffsetInclusive() throws ArithmeticException {
       return EFFECTIVE_INFINITY;
     }
 
@@ -452,6 +472,11 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     long endOffset() throws ArithmeticException {
+      return EFFECTIVE_INFINITY;
+    }
+
+    @Override
+    long endOffsetInclusive() throws ArithmeticException {
       return EFFECTIVE_INFINITY;
     }
 
