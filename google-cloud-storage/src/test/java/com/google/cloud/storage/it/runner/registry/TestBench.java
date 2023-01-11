@@ -188,8 +188,7 @@ public final class TestBench implements ManagedLifecycle {
   @Override
   public void start() {
     try {
-      String fullContainerName = String.format("storage-testbench_%s", containerName);
-      tempDirectory = Files.createTempDirectory(fullContainerName);
+      tempDirectory = Files.createTempDirectory(containerName);
       outPath = tempDirectory.resolve("stdout");
       errPath = tempDirectory.resolve("stderr");
 
@@ -234,7 +233,7 @@ public final class TestBench implements ManagedLifecycle {
               port + ":9000",
               "--publish",
               gRPCPort + ":9090",
-              String.format("--name=%s", fullContainerName),
+              String.format("--name=%s", containerName),
               dockerImage);
       process =
           new ProcessBuilder()
@@ -290,14 +289,31 @@ public final class TestBench implements ManagedLifecycle {
     try {
       process.destroy();
       process.waitFor(5, TimeUnit.SECONDS);
-      int processExitValue = process.exitValue();
-      LOGGER.warning("Container exit value = " + processExitValue);
+      boolean attemptForceStopContainer = false;
+      try {
+        int processExitValue = process.exitValue();
+        if (processExitValue != 0) {
+          attemptForceStopContainer = true;
+        }
+        System.out.println("processExitValue = " + processExitValue);
+        LOGGER.warning("Container exit value = " + processExitValue);
+      } catch (IllegalThreadStateException e) {
+        e.printStackTrace(System.out);
+        attemptForceStopContainer = true;
+      }
 
-      // Process shutdownProcess = new ProcessBuilder(ImmutableList.of("docker", "kill",
-      // containerName)).start();
-      // shutdownProcess.waitFor(5, TimeUnit.SECONDS);
-      // int shutdownProcessExitValue = shutdownProcess.exitValue();
-      // LOGGER1.info("shutdownProcessExitValue = {}", shutdownProcessExitValue);
+      if (attemptForceStopContainer) {
+        LOGGER.warning("Container did not gracefully exit, attempting to explicitly stop it.");
+        System.out.println("Container did not gracefully exit, attempting to explicitly stop it.");
+        ImmutableList<String> command = ImmutableList.of("docker", "kill", containerName);
+        System.out.println("command = " + command);
+        LOGGER.log(Level.WARNING, command.toString());
+        Process shutdownProcess = new ProcessBuilder(command).start();
+        shutdownProcess.waitFor(5, TimeUnit.SECONDS);
+        int shutdownProcessExitValue = shutdownProcess.exitValue();
+        LOGGER.warning("Container exit value = " + shutdownProcessExitValue);
+      }
+
       // wait for the server to shutdown
       runWithRetries(
           () -> {
@@ -329,7 +345,7 @@ public final class TestBench implements ManagedLifecycle {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-    } catch (InterruptedException e) {
+    } catch (InterruptedException | IOException e) {
       throw new RuntimeException(e);
     }
   }
@@ -465,7 +481,12 @@ public final class TestBench implements ManagedLifecycle {
 
     public TestBench build() {
       return new TestBench(
-          ignorePullError, baseUri, gRPCBaseUri, dockerImageName, dockerImageTag, containerName);
+          ignorePullError,
+          baseUri,
+          gRPCBaseUri,
+          dockerImageName,
+          dockerImageTag,
+          String.format("storage-testbench_%s", containerName));
     }
   }
 
