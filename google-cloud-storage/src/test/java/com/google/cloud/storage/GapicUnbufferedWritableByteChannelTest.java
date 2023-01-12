@@ -22,10 +22,12 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.rpc.DataLossException;
+import com.google.api.gax.rpc.PermissionDeniedException;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.StartResumableWriteRequest;
@@ -40,14 +42,21 @@ import io.grpc.stub.CallStreamObserver;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
+import java.util.logging.Logger;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import org.junit.Test;
 
 public final class GapicUnbufferedWritableByteChannelTest {
+  private static final Logger LOGGER =
+      Logger.getLogger(GapicUnbufferedWritableByteChannelTest.class.getName());
 
   private static final ChunkSegmenter segmenter =
       new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 10, 5);
@@ -174,7 +183,7 @@ public final class GapicUnbufferedWritableByteChannelTest {
     try (FakeServer fake = FakeServer.of(service);
         StorageClient sc = StorageClient.create(fake.storageSettings())) {
       SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
-      try (GapicUnbufferedWritableByteChannel<?> c =
+      GapicUnbufferedWritableByteChannel<?> c =
           new GapicUnbufferedWritableByteChannel<>(
               result,
               segmenter,
@@ -182,10 +191,23 @@ public final class GapicUnbufferedWritableByteChannelTest {
               WriteFlushStrategy.fsyncEveryFlush(
                   sc.writeObjectCallable(),
                   RetryingDependencies.attemptOnce(),
-                  Retrying.neverRetry()))) {
+                  Retrying.neverRetry()));
+      ArrayList<String> debugMessages = new ArrayList<>();
+      try {
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
         for (ByteBuffer buf : buffers) {
-          c.write(buf);
+          debugMessages.add(String.format("Writing buffer. buf = %s", buf));
+          int written = c.write(buf);
+          debugMessages.add(String.format("Wrote bytes. written = %2d", written));
+        }
+        // explicitly only close on success so we can trap the original error that maybe have
+        // happened before we reach here.
+        // Realistically, calling close here isn't strictly necessary because once we leave the
+        // try block for FakeServer the server will shut down.
+        c.close();
+      } catch (PermissionDeniedException ignore) {
+        for (String debugMessage : debugMessages) {
+          LOGGER.warning(debugMessage);
         }
       }
       assertThat(result.get()).isEqualTo(resp5);
@@ -228,6 +250,14 @@ public final class GapicUnbufferedWritableByteChannelTest {
                 obs.onNext(resp5);
                 obs.onCompleted();
               } else {
+                DirectWriteService.logUnexpectedRequest(
+                    ImmutableSet.of(
+                        ImmutableList.of(req1),
+                        ImmutableList.of(req2),
+                        ImmutableList.of(req3),
+                        ImmutableList.of(req4),
+                        ImmutableList.of(req5)),
+                    requests);
                 obs.onError(
                     TestUtils.apiException(Code.PERMISSION_DENIED, "Unexpected request chain."));
               }
@@ -276,6 +306,7 @@ public final class GapicUnbufferedWritableByteChannelTest {
   }
 
   static class DirectWriteService extends StorageImplBase {
+    private static final Logger LOGGER = Logger.getLogger(DirectWriteService.class.getName());
     private final BiConsumer<StreamObserver<WriteObjectResponse>, List<WriteObjectRequest>> c;
 
     private ImmutableList.Builder<WriteObjectRequest> requests;
@@ -293,10 +324,25 @@ public final class GapicUnbufferedWritableByteChannelTest {
               obs.onNext(writes.get(build));
               obs.onCompleted();
             } else {
+              logUnexpectedRequest(writes.keySet(), build);
               obs.onError(
                   TestUtils.apiException(Code.PERMISSION_DENIED, "Unexpected request chain."));
             }
           });
+    }
+
+    private static void logUnexpectedRequest(
+        Set<List<WriteObjectRequest>> writes, List<WriteObjectRequest> build) {
+      Collector<CharSequence, ?, String> joining = Collectors.joining(",\n\t", "[\n\t", "\n]");
+      Collector<CharSequence, ?, String> oneLine = Collectors.joining(",", "[", "]");
+      String msg =
+          String.format(
+              "Unexpected Request Chain.%nexpected one of: %s%n        but was: %s",
+              writes.stream()
+                  .map(l -> l.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine))
+                  .collect(joining),
+              build.stream().map(StorageV2ProtoUtils::fmtProto).collect(oneLine));
+      LOGGER.warning(msg);
     }
 
     @Override

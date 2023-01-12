@@ -78,6 +78,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 
 @InternalApi
@@ -373,7 +374,14 @@ final class ApiaryConversions {
         from.getDefaultKmsKeyName(),
         k -> new Encryption().setDefaultKmsKeyName(k),
         to::setEncryption);
-    ifNonNull(from.getLabels(), to::setLabels);
+    Map<String, String> pbLabels = from.getLabels();
+    if (pbLabels != null && !Data.isNull(pbLabels)) {
+      pbLabels = Maps.newHashMapWithExpectedSize(from.getLabels().size());
+      for (Map.Entry<String, String> entry : from.getLabels().entrySet()) {
+        pbLabels.put(entry.getKey(), firstNonNull(entry.getValue(), Data.nullOf(String.class)));
+      }
+    }
+    to.setLabels(pbLabels);
     maybeEncodeRetentionPolicy(from, to);
     ifNonNull(from.getIamConfiguration(), this::iamConfigEncode, to::setIamConfiguration);
     ifNonNull(from.getAutoclass(), this::autoclassEncode, to::setAutoclass);
@@ -412,7 +420,7 @@ final class ApiaryConversions {
         lift(Lifecycle::getRule).andThen(toImmutableListOf(lifecycleRule()::decode)),
         to::setLifecycleRules);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
-    ifNonNull(from.getLabels(), to::setLabels);
+    ifNonNull(from.getLabels(), ApiaryConversions::replaceDataNullValuesWithNull, to::setLabels);
     ifNonNull(from.getBilling(), Billing::getRequesterPays, to::setRequesterPays);
     Encryption encryption = from.getEncryption();
     if (encryption != null
@@ -915,6 +923,23 @@ final class ApiaryConversions {
           retentionPolicy.getRetentionPeriod(),
           durationSecondsCodec::decode,
           to::setRetentionPeriodDuration);
+    }
+  }
+
+  private static Map<String, String> replaceDataNullValuesWithNull(Map<String, String> labels) {
+    boolean anyDataNull = labels.values().stream().anyMatch(Data::isNull);
+    if (anyDataNull) {
+      // If we received any Data null values, replace them with null before setting.
+      // Explicitly use a HashMap as it allows null values.
+      Map<String, String> tmp = Maps.newHashMapWithExpectedSize(labels.size());
+      for (Entry<String, String> e : labels.entrySet()) {
+        String k = e.getKey();
+        String v = e.getValue();
+        tmp.put(k, Data.isNull(v) ? null : v);
+      }
+      return Collections.unmodifiableMap(tmp);
+    } else {
+      return labels;
     }
   }
 }

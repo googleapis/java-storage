@@ -73,6 +73,22 @@ public final class ITBucketLifecycleRulesTest {
   }
 
   @Test
+  public void condition_ageDays_0_shouldWork() throws Exception {
+    LifecycleRule d1 =
+        new LifecycleRule(
+            LifecycleAction.newAbortIncompleteMPUploadAction(),
+            LifecycleCondition.newBuilder().setAge(0).build());
+    BucketInfo info = baseInfo().setLifecycleRules(ImmutableList.of(d1)).build();
+
+    try (TemporaryBucket tmp =
+        TemporaryBucket.newBuilder().setBucketInfo(info).setStorage(storage).build()) {
+      BucketInfo bucket = tmp.getBucket();
+      Bucket update = storage.get(bucket.getName());
+      assertThat(update.getLifecycleRules()).isEqualTo(ImmutableList.of(d1));
+    }
+  }
+
+  @Test
   public void deleteRule_modifyingLifecycleRulesMatchesLastOperation() throws Exception {
     BucketInfo info;
     {

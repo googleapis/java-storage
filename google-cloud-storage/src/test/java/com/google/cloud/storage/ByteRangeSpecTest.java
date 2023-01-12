@@ -24,6 +24,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Streams;
+import com.google.storage.v2.ReadObjectRequest;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.stream.Stream;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -458,6 +460,13 @@ public final class ByteRangeSpecTest {
     }
 
     @Test
+    public void seekReadObjectRequest() {
+      ByteRangeSpec spec = rs.getSpec();
+      ReadObjectRequest actual = spec.seekReadObjectRequest(ReadObjectRequest.newBuilder()).build();
+      assertThat(actual).isEqualTo(expect.getReadObjectRequest());
+    }
+
+    @Test
     public void beginOffset() {
       assertThat(rs.getSpec().beginOffset()).isEqualTo(expect.getBeginOffset());
     }
@@ -487,6 +496,7 @@ public final class ByteRangeSpecTest {
               .endOffsetInclusive(EFFECTIVE_INFINITY)
               .length(EFFECTIVE_INFINITY)
               .httpRange(null)
+              .readObjectRequest(reqId())
               .isApplicableTo(
                   ByteRangeSpec.relativeLength(null, null),
                   ByteRangeSpec.explicit(null, null),
@@ -509,6 +519,7 @@ public final class ByteRangeSpecTest {
               .endOffsetInclusive(EFFECTIVE_INFINITY)
               .length(EFFECTIVE_INFINITY)
               .httpRange(headerRangeOpen(3))
+              .readObjectRequest(reqOpen(3))
               .isApplicableTo(
                   ByteRangeSpec.relativeLength(3L, null),
                   ByteRangeSpec.explicit(3L, null),
@@ -571,6 +582,7 @@ public final class ByteRangeSpecTest {
                   .endOffsetInclusive(EFFECTIVE_INFINITY)
                   .length(EFFECTIVE_INFINITY)
                   .httpRange(headerRangeOpen(1L))
+                  .readObjectRequest(reqOpen(1L))
                   .isApplicableTo(
                       ByteRangeSpec.relativeLength(1L, null),
                       ByteRangeSpec.explicit(1L, null),
@@ -582,6 +594,7 @@ public final class ByteRangeSpecTest {
                   .endOffsetInclusive(EFFECTIVE_INFINITY)
                   .length(EFFECTIVE_INFINITY)
                   .httpRange(headerRangeOpen(EFFECTIVE_INFINITY))
+                  .readObjectRequest(reqOpen(EFFECTIVE_INFINITY))
                   .isApplicableTo(
                       ByteRangeSpec.relativeLength(EFFECTIVE_INFINITY, null),
                       ByteRangeSpec.explicit(EFFECTIVE_INFINITY, null),
@@ -624,6 +637,18 @@ public final class ByteRangeSpecTest {
     return String.format("bytes=%d-%d", min, max);
   }
 
+  private static ReadObjectRequest reqOpen(long offset) {
+    return ReadObjectRequest.newBuilder().setReadOffset(offset).build();
+  }
+
+  private static ReadObjectRequest reqBounded(long offset, long length) {
+    return ReadObjectRequest.newBuilder().setReadOffset(offset).setReadLimit(length).build();
+  }
+
+  private static ReadObjectRequest reqId() {
+    return ReadObjectRequest.getDefaultInstance();
+  }
+
   private static final class RangeScenario {
     private final ByteRangeSpec spec;
     private final Expectations expectations;
@@ -657,18 +682,21 @@ public final class ByteRangeSpecTest {
       private final long endOffsetInclusive;
       private final long length;
       @Nullable private final String httpRange;
+      @NonNull private final ReadObjectRequest readObjectRequest;
 
       private Expectations(
           long beginOffset,
           long endOffset,
           long endOffsetInclusive,
           long length,
-          @Nullable String httpRange) {
+          @Nullable String httpRange,
+          @NonNull ReadObjectRequest readObjectRequest) {
         this.beginOffset = beginOffset;
         this.endOffset = endOffset;
         this.endOffsetInclusive = endOffsetInclusive;
         this.length = length;
         this.httpRange = httpRange;
+        this.readObjectRequest = readObjectRequest;
       }
 
       public long getBeginOffset() {
@@ -691,6 +719,10 @@ public final class ByteRangeSpecTest {
         return httpRange;
       }
 
+      public @NonNull ReadObjectRequest getReadObjectRequest() {
+        return readObjectRequest;
+      }
+
       String testNameFormat() {
         return MoreObjects.toStringHelper("")
             .add("bo", fmt(beginOffset))
@@ -708,6 +740,7 @@ public final class ByteRangeSpecTest {
             .add("endOffsetInclusive", fmt(endOffsetInclusive))
             .add("length", fmt(length))
             .add("httpRange", httpRange)
+            .add("readObjectRequest", StorageV2ProtoUtils.fmtProto(readObjectRequest))
             .toString();
       }
 
@@ -736,6 +769,7 @@ public final class ByteRangeSpecTest {
       private Long endOffsetInclusive;
       private Long length;
       @Nullable private String httpRange;
+      @NonNull private ReadObjectRequest readObjectRequest;
 
       public ExpectationsBuilder beginOffset(Long beginOffset) {
         this.beginOffset = beginOffset;
@@ -762,8 +796,14 @@ public final class ByteRangeSpecTest {
         return this;
       }
 
+      public ExpectationsBuilder readObjectRequest(ReadObjectRequest readObjectRequest) {
+        this.readObjectRequest = readObjectRequest;
+        return this;
+      }
+
       public ExpectationsBuilder bounded() {
-        return this.httpRange(headerRangeClosed(beginOffset, endOffsetInclusive));
+        return this.httpRange(headerRangeClosed(beginOffset, endOffsetInclusive))
+            .readObjectRequest(reqBounded(beginOffset, length));
       }
 
       public Stream<RangeScenario> isApplicableTo(ByteRangeSpec... brss) {
@@ -777,7 +817,8 @@ public final class ByteRangeSpecTest {
             requireNonNull(endOffset, "endOffset must be non null"),
             requireNonNull(endOffsetInclusive, "endOffsetInclusive must be non null"),
             requireNonNull(length, "length must be non null"),
-            httpRange);
+            httpRange,
+            requireNonNull(readObjectRequest, "readObjectRequest must be non null"));
       }
     }
   }

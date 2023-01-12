@@ -16,10 +16,10 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.ByteRangeSpec.relativeLength;
 import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
 import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import com.google.cloud.storage.jqwik.StorageArbitraries;
 import com.google.storage.v2.ObjectAccessControl;
@@ -34,39 +34,6 @@ import net.jqwik.api.Property;
 import net.jqwik.api.Provide;
 
 public final class StorageV2ProtoUtilsTest {
-
-  @Example
-  void validation_nullOffset_effectiveMin() {
-    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), null, 0L);
-    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), null, null);
-  }
-
-  @Example
-  void validation_nullLimit_effectiveMax() {
-    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 0L, null);
-    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), null, null);
-  }
-
-  @Example
-  void validation_offset_lteq_limit() {
-    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 3L, 2L);
-    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 0L, 0L);
-    seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), 1L, 1L);
-  }
-
-  @Example
-  void validation_offset_gteq_0() {
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), -1L, null));
-  }
-
-  @Example
-  void validation_limit_gteq_0() {
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> seekReadObjectRequest(ReadObjectRequest.getDefaultInstance(), null, -1L));
-  }
 
   @Example
   void objectAclEntityIdOrAltEq() {
@@ -86,21 +53,19 @@ public final class StorageV2ProtoUtilsTest {
   void seek(@ForAll("seekCases") SeekCase srr) {
     Long offset = srr.offset;
     Long limit = srr.limit;
+    ReadObjectRequest seek = seekReadObjectRequest(srr.req, relativeLength(offset, limit));
 
-    // I miss pattern matching...
+    // If both offset and limit are null, avoid allocating a new instance as we don't have any
+    // meaningful change to apply
     if (offset == null && limit == null) {
-      ReadObjectRequest seek = seekReadObjectRequest(srr.req, offset, limit);
       assertThat(seek).isSameInstanceAs(srr.req);
-    } else if (offset != null && limit == null) {
-      ReadObjectRequest seek = seekReadObjectRequest(srr.req, offset, limit);
-      assertThat(seek.getReadOffset()).isEqualTo(offset);
-    } else if (offset == null && limit != null) {
-      ReadObjectRequest seek = seekReadObjectRequest(srr.req, offset, limit);
-      assertThat(seek.getReadLimit()).isEqualTo(limit);
     } else {
-      ReadObjectRequest seek = seekReadObjectRequest(srr.req, offset, limit);
-      assertThat(seek.getReadOffset()).isEqualTo(offset);
-      assertThat(seek.getReadLimit()).isEqualTo(limit);
+      if (offset != null && offset != 0) {
+        assertThat(seek.getReadOffset()).isEqualTo(offset);
+      }
+      if (limit != null && limit != Long.MAX_VALUE) {
+        assertThat(seek.getReadLimit()).isEqualTo(limit);
+      }
     }
   }
 
@@ -128,14 +93,7 @@ public final class StorageV2ProtoUtilsTest {
 
     @Override
     public String toString() {
-      return "SeekReadRequest{"
-          + "req="
-          + fmtProto(req)
-          + ", offset="
-          + offset
-          + ", limit="
-          + limit
-          + '}';
+      return "SeekCase{" + "req=" + fmtProto(req) + ", offset=" + offset + ", limit=" + limit + '}';
     }
 
     private static SeekCase of(

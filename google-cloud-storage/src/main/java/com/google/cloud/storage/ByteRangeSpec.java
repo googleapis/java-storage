@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.core.InternalApi;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.storage.v2.ReadObjectRequest;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -79,6 +80,8 @@ abstract class ByteRangeSpec implements Serializable {
     }
     return httpRangeHeader;
   }
+
+  abstract ReadObjectRequest.Builder seekReadObjectRequest(ReadObjectRequest.Builder b);
 
   @Nullable
   protected abstract String fmtAsHttpRangeHeader() throws ArithmeticException;
@@ -213,6 +216,11 @@ abstract class ByteRangeSpec implements Serializable {
     }
 
     @Override
+    public ReadObjectRequest.Builder seekReadObjectRequest(ReadObjectRequest.Builder b) {
+      return b.setReadOffset(beginOffset()).setReadLimit(length());
+    }
+
+    @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
       return String.format("bytes=%d-%d", beginOffset, endOffsetInclusive());
     }
@@ -290,6 +298,11 @@ abstract class ByteRangeSpec implements Serializable {
     @Override
     ByteRangeSpec withNewRelativeLength(long relativeLength) {
       return new RelativeByteRangeSpec(beginOffset, relativeLength);
+    }
+
+    @Override
+    public ReadObjectRequest.Builder seekReadObjectRequest(ReadObjectRequest.Builder b) {
+      return b.setReadOffset(beginOffset()).setReadLimit(length());
     }
 
     @Override
@@ -373,6 +386,11 @@ abstract class ByteRangeSpec implements Serializable {
     }
 
     @Override
+    public ReadObjectRequest.Builder seekReadObjectRequest(ReadObjectRequest.Builder b) {
+      return b.setReadOffset(beginOffset()).setReadLimit(length());
+    }
+
+    @Override
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
       return String.format("bytes=%d-%d", beginOffset, endOffsetInclusive);
     }
@@ -443,6 +461,11 @@ abstract class ByteRangeSpec implements Serializable {
     @Override
     ByteRangeSpec withNewRelativeLength(long relativeLength) {
       return new RelativeByteRangeSpec(beginOffset, relativeLength);
+    }
+
+    @Override
+    public ReadObjectRequest.Builder seekReadObjectRequest(ReadObjectRequest.Builder b) {
+      return b.setReadOffset(beginOffset());
     }
 
     @Override
@@ -528,6 +551,11 @@ abstract class ByteRangeSpec implements Serializable {
       } else {
         return this;
       }
+    }
+
+    @Override
+    public ReadObjectRequest.Builder seekReadObjectRequest(ReadObjectRequest.Builder b) {
+      return b;
     }
 
     @Override
