@@ -16,78 +16,27 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteSizeConstants._16MiB;
-import static com.google.cloud.storage.Maths.sub;
-import static com.google.cloud.storage.StorageV2ProtoUtils.seekReadObjectRequest;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-
-import com.google.api.core.ApiFuture;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class GrpcBlobReadChannel implements ReadChannel {
+final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
 
-  private final LazyReadChannel<Object> lazyReadChannel;
-
-  private Long position;
-  private Long limit;
-  private int chunkSize = _16MiB;
+  private final ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read;
+  private final ReadObjectRequest request;
+  private final boolean autoGzipDecompression;
 
   GrpcBlobReadChannel(
       ServerStreamingCallable<ReadObjectRequest, ReadObjectResponse> read,
       ReadObjectRequest request,
       boolean autoGzipDecompression) {
-    this.lazyReadChannel =
-        new LazyReadChannel<>(
-            () -> {
-              ReadObjectRequest req =
-                  seekReadObjectRequest(request, position, sub(limit, position));
-              return ResumableMedia.gapic()
-                  .read()
-                  .byteChannel(read)
-                  .setHasher(Hasher.noop())
-                  .setAutoGzipDecompression(autoGzipDecompression)
-                  .buffered(BufferHandle.allocate(chunkSize))
-                  .setReadObjectRequest(req)
-                  .build();
-            });
-  }
-
-  @Override
-  public void setChunkSize(int chunkSize) {
-    checkState(!isOpen(), "Unable to change chunkSize after read");
-    this.chunkSize = chunkSize;
-  }
-
-  @Override
-  public boolean isOpen() {
-    return lazyReadChannel.isOpen() && lazyReadChannel.getChannel().isOpen();
-  }
-
-  @Override
-  public void close() {
-    if (lazyReadChannel.isOpen()) {
-      try {
-        lazyReadChannel.getChannel().close();
-      } catch (IOException e) {
-        // why does ReadChannel remove IOException?!
-        throw StorageException.coalesce(e);
-      }
-    }
-  }
-
-  @Override
-  public void seek(long position) throws IOException {
-    checkArgument(position >= 0, "position must be >= 0");
-    checkState(!isOpen(), "Unable to change position after read");
-    this.position = position;
+    this.read = read;
+    this.request = request;
+    this.autoGzipDecompression = autoGzipDecompression;
   }
 
   @Override
@@ -96,35 +45,29 @@ final class GrpcBlobReadChannel implements ReadChannel {
   }
 
   @Override
-  public ReadChannel limit(long limit) {
-    checkArgument(limit >= 0, "limit must be >= 0");
-    checkState(!isOpen(), "Unable to change limit after read");
-    this.limit = limit;
-    return this;
+  protected LazyReadChannel<Object> newLazyReadChannel() {
+    return new LazyReadChannel<>(
+        () ->
+            ResumableMedia.gapic()
+                .read()
+                .byteChannel(read)
+                .setHasher(Hasher.noop())
+                .setAutoGzipDecompression(autoGzipDecompression)
+                .buffered(getBufferHandle())
+                .setReadObjectRequest(getReadObjectRequest())
+                .build());
   }
 
-  @Override
-  public long limit() {
-    return limit != null ? limit : Long.MAX_VALUE;
-  }
-
-  @Override
-  public int read(ByteBuffer dst) throws IOException {
-    Long diff = sub(limit, position);
-    if (diff != null && diff <= 0) {
-      close();
-      return -1;
+  @NonNull
+  private ReadObjectRequest getReadObjectRequest() {
+    ByteRangeSpec rangeSpec = getByteRangeSpec();
+    ReadObjectRequest.Builder b = request.toBuilder();
+    if (request.getGeneration() == 0) {
+      Object resolvedObject = getResolvedObject();
+      if (resolvedObject != null) {
+        b.setGeneration(resolvedObject.getGeneration());
+      }
     }
-    try {
-      return lazyReadChannel.getChannel().read(dst);
-    } catch (IOException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new IOException(StorageException.coalesce(e));
-    }
-  }
-
-  ApiFuture<Object> getResults() {
-    return lazyReadChannel.getSession().get().getResult();
+    return rangeSpec.seekReadObjectRequest(b).build();
   }
 }

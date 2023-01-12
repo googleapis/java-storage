@@ -30,7 +30,6 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
@@ -56,10 +55,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.zip.GZIPInputStream;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Rule;
@@ -79,8 +78,6 @@ public final class ITBlobReadChannelTest {
   private static final byte[] COMPRESSED_CONTENT =
       BaseEncoding.base64()
           .decode("H4sIAAAAAAAAAPNIzcnJV3DPz0/PSVVwzskvTVEILskvSkxPVQQA/LySchsAAAA=");
-
-  @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(872364872));
 
   @Rule public final TemporaryFolder tmp = new TemporaryFolder();
 
@@ -139,7 +136,7 @@ public final class ITBlobReadChannelTest {
   public void testLimit_downloadToFile() throws IOException {
     String blobName = String.format("%s/src", generator.randomObjectName());
     BlobId blobId = BlobId.of(bucket.getName(), blobName);
-    ByteBuffer content = dataGeneration.randByteBuffer(108);
+    ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(108);
     try (WriteChannel writer = storage.writer(BlobInfo.newBuilder(blobId).build())) {
       writer.write(content);
     }
@@ -151,18 +148,21 @@ public final class ITBlobReadChannelTest {
     duplicate.position(14);
     duplicate.limit(37);
     duplicate.get(expectedBytes);
+    String xxdExpected = xxd(expectedBytes);
 
     try {
+      Path path = Paths.get(destFileName);
       try (ReadChannel from = storage.reader(blobId);
-          FileChannel to = FileChannel.open(Paths.get(destFileName), StandardOpenOption.WRITE)) {
+          FileChannel to = FileChannel.open(path, StandardOpenOption.WRITE)) {
         from.seek(14);
         from.limit(37);
 
         ByteStreams.copy(from, to);
       }
 
-      byte[] readBytes = Files.readAllBytes(Paths.get(destFileName));
-      assertThat(readBytes).isEqualTo(expectedBytes);
+      byte[] readBytes = Files.readAllBytes(path);
+      String xxdActual = xxd(readBytes);
+      assertThat(xxdActual).isEqualTo(xxdExpected);
     } finally {
       file.delete();
     }
@@ -344,7 +344,6 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @Exclude(transports = Transport.GRPC)
   public void seekAfterReadWorks() throws IOException {
     ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
     BlobInfo gen1 = obj512KiB.getInfo();
@@ -374,7 +373,6 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @Exclude(transports = Transport.GRPC)
   public void limitAfterReadWorks() throws IOException {
     ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
     BlobInfo gen1 = obj512KiB.getInfo();
@@ -404,7 +402,6 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @Exclude(transports = Transport.GRPC)
   public void readingLastByteReturnsOneByte_seekOnly() throws IOException {
     int length = 10;
     byte[] bytes = DataGenerator.base64Characters().genBytes(length);
@@ -426,7 +423,6 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  @Exclude(transports = Transport.GRPC)
   public void readingLastByteReturnsOneByte_seekAndLimit() throws IOException {
     int length = 10;
     byte[] bytes = DataGenerator.base64Characters().genBytes(length);
@@ -521,7 +517,7 @@ public final class ITBlobReadChannelTest {
       throws IOException {
     String blobName = String.format("%s/src", generator.randomObjectName());
     BlobInfo src = BlobInfo.newBuilder(bucket, blobName).build();
-    ByteBuffer content = dataGeneration.randByteBuffer(srcContentSize);
+    ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(srcContentSize);
     ByteBuffer dup = content.duplicate();
     dup.position(rangeBegin);
     int newLimit = Math.min(dup.capacity(), rangeEnd);

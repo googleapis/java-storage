@@ -16,8 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageOrBuilder;
 import com.google.protobuf.util.JsonFormat;
@@ -27,7 +25,6 @@ import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ReadObjectRequest;
 import java.util.function.Predicate;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class StorageV2ProtoUtils {
 
@@ -39,42 +36,21 @@ final class StorageV2ProtoUtils {
 
   private StorageV2ProtoUtils() {}
 
+  // TODO: can we eliminate this method all together?
   @NonNull
   static ReadObjectRequest seekReadObjectRequest(
-      @NonNull ReadObjectRequest request, @Nullable Long offset, @Nullable Long limit) {
-    validate(offset, limit);
+      @NonNull ReadObjectRequest request, @NonNull ByteRangeSpec byteRangeSpec) {
+
+    long offset = byteRangeSpec.beginOffset();
+    long limit = byteRangeSpec.length();
     ReadObjectRequest req = request;
 
-    boolean setOffset = offset != null && (offset > 0 || offset != req.getReadOffset());
-    boolean setLimit = limit != null && (limit < Long.MAX_VALUE || limit != req.getReadLimit());
+    boolean setOffset = (offset > 0 && offset != req.getReadOffset());
+    boolean setLimit = (limit < ByteRangeSpec.EFFECTIVE_INFINITY && limit != req.getReadLimit());
     if (setOffset || setLimit) {
-      ReadObjectRequest.Builder b = req.toBuilder();
-      if (setOffset) {
-        b.setReadOffset(offset);
-      }
-      if (setLimit) {
-        b.setReadLimit(limit);
-      }
-      req = b.build();
+      req = byteRangeSpec.seekReadObjectRequest(req.toBuilder()).build();
     }
     return req;
-  }
-
-  private static void validate(@Nullable Long offset, @Nullable Long limit) {
-    boolean offsetNull = offset == null;
-    boolean limitNull = limit == null;
-
-    if (offsetNull && limitNull) {
-      return;
-    }
-
-    if (!offsetNull) {
-      checkArgument(0 <= offset, VALIDATION_TEMPLATE, offset, limit);
-    }
-
-    if (!limitNull) {
-      checkArgument(0 <= limit, VALIDATION_TEMPLATE, offset, limit);
-    }
   }
 
   @NonNull
