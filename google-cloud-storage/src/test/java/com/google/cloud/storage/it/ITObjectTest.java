@@ -625,8 +625,6 @@ public class ITObjectTest {
   }
 
   @Test
-  // Metadata update bug b/230510191
-  @Exclude(transports = Transport.GRPC)
   public void testUpdateBlobUnsetMetadata() {
 
     String blobName = "test-update-blob-unset-metadata";

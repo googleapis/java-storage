@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.BackwardCompatibilityUtils.millisOffsetDateTimeCodec;
+import static com.google.cloud.storage.Utils.diffMaps;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,6 +25,7 @@ import com.google.api.client.util.Data;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -38,6 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Information about an object in Google Cloud Storage. A {@code BlobInfo} object includes the
@@ -100,7 +104,7 @@ public class BlobInfo implements Serializable {
   private final Boolean eventBasedHold;
   private final Boolean temporaryHold;
   private final OffsetDateTime retentionExpirationTime;
-  private final transient ImmutableSet<Storage.BlobField> modifiedFields;
+  private final transient ImmutableSet<NamedField> modifiedFields;
 
   /** This class is meant for internal use only. Users are discouraged from using this class. */
   public static final class ImmutableEmptyMap<K, V> extends AbstractMap<K, V> {
@@ -331,7 +335,7 @@ public class BlobInfo implements Serializable {
     }
 
     /** Sets the blob's user provided metadata. */
-    public abstract Builder setMetadata(Map<String, String> metadata);
+    public abstract Builder setMetadata(@Nullable Map<@NonNull String, @Nullable String> metadata);
 
     abstract Builder setMetageneration(Long metageneration);
 
@@ -502,7 +506,7 @@ public class BlobInfo implements Serializable {
     private Boolean eventBasedHold;
     private Boolean temporaryHold;
     private OffsetDateTime retentionExpirationTime;
-    private final ImmutableSet.Builder<Storage.BlobField> modifiedFields = ImmutableSet.builder();
+    private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(BlobId blobId) {
       this.blobId = blobId;
@@ -757,15 +761,18 @@ public class BlobInfo implements Serializable {
       return this;
     }
 
+    @SuppressWarnings({"UnnecessaryLocalVariable"})
     @Override
-    public Builder setMetadata(Map<String, String> metadata) {
-      if (!Objects.equals(this.metadata, metadata)) {
-        modifiedFields.add(BlobField.METADATA);
-      }
-      if (metadata != null) {
-        this.metadata = new HashMap<>(metadata);
-      } else {
-        this.metadata = (Map<String, String>) Data.nullOf(ImmutableEmptyMap.class);
+    public Builder setMetadata(@Nullable Map<@NonNull String, @Nullable String> metadata) {
+      Map<String, String> left = this.metadata;
+      Map<String, String> right = metadata;
+      if (!Objects.equals(left, right)) {
+        diffMaps(BlobField.METADATA, left, right, modifiedFields::add);
+        if (right != null) {
+          this.metadata = new HashMap<>(right);
+        } else {
+          this.metadata = (Map<String, String>) Data.nullOf(ImmutableEmptyMap.class);
+        }
       }
       return this;
     }
@@ -1317,7 +1324,8 @@ public class BlobInfo implements Serializable {
   }
 
   /** Returns blob's user provided metadata. */
-  public Map<String, String> getMetadata() {
+  @Nullable
+  public Map<@NonNull String, @Nullable String> getMetadata() {
     return metadata == null || Data.isNull(metadata) ? null : Collections.unmodifiableMap(metadata);
   }
 
@@ -1617,7 +1625,7 @@ public class BlobInfo implements Serializable {
         && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime);
   }
 
-  ImmutableSet<BlobField> getModifiedFields() {
+  ImmutableSet<NamedField> getModifiedFields() {
     return modifiedFields;
   }
 

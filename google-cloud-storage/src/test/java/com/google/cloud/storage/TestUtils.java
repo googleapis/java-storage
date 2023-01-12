@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -48,7 +50,10 @@ import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -238,5 +243,25 @@ public final class TestUtils {
             .filter(Objects::nonNull)
             .collect(ImmutableList.toImmutableList());
     MultipleFailureException.assertEmpty(x);
+  }
+
+  /** ImmutableMap does not allow null values, this method does */
+  public static Map<@NonNull String, @Nullable String> hashMapOf(
+      @NonNull String k1, @Nullable String v1) {
+    requireNonNull(k1, "k1 must be non null");
+    HashMap<String, String> map = new HashMap<>();
+    map.put(k1, v1);
+    return Collections.unmodifiableMap(map);
+  }
+
+  /** ImmutableMap does not allow null values, this method does */
+  public static Map<@NonNull String, @Nullable String> hashMapOf(
+      @NonNull String k1, @Nullable String v1, @NonNull String k2, @Nullable String v2) {
+    requireNonNull(k1, "k1 must be non null");
+    requireNonNull(k2, "k2 must be non null");
+    HashMap<String, String> map = new HashMap<>();
+    map.put(k1, v1);
+    map.put(k2, v2);
+    return Collections.unmodifiableMap(map);
   }
 }

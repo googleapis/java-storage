@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * A Google cloud storage bucket.
@@ -546,7 +547,7 @@ public class Bucket extends BucketInfo {
     }
 
     @Override
-    public Builder setLabels(Map<String, String> labels) {
+    public Builder setLabels(@Nullable Map<@NonNull String, @Nullable String> labels) {
       infoBuilder.setLabels(labels);
       return this;
     }
