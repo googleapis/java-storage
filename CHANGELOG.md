@@ -1,5 +1,42 @@
 # Changelog
 
+## [2.17.0](https://github.com/googleapis/java-storage/compare/v2.16.0...v2.17.0) (2023-01-12)
+
+
+### Features
+
+* Implement GrpcStorageImpl BucketAccessControl operations ([#1816](https://github.com/googleapis/java-storage/issues/1816)) ([5c52079](https://github.com/googleapis/java-storage/commit/5c52079fb5f52caf39a49ccb96df6251a9c728d3))
+* Implement GrpcStorageImpl ObjectAccessControl operations ([#1818](https://github.com/googleapis/java-storage/issues/1818)) ([2eec791](https://github.com/googleapis/java-storage/commit/2eec791122bb1bb28a1ffb14beb7ce8776c5b5ec))
+* Implement GrpcStorageImpl#createDefaultAcl & GrpcStorageImpl#updateDefaultAcl ([#1806](https://github.com/googleapis/java-storage/issues/1806)) ([0f24a11](https://github.com/googleapis/java-storage/commit/0f24a11c5289a4c07f27d8a3c29fab34520b036f))
+* Implement GrpcStorageImpl#deleteDefaultAcl ([#1807](https://github.com/googleapis/java-storage/issues/1807)) ([c783277](https://github.com/googleapis/java-storage/commit/c78327717a7936492161ddcc64c86374db72c48c))
+* Implement GrpcStorageImpl#getDefaultAcl ([#1802](https://github.com/googleapis/java-storage/issues/1802)) ([b9b7c49](https://github.com/googleapis/java-storage/commit/b9b7c49fcfcab285da156b34b186a007150e876f))
+* Implement GrpcStorageImpl#listDefaultAcl ([#1805](https://github.com/googleapis/java-storage/issues/1805)) ([03c2e66](https://github.com/googleapis/java-storage/commit/03c2e6660721b4a8bfc09b241ef44f3e4e08865b))
+* Improve throughput of http based storage#reader between 100 MiB/s and 200 MiB/s ([#1799](https://github.com/googleapis/java-storage/issues/1799)) ([94cd288](https://github.com/googleapis/java-storage/commit/94cd2887f22f6d1bb82f9929b388c27c63353d77))
+* Update GrpcBlobReadChannel to allow seek/limit after read ([#1834](https://github.com/googleapis/java-storage/issues/1834)) ([45dc983](https://github.com/googleapis/java-storage/commit/45dc983a4af8e7feb937263ce611bd34eda37e03))
+
+
+### Bug Fixes
+
+* Add missing preconditions and update samples ([#1753](https://github.com/googleapis/java-storage/issues/1753)) ([96beca2](https://github.com/googleapis/java-storage/commit/96beca2465158fb4633d58fe09a9776a4b171811))
+* **grpc:** Fix bucket logging conversion to allow clearing ([#1822](https://github.com/googleapis/java-storage/issues/1822)) ([30e19dc](https://github.com/googleapis/java-storage/commit/30e19dc55c61917c3a73055091e9e6ca0744f172))
+* Update gRPC object list implementation to include synthetic directories ([#1824](https://github.com/googleapis/java-storage/issues/1824)) ([0665c24](https://github.com/googleapis/java-storage/commit/0665c2473b5b1a18061d1e58382320ae55295520))
+* Update Grpc Write implementation to allow specifying expected md5 ([#1815](https://github.com/googleapis/java-storage/issues/1815)) ([4662572](https://github.com/googleapis/java-storage/commit/46625729b6fd62d8f133c3fb2d8ee00eb64ee8e9))
+* Update GrpcConversions to use Bucket.RetentionPolicy.retention_duration ([#1798](https://github.com/googleapis/java-storage/issues/1798)) ([82fb014](https://github.com/googleapis/java-storage/commit/82fb014508178e8ad3fd08e9efc757a8e47564da))
+* Update GrpcStorageImpl#update to support fine-grained update of BucketInfo.labels and BlobInfo.metadata ([#1843](https://github.com/googleapis/java-storage/issues/1843)) ([c8bf3c7](https://github.com/googleapis/java-storage/commit/c8bf3c70cca81ed87a52939fe7da58889c8f55ce))
+
+
+### Documentation
+
+* Document differing behavior of {get,list}{,default}Acl between HTTP and gRPC ([#1820](https://github.com/googleapis/java-storage/issues/1820)) ([9511b17](https://github.com/googleapis/java-storage/commit/9511b173e84d2b28ab1a1625b16e3e648c3856fb))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.1.1 ([#1836](https://github.com/googleapis/java-storage/issues/1836)) ([3b71fab](https://github.com/googleapis/java-storage/commit/3b71fab11ac71039c2a9983821ce02ce25ce311d))
+* Update dependency net.jqwik:jqwik to v1.7.2 ([#1833](https://github.com/googleapis/java-storage/issues/1833)) ([83bc261](https://github.com/googleapis/java-storage/commit/83bc261130e89e5994f21e32422054ef6ea2fe8e))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.9.2 ([#1837](https://github.com/googleapis/java-storage/issues/1837)) ([5b38184](https://github.com/googleapis/java-storage/commit/5b381845b4f48a691aa3f0cb96599ddefc7e463f))
+* Update junit-platform.version to v5.9.2 ([#1838](https://github.com/googleapis/java-storage/issues/1838)) ([372521b](https://github.com/googleapis/java-storage/commit/372521ba80b12e52c74fae5ac766dbe6610ff0b2))
+
 ## [2.16.0](https://github.com/googleapis/java-storage/compare/v2.15.1...v2.16.0) (2022-12-06)
 
 
