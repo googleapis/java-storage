@@ -714,8 +714,12 @@ final class GrpcConversions {
               .collect(ImmutableList.toImmutableList());
       conditionBuilder.setMatchesStorageClass(collect);
     }
-    conditionBuilder.setMatchesPrefix(condition.getMatchesPrefixList());
-    conditionBuilder.setMatchesSuffix(condition.getMatchesSuffixList());
+    if (!condition.getMatchesPrefixList().isEmpty()) {
+      conditionBuilder.setMatchesPrefix(condition.getMatchesPrefixList());
+    }
+    if (!condition.getMatchesSuffixList().isEmpty()) {
+      conditionBuilder.setMatchesSuffix(condition.getMatchesSuffixList());
+    }
     return new BucketInfo.LifecycleRule(lifecycleAction, conditionBuilder.build());
   }
 
