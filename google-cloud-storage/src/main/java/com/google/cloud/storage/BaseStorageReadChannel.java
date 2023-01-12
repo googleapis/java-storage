@@ -127,12 +127,12 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
   protected abstract LazyReadChannel<T> newLazyReadChannel();
 
-  private void maybeResetChannel(boolean umallocBuffer) throws IOException {
+  private void maybeResetChannel(boolean freeBuffer) throws IOException {
     if (lazyReadChannel != null && lazyReadChannel.isOpen()) {
       try (BufferedReadableByteChannel ignore = lazyReadChannel.getChannel()) {
-        if (bufferHandle != null && !umallocBuffer) {
+        if (bufferHandle != null && !freeBuffer) {
           bufferHandle.get().clear();
-        } else if (umallocBuffer) {
+        } else if (freeBuffer) {
           bufferHandle = null;
         }
         lazyReadChannel = null;
