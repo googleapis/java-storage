@@ -35,7 +35,7 @@ java.common_templates(excludes=[
   '.kokoro/presubmit/samples.cfg',
   '.kokoro/presubmit/graalvm-native.cfg',
   '.kokoro/presubmit/graalvm-native-17.cfg',
-  '.kokoro/build.sh'
+  '.kokoro/build.sh',
   '.github/workflows/auto-release.yaml',
   'CONTRIBUTING.md',
   'renovate.json'
