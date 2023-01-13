@@ -19,3 +19,4 @@ com.google.cloud.storage.jqwik.BucketArbitraryProvider
 com.google.cloud.storage.jqwik.HmacKeyMetadataArbitraryProvider
 com.google.cloud.storage.jqwik.ServiceAccountArbitraryProvider
 com.google.cloud.storage.jqwik.IamPolicyArbitraryProvider
+com.google.cloud.storage.jqwik.NotificationArbitraryProvider
