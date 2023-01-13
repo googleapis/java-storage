@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.17.1](https://github.com/googleapis/java-storage/compare/v2.17.0...v2.17.1) (2023-01-13)
+
+
+### Bug Fixes
+
+* Update BaseStorageReadChannel to be left open unless explicitly closed ([#1853](https://github.com/googleapis/java-storage/issues/1853)) ([1425dd9](https://github.com/googleapis/java-storage/commit/1425dd97cb7d4a58f0bbededeca543f1a89c7d5d))
+
 ## [2.17.0](https://github.com/googleapis/java-storage/compare/v2.16.0...v2.17.0) (2023-01-12)
 
 
