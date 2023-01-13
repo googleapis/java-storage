@@ -22,10 +22,12 @@ import static java.util.Objects.requireNonNull;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
+  private boolean open;
   private ByteRangeSpec byteRangeSpec;
   private int chunkSize = _2MiB;
   private BufferHandle bufferHandle;
@@ -34,6 +36,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   @Nullable private T resolvedObject;
 
   protected BaseStorageReadChannel() {
+    this.open = true;
     this.byteRangeSpec = ByteRangeSpec.nullRange();
   }
 
@@ -45,16 +48,12 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
   @Override
   public final synchronized boolean isOpen() {
-    if (lazyReadChannel == null) {
-      return true;
-    } else {
-      LazyReadChannel<T> tmp = internalGetLazyChannel();
-      return tmp.isOpen();
-    }
+    return open;
   }
 
   @Override
   public final synchronized void close() {
+    open = false;
     if (internalGetLazyChannel().isOpen()) {
       StorageException.wrapIOException(internalGetLazyChannel().getChannel()::close);
     }
@@ -75,17 +74,23 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
   @Override
   public final synchronized int read(ByteBuffer dst) throws IOException {
+    // BlobReadChannel only considered itself closed if close had been called on it.
+    if (!open) {
+      throw new ClosedChannelException();
+    }
     long diff = byteRangeSpec.length();
     if (diff <= 0) {
-      close();
       return -1;
     }
     try {
-      int read = internalGetLazyChannel().getChannel().read(dst);
+      // trap if the fact that tmp is already closed, and instead return -1
+      BufferedReadableByteChannel tmp = internalGetLazyChannel().getChannel();
+      if (!tmp.isOpen()) {
+        return -1;
+      }
+      int read = tmp.read(dst);
       if (read != -1) {
         byteRangeSpec = byteRangeSpec.withShiftBeginOffset(read);
-      } else {
-        close();
       }
       return read;
     } catch (StorageException e) {
@@ -128,15 +133,16 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   protected abstract LazyReadChannel<T> newLazyReadChannel();
 
   private void maybeResetChannel(boolean freeBuffer) throws IOException {
-    if (lazyReadChannel != null && lazyReadChannel.isOpen()) {
-      try (BufferedReadableByteChannel ignore = lazyReadChannel.getChannel()) {
-        if (bufferHandle != null && !freeBuffer) {
-          bufferHandle.get().clear();
-        } else if (freeBuffer) {
-          bufferHandle = null;
-        }
-        lazyReadChannel = null;
+    if (lazyReadChannel != null) {
+      if (lazyReadChannel.isOpen()) {
+        lazyReadChannel.getChannel().close();
       }
+      if (bufferHandle != null && !freeBuffer) {
+        bufferHandle.get().clear();
+      } else if (freeBuffer) {
+        bufferHandle = null;
+      }
+      lazyReadChannel = null;
     }
   }
 

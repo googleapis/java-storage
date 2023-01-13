@@ -16,11 +16,13 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.ReadChannel;
@@ -52,6 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
@@ -373,6 +376,40 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
+  public void seekBackToStartAfterReachingEndOfObjectWorks() throws IOException {
+    ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
+    BlobInfo gen1 = obj512KiB.getInfo();
+    byte[] bytes = obj512KiB.getContent().getBytes();
+
+    int from = bytes.length - 5;
+    byte[] expected1 = Arrays.copyOfRange(bytes, from, bytes.length);
+
+    String xxdExpected1 = xxd(expected1);
+    String xxdExpected2 = xxd(bytes);
+    try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
+      // seek forward to a new offset
+      reader.seek(from);
+
+      try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          WritableByteChannel out = Channels.newChannel(baos)) {
+        ByteStreams.copy(reader, out);
+        String xxd = xxd(baos.toByteArray());
+        assertThat(xxd).isEqualTo(xxdExpected1);
+      }
+
+      // seek back to the beginning
+      reader.seek(0);
+      // read again
+      try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          WritableByteChannel out = Channels.newChannel(baos)) {
+        ByteStreams.copy(reader, out);
+        String xxd = xxd(baos.toByteArray());
+        assertThat(xxd).isEqualTo(xxdExpected2);
+      }
+    }
+  }
+
+  @Test
   public void limitAfterReadWorks() throws IOException {
     ObjectAndContent obj512KiB = objectsFixture.getObj512KiB();
     BlobInfo gen1 = obj512KiB.getInfo();
@@ -466,6 +503,29 @@ public final class ITBlobReadChannelTest {
       assertThat(reader.isOpen()).isTrue();
       int read2 = reader.read(buf);
       assertThat(read2).isEqualTo(-1);
+    }
+  }
+
+  /** Read channel does not consider itself closed once it returns {@code -1} from read. */
+  @Test
+  public void readChannelIsAlwaysOpen_willReturnNegative1UntilExplicitlyClosed() throws Exception {
+    int length = 10;
+    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
+
+    BlobInfo info1 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
+
+    try (ReadChannel reader = storage.reader(gen1.getBlobId())) {
+      ByteBuffer buf = ByteBuffer.allocate(length * 2);
+      int read = reader.read(buf);
+      assertAll(
+          () -> assertThat(read).isEqualTo(length), () -> assertThat(reader.isOpen()).isTrue());
+      int read2 = reader.read(buf);
+      assertAll(() -> assertThat(read2).isEqualTo(-1), () -> assertThat(reader.isOpen()).isTrue());
+      int read3 = reader.read(buf);
+      assertAll(() -> assertThat(read3).isEqualTo(-1), () -> assertThat(reader.isOpen()).isTrue());
+      reader.close();
+      assertThrows(ClosedChannelException.class, () -> reader.read(buf));
     }
   }
 
