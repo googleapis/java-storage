@@ -142,6 +142,10 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     }
   }
 
+  private void setXGoogGeneration(long xGoogGeneration) {
+    this.xGoogGeneration = xGoogGeneration;
+  }
+
   private ScatteringByteChannel open() {
     try {
       Boolean b =
@@ -159,7 +163,8 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
         if (xGoogGenHeader != null) {
           StorageObject clone = apiaryReadRequest.getObject().clone();
           ifNonNull(xGoogGenHeader, Long::valueOf, clone::setGeneration);
-          ifNonNull(xGoogGenHeader, Long::valueOf, g -> this.xGoogGeneration = g);
+          // store xGoogGeneration ourselves incase we need to retry
+          ifNonNull(xGoogGenHeader, Long::valueOf, this::setXGoogGeneration);
           ifNonNull(
               getHeaderValue(responseHeaders, "x-goog-metageneration"),
               Long::valueOf,
