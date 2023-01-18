@@ -59,6 +59,7 @@ import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -1241,11 +1242,11 @@ public final class ITOptionRegressionTest {
   }
 
   private static String bucketName() {
-    return String.format("bucket-%03d", bucketCounter++);
+    return String.format("bucket-%03d", UUID.randomUUID());
   }
 
   private static String objectName() {
-    return String.format("object-%03d", objectCounter++);
+    return String.format("object-%03d", UUID.randomUUID());
   }
 
   private static Function<String, Set<String>> splitOnCommaToSet() {
