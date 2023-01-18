@@ -1088,6 +1088,7 @@ public final class ITOptionRegressionTest {
     b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.metagenerationMatch(0));
     requestAuditing.assertQueryParam("ifMetagenerationMatch", "0");
   }
+
   @Ignore
   @Test
   public void bucket_BlobWriteOption_metagenerationNotMatch_long() {
