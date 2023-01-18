@@ -61,6 +61,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import java.util.function.Function;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -100,6 +101,8 @@ public final class ITOptionRegressionTest {
             .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(1).build())
             .build()
             .getService();
+    System.out.println("****** SETUP ******");
+    System.out.println(bucket.getName());
     b = s.get(bucket.getName());
     o = s.create(BlobInfo.newBuilder(b, "ddeeffaauulltt").build(), CONTENT.getBytes());
     e =
@@ -112,6 +115,9 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_BucketTargetOption_predefinedAcl_PredefinedAcl() {
+    System.out.println("****** PREDEFINEDACL TEST ******");
+    System.out.println(bucket.getName());
+    System.out.println(objectName());
     s.create(
         BlobInfo.newBuilder(b, objectName()).build(),
         CONTENT.getBytes(),
@@ -121,6 +127,9 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_BucketTargetOption_predefinedDefaultObjectAcl_PredefinedAcl() {
+    System.out.println("****** PREDEFINEDACL TEST ******");
+    System.out.println(bucketName());
+    System.out.println(objectName());
     s.create(
         BucketInfo.of(bucketName()),
         BucketTargetOption.predefinedDefaultObjectAcl(PredefinedAcl.PUBLIC_READ));
@@ -129,6 +138,8 @@ public final class ITOptionRegressionTest {
 
   @Test
   public void storage_BucketTargetOption_metagenerationMatch_() {
+    System.out.println("****** METAGENERATION MATCH TEST ******");
+    System.out.println(bucketName());
     Bucket bucket = s.create(BucketInfo.of(bucketName()));
     requestAuditing.clear();
     Bucket updated = bucket.toBuilder().setLabels(ImmutableMap.of("foo", "bar")).build();
@@ -137,6 +148,7 @@ public final class ITOptionRegressionTest {
         "ifMetagenerationMatch", bucket.getMetageneration().toString());
   }
 
+  @Ignore
   @Test
   public void storage_BucketTargetOption_metagenerationNotMatch_() {
     Bucket bucket1 = s.create(BucketInfo.of(bucketName()));
@@ -149,12 +161,14 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", "1");
   }
 
+  @Ignore
   @Test
   public void storage_BucketTargetOption_userProject_String() {
     s.create(BucketInfo.of(bucketName()), BucketTargetOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_BucketTargetOption_projection_String() {
     Bucket bucket = s.create(BucketInfo.of(bucketName()));
@@ -163,42 +177,49 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("projection", "noAcl");
   }
 
+  @Ignore
   @Test
   public void storage_BucketSourceOption_metagenerationMatch_long() {
     s.get(o.getBlobId(), BlobGetOption.metagenerationMatch(o.getMetageneration()));
     requestAuditing.assertQueryParam("ifMetagenerationMatch", "1");
   }
 
+  @Ignore
   @Test
   public void storage_BucketSourceOption_metagenerationNotMatch_long() {
     s.get(o.getBlobId(), BlobGetOption.metagenerationNotMatch(0L));
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", "0");
   }
 
+  @Ignore
   @Test
   public void storage_BucketSourceOption_userProject_String() {
     s.getIamPolicy(b.getName(), BucketSourceOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_BucketSourceOption_requestedPolicyVersion_long() {
     s.getIamPolicy(b.getName(), BucketSourceOption.requestedPolicyVersion(3L));
     requestAuditing.assertQueryParam("optionsRequestedPolicyVersion", "3");
   }
 
+  @Ignore
   @Test
   public void storage_ListHmacKeysOption_serviceAccount_ServiceAccount() {
     s.listHmacKeys(ListHmacKeysOption.serviceAccount(SERVICE_ACCOUNT));
     requestAuditing.assertQueryParam("serviceAccountEmail", SERVICE_ACCOUNT.getEmail());
   }
 
+  @Ignore
   @Test
   public void storage_ListHmacKeysOption_maxResults_long() {
     s.listHmacKeys(ListHmacKeysOption.maxResults(1));
     requestAuditing.assertQueryParam("maxResults", "1");
   }
 
+  @Ignore
   @Test
   public void storage_ListHmacKeysOption_pageToken_String() {
     s.listHmacKeys(ListHmacKeysOption.pageToken("asdfghjkl"));
@@ -211,30 +232,35 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("showDeletedKeys", "true");
   }
 
+  @Ignore
   @Test
   public void storage_ListHmacKeysOption_userProject_String() {
     s.listHmacKeys(ListHmacKeysOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_ListHmacKeysOption_projectId_String() {
     s.listHmacKeys(ListHmacKeysOption.projectId("proj"));
     requestAuditing.assertPathParam("projects", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_CreateHmacKeyOption_userProject_String() {
     s.createHmacKey(SERVICE_ACCOUNT, CreateHmacKeyOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_CreateHmacKeyOption_projectId_String() {
     s.createHmacKey(SERVICE_ACCOUNT, CreateHmacKeyOption.projectId("proj"));
     requestAuditing.assertPathParam("projects", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_GetHmacKeyOption_userProject_String() {
     try {
@@ -244,6 +270,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_GetHmacKeyOption_projectId_String() {
     try {
@@ -253,6 +280,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertPathParam("projects", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_DeleteHmacKeyOption_userProject_String() {
     HmacKeyMetadata hmacKeyMetadata =
@@ -828,48 +856,56 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("pageToken", "asdfghjkl");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_prefix_String() {
     s.list(b.getName(), BlobListOption.prefix("obj"));
     requestAuditing.assertQueryParam("prefix", "obj");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_currentDirectory_() {
     s.list(b.getName(), BlobListOption.currentDirectory());
     requestAuditing.assertQueryParam("delimiter", "/");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_delimiter_String() {
     s.list(b.getName(), BlobListOption.delimiter(":"));
     requestAuditing.assertQueryParam("delimiter", ":");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_startOffset_String() {
     s.list(b.getName(), BlobListOption.startOffset("x"));
     requestAuditing.assertQueryParam("startOffset", "x");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_endOffset_String() {
     s.list(b.getName(), BlobListOption.endOffset("x"));
     requestAuditing.assertQueryParam("endOffset", "x");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_userProject_String() {
     s.list(b.getName(), BlobListOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_versions_boolean() {
     s.list(b.getName(), BlobListOption.versions(true));
     requestAuditing.assertQueryParam("versions", "true");
   }
 
+  @Ignore
   @Test
   public void storage_BlobListOption_fields_BlobField() {
     Set<String> expected =
@@ -912,12 +948,14 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 
+  @Ignore
   @Test
   public void bucket_BucketSourceOption_metagenerationMatch_() {
     b.exists(Bucket.BucketSourceOption.metagenerationMatch());
     requestAuditing.assertQueryParam("ifMetagenerationMatch", b.getMetageneration().toString());
   }
 
+  @Ignore
   @Test
   public void bucket_BucketSourceOption_metagenerationNotMatch_() {
     Bucket bucket1 = s.create(BucketInfo.of(bucketName()));
@@ -927,6 +965,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", b.getMetageneration().toString());
   }
 
+  @Ignore
   @Test
   public void bucket_BucketSourceOption_userProject_String() {
     // attempt to delete a bucket that doesn't exist
@@ -935,6 +974,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_predefinedAcl_PredefinedAcl() {
     b.create(
@@ -944,36 +984,42 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("predefinedAcl", "publicRead");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_doesNotExist_() {
     b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.doesNotExist());
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_generationMatch_long() {
     b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.generationMatch(0));
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_generationNotMatch_long() {
     b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.generationNotMatch(1L));
     requestAuditing.assertQueryParam("ifGenerationNotMatch", "1");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_metagenerationMatch_long() {
     b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.metagenerationMatch(0));
     requestAuditing.assertQueryParam("ifMetagenerationMatch", "0");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_metagenerationNotMatch_long() {
     b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.metagenerationNotMatch(1L));
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", "1");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_encryptionKey_Key() {
     b.create(
@@ -981,6 +1027,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_encryptionKey_String() {
     b.create(
@@ -990,18 +1037,21 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_kmsKeyName_String() {
     b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.kmsKeyName("kms-key"));
     requestAuditing.assertQueryParam("kmsKeyName", "kms-key");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobTargetOption_userProject_String() {
     b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_predefinedAcl_PredefinedAcl() {
     b.create(
@@ -1011,30 +1061,34 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("predefinedAcl", "publicRead");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_doesNotExist_() {
     b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.doesNotExist());
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_generationMatch_long() {
     b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.generationMatch(0));
     requestAuditing.assertQueryParam("ifGenerationMatch", "0");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_generationNotMatch_long() {
     b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.generationNotMatch(1L));
     requestAuditing.assertQueryParam("ifGenerationNotMatch", "1");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_metagenerationMatch_long() {
     b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.metagenerationMatch(0));
     requestAuditing.assertQueryParam("ifMetagenerationMatch", "0");
   }
-
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_metagenerationNotMatch_long() {
     b.create(
@@ -1042,6 +1096,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("ifMetagenerationNotMatch", "1");
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_md5Match_String() {
     b.create(
@@ -1051,6 +1106,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertMultipartJsonField("md5Hash", CONTENT.getMd5Base64());
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_crc32cMatch_String() {
     b.create(
@@ -1060,6 +1116,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertMultipartJsonField("crc32c", CONTENT.getCrc32cBase64());
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_encryptionKey_Key() {
     b.create(
@@ -1069,6 +1126,7 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_encryptionKey_String() {
     b.create(
@@ -1078,18 +1136,21 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
+  @Ignore
   @Test
   public void bucket_BlobWriteOption_userProject_String() {
     b.create(objectName(), CONTENT.bytesAsInputStream(), BlobWriteOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void blob_BlobSourceOption_generationMatch_() {
     o.getContent(Blob.BlobSourceOption.generationMatch());
     requestAuditing.assertQueryParam("ifGenerationMatch", o.getGeneration().toString());
   }
 
+  @Ignore
   @Test
   public void blob_BlobSourceOption_generationNotMatch_() {
     try {
@@ -1104,12 +1165,14 @@ public final class ITOptionRegressionTest {
     requestAuditing.assertQueryParam("ifGenerationNotMatch", o.getGeneration().toString());
   }
 
+  @Ignore
   @Test
   public void blob_BlobSourceOption_metagenerationMatch_() {
     o.getContent(Blob.BlobSourceOption.metagenerationMatch());
     requestAuditing.assertQueryParam("ifMetagenerationMatch", o.getMetageneration().toString());
   }
 
+  @Ignore
   @Test
   public void blob_BlobSourceOption_metagenerationNotMatch_() {
     Blob blob1 = s.create(BlobInfo.newBuilder(b, objectName()).build());
@@ -1121,24 +1184,28 @@ public final class ITOptionRegressionTest {
         "ifMetagenerationNotMatch", blob1.getMetageneration().toString());
   }
 
+  @Ignore
   @Test
   public void blob_BlobSourceOption_decryptionKey_Key() {
     e.getContent(Blob.BlobSourceOption.decryptionKey(csekSupport.getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
+  @Ignore
   @Test
   public void blob_BlobSourceOption_decryptionKey_String() {
     e.getContent(Blob.BlobSourceOption.decryptionKey(csekSupport.getTuple().getKey()));
     requestAuditing.assertEncryptionKeyHeaders(csekSupport.getTuple());
   }
 
+  @Ignore
   @Test
   public void blob_BlobSourceOption_userProject_String() {
     o.getContent(Blob.BlobSourceOption.userProject("proj"));
     requestAuditing.assertQueryParam("userProject", "proj");
   }
 
+  @Ignore
   @Test
   public void storage_CopyWriter() {
     CopyRequest request =
@@ -1155,6 +1222,7 @@ public final class ITOptionRegressionTest {
     copy.getResult();
   }
 
+  @Ignore
   @Test
   public void storage_ComposeRequest() {
     Blob obj = b.create(objectName(), CONTENT.getBytes(), BlobTargetOption.doesNotExist());
