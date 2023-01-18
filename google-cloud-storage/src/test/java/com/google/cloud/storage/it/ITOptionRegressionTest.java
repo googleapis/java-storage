@@ -1243,11 +1243,11 @@ public final class ITOptionRegressionTest {
   }
 
   private static String bucketName() {
-    return String.format("bucket-%03d", UUID.randomUUID());
+    return String.format("bucket-%03d", UUID.randomUUID().toString());
   }
 
   private static String objectName() {
-    return String.format("object-%03d", UUID.randomUUID());
+    return String.format("object-%03d", UUID.randomUUID().toString());
   }
 
   private static Function<String, Set<String>> splitOnCommaToSet() {
