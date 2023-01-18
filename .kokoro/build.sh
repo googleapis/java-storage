@@ -71,12 +71,12 @@ integration)
     ;;
 graalvm)
     # Run Unit and Integration Tests with Native Image
-    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative -Penable-integration-tests test "-Dtest=*ClientTest,com.google.cloud.storage.it.**" -DfailIfNoTests=false
+    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative -Penable-integration-tests test "-Dtest=*ClientTest,com.google.cloud.storage.it.ITOptionRegressionTest" -DfailIfNoTests=false
     RETURN_CODE=$?
     ;;
 graalvm17)
     # Run Unit and Integration Tests with Native Image
-    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative -Penable-integration-tests test "-Dtest=*ClientTest,com.google.cloud.storage.it.**" -DfailIfNoTests=false
+    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative -Penable-integration-tests test "-Dtest=*ClientTest,com.google.cloud.storage.it.ITOptionRegressionTest" -DfailIfNoTests=false
     RETURN_CODE=$?
     ;;
 samples)
