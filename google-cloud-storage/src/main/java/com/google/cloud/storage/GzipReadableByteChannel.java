@@ -16,9 +16,13 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
-import com.google.storage.v2.Object;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -27,13 +31,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPInputStream;
 
 final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
-  private final GapicUnbufferedReadableByteChannel source;
+  private final UnbufferedReadableByteChannel source;
+  private final ApiFuture<String> contentEncoding;
 
   private boolean retEOF = false;
   private ScatteringByteChannel delegate;
 
-  GzipReadableByteChannel(GapicUnbufferedReadableByteChannel source) {
+  GzipReadableByteChannel(UnbufferedReadableByteChannel source, ApiFuture<String> contentEncoding) {
     this.source = source;
+    this.contentEncoding = contentEncoding;
   }
 
   @Override
@@ -54,10 +60,10 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
       source.read(wrap);
       try {
         // Step 2: wait for the object metadata, this is populated in the first message from GCS
-        Object object = source.getResult().get();
+        String contentEncoding = this.contentEncoding.get();
         // if the Content-Encoding is gzip, Step 3: wire gzip decompression into the byte path
         //   this will have a copy impact as we are no longer controlling all the buffers
-        if ("gzip".equals(object.getContentEncoding())) {
+        if ("gzip".equals(contentEncoding) || "x-gzip".equals(contentEncoding)) {
           // to wire gzip decompression into the byte path:
           // Create an input stream of the first4 bytes we already read
           ByteArrayInputStream first4again = new ByteArrayInputStream(first4);

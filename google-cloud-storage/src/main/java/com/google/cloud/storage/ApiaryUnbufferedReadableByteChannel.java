@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.Utils.ifNonNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponse;
@@ -49,6 +50,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
@@ -82,13 +84,9 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     this.options = options;
     this.resultRetryAlgorithm = resultRetryAlgorithm;
     this.open = true;
-    this.position =
-        apiaryReadRequest.getByteRangeSpec() != null
-            ? apiaryReadRequest.getByteRangeSpec().beginOffset()
-            : 0;
+    this.position = apiaryReadRequest.getByteRangeSpec().beginOffset();
   }
 
-  @SuppressWarnings("UnnecessaryContinue")
   @Override
   public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
     do {
@@ -113,12 +111,10 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
           // if our retry algorithm COULD allow a retry, continue the loop and allow trying to
           // open the stream again.
           sbc = null;
-          continue;
         } else if (t instanceof IOException) {
           IOException ioE = (IOException) t;
           if (resultRetryAlgorithm.shouldRetry(StorageException.translate(ioE), null)) {
             sbc = null;
-            continue;
           } else {
             throw ioE;
           }
@@ -148,11 +144,8 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
 
   private ScatteringByteChannel open() {
     try {
-      Boolean b =
-          (Boolean) apiaryReadRequest.options.get(StorageRpc.Option.RETURN_RAW_INPUT_STREAM);
-      boolean returnRawInputStream = b != null ? b : true;
       ApiaryReadRequest request = apiaryReadRequest.withNewBeginOffset(position);
-      Get get = createGetRequest(request, storage.objects(), xGoogGeneration, returnRawInputStream);
+      Get get = createGetRequest(request, storage.objects(), xGoogGeneration);
 
       HttpResponse media = get.executeMedia();
       InputStream content = media.getContent();
@@ -215,10 +208,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
 
   @VisibleForTesting
   static Get createGetRequest(
-      ApiaryReadRequest apiaryReadRequest,
-      Objects objects,
-      Long xGoogGeneration,
-      boolean returnRawInputStream)
+      ApiaryReadRequest apiaryReadRequest, Objects objects, Long xGoogGeneration)
       throws IOException {
     StorageObject from = apiaryReadRequest.getObject();
     Map<StorageRpc.Option, ?> options = apiaryReadRequest.getOptions();
@@ -262,7 +252,9 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
               base64.encode(hashFunction.hashBytes(base64.decode(key)).asBytes()));
         });
 
-    get.setReturnRawInputStream(returnRawInputStream);
+    // gzip handling is performed upstream of here. Ensure we always get the raw input stream from
+    // the request
+    get.setReturnRawInputStream(true);
     String range = apiaryReadRequest.getByteRangeSpec().getHttpRangeHeader();
     if (range != null) {
       get.getRequestHeaders().setRange(range);
@@ -288,7 +280,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       if (list.isEmpty()) {
         return null;
       } else {
-        return list.get(0);
+        return list.get(0).trim().toLowerCase(Locale.ENGLISH);
       }
     } else if (o instanceof String) {
       return (String) o;
@@ -303,27 +295,32 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
   static final class ApiaryReadRequest implements Serializable {
     private static final long serialVersionUID = -4059435314115374448L;
     private static final Gson gson = new Gson();
-    private transient StorageObject object;
-    private final Map<StorageRpc.Option, ?> options;
-    private final ByteRangeSpec byteRangeSpec;
+    @NonNull private transient StorageObject object;
+    @NonNull private final Map<StorageRpc.Option, ?> options;
+    @NonNull private final ByteRangeSpec byteRangeSpec;
 
     private volatile String objectJson;
 
     ApiaryReadRequest(
-        StorageObject object, Map<StorageRpc.Option, ?> options, ByteRangeSpec byteRangeSpec) {
-      this.object = object;
-      this.options = options;
-      this.byteRangeSpec = byteRangeSpec;
+        @NonNull StorageObject object,
+        @NonNull Map<StorageRpc.Option, ?> options,
+        @NonNull ByteRangeSpec byteRangeSpec) {
+      this.object = requireNonNull(object, "object must be non null");
+      this.options = requireNonNull(options, "options must be non null");
+      this.byteRangeSpec = requireNonNull(byteRangeSpec, "byteRangeSpec must be non null");
     }
 
+    @NonNull
     StorageObject getObject() {
       return object;
     }
 
+    @NonNull
     Map<StorageRpc.Option, ?> getOptions() {
       return options;
     }
 
+    @NonNull
     ByteRangeSpec getByteRangeSpec() {
       return byteRangeSpec;
     }

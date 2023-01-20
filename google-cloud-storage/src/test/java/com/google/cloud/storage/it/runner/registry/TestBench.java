@@ -288,7 +288,7 @@ public final class TestBench implements ManagedLifecycle {
   public void stop() {
     try {
       process.destroy();
-      process.waitFor(5, TimeUnit.SECONDS);
+      process.waitFor(2, TimeUnit.SECONDS);
       boolean attemptForceStopContainer = false;
       try {
         int processExitValue = process.exitValue();
@@ -298,7 +298,6 @@ public final class TestBench implements ManagedLifecycle {
         System.out.println("processExitValue = " + processExitValue);
         LOGGER.warning("Container exit value = " + processExitValue);
       } catch (IllegalThreadStateException e) {
-        e.printStackTrace(System.out);
         attemptForceStopContainer = true;
       }
 

@@ -23,6 +23,7 @@ import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -99,7 +100,9 @@ final class GapicDownloadSessionBuilder {
       return (object, resultFuture) -> {
         if (autoGzipDecompression) {
           return new GzipReadableByteChannel(
-              new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher));
+              new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher),
+              ApiFutures.transform(
+                  resultFuture, Object::getContentEncoding, MoreExecutors.directExecutor()));
         } else {
           return new GapicUnbufferedReadableByteChannel(resultFuture, read, object, hasher);
         }

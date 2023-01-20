@@ -427,7 +427,7 @@ public final class ITBlobReadChannelTest {
       String xxd1 = xxd(bytes1);
       assertThat(xxd1).isEqualTo(xxdExpected1);
 
-      // seek forward to a new offset
+      // change the limit
       reader.limit(10);
 
       // read again
