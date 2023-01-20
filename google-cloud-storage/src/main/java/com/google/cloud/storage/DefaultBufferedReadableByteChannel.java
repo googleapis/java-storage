@@ -41,7 +41,7 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
     if (retEOF) {
       retEOF = false;
       return -1;
-    } else if (!channel.isOpen()) {
+    } else if (!enqueuedBytes() && !channel.isOpen()) {
       throw new ClosedChannelException();
     }
 
@@ -133,7 +133,7 @@ final class DefaultBufferedReadableByteChannel implements BufferedReadableByteCh
 
   @Override
   public boolean isOpen() {
-    return !retEOF && channel.isOpen();
+    return enqueuedBytes() || (!retEOF && channel.isOpen());
   }
 
   @Override

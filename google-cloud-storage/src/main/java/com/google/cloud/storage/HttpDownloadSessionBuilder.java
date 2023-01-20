@@ -25,6 +25,7 @@ import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRe
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
 import javax.annotation.concurrent.Immutable;
@@ -51,10 +52,18 @@ final class HttpDownloadSessionBuilder {
   public static final class ReadableByteChannelSessionBuilder {
 
     private final BlobReadChannelContext blobReadChannelContext;
+    private boolean autoGzipDecompression;
     // private Hasher hasher; // TODO: wire in Hasher
 
     private ReadableByteChannelSessionBuilder(BlobReadChannelContext blobReadChannelContext) {
       this.blobReadChannelContext = blobReadChannelContext;
+      this.autoGzipDecompression = false;
+    }
+
+    public ReadableByteChannelSessionBuilder setAutoGzipDecompression(
+        boolean autoGzipDecompression) {
+      this.autoGzipDecompression = autoGzipDecompression;
+      return this;
     }
 
     public BufferedReadableByteChannelSessionBuilder buffered() {
@@ -77,13 +86,27 @@ final class HttpDownloadSessionBuilder {
             ApiaryReadRequest, SettableApiFuture<StorageObject>, UnbufferedReadableByteChannel>
         bindFunction() {
       // for any non-final value, create a reference to the value at this point in time
-      return (request, resultFuture) ->
-          new ApiaryUnbufferedReadableByteChannel(
+      boolean autoGzipDecompression = this.autoGzipDecompression;
+      return (request, resultFuture) -> {
+        if (autoGzipDecompression) {
+          return new GzipReadableByteChannel(
+              new ApiaryUnbufferedReadableByteChannel(
+                  request,
+                  blobReadChannelContext.getApiaryClient(),
+                  resultFuture,
+                  blobReadChannelContext.getStorageOptions(),
+                  blobReadChannelContext.getRetryAlgorithmManager().idempotent()),
+              ApiFutures.transform(
+                  resultFuture, StorageObject::getContentEncoding, MoreExecutors.directExecutor()));
+        } else {
+          return new ApiaryUnbufferedReadableByteChannel(
               request,
               blobReadChannelContext.getApiaryClient(),
               resultFuture,
               blobReadChannelContext.getStorageOptions(),
               blobReadChannelContext.getRetryAlgorithmManager().idempotent());
+        }
+      };
     }
 
     public static final class BufferedReadableByteChannelSessionBuilder {

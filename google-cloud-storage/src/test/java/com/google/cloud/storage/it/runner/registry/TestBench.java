@@ -288,7 +288,7 @@ public final class TestBench implements ManagedLifecycle {
   public void stop() {
     try {
       process.destroy();
-      process.waitFor(5, TimeUnit.SECONDS);
+      process.waitFor(2, TimeUnit.SECONDS);
       boolean attemptForceStopContainer = false;
       try {
         int processExitValue = process.exitValue();
@@ -298,7 +298,6 @@ public final class TestBench implements ManagedLifecycle {
         System.out.println("processExitValue = " + processExitValue);
         LOGGER.warning("Container exit value = " + processExitValue);
       } catch (IllegalThreadStateException e) {
-        e.printStackTrace(System.out);
         attemptForceStopContainer = true;
       }
 
@@ -414,7 +413,7 @@ public final class TestBench implements ManagedLifecycle {
     private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
-    private static final String DEFAULT_IMAGE_TAG = "v0.32.0";
+    private static final String DEFAULT_IMAGE_TAG = "v0.33.0";
     private static final String DEFAULT_CONTAINER_NAME = "default";
 
     private boolean ignorePullError;

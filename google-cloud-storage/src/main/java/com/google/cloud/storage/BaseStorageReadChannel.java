@@ -120,7 +120,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   }
 
   @Override
-  public ApiFuture<BlobInfo> getObject() {
+  public final ApiFuture<BlobInfo> getObject() {
     return ApiFutures.transform(result, objectDecoder::decode, MoreExecutors.directExecutor());
   }
 
@@ -136,7 +136,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   }
 
   @Nullable
-  protected T getResolvedObject() {
+  protected final T getResolvedObject() {
     if (result.isDone()) {
       return StorageException.wrapFutureGet(result);
     } else {

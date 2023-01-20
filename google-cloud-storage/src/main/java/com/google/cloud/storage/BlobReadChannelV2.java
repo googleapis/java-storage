@@ -32,6 +32,7 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
   private final StorageObject storageObject;
   private final Map<StorageRpc.Option, ?> opts;
   private final BlobReadChannelContext blobReadChannelContext;
+  private final boolean autoGzipDecompression;
 
   BlobReadChannelV2(
       StorageObject storageObject,
@@ -41,10 +42,15 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
     this.storageObject = storageObject;
     this.opts = opts;
     this.blobReadChannelContext = blobReadChannelContext;
+    this.autoGzipDecompression =
+        // RETURN_RAW_INPUT_STREAM means do not add GZIPInputStream to the pipeline. Meaning, if
+        // RETURN_RAW_INPUT_STREAM is false, automatically attempt to decompress if Content-Encoding
+        // gzip.
+        Boolean.FALSE.equals(opts.get(StorageRpc.Option.RETURN_RAW_INPUT_STREAM));
   }
 
   @Override
-  public RestorableState<ReadChannel> capture() {
+  public synchronized RestorableState<ReadChannel> capture() {
     ApiaryReadRequest apiaryReadRequest = getApiaryReadRequest();
     return new BlobReadChannelV2State(
         apiaryReadRequest, blobReadChannelContext.getStorageOptions(), getChunkSize());
@@ -56,6 +62,7 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
             ResumableMedia.http()
                 .read()
                 .byteChannel(blobReadChannelContext)
+                .setAutoGzipDecompression(autoGzipDecompression)
                 .buffered(getBufferHandle())
                 .setApiaryReadRequest(getApiaryReadRequest())
                 .build());
