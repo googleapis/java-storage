@@ -123,11 +123,11 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectOrBuilder getObjectOrBuilder() {
-    return getObject();
+    return object_ == null ? com.google.storage.v2.Object.getDefaultInstance() : object_;
   }
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 2;
-  private long ifGenerationMatch_;
+  private long ifGenerationMatch_ = 0L;
   /**
    *
    *
@@ -164,7 +164,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 3;
-  private long ifGenerationNotMatch_;
+  private long ifGenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -203,7 +203,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 4;
-  private long ifMetagenerationMatch_;
+  private long ifMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -238,7 +238,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 5;
-  private long ifMetagenerationNotMatch_;
+  private long ifMetagenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -273,7 +273,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PREDEFINED_ACL_FIELD_NUMBER = 10;
-  private volatile java.lang.Object predefinedAcl_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object predefinedAcl_ = "";
   /**
    *
    *
@@ -392,7 +394,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    */
   @java.lang.Override
   public com.google.protobuf.FieldMaskOrBuilder getUpdateMaskOrBuilder() {
-    return getUpdateMask();
+    return updateMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : updateMask_;
   }
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 8;
@@ -441,7 +443,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
       getCommonObjectRequestParamsOrBuilder() {
-    return getCommonObjectRequestParams();
+    return commonObjectRequestParams_ == null
+        ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
+        : commonObjectRequestParams_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -742,32 +746,25 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      if (objectBuilder_ == null) {
-        object_ = null;
-      } else {
-        object_ = null;
+      bitField0_ = 0;
+      object_ = null;
+      if (objectBuilder_ != null) {
+        objectBuilder_.dispose();
         objectBuilder_ = null;
       }
       ifGenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000001);
       ifGenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
       ifMetagenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000008);
       predefinedAcl_ = "";
-
-      if (updateMaskBuilder_ == null) {
-        updateMask_ = null;
-      } else {
-        updateMask_ = null;
+      updateMask_ = null;
+      if (updateMaskBuilder_ != null) {
+        updateMaskBuilder_.dispose();
         updateMaskBuilder_ = null;
       }
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-      } else {
-        commonObjectRequestParams_ = null;
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
       return this;
@@ -797,43 +794,48 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.UpdateObjectRequest buildPartial() {
       com.google.storage.v2.UpdateObjectRequest result =
           new com.google.storage.v2.UpdateObjectRequest(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      if (objectBuilder_ == null) {
-        result.object_ = object_;
-      } else {
-        result.object_ = objectBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.UpdateObjectRequest result) {
+      int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.object_ = objectBuilder_ == null ? object_ : objectBuilder_.build();
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
         result.ifGenerationMatch_ = ifGenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
+      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
+      if (((from_bitField0_ & 0x00000008) != 0)) {
         result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000004;
       }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
+      if (((from_bitField0_ & 0x00000010) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000008;
       }
-      result.predefinedAcl_ = predefinedAcl_;
-      if (updateMaskBuilder_ == null) {
-        result.updateMask_ = updateMask_;
-      } else {
-        result.updateMask_ = updateMaskBuilder_.build();
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.predefinedAcl_ = predefinedAcl_;
       }
-      if (commonObjectRequestParamsBuilder_ == null) {
-        result.commonObjectRequestParams_ = commonObjectRequestParams_;
-      } else {
-        result.commonObjectRequestParams_ = commonObjectRequestParamsBuilder_.build();
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.updateMask_ = updateMaskBuilder_ == null ? updateMask_ : updateMaskBuilder_.build();
       }
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.commonObjectRequestParams_ =
+            commonObjectRequestParamsBuilder_ == null
+                ? commonObjectRequestParams_
+                : commonObjectRequestParamsBuilder_.build();
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -898,6 +900,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       }
       if (!other.getPredefinedAcl().isEmpty()) {
         predefinedAcl_ = other.predefinedAcl_;
+        bitField0_ |= 0x00000020;
         onChanged();
       }
       if (other.hasUpdateMask()) {
@@ -935,50 +938,50 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
             case 10:
               {
                 input.readMessage(getObjectFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 16:
               {
                 ifGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000002;
                 break;
               } // case 16
             case 24:
               {
                 ifGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000002;
+                bitField0_ |= 0x00000004;
                 break;
               } // case 24
             case 32:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000008;
                 break;
               } // case 32
             case 40:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000010;
                 break;
               } // case 40
             case 58:
               {
                 input.readMessage(getUpdateMaskFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000040;
                 break;
               } // case 58
             case 66:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000080;
                 break;
               } // case 66
             case 82:
               {
                 predefinedAcl_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000020;
                 break;
               } // case 82
             default:
@@ -1022,7 +1025,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return Whether the object field is set.
      */
     public boolean hasObject() {
-      return objectBuilder_ != null || object_ != null;
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      *
@@ -1065,11 +1068,11 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
           throw new NullPointerException();
         }
         object_ = value;
-        onChanged();
       } else {
         objectBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -1088,11 +1091,11 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     public Builder setObject(com.google.storage.v2.Object.Builder builderForValue) {
       if (objectBuilder_ == null) {
         object_ = builderForValue.build();
-        onChanged();
       } else {
         objectBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -1110,17 +1113,18 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      */
     public Builder mergeObject(com.google.storage.v2.Object value) {
       if (objectBuilder_ == null) {
-        if (object_ != null) {
-          object_ =
-              com.google.storage.v2.Object.newBuilder(object_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000001) != 0)
+            && object_ != null
+            && object_ != com.google.storage.v2.Object.getDefaultInstance()) {
+          getObjectBuilder().mergeFrom(value);
         } else {
           object_ = value;
         }
-        onChanged();
       } else {
         objectBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -1137,14 +1141,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.Object object = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public Builder clearObject() {
-      if (objectBuilder_ == null) {
-        object_ = null;
-        onChanged();
-      } else {
-        object_ = null;
+      bitField0_ = (bitField0_ & ~0x00000001);
+      object_ = null;
+      if (objectBuilder_ != null) {
+        objectBuilder_.dispose();
         objectBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1161,7 +1164,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.Object object = 1 [(.google.api.field_behavior) = REQUIRED];</code>
      */
     public com.google.storage.v2.Object.Builder getObjectBuilder() {
-
+      bitField0_ |= 0x00000001;
       onChanged();
       return getObjectFieldBuilder().getBuilder();
     }
@@ -1231,7 +1234,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfGenerationMatch() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -1265,8 +1268,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfGenerationMatch(long value) {
-      bitField0_ |= 0x00000001;
+
       ifGenerationMatch_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1284,7 +1288,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000002);
       ifGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1307,7 +1311,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfGenerationNotMatch() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      *
@@ -1343,8 +1347,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfGenerationNotMatch(long value) {
-      bitField0_ |= 0x00000002;
+
       ifGenerationNotMatch_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1363,7 +1368,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000004);
       ifGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1384,7 +1389,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      *
@@ -1416,8 +1421,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationMatch(long value) {
-      bitField0_ |= 0x00000004;
+
       ifMetagenerationMatch_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1434,7 +1440,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000008);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1455,7 +1461,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1487,8 +1493,9 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationNotMatch(long value) {
-      bitField0_ |= 0x00000008;
+
       ifMetagenerationNotMatch_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1505,7 +1512,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1578,8 +1585,8 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       predefinedAcl_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1597,8 +1604,8 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearPredefinedAcl() {
-
       predefinedAcl_ = getDefaultInstance().getPredefinedAcl();
+      bitField0_ = (bitField0_ & ~0x00000020);
       onChanged();
       return this;
     }
@@ -1621,8 +1628,8 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       predefinedAcl_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1653,7 +1660,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return Whether the updateMask field is set.
      */
     public boolean hasUpdateMask() {
-      return updateMaskBuilder_ != null || updateMask_ != null;
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      *
@@ -1706,11 +1713,11 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
           throw new NullPointerException();
         }
         updateMask_ = value;
-        onChanged();
       } else {
         updateMaskBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -1733,11 +1740,11 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     public Builder setUpdateMask(com.google.protobuf.FieldMask.Builder builderForValue) {
       if (updateMaskBuilder_ == null) {
         updateMask_ = builderForValue.build();
-        onChanged();
       } else {
         updateMaskBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -1759,17 +1766,18 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      */
     public Builder mergeUpdateMask(com.google.protobuf.FieldMask value) {
       if (updateMaskBuilder_ == null) {
-        if (updateMask_ != null) {
-          updateMask_ =
-              com.google.protobuf.FieldMask.newBuilder(updateMask_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000040) != 0)
+            && updateMask_ != null
+            && updateMask_ != com.google.protobuf.FieldMask.getDefaultInstance()) {
+          getUpdateMaskBuilder().mergeFrom(value);
         } else {
           updateMask_ = value;
         }
-        onChanged();
       } else {
         updateMaskBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -1790,14 +1798,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * </code>
      */
     public Builder clearUpdateMask() {
-      if (updateMaskBuilder_ == null) {
-        updateMask_ = null;
-        onChanged();
-      } else {
-        updateMask_ = null;
+      bitField0_ = (bitField0_ & ~0x00000040);
+      updateMask_ = null;
+      if (updateMaskBuilder_ != null) {
+        updateMaskBuilder_.dispose();
         updateMaskBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1818,7 +1825,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * </code>
      */
     public com.google.protobuf.FieldMask.Builder getUpdateMaskBuilder() {
-
+      bitField0_ |= 0x00000040;
       onChanged();
       return getUpdateMaskFieldBuilder().getBuilder();
     }
@@ -1900,7 +1907,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return commonObjectRequestParamsBuilder_ != null || commonObjectRequestParams_ != null;
+      return ((bitField0_ & 0x00000080) != 0);
     }
     /**
      *
@@ -1938,11 +1945,11 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
           throw new NullPointerException();
         }
         commonObjectRequestParams_ = value;
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000080;
+      onChanged();
       return this;
     }
     /**
@@ -1958,11 +1965,11 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
       if (commonObjectRequestParamsBuilder_ == null) {
         commonObjectRequestParams_ = builderForValue.build();
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000080;
+      onChanged();
       return this;
     }
     /**
@@ -1977,19 +1984,19 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (commonObjectRequestParams_ != null) {
-          commonObjectRequestParams_ =
-              com.google.storage.v2.CommonObjectRequestParams.newBuilder(commonObjectRequestParams_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000080) != 0)
+            && commonObjectRequestParams_ != null
+            && commonObjectRequestParams_
+                != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
+          getCommonObjectRequestParamsBuilder().mergeFrom(value);
         } else {
           commonObjectRequestParams_ = value;
         }
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000080;
+      onChanged();
       return this;
     }
     /**
@@ -2002,14 +2009,13 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-        onChanged();
-      } else {
-        commonObjectRequestParams_ = null;
+      bitField0_ = (bitField0_ & ~0x00000080);
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -2023,7 +2029,7 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-
+      bitField0_ |= 0x00000080;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }

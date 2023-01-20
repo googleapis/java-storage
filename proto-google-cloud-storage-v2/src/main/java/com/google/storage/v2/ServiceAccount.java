@@ -70,7 +70,9 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int EMAIL_ADDRESS_FIELD_NUMBER = 1;
-  private volatile java.lang.Object emailAddress_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object emailAddress_ = "";
   /**
    *
    *
@@ -315,8 +317,8 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       emailAddress_ = "";
-
       return this;
     }
 
@@ -343,9 +345,18 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public com.google.storage.v2.ServiceAccount buildPartial() {
       com.google.storage.v2.ServiceAccount result = new com.google.storage.v2.ServiceAccount(this);
-      result.emailAddress_ = emailAddress_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ServiceAccount result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.emailAddress_ = emailAddress_;
+      }
     }
 
     @java.lang.Override
@@ -395,6 +406,7 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
       if (other == com.google.storage.v2.ServiceAccount.getDefaultInstance()) return this;
       if (!other.getEmailAddress().isEmpty()) {
         emailAddress_ = other.emailAddress_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -426,7 +438,7 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
             case 10:
               {
                 emailAddress_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             default:
@@ -445,6 +457,8 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object emailAddress_ = "";
     /**
@@ -507,8 +521,8 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       emailAddress_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -524,8 +538,8 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearEmailAddress() {
-
       emailAddress_ = getDefaultInstance().getEmailAddress();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -546,8 +560,8 @@ public final class ServiceAccount extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       emailAddress_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }

@@ -68,7 +68,9 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
   }
 
   public static final int PARENT_FIELD_NUMBER = 1;
-  private volatile java.lang.Object parent_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object parent_ = "";
   /**
    *
    *
@@ -171,7 +173,9 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
    */
   @java.lang.Override
   public com.google.storage.v2.NotificationOrBuilder getNotificationOrBuilder() {
-    return getNotification();
+    return notification_ == null
+        ? com.google.storage.v2.Notification.getDefaultInstance()
+        : notification_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -385,12 +389,11 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       parent_ = "";
-
-      if (notificationBuilder_ == null) {
-        notification_ = null;
-      } else {
-        notification_ = null;
+      notification_ = null;
+      if (notificationBuilder_ != null) {
+        notificationBuilder_.dispose();
         notificationBuilder_ = null;
       }
       return this;
@@ -420,14 +423,22 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
     public com.google.storage.v2.CreateNotificationRequest buildPartial() {
       com.google.storage.v2.CreateNotificationRequest result =
           new com.google.storage.v2.CreateNotificationRequest(this);
-      result.parent_ = parent_;
-      if (notificationBuilder_ == null) {
-        result.notification_ = notification_;
-      } else {
-        result.notification_ = notificationBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.CreateNotificationRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.parent_ = parent_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.notification_ =
+            notificationBuilder_ == null ? notification_ : notificationBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -478,6 +489,7 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
         return this;
       if (!other.getParent().isEmpty()) {
         parent_ = other.parent_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.hasNotification()) {
@@ -512,13 +524,13 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
             case 10:
               {
                 parent_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 input.readMessage(getNotificationFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             default:
@@ -537,6 +549,8 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object parent_ = "";
     /**
@@ -605,8 +619,8 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
       if (value == null) {
         throw new NullPointerException();
       }
-
       parent_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -624,8 +638,8 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
      * @return This builder for chaining.
      */
     public Builder clearParent() {
-
       parent_ = getDefaultInstance().getParent();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -648,8 +662,8 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       parent_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -674,7 +688,7 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
      * @return Whether the notification field is set.
      */
     public boolean hasNotification() {
-      return notificationBuilder_ != null || notification_ != null;
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -715,11 +729,11 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
           throw new NullPointerException();
         }
         notification_ = value;
-        onChanged();
       } else {
         notificationBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -736,11 +750,11 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
     public Builder setNotification(com.google.storage.v2.Notification.Builder builderForValue) {
       if (notificationBuilder_ == null) {
         notification_ = builderForValue.build();
-        onChanged();
       } else {
         notificationBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -756,19 +770,18 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
      */
     public Builder mergeNotification(com.google.storage.v2.Notification value) {
       if (notificationBuilder_ == null) {
-        if (notification_ != null) {
-          notification_ =
-              com.google.storage.v2.Notification.newBuilder(notification_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000002) != 0)
+            && notification_ != null
+            && notification_ != com.google.storage.v2.Notification.getDefaultInstance()) {
+          getNotificationBuilder().mergeFrom(value);
         } else {
           notification_ = value;
         }
-        onChanged();
       } else {
         notificationBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -783,14 +796,13 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
      * </code>
      */
     public Builder clearNotification() {
-      if (notificationBuilder_ == null) {
-        notification_ = null;
-        onChanged();
-      } else {
-        notification_ = null;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      notification_ = null;
+      if (notificationBuilder_ != null) {
+        notificationBuilder_.dispose();
         notificationBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -805,7 +817,7 @@ public final class CreateNotificationRequest extends com.google.protobuf.Generat
      * </code>
      */
     public com.google.storage.v2.Notification.Builder getNotificationBuilder() {
-
+      bitField0_ |= 0x00000002;
       onChanged();
       return getNotificationFieldBuilder().getBuilder();
     }

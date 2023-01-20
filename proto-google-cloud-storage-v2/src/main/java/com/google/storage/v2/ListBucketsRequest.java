@@ -71,7 +71,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
 
   private int bitField0_;
   public static final int PARENT_FIELD_NUMBER = 1;
-  private volatile java.lang.Object parent_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object parent_ = "";
   /**
    *
    *
@@ -124,7 +126,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int PAGE_SIZE_FIELD_NUMBER = 2;
-  private int pageSize_;
+  private int pageSize_ = 0;
   /**
    *
    *
@@ -145,7 +147,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int PAGE_TOKEN_FIELD_NUMBER = 3;
-  private volatile java.lang.Object pageToken_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object pageToken_ = "";
   /**
    *
    *
@@ -196,7 +200,9 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int PREFIX_FIELD_NUMBER = 4;
-  private volatile java.lang.Object prefix_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object prefix_ = "";
   /**
    *
    *
@@ -545,20 +551,16 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       parent_ = "";
-
       pageSize_ = 0;
-
       pageToken_ = "";
-
       prefix_ = "";
-
-      if (readMaskBuilder_ == null) {
-        readMask_ = null;
-      } else {
-        readMaskBuilder_.clear();
+      readMask_ = null;
+      if (readMaskBuilder_ != null) {
+        readMaskBuilder_.dispose();
+        readMaskBuilder_ = null;
       }
-      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -586,23 +588,33 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     public com.google.storage.v2.ListBucketsRequest buildPartial() {
       com.google.storage.v2.ListBucketsRequest result =
           new com.google.storage.v2.ListBucketsRequest(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.parent_ = parent_;
-      result.pageSize_ = pageSize_;
-      result.pageToken_ = pageToken_;
-      result.prefix_ = prefix_;
-      if (((from_bitField0_ & 0x00000001) != 0)) {
-        if (readMaskBuilder_ == null) {
-          result.readMask_ = readMask_;
-        } else {
-          result.readMask_ = readMaskBuilder_.build();
-        }
-        to_bitField0_ |= 0x00000001;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      result.bitField0_ = to_bitField0_;
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ListBucketsRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.parent_ = parent_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.pageSize_ = pageSize_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.pageToken_ = pageToken_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.prefix_ = prefix_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.readMask_ = readMaskBuilder_ == null ? readMask_ : readMaskBuilder_.build();
+        to_bitField0_ |= 0x00000001;
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -652,6 +664,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       if (other == com.google.storage.v2.ListBucketsRequest.getDefaultInstance()) return this;
       if (!other.getParent().isEmpty()) {
         parent_ = other.parent_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.getPageSize() != 0) {
@@ -659,10 +672,12 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       }
       if (!other.getPageToken().isEmpty()) {
         pageToken_ = other.pageToken_;
+        bitField0_ |= 0x00000004;
         onChanged();
       }
       if (!other.getPrefix().isEmpty()) {
         prefix_ = other.prefix_;
+        bitField0_ |= 0x00000008;
         onChanged();
       }
       if (other.hasReadMask()) {
@@ -697,31 +712,31 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
             case 10:
               {
                 parent_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 16:
               {
                 pageSize_ = input.readInt32();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 16
             case 26:
               {
                 pageToken_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 26
             case 34:
               {
                 prefix_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000008;
                 break;
               } // case 34
             case 42:
               {
                 input.readMessage(getReadMaskFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000010;
                 break;
               } // case 42
             default:
@@ -810,8 +825,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       if (value == null) {
         throw new NullPointerException();
       }
-
       parent_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -829,8 +844,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearParent() {
-
       parent_ = getDefaultInstance().getParent();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -853,8 +868,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       parent_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -896,6 +911,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     public Builder setPageSize(int value) {
 
       pageSize_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -914,7 +930,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearPageSize() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       pageSize_ = 0;
       onChanged();
       return this;
@@ -984,8 +1000,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       if (value == null) {
         throw new NullPointerException();
       }
-
       pageToken_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1002,8 +1018,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearPageToken() {
-
       pageToken_ = getDefaultInstance().getPageToken();
+      bitField0_ = (bitField0_ & ~0x00000004);
       onChanged();
       return this;
     }
@@ -1025,8 +1041,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       pageToken_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1092,8 +1108,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
       if (value == null) {
         throw new NullPointerException();
       }
-
       prefix_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1109,8 +1125,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearPrefix() {
-
       prefix_ = getDefaultInstance().getPrefix();
+      bitField0_ = (bitField0_ & ~0x00000008);
       onChanged();
       return this;
     }
@@ -1131,8 +1147,8 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       prefix_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1158,7 +1174,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      * @return Whether the readMask field is set.
      */
     public boolean hasReadMask() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1199,11 +1215,11 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
           throw new NullPointerException();
         }
         readMask_ = value;
-        onChanged();
       } else {
         readMaskBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1221,11 +1237,11 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     public Builder setReadMask(com.google.protobuf.FieldMask.Builder builderForValue) {
       if (readMaskBuilder_ == null) {
         readMask_ = builderForValue.build();
-        onChanged();
       } else {
         readMaskBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1242,19 +1258,18 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      */
     public Builder mergeReadMask(com.google.protobuf.FieldMask value) {
       if (readMaskBuilder_ == null) {
-        if (((bitField0_ & 0x00000001) != 0)
+        if (((bitField0_ & 0x00000010) != 0)
             && readMask_ != null
             && readMask_ != com.google.protobuf.FieldMask.getDefaultInstance()) {
-          readMask_ =
-              com.google.protobuf.FieldMask.newBuilder(readMask_).mergeFrom(value).buildPartial();
+          getReadMaskBuilder().mergeFrom(value);
         } else {
           readMask_ = value;
         }
-        onChanged();
       } else {
         readMaskBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1270,13 +1285,13 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
      */
     public Builder clearReadMask() {
-      if (readMaskBuilder_ == null) {
-        readMask_ = null;
-        onChanged();
-      } else {
-        readMaskBuilder_.clear();
+      bitField0_ = (bitField0_ & ~0x00000010);
+      readMask_ = null;
+      if (readMaskBuilder_ != null) {
+        readMaskBuilder_.dispose();
+        readMaskBuilder_ = null;
       }
-      bitField0_ = (bitField0_ & ~0x00000001);
+      onChanged();
       return this;
     }
     /**
@@ -1292,7 +1307,7 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
      */
     public com.google.protobuf.FieldMask.Builder getReadMaskBuilder() {
-      bitField0_ |= 0x00000001;
+      bitField0_ |= 0x00000010;
       onChanged();
       return getReadMaskFieldBuilder().getBuilder();
     }

@@ -430,6 +430,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       if (resourceBuilder_ != null) {
         resourceBuilder_.clear();
       }
@@ -462,19 +463,24 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.WriteObjectResponse buildPartial() {
       com.google.storage.v2.WriteObjectResponse result =
           new com.google.storage.v2.WriteObjectResponse(this);
-      if (writeStatusCase_ == 1) {
-        result.writeStatus_ = writeStatus_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      if (writeStatusCase_ == 2) {
-        if (resourceBuilder_ == null) {
-          result.writeStatus_ = writeStatus_;
-        } else {
-          result.writeStatus_ = resourceBuilder_.build();
-        }
-      }
-      result.writeStatusCase_ = writeStatusCase_;
+      buildPartialOneofs(result);
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.WriteObjectResponse result) {
+      int from_bitField0_ = bitField0_;
+    }
+
+    private void buildPartialOneofs(com.google.storage.v2.WriteObjectResponse result) {
+      result.writeStatusCase_ = writeStatusCase_;
+      result.writeStatus_ = this.writeStatus_;
+      if (writeStatusCase_ == 2 && resourceBuilder_ != null) {
+        result.writeStatus_ = resourceBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -607,6 +613,8 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       return this;
     }
 
+    private int bitField0_;
+
     /**
      *
      *
@@ -654,6 +662,7 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setPersistedSize(long value) {
+
       writeStatusCase_ = 1;
       writeStatus_ = value;
       onChanged();
@@ -891,7 +900,6 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
       }
       writeStatusCase_ = 2;
       onChanged();
-      ;
       return resourceBuilder_;
     }
 

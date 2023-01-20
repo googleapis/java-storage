@@ -112,11 +112,13 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
    */
   @java.lang.Override
   public com.google.storage.v2.HmacKeyMetadataOrBuilder getMetadataOrBuilder() {
-    return getMetadata();
+    return metadata_ == null
+        ? com.google.storage.v2.HmacKeyMetadata.getDefaultInstance()
+        : metadata_;
   }
 
   public static final int SECRET_KEY_BYTES_FIELD_NUMBER = 3;
-  private com.google.protobuf.ByteString secretKeyBytes_;
+  private com.google.protobuf.ByteString secretKeyBytes_ = com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -345,14 +347,13 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      if (metadataBuilder_ == null) {
-        metadata_ = null;
-      } else {
-        metadata_ = null;
+      bitField0_ = 0;
+      metadata_ = null;
+      if (metadataBuilder_ != null) {
+        metadataBuilder_.dispose();
         metadataBuilder_ = null;
       }
       secretKeyBytes_ = com.google.protobuf.ByteString.EMPTY;
-
       return this;
     }
 
@@ -380,14 +381,21 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
     public com.google.storage.v2.CreateHmacKeyResponse buildPartial() {
       com.google.storage.v2.CreateHmacKeyResponse result =
           new com.google.storage.v2.CreateHmacKeyResponse(this);
-      if (metadataBuilder_ == null) {
-        result.metadata_ = metadata_;
-      } else {
-        result.metadata_ = metadataBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      result.secretKeyBytes_ = secretKeyBytes_;
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.CreateHmacKeyResponse result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.metadata_ = metadataBuilder_ == null ? metadata_ : metadataBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.secretKeyBytes_ = secretKeyBytes_;
+      }
     }
 
     @java.lang.Override
@@ -470,13 +478,13 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
             case 10:
               {
                 input.readMessage(getMetadataFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 26:
               {
                 secretKeyBytes_ = input.readBytes();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 26
             default:
@@ -496,6 +504,8 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
       return this;
     }
 
+    private int bitField0_;
+
     private com.google.storage.v2.HmacKeyMetadata metadata_;
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.HmacKeyMetadata,
@@ -514,7 +524,7 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
      * @return Whether the metadata field is set.
      */
     public boolean hasMetadata() {
-      return metadataBuilder_ != null || metadata_ != null;
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      *
@@ -551,11 +561,11 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
           throw new NullPointerException();
         }
         metadata_ = value;
-        onChanged();
       } else {
         metadataBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -570,11 +580,11 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
     public Builder setMetadata(com.google.storage.v2.HmacKeyMetadata.Builder builderForValue) {
       if (metadataBuilder_ == null) {
         metadata_ = builderForValue.build();
-        onChanged();
       } else {
         metadataBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -588,19 +598,18 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
      */
     public Builder mergeMetadata(com.google.storage.v2.HmacKeyMetadata value) {
       if (metadataBuilder_ == null) {
-        if (metadata_ != null) {
-          metadata_ =
-              com.google.storage.v2.HmacKeyMetadata.newBuilder(metadata_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000001) != 0)
+            && metadata_ != null
+            && metadata_ != com.google.storage.v2.HmacKeyMetadata.getDefaultInstance()) {
+          getMetadataBuilder().mergeFrom(value);
         } else {
           metadata_ = value;
         }
-        onChanged();
       } else {
         metadataBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -613,14 +622,13 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
      * <code>.google.storage.v2.HmacKeyMetadata metadata = 1;</code>
      */
     public Builder clearMetadata() {
-      if (metadataBuilder_ == null) {
-        metadata_ = null;
-        onChanged();
-      } else {
-        metadata_ = null;
+      bitField0_ = (bitField0_ & ~0x00000001);
+      metadata_ = null;
+      if (metadataBuilder_ != null) {
+        metadataBuilder_.dispose();
         metadataBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -633,7 +641,7 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
      * <code>.google.storage.v2.HmacKeyMetadata metadata = 1;</code>
      */
     public com.google.storage.v2.HmacKeyMetadata.Builder getMetadataBuilder() {
-
+      bitField0_ |= 0x00000001;
       onChanged();
       return getMetadataFieldBuilder().getBuilder();
     }
@@ -715,8 +723,8 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
       if (value == null) {
         throw new NullPointerException();
       }
-
       secretKeyBytes_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -733,7 +741,7 @@ public final class CreateHmacKeyResponse extends com.google.protobuf.GeneratedMe
      * @return This builder for chaining.
      */
     public Builder clearSecretKeyBytes() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       secretKeyBytes_ = getDefaultInstance().getSecretKeyBytes();
       onChanged();
       return this;

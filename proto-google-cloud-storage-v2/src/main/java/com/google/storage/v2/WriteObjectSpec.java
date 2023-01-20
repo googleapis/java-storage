@@ -111,11 +111,13 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectOrBuilder getResourceOrBuilder() {
-    return getResource();
+    return resource_ == null ? com.google.storage.v2.Object.getDefaultInstance() : resource_;
   }
 
   public static final int PREDEFINED_ACL_FIELD_NUMBER = 7;
-  private volatile java.lang.Object predefinedAcl_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object predefinedAcl_ = "";
   /**
    *
    *
@@ -168,7 +170,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   }
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 3;
-  private long ifGenerationMatch_;
+  private long ifGenerationMatch_ = 0L;
   /**
    *
    *
@@ -205,7 +207,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   }
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 4;
-  private long ifGenerationNotMatch_;
+  private long ifGenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -244,7 +246,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   }
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 5;
-  private long ifMetagenerationMatch_;
+  private long ifMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -279,7 +281,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   }
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 6;
-  private long ifMetagenerationNotMatch_;
+  private long ifMetagenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -314,7 +316,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
   }
 
   public static final int OBJECT_SIZE_FIELD_NUMBER = 8;
-  private long objectSize_;
+  private long objectSize_ = 0L;
   /**
    *
    *
@@ -637,24 +639,18 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      if (resourceBuilder_ == null) {
-        resource_ = null;
-      } else {
-        resource_ = null;
+      bitField0_ = 0;
+      resource_ = null;
+      if (resourceBuilder_ != null) {
+        resourceBuilder_.dispose();
         resourceBuilder_ = null;
       }
       predefinedAcl_ = "";
-
       ifGenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000001);
       ifGenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
       ifMetagenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000008);
       objectSize_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -682,37 +678,43 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public com.google.storage.v2.WriteObjectSpec buildPartial() {
       com.google.storage.v2.WriteObjectSpec result =
           new com.google.storage.v2.WriteObjectSpec(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      if (resourceBuilder_ == null) {
-        result.resource_ = resource_;
-      } else {
-        result.resource_ = resourceBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      result.predefinedAcl_ = predefinedAcl_;
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.WriteObjectSpec result) {
+      int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.resource_ = resourceBuilder_ == null ? resource_ : resourceBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.predefinedAcl_ = predefinedAcl_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.ifGenerationMatch_ = ifGenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
+      if (((from_bitField0_ & 0x00000008) != 0)) {
         result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
+      if (((from_bitField0_ & 0x00000010) != 0)) {
         result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000004;
       }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
+      if (((from_bitField0_ & 0x00000020) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000008;
       }
-      if (((from_bitField0_ & 0x00000010) != 0)) {
+      if (((from_bitField0_ & 0x00000040) != 0)) {
         result.objectSize_ = objectSize_;
         to_bitField0_ |= 0x00000010;
       }
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -765,6 +767,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       }
       if (!other.getPredefinedAcl().isEmpty()) {
         predefinedAcl_ = other.predefinedAcl_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (other.hasIfGenerationMatch()) {
@@ -811,43 +814,43 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
             case 10:
               {
                 input.readMessage(getResourceFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 24:
               {
                 ifGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000004;
                 break;
               } // case 24
             case 32:
               {
                 ifGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000002;
+                bitField0_ |= 0x00000008;
                 break;
               } // case 32
             case 40:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000010;
                 break;
               } // case 40
             case 48:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000020;
                 break;
               } // case 48
             case 58:
               {
                 predefinedAcl_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 58
             case 64:
               {
                 objectSize_ = input.readInt64();
-                bitField0_ |= 0x00000010;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 64
             default:
@@ -888,7 +891,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return Whether the resource field is set.
      */
     public boolean hasResource() {
-      return resourceBuilder_ != null || resource_ != null;
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      *
@@ -925,11 +928,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
           throw new NullPointerException();
         }
         resource_ = value;
-        onChanged();
       } else {
         resourceBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -945,11 +948,11 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     public Builder setResource(com.google.storage.v2.Object.Builder builderForValue) {
       if (resourceBuilder_ == null) {
         resource_ = builderForValue.build();
-        onChanged();
       } else {
         resourceBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -964,17 +967,18 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      */
     public Builder mergeResource(com.google.storage.v2.Object value) {
       if (resourceBuilder_ == null) {
-        if (resource_ != null) {
-          resource_ =
-              com.google.storage.v2.Object.newBuilder(resource_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000001) != 0)
+            && resource_ != null
+            && resource_ != com.google.storage.v2.Object.getDefaultInstance()) {
+          getResourceBuilder().mergeFrom(value);
         } else {
           resource_ = value;
         }
-        onChanged();
       } else {
         resourceBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -988,14 +992,13 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * </code>
      */
     public Builder clearResource() {
-      if (resourceBuilder_ == null) {
-        resource_ = null;
-        onChanged();
-      } else {
-        resource_ = null;
+      bitField0_ = (bitField0_ & ~0x00000001);
+      resource_ = null;
+      if (resourceBuilder_ != null) {
+        resourceBuilder_.dispose();
         resourceBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1009,7 +1012,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * </code>
      */
     public com.google.storage.v2.Object.Builder getResourceBuilder() {
-
+      bitField0_ |= 0x00000001;
       onChanged();
       return getResourceFieldBuilder().getBuilder();
     }
@@ -1124,8 +1127,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
       if (value == null) {
         throw new NullPointerException();
       }
-
       predefinedAcl_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1143,8 +1146,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearPredefinedAcl() {
-
       predefinedAcl_ = getDefaultInstance().getPredefinedAcl();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -1167,8 +1170,8 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       predefinedAcl_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1189,7 +1192,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      */
     @java.lang.Override
     public boolean hasIfGenerationMatch() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      *
@@ -1223,8 +1226,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder setIfGenerationMatch(long value) {
-      bitField0_ |= 0x00000001;
+
       ifGenerationMatch_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1242,7 +1246,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000004);
       ifGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1265,7 +1269,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      */
     @java.lang.Override
     public boolean hasIfGenerationNotMatch() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      *
@@ -1301,8 +1305,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder setIfGenerationNotMatch(long value) {
-      bitField0_ |= 0x00000002;
+
       ifGenerationNotMatch_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1321,7 +1326,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000008);
       ifGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1342,7 +1347,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1374,8 +1379,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationMatch(long value) {
-      bitField0_ |= 0x00000004;
+
       ifMetagenerationMatch_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1392,7 +1398,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000010);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1413,7 +1419,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      *
@@ -1445,8 +1451,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationNotMatch(long value) {
-      bitField0_ |= 0x00000008;
+
       ifMetagenerationNotMatch_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1463,7 +1470,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000020);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1489,7 +1496,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      */
     @java.lang.Override
     public boolean hasObjectSize() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      *
@@ -1531,8 +1538,9 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder setObjectSize(long value) {
-      bitField0_ |= 0x00000010;
+
       objectSize_ = value;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1554,7 +1562,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearObjectSize() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000040);
       objectSize_ = 0L;
       onChanged();
       return this;

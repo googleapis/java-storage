@@ -69,7 +69,9 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
   }
 
   public static final int BUCKET_FIELD_NUMBER = 1;
-  private volatile java.lang.Object bucket_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object bucket_ = "";
   /**
    *
    *
@@ -122,7 +124,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
   }
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 2;
-  private long ifMetagenerationMatch_;
+  private long ifMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -347,10 +349,9 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       bucket_ = "";
-
       ifMetagenerationMatch_ = 0L;
-
       return this;
     }
 
@@ -378,10 +379,21 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     public com.google.storage.v2.LockBucketRetentionPolicyRequest buildPartial() {
       com.google.storage.v2.LockBucketRetentionPolicyRequest result =
           new com.google.storage.v2.LockBucketRetentionPolicyRequest(this);
-      result.bucket_ = bucket_;
-      result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.LockBucketRetentionPolicyRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.bucket_ = bucket_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
+      }
     }
 
     @java.lang.Override
@@ -432,6 +444,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
         return this;
       if (!other.getBucket().isEmpty()) {
         bucket_ = other.bucket_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.getIfMetagenerationMatch() != 0L) {
@@ -466,13 +479,13 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
             case 10:
               {
                 bucket_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 16:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 16
             default:
@@ -491,6 +504,8 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object bucket_ = "";
     /**
@@ -559,8 +574,8 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
       if (value == null) {
         throw new NullPointerException();
       }
-
       bucket_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -578,8 +593,8 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
      * @return This builder for chaining.
      */
     public Builder clearBucket() {
-
       bucket_ = getDefaultInstance().getBucket();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -602,8 +617,8 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       bucket_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -641,6 +656,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
     public Builder setIfMetagenerationMatch(long value) {
 
       ifMetagenerationMatch_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -657,7 +673,7 @@ public final class LockBucketRetentionPolicyRequest extends com.google.protobuf.
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;

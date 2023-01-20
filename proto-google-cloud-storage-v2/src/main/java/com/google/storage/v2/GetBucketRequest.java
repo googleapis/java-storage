@@ -69,7 +69,9 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
 
   private int bitField0_;
   public static final int NAME_FIELD_NUMBER = 1;
-  private volatile java.lang.Object name_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object name_ = "";
   /**
    *
    *
@@ -122,7 +124,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
   }
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 2;
-  private long ifMetagenerationMatch_;
+  private long ifMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -157,7 +159,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
   }
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 3;
-  private long ifMetagenerationNotMatch_;
+  private long ifMetagenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -490,18 +492,15 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       name_ = "";
-
       ifMetagenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000001);
       ifMetagenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
-      if (readMaskBuilder_ == null) {
-        readMask_ = null;
-      } else {
-        readMaskBuilder_.clear();
+      readMask_ = null;
+      if (readMaskBuilder_ != null) {
+        readMaskBuilder_.dispose();
+        readMaskBuilder_ = null;
       }
-      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
@@ -529,28 +528,32 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     public com.google.storage.v2.GetBucketRequest buildPartial() {
       com.google.storage.v2.GetBucketRequest result =
           new com.google.storage.v2.GetBucketRequest(this);
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.GetBucketRequest result) {
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.name_ = name_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.name_ = name_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
         result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
+      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        if (readMaskBuilder_ == null) {
-          result.readMask_ = readMask_;
-        } else {
-          result.readMask_ = readMaskBuilder_.build();
-        }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.readMask_ = readMaskBuilder_ == null ? readMask_ : readMaskBuilder_.build();
         to_bitField0_ |= 0x00000004;
       }
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -600,6 +603,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       if (other == com.google.storage.v2.GetBucketRequest.getDefaultInstance()) return this;
       if (!other.getName().isEmpty()) {
         name_ = other.name_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.hasIfMetagenerationMatch()) {
@@ -640,25 +644,25 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
             case 10:
               {
                 name_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 16:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000002;
                 break;
               } // case 16
             case 24:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000002;
+                bitField0_ |= 0x00000004;
                 break;
               } // case 24
             case 42:
               {
                 input.readMessage(getReadMaskFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000008;
                 break;
               } // case 42
             default:
@@ -747,8 +751,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
       if (value == null) {
         throw new NullPointerException();
       }
-
       name_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -766,8 +770,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearName() {
-
       name_ = getDefaultInstance().getName();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -790,8 +794,8 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       name_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -811,7 +815,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -843,8 +847,9 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationMatch(long value) {
-      bitField0_ |= 0x00000001;
+
       ifMetagenerationMatch_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -861,7 +866,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000002);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -882,7 +887,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      *
@@ -914,8 +919,9 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationNotMatch(long value) {
-      bitField0_ |= 0x00000002;
+
       ifMetagenerationNotMatch_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -932,7 +938,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -958,7 +964,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * @return Whether the readMask field is set.
      */
     public boolean hasReadMask() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      *
@@ -997,11 +1003,11 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
           throw new NullPointerException();
         }
         readMask_ = value;
-        onChanged();
       } else {
         readMaskBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1018,11 +1024,11 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
     public Builder setReadMask(com.google.protobuf.FieldMask.Builder builderForValue) {
       if (readMaskBuilder_ == null) {
         readMask_ = builderForValue.build();
-        onChanged();
       } else {
         readMaskBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1038,19 +1044,18 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      */
     public Builder mergeReadMask(com.google.protobuf.FieldMask value) {
       if (readMaskBuilder_ == null) {
-        if (((bitField0_ & 0x00000004) != 0)
+        if (((bitField0_ & 0x00000008) != 0)
             && readMask_ != null
             && readMask_ != com.google.protobuf.FieldMask.getDefaultInstance()) {
-          readMask_ =
-              com.google.protobuf.FieldMask.newBuilder(readMask_).mergeFrom(value).buildPartial();
+          getReadMaskBuilder().mergeFrom(value);
         } else {
           readMask_ = value;
         }
-        onChanged();
       } else {
         readMaskBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -1065,13 +1070,13 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
      */
     public Builder clearReadMask() {
-      if (readMaskBuilder_ == null) {
-        readMask_ = null;
-        onChanged();
-      } else {
-        readMaskBuilder_.clear();
+      bitField0_ = (bitField0_ & ~0x00000008);
+      readMask_ = null;
+      if (readMaskBuilder_ != null) {
+        readMaskBuilder_.dispose();
+        readMaskBuilder_ = null;
       }
-      bitField0_ = (bitField0_ & ~0x00000004);
+      onChanged();
       return this;
     }
     /**
@@ -1086,7 +1091,7 @@ public final class GetBucketRequest extends com.google.protobuf.GeneratedMessage
      * <code>optional .google.protobuf.FieldMask read_mask = 5;</code>
      */
     public com.google.protobuf.FieldMask.Builder getReadMaskBuilder() {
-      bitField0_ |= 0x00000004;
+      bitField0_ |= 0x00000008;
       onChanged();
       return getReadMaskFieldBuilder().getBuilder();
     }

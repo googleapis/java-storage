@@ -68,7 +68,9 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
   }
 
   public static final int UPLOAD_ID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object uploadId_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object uploadId_ = "";
   /**
    *
    *
@@ -164,7 +166,9 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
       getCommonObjectRequestParamsOrBuilder() {
-    return getCommonObjectRequestParams();
+    return commonObjectRequestParams_ == null
+        ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
+        : commonObjectRequestParams_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -381,12 +385,11 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       uploadId_ = "";
-
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-      } else {
-        commonObjectRequestParams_ = null;
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
       return this;
@@ -416,14 +419,24 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
     public com.google.storage.v2.QueryWriteStatusRequest buildPartial() {
       com.google.storage.v2.QueryWriteStatusRequest result =
           new com.google.storage.v2.QueryWriteStatusRequest(this);
-      result.uploadId_ = uploadId_;
-      if (commonObjectRequestParamsBuilder_ == null) {
-        result.commonObjectRequestParams_ = commonObjectRequestParams_;
-      } else {
-        result.commonObjectRequestParams_ = commonObjectRequestParamsBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.QueryWriteStatusRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.uploadId_ = uploadId_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.commonObjectRequestParams_ =
+            commonObjectRequestParamsBuilder_ == null
+                ? commonObjectRequestParams_
+                : commonObjectRequestParamsBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -473,6 +486,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       if (other == com.google.storage.v2.QueryWriteStatusRequest.getDefaultInstance()) return this;
       if (!other.getUploadId().isEmpty()) {
         uploadId_ = other.uploadId_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.hasCommonObjectRequestParams()) {
@@ -507,14 +521,14 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
             case 10:
               {
                 uploadId_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             default:
@@ -533,6 +547,8 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object uploadId_ = "";
     /**
@@ -598,8 +614,8 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
       if (value == null) {
         throw new NullPointerException();
       }
-
       uploadId_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -616,8 +632,8 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
      * @return This builder for chaining.
      */
     public Builder clearUploadId() {
-
       uploadId_ = getDefaultInstance().getUploadId();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -639,8 +655,8 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       uploadId_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -663,7 +679,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return commonObjectRequestParamsBuilder_ != null || commonObjectRequestParams_ != null;
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -701,11 +717,11 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
           throw new NullPointerException();
         }
         commonObjectRequestParams_ = value;
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -721,11 +737,11 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
       if (commonObjectRequestParamsBuilder_ == null) {
         commonObjectRequestParams_ = builderForValue.build();
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -740,19 +756,19 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (commonObjectRequestParams_ != null) {
-          commonObjectRequestParams_ =
-              com.google.storage.v2.CommonObjectRequestParams.newBuilder(commonObjectRequestParams_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000002) != 0)
+            && commonObjectRequestParams_ != null
+            && commonObjectRequestParams_
+                != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
+          getCommonObjectRequestParamsBuilder().mergeFrom(value);
         } else {
           commonObjectRequestParams_ = value;
         }
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -765,14 +781,13 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 2;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-        onChanged();
-      } else {
-        commonObjectRequestParams_ = null;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -786,7 +801,7 @@ public final class QueryWriteStatusRequest extends com.google.protobuf.Generated
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-
+      bitField0_ |= 0x00000002;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }

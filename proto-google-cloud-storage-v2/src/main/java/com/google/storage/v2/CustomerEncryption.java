@@ -70,7 +70,9 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int ENCRYPTION_ALGORITHM_FIELD_NUMBER = 1;
-  private volatile java.lang.Object encryptionAlgorithm_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object encryptionAlgorithm_ = "";
   /**
    *
    *
@@ -119,7 +121,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int KEY_SHA256_BYTES_FIELD_NUMBER = 3;
-  private com.google.protobuf.ByteString keySha256Bytes_;
+  private com.google.protobuf.ByteString keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -343,10 +345,9 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       encryptionAlgorithm_ = "";
-
       keySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
-
       return this;
     }
 
@@ -374,10 +375,21 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
     public com.google.storage.v2.CustomerEncryption buildPartial() {
       com.google.storage.v2.CustomerEncryption result =
           new com.google.storage.v2.CustomerEncryption(this);
-      result.encryptionAlgorithm_ = encryptionAlgorithm_;
-      result.keySha256Bytes_ = keySha256Bytes_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.CustomerEncryption result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.encryptionAlgorithm_ = encryptionAlgorithm_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.keySha256Bytes_ = keySha256Bytes_;
+      }
     }
 
     @java.lang.Override
@@ -427,6 +439,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       if (other == com.google.storage.v2.CustomerEncryption.getDefaultInstance()) return this;
       if (!other.getEncryptionAlgorithm().isEmpty()) {
         encryptionAlgorithm_ = other.encryptionAlgorithm_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.getKeySha256Bytes() != com.google.protobuf.ByteString.EMPTY) {
@@ -461,13 +474,13 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
             case 10:
               {
                 encryptionAlgorithm_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 26:
               {
                 keySha256Bytes_ = input.readBytes();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 26
             default:
@@ -486,6 +499,8 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object encryptionAlgorithm_ = "";
     /**
@@ -548,8 +563,8 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       if (value == null) {
         throw new NullPointerException();
       }
-
       encryptionAlgorithm_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -565,8 +580,8 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearEncryptionAlgorithm() {
-
       encryptionAlgorithm_ = getDefaultInstance().getEncryptionAlgorithm();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -587,8 +602,8 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       encryptionAlgorithm_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -627,8 +642,8 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
       if (value == null) {
         throw new NullPointerException();
       }
-
       keySha256Bytes_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -645,7 +660,7 @@ public final class CustomerEncryption extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearKeySha256Bytes() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       keySha256Bytes_ = getDefaultInstance().getKeySha256Bytes();
       onChanged();
       return this;

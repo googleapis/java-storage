@@ -71,7 +71,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
 
   private int bitField0_;
   public static final int BUCKET_FIELD_NUMBER = 1;
-  private volatile java.lang.Object bucket_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object bucket_ = "";
   /**
    *
    *
@@ -120,7 +122,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int OBJECT_FIELD_NUMBER = 2;
-  private volatile java.lang.Object object_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object object_ = "";
   /**
    *
    *
@@ -173,7 +177,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int GENERATION_FIELD_NUMBER = 4;
-  private long generation_;
+  private long generation_ = 0L;
   /**
    *
    *
@@ -192,7 +196,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 5;
-  private long ifGenerationMatch_;
+  private long ifGenerationMatch_ = 0L;
   /**
    *
    *
@@ -229,7 +233,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 6;
-  private long ifGenerationNotMatch_;
+  private long ifGenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -268,7 +272,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 7;
-  private long ifMetagenerationMatch_;
+  private long ifMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -303,7 +307,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 8;
-  private long ifMetagenerationNotMatch_;
+  private long ifMetagenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -383,7 +387,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
       getCommonObjectRequestParamsOrBuilder() {
-    return getCommonObjectRequestParams();
+    return commonObjectRequestParams_ == null
+        ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
+        : commonObjectRequestParams_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -675,24 +681,17 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       bucket_ = "";
-
       object_ = "";
-
       generation_ = 0L;
-
       ifGenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000001);
       ifGenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
       ifMetagenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000008);
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-      } else {
-        commonObjectRequestParams_ = null;
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
       return this;
@@ -722,35 +721,48 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.DeleteObjectRequest buildPartial() {
       com.google.storage.v2.DeleteObjectRequest result =
           new com.google.storage.v2.DeleteObjectRequest(this);
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.DeleteObjectRequest result) {
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.bucket_ = bucket_;
-      result.object_ = object_;
-      result.generation_ = generation_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.bucket_ = bucket_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.object_ = object_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.generation_ = generation_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000008) != 0)) {
         result.ifGenerationMatch_ = ifGenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
+      if (((from_bitField0_ & 0x00000010) != 0)) {
         result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
+      if (((from_bitField0_ & 0x00000020) != 0)) {
         result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000004;
       }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
+      if (((from_bitField0_ & 0x00000040) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000008;
       }
-      if (commonObjectRequestParamsBuilder_ == null) {
-        result.commonObjectRequestParams_ = commonObjectRequestParams_;
-      } else {
-        result.commonObjectRequestParams_ = commonObjectRequestParamsBuilder_.build();
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.commonObjectRequestParams_ =
+            commonObjectRequestParamsBuilder_ == null
+                ? commonObjectRequestParams_
+                : commonObjectRequestParamsBuilder_.build();
       }
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -800,10 +812,12 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       if (other == com.google.storage.v2.DeleteObjectRequest.getDefaultInstance()) return this;
       if (!other.getBucket().isEmpty()) {
         bucket_ = other.bucket_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getObject().isEmpty()) {
         object_ = other.object_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (other.getGeneration() != 0L) {
@@ -853,50 +867,50 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
             case 10:
               {
                 bucket_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 object_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             case 32:
               {
                 generation_ = input.readInt64();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 32
             case 40:
               {
                 ifGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000008;
                 break;
               } // case 40
             case 48:
               {
                 ifGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000002;
+                bitField0_ |= 0x00000010;
                 break;
               } // case 48
             case 56:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000020;
                 break;
               } // case 56
             case 64:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 64
             case 82:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000080;
                 break;
               } // case 82
             default:
@@ -979,8 +993,8 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       bucket_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -996,8 +1010,8 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearBucket() {
-
       bucket_ = getDefaultInstance().getBucket();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -1018,8 +1032,8 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       bucket_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -1091,8 +1105,8 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       object_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1110,8 +1124,8 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearObject() {
-
       object_ = getDefaultInstance().getObject();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -1134,8 +1148,8 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       object_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1173,6 +1187,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public Builder setGeneration(long value) {
 
       generation_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1189,7 +1204,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearGeneration() {
-
+      bitField0_ = (bitField0_ & ~0x00000004);
       generation_ = 0L;
       onChanged();
       return this;
@@ -1211,7 +1226,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfGenerationMatch() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      *
@@ -1245,8 +1260,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfGenerationMatch(long value) {
-      bitField0_ |= 0x00000001;
+
       ifGenerationMatch_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1264,7 +1280,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000008);
       ifGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1287,7 +1303,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfGenerationNotMatch() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1323,8 +1339,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfGenerationNotMatch(long value) {
-      bitField0_ |= 0x00000002;
+
       ifGenerationNotMatch_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1343,7 +1360,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000010);
       ifGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1364,7 +1381,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      *
@@ -1396,8 +1413,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationMatch(long value) {
-      bitField0_ |= 0x00000004;
+
       ifMetagenerationMatch_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1414,7 +1432,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000020);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1435,7 +1453,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      *
@@ -1467,8 +1485,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationNotMatch(long value) {
-      bitField0_ |= 0x00000008;
+
       ifMetagenerationNotMatch_ = value;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1485,7 +1504,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000040);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1509,7 +1528,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return commonObjectRequestParamsBuilder_ != null || commonObjectRequestParams_ != null;
+      return ((bitField0_ & 0x00000080) != 0);
     }
     /**
      *
@@ -1547,11 +1566,11 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
           throw new NullPointerException();
         }
         commonObjectRequestParams_ = value;
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000080;
+      onChanged();
       return this;
     }
     /**
@@ -1567,11 +1586,11 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
       if (commonObjectRequestParamsBuilder_ == null) {
         commonObjectRequestParams_ = builderForValue.build();
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000080;
+      onChanged();
       return this;
     }
     /**
@@ -1586,19 +1605,19 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (commonObjectRequestParams_ != null) {
-          commonObjectRequestParams_ =
-              com.google.storage.v2.CommonObjectRequestParams.newBuilder(commonObjectRequestParams_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000080) != 0)
+            && commonObjectRequestParams_ != null
+            && commonObjectRequestParams_
+                != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
+          getCommonObjectRequestParamsBuilder().mergeFrom(value);
         } else {
           commonObjectRequestParams_ = value;
         }
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000080;
+      onChanged();
       return this;
     }
     /**
@@ -1611,14 +1630,13 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 10;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-        onChanged();
-      } else {
-        commonObjectRequestParams_ = null;
+      bitField0_ = (bitField0_ & ~0x00000080);
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1632,7 +1650,7 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-
+      bitField0_ |= 0x00000080;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }

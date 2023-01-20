@@ -70,7 +70,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PROJECT_FIELD_NUMBER = 1;
-  private volatile java.lang.Object project_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object project_ = "";
   /**
    *
    *
@@ -127,7 +129,7 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PAGE_SIZE_FIELD_NUMBER = 2;
-  private int pageSize_;
+  private int pageSize_ = 0;
   /**
    *
    *
@@ -145,7 +147,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PAGE_TOKEN_FIELD_NUMBER = 3;
-  private volatile java.lang.Object pageToken_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object pageToken_ = "";
   /**
    *
    *
@@ -194,7 +198,9 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int SERVICE_ACCOUNT_EMAIL_FIELD_NUMBER = 4;
-  private volatile java.lang.Object serviceAccountEmail_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object serviceAccountEmail_ = "";
   /**
    *
    *
@@ -243,7 +249,7 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int SHOW_DELETED_KEYS_FIELD_NUMBER = 5;
-  private boolean showDeletedKeys_;
+  private boolean showDeletedKeys_ = false;
   /**
    *
    *
@@ -493,16 +499,12 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       project_ = "";
-
       pageSize_ = 0;
-
       pageToken_ = "";
-
       serviceAccountEmail_ = "";
-
       showDeletedKeys_ = false;
-
       return this;
     }
 
@@ -530,13 +532,30 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.ListHmacKeysRequest buildPartial() {
       com.google.storage.v2.ListHmacKeysRequest result =
           new com.google.storage.v2.ListHmacKeysRequest(this);
-      result.project_ = project_;
-      result.pageSize_ = pageSize_;
-      result.pageToken_ = pageToken_;
-      result.serviceAccountEmail_ = serviceAccountEmail_;
-      result.showDeletedKeys_ = showDeletedKeys_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ListHmacKeysRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.project_ = project_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.pageSize_ = pageSize_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.pageToken_ = pageToken_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.serviceAccountEmail_ = serviceAccountEmail_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.showDeletedKeys_ = showDeletedKeys_;
+      }
     }
 
     @java.lang.Override
@@ -586,6 +605,7 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
       if (other == com.google.storage.v2.ListHmacKeysRequest.getDefaultInstance()) return this;
       if (!other.getProject().isEmpty()) {
         project_ = other.project_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.getPageSize() != 0) {
@@ -593,10 +613,12 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
       }
       if (!other.getPageToken().isEmpty()) {
         pageToken_ = other.pageToken_;
+        bitField0_ |= 0x00000004;
         onChanged();
       }
       if (!other.getServiceAccountEmail().isEmpty()) {
         serviceAccountEmail_ = other.serviceAccountEmail_;
+        bitField0_ |= 0x00000008;
         onChanged();
       }
       if (other.getShowDeletedKeys() != false) {
@@ -631,31 +653,31 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
             case 10:
               {
                 project_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 16:
               {
                 pageSize_ = input.readInt32();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 16
             case 26:
               {
                 pageToken_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 26
             case 34:
               {
                 serviceAccountEmail_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000008;
                 break;
               } // case 34
             case 40:
               {
                 showDeletedKeys_ = input.readBool();
-
+                bitField0_ |= 0x00000010;
                 break;
               } // case 40
             default:
@@ -674,6 +696,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object project_ = "";
     /**
@@ -748,8 +772,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       project_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -769,8 +793,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearProject() {
-
       project_ = getDefaultInstance().getProject();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -795,8 +819,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       project_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -832,6 +856,7 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
     public Builder setPageSize(int value) {
 
       pageSize_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -847,7 +872,7 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearPageSize() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       pageSize_ = 0;
       onChanged();
       return this;
@@ -914,8 +939,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       pageToken_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -931,8 +956,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearPageToken() {
-
       pageToken_ = getDefaultInstance().getPageToken();
+      bitField0_ = (bitField0_ & ~0x00000004);
       onChanged();
       return this;
     }
@@ -953,8 +978,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       pageToken_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1020,8 +1045,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       serviceAccountEmail_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1037,8 +1062,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearServiceAccountEmail() {
-
       serviceAccountEmail_ = getDefaultInstance().getServiceAccountEmail();
+      bitField0_ = (bitField0_ & ~0x00000008);
       onChanged();
       return this;
     }
@@ -1059,8 +1084,8 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       serviceAccountEmail_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1096,6 +1121,7 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
     public Builder setShowDeletedKeys(boolean value) {
 
       showDeletedKeys_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1111,7 +1137,7 @@ public final class ListHmacKeysRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearShowDeletedKeys() {
-
+      bitField0_ = (bitField0_ & ~0x00000010);
       showDeletedKeys_ = false;
       onChanged();
       return this;

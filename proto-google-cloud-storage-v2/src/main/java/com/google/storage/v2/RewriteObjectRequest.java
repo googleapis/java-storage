@@ -85,7 +85,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
 
   private int bitField0_;
   public static final int DESTINATION_NAME_FIELD_NUMBER = 24;
-  private volatile java.lang.Object destinationName_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object destinationName_ = "";
   /**
    *
    *
@@ -150,7 +152,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int DESTINATION_BUCKET_FIELD_NUMBER = 25;
-  private volatile java.lang.Object destinationBucket_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object destinationBucket_ = "";
   /**
    *
    *
@@ -205,7 +209,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int DESTINATION_KMS_KEY_FIELD_NUMBER = 27;
-  private volatile java.lang.Object destinationKmsKey_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object destinationKmsKey_ = "";
   /**
    *
    *
@@ -322,11 +328,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectOrBuilder getDestinationOrBuilder() {
-    return getDestination();
+    return destination_ == null ? com.google.storage.v2.Object.getDefaultInstance() : destination_;
   }
 
   public static final int SOURCE_BUCKET_FIELD_NUMBER = 2;
-  private volatile java.lang.Object sourceBucket_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object sourceBucket_ = "";
   /**
    *
    *
@@ -375,7 +383,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int SOURCE_OBJECT_FIELD_NUMBER = 3;
-  private volatile java.lang.Object sourceObject_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object sourceObject_ = "";
   /**
    *
    *
@@ -424,7 +434,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int SOURCE_GENERATION_FIELD_NUMBER = 4;
-  private long sourceGeneration_;
+  private long sourceGeneration_ = 0L;
   /**
    *
    *
@@ -443,7 +453,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int REWRITE_TOKEN_FIELD_NUMBER = 5;
-  private volatile java.lang.Object rewriteToken_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object rewriteToken_ = "";
   /**
    *
    *
@@ -500,7 +512,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int DESTINATION_PREDEFINED_ACL_FIELD_NUMBER = 28;
-  private volatile java.lang.Object destinationPredefinedAcl_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object destinationPredefinedAcl_ = "";
   /**
    *
    *
@@ -553,7 +567,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 7;
-  private long ifGenerationMatch_;
+  private long ifGenerationMatch_ = 0L;
   /**
    *
    *
@@ -590,7 +604,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_GENERATION_NOT_MATCH_FIELD_NUMBER = 8;
-  private long ifGenerationNotMatch_;
+  private long ifGenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -629,7 +643,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 9;
-  private long ifMetagenerationMatch_;
+  private long ifMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -664,7 +678,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 10;
-  private long ifMetagenerationNotMatch_;
+  private long ifMetagenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -699,7 +713,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_SOURCE_GENERATION_MATCH_FIELD_NUMBER = 11;
-  private long ifSourceGenerationMatch_;
+  private long ifSourceGenerationMatch_ = 0L;
   /**
    *
    *
@@ -734,7 +748,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_SOURCE_GENERATION_NOT_MATCH_FIELD_NUMBER = 12;
-  private long ifSourceGenerationNotMatch_;
+  private long ifSourceGenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -769,7 +783,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_SOURCE_METAGENERATION_MATCH_FIELD_NUMBER = 13;
-  private long ifSourceMetagenerationMatch_;
+  private long ifSourceMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -804,7 +818,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int IF_SOURCE_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 14;
-  private long ifSourceMetagenerationNotMatch_;
+  private long ifSourceMetagenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -839,7 +853,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int MAX_BYTES_REWRITTEN_PER_CALL_FIELD_NUMBER = 15;
-  private long maxBytesRewrittenPerCall_;
+  private long maxBytesRewrittenPerCall_ = 0L;
   /**
    *
    *
@@ -864,7 +878,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int COPY_SOURCE_ENCRYPTION_ALGORITHM_FIELD_NUMBER = 16;
-  private volatile java.lang.Object copySourceEncryptionAlgorithm_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object copySourceEncryptionAlgorithm_ = "";
   /**
    *
    *
@@ -915,7 +931,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int COPY_SOURCE_ENCRYPTION_KEY_BYTES_FIELD_NUMBER = 21;
-  private com.google.protobuf.ByteString copySourceEncryptionKeyBytes_;
+  private com.google.protobuf.ByteString copySourceEncryptionKeyBytes_ =
+      com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -935,7 +952,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   }
 
   public static final int COPY_SOURCE_ENCRYPTION_KEY_SHA256_BYTES_FIELD_NUMBER = 22;
-  private com.google.protobuf.ByteString copySourceEncryptionKeySha256Bytes_;
+  private com.google.protobuf.ByteString copySourceEncryptionKeySha256Bytes_ =
+      com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -1000,7 +1018,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
       getCommonObjectRequestParamsOrBuilder() {
-    return getCommonObjectRequestParams();
+    return commonObjectRequestParams_ == null
+        ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
+        : commonObjectRequestParams_;
   }
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 29;
@@ -1051,7 +1071,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
-    return getObjectChecksums();
+    return objectChecksums_ == null
+        ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
+        : objectChecksums_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -1531,62 +1553,40 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       destinationName_ = "";
-
       destinationBucket_ = "";
-
       destinationKmsKey_ = "";
-
-      if (destinationBuilder_ == null) {
-        destination_ = null;
-      } else {
-        destination_ = null;
+      destination_ = null;
+      if (destinationBuilder_ != null) {
+        destinationBuilder_.dispose();
         destinationBuilder_ = null;
       }
       sourceBucket_ = "";
-
       sourceObject_ = "";
-
       sourceGeneration_ = 0L;
-
       rewriteToken_ = "";
-
       destinationPredefinedAcl_ = "";
-
       ifGenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000001);
       ifGenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
       ifMetagenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000008);
       ifSourceGenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000010);
       ifSourceGenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000020);
       ifSourceMetagenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000040);
       ifSourceMetagenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000080);
       maxBytesRewrittenPerCall_ = 0L;
-
       copySourceEncryptionAlgorithm_ = "";
-
       copySourceEncryptionKeyBytes_ = com.google.protobuf.ByteString.EMPTY;
-
       copySourceEncryptionKeySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
-
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-      } else {
-        commonObjectRequestParams_ = null;
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-      if (objectChecksumsBuilder_ == null) {
-        objectChecksums_ = null;
-      } else {
-        objectChecksums_ = null;
+      objectChecksums_ = null;
+      if (objectChecksumsBuilder_ != null) {
+        objectChecksumsBuilder_.dispose();
         objectChecksumsBuilder_ = null;
       }
       return this;
@@ -1616,70 +1616,99 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public com.google.storage.v2.RewriteObjectRequest buildPartial() {
       com.google.storage.v2.RewriteObjectRequest result =
           new com.google.storage.v2.RewriteObjectRequest(this);
-      int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.destinationName_ = destinationName_;
-      result.destinationBucket_ = destinationBucket_;
-      result.destinationKmsKey_ = destinationKmsKey_;
-      if (destinationBuilder_ == null) {
-        result.destination_ = destination_;
-      } else {
-        result.destination_ = destinationBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      result.sourceBucket_ = sourceBucket_;
-      result.sourceObject_ = sourceObject_;
-      result.sourceGeneration_ = sourceGeneration_;
-      result.rewriteToken_ = rewriteToken_;
-      result.destinationPredefinedAcl_ = destinationPredefinedAcl_;
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.RewriteObjectRequest result) {
+      int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.destinationName_ = destinationName_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.destinationBucket_ = destinationBucket_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.destinationKmsKey_ = destinationKmsKey_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.destination_ =
+            destinationBuilder_ == null ? destination_ : destinationBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.sourceBucket_ = sourceBucket_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.sourceObject_ = sourceObject_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.sourceGeneration_ = sourceGeneration_;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.rewriteToken_ = rewriteToken_;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.destinationPredefinedAcl_ = destinationPredefinedAcl_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000200) != 0)) {
         result.ifGenerationMatch_ = ifGenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
+      if (((from_bitField0_ & 0x00000400) != 0)) {
         result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
+      if (((from_bitField0_ & 0x00000800) != 0)) {
         result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000004;
       }
-      if (((from_bitField0_ & 0x00000008) != 0)) {
+      if (((from_bitField0_ & 0x00001000) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000008;
       }
-      if (((from_bitField0_ & 0x00000010) != 0)) {
+      if (((from_bitField0_ & 0x00002000) != 0)) {
         result.ifSourceGenerationMatch_ = ifSourceGenerationMatch_;
         to_bitField0_ |= 0x00000010;
       }
-      if (((from_bitField0_ & 0x00000020) != 0)) {
+      if (((from_bitField0_ & 0x00004000) != 0)) {
         result.ifSourceGenerationNotMatch_ = ifSourceGenerationNotMatch_;
         to_bitField0_ |= 0x00000020;
       }
-      if (((from_bitField0_ & 0x00000040) != 0)) {
+      if (((from_bitField0_ & 0x00008000) != 0)) {
         result.ifSourceMetagenerationMatch_ = ifSourceMetagenerationMatch_;
         to_bitField0_ |= 0x00000040;
       }
-      if (((from_bitField0_ & 0x00000080) != 0)) {
+      if (((from_bitField0_ & 0x00010000) != 0)) {
         result.ifSourceMetagenerationNotMatch_ = ifSourceMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000080;
       }
-      result.maxBytesRewrittenPerCall_ = maxBytesRewrittenPerCall_;
-      result.copySourceEncryptionAlgorithm_ = copySourceEncryptionAlgorithm_;
-      result.copySourceEncryptionKeyBytes_ = copySourceEncryptionKeyBytes_;
-      result.copySourceEncryptionKeySha256Bytes_ = copySourceEncryptionKeySha256Bytes_;
-      if (commonObjectRequestParamsBuilder_ == null) {
-        result.commonObjectRequestParams_ = commonObjectRequestParams_;
-      } else {
-        result.commonObjectRequestParams_ = commonObjectRequestParamsBuilder_.build();
+      if (((from_bitField0_ & 0x00020000) != 0)) {
+        result.maxBytesRewrittenPerCall_ = maxBytesRewrittenPerCall_;
       }
-      if (objectChecksumsBuilder_ == null) {
-        result.objectChecksums_ = objectChecksums_;
-      } else {
-        result.objectChecksums_ = objectChecksumsBuilder_.build();
+      if (((from_bitField0_ & 0x00040000) != 0)) {
+        result.copySourceEncryptionAlgorithm_ = copySourceEncryptionAlgorithm_;
       }
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      if (((from_bitField0_ & 0x00080000) != 0)) {
+        result.copySourceEncryptionKeyBytes_ = copySourceEncryptionKeyBytes_;
+      }
+      if (((from_bitField0_ & 0x00100000) != 0)) {
+        result.copySourceEncryptionKeySha256Bytes_ = copySourceEncryptionKeySha256Bytes_;
+      }
+      if (((from_bitField0_ & 0x00200000) != 0)) {
+        result.commonObjectRequestParams_ =
+            commonObjectRequestParamsBuilder_ == null
+                ? commonObjectRequestParams_
+                : commonObjectRequestParamsBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00400000) != 0)) {
+        result.objectChecksums_ =
+            objectChecksumsBuilder_ == null ? objectChecksums_ : objectChecksumsBuilder_.build();
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -1729,14 +1758,17 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (other == com.google.storage.v2.RewriteObjectRequest.getDefaultInstance()) return this;
       if (!other.getDestinationName().isEmpty()) {
         destinationName_ = other.destinationName_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getDestinationBucket().isEmpty()) {
         destinationBucket_ = other.destinationBucket_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (!other.getDestinationKmsKey().isEmpty()) {
         destinationKmsKey_ = other.destinationKmsKey_;
+        bitField0_ |= 0x00000004;
         onChanged();
       }
       if (other.hasDestination()) {
@@ -1744,10 +1776,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       }
       if (!other.getSourceBucket().isEmpty()) {
         sourceBucket_ = other.sourceBucket_;
+        bitField0_ |= 0x00000010;
         onChanged();
       }
       if (!other.getSourceObject().isEmpty()) {
         sourceObject_ = other.sourceObject_;
+        bitField0_ |= 0x00000020;
         onChanged();
       }
       if (other.getSourceGeneration() != 0L) {
@@ -1755,10 +1789,12 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       }
       if (!other.getRewriteToken().isEmpty()) {
         rewriteToken_ = other.rewriteToken_;
+        bitField0_ |= 0x00000080;
         onChanged();
       }
       if (!other.getDestinationPredefinedAcl().isEmpty()) {
         destinationPredefinedAcl_ = other.destinationPredefinedAcl_;
+        bitField0_ |= 0x00000100;
         onChanged();
       }
       if (other.hasIfGenerationMatch()) {
@@ -1790,6 +1826,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       }
       if (!other.getCopySourceEncryptionAlgorithm().isEmpty()) {
         copySourceEncryptionAlgorithm_ = other.copySourceEncryptionAlgorithm_;
+        bitField0_ |= 0x00040000;
         onChanged();
       }
       if (other.getCopySourceEncryptionKeyBytes() != com.google.protobuf.ByteString.EMPTY) {
@@ -1833,140 +1870,140 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
             case 10:
               {
                 input.readMessage(getDestinationFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000008;
                 break;
               } // case 10
             case 18:
               {
                 sourceBucket_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000010;
                 break;
               } // case 18
             case 26:
               {
                 sourceObject_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000020;
                 break;
               } // case 26
             case 32:
               {
                 sourceGeneration_ = input.readInt64();
-
+                bitField0_ |= 0x00000040;
                 break;
               } // case 32
             case 42:
               {
                 rewriteToken_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000080;
                 break;
               } // case 42
             case 56:
               {
                 ifGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000200;
                 break;
               } // case 56
             case 64:
               {
                 ifGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000002;
+                bitField0_ |= 0x00000400;
                 break;
               } // case 64
             case 72:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000004;
+                bitField0_ |= 0x00000800;
                 break;
               } // case 72
             case 80:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00001000;
                 break;
               } // case 80
             case 88:
               {
                 ifSourceGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000010;
+                bitField0_ |= 0x00002000;
                 break;
               } // case 88
             case 96:
               {
                 ifSourceGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000020;
+                bitField0_ |= 0x00004000;
                 break;
               } // case 96
             case 104:
               {
                 ifSourceMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000040;
+                bitField0_ |= 0x00008000;
                 break;
               } // case 104
             case 112:
               {
                 ifSourceMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000080;
+                bitField0_ |= 0x00010000;
                 break;
               } // case 112
             case 120:
               {
                 maxBytesRewrittenPerCall_ = input.readInt64();
-
+                bitField0_ |= 0x00020000;
                 break;
               } // case 120
             case 130:
               {
                 copySourceEncryptionAlgorithm_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00040000;
                 break;
               } // case 130
             case 154:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00200000;
                 break;
               } // case 154
             case 170:
               {
                 copySourceEncryptionKeyBytes_ = input.readBytes();
-
+                bitField0_ |= 0x00080000;
                 break;
               } // case 170
             case 178:
               {
                 copySourceEncryptionKeySha256Bytes_ = input.readBytes();
-
+                bitField0_ |= 0x00100000;
                 break;
               } // case 178
             case 194:
               {
                 destinationName_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 194
             case 202:
               {
                 destinationBucket_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 202
             case 218:
               {
                 destinationKmsKey_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 218
             case 226:
               {
                 destinationPredefinedAcl_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000100;
                 break;
               } // case 226
             case 234:
               {
                 input.readMessage(getObjectChecksumsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00400000;
                 break;
               } // case 234
             default:
@@ -2073,8 +2110,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       destinationName_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -2098,8 +2135,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearDestinationName() {
-
       destinationName_ = getDefaultInstance().getDestinationName();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -2128,8 +2165,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       destinationName_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -2204,8 +2241,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       destinationBucket_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -2224,8 +2261,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearDestinationBucket() {
-
       destinationBucket_ = getDefaultInstance().getDestinationBucket();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -2249,8 +2286,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       destinationBucket_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -2328,8 +2365,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       destinationKmsKey_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -2349,8 +2386,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearDestinationKmsKey() {
-
       destinationKmsKey_ = getDefaultInstance().getDestinationKmsKey();
+      bitField0_ = (bitField0_ & ~0x00000004);
       onChanged();
       return this;
     }
@@ -2375,8 +2412,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       destinationKmsKey_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -2405,7 +2442,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return Whether the destination field is set.
      */
     public boolean hasDestination() {
-      return destinationBuilder_ != null || destination_ != null;
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      *
@@ -2454,11 +2491,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
           throw new NullPointerException();
         }
         destination_ = value;
-        onChanged();
       } else {
         destinationBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -2479,11 +2516,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setDestination(com.google.storage.v2.Object.Builder builderForValue) {
       if (destinationBuilder_ == null) {
         destination_ = builderForValue.build();
-        onChanged();
       } else {
         destinationBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -2503,17 +2540,18 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     public Builder mergeDestination(com.google.storage.v2.Object value) {
       if (destinationBuilder_ == null) {
-        if (destination_ != null) {
-          destination_ =
-              com.google.storage.v2.Object.newBuilder(destination_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000008) != 0)
+            && destination_ != null
+            && destination_ != com.google.storage.v2.Object.getDefaultInstance()) {
+          getDestinationBuilder().mergeFrom(value);
         } else {
           destination_ = value;
         }
-        onChanged();
       } else {
         destinationBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000008;
+      onChanged();
       return this;
     }
     /**
@@ -2532,14 +2570,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * <code>.google.storage.v2.Object destination = 1;</code>
      */
     public Builder clearDestination() {
-      if (destinationBuilder_ == null) {
-        destination_ = null;
-        onChanged();
-      } else {
-        destination_ = null;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      destination_ = null;
+      if (destinationBuilder_ != null) {
+        destinationBuilder_.dispose();
         destinationBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -2558,7 +2595,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * <code>.google.storage.v2.Object destination = 1;</code>
      */
     public com.google.storage.v2.Object.Builder getDestinationBuilder() {
-
+      bitField0_ |= 0x00000008;
       onChanged();
       return getDestinationFieldBuilder().getBuilder();
     }
@@ -2679,8 +2716,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       sourceBucket_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -2696,8 +2733,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearSourceBucket() {
-
       sourceBucket_ = getDefaultInstance().getSourceBucket();
+      bitField0_ = (bitField0_ & ~0x00000010);
       onChanged();
       return this;
     }
@@ -2718,8 +2755,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       sourceBucket_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -2785,8 +2822,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       sourceObject_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2802,8 +2839,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearSourceObject() {
-
       sourceObject_ = getDefaultInstance().getSourceObject();
+      bitField0_ = (bitField0_ & ~0x00000020);
       onChanged();
       return this;
     }
@@ -2824,8 +2861,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       sourceObject_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2863,6 +2900,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setSourceGeneration(long value) {
 
       sourceGeneration_ = value;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -2879,7 +2917,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearSourceGeneration() {
-
+      bitField0_ = (bitField0_ & ~0x00000040);
       sourceGeneration_ = 0L;
       onChanged();
       return this;
@@ -2958,8 +2996,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       rewriteToken_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -2979,8 +3017,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearRewriteToken() {
-
       rewriteToken_ = getDefaultInstance().getRewriteToken();
+      bitField0_ = (bitField0_ & ~0x00000080);
       onChanged();
       return this;
     }
@@ -3005,8 +3043,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       rewriteToken_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -3078,8 +3116,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       destinationPredefinedAcl_ = value;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -3097,8 +3135,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearDestinationPredefinedAcl() {
-
       destinationPredefinedAcl_ = getDefaultInstance().getDestinationPredefinedAcl();
+      bitField0_ = (bitField0_ & ~0x00000100);
       onChanged();
       return this;
     }
@@ -3121,8 +3159,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       destinationPredefinedAcl_ = value;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -3143,7 +3181,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfGenerationMatch() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000200) != 0);
     }
     /**
      *
@@ -3177,8 +3215,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfGenerationMatch(long value) {
-      bitField0_ |= 0x00000001;
+
       ifGenerationMatch_ = value;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -3196,7 +3235,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000200);
       ifGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -3219,7 +3258,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfGenerationNotMatch() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000400) != 0);
     }
     /**
      *
@@ -3255,8 +3294,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfGenerationNotMatch(long value) {
-      bitField0_ |= 0x00000002;
+
       ifGenerationNotMatch_ = value;
+      bitField0_ |= 0x00000400;
       onChanged();
       return this;
     }
@@ -3275,7 +3315,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000400);
       ifGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -3296,7 +3336,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000004) != 0);
+      return ((bitField0_ & 0x00000800) != 0);
     }
     /**
      *
@@ -3328,8 +3368,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationMatch(long value) {
-      bitField0_ |= 0x00000004;
+
       ifMetagenerationMatch_ = value;
+      bitField0_ |= 0x00000800;
       onChanged();
       return this;
     }
@@ -3346,7 +3387,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000004);
+      bitField0_ = (bitField0_ & ~0x00000800);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -3367,7 +3408,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00001000) != 0);
     }
     /**
      *
@@ -3399,8 +3440,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationNotMatch(long value) {
-      bitField0_ |= 0x00000008;
+
       ifMetagenerationNotMatch_ = value;
+      bitField0_ |= 0x00001000;
       onChanged();
       return this;
     }
@@ -3417,7 +3459,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00001000);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -3438,7 +3480,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfSourceGenerationMatch() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return ((bitField0_ & 0x00002000) != 0);
     }
     /**
      *
@@ -3470,8 +3512,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfSourceGenerationMatch(long value) {
-      bitField0_ |= 0x00000010;
+
       ifSourceGenerationMatch_ = value;
+      bitField0_ |= 0x00002000;
       onChanged();
       return this;
     }
@@ -3488,7 +3531,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfSourceGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00002000);
       ifSourceGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -3509,7 +3552,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfSourceGenerationNotMatch() {
-      return ((bitField0_ & 0x00000020) != 0);
+      return ((bitField0_ & 0x00004000) != 0);
     }
     /**
      *
@@ -3541,8 +3584,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfSourceGenerationNotMatch(long value) {
-      bitField0_ |= 0x00000020;
+
       ifSourceGenerationNotMatch_ = value;
+      bitField0_ |= 0x00004000;
       onChanged();
       return this;
     }
@@ -3559,7 +3603,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfSourceGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00004000);
       ifSourceGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -3580,7 +3624,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfSourceMetagenerationMatch() {
-      return ((bitField0_ & 0x00000040) != 0);
+      return ((bitField0_ & 0x00008000) != 0);
     }
     /**
      *
@@ -3612,8 +3656,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfSourceMetagenerationMatch(long value) {
-      bitField0_ |= 0x00000040;
+
       ifSourceMetagenerationMatch_ = value;
+      bitField0_ |= 0x00008000;
       onChanged();
       return this;
     }
@@ -3630,7 +3675,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfSourceMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00008000);
       ifSourceMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -3651,7 +3696,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     @java.lang.Override
     public boolean hasIfSourceMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000080) != 0);
+      return ((bitField0_ & 0x00010000) != 0);
     }
     /**
      *
@@ -3683,8 +3728,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder setIfSourceMetagenerationNotMatch(long value) {
-      bitField0_ |= 0x00000080;
+
       ifSourceMetagenerationNotMatch_ = value;
+      bitField0_ |= 0x00010000;
       onChanged();
       return this;
     }
@@ -3701,7 +3747,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearIfSourceMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00010000);
       ifSourceMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -3752,6 +3798,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder setMaxBytesRewrittenPerCall(long value) {
 
       maxBytesRewrittenPerCall_ = value;
+      bitField0_ |= 0x00020000;
       onChanged();
       return this;
     }
@@ -3774,7 +3821,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearMaxBytesRewrittenPerCall() {
-
+      bitField0_ = (bitField0_ & ~0x00020000);
       maxBytesRewrittenPerCall_ = 0L;
       onChanged();
       return this;
@@ -3844,8 +3891,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       copySourceEncryptionAlgorithm_ = value;
+      bitField0_ |= 0x00040000;
       onChanged();
       return this;
     }
@@ -3862,8 +3909,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearCopySourceEncryptionAlgorithm() {
-
       copySourceEncryptionAlgorithm_ = getDefaultInstance().getCopySourceEncryptionAlgorithm();
+      bitField0_ = (bitField0_ & ~0x00040000);
       onChanged();
       return this;
     }
@@ -3885,8 +3932,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       copySourceEncryptionAlgorithm_ = value;
+      bitField0_ |= 0x00040000;
       onChanged();
       return this;
     }
@@ -3928,8 +3975,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       copySourceEncryptionKeyBytes_ = value;
+      bitField0_ |= 0x00080000;
       onChanged();
       return this;
     }
@@ -3947,7 +3994,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearCopySourceEncryptionKeyBytes() {
-
+      bitField0_ = (bitField0_ & ~0x00080000);
       copySourceEncryptionKeyBytes_ = getDefaultInstance().getCopySourceEncryptionKeyBytes();
       onChanged();
       return this;
@@ -3990,8 +4037,8 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
       if (value == null) {
         throw new NullPointerException();
       }
-
       copySourceEncryptionKeySha256Bytes_ = value;
+      bitField0_ |= 0x00100000;
       onChanged();
       return this;
     }
@@ -4009,7 +4056,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return This builder for chaining.
      */
     public Builder clearCopySourceEncryptionKeySha256Bytes() {
-
+      bitField0_ = (bitField0_ & ~0x00100000);
       copySourceEncryptionKeySha256Bytes_ =
           getDefaultInstance().getCopySourceEncryptionKeySha256Bytes();
       onChanged();
@@ -4034,7 +4081,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return commonObjectRequestParamsBuilder_ != null || commonObjectRequestParams_ != null;
+      return ((bitField0_ & 0x00200000) != 0);
     }
     /**
      *
@@ -4072,11 +4119,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
           throw new NullPointerException();
         }
         commonObjectRequestParams_ = value;
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00200000;
+      onChanged();
       return this;
     }
     /**
@@ -4092,11 +4139,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
       if (commonObjectRequestParamsBuilder_ == null) {
         commonObjectRequestParams_ = builderForValue.build();
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00200000;
+      onChanged();
       return this;
     }
     /**
@@ -4111,19 +4158,19 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (commonObjectRequestParams_ != null) {
-          commonObjectRequestParams_ =
-              com.google.storage.v2.CommonObjectRequestParams.newBuilder(commonObjectRequestParams_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00200000) != 0)
+            && commonObjectRequestParams_ != null
+            && commonObjectRequestParams_
+                != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
+          getCommonObjectRequestParamsBuilder().mergeFrom(value);
         } else {
           commonObjectRequestParams_ = value;
         }
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00200000;
+      onChanged();
       return this;
     }
     /**
@@ -4136,14 +4183,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 19;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-        onChanged();
-      } else {
-        commonObjectRequestParams_ = null;
+      bitField0_ = (bitField0_ & ~0x00200000);
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -4157,7 +4203,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-
+      bitField0_ |= 0x00200000;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
@@ -4225,7 +4271,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * @return Whether the objectChecksums field is set.
      */
     public boolean hasObjectChecksums() {
-      return objectChecksumsBuilder_ != null || objectChecksums_ != null;
+      return ((bitField0_ & 0x00400000) != 0);
     }
     /**
      *
@@ -4264,11 +4310,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
           throw new NullPointerException();
         }
         objectChecksums_ = value;
-        onChanged();
       } else {
         objectChecksumsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00400000;
+      onChanged();
       return this;
     }
     /**
@@ -4285,11 +4331,11 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
         com.google.storage.v2.ObjectChecksums.Builder builderForValue) {
       if (objectChecksumsBuilder_ == null) {
         objectChecksums_ = builderForValue.build();
-        onChanged();
       } else {
         objectChecksumsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00400000;
+      onChanged();
       return this;
     }
     /**
@@ -4304,19 +4350,18 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      */
     public Builder mergeObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
-        if (objectChecksums_ != null) {
-          objectChecksums_ =
-              com.google.storage.v2.ObjectChecksums.newBuilder(objectChecksums_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00400000) != 0)
+            && objectChecksums_ != null
+            && objectChecksums_ != com.google.storage.v2.ObjectChecksums.getDefaultInstance()) {
+          getObjectChecksumsBuilder().mergeFrom(value);
         } else {
           objectChecksums_ = value;
         }
-        onChanged();
       } else {
         objectChecksumsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00400000;
+      onChanged();
       return this;
     }
     /**
@@ -4330,14 +4375,13 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
      */
     public Builder clearObjectChecksums() {
-      if (objectChecksumsBuilder_ == null) {
-        objectChecksums_ = null;
-        onChanged();
-      } else {
-        objectChecksums_ = null;
+      bitField0_ = (bitField0_ & ~0x00400000);
+      objectChecksums_ = null;
+      if (objectChecksumsBuilder_ != null) {
+        objectChecksumsBuilder_.dispose();
         objectChecksumsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -4351,7 +4395,7 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 29;</code>
      */
     public com.google.storage.v2.ObjectChecksums.Builder getObjectChecksumsBuilder() {
-
+      bitField0_ |= 0x00400000;
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }

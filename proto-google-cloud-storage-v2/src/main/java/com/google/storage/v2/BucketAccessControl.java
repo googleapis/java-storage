@@ -75,7 +75,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int ROLE_FIELD_NUMBER = 1;
-  private volatile java.lang.Object role_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object role_ = "";
   /**
    *
    *
@@ -124,7 +126,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int ID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object id_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object id_ = "";
   /**
    *
    *
@@ -173,7 +177,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int ENTITY_FIELD_NUMBER = 3;
-  private volatile java.lang.Object entity_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object entity_ = "";
   /**
    *
    *
@@ -256,7 +262,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int ENTITY_ALT_FIELD_NUMBER = 9;
-  private volatile java.lang.Object entityAlt_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object entityAlt_ = "";
   /**
    *
    *
@@ -307,7 +315,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int ENTITY_ID_FIELD_NUMBER = 4;
-  private volatile java.lang.Object entityId_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object entityId_ = "";
   /**
    *
    *
@@ -356,7 +366,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int ETAG_FIELD_NUMBER = 8;
-  private volatile java.lang.Object etag_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object etag_ = "";
   /**
    *
    *
@@ -411,7 +423,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int EMAIL_FIELD_NUMBER = 5;
-  private volatile java.lang.Object email_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object email_ = "";
   /**
    *
    *
@@ -460,7 +474,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
   }
 
   public static final int DOMAIN_FIELD_NUMBER = 6;
-  private volatile java.lang.Object domain_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object domain_ = "";
   /**
    *
    *
@@ -553,7 +569,9 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
    */
   @java.lang.Override
   public com.google.storage.v2.ProjectTeamOrBuilder getProjectTeamOrBuilder() {
-    return getProjectTeam();
+    return projectTeam_ == null
+        ? com.google.storage.v2.ProjectTeam.getDefaultInstance()
+        : projectTeam_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -830,26 +848,18 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       role_ = "";
-
       id_ = "";
-
       entity_ = "";
-
       entityAlt_ = "";
-
       entityId_ = "";
-
       etag_ = "";
-
       email_ = "";
-
       domain_ = "";
-
-      if (projectTeamBuilder_ == null) {
-        projectTeam_ = null;
-      } else {
-        projectTeam_ = null;
+      projectTeam_ = null;
+      if (projectTeamBuilder_ != null) {
+        projectTeamBuilder_.dispose();
         projectTeamBuilder_ = null;
       }
       return this;
@@ -879,21 +889,43 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.BucketAccessControl buildPartial() {
       com.google.storage.v2.BucketAccessControl result =
           new com.google.storage.v2.BucketAccessControl(this);
-      result.role_ = role_;
-      result.id_ = id_;
-      result.entity_ = entity_;
-      result.entityAlt_ = entityAlt_;
-      result.entityId_ = entityId_;
-      result.etag_ = etag_;
-      result.email_ = email_;
-      result.domain_ = domain_;
-      if (projectTeamBuilder_ == null) {
-        result.projectTeam_ = projectTeam_;
-      } else {
-        result.projectTeam_ = projectTeamBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.BucketAccessControl result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.role_ = role_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.id_ = id_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.entity_ = entity_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.entityAlt_ = entityAlt_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.entityId_ = entityId_;
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.etag_ = etag_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.email_ = email_;
+      }
+      if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.domain_ = domain_;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
+        result.projectTeam_ =
+            projectTeamBuilder_ == null ? projectTeam_ : projectTeamBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -943,34 +975,42 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (other == com.google.storage.v2.BucketAccessControl.getDefaultInstance()) return this;
       if (!other.getRole().isEmpty()) {
         role_ = other.role_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getId().isEmpty()) {
         id_ = other.id_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (!other.getEntity().isEmpty()) {
         entity_ = other.entity_;
+        bitField0_ |= 0x00000004;
         onChanged();
       }
       if (!other.getEntityAlt().isEmpty()) {
         entityAlt_ = other.entityAlt_;
+        bitField0_ |= 0x00000008;
         onChanged();
       }
       if (!other.getEntityId().isEmpty()) {
         entityId_ = other.entityId_;
+        bitField0_ |= 0x00000010;
         onChanged();
       }
       if (!other.getEtag().isEmpty()) {
         etag_ = other.etag_;
+        bitField0_ |= 0x00000020;
         onChanged();
       }
       if (!other.getEmail().isEmpty()) {
         email_ = other.email_;
+        bitField0_ |= 0x00000040;
         onChanged();
       }
       if (!other.getDomain().isEmpty()) {
         domain_ = other.domain_;
+        bitField0_ |= 0x00000080;
         onChanged();
       }
       if (other.hasProjectTeam()) {
@@ -1005,55 +1045,55 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
             case 10:
               {
                 role_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 id_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             case 26:
               {
                 entity_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 26
             case 34:
               {
                 entityId_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000010;
                 break;
               } // case 34
             case 42:
               {
                 email_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000040;
                 break;
               } // case 42
             case 50:
               {
                 domain_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000080;
                 break;
               } // case 50
             case 58:
               {
                 input.readMessage(getProjectTeamFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000100;
                 break;
               } // case 58
             case 66:
               {
                 etag_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000020;
                 break;
               } // case 66
             case 74:
               {
                 entityAlt_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000008;
                 break;
               } // case 74
             default:
@@ -1072,6 +1112,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object role_ = "";
     /**
@@ -1134,8 +1176,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       role_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -1151,8 +1193,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearRole() {
-
       role_ = getDefaultInstance().getRole();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -1173,8 +1215,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       role_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -1240,8 +1282,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       id_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1257,8 +1299,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearId() {
-
       id_ = getDefaultInstance().getId();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -1279,8 +1321,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       id_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1397,8 +1439,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       entity_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1431,8 +1473,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearEntity() {
-
       entity_ = getDefaultInstance().getEntity();
+      bitField0_ = (bitField0_ & ~0x00000004);
       onChanged();
       return this;
     }
@@ -1470,8 +1512,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       entity_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1540,8 +1582,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       entityAlt_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1558,8 +1600,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearEntityAlt() {
-
       entityAlt_ = getDefaultInstance().getEntityAlt();
+      bitField0_ = (bitField0_ & ~0x00000008);
       onChanged();
       return this;
     }
@@ -1581,8 +1623,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       entityAlt_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1648,8 +1690,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       entityId_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1665,8 +1707,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearEntityId() {
-
       entityId_ = getDefaultInstance().getEntityId();
+      bitField0_ = (bitField0_ & ~0x00000010);
       onChanged();
       return this;
     }
@@ -1687,8 +1729,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       entityId_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1763,8 +1805,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       etag_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1783,8 +1825,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearEtag() {
-
       etag_ = getDefaultInstance().getEtag();
+      bitField0_ = (bitField0_ & ~0x00000020);
       onChanged();
       return this;
     }
@@ -1808,8 +1850,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       etag_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1875,8 +1917,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       email_ = value;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1892,8 +1934,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearEmail() {
-
       email_ = getDefaultInstance().getEmail();
+      bitField0_ = (bitField0_ & ~0x00000040);
       onChanged();
       return this;
     }
@@ -1914,8 +1956,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       email_ = value;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1981,8 +2023,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       domain_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -1998,8 +2040,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearDomain() {
-
       domain_ = getDefaultInstance().getDomain();
+      bitField0_ = (bitField0_ & ~0x00000080);
       onChanged();
       return this;
     }
@@ -2020,8 +2062,8 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       domain_ = value;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -2044,7 +2086,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * @return Whether the projectTeam field is set.
      */
     public boolean hasProjectTeam() {
-      return projectTeamBuilder_ != null || projectTeam_ != null;
+      return ((bitField0_ & 0x00000100) != 0);
     }
     /**
      *
@@ -2081,11 +2123,11 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
           throw new NullPointerException();
         }
         projectTeam_ = value;
-        onChanged();
       } else {
         projectTeamBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000100;
+      onChanged();
       return this;
     }
     /**
@@ -2100,11 +2142,11 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
     public Builder setProjectTeam(com.google.storage.v2.ProjectTeam.Builder builderForValue) {
       if (projectTeamBuilder_ == null) {
         projectTeam_ = builderForValue.build();
-        onChanged();
       } else {
         projectTeamBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000100;
+      onChanged();
       return this;
     }
     /**
@@ -2118,19 +2160,18 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      */
     public Builder mergeProjectTeam(com.google.storage.v2.ProjectTeam value) {
       if (projectTeamBuilder_ == null) {
-        if (projectTeam_ != null) {
-          projectTeam_ =
-              com.google.storage.v2.ProjectTeam.newBuilder(projectTeam_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000100) != 0)
+            && projectTeam_ != null
+            && projectTeam_ != com.google.storage.v2.ProjectTeam.getDefaultInstance()) {
+          getProjectTeamBuilder().mergeFrom(value);
         } else {
           projectTeam_ = value;
         }
-        onChanged();
       } else {
         projectTeamBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000100;
+      onChanged();
       return this;
     }
     /**
@@ -2143,14 +2184,13 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
      */
     public Builder clearProjectTeam() {
-      if (projectTeamBuilder_ == null) {
-        projectTeam_ = null;
-        onChanged();
-      } else {
-        projectTeam_ = null;
+      bitField0_ = (bitField0_ & ~0x00000100);
+      projectTeam_ = null;
+      if (projectTeamBuilder_ != null) {
+        projectTeamBuilder_.dispose();
         projectTeamBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -2163,7 +2203,7 @@ public final class BucketAccessControl extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.ProjectTeam project_team = 7;</code>
      */
     public com.google.storage.v2.ProjectTeam.Builder getProjectTeamBuilder() {
-
+      bitField0_ |= 0x00000100;
       onChanged();
       return getProjectTeamFieldBuilder().getBuilder();
     }

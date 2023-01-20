@@ -69,7 +69,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
 
   private int bitField0_;
   public static final int CRC32C_FIELD_NUMBER = 1;
-  private int crc32C_;
+  private int crc32C_ = 0;
   /**
    *
    *
@@ -108,7 +108,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
   }
 
   public static final int MD5_HASH_FIELD_NUMBER = 2;
-  private com.google.protobuf.ByteString md5Hash_;
+  private com.google.protobuf.ByteString md5Hash_ = com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -340,10 +340,9 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       crc32C_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000001);
       md5Hash_ = com.google.protobuf.ByteString.EMPTY;
-
       return this;
     }
 
@@ -371,16 +370,24 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     public com.google.storage.v2.ObjectChecksums buildPartial() {
       com.google.storage.v2.ObjectChecksums result =
           new com.google.storage.v2.ObjectChecksums(this);
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ObjectChecksums result) {
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.crc32C_ = crc32C_;
         to_bitField0_ |= 0x00000001;
       }
-      result.md5Hash_ = md5Hash_;
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.md5Hash_ = md5Hash_;
+      }
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -469,7 +476,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
             case 18:
               {
                 md5Hash_ = input.readBytes();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             default:
@@ -544,8 +551,9 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder setCrc32C(int value) {
-      bitField0_ |= 0x00000001;
+
       crc32C_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -614,8 +622,8 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
       if (value == null) {
         throw new NullPointerException();
       }
-
       md5Hash_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -637,7 +645,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearMd5Hash() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       md5Hash_ = getDefaultInstance().getMd5Hash();
       onChanged();
       return this;

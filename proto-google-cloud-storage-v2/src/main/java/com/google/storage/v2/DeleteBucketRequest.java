@@ -69,7 +69,9 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
 
   private int bitField0_;
   public static final int NAME_FIELD_NUMBER = 1;
-  private volatile java.lang.Object name_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object name_ = "";
   /**
    *
    *
@@ -122,7 +124,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_METAGENERATION_MATCH_FIELD_NUMBER = 2;
-  private long ifMetagenerationMatch_;
+  private long ifMetagenerationMatch_ = 0L;
   /**
    *
    *
@@ -155,7 +157,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER = 3;
-  private long ifMetagenerationNotMatch_;
+  private long ifMetagenerationNotMatch_ = 0L;
   /**
    *
    *
@@ -414,12 +416,10 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       name_ = "";
-
       ifMetagenerationMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000001);
       ifMetagenerationNotMatch_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
 
@@ -447,20 +447,28 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.DeleteBucketRequest buildPartial() {
       com.google.storage.v2.DeleteBucketRequest result =
           new com.google.storage.v2.DeleteBucketRequest(this);
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.DeleteBucketRequest result) {
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.name_ = name_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.name_ = name_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
         result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
-      if (((from_bitField0_ & 0x00000002) != 0)) {
+      if (((from_bitField0_ & 0x00000004) != 0)) {
         result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -510,6 +518,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
       if (other == com.google.storage.v2.DeleteBucketRequest.getDefaultInstance()) return this;
       if (!other.getName().isEmpty()) {
         name_ = other.name_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.hasIfMetagenerationMatch()) {
@@ -547,19 +556,19 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
             case 10:
               {
                 name_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 16:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000002;
                 break;
               } // case 16
             case 24:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000002;
+                bitField0_ |= 0x00000004;
                 break;
               } // case 24
             default:
@@ -648,8 +657,8 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       name_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -667,8 +676,8 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearName() {
-
       name_ = getDefaultInstance().getName();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -691,8 +700,8 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       name_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -711,7 +720,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -741,8 +750,9 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationMatch(long value) {
-      bitField0_ |= 0x00000001;
+
       ifMetagenerationMatch_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -758,7 +768,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000002);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -779,7 +789,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000002) != 0);
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      *
@@ -811,8 +821,9 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder setIfMetagenerationNotMatch(long value) {
-      bitField0_ |= 0x00000002;
+
       ifMetagenerationNotMatch_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -829,7 +840,7 @@ public final class DeleteBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000004);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;

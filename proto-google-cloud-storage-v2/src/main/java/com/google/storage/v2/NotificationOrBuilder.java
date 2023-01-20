@@ -213,7 +213,6 @@ public interface NotificationOrBuilder
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
    */
-
   /* nullable */
   java.lang.String getCustomAttributesOrDefault(
       java.lang.String key,

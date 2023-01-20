@@ -70,7 +70,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
 
   private int bitField0_;
   public static final int CONTENT_FIELD_NUMBER = 1;
-  private com.google.protobuf.ByteString content_;
+  private com.google.protobuf.ByteString content_ = com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -88,7 +88,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
   }
 
   public static final int CRC32C_FIELD_NUMBER = 2;
-  private int crc32C_;
+  private int crc32C_ = 0;
   /**
    *
    *
@@ -330,10 +330,9 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       content_ = com.google.protobuf.ByteString.EMPTY;
-
       crc32C_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
@@ -361,16 +360,24 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
     public com.google.storage.v2.ChecksummedData buildPartial() {
       com.google.storage.v2.ChecksummedData result =
           new com.google.storage.v2.ChecksummedData(this);
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ChecksummedData result) {
       int from_bitField0_ = bitField0_;
-      int to_bitField0_ = 0;
-      result.content_ = content_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.content_ = content_;
+      }
+      int to_bitField0_ = 0;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
         result.crc32C_ = crc32C_;
         to_bitField0_ |= 0x00000001;
       }
-      result.bitField0_ = to_bitField0_;
-      onBuilt();
-      return result;
+      result.bitField0_ |= to_bitField0_;
     }
 
     @java.lang.Override
@@ -453,13 +460,13 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
             case 10:
               {
                 content_ = input.readBytes();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 21:
               {
                 crc32C_ = input.readFixed32();
-                bitField0_ |= 0x00000001;
+                bitField0_ |= 0x00000002;
                 break;
               } // case 21
             default:
@@ -513,8 +520,8 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
       if (value == null) {
         throw new NullPointerException();
       }
-
       content_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -530,7 +537,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearContent() {
-
+      bitField0_ = (bitField0_ & ~0x00000001);
       content_ = getDefaultInstance().getContent();
       onChanged();
       return this;
@@ -550,7 +557,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      */
     @java.lang.Override
     public boolean hasCrc32C() {
-      return ((bitField0_ & 0x00000001) != 0);
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -580,8 +587,9 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder setCrc32C(int value) {
-      bitField0_ |= 0x00000001;
+
       crc32C_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -597,7 +605,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * @return This builder for chaining.
      */
     public Builder clearCrc32C() {
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000002);
       crc32C_ = 0;
       onChanged();
       return this;

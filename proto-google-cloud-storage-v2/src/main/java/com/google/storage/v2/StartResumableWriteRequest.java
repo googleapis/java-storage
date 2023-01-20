@@ -119,7 +119,9 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    */
   @java.lang.Override
   public com.google.storage.v2.WriteObjectSpecOrBuilder getWriteObjectSpecOrBuilder() {
-    return getWriteObjectSpec();
+    return writeObjectSpec_ == null
+        ? com.google.storage.v2.WriteObjectSpec.getDefaultInstance()
+        : writeObjectSpec_;
   }
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 3;
@@ -168,7 +170,9 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
       getCommonObjectRequestParamsOrBuilder() {
-    return getCommonObjectRequestParams();
+    return commonObjectRequestParams_ == null
+        ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
+        : commonObjectRequestParams_;
   }
 
   public static final int OBJECT_CHECKSUMS_FIELD_NUMBER = 5;
@@ -225,7 +229,9 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
-    return getObjectChecksums();
+    return objectChecksums_ == null
+        ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
+        : objectChecksums_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -461,22 +467,20 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     @java.lang.Override
     public Builder clear() {
       super.clear();
-      if (writeObjectSpecBuilder_ == null) {
-        writeObjectSpec_ = null;
-      } else {
-        writeObjectSpec_ = null;
+      bitField0_ = 0;
+      writeObjectSpec_ = null;
+      if (writeObjectSpecBuilder_ != null) {
+        writeObjectSpecBuilder_.dispose();
         writeObjectSpecBuilder_ = null;
       }
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-      } else {
-        commonObjectRequestParams_ = null;
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-      if (objectChecksumsBuilder_ == null) {
-        objectChecksums_ = null;
-      } else {
-        objectChecksums_ = null;
+      objectChecksums_ = null;
+      if (objectChecksumsBuilder_ != null) {
+        objectChecksumsBuilder_.dispose();
         objectChecksumsBuilder_ = null;
       }
       return this;
@@ -506,23 +510,29 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     public com.google.storage.v2.StartResumableWriteRequest buildPartial() {
       com.google.storage.v2.StartResumableWriteRequest result =
           new com.google.storage.v2.StartResumableWriteRequest(this);
-      if (writeObjectSpecBuilder_ == null) {
-        result.writeObjectSpec_ = writeObjectSpec_;
-      } else {
-        result.writeObjectSpec_ = writeObjectSpecBuilder_.build();
-      }
-      if (commonObjectRequestParamsBuilder_ == null) {
-        result.commonObjectRequestParams_ = commonObjectRequestParams_;
-      } else {
-        result.commonObjectRequestParams_ = commonObjectRequestParamsBuilder_.build();
-      }
-      if (objectChecksumsBuilder_ == null) {
-        result.objectChecksums_ = objectChecksums_;
-      } else {
-        result.objectChecksums_ = objectChecksumsBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.StartResumableWriteRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.writeObjectSpec_ =
+            writeObjectSpecBuilder_ == null ? writeObjectSpec_ : writeObjectSpecBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.commonObjectRequestParams_ =
+            commonObjectRequestParamsBuilder_ == null
+                ? commonObjectRequestParams_
+                : commonObjectRequestParamsBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.objectChecksums_ =
+            objectChecksumsBuilder_ == null ? objectChecksums_ : objectChecksumsBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -609,20 +619,20 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
             case 10:
               {
                 input.readMessage(getWriteObjectSpecFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 26:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 26
             case 42:
               {
                 input.readMessage(getObjectChecksumsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 42
             default:
@@ -641,6 +651,8 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private com.google.storage.v2.WriteObjectSpec writeObjectSpec_;
     private com.google.protobuf.SingleFieldBuilderV3<
@@ -663,7 +675,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * @return Whether the writeObjectSpec field is set.
      */
     public boolean hasWriteObjectSpec() {
-      return writeObjectSpecBuilder_ != null || writeObjectSpec_ != null;
+      return ((bitField0_ & 0x00000001) != 0);
     }
     /**
      *
@@ -706,11 +718,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
           throw new NullPointerException();
         }
         writeObjectSpec_ = value;
-        onChanged();
       } else {
         writeObjectSpecBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -729,11 +741,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         com.google.storage.v2.WriteObjectSpec.Builder builderForValue) {
       if (writeObjectSpecBuilder_ == null) {
         writeObjectSpec_ = builderForValue.build();
-        onChanged();
       } else {
         writeObjectSpecBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -750,19 +762,18 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      */
     public Builder mergeWriteObjectSpec(com.google.storage.v2.WriteObjectSpec value) {
       if (writeObjectSpecBuilder_ == null) {
-        if (writeObjectSpec_ != null) {
-          writeObjectSpec_ =
-              com.google.storage.v2.WriteObjectSpec.newBuilder(writeObjectSpec_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000001) != 0)
+            && writeObjectSpec_ != null
+            && writeObjectSpec_ != com.google.storage.v2.WriteObjectSpec.getDefaultInstance()) {
+          getWriteObjectSpecBuilder().mergeFrom(value);
         } else {
           writeObjectSpec_ = value;
         }
-        onChanged();
       } else {
         writeObjectSpecBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000001;
+      onChanged();
       return this;
     }
     /**
@@ -778,14 +789,13 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * </code>
      */
     public Builder clearWriteObjectSpec() {
-      if (writeObjectSpecBuilder_ == null) {
-        writeObjectSpec_ = null;
-        onChanged();
-      } else {
-        writeObjectSpec_ = null;
+      bitField0_ = (bitField0_ & ~0x00000001);
+      writeObjectSpec_ = null;
+      if (writeObjectSpecBuilder_ != null) {
+        writeObjectSpecBuilder_.dispose();
         writeObjectSpecBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -801,7 +811,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * </code>
      */
     public com.google.storage.v2.WriteObjectSpec.Builder getWriteObjectSpecBuilder() {
-
+      bitField0_ |= 0x00000001;
       onChanged();
       return getWriteObjectSpecFieldBuilder().getBuilder();
     }
@@ -873,7 +883,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return commonObjectRequestParamsBuilder_ != null || commonObjectRequestParams_ != null;
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -911,11 +921,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
           throw new NullPointerException();
         }
         commonObjectRequestParams_ = value;
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -931,11 +941,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
       if (commonObjectRequestParamsBuilder_ == null) {
         commonObjectRequestParams_ = builderForValue.build();
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -950,19 +960,19 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (commonObjectRequestParams_ != null) {
-          commonObjectRequestParams_ =
-              com.google.storage.v2.CommonObjectRequestParams.newBuilder(commonObjectRequestParams_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000002) != 0)
+            && commonObjectRequestParams_ != null
+            && commonObjectRequestParams_
+                != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
+          getCommonObjectRequestParamsBuilder().mergeFrom(value);
         } else {
           commonObjectRequestParams_ = value;
         }
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -975,14 +985,13 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 3;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-        onChanged();
-      } else {
-        commonObjectRequestParams_ = null;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -996,7 +1005,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-
+      bitField0_ |= 0x00000002;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
@@ -1066,7 +1075,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * @return Whether the objectChecksums field is set.
      */
     public boolean hasObjectChecksums() {
-      return objectChecksumsBuilder_ != null || objectChecksums_ != null;
+      return ((bitField0_ & 0x00000004) != 0);
     }
     /**
      *
@@ -1109,11 +1118,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
           throw new NullPointerException();
         }
         objectChecksums_ = value;
-        onChanged();
       } else {
         objectChecksumsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -1132,11 +1141,11 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
         com.google.storage.v2.ObjectChecksums.Builder builderForValue) {
       if (objectChecksumsBuilder_ == null) {
         objectChecksums_ = builderForValue.build();
-        onChanged();
       } else {
         objectChecksumsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -1153,19 +1162,18 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      */
     public Builder mergeObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
-        if (objectChecksums_ != null) {
-          objectChecksums_ =
-              com.google.storage.v2.ObjectChecksums.newBuilder(objectChecksums_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000004) != 0)
+            && objectChecksums_ != null
+            && objectChecksums_ != com.google.storage.v2.ObjectChecksums.getDefaultInstance()) {
+          getObjectChecksumsBuilder().mergeFrom(value);
         } else {
           objectChecksums_ = value;
         }
-        onChanged();
       } else {
         objectChecksumsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000004;
+      onChanged();
       return this;
     }
     /**
@@ -1181,14 +1189,13 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
      */
     public Builder clearObjectChecksums() {
-      if (objectChecksumsBuilder_ == null) {
-        objectChecksums_ = null;
-        onChanged();
-      } else {
-        objectChecksums_ = null;
+      bitField0_ = (bitField0_ & ~0x00000004);
+      objectChecksums_ = null;
+      if (objectChecksumsBuilder_ != null) {
+        objectChecksumsBuilder_.dispose();
         objectChecksumsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1204,7 +1211,7 @@ public final class StartResumableWriteRequest extends com.google.protobuf.Genera
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 5;</code>
      */
     public com.google.storage.v2.ObjectChecksums.Builder getObjectChecksumsBuilder() {
-
+      bitField0_ |= 0x00000004;
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }

@@ -70,7 +70,9 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
   }
 
   public static final int ENCRYPTION_ALGORITHM_FIELD_NUMBER = 1;
-  private volatile java.lang.Object encryptionAlgorithm_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object encryptionAlgorithm_ = "";
   /**
    *
    *
@@ -121,7 +123,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
   }
 
   public static final int ENCRYPTION_KEY_BYTES_FIELD_NUMBER = 4;
-  private com.google.protobuf.ByteString encryptionKeyBytes_;
+  private com.google.protobuf.ByteString encryptionKeyBytes_ = com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -140,7 +142,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
   }
 
   public static final int ENCRYPTION_KEY_SHA256_BYTES_FIELD_NUMBER = 5;
-  private com.google.protobuf.ByteString encryptionKeySha256Bytes_;
+  private com.google.protobuf.ByteString encryptionKeySha256Bytes_ =
+      com.google.protobuf.ByteString.EMPTY;
   /**
    *
    *
@@ -373,12 +376,10 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       encryptionAlgorithm_ = "";
-
       encryptionKeyBytes_ = com.google.protobuf.ByteString.EMPTY;
-
       encryptionKeySha256Bytes_ = com.google.protobuf.ByteString.EMPTY;
-
       return this;
     }
 
@@ -406,11 +407,24 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     public com.google.storage.v2.CommonObjectRequestParams buildPartial() {
       com.google.storage.v2.CommonObjectRequestParams result =
           new com.google.storage.v2.CommonObjectRequestParams(this);
-      result.encryptionAlgorithm_ = encryptionAlgorithm_;
-      result.encryptionKeyBytes_ = encryptionKeyBytes_;
-      result.encryptionKeySha256Bytes_ = encryptionKeySha256Bytes_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.CommonObjectRequestParams result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.encryptionAlgorithm_ = encryptionAlgorithm_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.encryptionKeyBytes_ = encryptionKeyBytes_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.encryptionKeySha256Bytes_ = encryptionKeySha256Bytes_;
+      }
     }
 
     @java.lang.Override
@@ -461,6 +475,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
         return this;
       if (!other.getEncryptionAlgorithm().isEmpty()) {
         encryptionAlgorithm_ = other.encryptionAlgorithm_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.getEncryptionKeyBytes() != com.google.protobuf.ByteString.EMPTY) {
@@ -498,19 +513,19 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
             case 10:
               {
                 encryptionAlgorithm_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 34:
               {
                 encryptionKeyBytes_ = input.readBytes();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 34
             case 42:
               {
                 encryptionKeySha256Bytes_ = input.readBytes();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 42
             default:
@@ -529,6 +544,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object encryptionAlgorithm_ = "";
     /**
@@ -594,8 +611,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       if (value == null) {
         throw new NullPointerException();
       }
-
       encryptionAlgorithm_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -612,8 +629,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      * @return This builder for chaining.
      */
     public Builder clearEncryptionAlgorithm() {
-
       encryptionAlgorithm_ = getDefaultInstance().getEncryptionAlgorithm();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -635,8 +652,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       encryptionAlgorithm_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -676,8 +693,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       if (value == null) {
         throw new NullPointerException();
       }
-
       encryptionKeyBytes_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -694,7 +711,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      * @return This builder for chaining.
      */
     public Builder clearEncryptionKeyBytes() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       encryptionKeyBytes_ = getDefaultInstance().getEncryptionKeyBytes();
       onChanged();
       return this;
@@ -735,8 +752,8 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
       if (value == null) {
         throw new NullPointerException();
       }
-
       encryptionKeySha256Bytes_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -753,7 +770,7 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
      * @return This builder for chaining.
      */
     public Builder clearEncryptionKeySha256Bytes() {
-
+      bitField0_ = (bitField0_ & ~0x00000004);
       encryptionKeySha256Bytes_ = getDefaultInstance().getEncryptionKeySha256Bytes();
       onChanged();
       return this;

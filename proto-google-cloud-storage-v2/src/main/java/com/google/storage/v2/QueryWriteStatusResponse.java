@@ -434,6 +434,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       if (resourceBuilder_ != null) {
         resourceBuilder_.clear();
       }
@@ -466,19 +467,24 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
     public com.google.storage.v2.QueryWriteStatusResponse buildPartial() {
       com.google.storage.v2.QueryWriteStatusResponse result =
           new com.google.storage.v2.QueryWriteStatusResponse(this);
-      if (writeStatusCase_ == 1) {
-        result.writeStatus_ = writeStatus_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      if (writeStatusCase_ == 2) {
-        if (resourceBuilder_ == null) {
-          result.writeStatus_ = writeStatus_;
-        } else {
-          result.writeStatus_ = resourceBuilder_.build();
-        }
-      }
-      result.writeStatusCase_ = writeStatusCase_;
+      buildPartialOneofs(result);
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.QueryWriteStatusResponse result) {
+      int from_bitField0_ = bitField0_;
+    }
+
+    private void buildPartialOneofs(com.google.storage.v2.QueryWriteStatusResponse result) {
+      result.writeStatusCase_ = writeStatusCase_;
+      result.writeStatus_ = this.writeStatus_;
+      if (writeStatusCase_ == 2 && resourceBuilder_ != null) {
+        result.writeStatus_ = resourceBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -611,6 +617,8 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       return this;
     }
 
+    private int bitField0_;
+
     /**
      *
      *
@@ -664,6 +672,7 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
      * @return This builder for chaining.
      */
     public Builder setPersistedSize(long value) {
+
       writeStatusCase_ = 1;
       writeStatus_ = value;
       onChanged();
@@ -903,7 +912,6 @@ public final class QueryWriteStatusResponse extends com.google.protobuf.Generate
       }
       writeStatusCase_ = 2;
       onChanged();
-      ;
       return resourceBuilder_;
     }
 

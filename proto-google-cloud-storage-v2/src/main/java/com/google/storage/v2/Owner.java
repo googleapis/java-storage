@@ -67,7 +67,9 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int ENTITY_FIELD_NUMBER = 1;
-  private volatile java.lang.Object entity_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object entity_ = "";
   /**
    *
    *
@@ -116,7 +118,9 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int ENTITY_ID_FIELD_NUMBER = 2;
-  private volatile java.lang.Object entityId_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object entityId_ = "";
   /**
    *
    *
@@ -366,10 +370,9 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       entity_ = "";
-
       entityId_ = "";
-
       return this;
     }
 
@@ -395,10 +398,21 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public com.google.storage.v2.Owner buildPartial() {
       com.google.storage.v2.Owner result = new com.google.storage.v2.Owner(this);
-      result.entity_ = entity_;
-      result.entityId_ = entityId_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.Owner result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.entity_ = entity_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.entityId_ = entityId_;
+      }
     }
 
     @java.lang.Override
@@ -448,10 +462,12 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
       if (other == com.google.storage.v2.Owner.getDefaultInstance()) return this;
       if (!other.getEntity().isEmpty()) {
         entity_ = other.entity_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getEntityId().isEmpty()) {
         entityId_ = other.entityId_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -483,13 +499,13 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
             case 10:
               {
                 entity_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 entityId_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             default:
@@ -508,6 +524,8 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object entity_ = "";
     /**
@@ -570,8 +588,8 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       entity_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -587,8 +605,8 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearEntity() {
-
       entity_ = getDefaultInstance().getEntity();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -609,8 +627,8 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       entity_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -676,8 +694,8 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       entityId_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -693,8 +711,8 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearEntityId() {
-
       entityId_ = getDefaultInstance().getEntityId();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -715,8 +733,8 @@ public final class Owner extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       entityId_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }

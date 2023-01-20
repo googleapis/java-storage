@@ -84,7 +84,9 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int NAME_FIELD_NUMBER = 1;
-  private volatile java.lang.Object name_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object name_ = "";
   /**
    *
    *
@@ -139,7 +141,9 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int TOPIC_FIELD_NUMBER = 2;
-  private volatile java.lang.Object topic_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object topic_ = "";
   /**
    *
    *
@@ -192,7 +196,9 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int ETAG_FIELD_NUMBER = 7;
-  private volatile java.lang.Object etag_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object etag_ = "";
   /**
    *
    *
@@ -245,6 +251,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int EVENT_TYPES_FIELD_NUMBER = 3;
+
+  @SuppressWarnings("serial")
   private com.google.protobuf.LazyStringList eventTypes_;
   /**
    *
@@ -322,6 +330,7 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
             "");
   }
 
+  @SuppressWarnings("serial")
   private com.google.protobuf.MapField<java.lang.String, java.lang.String> customAttributes_;
 
   private com.google.protobuf.MapField<java.lang.String, java.lang.String>
@@ -384,8 +393,10 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
    */
   @java.lang.Override
-  public java.lang.String getCustomAttributesOrDefault(
-      java.lang.String key, java.lang.String defaultValue) {
+  public /* nullable */ java.lang.String getCustomAttributesOrDefault(
+      java.lang.String key,
+      /* nullable */
+      java.lang.String defaultValue) {
     if (key == null) {
       throw new NullPointerException("map key");
     }
@@ -415,7 +426,9 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int OBJECT_NAME_PREFIX_FIELD_NUMBER = 5;
-  private volatile java.lang.Object objectNamePrefix_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object objectNamePrefix_ = "";
   /**
    *
    *
@@ -466,7 +479,9 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int PAYLOAD_FORMAT_FIELD_NUMBER = 6;
-  private volatile java.lang.Object payloadFormat_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object payloadFormat_ = "";
   /**
    *
    *
@@ -798,19 +813,15 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       name_ = "";
-
       topic_ = "";
-
       etag_ = "";
-
       eventTypes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000008);
       internalGetMutableCustomAttributes().clear();
       objectNamePrefix_ = "";
-
       payloadFormat_ = "";
-
       return this;
     }
 
@@ -837,21 +848,43 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public com.google.storage.v2.Notification buildPartial() {
       com.google.storage.v2.Notification result = new com.google.storage.v2.Notification(this);
-      int from_bitField0_ = bitField0_;
-      result.name_ = name_;
-      result.topic_ = topic_;
-      result.etag_ = etag_;
-      if (((bitField0_ & 0x00000001) != 0)) {
-        eventTypes_ = eventTypes_.getUnmodifiableView();
-        bitField0_ = (bitField0_ & ~0x00000001);
+      buildPartialRepeatedFields(result);
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      result.eventTypes_ = eventTypes_;
-      result.customAttributes_ = internalGetCustomAttributes();
-      result.customAttributes_.makeImmutable();
-      result.objectNamePrefix_ = objectNamePrefix_;
-      result.payloadFormat_ = payloadFormat_;
       onBuilt();
       return result;
+    }
+
+    private void buildPartialRepeatedFields(com.google.storage.v2.Notification result) {
+      if (((bitField0_ & 0x00000008) != 0)) {
+        eventTypes_ = eventTypes_.getUnmodifiableView();
+        bitField0_ = (bitField0_ & ~0x00000008);
+      }
+      result.eventTypes_ = eventTypes_;
+    }
+
+    private void buildPartial0(com.google.storage.v2.Notification result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.name_ = name_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.topic_ = topic_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.etag_ = etag_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.customAttributes_ = internalGetCustomAttributes();
+        result.customAttributes_.makeImmutable();
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.objectNamePrefix_ = objectNamePrefix_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.payloadFormat_ = payloadFormat_;
+      }
     }
 
     @java.lang.Override
@@ -901,20 +934,23 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (other == com.google.storage.v2.Notification.getDefaultInstance()) return this;
       if (!other.getName().isEmpty()) {
         name_ = other.name_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getTopic().isEmpty()) {
         topic_ = other.topic_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       if (!other.getEtag().isEmpty()) {
         etag_ = other.etag_;
+        bitField0_ |= 0x00000004;
         onChanged();
       }
       if (!other.eventTypes_.isEmpty()) {
         if (eventTypes_.isEmpty()) {
           eventTypes_ = other.eventTypes_;
-          bitField0_ = (bitField0_ & ~0x00000001);
+          bitField0_ = (bitField0_ & ~0x00000008);
         } else {
           ensureEventTypesIsMutable();
           eventTypes_.addAll(other.eventTypes_);
@@ -922,12 +958,15 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
         onChanged();
       }
       internalGetMutableCustomAttributes().mergeFrom(other.internalGetCustomAttributes());
+      bitField0_ |= 0x00000010;
       if (!other.getObjectNamePrefix().isEmpty()) {
         objectNamePrefix_ = other.objectNamePrefix_;
+        bitField0_ |= 0x00000020;
         onChanged();
       }
       if (!other.getPayloadFormat().isEmpty()) {
         payloadFormat_ = other.payloadFormat_;
+        bitField0_ |= 0x00000040;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -959,13 +998,13 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
             case 10:
               {
                 name_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 topic_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             case 26:
@@ -985,24 +1024,25 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
                 internalGetMutableCustomAttributes()
                     .getMutableMap()
                     .put(customAttributes__.getKey(), customAttributes__.getValue());
+                bitField0_ |= 0x00000010;
                 break;
               } // case 34
             case 42:
               {
                 objectNamePrefix_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000020;
                 break;
               } // case 42
             case 50:
               {
                 payloadFormat_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000040;
                 break;
               } // case 50
             case 58:
               {
                 etag_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 58
             default:
@@ -1094,8 +1134,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       name_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -1114,8 +1154,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearName() {
-
       name_ = getDefaultInstance().getName();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -1139,8 +1179,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       name_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -1212,8 +1252,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       topic_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1231,8 +1271,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearTopic() {
-
       topic_ = getDefaultInstance().getTopic();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -1255,8 +1295,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       topic_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1328,8 +1368,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       etag_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1347,8 +1387,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearEtag() {
-
       etag_ = getDefaultInstance().getEtag();
+      bitField0_ = (bitField0_ & ~0x00000004);
       onChanged();
       return this;
     }
@@ -1371,8 +1411,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       etag_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1381,9 +1421,9 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
         com.google.protobuf.LazyStringArrayList.EMPTY;
 
     private void ensureEventTypesIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
+      if (!((bitField0_ & 0x00000008) != 0)) {
         eventTypes_ = new com.google.protobuf.LazyStringArrayList(eventTypes_);
-        bitField0_ |= 0x00000001;
+        bitField0_ |= 0x00000008;
       }
     }
     /**
@@ -1526,7 +1566,7 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      */
     public Builder clearEventTypes() {
       eventTypes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000001);
+      bitField0_ = (bitField0_ & ~0x00000008);
       onChanged();
       return this;
     }
@@ -1567,8 +1607,6 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
 
     private com.google.protobuf.MapField<java.lang.String, java.lang.String>
         internalGetMutableCustomAttributes() {
-      onChanged();
-      ;
       if (customAttributes_ == null) {
         customAttributes_ =
             com.google.protobuf.MapField.newMapField(
@@ -1577,6 +1615,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (!customAttributes_.isMutable()) {
         customAttributes_ = customAttributes_.copy();
       }
+      bitField0_ |= 0x00000010;
+      onChanged();
       return customAttributes_;
     }
 
@@ -1631,8 +1671,10 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
      */
     @java.lang.Override
-    public java.lang.String getCustomAttributesOrDefault(
-        java.lang.String key, java.lang.String defaultValue) {
+    public /* nullable */ java.lang.String getCustomAttributesOrDefault(
+        java.lang.String key,
+        /* nullable */
+        java.lang.String defaultValue) {
       if (key == null) {
         throw new NullPointerException("map key");
       }
@@ -1664,6 +1706,7 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
     }
 
     public Builder clearCustomAttributes() {
+      bitField0_ = (bitField0_ & ~0x00000010);
       internalGetMutableCustomAttributes().getMutableMap().clear();
       return this;
     }
@@ -1687,6 +1730,7 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
     /** Use alternate mutation accessors instead. */
     @java.lang.Deprecated
     public java.util.Map<java.lang.String, java.lang.String> getMutableCustomAttributes() {
+      bitField0_ |= 0x00000010;
       return internalGetMutableCustomAttributes().getMutableMap();
     }
     /**
@@ -1706,8 +1750,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException("map value");
       }
-
       internalGetMutableCustomAttributes().getMutableMap().put(key, value);
+      bitField0_ |= 0x00000010;
       return this;
     }
     /**
@@ -1723,6 +1767,7 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
     public Builder putAllCustomAttributes(
         java.util.Map<java.lang.String, java.lang.String> values) {
       internalGetMutableCustomAttributes().getMutableMap().putAll(values);
+      bitField0_ |= 0x00000010;
       return this;
     }
 
@@ -1790,8 +1835,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       objectNamePrefix_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1808,8 +1853,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearObjectNamePrefix() {
-
       objectNamePrefix_ = getDefaultInstance().getObjectNamePrefix();
+      bitField0_ = (bitField0_ & ~0x00000020);
       onChanged();
       return this;
     }
@@ -1831,8 +1876,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       objectNamePrefix_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1898,8 +1943,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       payloadFormat_ = value;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1915,8 +1960,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearPayloadFormat() {
-
       payloadFormat_ = getDefaultInstance().getPayloadFormat();
+      bitField0_ = (bitField0_ & ~0x00000040);
       onChanged();
       return this;
     }
@@ -1937,8 +1982,8 @@ public final class Notification extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       payloadFormat_ = value;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }

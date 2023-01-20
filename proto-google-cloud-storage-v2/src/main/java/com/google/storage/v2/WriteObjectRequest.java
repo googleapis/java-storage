@@ -284,7 +284,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   }
 
   public static final int WRITE_OFFSET_FIELD_NUMBER = 3;
-  private long writeOffset_;
+  private long writeOffset_ = 0L;
   /**
    *
    *
@@ -418,11 +418,13 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
    */
   @java.lang.Override
   public com.google.storage.v2.ObjectChecksumsOrBuilder getObjectChecksumsOrBuilder() {
-    return getObjectChecksums();
+    return objectChecksums_ == null
+        ? com.google.storage.v2.ObjectChecksums.getDefaultInstance()
+        : objectChecksums_;
   }
 
   public static final int FINISH_WRITE_FIELD_NUMBER = 7;
-  private boolean finishWrite_;
+  private boolean finishWrite_ = false;
   /**
    *
    *
@@ -490,7 +492,9 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   @java.lang.Override
   public com.google.storage.v2.CommonObjectRequestParamsOrBuilder
       getCommonObjectRequestParamsOrBuilder() {
-    return getCommonObjectRequestParams();
+    return commonObjectRequestParams_ == null
+        ? com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()
+        : commonObjectRequestParams_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -790,26 +794,23 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       if (writeObjectSpecBuilder_ != null) {
         writeObjectSpecBuilder_.clear();
       }
       writeOffset_ = 0L;
-
       if (checksummedDataBuilder_ != null) {
         checksummedDataBuilder_.clear();
       }
-      if (objectChecksumsBuilder_ == null) {
-        objectChecksums_ = null;
-      } else {
-        objectChecksums_ = null;
+      objectChecksums_ = null;
+      if (objectChecksumsBuilder_ != null) {
+        objectChecksumsBuilder_.dispose();
         objectChecksumsBuilder_ = null;
       }
       finishWrite_ = false;
-
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-      } else {
-        commonObjectRequestParams_ = null;
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
       firstMessageCase_ = 0;
@@ -843,39 +844,45 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public com.google.storage.v2.WriteObjectRequest buildPartial() {
       com.google.storage.v2.WriteObjectRequest result =
           new com.google.storage.v2.WriteObjectRequest(this);
-      if (firstMessageCase_ == 1) {
-        result.firstMessage_ = firstMessage_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      if (firstMessageCase_ == 2) {
-        if (writeObjectSpecBuilder_ == null) {
-          result.firstMessage_ = firstMessage_;
-        } else {
-          result.firstMessage_ = writeObjectSpecBuilder_.build();
-        }
-      }
-      result.writeOffset_ = writeOffset_;
-      if (dataCase_ == 4) {
-        if (checksummedDataBuilder_ == null) {
-          result.data_ = data_;
-        } else {
-          result.data_ = checksummedDataBuilder_.build();
-        }
-      }
-      if (objectChecksumsBuilder_ == null) {
-        result.objectChecksums_ = objectChecksums_;
-      } else {
-        result.objectChecksums_ = objectChecksumsBuilder_.build();
-      }
-      result.finishWrite_ = finishWrite_;
-      if (commonObjectRequestParamsBuilder_ == null) {
-        result.commonObjectRequestParams_ = commonObjectRequestParams_;
-      } else {
-        result.commonObjectRequestParams_ = commonObjectRequestParamsBuilder_.build();
-      }
-      result.firstMessageCase_ = firstMessageCase_;
-      result.dataCase_ = dataCase_;
+      buildPartialOneofs(result);
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.WriteObjectRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.writeOffset_ = writeOffset_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.objectChecksums_ =
+            objectChecksumsBuilder_ == null ? objectChecksums_ : objectChecksumsBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        result.finishWrite_ = finishWrite_;
+      }
+      if (((from_bitField0_ & 0x00000040) != 0)) {
+        result.commonObjectRequestParams_ =
+            commonObjectRequestParamsBuilder_ == null
+                ? commonObjectRequestParams_
+                : commonObjectRequestParamsBuilder_.build();
+      }
+    }
+
+    private void buildPartialOneofs(com.google.storage.v2.WriteObjectRequest result) {
+      result.firstMessageCase_ = firstMessageCase_;
+      result.firstMessage_ = this.firstMessage_;
+      if (firstMessageCase_ == 2 && writeObjectSpecBuilder_ != null) {
+        result.firstMessage_ = writeObjectSpecBuilder_.build();
+      }
+      result.dataCase_ = dataCase_;
+      result.data_ = this.data_;
+      if (dataCase_ == 4 && checksummedDataBuilder_ != null) {
+        result.data_ = checksummedDataBuilder_.build();
+      }
     }
 
     @java.lang.Override
@@ -1006,7 +1013,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             case 24:
               {
                 writeOffset_ = input.readInt64();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 24
             case 34:
@@ -1018,20 +1025,20 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
             case 50:
               {
                 input.readMessage(getObjectChecksumsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000010;
                 break;
               } // case 50
             case 56:
               {
                 finishWrite_ = input.readBool();
-
+                bitField0_ |= 0x00000020;
                 break;
               } // case 56
             case 66:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000040;
                 break;
               } // case 66
             default:
@@ -1078,6 +1085,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       onChanged();
       return this;
     }
+
+    private int bitField0_;
 
     /**
      *
@@ -1434,7 +1443,6 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
       firstMessageCase_ = 2;
       onChanged();
-      ;
       return writeObjectSpecBuilder_;
     }
 
@@ -1487,6 +1495,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public Builder setWriteOffset(long value) {
 
       writeOffset_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1511,7 +1520,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearWriteOffset() {
-
+      bitField0_ = (bitField0_ & ~0x00000004);
       writeOffset_ = 0L;
       onChanged();
       return this;
@@ -1729,7 +1738,6 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
       }
       dataCase_ = 4;
       onChanged();
-      ;
       return checksummedDataBuilder_;
     }
 
@@ -1754,7 +1762,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * @return Whether the objectChecksums field is set.
      */
     public boolean hasObjectChecksums() {
-      return objectChecksumsBuilder_ != null || objectChecksums_ != null;
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1797,11 +1805,11 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
           throw new NullPointerException();
         }
         objectChecksums_ = value;
-        onChanged();
       } else {
         objectChecksumsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1820,11 +1828,11 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         com.google.storage.v2.ObjectChecksums.Builder builderForValue) {
       if (objectChecksumsBuilder_ == null) {
         objectChecksums_ = builderForValue.build();
-        onChanged();
       } else {
         objectChecksumsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1841,19 +1849,18 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      */
     public Builder mergeObjectChecksums(com.google.storage.v2.ObjectChecksums value) {
       if (objectChecksumsBuilder_ == null) {
-        if (objectChecksums_ != null) {
-          objectChecksums_ =
-              com.google.storage.v2.ObjectChecksums.newBuilder(objectChecksums_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000010) != 0)
+            && objectChecksums_ != null
+            && objectChecksums_ != com.google.storage.v2.ObjectChecksums.getDefaultInstance()) {
+          getObjectChecksumsBuilder().mergeFrom(value);
         } else {
           objectChecksums_ = value;
         }
-        onChanged();
       } else {
         objectChecksumsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000010;
+      onChanged();
       return this;
     }
     /**
@@ -1869,14 +1876,13 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
      */
     public Builder clearObjectChecksums() {
-      if (objectChecksumsBuilder_ == null) {
-        objectChecksums_ = null;
-        onChanged();
-      } else {
-        objectChecksums_ = null;
+      bitField0_ = (bitField0_ & ~0x00000010);
+      objectChecksums_ = null;
+      if (objectChecksumsBuilder_ != null) {
+        objectChecksumsBuilder_.dispose();
         objectChecksumsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1892,7 +1898,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * <code>.google.storage.v2.ObjectChecksums object_checksums = 6;</code>
      */
     public com.google.storage.v2.ObjectChecksums.Builder getObjectChecksumsBuilder() {
-
+      bitField0_ |= 0x00000010;
       onChanged();
       return getObjectChecksumsFieldBuilder().getBuilder();
     }
@@ -1987,6 +1993,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public Builder setFinishWrite(boolean value) {
 
       finishWrite_ = value;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -2007,7 +2014,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearFinishWrite() {
-
+      bitField0_ = (bitField0_ & ~0x00000020);
       finishWrite_ = false;
       onChanged();
       return this;
@@ -2031,7 +2038,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return commonObjectRequestParamsBuilder_ != null || commonObjectRequestParams_ != null;
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      *
@@ -2069,11 +2076,11 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
           throw new NullPointerException();
         }
         commonObjectRequestParams_ = value;
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -2089,11 +2096,11 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
         com.google.storage.v2.CommonObjectRequestParams.Builder builderForValue) {
       if (commonObjectRequestParamsBuilder_ == null) {
         commonObjectRequestParams_ = builderForValue.build();
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -2108,19 +2115,19 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (commonObjectRequestParams_ != null) {
-          commonObjectRequestParams_ =
-              com.google.storage.v2.CommonObjectRequestParams.newBuilder(commonObjectRequestParams_)
-                  .mergeFrom(value)
-                  .buildPartial();
+        if (((bitField0_ & 0x00000040) != 0)
+            && commonObjectRequestParams_ != null
+            && commonObjectRequestParams_
+                != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
+          getCommonObjectRequestParamsBuilder().mergeFrom(value);
         } else {
           commonObjectRequestParams_ = value;
         }
-        onChanged();
       } else {
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000040;
+      onChanged();
       return this;
     }
     /**
@@ -2133,14 +2140,13 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      if (commonObjectRequestParamsBuilder_ == null) {
-        commonObjectRequestParams_ = null;
-        onChanged();
-      } else {
-        commonObjectRequestParams_ = null;
+      bitField0_ = (bitField0_ & ~0x00000040);
+      commonObjectRequestParams_ = null;
+      if (commonObjectRequestParamsBuilder_ != null) {
+        commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -2154,7 +2160,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-
+      bitField0_ |= 0x00000040;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }

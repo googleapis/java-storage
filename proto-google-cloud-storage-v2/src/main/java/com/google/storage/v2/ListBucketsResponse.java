@@ -69,6 +69,8 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
   }
 
   public static final int BUCKETS_FIELD_NUMBER = 1;
+
+  @SuppressWarnings("serial")
   private java.util.List<com.google.storage.v2.Bucket> buckets_;
   /**
    *
@@ -137,7 +139,9 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
   }
 
   public static final int NEXT_PAGE_TOKEN_FIELD_NUMBER = 2;
-  private volatile java.lang.Object nextPageToken_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object nextPageToken_ = "";
   /**
    *
    *
@@ -395,6 +399,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       if (bucketsBuilder_ == null) {
         buckets_ = java.util.Collections.emptyList();
       } else {
@@ -403,7 +408,6 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       bitField0_ = (bitField0_ & ~0x00000001);
       nextPageToken_ = "";
-
       return this;
     }
 
@@ -431,7 +435,15 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.ListBucketsResponse buildPartial() {
       com.google.storage.v2.ListBucketsResponse result =
           new com.google.storage.v2.ListBucketsResponse(this);
-      int from_bitField0_ = bitField0_;
+      buildPartialRepeatedFields(result);
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
+      onBuilt();
+      return result;
+    }
+
+    private void buildPartialRepeatedFields(com.google.storage.v2.ListBucketsResponse result) {
       if (bucketsBuilder_ == null) {
         if (((bitField0_ & 0x00000001) != 0)) {
           buckets_ = java.util.Collections.unmodifiableList(buckets_);
@@ -441,9 +453,13 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       } else {
         result.buckets_ = bucketsBuilder_.build();
       }
-      result.nextPageToken_ = nextPageToken_;
-      onBuilt();
-      return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ListBucketsResponse result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.nextPageToken_ = nextPageToken_;
+      }
     }
 
     @java.lang.Override
@@ -520,6 +536,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       }
       if (!other.getNextPageToken().isEmpty()) {
         nextPageToken_ = other.nextPageToken_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -563,7 +580,7 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
             case 18:
               {
                 nextPageToken_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             default:
@@ -994,8 +1011,8 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       nextPageToken_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1012,8 +1029,8 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearNextPageToken() {
-
       nextPageToken_ = getDefaultInstance().getNextPageToken();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -1035,8 +1052,8 @@ public final class ListBucketsResponse extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       nextPageToken_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }

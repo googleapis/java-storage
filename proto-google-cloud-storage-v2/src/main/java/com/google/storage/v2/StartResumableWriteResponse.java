@@ -68,7 +68,9 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
   }
 
   public static final int UPLOAD_ID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object uploadId_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object uploadId_ = "";
   /**
    *
    *
@@ -315,8 +317,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       uploadId_ = "";
-
       return this;
     }
 
@@ -344,9 +346,18 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
     public com.google.storage.v2.StartResumableWriteResponse buildPartial() {
       com.google.storage.v2.StartResumableWriteResponse result =
           new com.google.storage.v2.StartResumableWriteResponse(this);
-      result.uploadId_ = uploadId_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.StartResumableWriteResponse result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.uploadId_ = uploadId_;
+      }
     }
 
     @java.lang.Override
@@ -397,6 +408,7 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
         return this;
       if (!other.getUploadId().isEmpty()) {
         uploadId_ = other.uploadId_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -428,7 +440,7 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
             case 10:
               {
                 uploadId_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             default:
@@ -447,6 +459,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object uploadId_ = "";
     /**
@@ -512,8 +526,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
       if (value == null) {
         throw new NullPointerException();
       }
-
       uploadId_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -530,8 +544,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
      * @return This builder for chaining.
      */
     public Builder clearUploadId() {
-
       uploadId_ = getDefaultInstance().getUploadId();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -553,8 +567,8 @@ public final class StartResumableWriteResponse extends com.google.protobuf.Gener
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       uploadId_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }

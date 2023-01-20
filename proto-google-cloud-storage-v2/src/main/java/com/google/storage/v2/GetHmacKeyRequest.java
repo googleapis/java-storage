@@ -69,7 +69,9 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
   }
 
   public static final int ACCESS_ID_FIELD_NUMBER = 1;
-  private volatile java.lang.Object accessId_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object accessId_ = "";
   /**
    *
    *
@@ -118,7 +120,9 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
   }
 
   public static final int PROJECT_FIELD_NUMBER = 2;
-  private volatile java.lang.Object project_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object project_ = "";
   /**
    *
    *
@@ -379,10 +383,9 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       accessId_ = "";
-
       project_ = "";
-
       return this;
     }
 
@@ -410,10 +413,21 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
     public com.google.storage.v2.GetHmacKeyRequest buildPartial() {
       com.google.storage.v2.GetHmacKeyRequest result =
           new com.google.storage.v2.GetHmacKeyRequest(this);
-      result.accessId_ = accessId_;
-      result.project_ = project_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.GetHmacKeyRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.accessId_ = accessId_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.project_ = project_;
+      }
     }
 
     @java.lang.Override
@@ -463,10 +477,12 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
       if (other == com.google.storage.v2.GetHmacKeyRequest.getDefaultInstance()) return this;
       if (!other.getAccessId().isEmpty()) {
         accessId_ = other.accessId_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getProject().isEmpty()) {
         project_ = other.project_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -498,13 +514,13 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
             case 10:
               {
                 accessId_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 project_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             default:
@@ -523,6 +539,8 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object accessId_ = "";
     /**
@@ -585,8 +603,8 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
       if (value == null) {
         throw new NullPointerException();
       }
-
       accessId_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -602,8 +620,8 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
      * @return This builder for chaining.
      */
     public Builder clearAccessId() {
-
       accessId_ = getDefaultInstance().getAccessId();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -624,8 +642,8 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       accessId_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -703,8 +721,8 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
       if (value == null) {
         throw new NullPointerException();
       }
-
       project_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -724,8 +742,8 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
      * @return This builder for chaining.
      */
     public Builder clearProject() {
-
       project_ = getDefaultInstance().getProject();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -750,8 +768,8 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       project_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }

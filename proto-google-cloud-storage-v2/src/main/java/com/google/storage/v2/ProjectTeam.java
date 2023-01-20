@@ -69,7 +69,9 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int PROJECT_NUMBER_FIELD_NUMBER = 1;
-  private volatile java.lang.Object projectNumber_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object projectNumber_ = "";
   /**
    *
    *
@@ -118,7 +120,9 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int TEAM_FIELD_NUMBER = 2;
-  private volatile java.lang.Object team_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object team_ = "";
   /**
    *
    *
@@ -370,10 +374,9 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       projectNumber_ = "";
-
       team_ = "";
-
       return this;
     }
 
@@ -400,10 +403,21 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public com.google.storage.v2.ProjectTeam buildPartial() {
       com.google.storage.v2.ProjectTeam result = new com.google.storage.v2.ProjectTeam(this);
-      result.projectNumber_ = projectNumber_;
-      result.team_ = team_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ProjectTeam result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.projectNumber_ = projectNumber_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.team_ = team_;
+      }
     }
 
     @java.lang.Override
@@ -453,10 +467,12 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
       if (other == com.google.storage.v2.ProjectTeam.getDefaultInstance()) return this;
       if (!other.getProjectNumber().isEmpty()) {
         projectNumber_ = other.projectNumber_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (!other.getTeam().isEmpty()) {
         team_ = other.team_;
+        bitField0_ |= 0x00000002;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -488,13 +504,13 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
             case 10:
               {
                 projectNumber_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 team_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             default:
@@ -513,6 +529,8 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object projectNumber_ = "";
     /**
@@ -575,8 +593,8 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       projectNumber_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -592,8 +610,8 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearProjectNumber() {
-
       projectNumber_ = getDefaultInstance().getProjectNumber();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -614,8 +632,8 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       projectNumber_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -681,8 +699,8 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
       if (value == null) {
         throw new NullPointerException();
       }
-
       team_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -698,8 +716,8 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearTeam() {
-
       team_ = getDefaultInstance().getTeam();
+      bitField0_ = (bitField0_ & ~0x00000002);
       onChanged();
       return this;
     }
@@ -720,8 +738,8 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       team_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }

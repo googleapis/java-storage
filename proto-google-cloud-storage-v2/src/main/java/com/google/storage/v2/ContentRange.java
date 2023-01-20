@@ -66,7 +66,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int START_FIELD_NUMBER = 1;
-  private long start_;
+  private long start_ = 0L;
   /**
    *
    *
@@ -84,7 +84,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int END_FIELD_NUMBER = 2;
-  private long end_;
+  private long end_ = 0L;
   /**
    *
    *
@@ -102,7 +102,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
   }
 
   public static final int COMPLETE_LENGTH_FIELD_NUMBER = 3;
-  private long completeLength_;
+  private long completeLength_ = 0L;
   /**
    *
    *
@@ -332,12 +332,10 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       start_ = 0L;
-
       end_ = 0L;
-
       completeLength_ = 0L;
-
       return this;
     }
 
@@ -364,11 +362,24 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public com.google.storage.v2.ContentRange buildPartial() {
       com.google.storage.v2.ContentRange result = new com.google.storage.v2.ContentRange(this);
-      result.start_ = start_;
-      result.end_ = end_;
-      result.completeLength_ = completeLength_;
+      if (bitField0_ != 0) {
+        buildPartial0(result);
+      }
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.ContentRange result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.start_ = start_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.end_ = end_;
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.completeLength_ = completeLength_;
+      }
     }
 
     @java.lang.Override
@@ -454,19 +465,19 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
             case 8:
               {
                 start_ = input.readInt64();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 8
             case 16:
               {
                 end_ = input.readInt64();
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 16
             case 24:
               {
                 completeLength_ = input.readInt64();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 24
             default:
@@ -485,6 +496,8 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private long start_;
     /**
@@ -517,6 +530,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
     public Builder setStart(long value) {
 
       start_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -532,7 +546,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearStart() {
-
+      bitField0_ = (bitField0_ & ~0x00000001);
       start_ = 0L;
       onChanged();
       return this;
@@ -569,6 +583,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
     public Builder setEnd(long value) {
 
       end_ = value;
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -584,7 +599,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearEnd() {
-
+      bitField0_ = (bitField0_ & ~0x00000002);
       end_ = 0L;
       onChanged();
       return this;
@@ -621,6 +636,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
     public Builder setCompleteLength(long value) {
 
       completeLength_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -636,7 +652,7 @@ public final class ContentRange extends com.google.protobuf.GeneratedMessageV3
      * @return This builder for chaining.
      */
     public Builder clearCompleteLength() {
-
+      bitField0_ = (bitField0_ & ~0x00000004);
       completeLength_ = 0L;
       onChanged();
       return this;

@@ -71,7 +71,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PARENT_FIELD_NUMBER = 1;
-  private volatile java.lang.Object parent_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object parent_ = "";
   /**
    *
    *
@@ -175,11 +177,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
    */
   @java.lang.Override
   public com.google.storage.v2.BucketOrBuilder getBucketOrBuilder() {
-    return getBucket();
+    return bucket_ == null ? com.google.storage.v2.Bucket.getDefaultInstance() : bucket_;
   }
 
   public static final int BUCKET_ID_FIELD_NUMBER = 3;
-  private volatile java.lang.Object bucketId_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object bucketId_ = "";
   /**
    *
    *
@@ -232,7 +236,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PREDEFINED_ACL_FIELD_NUMBER = 6;
-  private volatile java.lang.Object predefinedAcl_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object predefinedAcl_ = "";
   /**
    *
    *
@@ -285,7 +291,9 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
   }
 
   public static final int PREDEFINED_DEFAULT_OBJECT_ACL_FIELD_NUMBER = 7;
-  private volatile java.lang.Object predefinedDefaultObjectAcl_;
+
+  @SuppressWarnings("serial")
+  private volatile java.lang.Object predefinedDefaultObjectAcl_ = "";
   /**
    *
    *
@@ -577,20 +585,16 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     @java.lang.Override
     public Builder clear() {
       super.clear();
+      bitField0_ = 0;
       parent_ = "";
-
-      if (bucketBuilder_ == null) {
-        bucket_ = null;
-      } else {
-        bucket_ = null;
+      bucket_ = null;
+      if (bucketBuilder_ != null) {
+        bucketBuilder_.dispose();
         bucketBuilder_ = null;
       }
       bucketId_ = "";
-
       predefinedAcl_ = "";
-
       predefinedDefaultObjectAcl_ = "";
-
       return this;
     }
 
@@ -618,17 +622,30 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     public com.google.storage.v2.CreateBucketRequest buildPartial() {
       com.google.storage.v2.CreateBucketRequest result =
           new com.google.storage.v2.CreateBucketRequest(this);
-      result.parent_ = parent_;
-      if (bucketBuilder_ == null) {
-        result.bucket_ = bucket_;
-      } else {
-        result.bucket_ = bucketBuilder_.build();
+      if (bitField0_ != 0) {
+        buildPartial0(result);
       }
-      result.bucketId_ = bucketId_;
-      result.predefinedAcl_ = predefinedAcl_;
-      result.predefinedDefaultObjectAcl_ = predefinedDefaultObjectAcl_;
       onBuilt();
       return result;
+    }
+
+    private void buildPartial0(com.google.storage.v2.CreateBucketRequest result) {
+      int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000001) != 0)) {
+        result.parent_ = parent_;
+      }
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        result.bucket_ = bucketBuilder_ == null ? bucket_ : bucketBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000004) != 0)) {
+        result.bucketId_ = bucketId_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        result.predefinedAcl_ = predefinedAcl_;
+      }
+      if (((from_bitField0_ & 0x00000010) != 0)) {
+        result.predefinedDefaultObjectAcl_ = predefinedDefaultObjectAcl_;
+      }
     }
 
     @java.lang.Override
@@ -678,6 +695,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       if (other == com.google.storage.v2.CreateBucketRequest.getDefaultInstance()) return this;
       if (!other.getParent().isEmpty()) {
         parent_ = other.parent_;
+        bitField0_ |= 0x00000001;
         onChanged();
       }
       if (other.hasBucket()) {
@@ -685,14 +703,17 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       }
       if (!other.getBucketId().isEmpty()) {
         bucketId_ = other.bucketId_;
+        bitField0_ |= 0x00000004;
         onChanged();
       }
       if (!other.getPredefinedAcl().isEmpty()) {
         predefinedAcl_ = other.predefinedAcl_;
+        bitField0_ |= 0x00000008;
         onChanged();
       }
       if (!other.getPredefinedDefaultObjectAcl().isEmpty()) {
         predefinedDefaultObjectAcl_ = other.predefinedDefaultObjectAcl_;
+        bitField0_ |= 0x00000010;
         onChanged();
       }
       this.mergeUnknownFields(other.getUnknownFields());
@@ -724,31 +745,31 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
             case 10:
               {
                 parent_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000001;
                 break;
               } // case 10
             case 18:
               {
                 input.readMessage(getBucketFieldBuilder().getBuilder(), extensionRegistry);
-
+                bitField0_ |= 0x00000002;
                 break;
               } // case 18
             case 26:
               {
                 bucketId_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000004;
                 break;
               } // case 26
             case 50:
               {
                 predefinedAcl_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000008;
                 break;
               } // case 50
             case 58:
               {
                 predefinedDefaultObjectAcl_ = input.readStringRequireUtf8();
-
+                bitField0_ |= 0x00000010;
                 break;
               } // case 58
             default:
@@ -767,6 +788,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       } // finally
       return this;
     }
+
+    private int bitField0_;
 
     private java.lang.Object parent_ = "";
     /**
@@ -835,8 +858,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       parent_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -854,8 +877,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearParent() {
-
       parent_ = getDefaultInstance().getParent();
+      bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
     }
@@ -878,8 +901,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       parent_ = value;
+      bitField0_ |= 0x00000001;
       onChanged();
       return this;
     }
@@ -905,7 +928,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * @return Whether the bucket field is set.
      */
     public boolean hasBucket() {
-      return bucketBuilder_ != null || bucket_ != null;
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
@@ -946,11 +969,11 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
           throw new NullPointerException();
         }
         bucket_ = value;
-        onChanged();
       } else {
         bucketBuilder_.setMessage(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -968,11 +991,11 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
     public Builder setBucket(com.google.storage.v2.Bucket.Builder builderForValue) {
       if (bucketBuilder_ == null) {
         bucket_ = builderForValue.build();
-        onChanged();
       } else {
         bucketBuilder_.setMessage(builderForValue.build());
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -989,17 +1012,18 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      */
     public Builder mergeBucket(com.google.storage.v2.Bucket value) {
       if (bucketBuilder_ == null) {
-        if (bucket_ != null) {
-          bucket_ =
-              com.google.storage.v2.Bucket.newBuilder(bucket_).mergeFrom(value).buildPartial();
+        if (((bitField0_ & 0x00000002) != 0)
+            && bucket_ != null
+            && bucket_ != com.google.storage.v2.Bucket.getDefaultInstance()) {
+          getBucketBuilder().mergeFrom(value);
         } else {
           bucket_ = value;
         }
-        onChanged();
       } else {
         bucketBuilder_.mergeFrom(value);
       }
-
+      bitField0_ |= 0x00000002;
+      onChanged();
       return this;
     }
     /**
@@ -1015,14 +1039,13 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public Builder clearBucket() {
-      if (bucketBuilder_ == null) {
-        bucket_ = null;
-        onChanged();
-      } else {
-        bucket_ = null;
+      bitField0_ = (bitField0_ & ~0x00000002);
+      bucket_ = null;
+      if (bucketBuilder_ != null) {
+        bucketBuilder_.dispose();
         bucketBuilder_ = null;
       }
-
+      onChanged();
       return this;
     }
     /**
@@ -1038,7 +1061,7 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * <code>.google.storage.v2.Bucket bucket = 2;</code>
      */
     public com.google.storage.v2.Bucket.Builder getBucketBuilder() {
-
+      bitField0_ |= 0x00000002;
       onChanged();
       return getBucketFieldBuilder().getBuilder();
     }
@@ -1157,8 +1180,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       bucketId_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1176,8 +1199,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearBucketId() {
-
       bucketId_ = getDefaultInstance().getBucketId();
+      bitField0_ = (bitField0_ & ~0x00000004);
       onChanged();
       return this;
     }
@@ -1200,8 +1223,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       bucketId_ = value;
+      bitField0_ |= 0x00000004;
       onChanged();
       return this;
     }
@@ -1273,8 +1296,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       predefinedAcl_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1292,8 +1315,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearPredefinedAcl() {
-
       predefinedAcl_ = getDefaultInstance().getPredefinedAcl();
+      bitField0_ = (bitField0_ & ~0x00000008);
       onChanged();
       return this;
     }
@@ -1316,8 +1339,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       predefinedAcl_ = value;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1389,8 +1412,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
       if (value == null) {
         throw new NullPointerException();
       }
-
       predefinedDefaultObjectAcl_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1408,8 +1431,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearPredefinedDefaultObjectAcl() {
-
       predefinedDefaultObjectAcl_ = getDefaultInstance().getPredefinedDefaultObjectAcl();
+      bitField0_ = (bitField0_ & ~0x00000010);
       onChanged();
       return this;
     }
@@ -1432,8 +1455,8 @@ public final class CreateBucketRequest extends com.google.protobuf.GeneratedMess
         throw new NullPointerException();
       }
       checkByteStringIsUtf8(value);
-
       predefinedDefaultObjectAcl_ = value;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
