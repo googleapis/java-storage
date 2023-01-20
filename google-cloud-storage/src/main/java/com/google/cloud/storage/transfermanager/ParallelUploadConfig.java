@@ -99,7 +99,10 @@ public class ParallelUploadConfig {
     private @NonNull List<BlobTargetOption> optionsPerRequest;
 
     private Builder() {
-      //TODO: set default values
+      this.skipIfExists = false;
+      this.prefix = "";
+      this.bucketName = "";
+      this.optionsPerRequest = ImmutableList.of();
     }
 
     public Builder setSkipIfExists(@NonNull boolean skipIfExists) {
