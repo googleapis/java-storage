@@ -22,15 +22,17 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageException;
 import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class DownloadResult {
 
   @NonNull private final BlobInfo input;
-  @NonNull private final Path outputDestination;
+  @MonotonicNonNull private final Path outputDestination;
   @NonNull private final TransferStatus status;
-  @NonNull private final StorageException exception;
+  @MonotonicNonNull private final StorageException exception;
 
   private DownloadResult(@NonNull BlobInfo input,
       @NonNull Path outputDestination,
@@ -85,19 +87,20 @@ public class DownloadResult {
         .add("exception", exception)
         .toString();
   }
-  public static Builder newBuilder() {
-    return new Builder();
+  public static Builder newBuilder(@NonNull BlobInfo blobInfo, @NonNull TransferStatus status) {
+    return new Builder(blobInfo, status);
   }
 
   public static class Builder {
 
     private @NonNull BlobInfo input;
-    private @NonNull Path outputDestination;
+    private @MonotonicNonNull Path outputDestination;
     private @NonNull TransferStatus status;
-    private @NonNull StorageException exception;
+    private @MonotonicNonNull StorageException exception;
 
-    private Builder() {
-      //TODO: set "NULL" values
+    private Builder(@NonNull BlobInfo input, @NonNull TransferStatus status) {
+      this.input = input;
+      this.status = status;
     }
 
     public Builder setInput(@NonNull BlobInfo input) {
@@ -122,9 +125,7 @@ public class DownloadResult {
 
     public DownloadResult build() {
       checkNotNull(input);
-      checkNotNull(outputDestination);
       checkNotNull(status);
-      checkNotNull(exception);
       return new DownloadResult(input, outputDestination, status, exception);
     }
   }

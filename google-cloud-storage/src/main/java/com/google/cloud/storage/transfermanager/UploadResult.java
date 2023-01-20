@@ -22,14 +22,15 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageException;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class UploadResult {
 
   @NonNull private final BlobInfo input;
   @NonNull private final TransferStatus status;
-  @NonNull private final BlobInfo uploadedBlob;
-  @NonNull private final StorageException exception;
+  @MonotonicNonNull private final BlobInfo uploadedBlob;
+  @MonotonicNonNull private final StorageException exception;
 
   public UploadResult(
       @NonNull BlobInfo input,
@@ -87,19 +88,20 @@ public class UploadResult {
         .toString();
   }
 
-  public static Builder newBuilder() {
-    return new Builder();
+  public static Builder newBuilder(@NonNull BlobInfo input, @NonNull TransferStatus status) {
+    return new Builder(input, status);
   }
 
   public static class Builder {
 
     private @NonNull BlobInfo input;
     private @NonNull TransferStatus status;
-    private @NonNull BlobInfo uploadedBlob;
-    private @NonNull StorageException exception;
+    private @MonotonicNonNull BlobInfo uploadedBlob;
+    private @MonotonicNonNull StorageException exception;
 
-    private Builder() {
-      //TODO: set "NULL" values
+    private Builder(@NonNull BlobInfo input, @NonNull TransferStatus status) {
+      this.input = input;
+      this.status = status;
     }
 
     public Builder setInput(@NonNull BlobInfo input) {
