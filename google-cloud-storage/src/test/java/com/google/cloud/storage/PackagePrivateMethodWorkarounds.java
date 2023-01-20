@@ -16,7 +16,10 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
 import com.google.common.collect.ImmutableList;
@@ -65,6 +68,16 @@ public final class PackagePrivateMethodWorkarounds {
         return Optional.empty();
       }
     };
+  }
+
+  public static ApiFuture<BlobInfo> getBlobInfoFromReadChannelFunction(ReadChannel c) {
+    if (c instanceof StorageReadChannel) {
+      StorageReadChannel src = (StorageReadChannel) c;
+      return src.getObject();
+    } else {
+      return ApiFutures.immediateFailedFuture(
+          new IllegalStateException("Unsupported ReadChannel Type " + c.getClass().getName()));
+    }
   }
 
   public static <T> void ifNonNull(@Nullable T t, Consumer<T> c) {

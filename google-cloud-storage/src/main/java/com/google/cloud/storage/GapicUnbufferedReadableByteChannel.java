@@ -237,12 +237,26 @@ final class GapicUnbufferedReadableByteChannel
 
     @Override
     public boolean hasNext() {
-      return ensureResponseIteratorOpen().hasNext();
+      try {
+        return ensureResponseIteratorOpen().hasNext();
+      } catch (RuntimeException e) {
+        if (!result.isDone()) {
+          result.setException(StorageException.coalesce(e));
+        }
+        throw e;
+      }
     }
 
     @Override
     public ReadObjectResponse next() {
-      return ensureResponseIteratorOpen().next();
+      try {
+        return ensureResponseIteratorOpen().next();
+      } catch (RuntimeException e) {
+        if (!result.isDone()) {
+          result.setException(StorageException.coalesce(e));
+        }
+        throw e;
+      }
     }
 
     @Override

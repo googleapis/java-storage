@@ -37,6 +37,7 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
       StorageObject storageObject,
       Map<StorageRpc.Option, ?> opts,
       BlobReadChannelContext blobReadChannelContext) {
+    super(Conversions.apiary().blobInfo());
     this.storageObject = storageObject;
     this.opts = opts;
     this.blobReadChannelContext = blobReadChannelContext;
@@ -55,7 +56,6 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
             ResumableMedia.http()
                 .read()
                 .byteChannel(blobReadChannelContext)
-                .setCallback(this::setResolvedObject)
                 .buffered(getBufferHandle())
                 .setApiaryReadRequest(getApiaryReadRequest())
                 .build());
@@ -66,7 +66,7 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
     return new ApiaryReadRequest(object, opts, getByteRangeSpec());
   }
 
-  static class BlobReadChannelV2State implements RestorableState<ReadChannel>, Serializable {
+  static final class BlobReadChannelV2State implements RestorableState<ReadChannel>, Serializable {
 
     private static final long serialVersionUID = -7595661593080505431L;
 

@@ -27,6 +27,7 @@ import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.Storage.Objects;
 import com.google.api.services.storage.Storage.Objects.Get;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
@@ -42,15 +43,17 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChannel {
 
@@ -59,7 +62,6 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
   private final SettableApiFuture<StorageObject> result;
   private final HttpStorageOptions options;
   private final ResultRetryAlgorithm<?> resultRetryAlgorithm;
-  private final Consumer<StorageObject> resolvedObjectCallback;
 
   private long position;
   private ScatteringByteChannel sbc;
@@ -73,14 +75,12 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       Storage storage,
       SettableApiFuture<StorageObject> result,
       HttpStorageOptions options,
-      ResultRetryAlgorithm<?> resultRetryAlgorithm,
-      Consumer<StorageObject> resolvedObjectCallback) {
+      ResultRetryAlgorithm<?> resultRetryAlgorithm) {
     this.apiaryReadRequest = apiaryReadRequest;
     this.storage = storage;
     this.result = result;
     this.options = options;
     this.resultRetryAlgorithm = resultRetryAlgorithm;
-    this.resolvedObjectCallback = resolvedObjectCallback;
     this.open = true;
     this.position =
         apiaryReadRequest.getByteRangeSpec() != null
@@ -142,6 +142,10 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     }
   }
 
+  private void setXGoogGeneration(long xGoogGeneration) {
+    this.xGoogGeneration = xGoogGeneration;
+  }
+
   private ScatteringByteChannel open() {
     try {
       Boolean b =
@@ -154,15 +158,35 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       InputStream content = media.getContent();
       if (xGoogGeneration == null) {
         HttpHeaders responseHeaders = media.getHeaders();
-        //noinspection unchecked
-        List<String> xGoogGenHeader = (List<String>) responseHeaders.get("x-goog-generation");
-        // TODO: wire in result metadata population
-        if (xGoogGenHeader != null && !xGoogGenHeader.isEmpty()) {
-          String s = xGoogGenHeader.get(0);
-          Long generation = Long.valueOf(s);
-          this.xGoogGeneration = generation;
-          resolvedObjectCallback.accept(
-              apiaryReadRequest.getObject().clone().setGeneration(generation));
+
+        String xGoogGenHeader = getHeaderValue(responseHeaders, "x-goog-generation");
+        if (xGoogGenHeader != null) {
+          StorageObject clone = apiaryReadRequest.getObject().clone();
+          ifNonNull(xGoogGenHeader, Long::valueOf, clone::setGeneration);
+          // store xGoogGeneration ourselves incase we need to retry
+          ifNonNull(xGoogGenHeader, Long::valueOf, this::setXGoogGeneration);
+          ifNonNull(
+              getHeaderValue(responseHeaders, "x-goog-metageneration"),
+              Long::valueOf,
+              clone::setMetageneration);
+          ifNonNull(
+              getHeaderValue(responseHeaders, "x-goog-storage-class"), clone::setStorageClass);
+          ifNonNull(
+              getHeaderValue(responseHeaders, "x-goog-stored-content-length"),
+              BigInteger::new,
+              clone::setSize);
+          ifNonNull(
+              getHeaderValue(responseHeaders, "content-disposition"), clone::setContentDisposition);
+          ifNonNull(getHeaderValue(responseHeaders, "content-type"), clone::setContentType);
+          ifNonNull(getHeaderValue(responseHeaders, "etag"), clone::setEtag);
+
+          String encoding = getHeaderValue(responseHeaders, "x-goog-stored-content-encoding");
+          if (encoding != null && !encoding.equalsIgnoreCase("identity")) {
+            clone.setContentEncoding(encoding);
+          }
+          if (!result.isDone()) {
+            result.set(clone);
+          }
         }
       }
 
@@ -175,11 +199,17 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
           throw new StorageException(404, "Failure while trying to resume download", e);
         }
       }
-      throw StorageException.translate(e);
+      StorageException translate = StorageException.translate(e);
+      result.setException(translate);
+      throw translate;
     } catch (IOException e) {
-      throw StorageException.translate(e);
+      StorageException translate = StorageException.translate(e);
+      result.setException(translate);
+      throw translate;
     } catch (Throwable t) {
-      throw StorageException.coalesce(t);
+      BaseServiceException coalesce = StorageException.coalesce(t);
+      result.setException(coalesce);
+      throw coalesce;
     }
   }
 
@@ -245,6 +275,28 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
   @SuppressWarnings("unchecked")
   private static <T> T cast(Object o) {
     return (T) o;
+  }
+
+  @Nullable
+  @SuppressWarnings("unchecked")
+  private static String getHeaderValue(@NonNull HttpHeaders headers, @NonNull String headerName) {
+    Object o = headers.get(headerName);
+    if (o == null) {
+      return null;
+    } else if (o instanceof List) {
+      List<String> list = (List<String>) o;
+      if (list.isEmpty()) {
+        return null;
+      } else {
+        return list.get(0);
+      }
+    } else if (o instanceof String) {
+      return (String) o;
+    } else {
+      throw new IllegalStateException(
+          String.format(
+              "Unexpected header type '%s' for header %s", o.getClass().getName(), headerName));
+    }
   }
 
   @Immutable

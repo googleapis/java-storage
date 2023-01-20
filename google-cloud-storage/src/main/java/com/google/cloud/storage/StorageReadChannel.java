@@ -18,12 +18,19 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.ReadChannel;
 import java.io.IOException;
 
 interface StorageReadChannel extends ReadChannel {
 
   StorageReadChannel setByteRangeSpec(ByteRangeSpec byteRangeSpec);
+
+  /**
+   * Return a Future which resolves to the sparse object metadata included in the response headers
+   * when opening the read.
+   */
+  ApiFuture<BlobInfo> getObject();
 
   default ByteRangeSpec getByteRangeSpec() {
     return ByteRangeSpec.nullRange();

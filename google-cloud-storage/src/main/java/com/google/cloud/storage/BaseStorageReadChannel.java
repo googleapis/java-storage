@@ -19,7 +19,13 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
+import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
+import com.google.cloud.storage.Conversions.Decoder;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -27,15 +33,18 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
+  private final Decoder<T, BlobInfo> objectDecoder;
+  private final SettableApiFuture<T> result;
+
   private boolean open;
   private ByteRangeSpec byteRangeSpec;
   private int chunkSize = _2MiB;
   private BufferHandle bufferHandle;
   private LazyReadChannel<T> lazyReadChannel;
 
-  @Nullable private T resolvedObject;
-
-  protected BaseStorageReadChannel() {
+  protected BaseStorageReadChannel(Decoder<T, BlobInfo> objectDecoder) {
+    this.objectDecoder = objectDecoder;
+    this.result = SettableApiFuture.create();
     this.open = true;
     this.byteRangeSpec = ByteRangeSpec.nullRange();
   }
@@ -110,6 +119,11 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
     }
   }
 
+  @Override
+  public ApiFuture<BlobInfo> getObject() {
+    return ApiFutures.transform(result, objectDecoder::decode, MoreExecutors.directExecutor());
+  }
+
   protected final BufferHandle getBufferHandle() {
     if (bufferHandle == null) {
       bufferHandle = BufferHandle.allocate(chunkSize);
@@ -123,11 +137,11 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
   @Nullable
   protected T getResolvedObject() {
-    return resolvedObject;
-  }
-
-  protected void setResolvedObject(@Nullable T resolvedObject) {
-    this.resolvedObject = resolvedObject;
+    if (result.isDone()) {
+      return StorageException.wrapFutureGet(result);
+    } else {
+      return null;
+    }
   }
 
   protected abstract LazyReadChannel<T> newLazyReadChannel();
@@ -148,7 +162,27 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
   private LazyReadChannel<T> internalGetLazyChannel() {
     if (lazyReadChannel == null) {
-      lazyReadChannel = newLazyReadChannel();
+      LazyReadChannel<T> tmp = newLazyReadChannel();
+      ApiFuture<T> future = tmp.getSession().getResult();
+      ApiFutures.addCallback(
+          future,
+          new ApiFutureCallback<T>() {
+            @Override
+            public void onFailure(Throwable t) {
+              if (!result.isDone()) {
+                result.setException(t);
+              }
+            }
+
+            @Override
+            public void onSuccess(T t) {
+              if (!result.isDone()) {
+                result.set(t);
+              }
+            }
+          },
+          MoreExecutors.directExecutor());
+      lazyReadChannel = tmp;
     }
     return lazyReadChannel;
   }

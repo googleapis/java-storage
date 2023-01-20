@@ -27,7 +27,6 @@ import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReada
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import java.nio.ByteBuffer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
@@ -53,15 +52,9 @@ final class HttpDownloadSessionBuilder {
 
     private final BlobReadChannelContext blobReadChannelContext;
     // private Hasher hasher; // TODO: wire in Hasher
-    private Consumer<StorageObject> callback;
 
     private ReadableByteChannelSessionBuilder(BlobReadChannelContext blobReadChannelContext) {
       this.blobReadChannelContext = blobReadChannelContext;
-    }
-
-    public ReadableByteChannelSessionBuilder setCallback(Consumer<StorageObject> callback) {
-      this.callback = callback;
-      return this;
     }
 
     public BufferedReadableByteChannelSessionBuilder buffered() {
@@ -90,8 +83,7 @@ final class HttpDownloadSessionBuilder {
               blobReadChannelContext.getApiaryClient(),
               resultFuture,
               blobReadChannelContext.getStorageOptions(),
-              blobReadChannelContext.getRetryAlgorithmManager().idempotent(),
-              callback);
+              blobReadChannelContext.getRetryAlgorithmManager().idempotent());
     }
 
     public static final class BufferedReadableByteChannelSessionBuilder {

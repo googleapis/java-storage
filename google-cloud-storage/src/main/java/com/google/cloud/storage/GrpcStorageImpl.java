@@ -1670,7 +1670,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         + ")";
   }
 
-  private ReadObjectRequest getReadObjectRequest(BlobId blob, Opts<ObjectSourceOpt> opts) {
+  ReadObjectRequest getReadObjectRequest(BlobId blob, Opts<ObjectSourceOpt> opts) {
     Object object = codecs.blobId().encode(blob);
 
     ReadObjectRequest.Builder builder =

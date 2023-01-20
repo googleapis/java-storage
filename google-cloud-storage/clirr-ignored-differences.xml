@@ -19,4 +19,11 @@
     <className>com/google/cloud/storage/Hasher$ConstantConcatValueHasher</className>
   </difference>
 
+  <!-- Not breaking, internal only class -->
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/cloud/storage/HttpDownloadSessionBuilder$ReadableByteChannelSessionBuilder</className>
+    <method>com.google.cloud.storage.HttpDownloadSessionBuilder$ReadableByteChannelSessionBuilder setCallback(java.util.function.Consumer)</method>
+  </difference>
+
 </differences>
