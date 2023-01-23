@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.17.2](https://github.com/googleapis/java-storage/compare/v2.17.1...v2.17.2) (2023-01-23)
+
+
+### Bug Fixes
+
+* Update BlobReadChannelV2 handling to correctly restart for decompressed object ([#1867](https://github.com/googleapis/java-storage/issues/1867)) ([93e8ed4](https://github.com/googleapis/java-storage/commit/93e8ed484224477cd1aeba24b3d84ed4003e9ee6))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.1.2 ([#1865](https://github.com/googleapis/java-storage/issues/1865)) ([ceb9a61](https://github.com/googleapis/java-storage/commit/ceb9a61921105f6c5dff80f4a1a41a0d3b51a06d))
+
 ## [2.17.1](https://github.com/googleapis/java-storage/compare/v2.17.0...v2.17.1) (2023-01-13)
 
 
