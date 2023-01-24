@@ -110,10 +110,6 @@ public interface TransferManager {
     }
   }
 
-  // Separate package for  transfer manager,
-  // Might be allowing public access to ChannelSessionBuilder
-  // We do not want to use ReadChannel and WriteChannel. We want to use the SessionBuilder.
-
   UploadJob uploadFiles(List<Path> files, ParallelUploadConfig opts);
 
   DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig opts);
