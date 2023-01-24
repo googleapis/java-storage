@@ -195,7 +195,11 @@ final class JsonResumableSessionPutTask
         span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
         throw se;
       }
-    } catch (StorageException e) {
+    } catch (StorageException | IllegalArgumentException e) {
+      // IllegalArgumentException can happen if there is no json in the body and we try to parse it
+      // Our retry algorithms have special case for this, so in an effort to keep compatibility
+      // with those existing behaviors, explicitly rethrow an IllegalArgumentException that may have
+      // happened
       span.setStatus(Status.UNKNOWN.withDescription(e.getMessage()));
       throw e;
     } catch (Exception e) {

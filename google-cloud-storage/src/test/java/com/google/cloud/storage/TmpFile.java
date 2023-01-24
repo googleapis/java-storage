@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.nio.channels.SeekableByteChannel;
@@ -52,6 +53,11 @@ public final class TmpFile implements AutoCloseable {
   @Override
   public void close() throws IOException {
     Files.delete(path);
+  }
+
+  @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this).add("path", path).toString();
   }
 
   /**

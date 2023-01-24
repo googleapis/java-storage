@@ -37,6 +37,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -281,6 +282,14 @@ final class Utils {
       keys = Stream.empty();
     }
     keys.map(NamedField::literal).map(k -> NamedField.nested(parent, k)).forEach(sink);
+  }
+
+  static <T> T[] subArray(T[] ts, int offset, int length) {
+    if (offset == 0 && length == ts.length) {
+      return ts;
+    } else {
+      return Arrays.copyOfRange(ts, offset, length);
+    }
   }
 
   private static int crc32cDecode(String from) {

@@ -38,7 +38,7 @@ final class HttpDownloadSessionBuilder {
 
   private HttpDownloadSessionBuilder() {}
 
-  public static HttpDownloadSessionBuilder create() {
+  static HttpDownloadSessionBuilder create() {
     return INSTANCE;
   }
 

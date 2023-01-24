@@ -63,16 +63,6 @@ final class GapicUnbufferedWritableByteChannel<
   }
 
   @Override
-  public int write(ByteBuffer src) throws IOException {
-    return Math.toIntExact(write(new ByteBuffer[] {src}));
-  }
-
-  @Override
-  public long write(ByteBuffer[] srcs) throws IOException {
-    return write(srcs, 0, srcs.length);
-  }
-
-  @Override
   public long write(ByteBuffer[] srcs, int srcsOffset, int srcLength) throws IOException {
     if (!open) {
       throw new ClosedChannelException();

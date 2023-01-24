@@ -20,6 +20,7 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
+import com.google.cloud.storage.spi.v1.HttpRpcContext;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import io.opencensus.trace.EndSpanOptions;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,6 +64,8 @@ final class JsonResumableSession extends ResumableSession<StorageObject> {
     JsonResumableSessionPutTask task =
         new JsonResumableSessionPutTask(
             context, resumableWrite.getUploadId(), content, contentRange);
+    HttpRpcContext httpRpcContext = HttpRpcContext.getInstance();
+    httpRpcContext.newInvocationId();
     AtomicBoolean dirty = new AtomicBoolean(false);
     return Retrying.run(
         deps,

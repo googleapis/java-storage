@@ -143,15 +143,18 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
   static final class BlobReadChannelContext {
     private final HttpStorageOptions storageOptions;
     private final HttpRetryAlgorithmManager retryAlgorithmManager;
+    private final HttpClientContext httpClientContext;
     private final Storage apiaryClient;
 
     private BlobReadChannelContext(
         HttpStorageOptions storageOptions,
-        Storage apiaryClient,
-        HttpRetryAlgorithmManager retryAlgorithmManager) {
+        HttpRetryAlgorithmManager retryAlgorithmManager,
+        HttpClientContext httpClientContext,
+        Storage apiaryClient) {
       this.storageOptions = storageOptions;
-      this.apiaryClient = apiaryClient;
       this.retryAlgorithmManager = retryAlgorithmManager;
+      this.httpClientContext = httpClientContext;
+      this.apiaryClient = apiaryClient;
     }
 
     public HttpStorageOptions getStorageOptions() {
@@ -162,13 +165,20 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
       return retryAlgorithmManager;
     }
 
+    public HttpClientContext getHttpClientContext() {
+      return httpClientContext;
+    }
+
     public Storage getApiaryClient() {
       return apiaryClient;
     }
 
     static BlobReadChannelContext from(HttpStorageOptions options) {
       return new BlobReadChannelContext(
-          options, options.getStorageRpcV1().getStorage(), options.getRetryAlgorithmManager());
+          options,
+          options.getRetryAlgorithmManager(),
+          HttpClientContext.from(options.getStorageRpcV1()),
+          options.getStorageRpcV1().getStorage());
     }
 
     static BlobReadChannelContext from(com.google.cloud.storage.Storage s) {

@@ -40,7 +40,6 @@ import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.Blob.BlobSourceOption;
 import com.google.cloud.storage.BlobInfo.BuilderImpl;
-import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
 import com.google.cloud.storage.spi.v1.StorageRpc;
@@ -385,43 +384,6 @@ public class BlobTest {
     initializeBlob();
     assertSame(channel, blob.reader(BlobSourceOption.decryptionKey(BASE64_KEY)));
     assertSame(channel, blob.reader(BlobSourceOption.decryptionKey(KEY)));
-  }
-
-  @Test
-  public void testWriter() throws Exception {
-    initializeExpectedBlob();
-    BlobWriteChannel channel = createMock(BlobWriteChannel.class);
-    expect(storage.getOptions()).andReturn(mockOptions).anyTimes();
-    expect(storage.writer(eq(expectedBlob))).andReturn(channel);
-    replay(storage);
-    initializeBlob();
-    assertSame(channel, blob.writer());
-  }
-
-  @Test
-  public void testWriterWithEncryptionKey() throws Exception {
-    initializeExpectedBlob();
-    BlobWriteChannel channel = createMock(BlobWriteChannel.class);
-    expect(storage.getOptions()).andReturn(mockOptions).anyTimes();
-    expect(storage.writer(eq(expectedBlob), eq(BlobWriteOption.encryptionKey(BASE64_KEY))))
-        .andReturn(channel)
-        .times(2);
-    replay(storage);
-    initializeBlob();
-    assertSame(channel, blob.writer(BlobWriteOption.encryptionKey(BASE64_KEY)));
-    assertSame(channel, blob.writer(BlobWriteOption.encryptionKey(KEY)));
-  }
-
-  @Test
-  public void testWriterWithKmsKeyName() throws Exception {
-    initializeExpectedBlob();
-    BlobWriteChannel channel = createMock(BlobWriteChannel.class);
-    expect(storage.getOptions()).andReturn(mockOptions).anyTimes();
-    expect(storage.writer(eq(expectedBlob), eq(BlobWriteOption.kmsKeyName(KMS_KEY_NAME))))
-        .andReturn(channel);
-    replay(storage);
-    initializeBlob();
-    assertSame(channel, blob.writer(BlobWriteOption.kmsKeyName(KMS_KEY_NAME)));
   }
 
   @Test

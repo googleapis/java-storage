@@ -226,9 +226,25 @@ public final class TestUtils {
   }
 
   public static String xxd(ByteBuffer bytes) {
+    return xxd(true, bytes);
+  }
+
+  public static String xxd(boolean flip, ByteBuffer bytes) {
     ByteBuffer dup = bytes.duplicate();
-    dup.flip();
+    if (flip) dup.flip();
     return ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(dup));
+  }
+
+  public static String xxd(boolean flip, ByteBuffer[] buffers) {
+    ByteBuffer[] dups =
+        Arrays.stream(buffers)
+            .map(ByteBuffer::duplicate)
+            .peek(
+                byteBuffer -> {
+                  if (flip) byteBuffer.flip();
+                })
+            .toArray(ByteBuffer[]::new);
+    return ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(dups));
   }
 
   public static void assertAll(ThrowingRunnable... trs) throws Exception {

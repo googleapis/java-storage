@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -32,7 +31,6 @@ import com.google.api.gax.paging.Page;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.Tuple;
-import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.StorageRpc;
@@ -42,7 +40,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.BaseEncoding;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -984,130 +981,6 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testCreateFromStream() throws Exception {
-    byte[] dataToSend = {1, 2, 3, 4, 5};
-    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
-
-    BlobInfo blobInfo = initializeUpload(dataToSend);
-    Blob blob = storage.createFrom(blobInfo, stream);
-    assertEquals(expectedUpdated, blob);
-  }
-
-  @Test
-  public void testCreateFromWithOptions() throws Exception {
-    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
-    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
-
-    BlobInfo blobInfo = initializeUpload(dataToSend, DEFAULT_BUFFER_SIZE, KMS_KEY_NAME_OPTIONS);
-    Blob blob =
-        storage.createFrom(blobInfo, stream, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
-    assertEquals(expectedUpdated, blob);
-  }
-
-  @Test
-  public void testCreateFromWithBufferSize() throws Exception {
-    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
-    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
-    int bufferSize = MIN_BUFFER_SIZE * 2;
-
-    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize);
-    Blob blob = storage.createFrom(blobInfo, stream, bufferSize);
-    assertEquals(expectedUpdated, blob);
-  }
-
-  @Test
-  public void testCreateFromWithBufferSizeAndOptions() throws Exception {
-    byte[] dataToSend = {1, 2, 3, 4, 5, 6};
-    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
-    int bufferSize = MIN_BUFFER_SIZE * 2;
-
-    BlobInfo blobInfo = initializeUpload(dataToSend, bufferSize, KMS_KEY_NAME_OPTIONS);
-    Blob blob =
-        storage.createFrom(
-            blobInfo, stream, bufferSize, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
-    assertEquals(expectedUpdated, blob);
-  }
-
-  @Test
-  public void testCreateFromWithSmallBufferSize() throws Exception {
-    byte[] dataToSend = new byte[100_000];
-    ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);
-    int smallBufferSize = 100;
-
-    BlobInfo blobInfo = initializeUpload(dataToSend, MIN_BUFFER_SIZE);
-    Blob blob = storage.createFrom(blobInfo, stream, smallBufferSize);
-    assertEquals(expectedUpdated, blob);
-  }
-
-  @Test
-  public void testCreateFromWithException() throws Exception {
-    initializeService();
-    String uploadId = "id-exception";
-    byte[] bytes = new byte[10];
-    byte[] buffer = new byte[MIN_BUFFER_SIZE];
-    System.arraycopy(bytes, 0, buffer, 0, bytes.length);
-    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
-    doReturn(uploadId)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(info), EMPTY_RPC_OPTIONS);
-
-    Exception runtimeException = new RuntimeException("message");
-    doThrow(runtimeException)
-        .when(storageRpcMock)
-        .writeWithResponse(uploadId, buffer, 0, 0L, bytes.length, true);
-
-    InputStream input = new ByteArrayInputStream(bytes);
-    try {
-      storage.createFrom(info, input, MIN_BUFFER_SIZE);
-      fail();
-    } catch (StorageException e) {
-      assertSame(runtimeException, e.getCause());
-    }
-  }
-
-  @Test
-  public void testCreateFromMultipleParts() throws Exception {
-    initializeService();
-    String uploadId = "id-multiple-parts";
-    int extraBytes = 10;
-    int totalSize = MIN_BUFFER_SIZE + extraBytes;
-    byte[] dataToSend = new byte[totalSize];
-    dataToSend[0] = 42;
-    dataToSend[MIN_BUFFER_SIZE + 1] = 43;
-
-    StorageObject storageObject = new StorageObject();
-    storageObject.setBucket(BLOB_INFO1.getBucket());
-    storageObject.setName(BLOB_INFO1.getName());
-    storageObject.setSize(BigInteger.valueOf(totalSize));
-
-    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
-    doReturn(uploadId)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(info), EMPTY_RPC_OPTIONS);
-
-    byte[] buffer1 = new byte[MIN_BUFFER_SIZE];
-    System.arraycopy(dataToSend, 0, buffer1, 0, MIN_BUFFER_SIZE);
-    doReturn(null)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .writeWithResponse(uploadId, buffer1, 0, 0L, MIN_BUFFER_SIZE, false);
-
-    byte[] buffer2 = new byte[MIN_BUFFER_SIZE];
-    System.arraycopy(dataToSend, MIN_BUFFER_SIZE, buffer2, 0, extraBytes);
-    doReturn(storageObject)
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .writeWithResponse(uploadId, buffer2, 0, (long) MIN_BUFFER_SIZE, extraBytes, true);
-
-    InputStream input = new ByteArrayInputStream(dataToSend);
-    Blob blob = storage.createFrom(info, input, MIN_BUFFER_SIZE);
-    BlobInfo info1 = Conversions.apiary().blobInfo().decode(storageObject);
-    assertEquals(info1.asBlob(storage), blob);
-  }
-
-  @Test
   public void testListBuckets() {
     String cursor = "cursor";
     ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
@@ -1327,85 +1200,6 @@ public class StorageImplMockitoTest {
       fail();
     } catch (StorageException e) {
       assertEquals(STORAGE_FAILURE.toString(), e.getMessage());
-    }
-  }
-
-  @Test
-  public void testWriter() {
-    // verify that md5 and crc32c are cleared if present when calling create
-    doReturn("upload-id")
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES), EMPTY_RPC_OPTIONS);
-    initializeService();
-    WriteChannel channel = storage.writer(BLOB_INFO_WITH_HASHES);
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-  }
-
-  @Test
-  public void testWriterWithOptions() {
-    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(CONTENT_MD5).setCrc32c(CONTENT_CRC32C).build();
-    doReturn("upload-id")
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(info), BLOB_TARGET_OPTIONS_CREATE);
-    initializeService();
-    WriteChannel channel =
-        storage.writer(
-            info,
-            BLOB_WRITE_METAGENERATION,
-            BLOB_WRITE_NOT_EXIST,
-            BLOB_WRITE_PREDEFINED_ACL,
-            BLOB_WRITE_CRC2C,
-            BLOB_WRITE_MD5_HASH);
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-  }
-
-  @Test
-  public void testWriterWithEncryptionKey() {
-    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
-    doReturn("upload-id-1", "upload-id-2")
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(info), ENCRYPTION_KEY_OPTIONS);
-    initializeService();
-    WriteChannel channel = storage.writer(info, Storage.BlobWriteOption.encryptionKey(KEY));
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-    channel = storage.writer(info, Storage.BlobWriteOption.encryptionKey(BASE64_KEY));
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-  }
-
-  @Test
-  public void testWriterWithKmsKeyName() {
-    BlobInfo info = BLOB_INFO1.toBuilder().setMd5(null).setCrc32c(null).build();
-    doReturn("upload-id-1", "upload-id-2")
-        .doThrow(UNEXPECTED_CALL_EXCEPTION)
-        .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(info), KMS_KEY_NAME_OPTIONS);
-    initializeService();
-    WriteChannel channel = storage.writer(info, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-    channel = storage.writer(info, Storage.BlobWriteOption.kmsKeyName(KMS_KEY_NAME));
-    assertNotNull(channel);
-    assertTrue(channel.isOpen());
-  }
-
-  @Test
-  public void testWriterFailure() {
-    doThrow(STORAGE_FAILURE)
-        .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES), EMPTY_RPC_OPTIONS);
-    initializeService();
-    try {
-      storage.writer(BLOB_INFO_WITH_HASHES);
-      fail();
-    } catch (StorageException e) {
-      assertSame(STORAGE_FAILURE, e.getCause());
     }
   }
 

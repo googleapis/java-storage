@@ -91,7 +91,6 @@ public final class ITJsonResumableSessionTest {
         req -> {
           requests.add(req);
           String contentRange = req.headers().get(CONTENT_RANGE);
-          System.out.println("contentRange = " + contentRange);
           DefaultFullHttpResponse resp =
               new DefaultFullHttpResponse(req.protocolVersion(), RESUME_INCOMPLETE);
           if (range1.getHeaderValue().equals(contentRange)) {

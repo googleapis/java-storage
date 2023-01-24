@@ -103,11 +103,16 @@ final class Retrying {
                 } catch (StorageException se) {
                   // we hope for this case
                   throw se;
+                } catch (IllegalArgumentException iae) {
+                  // IllegalArgumentException can happen if there is no json in the body and we try
+                  // to parse it Our retry algorithms have special case for this, so in an effort to
+                  // keep compatibility with those existing behaviors, explicitly rethrow an
+                  // IllegalArgumentException that may have happened
+                  throw iae;
                 } catch (Exception e) {
-                  // but wire in this fall through just in case.
+                  // Wire in this fall through just in case.
                   // all of our retry algorithms are centered around StorageException so this helps
-                  // those
-                  // be more effective
+                  // those be more effective
                   throw StorageException.coalesce(e);
                 }
               },

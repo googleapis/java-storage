@@ -103,6 +103,10 @@ final class ResumableMedia {
 
     private HttpMediaSession() {}
 
+    HttpUploadSessionBuilder write() {
+      return HttpUploadSessionBuilder.create();
+    }
+
     HttpDownloadSessionBuilder read() {
       return HttpDownloadSessionBuilder.create();
     }

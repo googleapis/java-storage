@@ -102,11 +102,11 @@ public class HttpStorageRpc implements StorageRpc {
 
   // declare this HttpStatus code here as it's not included in java.net.HttpURLConnection
   private static final int SC_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
+  private static final boolean IS_RECORD_EVENTS = true;
 
   private final StorageOptions options;
   private final Storage storage;
   private final Tracer tracer = Tracing.getTracer();
-  private final CensusHttpModule censusHttpModule;
   private final HttpRequestInitializer batchRequestInitializer;
 
   private static final long MEGABYTE = 1024L * 1024L;
@@ -123,7 +123,7 @@ public class HttpStorageRpc implements StorageRpc {
     this.options = options;
 
     // Open Census initialization
-    censusHttpModule = new CensusHttpModule(tracer, true);
+    CensusHttpModule censusHttpModule = new CensusHttpModule(tracer, IS_RECORD_EVENTS);
     initializer = censusHttpModule.getHttpRequestInitializer(initializer);
     initializer = new InvocationIdInitializer(initializer);
     batchRequestInitializer = censusHttpModule.getHttpRequestInitializer(null);
@@ -318,10 +318,7 @@ public class HttpStorageRpc implements StorageRpc {
 
   /** Helper method to start a span. */
   private Span startSpan(String spanName) {
-    return tracer
-        .spanBuilder(spanName)
-        .setRecordEvents(censusHttpModule.isRecordEvents())
-        .startSpan();
+    return tracer.spanBuilder(spanName).setRecordEvents(IS_RECORD_EVENTS).startSpan();
   }
 
   @Override

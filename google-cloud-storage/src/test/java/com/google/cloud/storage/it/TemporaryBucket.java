@@ -25,7 +25,7 @@ import com.google.cloud.storage.conformance.retry.CleanupStrategy;
 import com.google.common.base.Preconditions;
 import java.time.Duration;
 
-final class TemporaryBucket implements AutoCloseable {
+public final class TemporaryBucket implements AutoCloseable {
 
   private final BucketInfo bucket;
   private final Storage storage;
@@ -44,7 +44,7 @@ final class TemporaryBucket implements AutoCloseable {
   }
 
   /** Return the BucketInfo from the created temporary bucket. */
-  BucketInfo getBucket() {
+  public BucketInfo getBucket() {
     return bucket;
   }
 
@@ -55,11 +55,11 @@ final class TemporaryBucket implements AutoCloseable {
     }
   }
 
-  static Builder newBuilder() {
+  public static Builder newBuilder() {
     return new Builder();
   }
 
-  static final class Builder {
+  public static final class Builder {
 
     private CleanupStrategy cleanupStrategy;
     private Duration cleanupTimeoutDuration;
@@ -71,27 +71,27 @@ final class TemporaryBucket implements AutoCloseable {
       this.cleanupTimeoutDuration = Duration.ofMinutes(1);
     }
 
-    Builder setCleanupStrategy(CleanupStrategy cleanupStrategy) {
+    public Builder setCleanupStrategy(CleanupStrategy cleanupStrategy) {
       this.cleanupStrategy = cleanupStrategy;
       return this;
     }
 
-    Builder setCleanupTimeoutDuration(Duration cleanupTimeoutDuration) {
+    public Builder setCleanupTimeoutDuration(Duration cleanupTimeoutDuration) {
       this.cleanupTimeoutDuration = cleanupTimeoutDuration;
       return this;
     }
 
-    Builder setBucketInfo(BucketInfo bucketInfo) {
+    public Builder setBucketInfo(BucketInfo bucketInfo) {
       this.bucketInfo = bucketInfo;
       return this;
     }
 
-    Builder setStorage(Storage storage) {
+    public Builder setStorage(Storage storage) {
       this.storage = storage;
       return this;
     }
 
-    TemporaryBucket build() {
+    public TemporaryBucket build() {
       Preconditions.checkArgument(
           cleanupStrategy != CleanupStrategy.ONLY_ON_SUCCESS, "Unable to detect success.");
       Storage s = requireNonNull(storage, "storage must be non null");

@@ -397,6 +397,11 @@ public class ITRetryConformanceTest {
       return (m, trc) -> trc.getScenarioId() == scenarioId;
     }
 
+    static BiPredicate<RpcMethod, TestRetryConformance> mappingIdIn(Integer... mappingIds) {
+      ImmutableSet<Integer> ids = ImmutableSet.copyOf(mappingIds);
+      return (m, trc) -> ids.contains(trc.getMappingId());
+    }
+
     static final class Builder {
       private String retryTestsJsonResourcePath;
       private RpcMethodMappings mappings;

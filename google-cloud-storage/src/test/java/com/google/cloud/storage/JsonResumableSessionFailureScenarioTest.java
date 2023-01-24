@@ -72,7 +72,7 @@ public final class JsonResumableSessionFailureScenarioTest {
               throw new Kaboom();
             });
 
-    assertThat(storageException.getCode()).isEqualTo(400);
+    assertThat(storageException.getCode()).isEqualTo(0);
     assertThat(storageException).hasCauseThat().isInstanceOf(Cause.class);
     assertThat(storageException.getSuppressed()).isNotEmpty();
     assertThat(storageException.getSuppressed()[0]).isInstanceOf(StorageException.class);
