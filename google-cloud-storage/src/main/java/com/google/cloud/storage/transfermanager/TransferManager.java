@@ -87,6 +87,9 @@ public interface TransferManager {
 
       private Builder() {
         //TODO: add null values
+        // bufferSize tbd?
+        this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
+        this.allowChunking = false;
       }
 
       public Builder setMaxWorkers(@NonNull int maxWorkers) {
