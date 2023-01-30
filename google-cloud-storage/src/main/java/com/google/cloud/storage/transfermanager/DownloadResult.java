@@ -35,9 +35,9 @@ public class DownloadResult {
   @MonotonicNonNull private final StorageException exception;
 
   private DownloadResult(@NonNull BlobInfo input,
-      @NonNull Path outputDestination,
+      Path outputDestination,
       @NonNull TransferStatus status,
-      @NonNull StorageException exception) {
+      StorageException exception) {
     this.input = input;
     this.outputDestination = outputDestination;
     this.status = status;
@@ -48,7 +48,7 @@ public class DownloadResult {
     return input;
   }
 
-  public @NonNull Path getOutputDestination() {
+  public Path getOutputDestination() {
     return outputDestination;
   }
 
@@ -56,7 +56,7 @@ public class DownloadResult {
     return status;
   }
 
-  public @NonNull StorageException getException() {
+  public StorageException getException() {
     return exception;
   }
 

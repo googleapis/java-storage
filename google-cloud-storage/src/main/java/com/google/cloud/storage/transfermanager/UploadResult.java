@@ -35,8 +35,8 @@ public class UploadResult {
   public UploadResult(
       @NonNull BlobInfo input,
       @NonNull TransferStatus status,
-      @NonNull BlobInfo uploadedBlob,
-      @NonNull StorageException exception) {
+      BlobInfo uploadedBlob,
+      StorageException exception) {
     this.input = input;
     this.status = status;
     this.uploadedBlob = uploadedBlob;
@@ -51,11 +51,11 @@ public class UploadResult {
     return status;
   }
 
-  public @NonNull BlobInfo getUploadedBlob() {
+  public BlobInfo getUploadedBlob() {
     return uploadedBlob;
   }
 
-  public @NonNull StorageException getException() {
+  public StorageException getException() {
     return exception;
   }
 
