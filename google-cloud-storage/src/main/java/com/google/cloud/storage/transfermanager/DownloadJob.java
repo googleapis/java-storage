@@ -89,7 +89,9 @@ public class DownloadJob {
     private @NonNull boolean anyFailed;
 
     private Builder() {
-      //TODO: set "NULL" values
+      this.successResponses = ImmutableList.of();
+      this.failedResponses = ImmutableList.of();
+      this.anyFailed = false;
     }
 
     public Builder setSuccessResponses(@NonNull List<DownloadResult> successResponses) {

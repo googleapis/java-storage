@@ -89,7 +89,9 @@ public class UploadJob {
     private @NonNull boolean anyFailed;
 
     private Builder() {
-      //TODO: set null values
+      this.successResponses = ImmutableList.of();
+      this.failedResponses = ImmutableList.of();
+      this.anyFailed = false;
     }
 
     public Builder setSuccessResponses(@NonNull List<UploadResult> successResponses) {

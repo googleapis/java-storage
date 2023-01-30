@@ -127,8 +127,6 @@ public class UploadResult {
     public UploadResult build() {
       checkNotNull(input);
       checkNotNull(status);
-      checkNotNull(uploadedBlob);
-      checkNotNull(exception);
       return new UploadResult(input, status, uploadedBlob, exception);
     }
   }
