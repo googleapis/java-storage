@@ -48,16 +48,22 @@ public class DownloadResult {
     return input;
   }
 
-  public Path getOutputDestination() {
-    return outputDestination;
+  public @NonNull Path getOutputDestination() {
+    if(status == TransferStatus.SUCCESS) {
+      return outputDestination;
+    }
+    throw new IllegalStateException("getOutputDestination() is only valid when status is SUCCESS");
   }
 
   public @NonNull TransferStatus getStatus() {
     return status;
   }
 
-  public StorageException getException() {
-    return exception;
+  public @NonNull StorageException getException() {
+    if(status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
+      return exception;
+    }
+    throw new IllegalStateException("getException() is only valid when an unexpected error has occurred");
   }
 
   @Override

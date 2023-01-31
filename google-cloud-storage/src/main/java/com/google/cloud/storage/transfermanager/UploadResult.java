@@ -32,7 +32,7 @@ public class UploadResult {
   @MonotonicNonNull private final BlobInfo uploadedBlob;
   @MonotonicNonNull private final StorageException exception;
 
-  public UploadResult(
+  private UploadResult(
       @NonNull BlobInfo input,
       @NonNull TransferStatus status,
       BlobInfo uploadedBlob,
@@ -51,12 +51,18 @@ public class UploadResult {
     return status;
   }
 
-  public BlobInfo getUploadedBlob() {
-    return uploadedBlob;
+  public @NonNull BlobInfo getUploadedBlob() {
+    if(status == TransferStatus.SUCCESS) {
+      return uploadedBlob;
+    }
+    throw new IllegalStateException("getUploadedBlob() only valid when status is SUCCESS");
   }
 
-  public StorageException getException() {
-    return exception;
+  public @NonNull StorageException getException() {
+    if(status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
+      return exception;
+    }
+    throw new IllegalStateException("getException() is only valid when an unexpected error has occurred");
   }
 
   @Override
