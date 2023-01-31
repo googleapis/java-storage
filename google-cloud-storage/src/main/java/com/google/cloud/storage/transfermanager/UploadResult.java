@@ -52,17 +52,18 @@ public class UploadResult {
   }
 
   public @NonNull BlobInfo getUploadedBlob() {
-    if(status == TransferStatus.SUCCESS) {
+    if (status == TransferStatus.SUCCESS) {
       return uploadedBlob;
     }
     throw new IllegalStateException("getUploadedBlob() only valid when status is SUCCESS");
   }
 
   public @NonNull StorageException getException() {
-    if(status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
+    if (status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
       return exception;
     }
-    throw new IllegalStateException("getException() is only valid when an unexpected error has occurred");
+    throw new IllegalStateException(
+        "getException() is only valid when an unexpected error has occurred");
   }
 
   @Override
@@ -74,8 +75,9 @@ public class UploadResult {
       return false;
     }
     UploadResult that = (UploadResult) o;
-    return input.equals(that.input) && status == that.status && uploadedBlob.equals(
-        that.uploadedBlob)
+    return input.equals(that.input)
+        && status == that.status
+        && uploadedBlob.equals(that.uploadedBlob)
         && exception.equals(that.exception);
   }
 

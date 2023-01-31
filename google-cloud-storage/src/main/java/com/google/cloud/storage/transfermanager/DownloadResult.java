@@ -22,7 +22,6 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageException;
 import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -34,7 +33,8 @@ public class DownloadResult {
   @NonNull private final TransferStatus status;
   @MonotonicNonNull private final StorageException exception;
 
-  private DownloadResult(@NonNull BlobInfo input,
+  private DownloadResult(
+      @NonNull BlobInfo input,
       Path outputDestination,
       @NonNull TransferStatus status,
       StorageException exception) {
@@ -49,7 +49,7 @@ public class DownloadResult {
   }
 
   public @NonNull Path getOutputDestination() {
-    if(status == TransferStatus.SUCCESS) {
+    if (status == TransferStatus.SUCCESS) {
       return outputDestination;
     }
     throw new IllegalStateException("getOutputDestination() is only valid when status is SUCCESS");
@@ -60,10 +60,11 @@ public class DownloadResult {
   }
 
   public @NonNull StorageException getException() {
-    if(status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
+    if (status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
       return exception;
     }
-    throw new IllegalStateException("getException() is only valid when an unexpected error has occurred");
+    throw new IllegalStateException(
+        "getException() is only valid when an unexpected error has occurred");
   }
 
   @Override
@@ -75,8 +76,10 @@ public class DownloadResult {
       return false;
     }
     DownloadResult that = (DownloadResult) o;
-    return input.equals(that.input) && outputDestination.equals(that.outputDestination)
-        && status == that.status && exception.equals(that.exception);
+    return input.equals(that.input)
+        && outputDestination.equals(that.outputDestination)
+        && status == that.status
+        && exception.equals(that.exception);
   }
 
   @Override
@@ -93,6 +96,7 @@ public class DownloadResult {
         .add("exception", exception)
         .toString();
   }
+
   public static Builder newBuilder(@NonNull BlobInfo blobInfo, @NonNull TransferStatus status) {
     return new Builder(blobInfo, status);
   }
@@ -135,5 +139,4 @@ public class DownloadResult {
       return new DownloadResult(input, outputDestination, status, exception);
     }
   }
-
 }

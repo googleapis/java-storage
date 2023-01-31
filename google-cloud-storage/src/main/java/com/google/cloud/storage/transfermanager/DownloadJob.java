@@ -60,7 +60,8 @@ public class DownloadJob {
       return false;
     }
     DownloadJob that = (DownloadJob) o;
-    return anyFailed == that.anyFailed && successResponses.equals(that.successResponses)
+    return anyFailed == that.anyFailed
+        && successResponses.equals(that.successResponses)
         && failedResponses.equals(that.failedResponses);
   }
 

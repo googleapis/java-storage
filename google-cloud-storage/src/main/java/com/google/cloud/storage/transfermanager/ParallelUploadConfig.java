@@ -68,8 +68,10 @@ public class ParallelUploadConfig {
       return false;
     }
     ParallelUploadConfig that = (ParallelUploadConfig) o;
-    return skipIfExists == that.skipIfExists && prefix.equals(that.prefix) && bucketName.equals(
-        that.bucketName) && optionsPerRequest.equals(that.optionsPerRequest);
+    return skipIfExists == that.skipIfExists
+        && prefix.equals(that.prefix)
+        && bucketName.equals(that.bucketName)
+        && optionsPerRequest.equals(that.optionsPerRequest);
   }
 
   @Override

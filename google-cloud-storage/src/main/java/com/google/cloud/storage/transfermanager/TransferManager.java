@@ -58,7 +58,8 @@ public interface TransferManager {
         return false;
       }
       TransferManagerConfig that = (TransferManagerConfig) o;
-      return maxWorkers == that.maxWorkers && perWorkerBufferSize == that.perWorkerBufferSize
+      return maxWorkers == that.maxWorkers
+          && perWorkerBufferSize == that.perWorkerBufferSize
           && allowChunking == that.allowChunking;
     }
 
@@ -75,6 +76,7 @@ public interface TransferManager {
           .add("allowChunking", allowChunking)
           .toString();
     }
+
     public static Builder newBuilder() {
       return new Builder();
     }
@@ -86,7 +88,7 @@ public interface TransferManager {
       private @NonNull boolean allowChunking;
 
       private Builder() {
-        //TODO: add null values
+        // TODO: add null values
         // bufferSize tbd?
         this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
         this.allowChunking = false;

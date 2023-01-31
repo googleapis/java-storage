@@ -32,8 +32,8 @@ public final class ParallelDownloadConfig {
   @NonNull private final String bucketName;
   @NonNull private final List<BlobSourceOption> optionsPerRequest;
 
-
-  private ParallelDownloadConfig(@NonNull String stripPrefix,
+  private ParallelDownloadConfig(
+      @NonNull String stripPrefix,
       @NonNull String prefix,
       @NonNull String bucketName,
       @NonNull List<BlobSourceOption> optionsPerRequest) {
@@ -68,8 +68,10 @@ public final class ParallelDownloadConfig {
       return false;
     }
     ParallelDownloadConfig that = (ParallelDownloadConfig) o;
-    return stripPrefix.equals(that.stripPrefix) && prefix.equals(that.prefix) && bucketName.equals(
-        that.bucketName) && optionsPerRequest.equals(that.optionsPerRequest);
+    return stripPrefix.equals(that.stripPrefix)
+        && prefix.equals(that.prefix)
+        && bucketName.equals(that.bucketName)
+        && optionsPerRequest.equals(that.optionsPerRequest);
   }
 
   @Override

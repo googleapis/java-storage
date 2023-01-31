@@ -60,7 +60,8 @@ public class UploadJob {
       return false;
     }
     UploadJob uploadJob = (UploadJob) o;
-    return anyFailed == uploadJob.anyFailed && successResponses.equals(uploadJob.successResponses)
+    return anyFailed == uploadJob.anyFailed
+        && successResponses.equals(uploadJob.successResponses)
         && failedResponses.equals(uploadJob.failedResponses);
   }
 
