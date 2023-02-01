@@ -28,15 +28,13 @@ public final class UploadJob {
 
   @NonNull private final List<UploadResult> successResponses;
   @NonNull private final List<UploadResult> failedResponses;
-  @NonNull private final boolean anyFailed;
+  private final boolean anyFailed;
 
   private UploadJob(
-      @NonNull List<UploadResult> successResponses,
-      @NonNull List<UploadResult> failedResponses,
-      @NonNull boolean anyFailed) {
+      @NonNull List<UploadResult> successResponses, @NonNull List<UploadResult> failedResponses) {
     this.successResponses = successResponses;
     this.failedResponses = failedResponses;
-    this.anyFailed = anyFailed;
+    this.anyFailed = this.failedResponses.isEmpty();
   }
 
   public List<UploadResult> getSuccessResponses() {
@@ -87,12 +85,10 @@ public final class UploadJob {
 
     private @NonNull List<UploadResult> successResponses;
     private @NonNull List<UploadResult> failedResponses;
-    private @NonNull boolean anyFailed;
 
     private Builder() {
       this.successResponses = ImmutableList.of();
       this.failedResponses = ImmutableList.of();
-      this.anyFailed = false;
     }
 
     public Builder setSuccessResponses(@NonNull List<UploadResult> successResponses) {
@@ -105,16 +101,10 @@ public final class UploadJob {
       return this;
     }
 
-    public Builder setAnyFailed(@NonNull boolean anyFailed) {
-      this.anyFailed = anyFailed;
-      return this;
-    }
-
     public UploadJob build() {
       checkNotNull(successResponses);
       checkNotNull(failedResponses);
-      checkNotNull(anyFailed);
-      return new UploadJob(successResponses, failedResponses, anyFailed);
+      return new UploadJob(successResponses, failedResponses);
     }
   }
 }

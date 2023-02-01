@@ -21,17 +21,15 @@ import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface TransferManager {
 
   class TransferManagerConfig {
-    @NonNull private final int maxWorkers;
-    @NonNull private final int perWorkerBufferSize;
-    @NonNull private final boolean allowChunking;
+    private final int maxWorkers;
+    private final int perWorkerBufferSize;
+    private final boolean allowChunking;
 
-    private TransferManagerConfig(
-        @NonNull int maxWorkers, @NonNull int perWorkerBufferSize, @NonNull boolean allowChunking) {
+    private TransferManagerConfig(int maxWorkers, int perWorkerBufferSize, boolean allowChunking) {
       this.maxWorkers = maxWorkers;
       this.perWorkerBufferSize = perWorkerBufferSize;
       this.allowChunking = allowChunking;
@@ -83,28 +81,28 @@ public interface TransferManager {
 
     static class Builder {
 
-      private @NonNull int maxWorkers;
-      private @NonNull int perWorkerBufferSize;
-      private @NonNull boolean allowChunking;
+      private int maxWorkers;
+      private int perWorkerBufferSize;
+      private boolean allowChunking;
 
       private Builder() {
-        // TODO: add null values
+        // TODO: add default values
         // bufferSize tbd?
         this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
         this.allowChunking = false;
       }
 
-      public Builder setMaxWorkers(@NonNull int maxWorkers) {
+      public Builder setMaxWorkers(int maxWorkers) {
         this.maxWorkers = maxWorkers;
         return this;
       }
 
-      public Builder setPerWorkerBufferSize(@NonNull int perWorkerBufferSize) {
+      public Builder setPerWorkerBufferSize(int perWorkerBufferSize) {
         this.perWorkerBufferSize = perWorkerBufferSize;
         return this;
       }
 
-      public Builder setAllowChunking(@NonNull boolean allowChunking) {
+      public Builder setAllowChunking(boolean allowChunking) {
         this.allowChunking = allowChunking;
         return this;
       }

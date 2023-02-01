@@ -27,13 +27,13 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class ParallelUploadConfig {
 
-  @NonNull private final boolean skipIfExists;
+  private final boolean skipIfExists;
   @NonNull private final String prefix;
   @NonNull private final String bucketName;
   @NonNull private final List<BlobTargetOption> optionsPerRequest;
 
   private ParallelUploadConfig(
-      @NonNull boolean skipIfExists,
+      boolean skipIfExists,
       @NonNull String prefix,
       @NonNull String bucketName,
       @NonNull List<BlobTargetOption> optionsPerRequest) {
@@ -95,19 +95,18 @@ public final class ParallelUploadConfig {
 
   public static final class Builder {
 
-    private @NonNull boolean skipIfExists;
+    private boolean skipIfExists;
     private @NonNull String prefix;
     private @NonNull String bucketName;
     private @NonNull List<BlobTargetOption> optionsPerRequest;
 
     private Builder() {
-      this.skipIfExists = false;
       this.prefix = "";
       this.bucketName = "";
       this.optionsPerRequest = ImmutableList.of();
     }
 
-    public Builder setSkipIfExists(@NonNull boolean skipIfExists) {
+    public Builder setSkipIfExists(boolean skipIfExists) {
       this.skipIfExists = skipIfExists;
       return this;
     }
@@ -128,7 +127,6 @@ public final class ParallelUploadConfig {
     }
 
     public ParallelUploadConfig build() {
-      checkNotNull(skipIfExists);
       checkNotNull(prefix);
       checkNotNull(bucketName);
       checkNotNull(optionsPerRequest);

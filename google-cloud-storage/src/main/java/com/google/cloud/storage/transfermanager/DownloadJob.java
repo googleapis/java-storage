@@ -28,15 +28,14 @@ public final class DownloadJob {
 
   @NonNull private final List<DownloadResult> successResponses;
   @NonNull private final List<DownloadResult> failedResponses;
-  @NonNull private final boolean anyFailed;
+  private final boolean anyFailed;
 
   private DownloadJob(
       @NonNull List<DownloadResult> successResponses,
-      @NonNull List<DownloadResult> failedResponses,
-      @NonNull boolean anyFailed) {
+      @NonNull List<DownloadResult> failedResponses) {
     this.successResponses = successResponses;
     this.failedResponses = failedResponses;
-    this.anyFailed = anyFailed;
+    this.anyFailed = failedResponses.isEmpty();
   }
 
   public List<DownloadResult> getSuccessResponses() {
@@ -87,12 +86,10 @@ public final class DownloadJob {
 
     private @NonNull List<DownloadResult> successResponses;
     private @NonNull List<DownloadResult> failedResponses;
-    private @NonNull boolean anyFailed;
 
     private Builder() {
       this.successResponses = ImmutableList.of();
       this.failedResponses = ImmutableList.of();
-      this.anyFailed = false;
     }
 
     public Builder setSuccessResponses(@NonNull List<DownloadResult> successResponses) {
@@ -105,16 +102,10 @@ public final class DownloadJob {
       return this;
     }
 
-    public Builder setAnyFailed(@NonNull boolean anyFailed) {
-      this.anyFailed = anyFailed;
-      return this;
-    }
-
     public DownloadJob build() {
       checkNotNull(successResponses);
       checkNotNull(failedResponses);
-      checkNotNull(anyFailed);
-      return new DownloadJob(successResponses, failedResponses, anyFailed);
+      return new DownloadJob(successResponses, failedResponses);
     }
   }
 }

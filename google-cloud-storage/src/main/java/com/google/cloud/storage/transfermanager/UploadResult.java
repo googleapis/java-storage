@@ -135,6 +135,8 @@ public final class UploadResult {
     public UploadResult build() {
       checkNotNull(input);
       checkNotNull(status);
+      // TODO: validate either uploadedBlob or exception are non-null relative to the value of
+      // status.
       return new UploadResult(input, status, uploadedBlob, exception);
     }
   }

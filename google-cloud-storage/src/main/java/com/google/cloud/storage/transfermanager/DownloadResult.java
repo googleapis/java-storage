@@ -136,6 +136,8 @@ public final class DownloadResult {
     public DownloadResult build() {
       checkNotNull(input);
       checkNotNull(status);
+      // TODO: validate either outputDestination or exception are non-null relative to the value of
+      // status.
       return new DownloadResult(input, outputDestination, status, exception);
     }
   }
