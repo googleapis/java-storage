@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class ParallelUploadConfig {
+public final class ParallelUploadConfig {
 
   @NonNull private final boolean skipIfExists;
   @NonNull private final String prefix;
@@ -93,7 +93,7 @@ public class ParallelUploadConfig {
     return new Builder();
   }
 
-  public static class Builder {
+  public static final class Builder {
 
     private @NonNull boolean skipIfExists;
     private @NonNull String prefix;

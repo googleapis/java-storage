@@ -93,7 +93,7 @@ public final class ParallelDownloadConfig {
     return new Builder();
   }
 
-  public static class Builder {
+  public static final class Builder {
 
     @NonNull private String stripPrefix;
     @NonNull private String prefix;

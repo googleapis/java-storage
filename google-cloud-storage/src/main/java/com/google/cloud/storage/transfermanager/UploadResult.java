@@ -25,7 +25,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class UploadResult {
+public final class UploadResult {
 
   @NonNull private final BlobInfo input;
   @NonNull private final TransferStatus status;
@@ -100,7 +100,7 @@ public class UploadResult {
     return new Builder(input, status);
   }
 
-  public static class Builder {
+  public static final class Builder {
 
     private @NonNull BlobInfo input;
     private @NonNull TransferStatus status;

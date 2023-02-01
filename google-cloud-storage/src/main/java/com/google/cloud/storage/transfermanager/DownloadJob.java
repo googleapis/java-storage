@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class DownloadJob {
+public final class DownloadJob {
 
   @NonNull private final List<DownloadResult> successResponses;
   @NonNull private final List<DownloadResult> failedResponses;
@@ -83,7 +83,7 @@ public class DownloadJob {
     return new Builder();
   }
 
-  public static class Builder {
+  public static final class Builder {
 
     private @NonNull List<DownloadResult> successResponses;
     private @NonNull List<DownloadResult> failedResponses;

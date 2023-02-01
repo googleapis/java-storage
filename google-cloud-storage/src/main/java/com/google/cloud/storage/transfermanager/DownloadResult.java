@@ -26,7 +26,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class DownloadResult {
+public final class DownloadResult {
 
   @NonNull private final BlobInfo input;
   @MonotonicNonNull private final Path outputDestination;
@@ -101,7 +101,7 @@ public class DownloadResult {
     return new Builder(blobInfo, status);
   }
 
-  public static class Builder {
+  public static final class Builder {
 
     private @NonNull BlobInfo input;
     private @MonotonicNonNull Path outputDestination;

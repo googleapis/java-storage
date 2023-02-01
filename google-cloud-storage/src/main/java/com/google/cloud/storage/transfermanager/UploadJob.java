@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class UploadJob {
+public final class UploadJob {
 
   @NonNull private final List<UploadResult> successResponses;
   @NonNull private final List<UploadResult> failedResponses;
@@ -83,7 +83,7 @@ public class UploadJob {
     return new Builder();
   }
 
-  public static class Builder {
+  public static final class Builder {
 
     private @NonNull List<UploadResult> successResponses;
     private @NonNull List<UploadResult> failedResponses;
