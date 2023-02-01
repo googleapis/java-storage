@@ -47,15 +47,15 @@ public final class ParallelUploadConfig {
     return skipIfExists;
   }
 
-  public String getPrefix() {
+  public @NonNull String getPrefix() {
     return prefix;
   }
 
-  public String getBucketName() {
+  public @NonNull String getBucketName() {
     return bucketName;
   }
 
-  public List<BlobTargetOption> getOptionsPerRequest() {
+  public @NonNull List<BlobTargetOption> getOptionsPerRequest() {
     return optionsPerRequest;
   }
 

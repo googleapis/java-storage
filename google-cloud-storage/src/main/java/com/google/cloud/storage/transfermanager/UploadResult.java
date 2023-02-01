@@ -17,6 +17,7 @@
 package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageException;
@@ -52,18 +53,19 @@ public final class UploadResult {
   }
 
   public @NonNull BlobInfo getUploadedBlob() {
-    if (status == TransferStatus.SUCCESS) {
-      return uploadedBlob;
-    }
-    throw new IllegalStateException("getUploadedBlob() only valid when status is SUCCESS");
+    checkState(
+        status == TransferStatus.SUCCESS,
+        "getUploadedBlob() only valid when status is SUCCESS but status was %s",
+        status);
+    return uploadedBlob;
   }
 
   public @NonNull StorageException getException() {
-    if (status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
-      return exception;
-    }
-    throw new IllegalStateException(
-        "getException() is only valid when an unexpected error has occurred");
+    checkState(
+        status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH,
+        "getException() is only valid when an unexpected error has occurred but status was %s",
+        status);
+    return exception;
   }
 
   @Override

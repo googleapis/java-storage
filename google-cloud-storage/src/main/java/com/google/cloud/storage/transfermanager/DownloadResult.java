@@ -17,6 +17,7 @@
 package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageException;
@@ -49,10 +50,11 @@ public final class DownloadResult {
   }
 
   public @NonNull Path getOutputDestination() {
-    if (status == TransferStatus.SUCCESS) {
-      return outputDestination;
-    }
-    throw new IllegalStateException("getOutputDestination() is only valid when status is SUCCESS");
+    checkState(
+        status == TransferStatus.SUCCESS,
+        "getOutputDestination() is only valid when status is SUCCESS but status was %s",
+        status);
+    return outputDestination;
   }
 
   public @NonNull TransferStatus getStatus() {
@@ -60,11 +62,11 @@ public final class DownloadResult {
   }
 
   public @NonNull StorageException getException() {
-    if (status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH) {
-      return exception;
-    }
-    throw new IllegalStateException(
-        "getException() is only valid when an unexpected error has occurred");
+    checkState(
+        status == TransferStatus.FAILED_TO_FINISH || status == TransferStatus.FAILED_TO_START,
+        "getException() is only valid when an unexpected error has occurred but status was %s",
+        status);
+    return exception;
   }
 
   @Override
