@@ -2288,6 +2288,22 @@ final class UnifiedOpts {
           .orElse(Decoder.identity());
     }
 
+    <L extends T> Opts<T> prepend(Opts<L> l) {
+      Opts<T> right = this;
+      Set<? extends Class<? extends Opt>> rightClasses =
+          right.opts.stream().map(Opt::getClass).collect(Collectors.toSet());
+
+      ImmutableList<T> list =
+          Stream.of(
+                  l.opts.stream()
+                      // remove opts which are defined on the right hand size
+                      .filter(o -> !rightClasses.contains(o.getClass())),
+                  right.opts.stream())
+              .flatMap(x -> x)
+              .collect(ImmutableList.toImmutableList());
+      return new Opts<>(list);
+    }
+
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {
       return fuseMappers(RpcOptVal.class, RpcOptVal::mapper);
     }
@@ -2308,6 +2324,10 @@ final class UnifiedOpts {
 
     static <T extends Opt> Opts<T> from(T... ts) {
       return new Opts<>(ImmutableList.copyOf(ts));
+    }
+
+    static <O extends Opt> Opts<O> empty() {
+      return new Opts<>(ImmutableList.of());
     }
 
     /**

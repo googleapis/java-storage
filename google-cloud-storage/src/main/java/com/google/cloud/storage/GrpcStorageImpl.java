@@ -67,6 +67,7 @@ import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.ProjectId;
+import com.google.cloud.storage.UnifiedOpts.UserProject;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -159,11 +160,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
 
+  // workaround for https://github.com/googleapis/java-storage/issues/1736
+  private final Opts<UserProject> defaultOpts;
   @Deprecated private final ProjectId defaultProjectId;
 
-  GrpcStorageImpl(GrpcStorageOptions options, StorageClient storageClient) {
+  GrpcStorageImpl(
+      GrpcStorageOptions options, StorageClient storageClient, Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
+    this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
@@ -182,7 +187,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket create(BucketInfo bucketInfo, BucketTargetOption... options) {
-    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo);
+    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
@@ -215,7 +220,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
     requireNonNull(blobInfo, "blobInfo must be non null");
     requireNonNull(content, "content must be non null");
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
@@ -267,7 +272,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       throw new StorageException(0, path + " is a directory");
     }
 
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
@@ -335,7 +340,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       throws IOException {
     requireNonNull(blobInfo, "blobInfo must be non null");
 
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
@@ -369,7 +374,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetBucketRequest.Builder builder =
@@ -384,7 +389,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket lockRetentionPolicy(BucketInfo bucket, BucketTargetOption... options) {
-    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucket);
+    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucket).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     LockBucketRetentionPolicyRequest.Builder builder =
@@ -406,7 +411,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetObjectRequest.Builder builder =
@@ -435,7 +440,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<Bucket> list(BucketListOption... options) {
-    Opts<BucketListOpt> opts = Opts.unwrap(options);
+    Opts<BucketListOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListBucketsRequest request =
@@ -462,7 +467,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<Blob> list(String bucket, BlobListOption... options) {
-    Opts<ObjectListOpt> opts = Opts.unwrap(options);
+    Opts<ObjectListOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListObjectsRequest.Builder builder =
@@ -481,7 +486,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
-    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo);
+    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
@@ -503,7 +508,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     Object object = codecs.blobInfo().encode(blobInfo);
@@ -530,7 +535,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(String bucket, BucketSourceOption... options) {
-    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteBucketRequest.Builder builder =
@@ -555,7 +560,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public boolean delete(BlobId blob, BlobSourceOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteObjectRequest.Builder builder =
@@ -587,7 +592,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Blob compose(ComposeRequest composeRequest) {
     Opts<ObjectTargetOpt> opts =
-        Opts.unwrap(composeRequest.getTargetOptions()).resolveFrom(composeRequest.getTarget());
+        Opts.unwrap(composeRequest.getTargetOptions())
+            .resolveFrom(composeRequest.getTarget())
+            .prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();
@@ -609,8 +616,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     BlobId src = copyRequest.getSource();
     BlobInfo dst = copyRequest.getTarget();
     Opts<ObjectSourceOpt> srcOpts =
-        Opts.unwrap(copyRequest.getSourceOptions()).projectAsSource().resolveFrom(src);
-    Opts<ObjectTargetOpt> dstOpts = Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst);
+        Opts.unwrap(copyRequest.getSourceOptions())
+            .projectAsSource()
+            .resolveFrom(src)
+            .prepend(defaultOpts);
+    Opts<ObjectTargetOpt> dstOpts =
+        Opts.unwrap(copyRequest.getTargetOptions()).resolveFrom(dst).prepend(defaultOpts);
 
     Mapper<RewriteObjectRequest.Builder> mapper =
         srcOpts.rewriteObjectsRequest().andThen(dstOpts.rewriteObjectsRequest());
@@ -684,7 +695,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobReadChannel reader(BlobId blob, BlobSourceOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
@@ -722,7 +733,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
@@ -844,7 +855,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Acl getAcl(String bucket, Entity entity, BucketSourceOption... options) {
     try {
-      Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+      Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
       com.google.storage.v2.Bucket resp = getBucketWithAcls(bucket, opts);
 
       Predicate<BucketAccessControl> entityPredicate =
@@ -874,7 +885,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public boolean deleteAcl(String bucket, Entity entity, BucketSourceOption... options) {
     try {
-      Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+      Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
       com.google.storage.v2.Bucket resp = getBucketWithAcls(bucket, opts);
       String encode = codecs.entity().encode(entity);
 
@@ -928,7 +939,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Acl updateAcl(String bucket, Acl acl, BucketSourceOption... options) {
     try {
-      Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+      Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
       com.google.storage.v2.Bucket resp = getBucketWithAcls(bucket, opts);
       BucketAccessControl encode = codecs.bucketAcl().encode(acl);
       String entity = encode.getEntity();
@@ -966,7 +977,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public List<Acl> listAcls(String bucket, BucketSourceOption... options) {
     try {
-      Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+      Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
       com.google.storage.v2.Bucket resp = getBucketWithAcls(bucket, opts);
       return resp.getAclList().stream()
           .map(codecs.bucketAcl()::decode)
@@ -1211,7 +1222,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public HmacKey createHmacKey(ServiceAccount serviceAccount, CreateHmacKeyOption... options) {
-    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options);
+    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     CreateHmacKeyRequest request =
@@ -1236,7 +1247,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Page<HmacKeyMetadata> listHmacKeys(ListHmacKeysOption... options) {
-    Opts<HmacKeyListOpt> opts = Opts.unwrap(options);
+    Opts<HmacKeyListOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
 
@@ -1264,7 +1275,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public HmacKeyMetadata getHmacKey(String accessId, GetHmacKeyOption... options) {
-    Opts<HmacKeySourceOpt> opts = Opts.unwrap(options);
+    Opts<HmacKeySourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetHmacKeyRequest request =
@@ -1283,7 +1294,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public void deleteHmacKey(HmacKeyMetadata hmacKeyMetadata, DeleteHmacKeyOption... options) {
-    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options);
+    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     DeleteHmacKeyRequest req =
@@ -1304,7 +1315,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public HmacKeyMetadata updateHmacKeyState(
       HmacKeyMetadata hmacKeyMetadata, HmacKeyState state, UpdateHmacKeyOption... options) {
-    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options);
+    Opts<HmacKeyTargetOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.HmacKeyMetadata encode =
@@ -1323,7 +1334,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Policy getIamPolicy(String bucket, BucketSourceOption... options) {
-    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetIamPolicyRequest.Builder builder =
@@ -1338,7 +1349,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Policy setIamPolicy(String bucket, Policy policy, BucketSourceOption... options) {
-    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     SetIamPolicyRequest req =
@@ -1356,7 +1367,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public List<Boolean> testIamPermissions(
       String bucket, List<String> permissions, BucketSourceOption... options) {
-    Opts<BucketSourceOpt> opts = Opts.unwrap(options);
+    Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     TestIamPermissionsRequest req =
@@ -1706,7 +1717,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
       BlobId blob, BlobSourceOption[] options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes =
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
