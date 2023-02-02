@@ -26,7 +26,6 @@ import com.google.auth.ServiceAccountSigner;
 import com.google.auth.ServiceAccountSigner.SigningException;
 import com.google.cloud.FieldSelector;
 import com.google.cloud.Policy;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.Service;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;

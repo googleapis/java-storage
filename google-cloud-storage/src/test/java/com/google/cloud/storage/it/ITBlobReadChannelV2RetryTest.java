@@ -23,12 +23,12 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.client.http.HttpRequest;
 import com.google.api.gax.rpc.FixedHeaderProvider;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
+import com.google.cloud.storage.ReadChannel;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;

@@ -51,10 +51,10 @@
  * credentials</a>.
  *
  * <p>Operations in this library are generally thread safe, except for the use of <a
- * href="https://github.com/googleapis/java-storage/blob/main/google-cloud-storage/src/main/java/com/google/cloud/storage/BlobReadChannel.java">
- * BlobReadChannel</a> and <a
- * href="https://github.com/googleapis/java-storage/blob/main/google-cloud-storage/src/main/java/com/google/cloud/storage/BlobWriteChannel.java">
- * BlobWriteChannel</a>.
+ * href="https://github.com/googleapis/java-storage/blob/main/google-cloud-storage/src/main/java/com/google/cloud/storage/ReadChannel.java">
+ * ReadChannel</a> and <a
+ * href="https://github.com/googleapis/java-storage/blob/main/google-cloud-storage/src/main/java/com/google/cloud/storage/WriteChannel.java">
+ * WriteChannel</a>.
  *
  * @see <a href="https://cloud.google.com/storage/">Google Cloud Storage</a>
  */

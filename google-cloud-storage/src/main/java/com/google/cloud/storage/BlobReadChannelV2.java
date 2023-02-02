@@ -18,8 +18,6 @@ package com.google.cloud.storage;
 
 import com.google.api.services.storage.Storage;
 import com.google.api.services.storage.model.StorageObject;
-import com.google.cloud.ReadChannel;
-import com.google.cloud.RestorableState;
 import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRequest;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
@@ -50,7 +48,7 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
   }
 
   @Override
-  public synchronized RestorableState<ReadChannel> capture() {
+  public synchronized ReadChannelState capture() {
     ApiaryReadRequest apiaryReadRequest = getApiaryReadRequest();
     return new BlobReadChannelV2State(
         apiaryReadRequest, blobReadChannelContext.getStorageOptions(), getChunkSize());
@@ -73,7 +71,7 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
     return new ApiaryReadRequest(object, opts, getByteRangeSpec());
   }
 
-  static final class BlobReadChannelV2State implements RestorableState<ReadChannel>, Serializable {
+  static final class BlobReadChannelV2State implements ReadChannelState, Serializable {
 
     private static final long serialVersionUID = -7595661593080505431L;
 

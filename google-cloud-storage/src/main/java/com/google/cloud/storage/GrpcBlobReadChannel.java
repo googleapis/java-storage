@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
-import com.google.cloud.RestorableState;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -41,7 +40,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
   }
 
   @Override
-  public RestorableState<ReadChannel> capture() {
+  public ReadChannelState capture() {
     return GrpcStorageImpl.throwHttpJsonOnly(ReadChannel.class, "capture");
   }
 

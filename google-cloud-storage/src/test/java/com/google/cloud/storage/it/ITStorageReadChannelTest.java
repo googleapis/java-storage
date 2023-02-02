@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage.it;
 
-import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.getBlobInfoFromReadChannelFunction;
 import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.cloud.storage.TestUtils.gzipBytes;
 import static com.google.cloud.storage.TestUtils.xxd;
@@ -24,12 +23,12 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
+import com.google.cloud.storage.ReadChannel;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
@@ -87,7 +86,7 @@ public final class ITStorageReadChannelTest {
     try (ReadChannel c =
         storage.reader(info.getBlobId(), BlobSourceOption.shouldReturnRawInputStream(true))) {
 
-      ApiFuture<BlobInfo> infoFuture = getBlobInfoFromReadChannelFunction(c);
+      ApiFuture<BlobInfo> infoFuture = c.getObject();
 
       ByteBuffer buf = ByteBuffer.allocate(_1MiB);
       c.read(buf);
@@ -112,7 +111,7 @@ public final class ITStorageReadChannelTest {
     BlobId id = BlobId.of(bucket.getName(), generator.randomObjectName());
 
     try (ReadChannel c = storage.reader(id)) {
-      ApiFuture<BlobInfo> infoFuture = getBlobInfoFromReadChannelFunction(c);
+      ApiFuture<BlobInfo> infoFuture = c.getObject();
       IOException ioException =
           assertThrows(IOException.class, () -> c.read(ByteBuffer.allocate(10)));
       assertThat(ioException).hasCauseThat().isInstanceOf(StorageException.class);

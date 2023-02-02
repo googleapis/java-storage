@@ -19,7 +19,6 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.common.io.ByteStreams;

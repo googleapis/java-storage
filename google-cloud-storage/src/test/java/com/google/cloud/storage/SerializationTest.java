@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
@@ -25,13 +24,9 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.BaseSerializationTest;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.PageImpl;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.Restorable;
-import com.google.cloud.RestorableState;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
-import com.google.cloud.storage.BlobReadChannel.StateImpl;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
-import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelV2State;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.UnifiedOpts.Opt;
@@ -39,15 +34,9 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -216,36 +205,6 @@ public class SerializationTest extends BaseSerializationTest {
         new BlobWriteChannel(
             options, BlobInfo.newBuilder(BlobId.of("b", "n")).build(), "upload-id", algorithm);
     return new Restorable<?>[] {readerV2, writer};
-  }
-
-  @SuppressWarnings({"deprecation", "rawtypes"})
-  @Test
-  public void restoreOfV1BlobReadChannelShouldReturnV2Channel()
-      throws IOException, ClassNotFoundException {
-
-    Properties properties = new Properties();
-    try (InputStream is =
-        SerializationTest.class
-            .getClassLoader()
-            .getResourceAsStream("com/google/cloud/storage/blobWriteChannel.ser.properties")) {
-      properties.load(is);
-    }
-    String b64bytes = properties.getProperty("b64bytes");
-    assertThat(b64bytes).isNotEmpty();
-
-    byte[] decode = Base64.getDecoder().decode(b64bytes);
-    try (ByteArrayInputStream bais = new ByteArrayInputStream(decode);
-        ObjectInputStream ois = new ObjectInputStream(bais)) {
-      Object o = ois.readObject();
-      assertThat(o).isInstanceOf(RestorableState.class);
-      RestorableState restorableState = (RestorableState) o;
-      assertThat(o).isInstanceOf(StateImpl.class);
-      StateImpl state = (StateImpl) restorableState;
-      ReadChannel restore = state.restore();
-      assertThat(restore).isInstanceOf(BlobReadChannelV2.class);
-      RestorableState<ReadChannel> capture = restore.capture();
-      assertThat(capture).isInstanceOf(BlobReadChannelV2State.class);
-    }
   }
 
   /**

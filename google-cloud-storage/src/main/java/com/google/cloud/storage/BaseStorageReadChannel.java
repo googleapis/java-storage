@@ -31,7 +31,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
+abstract class BaseStorageReadChannel<T> implements ReadChannel {
 
   private final Decoder<T, BlobInfo> objectDecoder;
   private final SettableApiFuture<T> result;
@@ -69,7 +69,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   }
 
   @Override
-  public final synchronized StorageReadChannel setByteRangeSpec(ByteRangeSpec byteRangeSpec) {
+  public final synchronized ReadChannel setByteRangeSpec(ByteRangeSpec byteRangeSpec) {
     requireNonNull(byteRangeSpec, "byteRangeSpec must be non null");
     StorageException.wrapIOException(() -> maybeResetChannel(false));
     this.byteRangeSpec = byteRangeSpec;

@@ -33,7 +33,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.api.core.ApiClock;
 import com.google.api.gax.retrying.RetrySettings;
-import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.Acl.Project;
 import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.Acl.Role;

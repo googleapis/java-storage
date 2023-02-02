@@ -580,12 +580,12 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public StorageReadChannel reader(String bucket, String blob, BlobSourceOption... options) {
+  public ReadChannel reader(String bucket, String blob, BlobSourceOption... options) {
     return reader(BlobId.of(bucket, blob), options);
   }
 
   @Override
-  public StorageReadChannel reader(BlobId blob, BlobSourceOption... options) {
+  public ReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
     StorageObject storageObject = Conversions.apiary().blobId().encode(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();

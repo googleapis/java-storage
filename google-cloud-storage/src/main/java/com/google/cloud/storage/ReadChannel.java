@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,19 @@ package com.google.cloud.storage;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.ReadChannel;
+import com.google.cloud.Restorable;
+import com.google.cloud.RestorableState;
 import java.io.IOException;
+import java.nio.channels.ReadableByteChannel;
 
-interface StorageReadChannel extends ReadChannel {
+public interface ReadChannel extends ReadableByteChannel, AutoCloseable, Restorable<ReadChannel> {
 
-  StorageReadChannel setByteRangeSpec(ByteRangeSpec byteRangeSpec);
+  void close();
 
-  /**
-   * Return a Future which resolves to the sparse object metadata included in the response headers
-   * when opening the read.
-   */
+  void setChunkSize(int chunkSize);
+
+  ReadChannel setByteRangeSpec(ByteRangeSpec byteRangeSpec);
+
   ApiFuture<BlobInfo> getObject();
 
   default ByteRangeSpec getByteRangeSpec() {
@@ -39,7 +41,6 @@ interface StorageReadChannel extends ReadChannel {
   /** @deprecated Use {@link #setByteRangeSpec(ByteRangeSpec)} */
   @Deprecated
   @SuppressWarnings("resource")
-  @Override
   default void seek(long position) throws IOException {
     checkArgument(position >= 0, "position must be >= 0");
     try {
@@ -57,7 +58,6 @@ interface StorageReadChannel extends ReadChannel {
   /** @deprecated Use {@link #setByteRangeSpec(ByteRangeSpec)} */
   @SuppressWarnings("resource")
   @Deprecated
-  @Override
   default ReadChannel limit(long limit) {
     checkArgument(limit >= 0, "limit must be >= 0");
     setByteRangeSpec(getByteRangeSpec().withNewEndOffset(limit));
@@ -66,8 +66,11 @@ interface StorageReadChannel extends ReadChannel {
 
   /** @deprecated Use {@link #getByteRangeSpec()} */
   @Deprecated
-  @Override
   default long limit() {
     return getByteRangeSpec().endOffset();
   }
+
+  ReadChannelState capture();
+
+  interface ReadChannelState extends RestorableState<ReadChannel> {}
 }
