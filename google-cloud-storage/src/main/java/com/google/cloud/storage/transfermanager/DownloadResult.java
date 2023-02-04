@@ -138,8 +138,12 @@ public final class DownloadResult {
     public DownloadResult build() {
       checkNotNull(input);
       checkNotNull(status);
-      // TODO: validate either outputDestination or exception are non-null relative to the value of
-      // status.
+      if (status == TransferStatus.SUCCESS) {
+        checkNotNull(outputDestination);
+      } else if (status == TransferStatus.FAILED_TO_START
+          || status == TransferStatus.FAILED_TO_FINISH) {
+        checkNotNull(exception);
+      }
       return new DownloadResult(input, outputDestination, status, exception);
     }
   }

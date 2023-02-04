@@ -137,8 +137,12 @@ public final class UploadResult {
     public UploadResult build() {
       checkNotNull(input);
       checkNotNull(status);
-      // TODO: validate either uploadedBlob or exception are non-null relative to the value of
-      // status.
+      if (status == TransferStatus.SUCCESS) {
+        checkNotNull(uploadedBlob);
+      } else if (status == TransferStatus.FAILED_TO_START
+          || status == TransferStatus.FAILED_TO_FINISH) {
+        checkNotNull(exception);
+      }
       return new UploadResult(input, status, uploadedBlob, exception);
     }
   }
