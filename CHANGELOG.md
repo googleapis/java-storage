@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.18.0](https://github.com/googleapis/java-storage/compare/v2.17.2...v2.18.0) (2023-02-06)
+
+
+### Features
+
+* Add Storage.BlobWriteOption.{meta,}generation{Not,}Match(long) methods to allow literal value construction ([#1875](https://github.com/googleapis/java-storage/issues/1875)) ([a9fab09](https://github.com/googleapis/java-storage/commit/a9fab098e23c93887f0aae8a5de6e3477d5f0f0c))
+* Setting up 2.15.x ([#1880](https://github.com/googleapis/java-storage/issues/1880)) ([1c88e83](https://github.com/googleapis/java-storage/commit/1c88e83974798d39a63ea4dd85d8f5bb9cb8f88c))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.2.0 ([#1886](https://github.com/googleapis/java-storage/issues/1886)) ([6928556](https://github.com/googleapis/java-storage/commit/6928556f0a0a61e8c68d9bf98403ce5b27a3bee2))
+
 ## [2.17.2](https://github.com/googleapis/java-storage/compare/v2.17.1...v2.17.2) (2023-01-23)
 
 
