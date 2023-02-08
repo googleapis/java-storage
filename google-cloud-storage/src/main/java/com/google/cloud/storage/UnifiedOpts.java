@@ -2288,17 +2288,22 @@ final class UnifiedOpts {
           .orElse(Decoder.identity());
     }
 
-    <L extends T> Opts<T> prepend(Opts<L> l) {
-      Opts<T> right = this;
-      Set<? extends Class<? extends Opt>> rightClasses =
-          right.opts.stream().map(Opt::getClass).collect(Collectors.toSet());
+    /**
+     * Create a new instance of Opts<T> where {@code toPrepend} and {@code this}. If an {@link Opt}
+     * type ({@code Class<T>}) is present in both {@code toPrepend} and {@code this}, the {@link
+     * Opt} from {@code this} will take priority when applied via one of the produced mappers.
+     */
+    Opts<T> prepend(Opts<? extends T> toPrepend) {
+      // inventory the Opt types already present in this
+      Set<? extends Class<? extends Opt>> existingOptTypes =
+          this.opts.stream().map(Opt::getClass).collect(Collectors.toSet());
 
       ImmutableList<T> list =
           Stream.of(
-                  l.opts.stream()
-                      // remove opts which are defined on the right hand size
-                      .filter(o -> !rightClasses.contains(o.getClass())),
-                  right.opts.stream())
+                  toPrepend.opts.stream()
+                      // exclude those opt types which are already present in this
+                      .filter(o -> !existingOptTypes.contains(o.getClass())),
+                  this.opts.stream())
               .flatMap(x -> x)
               .collect(ImmutableList.toImmutableList());
       return new Opts<>(list);
