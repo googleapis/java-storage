@@ -17,103 +17,15 @@
 package com.google.cloud.storage.transfermanager;
 
 import com.google.cloud.storage.BlobInfo;
-import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public interface TransferManager {
 
-  class TransferManagerConfig {
-    private final int maxWorkers;
-    private final int perWorkerBufferSize;
-    private final boolean allowChunking;
-
-    private TransferManagerConfig(int maxWorkers, int perWorkerBufferSize, boolean allowChunking) {
-      this.maxWorkers = maxWorkers;
-      this.perWorkerBufferSize = perWorkerBufferSize;
-      this.allowChunking = allowChunking;
-    }
-
-    public int getMaxWorkers() {
-      return maxWorkers;
-    }
-
-    public int getPerWorkerBufferSize() {
-      return perWorkerBufferSize;
-    }
-
-    public boolean isAllowChunking() {
-      return allowChunking;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      TransferManagerConfig that = (TransferManagerConfig) o;
-      return maxWorkers == that.maxWorkers
-          && perWorkerBufferSize == that.perWorkerBufferSize
-          && allowChunking == that.allowChunking;
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(maxWorkers, perWorkerBufferSize, allowChunking);
-    }
-
-    @Override
-    public String toString() {
-      return MoreObjects.toStringHelper(this)
-          .add("maxWorkers", maxWorkers)
-          .add("perWorkerBufferSize", perWorkerBufferSize)
-          .add("allowChunking", allowChunking)
-          .toString();
-    }
-
-    public static Builder newBuilder() {
-      return new Builder();
-    }
-
-    static class Builder {
-
-      private int maxWorkers;
-      private int perWorkerBufferSize;
-      private boolean allowChunking;
-
-      private Builder() {
-        // TODO: add default values
-        // bufferSize tbd?
-        this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
-        this.allowChunking = false;
-      }
-
-      public Builder setMaxWorkers(int maxWorkers) {
-        this.maxWorkers = maxWorkers;
-        return this;
-      }
-
-      public Builder setPerWorkerBufferSize(int perWorkerBufferSize) {
-        this.perWorkerBufferSize = perWorkerBufferSize;
-        return this;
-      }
-
-      public Builder setAllowChunking(boolean allowChunking) {
-        this.allowChunking = allowChunking;
-        return this;
-      }
-
-      public TransferManagerConfig build() {
-        return new TransferManagerConfig(maxWorkers, perWorkerBufferSize, allowChunking);
-      }
-    }
-  }
-
+  @NonNull
   UploadJob uploadFiles(List<Path> files, ParallelUploadConfig opts);
 
+  @NonNull
   DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig opts);
 }

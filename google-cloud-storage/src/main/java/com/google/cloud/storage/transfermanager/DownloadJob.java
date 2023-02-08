@@ -22,20 +22,25 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class DownloadJob {
 
   @NonNull private final List<DownloadResult> successResponses;
   @NonNull private final List<DownloadResult> failedResponses;
+
+  @NonNull private final ParallelDownloadConfig parallelDownloadConfig;
   private final boolean anyFailed;
 
   private DownloadJob(
       @NonNull List<DownloadResult> successResponses,
-      @NonNull List<DownloadResult> failedResponses) {
+      @NonNull List<DownloadResult> failedResponses,
+      @NonNull ParallelDownloadConfig parallelDownloadConfig) {
     this.successResponses = successResponses;
     this.failedResponses = failedResponses;
-    this.anyFailed = failedResponses.isEmpty();
+    this.anyFailed = !failedResponses.isEmpty();
+    this.parallelDownloadConfig = parallelDownloadConfig;
   }
 
   public List<DownloadResult> getSuccessResponses() {
@@ -50,23 +55,28 @@ public final class DownloadJob {
     return anyFailed;
   }
 
+  public ParallelDownloadConfig getParallelDownloadConfig() {
+    return parallelDownloadConfig;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof DownloadJob)) {
       return false;
     }
     DownloadJob that = (DownloadJob) o;
     return anyFailed == that.anyFailed
         && successResponses.equals(that.successResponses)
-        && failedResponses.equals(that.failedResponses);
+        && failedResponses.equals(that.failedResponses)
+        && parallelDownloadConfig.equals(that.parallelDownloadConfig);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(successResponses, failedResponses, anyFailed);
+    return Objects.hash(successResponses, failedResponses, parallelDownloadConfig, anyFailed);
   }
 
   @Override
@@ -74,6 +84,7 @@ public final class DownloadJob {
     return MoreObjects.toStringHelper(this)
         .add("successResponses", successResponses)
         .add("failedResponses", failedResponses)
+        .add("parallelDownloadConfig", parallelDownloadConfig)
         .add("anyFailed", anyFailed)
         .toString();
   }
@@ -86,6 +97,7 @@ public final class DownloadJob {
 
     private @NonNull List<DownloadResult> successResponses;
     private @NonNull List<DownloadResult> failedResponses;
+    private @MonotonicNonNull ParallelDownloadConfig parallelDownloadConfig;
 
     private Builder() {
       this.successResponses = ImmutableList.of();
@@ -102,10 +114,17 @@ public final class DownloadJob {
       return this;
     }
 
+    public Builder setParallelDownloadConfig(
+        @NonNull ParallelDownloadConfig parallelDownloadConfig) {
+      this.parallelDownloadConfig = parallelDownloadConfig;
+      return this;
+    }
+
     public DownloadJob build() {
       checkNotNull(successResponses);
       checkNotNull(failedResponses);
-      return new DownloadJob(successResponses, failedResponses);
+      checkNotNull(parallelDownloadConfig);
+      return new DownloadJob(successResponses, failedResponses, parallelDownloadConfig);
     }
   }
 }
