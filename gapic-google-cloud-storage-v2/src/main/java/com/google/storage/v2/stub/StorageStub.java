@@ -18,7 +18,7 @@ package com.google.storage.v2.stub;
 
 import static com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
-import static com.google.storage.v2.StorageClient.ListNotificationsPagedResponse;
+import static com.google.storage.v2.StorageClient.ListNotificationConfigsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.gax.core.BackgroundResource;
@@ -38,14 +38,14 @@ import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.CreateHmacKeyResponse;
-import com.google.storage.v2.CreateNotificationRequest;
+import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
-import com.google.storage.v2.DeleteNotificationRequest;
+import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetHmacKeyRequest;
-import com.google.storage.v2.GetNotificationRequest;
+import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.HmacKeyMetadata;
@@ -53,12 +53,12 @@ import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListBucketsResponse;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListHmacKeysResponse;
-import com.google.storage.v2.ListNotificationsRequest;
-import com.google.storage.v2.ListNotificationsResponse;
+import com.google.storage.v2.ListNotificationConfigsRequest;
+import com.google.storage.v2.ListNotificationConfigsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
-import com.google.storage.v2.Notification;
+import com.google.storage.v2.NotificationConfig;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -127,26 +127,29 @@ public abstract class StorageStub implements BackgroundResource {
     throw new UnsupportedOperationException("Not implemented: updateBucketCallable()");
   }
 
-  public UnaryCallable<DeleteNotificationRequest, Empty> deleteNotificationCallable() {
-    throw new UnsupportedOperationException("Not implemented: deleteNotificationCallable()");
+  public UnaryCallable<DeleteNotificationConfigRequest, Empty> deleteNotificationConfigCallable() {
+    throw new UnsupportedOperationException("Not implemented: deleteNotificationConfigCallable()");
   }
 
-  public UnaryCallable<GetNotificationRequest, Notification> getNotificationCallable() {
-    throw new UnsupportedOperationException("Not implemented: getNotificationCallable()");
+  public UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
+      getNotificationConfigCallable() {
+    throw new UnsupportedOperationException("Not implemented: getNotificationConfigCallable()");
   }
 
-  public UnaryCallable<CreateNotificationRequest, Notification> createNotificationCallable() {
-    throw new UnsupportedOperationException("Not implemented: createNotificationCallable()");
+  public UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
+      createNotificationConfigCallable() {
+    throw new UnsupportedOperationException("Not implemented: createNotificationConfigCallable()");
   }
 
-  public UnaryCallable<ListNotificationsRequest, ListNotificationsPagedResponse>
-      listNotificationsPagedCallable() {
-    throw new UnsupportedOperationException("Not implemented: listNotificationsPagedCallable()");
+  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
+      listNotificationConfigsPagedCallable() {
+    throw new UnsupportedOperationException(
+        "Not implemented: listNotificationConfigsPagedCallable()");
   }
 
-  public UnaryCallable<ListNotificationsRequest, ListNotificationsResponse>
-      listNotificationsCallable() {
-    throw new UnsupportedOperationException("Not implemented: listNotificationsCallable()");
+  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
+      listNotificationConfigsCallable() {
+    throw new UnsupportedOperationException("Not implemented: listNotificationConfigsCallable()");
   }
 
   public UnaryCallable<ComposeObjectRequest, Object> composeObjectCallable() {

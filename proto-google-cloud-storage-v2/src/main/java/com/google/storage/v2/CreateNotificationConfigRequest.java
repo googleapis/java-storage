@@ -22,30 +22,30 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for ListNotifications.
+ * Request message for CreateNotificationConfig.
  * </pre>
  *
- * Protobuf type {@code google.storage.v2.ListNotificationsRequest}
+ * Protobuf type {@code google.storage.v2.CreateNotificationConfigRequest}
  */
-public final class ListNotificationsRequest extends com.google.protobuf.GeneratedMessageV3
+public final class CreateNotificationConfigRequest extends com.google.protobuf.GeneratedMessageV3
     implements
-    // @@protoc_insertion_point(message_implements:google.storage.v2.ListNotificationsRequest)
-    ListNotificationsRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:google.storage.v2.CreateNotificationConfigRequest)
+    CreateNotificationConfigRequestOrBuilder {
   private static final long serialVersionUID = 0L;
-  // Use ListNotificationsRequest.newBuilder() to construct.
-  private ListNotificationsRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use CreateNotificationConfigRequest.newBuilder() to construct.
+  private CreateNotificationConfigRequest(
+      com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
 
-  private ListNotificationsRequest() {
+  private CreateNotificationConfigRequest() {
     parent_ = "";
-    pageToken_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-    return new ListNotificationsRequest();
+    return new CreateNotificationConfigRequest();
   }
 
   @java.lang.Override
@@ -55,17 +55,17 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_ListNotificationsRequest_descriptor;
+        .internal_static_google_storage_v2_CreateNotificationConfigRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_ListNotificationsRequest_fieldAccessorTable
+        .internal_static_google_storage_v2_CreateNotificationConfigRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.google.storage.v2.ListNotificationsRequest.class,
-            com.google.storage.v2.ListNotificationsRequest.Builder.class);
+            com.google.storage.v2.CreateNotificationConfigRequest.class,
+            com.google.storage.v2.CreateNotificationConfigRequest.Builder.class);
   }
 
   public static final int PARENT_FIELD_NUMBER = 1;
@@ -76,7 +76,7 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Required. Name of a Google Cloud Storage bucket.
+   * Required. The bucket to which this NotificationConfig belongs.
    * </pre>
    *
    * <code>
@@ -101,7 +101,7 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Required. Name of a Google Cloud Storage bucket.
+   * Required. The bucket to which this NotificationConfig belongs.
    * </pre>
    *
    * <code>
@@ -123,82 +123,60 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
     }
   }
 
-  public static final int PAGE_SIZE_FIELD_NUMBER = 2;
-  private int pageSize_ = 0;
+  public static final int NOTIFICATION_CONFIG_FIELD_NUMBER = 2;
+  private com.google.storage.v2.NotificationConfig notificationConfig_;
   /**
    *
    *
    * <pre>
-   * The maximum number of notifications to return. The service may return fewer
-   * than this value.
-   * The default value is 100. Specifying a value above 100 will result in a
-   * page_size of 100.
+   * Required. Properties of the NotificationConfig to be inserted.
    * </pre>
    *
-   * <code>int32 page_size = 2;</code>
+   * <code>
+   * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
-   * @return The pageSize.
+   * @return Whether the notificationConfig field is set.
    */
   @java.lang.Override
-  public int getPageSize() {
-    return pageSize_;
-  }
-
-  public static final int PAGE_TOKEN_FIELD_NUMBER = 3;
-
-  @SuppressWarnings("serial")
-  private volatile java.lang.Object pageToken_ = "";
-  /**
-   *
-   *
-   * <pre>
-   * A page token, received from a previous `ListNotifications` call.
-   * Provide this to retrieve the subsequent page.
-   * When paginating, all other parameters provided to `ListNotifications` must
-   * match the call that provided the page token.
-   * </pre>
-   *
-   * <code>string page_token = 3;</code>
-   *
-   * @return The pageToken.
-   */
-  @java.lang.Override
-  public java.lang.String getPageToken() {
-    java.lang.Object ref = pageToken_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      pageToken_ = s;
-      return s;
-    }
+  public boolean hasNotificationConfig() {
+    return notificationConfig_ != null;
   }
   /**
    *
    *
    * <pre>
-   * A page token, received from a previous `ListNotifications` call.
-   * Provide this to retrieve the subsequent page.
-   * When paginating, all other parameters provided to `ListNotifications` must
-   * match the call that provided the page token.
+   * Required. Properties of the NotificationConfig to be inserted.
    * </pre>
    *
-   * <code>string page_token = 3;</code>
+   * <code>
+   * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
    *
-   * @return The bytes for pageToken.
+   * @return The notificationConfig.
    */
   @java.lang.Override
-  public com.google.protobuf.ByteString getPageTokenBytes() {
-    java.lang.Object ref = pageToken_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-          com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-      pageToken_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
+  public com.google.storage.v2.NotificationConfig getNotificationConfig() {
+    return notificationConfig_ == null
+        ? com.google.storage.v2.NotificationConfig.getDefaultInstance()
+        : notificationConfig_;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Required. Properties of the NotificationConfig to be inserted.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+   * </code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.NotificationConfigOrBuilder getNotificationConfigOrBuilder() {
+    return notificationConfig_ == null
+        ? com.google.storage.v2.NotificationConfig.getDefaultInstance()
+        : notificationConfig_;
   }
 
   private byte memoizedIsInitialized = -1;
@@ -218,11 +196,8 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(parent_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, parent_);
     }
-    if (pageSize_ != 0) {
-      output.writeInt32(2, pageSize_);
-    }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(pageToken_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, pageToken_);
+    if (notificationConfig_ != null) {
+      output.writeMessage(2, getNotificationConfig());
     }
     getUnknownFields().writeTo(output);
   }
@@ -236,11 +211,8 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(parent_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, parent_);
     }
-    if (pageSize_ != 0) {
-      size += com.google.protobuf.CodedOutputStream.computeInt32Size(2, pageSize_);
-    }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(pageToken_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, pageToken_);
+    if (notificationConfig_ != null) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getNotificationConfig());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -252,15 +224,17 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof com.google.storage.v2.ListNotificationsRequest)) {
+    if (!(obj instanceof com.google.storage.v2.CreateNotificationConfigRequest)) {
       return super.equals(obj);
     }
-    com.google.storage.v2.ListNotificationsRequest other =
-        (com.google.storage.v2.ListNotificationsRequest) obj;
+    com.google.storage.v2.CreateNotificationConfigRequest other =
+        (com.google.storage.v2.CreateNotificationConfigRequest) obj;
 
     if (!getParent().equals(other.getParent())) return false;
-    if (getPageSize() != other.getPageSize()) return false;
-    if (!getPageToken().equals(other.getPageToken())) return false;
+    if (hasNotificationConfig() != other.hasNotificationConfig()) return false;
+    if (hasNotificationConfig()) {
+      if (!getNotificationConfig().equals(other.getNotificationConfig())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -274,80 +248,80 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + PARENT_FIELD_NUMBER;
     hash = (53 * hash) + getParent().hashCode();
-    hash = (37 * hash) + PAGE_SIZE_FIELD_NUMBER;
-    hash = (53 * hash) + getPageSize();
-    hash = (37 * hash) + PAGE_TOKEN_FIELD_NUMBER;
-    hash = (53 * hash) + getPageToken().hashCode();
+    if (hasNotificationConfig()) {
+      hash = (37 * hash) + NOTIFICATION_CONFIG_FIELD_NUMBER;
+      hash = (53 * hash) + getNotificationConfig().hashCode();
+    }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(java.nio.ByteBuffer data)
-      throws com.google.protobuf.InvalidProtocolBufferException {
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
+      java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
       java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(byte[] data)
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
       byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(java.io.InputStream input)
-      throws java.io.IOException {
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
+      java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseDelimitedFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseDelimitedFrom(
       java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseDelimitedFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseDelimitedFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
       com.google.protobuf.CodedInputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest parseFrom(
+  public static com.google.storage.v2.CreateNotificationConfigRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -364,7 +338,8 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
     return DEFAULT_INSTANCE.toBuilder();
   }
 
-  public static Builder newBuilder(com.google.storage.v2.ListNotificationsRequest prototype) {
+  public static Builder newBuilder(
+      com.google.storage.v2.CreateNotificationConfigRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
 
@@ -382,31 +357,31 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Request message for ListNotifications.
+   * Request message for CreateNotificationConfig.
    * </pre>
    *
-   * Protobuf type {@code google.storage.v2.ListNotificationsRequest}
+   * Protobuf type {@code google.storage.v2.CreateNotificationConfigRequest}
    */
   public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:google.storage.v2.ListNotificationsRequest)
-      com.google.storage.v2.ListNotificationsRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:google.storage.v2.CreateNotificationConfigRequest)
+      com.google.storage.v2.CreateNotificationConfigRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_ListNotificationsRequest_descriptor;
+          .internal_static_google_storage_v2_CreateNotificationConfigRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_ListNotificationsRequest_fieldAccessorTable
+          .internal_static_google_storage_v2_CreateNotificationConfigRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.ListNotificationsRequest.class,
-              com.google.storage.v2.ListNotificationsRequest.Builder.class);
+              com.google.storage.v2.CreateNotificationConfigRequest.class,
+              com.google.storage.v2.CreateNotificationConfigRequest.Builder.class);
     }
 
-    // Construct using com.google.storage.v2.ListNotificationsRequest.newBuilder()
+    // Construct using com.google.storage.v2.CreateNotificationConfigRequest.newBuilder()
     private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
@@ -418,25 +393,28 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
       super.clear();
       bitField0_ = 0;
       parent_ = "";
-      pageSize_ = 0;
-      pageToken_ = "";
+      notificationConfig_ = null;
+      if (notificationConfigBuilder_ != null) {
+        notificationConfigBuilder_.dispose();
+        notificationConfigBuilder_ = null;
+      }
       return this;
     }
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_ListNotificationsRequest_descriptor;
+          .internal_static_google_storage_v2_CreateNotificationConfigRequest_descriptor;
     }
 
     @java.lang.Override
-    public com.google.storage.v2.ListNotificationsRequest getDefaultInstanceForType() {
-      return com.google.storage.v2.ListNotificationsRequest.getDefaultInstance();
+    public com.google.storage.v2.CreateNotificationConfigRequest getDefaultInstanceForType() {
+      return com.google.storage.v2.CreateNotificationConfigRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public com.google.storage.v2.ListNotificationsRequest build() {
-      com.google.storage.v2.ListNotificationsRequest result = buildPartial();
+    public com.google.storage.v2.CreateNotificationConfigRequest build() {
+      com.google.storage.v2.CreateNotificationConfigRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -444,9 +422,9 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
     }
 
     @java.lang.Override
-    public com.google.storage.v2.ListNotificationsRequest buildPartial() {
-      com.google.storage.v2.ListNotificationsRequest result =
-          new com.google.storage.v2.ListNotificationsRequest(this);
+    public com.google.storage.v2.CreateNotificationConfigRequest buildPartial() {
+      com.google.storage.v2.CreateNotificationConfigRequest result =
+          new com.google.storage.v2.CreateNotificationConfigRequest(this);
       if (bitField0_ != 0) {
         buildPartial0(result);
       }
@@ -454,16 +432,16 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
       return result;
     }
 
-    private void buildPartial0(com.google.storage.v2.ListNotificationsRequest result) {
+    private void buildPartial0(com.google.storage.v2.CreateNotificationConfigRequest result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.parent_ = parent_;
       }
       if (((from_bitField0_ & 0x00000002) != 0)) {
-        result.pageSize_ = pageSize_;
-      }
-      if (((from_bitField0_ & 0x00000004) != 0)) {
-        result.pageToken_ = pageToken_;
+        result.notificationConfig_ =
+            notificationConfigBuilder_ == null
+                ? notificationConfig_
+                : notificationConfigBuilder_.build();
       }
     }
 
@@ -502,28 +480,24 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
 
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.google.storage.v2.ListNotificationsRequest) {
-        return mergeFrom((com.google.storage.v2.ListNotificationsRequest) other);
+      if (other instanceof com.google.storage.v2.CreateNotificationConfigRequest) {
+        return mergeFrom((com.google.storage.v2.CreateNotificationConfigRequest) other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.google.storage.v2.ListNotificationsRequest other) {
-      if (other == com.google.storage.v2.ListNotificationsRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(com.google.storage.v2.CreateNotificationConfigRequest other) {
+      if (other == com.google.storage.v2.CreateNotificationConfigRequest.getDefaultInstance())
+        return this;
       if (!other.getParent().isEmpty()) {
         parent_ = other.parent_;
         bitField0_ |= 0x00000001;
         onChanged();
       }
-      if (other.getPageSize() != 0) {
-        setPageSize(other.getPageSize());
-      }
-      if (!other.getPageToken().isEmpty()) {
-        pageToken_ = other.pageToken_;
-        bitField0_ |= 0x00000004;
-        onChanged();
+      if (other.hasNotificationConfig()) {
+        mergeNotificationConfig(other.getNotificationConfig());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -557,18 +531,13 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
                 bitField0_ |= 0x00000001;
                 break;
               } // case 10
-            case 16:
+            case 18:
               {
-                pageSize_ = input.readInt32();
+                input.readMessage(
+                    getNotificationConfigFieldBuilder().getBuilder(), extensionRegistry);
                 bitField0_ |= 0x00000002;
                 break;
-              } // case 16
-            case 26:
-              {
-                pageToken_ = input.readStringRequireUtf8();
-                bitField0_ |= 0x00000004;
-                break;
-              } // case 26
+              } // case 18
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -593,7 +562,7 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Name of a Google Cloud Storage bucket.
+     * Required. The bucket to which this NotificationConfig belongs.
      * </pre>
      *
      * <code>
@@ -617,7 +586,7 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Name of a Google Cloud Storage bucket.
+     * Required. The bucket to which this NotificationConfig belongs.
      * </pre>
      *
      * <code>
@@ -641,7 +610,7 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Name of a Google Cloud Storage bucket.
+     * Required. The bucket to which this NotificationConfig belongs.
      * </pre>
      *
      * <code>
@@ -664,7 +633,7 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Name of a Google Cloud Storage bucket.
+     * Required. The bucket to which this NotificationConfig belongs.
      * </pre>
      *
      * <code>
@@ -683,7 +652,7 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Name of a Google Cloud Storage bucket.
+     * Required. The bucket to which this NotificationConfig belongs.
      * </pre>
      *
      * <code>
@@ -704,43 +673,70 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
       return this;
     }
 
-    private int pageSize_;
+    private com.google.storage.v2.NotificationConfig notificationConfig_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.NotificationConfig,
+            com.google.storage.v2.NotificationConfig.Builder,
+            com.google.storage.v2.NotificationConfigOrBuilder>
+        notificationConfigBuilder_;
     /**
      *
      *
      * <pre>
-     * The maximum number of notifications to return. The service may return fewer
-     * than this value.
-     * The default value is 100. Specifying a value above 100 will result in a
-     * page_size of 100.
+     * Required. Properties of the NotificationConfig to be inserted.
      * </pre>
      *
-     * <code>int32 page_size = 2;</code>
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
-     * @return The pageSize.
+     * @return Whether the notificationConfig field is set.
      */
-    @java.lang.Override
-    public int getPageSize() {
-      return pageSize_;
+    public boolean hasNotificationConfig() {
+      return ((bitField0_ & 0x00000002) != 0);
     }
     /**
      *
      *
      * <pre>
-     * The maximum number of notifications to return. The service may return fewer
-     * than this value.
-     * The default value is 100. Specifying a value above 100 will result in a
-     * page_size of 100.
+     * Required. Properties of the NotificationConfig to be inserted.
      * </pre>
      *
-     * <code>int32 page_size = 2;</code>
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      *
-     * @param value The pageSize to set.
-     * @return This builder for chaining.
+     * @return The notificationConfig.
      */
-    public Builder setPageSize(int value) {
-
-      pageSize_ = value;
+    public com.google.storage.v2.NotificationConfig getNotificationConfig() {
+      if (notificationConfigBuilder_ == null) {
+        return notificationConfig_ == null
+            ? com.google.storage.v2.NotificationConfig.getDefaultInstance()
+            : notificationConfig_;
+      } else {
+        return notificationConfigBuilder_.getMessage();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Required. Properties of the NotificationConfig to be inserted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
+     */
+    public Builder setNotificationConfig(com.google.storage.v2.NotificationConfig value) {
+      if (notificationConfigBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        notificationConfig_ = value;
+      } else {
+        notificationConfigBuilder_.setMessage(value);
+      }
       bitField0_ |= 0x00000002;
       onChanged();
       return this;
@@ -749,142 +745,135 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * The maximum number of notifications to return. The service may return fewer
-     * than this value.
-     * The default value is 100. Specifying a value above 100 will result in a
-     * page_size of 100.
+     * Required. Properties of the NotificationConfig to be inserted.
      * </pre>
      *
-     * <code>int32 page_size = 2;</code>
-     *
-     * @return This builder for chaining.
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
-    public Builder clearPageSize() {
+    public Builder setNotificationConfig(
+        com.google.storage.v2.NotificationConfig.Builder builderForValue) {
+      if (notificationConfigBuilder_ == null) {
+        notificationConfig_ = builderForValue.build();
+      } else {
+        notificationConfigBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Required. Properties of the NotificationConfig to be inserted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
+     */
+    public Builder mergeNotificationConfig(com.google.storage.v2.NotificationConfig value) {
+      if (notificationConfigBuilder_ == null) {
+        if (((bitField0_ & 0x00000002) != 0)
+            && notificationConfig_ != null
+            && notificationConfig_
+                != com.google.storage.v2.NotificationConfig.getDefaultInstance()) {
+          getNotificationConfigBuilder().mergeFrom(value);
+        } else {
+          notificationConfig_ = value;
+        }
+      } else {
+        notificationConfigBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Required. Properties of the NotificationConfig to be inserted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
+     */
+    public Builder clearNotificationConfig() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      pageSize_ = 0;
+      notificationConfig_ = null;
+      if (notificationConfigBuilder_ != null) {
+        notificationConfigBuilder_.dispose();
+        notificationConfigBuilder_ = null;
+      }
       onChanged();
       return this;
     }
-
-    private java.lang.Object pageToken_ = "";
     /**
      *
      *
      * <pre>
-     * A page token, received from a previous `ListNotifications` call.
-     * Provide this to retrieve the subsequent page.
-     * When paginating, all other parameters provided to `ListNotifications` must
-     * match the call that provided the page token.
+     * Required. Properties of the NotificationConfig to be inserted.
      * </pre>
      *
-     * <code>string page_token = 3;</code>
-     *
-     * @return The pageToken.
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
-    public java.lang.String getPageToken() {
-      java.lang.Object ref = pageToken_;
-      if (!(ref instanceof java.lang.String)) {
-        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        pageToken_ = s;
-        return s;
+    public com.google.storage.v2.NotificationConfig.Builder getNotificationConfigBuilder() {
+      bitField0_ |= 0x00000002;
+      onChanged();
+      return getNotificationConfigFieldBuilder().getBuilder();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Required. Properties of the NotificationConfig to be inserted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
+     */
+    public com.google.storage.v2.NotificationConfigOrBuilder getNotificationConfigOrBuilder() {
+      if (notificationConfigBuilder_ != null) {
+        return notificationConfigBuilder_.getMessageOrBuilder();
       } else {
-        return (java.lang.String) ref;
+        return notificationConfig_ == null
+            ? com.google.storage.v2.NotificationConfig.getDefaultInstance()
+            : notificationConfig_;
       }
     }
     /**
      *
      *
      * <pre>
-     * A page token, received from a previous `ListNotifications` call.
-     * Provide this to retrieve the subsequent page.
-     * When paginating, all other parameters provided to `ListNotifications` must
-     * match the call that provided the page token.
+     * Required. Properties of the NotificationConfig to be inserted.
      * </pre>
      *
-     * <code>string page_token = 3;</code>
-     *
-     * @return The bytes for pageToken.
+     * <code>
+     * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
+     * </code>
      */
-    public com.google.protobuf.ByteString getPageTokenBytes() {
-      java.lang.Object ref = pageToken_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b =
-            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
-        pageToken_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.NotificationConfig,
+            com.google.storage.v2.NotificationConfig.Builder,
+            com.google.storage.v2.NotificationConfigOrBuilder>
+        getNotificationConfigFieldBuilder() {
+      if (notificationConfigBuilder_ == null) {
+        notificationConfigBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.NotificationConfig,
+                com.google.storage.v2.NotificationConfig.Builder,
+                com.google.storage.v2.NotificationConfigOrBuilder>(
+                getNotificationConfig(), getParentForChildren(), isClean());
+        notificationConfig_ = null;
       }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A page token, received from a previous `ListNotifications` call.
-     * Provide this to retrieve the subsequent page.
-     * When paginating, all other parameters provided to `ListNotifications` must
-     * match the call that provided the page token.
-     * </pre>
-     *
-     * <code>string page_token = 3;</code>
-     *
-     * @param value The pageToken to set.
-     * @return This builder for chaining.
-     */
-    public Builder setPageToken(java.lang.String value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      pageToken_ = value;
-      bitField0_ |= 0x00000004;
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A page token, received from a previous `ListNotifications` call.
-     * Provide this to retrieve the subsequent page.
-     * When paginating, all other parameters provided to `ListNotifications` must
-     * match the call that provided the page token.
-     * </pre>
-     *
-     * <code>string page_token = 3;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearPageToken() {
-      pageToken_ = getDefaultInstance().getPageToken();
-      bitField0_ = (bitField0_ & ~0x00000004);
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * A page token, received from a previous `ListNotifications` call.
-     * Provide this to retrieve the subsequent page.
-     * When paginating, all other parameters provided to `ListNotifications` must
-     * match the call that provided the page token.
-     * </pre>
-     *
-     * <code>string page_token = 3;</code>
-     *
-     * @param value The bytes for pageToken to set.
-     * @return This builder for chaining.
-     */
-    public Builder setPageTokenBytes(com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-      pageToken_ = value;
-      bitField0_ |= 0x00000004;
-      onChanged();
-      return this;
+      return notificationConfigBuilder_;
     }
 
     @java.lang.Override
@@ -898,24 +887,24 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
       return super.mergeUnknownFields(unknownFields);
     }
 
-    // @@protoc_insertion_point(builder_scope:google.storage.v2.ListNotificationsRequest)
+    // @@protoc_insertion_point(builder_scope:google.storage.v2.CreateNotificationConfigRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:google.storage.v2.ListNotificationsRequest)
-  private static final com.google.storage.v2.ListNotificationsRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:google.storage.v2.CreateNotificationConfigRequest)
+  private static final com.google.storage.v2.CreateNotificationConfigRequest DEFAULT_INSTANCE;
 
   static {
-    DEFAULT_INSTANCE = new com.google.storage.v2.ListNotificationsRequest();
+    DEFAULT_INSTANCE = new com.google.storage.v2.CreateNotificationConfigRequest();
   }
 
-  public static com.google.storage.v2.ListNotificationsRequest getDefaultInstance() {
+  public static com.google.storage.v2.CreateNotificationConfigRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<ListNotificationsRequest> PARSER =
-      new com.google.protobuf.AbstractParser<ListNotificationsRequest>() {
+  private static final com.google.protobuf.Parser<CreateNotificationConfigRequest> PARSER =
+      new com.google.protobuf.AbstractParser<CreateNotificationConfigRequest>() {
         @java.lang.Override
-        public ListNotificationsRequest parsePartialFrom(
+        public CreateNotificationConfigRequest parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
@@ -934,17 +923,17 @@ public final class ListNotificationsRequest extends com.google.protobuf.Generate
         }
       };
 
-  public static com.google.protobuf.Parser<ListNotificationsRequest> parser() {
+  public static com.google.protobuf.Parser<CreateNotificationConfigRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<ListNotificationsRequest> getParserForType() {
+  public com.google.protobuf.Parser<CreateNotificationConfigRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.storage.v2.ListNotificationsRequest getDefaultInstanceForType() {
+  public com.google.storage.v2.CreateNotificationConfigRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 }

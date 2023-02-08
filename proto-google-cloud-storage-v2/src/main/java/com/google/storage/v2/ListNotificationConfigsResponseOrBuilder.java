@@ -18,9 +18,9 @@
 
 package com.google.storage.v2;
 
-public interface ListNotificationsResponseOrBuilder
+public interface ListNotificationConfigsResponseOrBuilder
     extends
-    // @@protoc_insertion_point(interface_extends:google.storage.v2.ListNotificationsResponse)
+    // @@protoc_insertion_point(interface_extends:google.storage.v2.ListNotificationConfigsResponse)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -30,9 +30,9 @@ public interface ListNotificationsResponseOrBuilder
    * The list of items.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Notification notifications = 1;</code>
+   * <code>repeated .google.storage.v2.NotificationConfig notification_configs = 1;</code>
    */
-  java.util.List<com.google.storage.v2.Notification> getNotificationsList();
+  java.util.List<com.google.storage.v2.NotificationConfig> getNotificationConfigsList();
   /**
    *
    *
@@ -40,9 +40,9 @@ public interface ListNotificationsResponseOrBuilder
    * The list of items.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Notification notifications = 1;</code>
+   * <code>repeated .google.storage.v2.NotificationConfig notification_configs = 1;</code>
    */
-  com.google.storage.v2.Notification getNotifications(int index);
+  com.google.storage.v2.NotificationConfig getNotificationConfigs(int index);
   /**
    *
    *
@@ -50,9 +50,9 @@ public interface ListNotificationsResponseOrBuilder
    * The list of items.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Notification notifications = 1;</code>
+   * <code>repeated .google.storage.v2.NotificationConfig notification_configs = 1;</code>
    */
-  int getNotificationsCount();
+  int getNotificationConfigsCount();
   /**
    *
    *
@@ -60,10 +60,10 @@ public interface ListNotificationsResponseOrBuilder
    * The list of items.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Notification notifications = 1;</code>
+   * <code>repeated .google.storage.v2.NotificationConfig notification_configs = 1;</code>
    */
-  java.util.List<? extends com.google.storage.v2.NotificationOrBuilder>
-      getNotificationsOrBuilderList();
+  java.util.List<? extends com.google.storage.v2.NotificationConfigOrBuilder>
+      getNotificationConfigsOrBuilderList();
   /**
    *
    *
@@ -71,9 +71,9 @@ public interface ListNotificationsResponseOrBuilder
    * The list of items.
    * </pre>
    *
-   * <code>repeated .google.storage.v2.Notification notifications = 1;</code>
+   * <code>repeated .google.storage.v2.NotificationConfig notification_configs = 1;</code>
    */
-  com.google.storage.v2.NotificationOrBuilder getNotificationsOrBuilder(int index);
+  com.google.storage.v2.NotificationConfigOrBuilder getNotificationConfigsOrBuilder(int index);
 
   /**
    *

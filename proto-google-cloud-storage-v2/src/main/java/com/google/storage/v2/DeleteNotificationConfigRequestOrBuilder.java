@@ -18,18 +18,16 @@
 
 package com.google.storage.v2;
 
-public interface GetNotificationRequestOrBuilder
+public interface DeleteNotificationConfigRequestOrBuilder
     extends
-    // @@protoc_insertion_point(interface_extends:google.storage.v2.GetNotificationRequest)
+    // @@protoc_insertion_point(interface_extends:google.storage.v2.DeleteNotificationConfigRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
    *
    *
    * <pre>
-   * Required. The parent bucket of the notification.
-   * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
+   * Required. The parent bucket of the NotificationConfig.
    * </pre>
    *
    * <code>
@@ -43,9 +41,7 @@ public interface GetNotificationRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The parent bucket of the notification.
-   * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
+   * Required. The parent bucket of the NotificationConfig.
    * </pre>
    *
    * <code>
