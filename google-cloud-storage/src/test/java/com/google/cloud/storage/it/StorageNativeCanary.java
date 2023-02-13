@@ -39,10 +39,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Predicate;
 import org.junit.Test;
 
 // Intentionally avoid StorageITRunner here. It touches lots of code at a semi-static level making
@@ -130,15 +128,10 @@ public final class StorageNativeCanary {
 
             assertThat(actualNames).containsExactly(info1.getName(), info2.getName());
           },
-          () -> {
-            // if the content isn't equal carry it through
-            List<BlobWithContent> contentNotEquals =
-                actual.stream()
-                    .filter(bwc -> !Arrays.equals(bwc.getContent(), bytes))
-                    .collect(ImmutableList.toImmutableList());
-            assertThat(contentNotEquals).isEmpty();
-          },
-          () -> assertThat(deletes.stream().anyMatch(isFalse())).isFalse());
+          () -> assertThat(actual.get(0).getContent()).isEqualTo(bytes),
+          () -> assertThat(actual.get(1).getContent()).isEqualTo(bytes),
+          () -> assertThat(deletes.get(0)).isFalse(),
+          () -> assertThat(deletes.get(1)).isFalse());
     }
   }
 
@@ -159,12 +152,8 @@ public final class StorageNativeCanary {
       ByteStreams.copy(r, w);
       return new BlobWithContent(info, baos.toByteArray());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeIOException(e);
     }
-  }
-
-  private static Predicate<Boolean> isFalse() {
-    return b -> !b;
   }
 
   private static final class BlobWithContent {
@@ -182,6 +171,12 @@ public final class StorageNativeCanary {
 
     public byte[] getContent() {
       return content;
+    }
+  }
+
+  private static final class RuntimeIOException extends RuntimeException {
+    private RuntimeIOException(IOException cause) {
+      super(cause);
     }
   }
 }
