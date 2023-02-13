@@ -130,8 +130,8 @@ public final class StorageNativeCanary {
           },
           () -> assertThat(actual.get(0).getContent()).isEqualTo(bytes),
           () -> assertThat(actual.get(1).getContent()).isEqualTo(bytes),
-          () -> assertThat(deletes.get(0)).isFalse(),
-          () -> assertThat(deletes.get(1)).isFalse());
+          () -> assertThat(deletes.get(0)).isTrue(),
+          () -> assertThat(deletes.get(1)).isTrue());
     }
   }
 
