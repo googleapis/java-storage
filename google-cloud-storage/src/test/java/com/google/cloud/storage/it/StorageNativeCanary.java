@@ -47,18 +47,17 @@ import org.junit.Test;
 // native-test have a hard time.
 public final class StorageNativeCanary {
 
-  private static final int _512KiB = 512 * 1024;
   private static final int _256KiB = 256 * 1024;
-  private static final byte[] bytes = DataGenerator.base64Characters().genBytes(_512KiB);
+  private static final byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
 
   @Test
   public void canary_happyPath_http() throws Exception {
-    canary_happyPath(StorageOptions.http().build().getService());
+    assertBehaviorOfPrimaryStorageActions(StorageOptions.http().build().getService());
   }
 
   @Test
   public void canary_happyPath_grpc() throws Exception {
-    canary_happyPath(StorageOptions.grpc().build().getService());
+    assertBehaviorOfPrimaryStorageActions(StorageOptions.grpc().build().getService());
   }
 
   /**
@@ -85,14 +84,14 @@ public final class StorageNativeCanary {
    *   <li>Delete temporary bucket (Unary)
    * </ul>
    */
-  private static void canary_happyPath(Storage storage) throws Exception {
+  private static void assertBehaviorOfPrimaryStorageActions(Storage storage) throws Exception {
     // create a temporary bucket
-    try (TemporaryBucket tempB =
+    try (TemporaryBucket temporaryBucket =
         TemporaryBucket.newBuilder()
             .setStorage(storage)
             .setBucketInfo(BucketInfo.of("java-storage-grpc-" + UUID.randomUUID()))
             .build()) {
-      String bucketName = tempB.getBucket().getName();
+      String bucketName = temporaryBucket.getBucket().getName();
       String obj1Name = UUID.randomUUID().toString();
       String obj2Name = UUID.randomUUID().toString();
 
@@ -136,21 +135,22 @@ public final class StorageNativeCanary {
   }
 
   private static void uploadUsingWriter(Storage storage, BlobInfo info) throws IOException {
-    try (WriteChannel w = storage.writer(info, BlobWriteOption.doesNotExist())) {
+    try (WriteChannel writeChannel = storage.writer(info, BlobWriteOption.doesNotExist())) {
       // set our size to the smallest resumable size, so we can send multiple requests
-      w.setChunkSize(_256KiB);
-      ByteStreams.copy(Channels.newChannel(new ByteArrayInputStream(bytes)), w);
+      writeChannel.setChunkSize(_256KiB);
+      ByteStreams.copy(Channels.newChannel(new ByteArrayInputStream(bytes)), writeChannel);
     }
   }
 
   private static BlobWithContent readAll(Storage storage, BlobInfo info) {
-    try (ReadChannel r = storage.reader(info.getBlobId(), BlobSourceOption.generationMatch());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        WritableByteChannel w = Channels.newChannel(baos)) {
+    try (ReadChannel readChannel =
+            storage.reader(info.getBlobId(), BlobSourceOption.generationMatch());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        WritableByteChannel writeChannel = Channels.newChannel(outputStream)) {
       // only buffer up to half the object
-      r.setChunkSize(_256KiB);
-      ByteStreams.copy(r, w);
-      return new BlobWithContent(info, baos.toByteArray());
+      readChannel.setChunkSize(_256KiB);
+      ByteStreams.copy(readChannel, writeChannel);
+      return new BlobWithContent(info, outputStream.toByteArray());
     } catch (IOException e) {
       throw new RuntimeIOException(e);
     }
