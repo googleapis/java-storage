@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.api.gax.paging.Page;
 import com.google.cloud.Policy;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
@@ -38,10 +39,12 @@ import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.BucketFixture;
 import com.google.cloud.storage.it.runner.annotations.BucketType;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
@@ -52,9 +55,9 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,39 +74,26 @@ public class ITBucketTest {
   private static final Duration RETENTION_DURATION = Duration.ofSeconds(5);
 
   @Inject
-  @com.google.cloud.storage.it.runner.annotations.BucketFixture(BucketType.DEFAULT)
+  @BucketFixture(BucketType.DEFAULT)
   public BucketInfo bucket;
 
   @Inject
-  @com.google.cloud.storage.it.runner.annotations.BucketFixture(BucketType.REQUESTER_PAYS)
+  @BucketFixture(BucketType.REQUESTER_PAYS)
   public BucketInfo requesterPaysBucket;
 
   @Inject public Storage storage;
   @Inject public Generator generator;
 
-  @Test(timeout = 5000)
-  public void testListBuckets() throws InterruptedException {
-    Iterator<Bucket> bucketIterator =
-        storage
-            .list(
-                Storage.BucketListOption.prefix(bucket.getName()),
-                Storage.BucketListOption.fields())
-            .iterateAll()
-            .iterator();
-    while (!bucketIterator.hasNext()) {
-      Thread.sleep(500);
-      bucketIterator =
-          storage
-              .list(
-                  Storage.BucketListOption.prefix(bucket.getName()),
-                  Storage.BucketListOption.fields())
-              .iterateAll()
-              .iterator();
-    }
-    while (bucketIterator.hasNext()) {
-      Bucket remoteBucket = bucketIterator.next();
-      assertTrue(remoteBucket.getName().startsWith(bucket.getName()));
-    }
+  @Test
+  public void testListBuckets() {
+    Page<Bucket> page =
+        storage.list(
+            BucketListOption.prefix(bucket.getName()), BucketListOption.fields(BucketField.NAME));
+    ImmutableList<String> bucketNames =
+        StreamSupport.stream(page.iterateAll().spliterator(), false)
+            .map(BucketInfo::getName)
+            .collect(ImmutableList.toImmutableList());
+    assertThat(bucketNames).contains(bucket.getName());
   }
 
   @Test

@@ -31,7 +31,6 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
-import com.google.cloud.storage.DataGeneration;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.StorageException;
@@ -47,9 +46,7 @@ import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.Key;
-import java.util.Random;
 import javax.crypto.spec.SecretKeySpec;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -58,9 +55,6 @@ import org.junit.runner.RunWith;
     transports = {Transport.HTTP, Transport.GRPC},
     backends = Backend.PROD)
 public class ITKmsTest {
-
-  private static final long seed = -7071346537822433445L;
-  @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(seed));
 
   private static final byte[] BLOB_BYTE_CONTENT = {0xD, 0xE, 0xA, 0xD};
   private static final String BLOB_STRING_CONTENT = "Hello Google Cloud Storage!";
