@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.19.0](https://github.com/googleapis/java-storage/compare/v2.18.0...v2.19.0) (2023-02-21)
+
+
+### Features
+
+* Update routing annotation for CreateBucketRequest ([#1892](https://github.com/googleapis/java-storage/issues/1892)) ([581120f](https://github.com/googleapis/java-storage/commit/581120f00b9adc2d8d45ac038772685d7e134e61))
+
+
+### Bug Fixes
+
+* Update Default RetryStrategy to retry SSLException caused by SocketException ([#1900](https://github.com/googleapis/java-storage/issues/1900)) ([be2aba0](https://github.com/googleapis/java-storage/commit/be2aba0704bcdd55fdfeb233802dea532e6c7882))
+* Update GrpcStorageImpl handling to be aware of quotaProjectId ([#1877](https://github.com/googleapis/java-storage/issues/1877)) ([ca8510e](https://github.com/googleapis/java-storage/commit/ca8510e3c16a5cc2fac1499b1888af612aa8e5b2)), closes [#1736](https://github.com/googleapis/java-storage/issues/1736)
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.3.0 ([#1907](https://github.com/googleapis/java-storage/issues/1907)) ([85e22d7](https://github.com/googleapis/java-storage/commit/85e22d785b3abef152b2b4df4d394a7477555b08))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.20 ([#1904](https://github.com/googleapis/java-storage/issues/1904)) ([95b9aef](https://github.com/googleapis/java-storage/commit/95b9aef5fd390a1497bfe6baed3a7200e44f13cf))
+
 ## [2.18.0](https://github.com/googleapis/java-storage/compare/v2.17.2...v2.18.0) (2023-02-06)
 
 
