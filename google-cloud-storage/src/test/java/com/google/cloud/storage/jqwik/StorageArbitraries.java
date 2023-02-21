@@ -37,6 +37,7 @@ import com.google.storage.v2.CustomerEncryption;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.Owner;
+import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ProjectTeam;
 import com.google.type.Date;
 import java.math.BigInteger;
@@ -436,6 +437,10 @@ public final class StorageArbitraries {
 
     public String get() {
       return value;
+    }
+
+    public ProjectName toProjectName() {
+      return ProjectName.of(value);
     }
   }
 

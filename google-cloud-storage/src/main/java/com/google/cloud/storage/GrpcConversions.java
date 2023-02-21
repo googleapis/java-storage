@@ -209,7 +209,7 @@ final class GrpcConversions {
 
   private BucketInfo bucketInfoDecode(Bucket from) {
     BucketInfo.Builder to = new BucketInfo.BuilderImpl(bucketNameCodec.decode(from.getName()));
-    to.setProject(from.getProject());
+    to.setProject(projectNameCodec.decode(from.getProject()));
     to.setGeneratedId(from.getBucketId());
     maybeDecodeRetentionPolicy(from, to);
     ifNonNull(from.getLocation(), to::setLocation);
@@ -302,6 +302,7 @@ final class GrpcConversions {
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket.Builder to = Bucket.newBuilder();
     to.setName(bucketNameCodec.encode(from.getName()));
+    ifNonNull(from.getProject(), projectNameCodec::encode, to::setProject);
     ifNonNull(from.getGeneratedId(), to::setBucketId);
     maybeEncodeRetentionPolicy(from, to);
     ifNonNull(from.getLocation(), to::setLocation);
