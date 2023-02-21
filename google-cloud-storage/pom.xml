@@ -340,5 +340,15 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>native</id>
+      <properties>
+        <!--
+        Override the default match pattern for native image tests since we have a custom
+        test specifically for native image validation.
+        -->
+        <test>com.google.cloud.storage.it.StorageNativeCanary</test>
+      </properties>
+    </profile>
   </profiles>
 </project>
