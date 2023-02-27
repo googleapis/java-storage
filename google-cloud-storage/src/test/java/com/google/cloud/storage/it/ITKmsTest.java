@@ -69,6 +69,7 @@ public class ITKmsTest {
   @Inject public KmsFixture kms;
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testClearBucketDefaultKmsKeyName() {
     String bucketName = generator.randomBucketName();
     Bucket remoteBucket =
@@ -87,6 +88,7 @@ public class ITKmsTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBucketDefaultKmsKeyName() {
     String bucketName = generator.randomBucketName();
     Bucket remoteBucket =

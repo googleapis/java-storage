@@ -345,6 +345,7 @@ public class ITAccessTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testEnableAndDisableUniformBucketLevelAccessOnExistingBucket() throws Exception {
     String bpoBucket = generator.randomBucketName();
     BucketInfo.IamConfiguration ublaDisabledIamConfiguration =
@@ -492,6 +493,7 @@ public class ITAccessTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void changingPAPDoesNotAffectUBLA() throws Exception {
     String bucketName = generator.randomBucketName();
     try (TemporaryBucket tempB =
@@ -534,6 +536,7 @@ public class ITAccessTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void changingUBLADoesNotAffectPAP() throws Exception {
     String bucketName = generator.randomBucketName();
     try (TemporaryBucket tempB =
@@ -615,6 +618,7 @@ public class ITAccessTest {
 
   @Test
   @SuppressWarnings({"unchecked", "deprecation"})
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testEnableAndDisableBucketPolicyOnlyOnExistingBucket() throws Exception {
     String bpoBucket = generator.randomBucketName();
     try (TemporaryBucket tempB =

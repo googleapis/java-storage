@@ -47,6 +47,7 @@ public final class ITBucketLifecycleRulesTest {
   @Inject public Storage storage;
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void deleteRule_addingALabelToABucketWithASingleDeleteRuleOnlyModifiesTheLabels()
       throws Exception {
     LifecycleRule d1 =
@@ -89,6 +90,7 @@ public final class ITBucketLifecycleRulesTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void deleteRule_modifyingLifecycleRulesMatchesLastOperation() throws Exception {
     BucketInfo info;
     {

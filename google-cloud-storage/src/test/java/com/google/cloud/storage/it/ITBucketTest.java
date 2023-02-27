@@ -148,6 +148,7 @@ public class ITBucketTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testBucketLogging() throws Exception {
     String logsBucketName = generator.randomBucketName();
     String loggingBucketName = generator.randomBucketName();
@@ -189,6 +190,7 @@ public class ITBucketTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testRemoveBucketCORS() {
     String bucketName = generator.randomBucketName();
     List<Cors.Origin> origins = ImmutableList.of(Cors.Origin.of("http://cloud.google.com"));
@@ -237,6 +239,7 @@ public class ITBucketTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testRpoConfig() {
     String rpoBucket = generator.randomBucketName();
     try {
@@ -259,6 +262,7 @@ public class ITBucketTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testRetentionPolicyLockRequesterPays() {
     retentionPolicyLockRequesterPays(true);
   }
@@ -386,6 +390,7 @@ public class ITBucketTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testCreateBucketWithAutoclass() {
     String bucketName = generator.randomBucketName();
     storage.create(
