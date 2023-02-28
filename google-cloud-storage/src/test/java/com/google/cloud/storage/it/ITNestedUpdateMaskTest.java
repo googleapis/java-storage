@@ -113,6 +113,7 @@ public final class ITNestedUpdateMaskTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testBucketLabels() throws Exception {
     BucketInfo bucket = newBucketInfo(param.initial);
     try (TemporaryBucket tempB =
@@ -125,6 +126,7 @@ public final class ITNestedUpdateMaskTest {
   }
 
   @Test
+  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testBlobMetadata() {
     BlobInfo blob = newBlobInfo(param.initial);
     Blob gen1 = storage.create(blob, BlobTargetOption.doesNotExist());
