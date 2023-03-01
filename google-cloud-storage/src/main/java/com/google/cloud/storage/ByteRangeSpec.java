@@ -472,6 +472,8 @@ abstract class ByteRangeSpec implements Serializable {
     protected String fmtAsHttpRangeHeader() throws ArithmeticException {
       if (beginOffset > 0) {
         return String.format("bytes=%d-", beginOffset);
+      } else if (beginOffset < 0) {
+        return String.format("bytes=%d", beginOffset);
       } else {
         return null;
       }
@@ -510,7 +512,7 @@ abstract class ByteRangeSpec implements Serializable {
 
     @Override
     ByteRangeSpec withNewBeginOffset(long beginOffset) {
-      if (beginOffset > 0) {
+      if (beginOffset != 0) {
         return new LeftClosedByteRangeSpec(beginOffset);
       } else {
         return this;
