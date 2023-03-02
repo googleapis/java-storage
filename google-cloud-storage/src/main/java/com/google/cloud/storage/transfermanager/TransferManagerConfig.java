@@ -16,22 +16,26 @@
 
 package com.google.cloud.storage.transfermanager;
 
+import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
-public class TransferManagerConfig {
+public final class TransferManagerConfig {
   private final int maxWorkers;
   private final int perWorkerBufferSize;
   private final boolean allowChunking;
 
-  // Getting stuff in for implementation bits
-  // getService to get Storage instance
-  // private final StorageOptions storageOptions;
+  private final StorageOptions storageOptions;
 
-  private TransferManagerConfig(int maxWorkers, int perWorkerBufferSize, boolean allowChunking) {
+  TransferManagerConfig(
+      int maxWorkers,
+      int perWorkerBufferSize,
+      boolean allowChunking,
+      StorageOptions storageOptions) {
     this.maxWorkers = maxWorkers;
     this.perWorkerBufferSize = perWorkerBufferSize;
     this.allowChunking = allowChunking;
+    this.storageOptions = storageOptions;
   }
 
   public int getMaxWorkers() {
@@ -46,23 +50,28 @@ public class TransferManagerConfig {
     return allowChunking;
   }
 
+  public StorageOptions getStorageOptions() {
+    return storageOptions;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof TransferManagerConfig)) {
       return false;
     }
     TransferManagerConfig that = (TransferManagerConfig) o;
     return maxWorkers == that.maxWorkers
         && perWorkerBufferSize == that.perWorkerBufferSize
-        && allowChunking == that.allowChunking;
+        && allowChunking == that.allowChunking
+        && Objects.equals(storageOptions, that.storageOptions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(maxWorkers, perWorkerBufferSize, allowChunking);
+    return Objects.hash(maxWorkers, perWorkerBufferSize, allowChunking, storageOptions);
   }
 
   @Override
@@ -71,6 +80,7 @@ public class TransferManagerConfig {
         .add("maxWorkers", maxWorkers)
         .add("perWorkerBufferSize", perWorkerBufferSize)
         .add("allowChunking", allowChunking)
+        .add("storageOptions", storageOptions)
         .toString();
   }
 
@@ -84,12 +94,15 @@ public class TransferManagerConfig {
     private int perWorkerBufferSize;
     private boolean allowChunking;
 
+    private StorageOptions storageOptions;
+
     private Builder() {
       // TODO: add default values
       //  bufferSize tbd?
       this.perWorkerBufferSize = 16 * 1024 * 1024;
       this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
       this.allowChunking = false;
+      this.storageOptions = StorageOptions.getDefaultInstance();
     }
 
     public Builder setMaxWorkers(int maxWorkers) {
@@ -107,8 +120,13 @@ public class TransferManagerConfig {
       return this;
     }
 
+    public void setStorageOptions(StorageOptions storageOptions) {
+      this.storageOptions = storageOptions;
+    }
+
     public TransferManagerConfig build() {
-      return new TransferManagerConfig(maxWorkers, perWorkerBufferSize, allowChunking);
+      return new TransferManagerConfig(
+          maxWorkers, perWorkerBufferSize, allowChunking, storageOptions);
     }
   }
 }

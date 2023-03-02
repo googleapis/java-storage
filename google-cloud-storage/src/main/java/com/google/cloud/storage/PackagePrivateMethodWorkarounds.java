@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,17 @@ public final class PackagePrivateMethodWorkarounds {
       if (w instanceof BlobWriteChannel) {
         BlobWriteChannel blobWriteChannel = (BlobWriteChannel) w;
         return Optional.of(blobWriteChannel.getStorageObject());
+      } else {
+        return Optional.empty();
+      }
+    };
+  }
+
+  public static Function<WriteChannel, Optional<BlobInfo>> maybeGetBlobInfoFunction() {
+    return writeChannel -> {
+      Optional<StorageObject> so = maybeGetStorageObjectFunction().apply(writeChannel);
+      if (so.isPresent()) {
+        return Optional.of(Conversions.apiary().blobInfo().decode(so.get()));
       } else {
         return Optional.empty();
       }
