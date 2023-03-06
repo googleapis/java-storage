@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.20.0](https://github.com/googleapis/java-storage/compare/v2.19.0...v2.20.0) (2023-03-01)
+
+
+### Features
+
+* Allow specifying a negative offset to ReadChannel ([#1916](https://github.com/googleapis/java-storage/issues/1916)) ([6df5469](https://github.com/googleapis/java-storage/commit/6df546945211a767f73190773ab2754bf7842e75))
+
 ## [2.19.0](https://github.com/googleapis/java-storage/compare/v2.18.0...v2.19.0) (2023-02-21)
 
 
