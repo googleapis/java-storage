@@ -18,7 +18,7 @@ package com.google.storage.v2;
 
 import static com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
-import static com.google.storage.v2.StorageClient.ListNotificationsPagedResponse;
+import static com.google.storage.v2.StorageClient.ListNotificationConfigsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.gax.core.NoCredentialsProvider;
@@ -984,17 +984,19 @@ public class StorageClientTest {
   }
 
   @Test
-  public void deleteNotificationTest() throws Exception {
+  public void deleteNotificationConfigTest() throws Exception {
     Empty expectedResponse = Empty.newBuilder().build();
     mockStorage.addResponse(expectedResponse);
 
-    NotificationName name = NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]");
+    NotificationConfigName name =
+        NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
 
-    client.deleteNotification(name);
+    client.deleteNotificationConfig(name);
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    DeleteNotificationRequest actualRequest = ((DeleteNotificationRequest) actualRequests.get(0));
+    DeleteNotificationConfigRequest actualRequest =
+        ((DeleteNotificationConfigRequest) actualRequests.get(0));
 
     Assert.assertEquals(name.toString(), actualRequest.getName());
     Assert.assertTrue(
@@ -1004,13 +1006,14 @@ public class StorageClientTest {
   }
 
   @Test
-  public void deleteNotificationExceptionTest() throws Exception {
+  public void deleteNotificationConfigExceptionTest() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
-      NotificationName name = NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]");
-      client.deleteNotification(name);
+      NotificationConfigName name =
+          NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
+      client.deleteNotificationConfig(name);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
@@ -1018,17 +1021,18 @@ public class StorageClientTest {
   }
 
   @Test
-  public void deleteNotificationTest2() throws Exception {
+  public void deleteNotificationConfigTest2() throws Exception {
     Empty expectedResponse = Empty.newBuilder().build();
     mockStorage.addResponse(expectedResponse);
 
     String name = "name3373707";
 
-    client.deleteNotification(name);
+    client.deleteNotificationConfig(name);
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    DeleteNotificationRequest actualRequest = ((DeleteNotificationRequest) actualRequests.get(0));
+    DeleteNotificationConfigRequest actualRequest =
+        ((DeleteNotificationConfigRequest) actualRequests.get(0));
 
     Assert.assertEquals(name, actualRequest.getName());
     Assert.assertTrue(
@@ -1038,13 +1042,13 @@ public class StorageClientTest {
   }
 
   @Test
-  public void deleteNotificationExceptionTest2() throws Exception {
+  public void deleteNotificationConfigExceptionTest2() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
       String name = "name3373707";
-      client.deleteNotification(name);
+      client.deleteNotificationConfig(name);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
@@ -1052,10 +1056,12 @@ public class StorageClientTest {
   }
 
   @Test
-  public void getNotificationTest() throws Exception {
-    Notification expectedResponse =
-        Notification.newBuilder()
-            .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
+  public void getNotificationConfigTest() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
             .setTopic("topic110546223")
             .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
@@ -1067,12 +1073,13 @@ public class StorageClientTest {
 
     BucketName name = BucketName.of("[PROJECT]", "[BUCKET]");
 
-    Notification actualResponse = client.getNotification(name);
+    NotificationConfig actualResponse = client.getNotificationConfig(name);
     Assert.assertEquals(expectedResponse, actualResponse);
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    GetNotificationRequest actualRequest = ((GetNotificationRequest) actualRequests.get(0));
+    GetNotificationConfigRequest actualRequest =
+        ((GetNotificationConfigRequest) actualRequests.get(0));
 
     Assert.assertEquals(name.toString(), actualRequest.getName());
     Assert.assertTrue(
@@ -1082,13 +1089,13 @@ public class StorageClientTest {
   }
 
   @Test
-  public void getNotificationExceptionTest() throws Exception {
+  public void getNotificationConfigExceptionTest() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
       BucketName name = BucketName.of("[PROJECT]", "[BUCKET]");
-      client.getNotification(name);
+      client.getNotificationConfig(name);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
@@ -1096,10 +1103,12 @@ public class StorageClientTest {
   }
 
   @Test
-  public void getNotificationTest2() throws Exception {
-    Notification expectedResponse =
-        Notification.newBuilder()
-            .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
+  public void getNotificationConfigTest2() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
             .setTopic("topic110546223")
             .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
@@ -1111,12 +1120,13 @@ public class StorageClientTest {
 
     String name = "name3373707";
 
-    Notification actualResponse = client.getNotification(name);
+    NotificationConfig actualResponse = client.getNotificationConfig(name);
     Assert.assertEquals(expectedResponse, actualResponse);
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    GetNotificationRequest actualRequest = ((GetNotificationRequest) actualRequests.get(0));
+    GetNotificationConfigRequest actualRequest =
+        ((GetNotificationConfigRequest) actualRequests.get(0));
 
     Assert.assertEquals(name, actualRequest.getName());
     Assert.assertTrue(
@@ -1126,13 +1136,13 @@ public class StorageClientTest {
   }
 
   @Test
-  public void getNotificationExceptionTest2() throws Exception {
+  public void getNotificationConfigExceptionTest2() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
       String name = "name3373707";
-      client.getNotification(name);
+      client.getNotificationConfig(name);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
@@ -1140,10 +1150,12 @@ public class StorageClientTest {
   }
 
   @Test
-  public void createNotificationTest() throws Exception {
-    Notification expectedResponse =
-        Notification.newBuilder()
-            .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
+  public void createNotificationConfigTest() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
             .setTopic("topic110546223")
             .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
@@ -1154,17 +1166,18 @@ public class StorageClientTest {
     mockStorage.addResponse(expectedResponse);
 
     ProjectName parent = ProjectName.of("[PROJECT]");
-    Notification notification = Notification.newBuilder().build();
+    NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
 
-    Notification actualResponse = client.createNotification(parent, notification);
+    NotificationConfig actualResponse = client.createNotificationConfig(parent, notificationConfig);
     Assert.assertEquals(expectedResponse, actualResponse);
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    CreateNotificationRequest actualRequest = ((CreateNotificationRequest) actualRequests.get(0));
+    CreateNotificationConfigRequest actualRequest =
+        ((CreateNotificationConfigRequest) actualRequests.get(0));
 
     Assert.assertEquals(parent.toString(), actualRequest.getParent());
-    Assert.assertEquals(notification, actualRequest.getNotification());
+    Assert.assertEquals(notificationConfig, actualRequest.getNotificationConfig());
     Assert.assertTrue(
         channelProvider.isHeaderSent(
             ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -1172,14 +1185,14 @@ public class StorageClientTest {
   }
 
   @Test
-  public void createNotificationExceptionTest() throws Exception {
+  public void createNotificationConfigExceptionTest() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
       ProjectName parent = ProjectName.of("[PROJECT]");
-      Notification notification = Notification.newBuilder().build();
-      client.createNotification(parent, notification);
+      NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+      client.createNotificationConfig(parent, notificationConfig);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
@@ -1187,10 +1200,12 @@ public class StorageClientTest {
   }
 
   @Test
-  public void createNotificationTest2() throws Exception {
-    Notification expectedResponse =
-        Notification.newBuilder()
-            .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
+  public void createNotificationConfigTest2() throws Exception {
+    NotificationConfig expectedResponse =
+        NotificationConfig.newBuilder()
+            .setName(
+                NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+                    .toString())
             .setTopic("topic110546223")
             .setEtag("etag3123477")
             .addAllEventTypes(new ArrayList<String>())
@@ -1201,17 +1216,18 @@ public class StorageClientTest {
     mockStorage.addResponse(expectedResponse);
 
     String parent = "parent-995424086";
-    Notification notification = Notification.newBuilder().build();
+    NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
 
-    Notification actualResponse = client.createNotification(parent, notification);
+    NotificationConfig actualResponse = client.createNotificationConfig(parent, notificationConfig);
     Assert.assertEquals(expectedResponse, actualResponse);
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    CreateNotificationRequest actualRequest = ((CreateNotificationRequest) actualRequests.get(0));
+    CreateNotificationConfigRequest actualRequest =
+        ((CreateNotificationConfigRequest) actualRequests.get(0));
 
     Assert.assertEquals(parent, actualRequest.getParent());
-    Assert.assertEquals(notification, actualRequest.getNotification());
+    Assert.assertEquals(notificationConfig, actualRequest.getNotificationConfig());
     Assert.assertTrue(
         channelProvider.isHeaderSent(
             ApiClientHeaderProvider.getDefaultApiClientHeaderKey(),
@@ -1219,14 +1235,14 @@ public class StorageClientTest {
   }
 
   @Test
-  public void createNotificationExceptionTest2() throws Exception {
+  public void createNotificationConfigExceptionTest2() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
       String parent = "parent-995424086";
-      Notification notification = Notification.newBuilder().build();
-      client.createNotification(parent, notification);
+      NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
+      client.createNotificationConfig(parent, notificationConfig);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
@@ -1234,27 +1250,28 @@ public class StorageClientTest {
   }
 
   @Test
-  public void listNotificationsTest() throws Exception {
-    Notification responsesElement = Notification.newBuilder().build();
-    ListNotificationsResponse expectedResponse =
-        ListNotificationsResponse.newBuilder()
+  public void listNotificationConfigsTest() throws Exception {
+    NotificationConfig responsesElement = NotificationConfig.newBuilder().build();
+    ListNotificationConfigsResponse expectedResponse =
+        ListNotificationConfigsResponse.newBuilder()
             .setNextPageToken("")
-            .addAllNotifications(Arrays.asList(responsesElement))
+            .addAllNotificationConfigs(Arrays.asList(responsesElement))
             .build();
     mockStorage.addResponse(expectedResponse);
 
     ProjectName parent = ProjectName.of("[PROJECT]");
 
-    ListNotificationsPagedResponse pagedListResponse = client.listNotifications(parent);
+    ListNotificationConfigsPagedResponse pagedListResponse = client.listNotificationConfigs(parent);
 
-    List<Notification> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+    List<NotificationConfig> resources = Lists.newArrayList(pagedListResponse.iterateAll());
 
     Assert.assertEquals(1, resources.size());
-    Assert.assertEquals(expectedResponse.getNotificationsList().get(0), resources.get(0));
+    Assert.assertEquals(expectedResponse.getNotificationConfigsList().get(0), resources.get(0));
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    ListNotificationsRequest actualRequest = ((ListNotificationsRequest) actualRequests.get(0));
+    ListNotificationConfigsRequest actualRequest =
+        ((ListNotificationConfigsRequest) actualRequests.get(0));
 
     Assert.assertEquals(parent.toString(), actualRequest.getParent());
     Assert.assertTrue(
@@ -1264,13 +1281,13 @@ public class StorageClientTest {
   }
 
   @Test
-  public void listNotificationsExceptionTest() throws Exception {
+  public void listNotificationConfigsExceptionTest() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
       ProjectName parent = ProjectName.of("[PROJECT]");
-      client.listNotifications(parent);
+      client.listNotificationConfigs(parent);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.
@@ -1278,27 +1295,28 @@ public class StorageClientTest {
   }
 
   @Test
-  public void listNotificationsTest2() throws Exception {
-    Notification responsesElement = Notification.newBuilder().build();
-    ListNotificationsResponse expectedResponse =
-        ListNotificationsResponse.newBuilder()
+  public void listNotificationConfigsTest2() throws Exception {
+    NotificationConfig responsesElement = NotificationConfig.newBuilder().build();
+    ListNotificationConfigsResponse expectedResponse =
+        ListNotificationConfigsResponse.newBuilder()
             .setNextPageToken("")
-            .addAllNotifications(Arrays.asList(responsesElement))
+            .addAllNotificationConfigs(Arrays.asList(responsesElement))
             .build();
     mockStorage.addResponse(expectedResponse);
 
     String parent = "parent-995424086";
 
-    ListNotificationsPagedResponse pagedListResponse = client.listNotifications(parent);
+    ListNotificationConfigsPagedResponse pagedListResponse = client.listNotificationConfigs(parent);
 
-    List<Notification> resources = Lists.newArrayList(pagedListResponse.iterateAll());
+    List<NotificationConfig> resources = Lists.newArrayList(pagedListResponse.iterateAll());
 
     Assert.assertEquals(1, resources.size());
-    Assert.assertEquals(expectedResponse.getNotificationsList().get(0), resources.get(0));
+    Assert.assertEquals(expectedResponse.getNotificationConfigsList().get(0), resources.get(0));
 
     List<AbstractMessage> actualRequests = mockStorage.getRequests();
     Assert.assertEquals(1, actualRequests.size());
-    ListNotificationsRequest actualRequest = ((ListNotificationsRequest) actualRequests.get(0));
+    ListNotificationConfigsRequest actualRequest =
+        ((ListNotificationConfigsRequest) actualRequests.get(0));
 
     Assert.assertEquals(parent, actualRequest.getParent());
     Assert.assertTrue(
@@ -1308,13 +1326,13 @@ public class StorageClientTest {
   }
 
   @Test
-  public void listNotificationsExceptionTest2() throws Exception {
+  public void listNotificationConfigsExceptionTest2() throws Exception {
     StatusRuntimeException exception = new StatusRuntimeException(io.grpc.Status.INVALID_ARGUMENT);
     mockStorage.addException(exception);
 
     try {
       String parent = "parent-995424086";
-      client.listNotifications(parent);
+      client.listNotificationConfigs(parent);
       Assert.fail("No exception raised");
     } catch (InvalidArgumentException e) {
       // Expected exception.

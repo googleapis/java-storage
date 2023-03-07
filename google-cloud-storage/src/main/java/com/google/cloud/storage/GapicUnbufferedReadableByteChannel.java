@@ -27,7 +27,6 @@ import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
-import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import java.io.Closeable;
@@ -50,12 +49,9 @@ final class GapicUnbufferedReadableByteChannel
 
   private boolean open = true;
   private boolean complete = false;
-  private boolean ioExceptionAlreadyThrown = false;
   private long blobOffset;
-  private Crc32cLengthKnown cumulativeCrc32c;
 
   private Object metadata;
-  private ObjectChecksums objectChecksums;
 
   private ByteBuffer leftovers;
 
@@ -110,18 +106,6 @@ final class GapicUnbufferedReadableByteChannel
             result.set(metadata);
           }
         }
-        if (resp.hasObjectChecksums()) {
-          ObjectChecksums checksums = resp.getObjectChecksums();
-          if (this.objectChecksums == null) {
-            this.objectChecksums = checksums;
-          } else if (!objectChecksums.equals(checksums)) {
-            throw closeWithError(
-                String.format(
-                    "Mismatch checksums between subsequent reads. Expected %s but received %s",
-                    Crc32cValue.fmtCrc32cValue(objectChecksums.getCrc32C()),
-                    Crc32cValue.fmtCrc32cValue(checksums.getCrc32C())));
-          }
-        }
         ChecksummedData checksummedData = resp.getChecksummedData();
         ByteBuffer content = checksummedData.getContent().asReadOnlyByteBuffer();
         // very important to know whether a crc32c value is set. Without checking, protobuf will
@@ -129,11 +113,9 @@ final class GapicUnbufferedReadableByteChannel
         if (checksummedData.hasCrc32C()) {
           Crc32cLengthKnown expected =
               Crc32cValue.of(checksummedData.getCrc32C(), checksummedData.getContent().size());
-          cumulativeCrc32c = hasher.nullSafeConcat(cumulativeCrc32c, expected);
           try {
             hasher.validate(expected, content::duplicate);
           } catch (IOException e) {
-            ioExceptionAlreadyThrown = true;
             close();
             throw e;
           }
@@ -161,18 +143,6 @@ final class GapicUnbufferedReadableByteChannel
 
   @Override
   public void close() throws IOException {
-    if (!ioExceptionAlreadyThrown
-        && cumulativeCrc32c != null
-        && objectChecksums != null
-        && objectChecksums.hasCrc32C()) {
-      Crc32cLengthKnown expected = Crc32cValue.of(objectChecksums.getCrc32C(), metadata.getSize());
-      if (!expected.eqValue(cumulativeCrc32c)) {
-        throw new IOException(
-            String.format(
-                "Mismatch checksum value. Expected %s actual %s",
-                expected.debugString(), cumulativeCrc32c.debugString()));
-      }
-    }
     open = false;
     iter.close();
   }
@@ -187,7 +157,6 @@ final class GapicUnbufferedReadableByteChannel
   }
 
   private IOException closeWithError(String message) throws IOException {
-    ioExceptionAlreadyThrown = true;
     close();
     StorageException cause =
         new StorageException(HttpStatusCodes.STATUS_CODE_PRECONDITION_FAILED, message);
@@ -204,7 +173,6 @@ final class GapicUnbufferedReadableByteChannel
     private final long limit;
 
     private ReadCursor(long beginning, long limit) {
-      checkArgument(0 <= beginning && beginning <= limit, "0 <= %d <= %d", beginning, limit);
       this.limit = limit;
       this.beginning = beginning;
       this.offset = beginning;

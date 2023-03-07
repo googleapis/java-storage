@@ -18,16 +18,16 @@
 
 package com.google.storage.v2;
 
-public interface CreateNotificationRequestOrBuilder
+public interface CreateNotificationConfigRequestOrBuilder
     extends
-    // @@protoc_insertion_point(interface_extends:google.storage.v2.CreateNotificationRequest)
+    // @@protoc_insertion_point(interface_extends:google.storage.v2.CreateNotificationConfigRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
    *
    *
    * <pre>
-   * Required. The bucket to which this notification belongs.
+   * Required. The bucket to which this NotificationConfig belongs.
    * </pre>
    *
    * <code>
@@ -41,7 +41,7 @@ public interface CreateNotificationRequestOrBuilder
    *
    *
    * <pre>
-   * Required. The bucket to which this notification belongs.
+   * Required. The bucket to which this NotificationConfig belongs.
    * </pre>
    *
    * <code>
@@ -56,40 +56,40 @@ public interface CreateNotificationRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Properties of the notification to be inserted.
+   * Required. Properties of the NotificationConfig to be inserted.
    * </pre>
    *
    * <code>
-   * .google.storage.v2.Notification notification = 2 [(.google.api.field_behavior) = REQUIRED];
+   * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
    * </code>
    *
-   * @return Whether the notification field is set.
+   * @return Whether the notificationConfig field is set.
    */
-  boolean hasNotification();
+  boolean hasNotificationConfig();
   /**
    *
    *
    * <pre>
-   * Required. Properties of the notification to be inserted.
+   * Required. Properties of the NotificationConfig to be inserted.
    * </pre>
    *
    * <code>
-   * .google.storage.v2.Notification notification = 2 [(.google.api.field_behavior) = REQUIRED];
+   * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
    * </code>
    *
-   * @return The notification.
+   * @return The notificationConfig.
    */
-  com.google.storage.v2.Notification getNotification();
+  com.google.storage.v2.NotificationConfig getNotificationConfig();
   /**
    *
    *
    * <pre>
-   * Required. Properties of the notification to be inserted.
+   * Required. Properties of the NotificationConfig to be inserted.
    * </pre>
    *
    * <code>
-   * .google.storage.v2.Notification notification = 2 [(.google.api.field_behavior) = REQUIRED];
+   * .google.storage.v2.NotificationConfig notification_config = 2 [(.google.api.field_behavior) = REQUIRED];
    * </code>
    */
-  com.google.storage.v2.NotificationOrBuilder getNotificationOrBuilder();
+  com.google.storage.v2.NotificationConfigOrBuilder getNotificationConfigOrBuilder();
 }

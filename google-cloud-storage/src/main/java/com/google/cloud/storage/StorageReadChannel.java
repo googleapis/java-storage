@@ -41,7 +41,6 @@ interface StorageReadChannel extends ReadChannel {
   @SuppressWarnings("resource")
   @Override
   default void seek(long position) throws IOException {
-    checkArgument(position >= 0, "position must be >= 0");
     try {
       setByteRangeSpec(getByteRangeSpec().withNewBeginOffset(position));
     } catch (StorageException e) {

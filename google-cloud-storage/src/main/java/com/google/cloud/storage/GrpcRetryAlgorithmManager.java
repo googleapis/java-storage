@@ -23,19 +23,19 @@ import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
-import com.google.storage.v2.CreateNotificationRequest;
+import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
-import com.google.storage.v2.DeleteNotificationRequest;
+import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetHmacKeyRequest;
-import com.google.storage.v2.GetNotificationRequest;
+import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
-import com.google.storage.v2.ListNotificationsRequest;
+import com.google.storage.v2.ListNotificationConfigsRequest;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.QueryWriteStatusRequest;
@@ -79,7 +79,7 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getNonidempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getFor(CreateNotificationRequest req) {
+  public ResultRetryAlgorithm<?> getFor(CreateNotificationConfigRequest req) {
     return retryStrategy.getNonidempotentHandler();
   }
 
@@ -91,7 +91,7 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getNonidempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getFor(DeleteNotificationRequest req) {
+  public ResultRetryAlgorithm<?> getFor(DeleteNotificationConfigRequest req) {
     return retryStrategy.getNonidempotentHandler();
   }
 
@@ -111,7 +111,7 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getFor(GetNotificationRequest req) {
+  public ResultRetryAlgorithm<?> getFor(GetNotificationConfigRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
 
@@ -131,7 +131,7 @@ final class GrpcRetryAlgorithmManager implements Serializable {
     return retryStrategy.getIdempotentHandler();
   }
 
-  public ResultRetryAlgorithm<?> getFor(ListNotificationsRequest req) {
+  public ResultRetryAlgorithm<?> getFor(ListNotificationConfigsRequest req) {
     return retryStrategy.getIdempotentHandler();
   }
 

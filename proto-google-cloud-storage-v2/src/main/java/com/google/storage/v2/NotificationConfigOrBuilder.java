@@ -18,18 +18,18 @@
 
 package com.google.storage.v2;
 
-public interface NotificationOrBuilder
+public interface NotificationConfigOrBuilder
     extends
-    // @@protoc_insertion_point(interface_extends:google.storage.v2.Notification)
+    // @@protoc_insertion_point(interface_extends:google.storage.v2.NotificationConfig)
     com.google.protobuf.MessageOrBuilder {
 
   /**
    *
    *
    * <pre>
-   * Required. The resource name of this notification.
+   * Required. The resource name of this NotificationConfig.
    * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
+   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
    * The `{project}` portion may be `_` for globally unique buckets.
    * </pre>
    *
@@ -42,9 +42,9 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * Required. The resource name of this notification.
+   * Required. The resource name of this NotificationConfig.
    * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
+   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
    * The `{project}` portion may be `_` for globally unique buckets.
    * </pre>
    *
@@ -87,9 +87,9 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * The etag of the Notification.
-   * If included in the metadata of GetNotificationRequest, the operation will
-   * only be performed if the etag matches that of the Notification.
+   * The etag of the NotificationConfig.
+   * If included in the metadata of GetNotificationConfigRequest, the operation
+   * will only be performed if the etag matches that of the NotificationConfig.
    * </pre>
    *
    * <code>string etag = 7;</code>
@@ -101,9 +101,9 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * The etag of the Notification.
-   * If included in the metadata of GetNotificationRequest, the operation will
-   * only be performed if the etag matches that of the Notification.
+   * The etag of the NotificationConfig.
+   * If included in the metadata of GetNotificationConfigRequest, the operation
+   * will only be performed if the etag matches that of the NotificationConfig.
    * </pre>
    *
    * <code>string etag = 7;</code>
@@ -116,8 +116,8 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If empty,
-   * sent notifications for all event types.
+   * If present, only send notifications about listed event types. If
+   * empty, sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -129,8 +129,8 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If empty,
-   * sent notifications for all event types.
+   * If present, only send notifications about listed event types. If
+   * empty, sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -142,8 +142,8 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If empty,
-   * sent notifications for all event types.
+   * If present, only send notifications about listed event types. If
+   * empty, sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -156,8 +156,8 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If empty,
-   * sent notifications for all event types.
+   * If present, only send notifications about listed event types. If
+   * empty, sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -172,7 +172,7 @@ public interface NotificationOrBuilder
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this notification subscription.
+   * message published for this NotificationConfig.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -183,7 +183,7 @@ public interface NotificationOrBuilder
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this notification subscription.
+   * message published for this NotificationConfig.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -197,7 +197,7 @@ public interface NotificationOrBuilder
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this notification subscription.
+   * message published for this NotificationConfig.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -208,7 +208,7 @@ public interface NotificationOrBuilder
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this notification subscription.
+   * message published for this NotificationConfig.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -223,7 +223,7 @@ public interface NotificationOrBuilder
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this notification subscription.
+   * message published for this NotificationConfig.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -234,7 +234,7 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * If present, only apply this notification config to object names that
+   * If present, only apply this NotificationConfig to object names that
    * begin with this prefix.
    * </pre>
    *
@@ -247,7 +247,7 @@ public interface NotificationOrBuilder
    *
    *
    * <pre>
-   * If present, only apply this notification config to object names that
+   * If present, only apply this NotificationConfig to object names that
    * begin with this prefix.
    * </pre>
    *

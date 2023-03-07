@@ -272,46 +272,6 @@ public final class GapicUnbufferedReadableByteChannelTest {
   }
 
   @Test
-  public void ioException_if_crc32c_mismatch_cumulative() throws IOException, InterruptedException {
-    StorageGrpc.StorageImplBase fakeStorage =
-        new StorageGrpc.StorageImplBase() {
-          @Override
-          public void readObject(
-              ReadObjectRequest request, StreamObserver<ReadObjectResponse> responseObserver) {
-            if (request.equals(req1)) {
-              responseObserver.onNext(resp1);
-              responseObserver.onCompleted();
-            } else {
-              responseObserver.onError(apiException(Code.PERMISSION_DENIED));
-            }
-          }
-        };
-    try (FakeServer server = FakeServer.of(fakeStorage);
-        StorageClient storageClient = StorageClient.create(server.storageSettings())) {
-
-      UnbufferedReadableByteChannelSession<Object> session =
-          new UnbufferedReadSession<>(
-              ApiFutures.immediateFuture(req1),
-              (start, resultFuture) ->
-                  new GapicUnbufferedReadableByteChannel(
-                      resultFuture,
-                      storageClient
-                          .readObjectCallable()
-                          .withDefaultCallContext(
-                              contextWithRetryForCodes(StatusCode.Code.DATA_LOSS)),
-                      start,
-                      Hasher.enabled()));
-      byte[] actualBytes = new byte[40];
-      //noinspection resource
-      UnbufferedReadableByteChannel c = session.open();
-      c.read(ByteBuffer.wrap(actualBytes));
-
-      IOException ioException = assertThrows(IOException.class, c::close);
-      assertThat(ioException).hasMessageThat().contains("Mismatch checksum");
-    }
-  }
-
-  @Test
   public void overRead_handledProperly() throws IOException, InterruptedException {
     StorageGrpc.StorageImplBase fakeStorage =
         new StorageGrpc.StorageImplBase() {

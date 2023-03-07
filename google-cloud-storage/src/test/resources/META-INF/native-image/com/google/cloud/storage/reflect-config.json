@@ -14,9 +14,4 @@
     "allDeclaredFields":true,
     "allDeclaredMethods":true,
     "methods":[{"name":"<init>","parameterTypes":[] }]}
-,
-{
-  "name":"com.google.cloud.storage.conformance.retry.TestBench$RetryTestResource",
-  "allDeclaredFields":true,
-  "methods":[{"name":"<init>","parameterTypes":[] }]}
 ]

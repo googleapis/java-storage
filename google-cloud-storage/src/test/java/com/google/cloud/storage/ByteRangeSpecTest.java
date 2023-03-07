@@ -46,6 +46,20 @@ public final class ByteRangeSpecTest {
   public static final class Behavior {
 
     @Test
+    public void negativeBeginOffset() throws Exception {
+      ByteRangeSpec rel = ByteRangeSpec.relativeLength(-5L, null);
+      ByteRangeSpec exO = ByteRangeSpec.explicit(-5L, null);
+      ByteRangeSpec exC = ByteRangeSpec.explicitClosed(-5L, null);
+      threeWayEqual(exO, exC, rel);
+    }
+
+    @Test
+    public void negativeBeginOffset_fromNull() {
+      ByteRangeSpec spec = ByteRangeSpec.nullRange().withNewBeginOffset(-5L);
+      assertThat(spec.getHttpRangeHeader()).isEqualTo("bytes=-5");
+    }
+
+    @Test
     public void beginNonNullZero_endNonNullNonInfinity() throws Exception {
       ByteRangeSpec rel = ByteRangeSpec.relativeLength(0L, 52L);
       ByteRangeSpec exO = ByteRangeSpec.explicit(0L, 52L);

@@ -268,6 +268,7 @@ public final class DefaultRetryHandlingBehaviorTest {
     SOCKET_EXCEPTION(C.SOCKET_EXCEPTION),
     SSL_EXCEPTION(C.SSL_EXCEPTION),
     SSL_EXCEPTION_CONNECTION_SHUTDOWN(C.SSL_EXCEPTION_CONNECTION_SHUTDOWN),
+    SSL_EXCEPTION_CONNECTION_RESET(C.SSL_EXCEPTION_CONNECTION_RESET),
     SSL_HANDSHAKE_EXCEPTION(C.SSL_HANDSHAKE_EXCEPTION),
     SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION(
         C.SSL_HANDSHAKE_EXCEPTION_CERTIFICATE_EXCEPTION),
@@ -305,6 +306,8 @@ public final class DefaultRetryHandlingBehaviorTest {
     STORAGE_EXCEPTION_SSL_EXCEPTION(new StorageException(C.SSL_EXCEPTION)),
     STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_SHUTDOWN(
         new StorageException(C.SSL_EXCEPTION_CONNECTION_SHUTDOWN)),
+    STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_RESET(
+        new StorageException(C.SSL_EXCEPTION_CONNECTION_RESET)),
     STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION(new StorageException(C.SSL_HANDSHAKE_EXCEPTION)),
     STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION_CAUSED_BY_CERTIFICATE_EXCEPTION(
         new StorageException(C.SSL_HANDSHAKE_EXCEPTION_CERTIFICATE_EXCEPTION)),
@@ -361,6 +364,8 @@ public final class DefaultRetryHandlingBehaviorTest {
       private static final SSLException SSL_EXCEPTION = new SSLException("unknown");
       private static final SSLException SSL_EXCEPTION_CONNECTION_SHUTDOWN =
           new SSLException("Connection has been shutdown: asdf");
+      private static final SSLException SSL_EXCEPTION_CONNECTION_RESET =
+          new SSLException("Connection reset", new SocketException("Connection reset"));
       private static final SSLHandshakeException SSL_HANDSHAKE_EXCEPTION =
           newSslHandshakeExceptionWithCause(new SSLProtocolException(DEFAULT_MESSAGE));
       private static final SSLHandshakeException SSL_HANDSHAKE_EXCEPTION_CERTIFICATE_EXCEPTION =
@@ -615,6 +620,16 @@ public final class DefaultRetryHandlingBehaviorTest {
                 ExpectRetry.NO,
                 Behavior.SAME),
             new Case(
+                ThrowableCategory.SSL_EXCEPTION_CONNECTION_RESET,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.SSL_EXCEPTION_CONNECTION_RESET,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
                 ThrowableCategory.SSL_HANDSHAKE_EXCEPTION,
                 HandlerCategory.IDEMPOTENT,
                 ExpectRetry.YES,
@@ -884,6 +899,16 @@ public final class DefaultRetryHandlingBehaviorTest {
                 HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
                 Behavior.DEFAULT_MORE_STRICT),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_RESET,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.STORAGE_EXCEPTION_SSL_EXCEPTION_CONNECTION_RESET,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
             new Case(
                 ThrowableCategory.STORAGE_EXCEPTION_SSL_HANDSHAKE_EXCEPTION,
                 HandlerCategory.IDEMPOTENT,
