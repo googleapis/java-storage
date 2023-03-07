@@ -460,27 +460,6 @@ public final class ITBlobReadChannelTest {
   }
 
   @Test
-  public void readingLastByteReturnsOneByte_seekOnly_negativeOffset() throws IOException {
-    int length = 10;
-    byte[] bytes = DataGenerator.base64Characters().genBytes(length);
-
-    BlobInfo info1 = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
-    Blob gen1 = storage.create(info1, bytes, BlobTargetOption.doesNotExist());
-
-    byte[] expected1 = Arrays.copyOfRange(bytes, 9, 10);
-    String xxdExpected1 = xxd(expected1);
-    try (ReadChannel reader = storage.reader(gen1.getBlobId());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        WritableByteChannel writer = Channels.newChannel(baos)) {
-      reader.seek(-1);
-      ByteStreams.copy(reader, writer);
-      byte[] bytes1 = baos.toByteArray();
-      String xxd1 = xxd(bytes1);
-      assertThat(xxd1).isEqualTo(xxdExpected1);
-    }
-  }
-
-  @Test
   public void readingLastByteReturnsOneByte_seekAndLimit() throws IOException {
     int length = 10;
     byte[] bytes = DataGenerator.base64Characters().genBytes(length);

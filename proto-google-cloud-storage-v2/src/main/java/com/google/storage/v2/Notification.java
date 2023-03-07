@@ -25,19 +25,19 @@ package com.google.storage.v2;
  * A directive to publish Pub/Sub notifications upon changes to a bucket.
  * </pre>
  *
- * Protobuf type {@code google.storage.v2.NotificationConfig}
+ * Protobuf type {@code google.storage.v2.Notification}
  */
-public final class NotificationConfig extends com.google.protobuf.GeneratedMessageV3
+public final class Notification extends com.google.protobuf.GeneratedMessageV3
     implements
-    // @@protoc_insertion_point(message_implements:google.storage.v2.NotificationConfig)
-    NotificationConfigOrBuilder {
+    // @@protoc_insertion_point(message_implements:google.storage.v2.Notification)
+    NotificationOrBuilder {
   private static final long serialVersionUID = 0L;
-  // Use NotificationConfig.newBuilder() to construct.
-  private NotificationConfig(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use Notification.newBuilder() to construct.
+  private Notification(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
 
-  private NotificationConfig() {
+  private Notification() {
     name_ = "";
     topic_ = "";
     etag_ = "";
@@ -49,7 +49,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-    return new NotificationConfig();
+    return new Notification();
   }
 
   @java.lang.Override
@@ -59,7 +59,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_NotificationConfig_descriptor;
+        .internal_static_google_storage_v2_Notification_descriptor;
   }
 
   @SuppressWarnings({"rawtypes"})
@@ -77,10 +77,10 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_NotificationConfig_fieldAccessorTable
+        .internal_static_google_storage_v2_Notification_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.google.storage.v2.NotificationConfig.class,
-            com.google.storage.v2.NotificationConfig.Builder.class);
+            com.google.storage.v2.Notification.class,
+            com.google.storage.v2.Notification.Builder.class);
   }
 
   public static final int NAME_FIELD_NUMBER = 1;
@@ -91,9 +91,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Required. The resource name of this NotificationConfig.
+   * Required. The resource name of this notification.
    * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
    * The `{project}` portion may be `_` for globally unique buckets.
    * </pre>
    *
@@ -117,9 +117,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * Required. The resource name of this NotificationConfig.
+   * Required. The resource name of this notification.
    * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
    * The `{project}` portion may be `_` for globally unique buckets.
    * </pre>
    *
@@ -203,9 +203,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * The etag of the NotificationConfig.
-   * If included in the metadata of GetNotificationConfigRequest, the operation
-   * will only be performed if the etag matches that of the NotificationConfig.
+   * The etag of the Notification.
+   * If included in the metadata of GetNotificationRequest, the operation will
+   * only be performed if the etag matches that of the Notification.
    * </pre>
    *
    * <code>string etag = 7;</code>
@@ -228,9 +228,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * The etag of the NotificationConfig.
-   * If included in the metadata of GetNotificationConfigRequest, the operation
-   * will only be performed if the etag matches that of the NotificationConfig.
+   * The etag of the Notification.
+   * If included in the metadata of GetNotificationRequest, the operation will
+   * only be performed if the etag matches that of the Notification.
    * </pre>
    *
    * <code>string etag = 7;</code>
@@ -258,8 +258,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If
-   * empty, sent notifications for all event types.
+   * If present, only send notifications about listed event types. If empty,
+   * sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -273,8 +273,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If
-   * empty, sent notifications for all event types.
+   * If present, only send notifications about listed event types. If empty,
+   * sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -288,8 +288,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If
-   * empty, sent notifications for all event types.
+   * If present, only send notifications about listed event types. If empty,
+   * sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -304,8 +304,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If present, only send notifications about listed event types. If
-   * empty, sent notifications for all event types.
+   * If present, only send notifications about listed event types. If empty,
+   * sent notifications for all event types.
    * </pre>
    *
    * <code>repeated string event_types = 3;</code>
@@ -323,7 +323,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     static final com.google.protobuf.MapEntry<java.lang.String, java.lang.String> defaultEntry =
         com.google.protobuf.MapEntry.<java.lang.String, java.lang.String>newDefaultInstance(
             com.google.storage.v2.StorageProto
-                .internal_static_google_storage_v2_NotificationConfig_CustomAttributesEntry_descriptor,
+                .internal_static_google_storage_v2_Notification_CustomAttributesEntry_descriptor,
             com.google.protobuf.WireFormat.FieldType.STRING,
             "",
             com.google.protobuf.WireFormat.FieldType.STRING,
@@ -350,7 +350,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this NotificationConfig.
+   * message published for this notification subscription.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -373,7 +373,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this NotificationConfig.
+   * message published for this notification subscription.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -387,7 +387,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this NotificationConfig.
+   * message published for this notification subscription.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -408,7 +408,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * A list of additional attributes to attach to each Pub/Sub
-   * message published for this NotificationConfig.
+   * message published for this notification subscription.
    * </pre>
    *
    * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -433,7 +433,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If present, only apply this NotificationConfig to object names that
+   * If present, only apply this notification config to object names that
    * begin with this prefix.
    * </pre>
    *
@@ -457,7 +457,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    *
    *
    * <pre>
-   * If present, only apply this NotificationConfig to object names that
+   * If present, only apply this notification config to object names that
    * begin with this prefix.
    * </pre>
    *
@@ -615,10 +615,10 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof com.google.storage.v2.NotificationConfig)) {
+    if (!(obj instanceof com.google.storage.v2.Notification)) {
       return super.equals(obj);
     }
-    com.google.storage.v2.NotificationConfig other = (com.google.storage.v2.NotificationConfig) obj;
+    com.google.storage.v2.Notification other = (com.google.storage.v2.Notification) obj;
 
     if (!getName().equals(other.getName())) return false;
     if (!getTopic().equals(other.getTopic())) return false;
@@ -661,71 +661,70 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     return hash;
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(java.nio.ByteBuffer data)
+  public static com.google.storage.v2.Notification parseFrom(java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(
+  public static com.google.storage.v2.Notification parseFrom(
       java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(
-      com.google.protobuf.ByteString data)
+  public static com.google.storage.v2.Notification parseFrom(com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(
+  public static com.google.storage.v2.Notification parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(byte[] data)
+  public static com.google.storage.v2.Notification parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(
+  public static com.google.storage.v2.Notification parseFrom(
       byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(java.io.InputStream input)
+  public static com.google.storage.v2.Notification parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(
+  public static com.google.storage.v2.Notification parseFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseDelimitedFrom(
-      java.io.InputStream input) throws java.io.IOException {
+  public static com.google.storage.v2.Notification parseDelimitedFrom(java.io.InputStream input)
+      throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseDelimitedFrom(
+  public static com.google.storage.v2.Notification parseDelimitedFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(
+  public static com.google.storage.v2.Notification parseFrom(
       com.google.protobuf.CodedInputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.NotificationConfig parseFrom(
+  public static com.google.storage.v2.Notification parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -742,7 +741,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     return DEFAULT_INSTANCE.toBuilder();
   }
 
-  public static Builder newBuilder(com.google.storage.v2.NotificationConfig prototype) {
+  public static Builder newBuilder(com.google.storage.v2.Notification prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
 
@@ -763,15 +762,15 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
    * A directive to publish Pub/Sub notifications upon changes to a bucket.
    * </pre>
    *
-   * Protobuf type {@code google.storage.v2.NotificationConfig}
+   * Protobuf type {@code google.storage.v2.Notification}
    */
   public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:google.storage.v2.NotificationConfig)
-      com.google.storage.v2.NotificationConfigOrBuilder {
+      // @@protoc_insertion_point(builder_implements:google.storage.v2.Notification)
+      com.google.storage.v2.NotificationOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_NotificationConfig_descriptor;
+          .internal_static_google_storage_v2_Notification_descriptor;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -798,13 +797,13 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_NotificationConfig_fieldAccessorTable
+          .internal_static_google_storage_v2_Notification_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.NotificationConfig.class,
-              com.google.storage.v2.NotificationConfig.Builder.class);
+              com.google.storage.v2.Notification.class,
+              com.google.storage.v2.Notification.Builder.class);
     }
 
-    // Construct using com.google.storage.v2.NotificationConfig.newBuilder()
+    // Construct using com.google.storage.v2.Notification.newBuilder()
     private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
@@ -829,17 +828,17 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_NotificationConfig_descriptor;
+          .internal_static_google_storage_v2_Notification_descriptor;
     }
 
     @java.lang.Override
-    public com.google.storage.v2.NotificationConfig getDefaultInstanceForType() {
-      return com.google.storage.v2.NotificationConfig.getDefaultInstance();
+    public com.google.storage.v2.Notification getDefaultInstanceForType() {
+      return com.google.storage.v2.Notification.getDefaultInstance();
     }
 
     @java.lang.Override
-    public com.google.storage.v2.NotificationConfig build() {
-      com.google.storage.v2.NotificationConfig result = buildPartial();
+    public com.google.storage.v2.Notification build() {
+      com.google.storage.v2.Notification result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -847,9 +846,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     }
 
     @java.lang.Override
-    public com.google.storage.v2.NotificationConfig buildPartial() {
-      com.google.storage.v2.NotificationConfig result =
-          new com.google.storage.v2.NotificationConfig(this);
+    public com.google.storage.v2.Notification buildPartial() {
+      com.google.storage.v2.Notification result = new com.google.storage.v2.Notification(this);
       buildPartialRepeatedFields(result);
       if (bitField0_ != 0) {
         buildPartial0(result);
@@ -858,7 +856,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       return result;
     }
 
-    private void buildPartialRepeatedFields(com.google.storage.v2.NotificationConfig result) {
+    private void buildPartialRepeatedFields(com.google.storage.v2.Notification result) {
       if (((bitField0_ & 0x00000008) != 0)) {
         eventTypes_ = eventTypes_.getUnmodifiableView();
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -866,7 +864,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       result.eventTypes_ = eventTypes_;
     }
 
-    private void buildPartial0(com.google.storage.v2.NotificationConfig result) {
+    private void buildPartial0(com.google.storage.v2.Notification result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.name_ = name_;
@@ -924,16 +922,16 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
 
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.google.storage.v2.NotificationConfig) {
-        return mergeFrom((com.google.storage.v2.NotificationConfig) other);
+      if (other instanceof com.google.storage.v2.Notification) {
+        return mergeFrom((com.google.storage.v2.Notification) other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.google.storage.v2.NotificationConfig other) {
-      if (other == com.google.storage.v2.NotificationConfig.getDefaultInstance()) return this;
+    public Builder mergeFrom(com.google.storage.v2.Notification other) {
+      if (other == com.google.storage.v2.Notification.getDefaultInstance()) return this;
       if (!other.getName().isEmpty()) {
         name_ = other.name_;
         bitField0_ |= 0x00000001;
@@ -1071,9 +1069,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The resource name of this NotificationConfig.
+     * Required. The resource name of this notification.
      * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
      * The `{project}` portion may be `_` for globally unique buckets.
      * </pre>
      *
@@ -1096,9 +1094,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The resource name of this NotificationConfig.
+     * Required. The resource name of this notification.
      * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
      * The `{project}` portion may be `_` for globally unique buckets.
      * </pre>
      *
@@ -1121,9 +1119,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The resource name of this NotificationConfig.
+     * Required. The resource name of this notification.
      * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
      * The `{project}` portion may be `_` for globally unique buckets.
      * </pre>
      *
@@ -1145,9 +1143,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The resource name of this NotificationConfig.
+     * Required. The resource name of this notification.
      * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
      * The `{project}` portion may be `_` for globally unique buckets.
      * </pre>
      *
@@ -1165,9 +1163,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * Required. The resource name of this NotificationConfig.
+     * Required. The resource name of this notification.
      * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
      * The `{project}` portion may be `_` for globally unique buckets.
      * </pre>
      *
@@ -1308,9 +1306,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The etag of the NotificationConfig.
-     * If included in the metadata of GetNotificationConfigRequest, the operation
-     * will only be performed if the etag matches that of the NotificationConfig.
+     * The etag of the Notification.
+     * If included in the metadata of GetNotificationRequest, the operation will
+     * only be performed if the etag matches that of the Notification.
      * </pre>
      *
      * <code>string etag = 7;</code>
@@ -1332,9 +1330,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The etag of the NotificationConfig.
-     * If included in the metadata of GetNotificationConfigRequest, the operation
-     * will only be performed if the etag matches that of the NotificationConfig.
+     * The etag of the Notification.
+     * If included in the metadata of GetNotificationRequest, the operation will
+     * only be performed if the etag matches that of the Notification.
      * </pre>
      *
      * <code>string etag = 7;</code>
@@ -1356,9 +1354,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The etag of the NotificationConfig.
-     * If included in the metadata of GetNotificationConfigRequest, the operation
-     * will only be performed if the etag matches that of the NotificationConfig.
+     * The etag of the Notification.
+     * If included in the metadata of GetNotificationRequest, the operation will
+     * only be performed if the etag matches that of the Notification.
      * </pre>
      *
      * <code>string etag = 7;</code>
@@ -1379,9 +1377,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The etag of the NotificationConfig.
-     * If included in the metadata of GetNotificationConfigRequest, the operation
-     * will only be performed if the etag matches that of the NotificationConfig.
+     * The etag of the Notification.
+     * If included in the metadata of GetNotificationRequest, the operation will
+     * only be performed if the etag matches that of the Notification.
      * </pre>
      *
      * <code>string etag = 7;</code>
@@ -1398,9 +1396,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * The etag of the NotificationConfig.
-     * If included in the metadata of GetNotificationConfigRequest, the operation
-     * will only be performed if the etag matches that of the NotificationConfig.
+     * The etag of the Notification.
+     * If included in the metadata of GetNotificationRequest, the operation will
+     * only be performed if the etag matches that of the Notification.
      * </pre>
      *
      * <code>string etag = 7;</code>
@@ -1432,8 +1430,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1447,8 +1445,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1462,8 +1460,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1478,8 +1476,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1494,8 +1492,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1517,8 +1515,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1539,8 +1537,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1558,8 +1556,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1576,8 +1574,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only send notifications about listed event types. If
-     * empty, sent notifications for all event types.
+     * If present, only send notifications about listed event types. If empty,
+     * sent notifications for all event types.
      * </pre>
      *
      * <code>repeated string event_types = 3;</code>
@@ -1630,7 +1628,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * A list of additional attributes to attach to each Pub/Sub
-     * message published for this NotificationConfig.
+     * message published for this notification subscription.
      * </pre>
      *
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -1653,7 +1651,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * A list of additional attributes to attach to each Pub/Sub
-     * message published for this NotificationConfig.
+     * message published for this notification subscription.
      * </pre>
      *
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -1667,7 +1665,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * A list of additional attributes to attach to each Pub/Sub
-     * message published for this NotificationConfig.
+     * message published for this notification subscription.
      * </pre>
      *
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -1689,7 +1687,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * A list of additional attributes to attach to each Pub/Sub
-     * message published for this NotificationConfig.
+     * message published for this notification subscription.
      * </pre>
      *
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -1717,7 +1715,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * A list of additional attributes to attach to each Pub/Sub
-     * message published for this NotificationConfig.
+     * message published for this notification subscription.
      * </pre>
      *
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -1740,7 +1738,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * A list of additional attributes to attach to each Pub/Sub
-     * message published for this NotificationConfig.
+     * message published for this notification subscription.
      * </pre>
      *
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -1761,7 +1759,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * A list of additional attributes to attach to each Pub/Sub
-     * message published for this NotificationConfig.
+     * message published for this notification subscription.
      * </pre>
      *
      * <code>map&lt;string, string&gt; custom_attributes = 4;</code>
@@ -1778,7 +1776,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only apply this NotificationConfig to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
@@ -1801,7 +1799,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only apply this NotificationConfig to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
@@ -1824,7 +1822,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only apply this NotificationConfig to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
@@ -1846,7 +1844,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only apply this NotificationConfig to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
@@ -1864,7 +1862,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      *
      *
      * <pre>
-     * If present, only apply this NotificationConfig to object names that
+     * If present, only apply this notification config to object names that
      * begin with this prefix.
      * </pre>
      *
@@ -2001,24 +1999,24 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       return super.mergeUnknownFields(unknownFields);
     }
 
-    // @@protoc_insertion_point(builder_scope:google.storage.v2.NotificationConfig)
+    // @@protoc_insertion_point(builder_scope:google.storage.v2.Notification)
   }
 
-  // @@protoc_insertion_point(class_scope:google.storage.v2.NotificationConfig)
-  private static final com.google.storage.v2.NotificationConfig DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:google.storage.v2.Notification)
+  private static final com.google.storage.v2.Notification DEFAULT_INSTANCE;
 
   static {
-    DEFAULT_INSTANCE = new com.google.storage.v2.NotificationConfig();
+    DEFAULT_INSTANCE = new com.google.storage.v2.Notification();
   }
 
-  public static com.google.storage.v2.NotificationConfig getDefaultInstance() {
+  public static com.google.storage.v2.Notification getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<NotificationConfig> PARSER =
-      new com.google.protobuf.AbstractParser<NotificationConfig>() {
+  private static final com.google.protobuf.Parser<Notification> PARSER =
+      new com.google.protobuf.AbstractParser<Notification>() {
         @java.lang.Override
-        public NotificationConfig parsePartialFrom(
+        public Notification parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2037,17 +2035,17 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
         }
       };
 
-  public static com.google.protobuf.Parser<NotificationConfig> parser() {
+  public static com.google.protobuf.Parser<Notification> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<NotificationConfig> getParserForType() {
+  public com.google.protobuf.Parser<Notification> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.storage.v2.NotificationConfig getDefaultInstanceForType() {
+  public com.google.storage.v2.Notification getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 }

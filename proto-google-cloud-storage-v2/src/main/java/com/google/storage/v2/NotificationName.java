@@ -28,26 +28,26 @@ import javax.annotation.Generated;
 
 // AUTO-GENERATED DOCUMENTATION AND CLASS.
 @Generated("by gapic-generator-java")
-public class NotificationConfigName implements ResourceName {
-  private static final PathTemplate PROJECT_BUCKET_NOTIFICATION_CONFIG =
+public class NotificationName implements ResourceName {
+  private static final PathTemplate PROJECT_BUCKET_NOTIFICATION =
       PathTemplate.createWithoutUrlEncoding(
-          "projects/{project}/buckets/{bucket}/notificationConfigs/{notification_config}");
+          "projects/{project}/buckets/{bucket}/notificationConfigs/{notification}");
   private volatile Map<String, String> fieldValuesMap;
   private final String project;
   private final String bucket;
-  private final String notificationConfig;
+  private final String notification;
 
   @Deprecated
-  protected NotificationConfigName() {
+  protected NotificationName() {
     project = null;
     bucket = null;
-    notificationConfig = null;
+    notification = null;
   }
 
-  private NotificationConfigName(Builder builder) {
+  private NotificationName(Builder builder) {
     project = Preconditions.checkNotNull(builder.getProject());
     bucket = Preconditions.checkNotNull(builder.getBucket());
-    notificationConfig = Preconditions.checkNotNull(builder.getNotificationConfig());
+    notification = Preconditions.checkNotNull(builder.getNotification());
   }
 
   public String getProject() {
@@ -58,8 +58,8 @@ public class NotificationConfigName implements ResourceName {
     return bucket;
   }
 
-  public String getNotificationConfig() {
-    return notificationConfig;
+  public String getNotification() {
+    return notification;
   }
 
   public static Builder newBuilder() {
@@ -70,45 +70,40 @@ public class NotificationConfigName implements ResourceName {
     return new Builder(this);
   }
 
-  public static NotificationConfigName of(
-      String project, String bucket, String notificationConfig) {
-    return newBuilder()
-        .setProject(project)
-        .setBucket(bucket)
-        .setNotificationConfig(notificationConfig)
-        .build();
+  public static NotificationName of(String project, String bucket, String notification) {
+    return newBuilder().setProject(project).setBucket(bucket).setNotification(notification).build();
   }
 
-  public static String format(String project, String bucket, String notificationConfig) {
+  public static String format(String project, String bucket, String notification) {
     return newBuilder()
         .setProject(project)
         .setBucket(bucket)
-        .setNotificationConfig(notificationConfig)
+        .setNotification(notification)
         .build()
         .toString();
   }
 
-  public static NotificationConfigName parse(String formattedString) {
+  public static NotificationName parse(String formattedString) {
     if (formattedString.isEmpty()) {
       return null;
     }
     Map<String, String> matchMap =
-        PROJECT_BUCKET_NOTIFICATION_CONFIG.validatedMatch(
-            formattedString, "NotificationConfigName.parse: formattedString not in valid format");
-    return of(matchMap.get("project"), matchMap.get("bucket"), matchMap.get("notification_config"));
+        PROJECT_BUCKET_NOTIFICATION.validatedMatch(
+            formattedString, "NotificationName.parse: formattedString not in valid format");
+    return of(matchMap.get("project"), matchMap.get("bucket"), matchMap.get("notification"));
   }
 
-  public static List<NotificationConfigName> parseList(List<String> formattedStrings) {
-    List<NotificationConfigName> list = new ArrayList<>(formattedStrings.size());
+  public static List<NotificationName> parseList(List<String> formattedStrings) {
+    List<NotificationName> list = new ArrayList<>(formattedStrings.size());
     for (String formattedString : formattedStrings) {
       list.add(parse(formattedString));
     }
     return list;
   }
 
-  public static List<String> toStringList(List<NotificationConfigName> values) {
+  public static List<String> toStringList(List<NotificationName> values) {
     List<String> list = new ArrayList<>(values.size());
-    for (NotificationConfigName value : values) {
+    for (NotificationName value : values) {
       if (value == null) {
         list.add("");
       } else {
@@ -119,7 +114,7 @@ public class NotificationConfigName implements ResourceName {
   }
 
   public static boolean isParsableFrom(String formattedString) {
-    return PROJECT_BUCKET_NOTIFICATION_CONFIG.matches(formattedString);
+    return PROJECT_BUCKET_NOTIFICATION.matches(formattedString);
   }
 
   @Override
@@ -134,8 +129,8 @@ public class NotificationConfigName implements ResourceName {
           if (bucket != null) {
             fieldMapBuilder.put("bucket", bucket);
           }
-          if (notificationConfig != null) {
-            fieldMapBuilder.put("notification_config", notificationConfig);
+          if (notification != null) {
+            fieldMapBuilder.put("notification", notification);
           }
           fieldValuesMap = fieldMapBuilder.build();
         }
@@ -150,8 +145,8 @@ public class NotificationConfigName implements ResourceName {
 
   @Override
   public String toString() {
-    return PROJECT_BUCKET_NOTIFICATION_CONFIG.instantiate(
-        "project", project, "bucket", bucket, "notification_config", notificationConfig);
+    return PROJECT_BUCKET_NOTIFICATION.instantiate(
+        "project", project, "bucket", bucket, "notification", notification);
   }
 
   @Override
@@ -160,10 +155,10 @@ public class NotificationConfigName implements ResourceName {
       return true;
     }
     if (o != null || getClass() == o.getClass()) {
-      NotificationConfigName that = ((NotificationConfigName) o);
+      NotificationName that = ((NotificationName) o);
       return Objects.equals(this.project, that.project)
           && Objects.equals(this.bucket, that.bucket)
-          && Objects.equals(this.notificationConfig, that.notificationConfig);
+          && Objects.equals(this.notification, that.notification);
     }
     return false;
   }
@@ -176,15 +171,15 @@ public class NotificationConfigName implements ResourceName {
     h *= 1000003;
     h ^= Objects.hashCode(bucket);
     h *= 1000003;
-    h ^= Objects.hashCode(notificationConfig);
+    h ^= Objects.hashCode(notification);
     return h;
   }
 
-  /** Builder for projects/{project}/buckets/{bucket}/notificationConfigs/{notification_config}. */
+  /** Builder for projects/{project}/buckets/{bucket}/notificationConfigs/{notification}. */
   public static class Builder {
     private String project;
     private String bucket;
-    private String notificationConfig;
+    private String notification;
 
     protected Builder() {}
 
@@ -196,8 +191,8 @@ public class NotificationConfigName implements ResourceName {
       return bucket;
     }
 
-    public String getNotificationConfig() {
-      return notificationConfig;
+    public String getNotification() {
+      return notification;
     }
 
     public Builder setProject(String project) {
@@ -210,19 +205,19 @@ public class NotificationConfigName implements ResourceName {
       return this;
     }
 
-    public Builder setNotificationConfig(String notificationConfig) {
-      this.notificationConfig = notificationConfig;
+    public Builder setNotification(String notification) {
+      this.notification = notification;
       return this;
     }
 
-    private Builder(NotificationConfigName notificationConfigName) {
-      this.project = notificationConfigName.project;
-      this.bucket = notificationConfigName.bucket;
-      this.notificationConfig = notificationConfigName.notificationConfig;
+    private Builder(NotificationName notificationName) {
+      this.project = notificationName.project;
+      this.bucket = notificationName.bucket;
+      this.notification = notificationName.notification;
     }
 
-    public NotificationConfigName build() {
-      return new NotificationConfigName(this);
+    public NotificationName build() {
+      return new NotificationName(this);
     }
   }
 }

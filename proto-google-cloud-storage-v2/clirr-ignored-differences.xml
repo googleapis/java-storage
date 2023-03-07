@@ -14,11 +14,4 @@
     <method>* *ObjectChecksums*(*)</method>
   </difference>
 
-  <!-- Allow rename from Notification to NotificationConfig-->
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/*Notification*</className>
-  </difference>
-
-
 </differences>

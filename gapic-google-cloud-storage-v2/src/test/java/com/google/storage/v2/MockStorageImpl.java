@@ -249,8 +249,8 @@ public class MockStorageImpl extends StorageImplBase {
   }
 
   @Override
-  public void deleteNotificationConfig(
-      DeleteNotificationConfigRequest request, StreamObserver<Empty> responseObserver) {
+  public void deleteNotification(
+      DeleteNotificationRequest request, StreamObserver<Empty> responseObserver) {
     java.lang.Object response = responses.poll();
     if (response instanceof Empty) {
       requests.add(request);
@@ -262,7 +262,7 @@ public class MockStorageImpl extends StorageImplBase {
       responseObserver.onError(
           new IllegalArgumentException(
               String.format(
-                  "Unrecognized response type %s for method DeleteNotificationConfig, expected %s or %s",
+                  "Unrecognized response type %s for method DeleteNotification, expected %s or %s",
                   response == null ? "null" : response.getClass().getName(),
                   Empty.class.getName(),
                   Exception.class.getName())));
@@ -270,12 +270,12 @@ public class MockStorageImpl extends StorageImplBase {
   }
 
   @Override
-  public void getNotificationConfig(
-      GetNotificationConfigRequest request, StreamObserver<NotificationConfig> responseObserver) {
+  public void getNotification(
+      GetNotificationRequest request, StreamObserver<Notification> responseObserver) {
     java.lang.Object response = responses.poll();
-    if (response instanceof NotificationConfig) {
+    if (response instanceof Notification) {
       requests.add(request);
-      responseObserver.onNext(((NotificationConfig) response));
+      responseObserver.onNext(((Notification) response));
       responseObserver.onCompleted();
     } else if (response instanceof Exception) {
       responseObserver.onError(((Exception) response));
@@ -283,21 +283,20 @@ public class MockStorageImpl extends StorageImplBase {
       responseObserver.onError(
           new IllegalArgumentException(
               String.format(
-                  "Unrecognized response type %s for method GetNotificationConfig, expected %s or %s",
+                  "Unrecognized response type %s for method GetNotification, expected %s or %s",
                   response == null ? "null" : response.getClass().getName(),
-                  NotificationConfig.class.getName(),
+                  Notification.class.getName(),
                   Exception.class.getName())));
     }
   }
 
   @Override
-  public void createNotificationConfig(
-      CreateNotificationConfigRequest request,
-      StreamObserver<NotificationConfig> responseObserver) {
+  public void createNotification(
+      CreateNotificationRequest request, StreamObserver<Notification> responseObserver) {
     java.lang.Object response = responses.poll();
-    if (response instanceof NotificationConfig) {
+    if (response instanceof Notification) {
       requests.add(request);
-      responseObserver.onNext(((NotificationConfig) response));
+      responseObserver.onNext(((Notification) response));
       responseObserver.onCompleted();
     } else if (response instanceof Exception) {
       responseObserver.onError(((Exception) response));
@@ -305,21 +304,21 @@ public class MockStorageImpl extends StorageImplBase {
       responseObserver.onError(
           new IllegalArgumentException(
               String.format(
-                  "Unrecognized response type %s for method CreateNotificationConfig, expected %s or %s",
+                  "Unrecognized response type %s for method CreateNotification, expected %s or %s",
                   response == null ? "null" : response.getClass().getName(),
-                  NotificationConfig.class.getName(),
+                  Notification.class.getName(),
                   Exception.class.getName())));
     }
   }
 
   @Override
-  public void listNotificationConfigs(
-      ListNotificationConfigsRequest request,
-      StreamObserver<ListNotificationConfigsResponse> responseObserver) {
+  public void listNotifications(
+      ListNotificationsRequest request,
+      StreamObserver<ListNotificationsResponse> responseObserver) {
     java.lang.Object response = responses.poll();
-    if (response instanceof ListNotificationConfigsResponse) {
+    if (response instanceof ListNotificationsResponse) {
       requests.add(request);
-      responseObserver.onNext(((ListNotificationConfigsResponse) response));
+      responseObserver.onNext(((ListNotificationsResponse) response));
       responseObserver.onCompleted();
     } else if (response instanceof Exception) {
       responseObserver.onError(((Exception) response));
@@ -327,9 +326,9 @@ public class MockStorageImpl extends StorageImplBase {
       responseObserver.onError(
           new IllegalArgumentException(
               String.format(
-                  "Unrecognized response type %s for method ListNotificationConfigs, expected %s or %s",
+                  "Unrecognized response type %s for method ListNotifications, expected %s or %s",
                   response == null ? "null" : response.getClass().getName(),
-                  ListNotificationConfigsResponse.class.getName(),
+                  ListNotificationsResponse.class.getName(),
                   Exception.class.getName())));
     }
   }

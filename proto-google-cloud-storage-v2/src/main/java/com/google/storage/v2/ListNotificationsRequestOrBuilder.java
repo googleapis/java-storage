@@ -18,9 +18,9 @@
 
 package com.google.storage.v2;
 
-public interface ListNotificationConfigsRequestOrBuilder
+public interface ListNotificationsRequestOrBuilder
     extends
-    // @@protoc_insertion_point(interface_extends:google.storage.v2.ListNotificationConfigsRequest)
+    // @@protoc_insertion_point(interface_extends:google.storage.v2.ListNotificationsRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -56,9 +56,10 @@ public interface ListNotificationConfigsRequestOrBuilder
    *
    *
    * <pre>
-   * The maximum number of NotificationConfigs to return. The service may
-   * return fewer than this value. The default value is 100. Specifying a value
-   * above 100 will result in a page_size of 100.
+   * The maximum number of notifications to return. The service may return fewer
+   * than this value.
+   * The default value is 100. Specifying a value above 100 will result in a
+   * page_size of 100.
    * </pre>
    *
    * <code>int32 page_size = 2;</code>
@@ -71,10 +72,10 @@ public interface ListNotificationConfigsRequestOrBuilder
    *
    *
    * <pre>
-   * A page token, received from a previous `ListNotificationConfigs` call.
+   * A page token, received from a previous `ListNotifications` call.
    * Provide this to retrieve the subsequent page.
-   * When paginating, all other parameters provided to `ListNotificationConfigs`
-   * must match the call that provided the page token.
+   * When paginating, all other parameters provided to `ListNotifications` must
+   * match the call that provided the page token.
    * </pre>
    *
    * <code>string page_token = 3;</code>
@@ -86,10 +87,10 @@ public interface ListNotificationConfigsRequestOrBuilder
    *
    *
    * <pre>
-   * A page token, received from a previous `ListNotificationConfigs` call.
+   * A page token, received from a previous `ListNotifications` call.
    * Provide this to retrieve the subsequent page.
-   * When paginating, all other parameters provided to `ListNotificationConfigs`
-   * must match the call that provided the page token.
+   * When paginating, all other parameters provided to `ListNotifications` must
+   * match the call that provided the page token.
    * </pre>
    *
    * <code>string page_token = 3;</code>

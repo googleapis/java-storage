@@ -27,20 +27,4 @@
     <className>com/google/storage/v2/stub/HttpJsonStorageStub</className>
   </difference>
 
-  <!-- Allow rename from Notification to NotificationConfig-->
-  <difference>
-    <differenceType>7002</differenceType>
-    <className>com/google/storage/v2/*</className>
-    <method>* *Notification*(*)</method>
-  </difference>
-  <difference>
-    <differenceType>7002</differenceType>
-    <className>com/google/storage/v2/stub/*</className>
-    <method>* *Notification*(*)</method>
-  </difference>
-  <difference>
-    <differenceType>8001</differenceType>
-    <className>com/google/storage/v2/StorageClient$ListNotification*</className>
-  </difference>
-
 </differences>

@@ -88,9 +88,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
       throw new ClosedChannelException();
     }
     long diff = byteRangeSpec.length();
-    // the check on beginOffset >= 0 used to be a precondition on seek(long)
-    // move it here to preserve existing behavior while allowing new negative offsets
-    if (diff <= 0 && byteRangeSpec.beginOffset() >= 0) {
+    if (diff <= 0) {
       return -1;
     }
     try {

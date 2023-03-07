@@ -417,194 +417,171 @@ public final class StorageGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.google.storage.v2.DeleteNotificationConfigRequest, com.google.protobuf.Empty>
-      getDeleteNotificationConfigMethod;
+          com.google.storage.v2.DeleteNotificationRequest, com.google.protobuf.Empty>
+      getDeleteNotificationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "DeleteNotificationConfig",
-      requestType = com.google.storage.v2.DeleteNotificationConfigRequest.class,
+      fullMethodName = SERVICE_NAME + '/' + "DeleteNotification",
+      requestType = com.google.storage.v2.DeleteNotificationRequest.class,
       responseType = com.google.protobuf.Empty.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.google.storage.v2.DeleteNotificationConfigRequest, com.google.protobuf.Empty>
-      getDeleteNotificationConfigMethod() {
+          com.google.storage.v2.DeleteNotificationRequest, com.google.protobuf.Empty>
+      getDeleteNotificationMethod() {
     io.grpc.MethodDescriptor<
-            com.google.storage.v2.DeleteNotificationConfigRequest, com.google.protobuf.Empty>
-        getDeleteNotificationConfigMethod;
-    if ((getDeleteNotificationConfigMethod = StorageGrpc.getDeleteNotificationConfigMethod)
-        == null) {
+            com.google.storage.v2.DeleteNotificationRequest, com.google.protobuf.Empty>
+        getDeleteNotificationMethod;
+    if ((getDeleteNotificationMethod = StorageGrpc.getDeleteNotificationMethod) == null) {
       synchronized (StorageGrpc.class) {
-        if ((getDeleteNotificationConfigMethod = StorageGrpc.getDeleteNotificationConfigMethod)
-            == null) {
-          StorageGrpc.getDeleteNotificationConfigMethod =
-              getDeleteNotificationConfigMethod =
+        if ((getDeleteNotificationMethod = StorageGrpc.getDeleteNotificationMethod) == null) {
+          StorageGrpc.getDeleteNotificationMethod =
+              getDeleteNotificationMethod =
                   io.grpc.MethodDescriptor
-                      .<com.google.storage.v2.DeleteNotificationConfigRequest,
-                          com.google.protobuf.Empty>
+                      .<com.google.storage.v2.DeleteNotificationRequest, com.google.protobuf.Empty>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "DeleteNotificationConfig"))
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "DeleteNotification"))
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.v2.DeleteNotificationConfigRequest
-                                  .getDefaultInstance()))
+                              com.google.storage.v2.DeleteNotificationRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
                               com.google.protobuf.Empty.getDefaultInstance()))
                       .setSchemaDescriptor(
-                          new StorageMethodDescriptorSupplier("DeleteNotificationConfig"))
+                          new StorageMethodDescriptorSupplier("DeleteNotification"))
                       .build();
         }
       }
     }
-    return getDeleteNotificationConfigMethod;
+    return getDeleteNotificationMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.google.storage.v2.GetNotificationConfigRequest,
-          com.google.storage.v2.NotificationConfig>
-      getGetNotificationConfigMethod;
+          com.google.storage.v2.GetNotificationRequest, com.google.storage.v2.Notification>
+      getGetNotificationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "GetNotificationConfig",
-      requestType = com.google.storage.v2.GetNotificationConfigRequest.class,
-      responseType = com.google.storage.v2.NotificationConfig.class,
+      fullMethodName = SERVICE_NAME + '/' + "GetNotification",
+      requestType = com.google.storage.v2.GetNotificationRequest.class,
+      responseType = com.google.storage.v2.Notification.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.google.storage.v2.GetNotificationConfigRequest,
-          com.google.storage.v2.NotificationConfig>
-      getGetNotificationConfigMethod() {
+          com.google.storage.v2.GetNotificationRequest, com.google.storage.v2.Notification>
+      getGetNotificationMethod() {
     io.grpc.MethodDescriptor<
-            com.google.storage.v2.GetNotificationConfigRequest,
-            com.google.storage.v2.NotificationConfig>
-        getGetNotificationConfigMethod;
-    if ((getGetNotificationConfigMethod = StorageGrpc.getGetNotificationConfigMethod) == null) {
+            com.google.storage.v2.GetNotificationRequest, com.google.storage.v2.Notification>
+        getGetNotificationMethod;
+    if ((getGetNotificationMethod = StorageGrpc.getGetNotificationMethod) == null) {
       synchronized (StorageGrpc.class) {
-        if ((getGetNotificationConfigMethod = StorageGrpc.getGetNotificationConfigMethod) == null) {
-          StorageGrpc.getGetNotificationConfigMethod =
-              getGetNotificationConfigMethod =
+        if ((getGetNotificationMethod = StorageGrpc.getGetNotificationMethod) == null) {
+          StorageGrpc.getGetNotificationMethod =
+              getGetNotificationMethod =
                   io.grpc.MethodDescriptor
-                      .<com.google.storage.v2.GetNotificationConfigRequest,
-                          com.google.storage.v2.NotificationConfig>
+                      .<com.google.storage.v2.GetNotificationRequest,
+                          com.google.storage.v2.Notification>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "GetNotificationConfig"))
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetNotification"))
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.v2.GetNotificationConfigRequest
-                                  .getDefaultInstance()))
+                              com.google.storage.v2.GetNotificationRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.v2.NotificationConfig.getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new StorageMethodDescriptorSupplier("GetNotificationConfig"))
+                              com.google.storage.v2.Notification.getDefaultInstance()))
+                      .setSchemaDescriptor(new StorageMethodDescriptorSupplier("GetNotification"))
                       .build();
         }
       }
     }
-    return getGetNotificationConfigMethod;
+    return getGetNotificationMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.google.storage.v2.CreateNotificationConfigRequest,
-          com.google.storage.v2.NotificationConfig>
-      getCreateNotificationConfigMethod;
+          com.google.storage.v2.CreateNotificationRequest, com.google.storage.v2.Notification>
+      getCreateNotificationMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "CreateNotificationConfig",
-      requestType = com.google.storage.v2.CreateNotificationConfigRequest.class,
-      responseType = com.google.storage.v2.NotificationConfig.class,
+      fullMethodName = SERVICE_NAME + '/' + "CreateNotification",
+      requestType = com.google.storage.v2.CreateNotificationRequest.class,
+      responseType = com.google.storage.v2.Notification.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.google.storage.v2.CreateNotificationConfigRequest,
-          com.google.storage.v2.NotificationConfig>
-      getCreateNotificationConfigMethod() {
+          com.google.storage.v2.CreateNotificationRequest, com.google.storage.v2.Notification>
+      getCreateNotificationMethod() {
     io.grpc.MethodDescriptor<
-            com.google.storage.v2.CreateNotificationConfigRequest,
-            com.google.storage.v2.NotificationConfig>
-        getCreateNotificationConfigMethod;
-    if ((getCreateNotificationConfigMethod = StorageGrpc.getCreateNotificationConfigMethod)
-        == null) {
+            com.google.storage.v2.CreateNotificationRequest, com.google.storage.v2.Notification>
+        getCreateNotificationMethod;
+    if ((getCreateNotificationMethod = StorageGrpc.getCreateNotificationMethod) == null) {
       synchronized (StorageGrpc.class) {
-        if ((getCreateNotificationConfigMethod = StorageGrpc.getCreateNotificationConfigMethod)
-            == null) {
-          StorageGrpc.getCreateNotificationConfigMethod =
-              getCreateNotificationConfigMethod =
+        if ((getCreateNotificationMethod = StorageGrpc.getCreateNotificationMethod) == null) {
+          StorageGrpc.getCreateNotificationMethod =
+              getCreateNotificationMethod =
                   io.grpc.MethodDescriptor
-                      .<com.google.storage.v2.CreateNotificationConfigRequest,
-                          com.google.storage.v2.NotificationConfig>
+                      .<com.google.storage.v2.CreateNotificationRequest,
+                          com.google.storage.v2.Notification>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "CreateNotificationConfig"))
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "CreateNotification"))
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.v2.CreateNotificationConfigRequest
-                                  .getDefaultInstance()))
+                              com.google.storage.v2.CreateNotificationRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.v2.NotificationConfig.getDefaultInstance()))
+                              com.google.storage.v2.Notification.getDefaultInstance()))
                       .setSchemaDescriptor(
-                          new StorageMethodDescriptorSupplier("CreateNotificationConfig"))
+                          new StorageMethodDescriptorSupplier("CreateNotification"))
                       .build();
         }
       }
     }
-    return getCreateNotificationConfigMethod;
+    return getCreateNotificationMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
-          com.google.storage.v2.ListNotificationConfigsRequest,
-          com.google.storage.v2.ListNotificationConfigsResponse>
-      getListNotificationConfigsMethod;
+          com.google.storage.v2.ListNotificationsRequest,
+          com.google.storage.v2.ListNotificationsResponse>
+      getListNotificationsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
-      fullMethodName = SERVICE_NAME + '/' + "ListNotificationConfigs",
-      requestType = com.google.storage.v2.ListNotificationConfigsRequest.class,
-      responseType = com.google.storage.v2.ListNotificationConfigsResponse.class,
+      fullMethodName = SERVICE_NAME + '/' + "ListNotifications",
+      requestType = com.google.storage.v2.ListNotificationsRequest.class,
+      responseType = com.google.storage.v2.ListNotificationsResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<
-          com.google.storage.v2.ListNotificationConfigsRequest,
-          com.google.storage.v2.ListNotificationConfigsResponse>
-      getListNotificationConfigsMethod() {
+          com.google.storage.v2.ListNotificationsRequest,
+          com.google.storage.v2.ListNotificationsResponse>
+      getListNotificationsMethod() {
     io.grpc.MethodDescriptor<
-            com.google.storage.v2.ListNotificationConfigsRequest,
-            com.google.storage.v2.ListNotificationConfigsResponse>
-        getListNotificationConfigsMethod;
-    if ((getListNotificationConfigsMethod = StorageGrpc.getListNotificationConfigsMethod) == null) {
+            com.google.storage.v2.ListNotificationsRequest,
+            com.google.storage.v2.ListNotificationsResponse>
+        getListNotificationsMethod;
+    if ((getListNotificationsMethod = StorageGrpc.getListNotificationsMethod) == null) {
       synchronized (StorageGrpc.class) {
-        if ((getListNotificationConfigsMethod = StorageGrpc.getListNotificationConfigsMethod)
-            == null) {
-          StorageGrpc.getListNotificationConfigsMethod =
-              getListNotificationConfigsMethod =
+        if ((getListNotificationsMethod = StorageGrpc.getListNotificationsMethod) == null) {
+          StorageGrpc.getListNotificationsMethod =
+              getListNotificationsMethod =
                   io.grpc.MethodDescriptor
-                      .<com.google.storage.v2.ListNotificationConfigsRequest,
-                          com.google.storage.v2.ListNotificationConfigsResponse>
+                      .<com.google.storage.v2.ListNotificationsRequest,
+                          com.google.storage.v2.ListNotificationsResponse>
                           newBuilder()
                       .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
-                      .setFullMethodName(
-                          generateFullMethodName(SERVICE_NAME, "ListNotificationConfigs"))
+                      .setFullMethodName(generateFullMethodName(SERVICE_NAME, "ListNotifications"))
                       .setSampledToLocalTracing(true)
                       .setRequestMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.v2.ListNotificationConfigsRequest
-                                  .getDefaultInstance()))
+                              com.google.storage.v2.ListNotificationsRequest.getDefaultInstance()))
                       .setResponseMarshaller(
                           io.grpc.protobuf.ProtoUtils.marshaller(
-                              com.google.storage.v2.ListNotificationConfigsResponse
-                                  .getDefaultInstance()))
-                      .setSchemaDescriptor(
-                          new StorageMethodDescriptorSupplier("ListNotificationConfigs"))
+                              com.google.storage.v2.ListNotificationsResponse.getDefaultInstance()))
+                      .setSchemaDescriptor(new StorageMethodDescriptorSupplier("ListNotifications"))
                       .build();
         }
       }
     }
-    return getListNotificationConfigsMethod;
+    return getListNotificationsMethod;
   }
 
   private static volatile io.grpc.MethodDescriptor<
@@ -1519,60 +1496,60 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Permanently deletes a NotificationConfig.
+     * Permanently deletes a notification subscription.
      * </pre>
      */
-    public void deleteNotificationConfig(
-        com.google.storage.v2.DeleteNotificationConfigRequest request,
+    public void deleteNotification(
+        com.google.storage.v2.DeleteNotificationRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
-          getDeleteNotificationConfigMethod(), responseObserver);
+          getDeleteNotificationMethod(), responseObserver);
     }
 
     /**
      *
      *
      * <pre>
-     * View a NotificationConfig.
+     * View a notification config.
      * </pre>
      */
-    public void getNotificationConfig(
-        com.google.storage.v2.GetNotificationConfigRequest request,
-        io.grpc.stub.StreamObserver<com.google.storage.v2.NotificationConfig> responseObserver) {
+    public void getNotification(
+        com.google.storage.v2.GetNotificationRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.Notification> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
-          getGetNotificationConfigMethod(), responseObserver);
+          getGetNotificationMethod(), responseObserver);
     }
 
     /**
      *
      *
      * <pre>
-     * Creates a NotificationConfig for a given bucket.
-     * These NotificationConfigs, when triggered, publish messages to the
-     * specified Pub/Sub topics. See
-     * https://cloud.google.com/storage/docs/pubsub-notifications.
+     * Creates a notification subscription for a given bucket.
+     * These notifications, when triggered, publish messages to the specified
+     * Pub/Sub topics.
+     * See https://cloud.google.com/storage/docs/pubsub-notifications.
      * </pre>
      */
-    public void createNotificationConfig(
-        com.google.storage.v2.CreateNotificationConfigRequest request,
-        io.grpc.stub.StreamObserver<com.google.storage.v2.NotificationConfig> responseObserver) {
+    public void createNotification(
+        com.google.storage.v2.CreateNotificationRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.Notification> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
-          getCreateNotificationConfigMethod(), responseObserver);
+          getCreateNotificationMethod(), responseObserver);
     }
 
     /**
      *
      *
      * <pre>
-     * Retrieves a list of NotificationConfigs for a given bucket.
+     * Retrieves a list of notification subscriptions for a given bucket.
      * </pre>
      */
-    public void listNotificationConfigs(
-        com.google.storage.v2.ListNotificationConfigsRequest request,
-        io.grpc.stub.StreamObserver<com.google.storage.v2.ListNotificationConfigsResponse>
+    public void listNotifications(
+        com.google.storage.v2.ListNotificationsRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.ListNotificationsResponse>
             responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(
-          getListNotificationConfigsMethod(), responseObserver);
+          getListNotificationsMethod(), responseObserver);
     }
 
     /**
@@ -1702,9 +1679,8 @@ public final class StorageGrpc {
      *     returned `persisted_size`; in this case, the service will skip data at
      *     offsets that were already persisted (without checking that it matches
      *     the previously written data), and write only the data starting from the
-     *     persisted offset. Even though the data isn't written, it may still
-     *     incur a performance cost over resuming at the correct write offset.
-     *     This behavior can make client-side handling simpler in some cases.
+     *     persisted offset. This behavior can make client-side handling simpler
+     *     in some cases.
      * The service will not view the object as complete until the client has
      * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
      * requests on a stream after sending a request with `finish_write` set to
@@ -1935,32 +1911,30 @@ public final class StorageGrpc {
                       com.google.storage.v2.UpdateBucketRequest, com.google.storage.v2.Bucket>(
                       this, METHODID_UPDATE_BUCKET)))
           .addMethod(
-              getDeleteNotificationConfigMethod(),
+              getDeleteNotificationMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
-                      com.google.storage.v2.DeleteNotificationConfigRequest,
-                      com.google.protobuf.Empty>(this, METHODID_DELETE_NOTIFICATION_CONFIG)))
+                      com.google.storage.v2.DeleteNotificationRequest, com.google.protobuf.Empty>(
+                      this, METHODID_DELETE_NOTIFICATION)))
           .addMethod(
-              getGetNotificationConfigMethod(),
+              getGetNotificationMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
-                      com.google.storage.v2.GetNotificationConfigRequest,
-                      com.google.storage.v2.NotificationConfig>(
-                      this, METHODID_GET_NOTIFICATION_CONFIG)))
+                      com.google.storage.v2.GetNotificationRequest,
+                      com.google.storage.v2.Notification>(this, METHODID_GET_NOTIFICATION)))
           .addMethod(
-              getCreateNotificationConfigMethod(),
+              getCreateNotificationMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
-                      com.google.storage.v2.CreateNotificationConfigRequest,
-                      com.google.storage.v2.NotificationConfig>(
-                      this, METHODID_CREATE_NOTIFICATION_CONFIG)))
+                      com.google.storage.v2.CreateNotificationRequest,
+                      com.google.storage.v2.Notification>(this, METHODID_CREATE_NOTIFICATION)))
           .addMethod(
-              getListNotificationConfigsMethod(),
+              getListNotificationsMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
                   new MethodHandlers<
-                      com.google.storage.v2.ListNotificationConfigsRequest,
-                      com.google.storage.v2.ListNotificationConfigsResponse>(
-                      this, METHODID_LIST_NOTIFICATION_CONFIGS)))
+                      com.google.storage.v2.ListNotificationsRequest,
+                      com.google.storage.v2.ListNotificationsResponse>(
+                      this, METHODID_LIST_NOTIFICATIONS)))
           .addMethod(
               getComposeObjectMethod(),
               io.grpc.stub.ServerCalls.asyncUnaryCall(
@@ -2261,14 +2235,14 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Permanently deletes a NotificationConfig.
+     * Permanently deletes a notification subscription.
      * </pre>
      */
-    public void deleteNotificationConfig(
-        com.google.storage.v2.DeleteNotificationConfigRequest request,
+    public void deleteNotification(
+        com.google.storage.v2.DeleteNotificationRequest request,
         io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getDeleteNotificationConfigMethod(), getCallOptions()),
+          getChannel().newCall(getDeleteNotificationMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -2277,14 +2251,14 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * View a NotificationConfig.
+     * View a notification config.
      * </pre>
      */
-    public void getNotificationConfig(
-        com.google.storage.v2.GetNotificationConfigRequest request,
-        io.grpc.stub.StreamObserver<com.google.storage.v2.NotificationConfig> responseObserver) {
+    public void getNotification(
+        com.google.storage.v2.GetNotificationRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.Notification> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getGetNotificationConfigMethod(), getCallOptions()),
+          getChannel().newCall(getGetNotificationMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -2293,17 +2267,17 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Creates a NotificationConfig for a given bucket.
-     * These NotificationConfigs, when triggered, publish messages to the
-     * specified Pub/Sub topics. See
-     * https://cloud.google.com/storage/docs/pubsub-notifications.
+     * Creates a notification subscription for a given bucket.
+     * These notifications, when triggered, publish messages to the specified
+     * Pub/Sub topics.
+     * See https://cloud.google.com/storage/docs/pubsub-notifications.
      * </pre>
      */
-    public void createNotificationConfig(
-        com.google.storage.v2.CreateNotificationConfigRequest request,
-        io.grpc.stub.StreamObserver<com.google.storage.v2.NotificationConfig> responseObserver) {
+    public void createNotification(
+        com.google.storage.v2.CreateNotificationRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.Notification> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getCreateNotificationConfigMethod(), getCallOptions()),
+          getChannel().newCall(getCreateNotificationMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -2312,15 +2286,15 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Retrieves a list of NotificationConfigs for a given bucket.
+     * Retrieves a list of notification subscriptions for a given bucket.
      * </pre>
      */
-    public void listNotificationConfigs(
-        com.google.storage.v2.ListNotificationConfigsRequest request,
-        io.grpc.stub.StreamObserver<com.google.storage.v2.ListNotificationConfigsResponse>
+    public void listNotifications(
+        com.google.storage.v2.ListNotificationsRequest request,
+        io.grpc.stub.StreamObserver<com.google.storage.v2.ListNotificationsResponse>
             responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
-          getChannel().newCall(getListNotificationConfigsMethod(), getCallOptions()),
+          getChannel().newCall(getListNotificationsMethod(), getCallOptions()),
           request,
           responseObserver);
     }
@@ -2462,9 +2436,8 @@ public final class StorageGrpc {
      *     returned `persisted_size`; in this case, the service will skip data at
      *     offsets that were already persisted (without checking that it matches
      *     the previously written data), and write only the data starting from the
-     *     persisted offset. Even though the data isn't written, it may still
-     *     incur a performance cost over resuming at the correct write offset.
-     *     This behavior can make client-side handling simpler in some cases.
+     *     persisted offset. This behavior can make client-side handling simpler
+     *     in some cases.
      * The service will not view the object as complete until the client has
      * sent a `WriteObjectRequest` with `finish_write` set to `true`. Sending any
      * requests on a stream after sending a request with `finish_write` set to
@@ -2819,55 +2792,55 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Permanently deletes a NotificationConfig.
+     * Permanently deletes a notification subscription.
      * </pre>
      */
-    public com.google.protobuf.Empty deleteNotificationConfig(
-        com.google.storage.v2.DeleteNotificationConfigRequest request) {
+    public com.google.protobuf.Empty deleteNotification(
+        com.google.storage.v2.DeleteNotificationRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getDeleteNotificationConfigMethod(), getCallOptions(), request);
+          getChannel(), getDeleteNotificationMethod(), getCallOptions(), request);
     }
 
     /**
      *
      *
      * <pre>
-     * View a NotificationConfig.
+     * View a notification config.
      * </pre>
      */
-    public com.google.storage.v2.NotificationConfig getNotificationConfig(
-        com.google.storage.v2.GetNotificationConfigRequest request) {
+    public com.google.storage.v2.Notification getNotification(
+        com.google.storage.v2.GetNotificationRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getGetNotificationConfigMethod(), getCallOptions(), request);
+          getChannel(), getGetNotificationMethod(), getCallOptions(), request);
     }
 
     /**
      *
      *
      * <pre>
-     * Creates a NotificationConfig for a given bucket.
-     * These NotificationConfigs, when triggered, publish messages to the
-     * specified Pub/Sub topics. See
-     * https://cloud.google.com/storage/docs/pubsub-notifications.
+     * Creates a notification subscription for a given bucket.
+     * These notifications, when triggered, publish messages to the specified
+     * Pub/Sub topics.
+     * See https://cloud.google.com/storage/docs/pubsub-notifications.
      * </pre>
      */
-    public com.google.storage.v2.NotificationConfig createNotificationConfig(
-        com.google.storage.v2.CreateNotificationConfigRequest request) {
+    public com.google.storage.v2.Notification createNotification(
+        com.google.storage.v2.CreateNotificationRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getCreateNotificationConfigMethod(), getCallOptions(), request);
+          getChannel(), getCreateNotificationMethod(), getCallOptions(), request);
     }
 
     /**
      *
      *
      * <pre>
-     * Retrieves a list of NotificationConfigs for a given bucket.
+     * Retrieves a list of notification subscriptions for a given bucket.
      * </pre>
      */
-    public com.google.storage.v2.ListNotificationConfigsResponse listNotificationConfigs(
-        com.google.storage.v2.ListNotificationConfigsRequest request) {
+    public com.google.storage.v2.ListNotificationsResponse listNotifications(
+        com.google.storage.v2.ListNotificationsRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
-          getChannel(), getListNotificationConfigsMethod(), getCallOptions(), request);
+          getChannel(), getListNotificationsMethod(), getCallOptions(), request);
     }
 
     /**
@@ -3262,58 +3235,56 @@ public final class StorageGrpc {
      *
      *
      * <pre>
-     * Permanently deletes a NotificationConfig.
+     * Permanently deletes a notification subscription.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<com.google.protobuf.Empty>
-        deleteNotificationConfig(com.google.storage.v2.DeleteNotificationConfigRequest request) {
+        deleteNotification(com.google.storage.v2.DeleteNotificationRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getDeleteNotificationConfigMethod(), getCallOptions()), request);
+          getChannel().newCall(getDeleteNotificationMethod(), getCallOptions()), request);
     }
 
     /**
      *
      *
      * <pre>
-     * View a NotificationConfig.
+     * View a notification config.
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.google.storage.v2.NotificationConfig>
-        getNotificationConfig(com.google.storage.v2.GetNotificationConfigRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Notification>
+        getNotification(com.google.storage.v2.GetNotificationRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getGetNotificationConfigMethod(), getCallOptions()), request);
+          getChannel().newCall(getGetNotificationMethod(), getCallOptions()), request);
     }
 
     /**
      *
      *
      * <pre>
-     * Creates a NotificationConfig for a given bucket.
-     * These NotificationConfigs, when triggered, publish messages to the
-     * specified Pub/Sub topics. See
-     * https://cloud.google.com/storage/docs/pubsub-notifications.
+     * Creates a notification subscription for a given bucket.
+     * These notifications, when triggered, publish messages to the specified
+     * Pub/Sub topics.
+     * See https://cloud.google.com/storage/docs/pubsub-notifications.
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<
-            com.google.storage.v2.NotificationConfig>
-        createNotificationConfig(com.google.storage.v2.CreateNotificationConfigRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<com.google.storage.v2.Notification>
+        createNotification(com.google.storage.v2.CreateNotificationRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getCreateNotificationConfigMethod(), getCallOptions()), request);
+          getChannel().newCall(getCreateNotificationMethod(), getCallOptions()), request);
     }
 
     /**
      *
      *
      * <pre>
-     * Retrieves a list of NotificationConfigs for a given bucket.
+     * Retrieves a list of notification subscriptions for a given bucket.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<
-            com.google.storage.v2.ListNotificationConfigsResponse>
-        listNotificationConfigs(com.google.storage.v2.ListNotificationConfigsRequest request) {
+            com.google.storage.v2.ListNotificationsResponse>
+        listNotifications(com.google.storage.v2.ListNotificationsRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
-          getChannel().newCall(getListNotificationConfigsMethod(), getCallOptions()), request);
+          getChannel().newCall(getListNotificationsMethod(), getCallOptions()), request);
     }
 
     /**
@@ -3543,10 +3514,10 @@ public final class StorageGrpc {
   private static final int METHODID_SET_IAM_POLICY = 6;
   private static final int METHODID_TEST_IAM_PERMISSIONS = 7;
   private static final int METHODID_UPDATE_BUCKET = 8;
-  private static final int METHODID_DELETE_NOTIFICATION_CONFIG = 9;
-  private static final int METHODID_GET_NOTIFICATION_CONFIG = 10;
-  private static final int METHODID_CREATE_NOTIFICATION_CONFIG = 11;
-  private static final int METHODID_LIST_NOTIFICATION_CONFIGS = 12;
+  private static final int METHODID_DELETE_NOTIFICATION = 9;
+  private static final int METHODID_GET_NOTIFICATION = 10;
+  private static final int METHODID_CREATE_NOTIFICATION = 11;
+  private static final int METHODID_LIST_NOTIFICATIONS = 12;
   private static final int METHODID_COMPOSE_OBJECT = 13;
   private static final int METHODID_DELETE_OBJECT = 14;
   private static final int METHODID_CANCEL_RESUMABLE_WRITE = 15;
@@ -3629,27 +3600,25 @@ public final class StorageGrpc {
               (com.google.storage.v2.UpdateBucketRequest) request,
               (io.grpc.stub.StreamObserver<com.google.storage.v2.Bucket>) responseObserver);
           break;
-        case METHODID_DELETE_NOTIFICATION_CONFIG:
-          serviceImpl.deleteNotificationConfig(
-              (com.google.storage.v2.DeleteNotificationConfigRequest) request,
+        case METHODID_DELETE_NOTIFICATION:
+          serviceImpl.deleteNotification(
+              (com.google.storage.v2.DeleteNotificationRequest) request,
               (io.grpc.stub.StreamObserver<com.google.protobuf.Empty>) responseObserver);
           break;
-        case METHODID_GET_NOTIFICATION_CONFIG:
-          serviceImpl.getNotificationConfig(
-              (com.google.storage.v2.GetNotificationConfigRequest) request,
-              (io.grpc.stub.StreamObserver<com.google.storage.v2.NotificationConfig>)
-                  responseObserver);
+        case METHODID_GET_NOTIFICATION:
+          serviceImpl.getNotification(
+              (com.google.storage.v2.GetNotificationRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.v2.Notification>) responseObserver);
           break;
-        case METHODID_CREATE_NOTIFICATION_CONFIG:
-          serviceImpl.createNotificationConfig(
-              (com.google.storage.v2.CreateNotificationConfigRequest) request,
-              (io.grpc.stub.StreamObserver<com.google.storage.v2.NotificationConfig>)
-                  responseObserver);
+        case METHODID_CREATE_NOTIFICATION:
+          serviceImpl.createNotification(
+              (com.google.storage.v2.CreateNotificationRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.v2.Notification>) responseObserver);
           break;
-        case METHODID_LIST_NOTIFICATION_CONFIGS:
-          serviceImpl.listNotificationConfigs(
-              (com.google.storage.v2.ListNotificationConfigsRequest) request,
-              (io.grpc.stub.StreamObserver<com.google.storage.v2.ListNotificationConfigsResponse>)
+        case METHODID_LIST_NOTIFICATIONS:
+          serviceImpl.listNotifications(
+              (com.google.storage.v2.ListNotificationsRequest) request,
+              (io.grpc.stub.StreamObserver<com.google.storage.v2.ListNotificationsResponse>)
                   responseObserver);
           break;
         case METHODID_COMPOSE_OBJECT:
@@ -3818,10 +3787,10 @@ public final class StorageGrpc {
                       .addMethod(getSetIamPolicyMethod())
                       .addMethod(getTestIamPermissionsMethod())
                       .addMethod(getUpdateBucketMethod())
-                      .addMethod(getDeleteNotificationConfigMethod())
-                      .addMethod(getGetNotificationConfigMethod())
-                      .addMethod(getCreateNotificationConfigMethod())
-                      .addMethod(getListNotificationConfigsMethod())
+                      .addMethod(getDeleteNotificationMethod())
+                      .addMethod(getGetNotificationMethod())
+                      .addMethod(getCreateNotificationMethod())
+                      .addMethod(getListNotificationsMethod())
                       .addMethod(getComposeObjectMethod())
                       .addMethod(getDeleteObjectMethod())
                       .addMethod(getCancelResumableWriteMethod())

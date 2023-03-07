@@ -24,9 +24,7 @@ import com.google.cloud.ExceptionHandler.Interceptor;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.MalformedJsonException;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.Set;
-import javax.net.ssl.SSLException;
 
 final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
 
@@ -104,14 +102,7 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
         return RetryResult.RETRY;
       } else if (ioException instanceof MalformedJsonException && idempotent) { // Gson
         return RetryResult.RETRY;
-      } else if (ioException instanceof SSLException && idempotent) {
-        Throwable cause = ioException.getCause();
-        if (cause instanceof SocketException) {
-          SocketException se = (SocketException) cause;
-          return shouldRetryIOException(se);
-        }
-      }
-      if (BaseServiceException.isRetryable(idempotent, ioException)) {
+      } else if (BaseServiceException.isRetryable(idempotent, ioException)) {
         return RetryResult.RETRY;
       } else {
         return RetryResult.NO_RETRY;

@@ -1347,7 +1347,7 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes a NotificationConfig.
+   * Permanently deletes a notification subscription.
    *
    * <p>Sample code:
    *
@@ -1358,26 +1358,25 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   NotificationConfigName name =
-   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
-   *   storageClient.deleteNotificationConfig(name);
+   *   NotificationName name = NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]");
+   *   storageClient.deleteNotification(name);
    * }
    * }</pre>
    *
-   * @param name Required. The parent bucket of the NotificationConfig.
+   * @param name Required. The parent bucket of the notification.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final void deleteNotificationConfig(NotificationConfigName name) {
-    DeleteNotificationConfigRequest request =
-        DeleteNotificationConfigRequest.newBuilder()
+  public final void deleteNotification(NotificationName name) {
+    DeleteNotificationRequest request =
+        DeleteNotificationRequest.newBuilder()
             .setName(name == null ? null : name.toString())
             .build();
-    deleteNotificationConfig(request);
+    deleteNotification(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes a NotificationConfig.
+   * Permanently deletes a notification subscription.
    *
    * <p>Sample code:
    *
@@ -1388,24 +1387,23 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String name =
-   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]").toString();
-   *   storageClient.deleteNotificationConfig(name);
+   *   String name = NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString();
+   *   storageClient.deleteNotification(name);
    * }
    * }</pre>
    *
-   * @param name Required. The parent bucket of the NotificationConfig.
+   * @param name Required. The parent bucket of the notification.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final void deleteNotificationConfig(String name) {
-    DeleteNotificationConfigRequest request =
-        DeleteNotificationConfigRequest.newBuilder().setName(name).build();
-    deleteNotificationConfig(request);
+  public final void deleteNotification(String name) {
+    DeleteNotificationRequest request =
+        DeleteNotificationRequest.newBuilder().setName(name).build();
+    deleteNotification(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes a NotificationConfig.
+   * Permanently deletes a notification subscription.
    *
    * <p>Sample code:
    *
@@ -1416,26 +1414,24 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   DeleteNotificationConfigRequest request =
-   *       DeleteNotificationConfigRequest.newBuilder()
-   *           .setName(
-   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-   *                   .toString())
+   *   DeleteNotificationRequest request =
+   *       DeleteNotificationRequest.newBuilder()
+   *           .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
    *           .build();
-   *   storageClient.deleteNotificationConfig(request);
+   *   storageClient.deleteNotification(request);
    * }
    * }</pre>
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final void deleteNotificationConfig(DeleteNotificationConfigRequest request) {
-    deleteNotificationConfigCallable().call(request);
+  public final void deleteNotification(DeleteNotificationRequest request) {
+    deleteNotificationCallable().call(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Permanently deletes a NotificationConfig.
+   * Permanently deletes a notification subscription.
    *
    * <p>Sample code:
    *
@@ -1446,27 +1442,23 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   DeleteNotificationConfigRequest request =
-   *       DeleteNotificationConfigRequest.newBuilder()
-   *           .setName(
-   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
-   *                   .toString())
+   *   DeleteNotificationRequest request =
+   *       DeleteNotificationRequest.newBuilder()
+   *           .setName(NotificationName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION]").toString())
    *           .build();
-   *   ApiFuture<Empty> future =
-   *       storageClient.deleteNotificationConfigCallable().futureCall(request);
+   *   ApiFuture<Empty> future = storageClient.deleteNotificationCallable().futureCall(request);
    *   // Do something.
    *   future.get();
    * }
    * }</pre>
    */
-  public final UnaryCallable<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigCallable() {
-    return stub.deleteNotificationConfigCallable();
+  public final UnaryCallable<DeleteNotificationRequest, Empty> deleteNotificationCallable() {
+    return stub.deleteNotificationCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * View a NotificationConfig.
+   * View a notification config.
    *
    * <p>Sample code:
    *
@@ -1478,25 +1470,23 @@ public class StorageClient implements BackgroundResource {
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
    *   BucketName name = BucketName.of("[PROJECT]", "[BUCKET]");
-   *   NotificationConfig response = storageClient.getNotificationConfig(name);
+   *   Notification response = storageClient.getNotification(name);
    * }
    * }</pre>
    *
-   * @param name Required. The parent bucket of the NotificationConfig. Format:
-   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * @param name Required. The parent bucket of the notification. Format:
+   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final NotificationConfig getNotificationConfig(BucketName name) {
-    GetNotificationConfigRequest request =
-        GetNotificationConfigRequest.newBuilder()
-            .setName(name == null ? null : name.toString())
-            .build();
-    return getNotificationConfig(request);
+  public final Notification getNotification(BucketName name) {
+    GetNotificationRequest request =
+        GetNotificationRequest.newBuilder().setName(name == null ? null : name.toString()).build();
+    return getNotification(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * View a NotificationConfig.
+   * View a notification config.
    *
    * <p>Sample code:
    *
@@ -1508,23 +1498,22 @@ public class StorageClient implements BackgroundResource {
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
    *   String name = BucketName.of("[PROJECT]", "[BUCKET]").toString();
-   *   NotificationConfig response = storageClient.getNotificationConfig(name);
+   *   Notification response = storageClient.getNotification(name);
    * }
    * }</pre>
    *
-   * @param name Required. The parent bucket of the NotificationConfig. Format:
-   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * @param name Required. The parent bucket of the notification. Format:
+   *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notification}`
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final NotificationConfig getNotificationConfig(String name) {
-    GetNotificationConfigRequest request =
-        GetNotificationConfigRequest.newBuilder().setName(name).build();
-    return getNotificationConfig(request);
+  public final Notification getNotification(String name) {
+    GetNotificationRequest request = GetNotificationRequest.newBuilder().setName(name).build();
+    return getNotification(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * View a NotificationConfig.
+   * View a notification config.
    *
    * <p>Sample code:
    *
@@ -1535,24 +1524,24 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   GetNotificationConfigRequest request =
-   *       GetNotificationConfigRequest.newBuilder()
+   *   GetNotificationRequest request =
+   *       GetNotificationRequest.newBuilder()
    *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .build();
-   *   NotificationConfig response = storageClient.getNotificationConfig(request);
+   *   Notification response = storageClient.getNotification(request);
    * }
    * }</pre>
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final NotificationConfig getNotificationConfig(GetNotificationConfigRequest request) {
-    return getNotificationConfigCallable().call(request);
+  public final Notification getNotification(GetNotificationRequest request) {
+    return getNotificationCallable().call(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * View a NotificationConfig.
+   * View a notification config.
    *
    * <p>Sample code:
    *
@@ -1563,25 +1552,23 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   GetNotificationConfigRequest request =
-   *       GetNotificationConfigRequest.newBuilder()
+   *   GetNotificationRequest request =
+   *       GetNotificationRequest.newBuilder()
    *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .build();
-   *   ApiFuture<NotificationConfig> future =
-   *       storageClient.getNotificationConfigCallable().futureCall(request);
+   *   ApiFuture<Notification> future = storageClient.getNotificationCallable().futureCall(request);
    *   // Do something.
-   *   NotificationConfig response = future.get();
+   *   Notification response = future.get();
    * }
    * }</pre>
    */
-  public final UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable() {
-    return stub.getNotificationConfigCallable();
+  public final UnaryCallable<GetNotificationRequest, Notification> getNotificationCallable() {
+    return stub.getNotificationCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * Creates a notification subscription for a given bucket. These notifications, when triggered,
    * publish messages to the specified Pub/Sub topics. See
    * https://cloud.google.com/storage/docs/pubsub-notifications.
    *
@@ -1595,29 +1582,27 @@ public class StorageClient implements BackgroundResource {
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ProjectName parent = ProjectName.of("[PROJECT]");
-   *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-   *   NotificationConfig response =
-   *       storageClient.createNotificationConfig(parent, notificationConfig);
+   *   Notification notification = Notification.newBuilder().build();
+   *   Notification response = storageClient.createNotification(parent, notification);
    * }
    * }</pre>
    *
-   * @param parent Required. The bucket to which this NotificationConfig belongs.
-   * @param notificationConfig Required. Properties of the NotificationConfig to be inserted.
+   * @param parent Required. The bucket to which this notification belongs.
+   * @param notification Required. Properties of the notification to be inserted.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final NotificationConfig createNotificationConfig(
-      ProjectName parent, NotificationConfig notificationConfig) {
-    CreateNotificationConfigRequest request =
-        CreateNotificationConfigRequest.newBuilder()
+  public final Notification createNotification(ProjectName parent, Notification notification) {
+    CreateNotificationRequest request =
+        CreateNotificationRequest.newBuilder()
             .setParent(parent == null ? null : parent.toString())
-            .setNotificationConfig(notificationConfig)
+            .setNotification(notification)
             .build();
-    return createNotificationConfig(request);
+    return createNotification(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * Creates a notification subscription for a given bucket. These notifications, when triggered,
    * publish messages to the specified Pub/Sub topics. See
    * https://cloud.google.com/storage/docs/pubsub-notifications.
    *
@@ -1631,29 +1616,27 @@ public class StorageClient implements BackgroundResource {
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
    *   String parent = ProjectName.of("[PROJECT]").toString();
-   *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
-   *   NotificationConfig response =
-   *       storageClient.createNotificationConfig(parent, notificationConfig);
+   *   Notification notification = Notification.newBuilder().build();
+   *   Notification response = storageClient.createNotification(parent, notification);
    * }
    * }</pre>
    *
-   * @param parent Required. The bucket to which this NotificationConfig belongs.
-   * @param notificationConfig Required. Properties of the NotificationConfig to be inserted.
+   * @param parent Required. The bucket to which this notification belongs.
+   * @param notification Required. Properties of the notification to be inserted.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final NotificationConfig createNotificationConfig(
-      String parent, NotificationConfig notificationConfig) {
-    CreateNotificationConfigRequest request =
-        CreateNotificationConfigRequest.newBuilder()
+  public final Notification createNotification(String parent, Notification notification) {
+    CreateNotificationRequest request =
+        CreateNotificationRequest.newBuilder()
             .setParent(parent)
-            .setNotificationConfig(notificationConfig)
+            .setNotification(notification)
             .build();
-    return createNotificationConfig(request);
+    return createNotification(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * Creates a notification subscription for a given bucket. These notifications, when triggered,
    * publish messages to the specified Pub/Sub topics. See
    * https://cloud.google.com/storage/docs/pubsub-notifications.
    *
@@ -1666,26 +1649,25 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   CreateNotificationConfigRequest request =
-   *       CreateNotificationConfigRequest.newBuilder()
+   *   CreateNotificationRequest request =
+   *       CreateNotificationRequest.newBuilder()
    *           .setParent(ProjectName.of("[PROJECT]").toString())
-   *           .setNotificationConfig(NotificationConfig.newBuilder().build())
+   *           .setNotification(Notification.newBuilder().build())
    *           .build();
-   *   NotificationConfig response = storageClient.createNotificationConfig(request);
+   *   Notification response = storageClient.createNotification(request);
    * }
    * }</pre>
    *
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final NotificationConfig createNotificationConfig(
-      CreateNotificationConfigRequest request) {
-    return createNotificationConfigCallable().call(request);
+  public final Notification createNotification(CreateNotificationRequest request) {
+    return createNotificationCallable().call(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Creates a NotificationConfig for a given bucket. These NotificationConfigs, when triggered,
+   * Creates a notification subscription for a given bucket. These notifications, when triggered,
    * publish messages to the specified Pub/Sub topics. See
    * https://cloud.google.com/storage/docs/pubsub-notifications.
    *
@@ -1698,26 +1680,25 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   CreateNotificationConfigRequest request =
-   *       CreateNotificationConfigRequest.newBuilder()
+   *   CreateNotificationRequest request =
+   *       CreateNotificationRequest.newBuilder()
    *           .setParent(ProjectName.of("[PROJECT]").toString())
-   *           .setNotificationConfig(NotificationConfig.newBuilder().build())
+   *           .setNotification(Notification.newBuilder().build())
    *           .build();
-   *   ApiFuture<NotificationConfig> future =
-   *       storageClient.createNotificationConfigCallable().futureCall(request);
+   *   ApiFuture<Notification> future =
+   *       storageClient.createNotificationCallable().futureCall(request);
    *   // Do something.
-   *   NotificationConfig response = future.get();
+   *   Notification response = future.get();
    * }
    * }</pre>
    */
-  public final UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable() {
-    return stub.createNotificationConfigCallable();
+  public final UnaryCallable<CreateNotificationRequest, Notification> createNotificationCallable() {
+    return stub.createNotificationCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
+   * Retrieves a list of notification subscriptions for a given bucket.
    *
    * <p>Sample code:
    *
@@ -1729,8 +1710,7 @@ public class StorageClient implements BackgroundResource {
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ProjectName parent = ProjectName.of("[PROJECT]");
-   *   for (NotificationConfig element :
-   *       storageClient.listNotificationConfigs(parent).iterateAll()) {
+   *   for (Notification element : storageClient.listNotifications(parent).iterateAll()) {
    *     // doThingsWith(element);
    *   }
    * }
@@ -1739,17 +1719,17 @@ public class StorageClient implements BackgroundResource {
    * @param parent Required. Name of a Google Cloud Storage bucket.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final ListNotificationConfigsPagedResponse listNotificationConfigs(ProjectName parent) {
-    ListNotificationConfigsRequest request =
-        ListNotificationConfigsRequest.newBuilder()
+  public final ListNotificationsPagedResponse listNotifications(ProjectName parent) {
+    ListNotificationsRequest request =
+        ListNotificationsRequest.newBuilder()
             .setParent(parent == null ? null : parent.toString())
             .build();
-    return listNotificationConfigs(request);
+    return listNotifications(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
+   * Retrieves a list of notification subscriptions for a given bucket.
    *
    * <p>Sample code:
    *
@@ -1761,8 +1741,7 @@ public class StorageClient implements BackgroundResource {
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
    *   String parent = ProjectName.of("[PROJECT]").toString();
-   *   for (NotificationConfig element :
-   *       storageClient.listNotificationConfigs(parent).iterateAll()) {
+   *   for (Notification element : storageClient.listNotifications(parent).iterateAll()) {
    *     // doThingsWith(element);
    *   }
    * }
@@ -1771,15 +1750,15 @@ public class StorageClient implements BackgroundResource {
    * @param parent Required. Name of a Google Cloud Storage bucket.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final ListNotificationConfigsPagedResponse listNotificationConfigs(String parent) {
-    ListNotificationConfigsRequest request =
-        ListNotificationConfigsRequest.newBuilder().setParent(parent).build();
-    return listNotificationConfigs(request);
+  public final ListNotificationsPagedResponse listNotifications(String parent) {
+    ListNotificationsRequest request =
+        ListNotificationsRequest.newBuilder().setParent(parent).build();
+    return listNotifications(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
+   * Retrieves a list of notification subscriptions for a given bucket.
    *
    * <p>Sample code:
    *
@@ -1790,14 +1769,13 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   ListNotificationConfigsRequest request =
-   *       ListNotificationConfigsRequest.newBuilder()
+   *   ListNotificationsRequest request =
+   *       ListNotificationsRequest.newBuilder()
    *           .setParent(ProjectName.of("[PROJECT]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .build();
-   *   for (NotificationConfig element :
-   *       storageClient.listNotificationConfigs(request).iterateAll()) {
+   *   for (Notification element : storageClient.listNotifications(request).iterateAll()) {
    *     // doThingsWith(element);
    *   }
    * }
@@ -1806,14 +1784,13 @@ public class StorageClient implements BackgroundResource {
    * @param request The request object containing all of the parameters for the API call.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final ListNotificationConfigsPagedResponse listNotificationConfigs(
-      ListNotificationConfigsRequest request) {
-    return listNotificationConfigsPagedCallable().call(request);
+  public final ListNotificationsPagedResponse listNotifications(ListNotificationsRequest request) {
+    return listNotificationsPagedCallable().call(request);
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
+   * Retrieves a list of notification subscriptions for a given bucket.
    *
    * <p>Sample code:
    *
@@ -1824,29 +1801,29 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   ListNotificationConfigsRequest request =
-   *       ListNotificationConfigsRequest.newBuilder()
+   *   ListNotificationsRequest request =
+   *       ListNotificationsRequest.newBuilder()
    *           .setParent(ProjectName.of("[PROJECT]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .build();
-   *   ApiFuture<NotificationConfig> future =
-   *       storageClient.listNotificationConfigsPagedCallable().futureCall(request);
+   *   ApiFuture<Notification> future =
+   *       storageClient.listNotificationsPagedCallable().futureCall(request);
    *   // Do something.
-   *   for (NotificationConfig element : future.get().iterateAll()) {
+   *   for (Notification element : future.get().iterateAll()) {
    *     // doThingsWith(element);
    *   }
    * }
    * }</pre>
    */
-  public final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable() {
-    return stub.listNotificationConfigsPagedCallable();
+  public final UnaryCallable<ListNotificationsRequest, ListNotificationsPagedResponse>
+      listNotificationsPagedCallable() {
+    return stub.listNotificationsPagedCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Retrieves a list of NotificationConfigs for a given bucket.
+   * Retrieves a list of notification subscriptions for a given bucket.
    *
    * <p>Sample code:
    *
@@ -1857,16 +1834,16 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   ListNotificationConfigsRequest request =
-   *       ListNotificationConfigsRequest.newBuilder()
+   *   ListNotificationsRequest request =
+   *       ListNotificationsRequest.newBuilder()
    *           .setParent(ProjectName.of("[PROJECT]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .build();
    *   while (true) {
-   *     ListNotificationConfigsResponse response =
-   *         storageClient.listNotificationConfigsCallable().call(request);
-   *     for (NotificationConfig element : response.getNotificationConfigsList()) {
+   *     ListNotificationsResponse response =
+   *         storageClient.listNotificationsCallable().call(request);
+   *     for (Notification element : response.getNotificationsList()) {
    *       // doThingsWith(element);
    *     }
    *     String nextPageToken = response.getNextPageToken();
@@ -1879,9 +1856,9 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    */
-  public final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable() {
-    return stub.listNotificationConfigsCallable();
+  public final UnaryCallable<ListNotificationsRequest, ListNotificationsResponse>
+      listNotificationsCallable() {
+    return stub.listNotificationsCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2491,9 +2468,8 @@ public class StorageClient implements BackgroundResource {
    * previously sent. Note also that it is acceptable to send data starting at an offset earlier
    * than the returned `persisted_size`; in this case, the service will skip data at offsets that
    * were already persisted (without checking that it matches the previously written data), and
-   * write only the data starting from the persisted offset. Even though the data isn't written, it
-   * may still incur a performance cost over resuming at the correct write offset. This behavior can
-   * make client-side handling simpler in some cases.
+   * write only the data starting from the persisted offset. This behavior can make client-side
+   * handling simpler in some cases.
    *
    * <p>The service will not view the object as complete until the client has sent a
    * `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after
@@ -3862,91 +3838,83 @@ public class StorageClient implements BackgroundResource {
     }
   }
 
-  public static class ListNotificationConfigsPagedResponse
+  public static class ListNotificationsPagedResponse
       extends AbstractPagedListResponse<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          NotificationConfig,
-          ListNotificationConfigsPage,
-          ListNotificationConfigsFixedSizeCollection> {
+          ListNotificationsRequest,
+          ListNotificationsResponse,
+          Notification,
+          ListNotificationsPage,
+          ListNotificationsFixedSizeCollection> {
 
-    public static ApiFuture<ListNotificationConfigsPagedResponse> createAsync(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ApiFuture<ListNotificationConfigsResponse> futureResponse) {
-      ApiFuture<ListNotificationConfigsPage> futurePage =
-          ListNotificationConfigsPage.createEmptyPage().createPageAsync(context, futureResponse);
+    public static ApiFuture<ListNotificationsPagedResponse> createAsync(
+        PageContext<ListNotificationsRequest, ListNotificationsResponse, Notification> context,
+        ApiFuture<ListNotificationsResponse> futureResponse) {
+      ApiFuture<ListNotificationsPage> futurePage =
+          ListNotificationsPage.createEmptyPage().createPageAsync(context, futureResponse);
       return ApiFutures.transform(
           futurePage,
-          input -> new ListNotificationConfigsPagedResponse(input),
+          input -> new ListNotificationsPagedResponse(input),
           MoreExecutors.directExecutor());
     }
 
-    private ListNotificationConfigsPagedResponse(ListNotificationConfigsPage page) {
-      super(page, ListNotificationConfigsFixedSizeCollection.createEmptyCollection());
+    private ListNotificationsPagedResponse(ListNotificationsPage page) {
+      super(page, ListNotificationsFixedSizeCollection.createEmptyCollection());
     }
   }
 
-  public static class ListNotificationConfigsPage
+  public static class ListNotificationsPage
       extends AbstractPage<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          NotificationConfig,
-          ListNotificationConfigsPage> {
+          ListNotificationsRequest,
+          ListNotificationsResponse,
+          Notification,
+          ListNotificationsPage> {
 
-    private ListNotificationConfigsPage(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ListNotificationConfigsResponse response) {
+    private ListNotificationsPage(
+        PageContext<ListNotificationsRequest, ListNotificationsResponse, Notification> context,
+        ListNotificationsResponse response) {
       super(context, response);
     }
 
-    private static ListNotificationConfigsPage createEmptyPage() {
-      return new ListNotificationConfigsPage(null, null);
+    private static ListNotificationsPage createEmptyPage() {
+      return new ListNotificationsPage(null, null);
     }
 
     @Override
-    protected ListNotificationConfigsPage createPage(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ListNotificationConfigsResponse response) {
-      return new ListNotificationConfigsPage(context, response);
+    protected ListNotificationsPage createPage(
+        PageContext<ListNotificationsRequest, ListNotificationsResponse, Notification> context,
+        ListNotificationsResponse response) {
+      return new ListNotificationsPage(context, response);
     }
 
     @Override
-    public ApiFuture<ListNotificationConfigsPage> createPageAsync(
-        PageContext<
-                ListNotificationConfigsRequest, ListNotificationConfigsResponse, NotificationConfig>
-            context,
-        ApiFuture<ListNotificationConfigsResponse> futureResponse) {
+    public ApiFuture<ListNotificationsPage> createPageAsync(
+        PageContext<ListNotificationsRequest, ListNotificationsResponse, Notification> context,
+        ApiFuture<ListNotificationsResponse> futureResponse) {
       return super.createPageAsync(context, futureResponse);
     }
   }
 
-  public static class ListNotificationConfigsFixedSizeCollection
+  public static class ListNotificationsFixedSizeCollection
       extends AbstractFixedSizeCollection<
-          ListNotificationConfigsRequest,
-          ListNotificationConfigsResponse,
-          NotificationConfig,
-          ListNotificationConfigsPage,
-          ListNotificationConfigsFixedSizeCollection> {
+          ListNotificationsRequest,
+          ListNotificationsResponse,
+          Notification,
+          ListNotificationsPage,
+          ListNotificationsFixedSizeCollection> {
 
-    private ListNotificationConfigsFixedSizeCollection(
-        List<ListNotificationConfigsPage> pages, int collectionSize) {
+    private ListNotificationsFixedSizeCollection(
+        List<ListNotificationsPage> pages, int collectionSize) {
       super(pages, collectionSize);
     }
 
-    private static ListNotificationConfigsFixedSizeCollection createEmptyCollection() {
-      return new ListNotificationConfigsFixedSizeCollection(null, 0);
+    private static ListNotificationsFixedSizeCollection createEmptyCollection() {
+      return new ListNotificationsFixedSizeCollection(null, 0);
     }
 
     @Override
-    protected ListNotificationConfigsFixedSizeCollection createCollection(
-        List<ListNotificationConfigsPage> pages, int collectionSize) {
-      return new ListNotificationConfigsFixedSizeCollection(pages, collectionSize);
+    protected ListNotificationsFixedSizeCollection createCollection(
+        List<ListNotificationsPage> pages, int collectionSize) {
+      return new ListNotificationsFixedSizeCollection(pages, collectionSize);
     }
   }
 

@@ -18,7 +18,7 @@ package com.google.storage.v2.stub;
 
 import static com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
-import static com.google.storage.v2.StorageClient.ListNotificationConfigsPagedResponse;
+import static com.google.storage.v2.StorageClient.ListNotificationsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.gax.core.BackgroundResource;
@@ -45,14 +45,14 @@ import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
 import com.google.storage.v2.CreateHmacKeyResponse;
-import com.google.storage.v2.CreateNotificationConfigRequest;
+import com.google.storage.v2.CreateNotificationRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
-import com.google.storage.v2.DeleteNotificationConfigRequest;
+import com.google.storage.v2.DeleteNotificationRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetHmacKeyRequest;
-import com.google.storage.v2.GetNotificationConfigRequest;
+import com.google.storage.v2.GetNotificationRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.HmacKeyMetadata;
@@ -60,12 +60,12 @@ import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListBucketsResponse;
 import com.google.storage.v2.ListHmacKeysRequest;
 import com.google.storage.v2.ListHmacKeysResponse;
-import com.google.storage.v2.ListNotificationConfigsRequest;
-import com.google.storage.v2.ListNotificationConfigsResponse;
+import com.google.storage.v2.ListNotificationsRequest;
+import com.google.storage.v2.ListNotificationsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
-import com.google.storage.v2.NotificationConfig;
+import com.google.storage.v2.Notification;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
@@ -174,47 +174,45 @@ public class GrpcStorageStub extends StorageStub {
           .setResponseMarshaller(ProtoUtils.marshaller(Bucket.getDefaultInstance()))
           .build();
 
-  private static final MethodDescriptor<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigMethodDescriptor =
-          MethodDescriptor.<DeleteNotificationConfigRequest, Empty>newBuilder()
+  private static final MethodDescriptor<DeleteNotificationRequest, Empty>
+      deleteNotificationMethodDescriptor =
+          MethodDescriptor.<DeleteNotificationRequest, Empty>newBuilder()
               .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/DeleteNotificationConfig")
+              .setFullMethodName("google.storage.v2.Storage/DeleteNotification")
               .setRequestMarshaller(
-                  ProtoUtils.marshaller(DeleteNotificationConfigRequest.getDefaultInstance()))
+                  ProtoUtils.marshaller(DeleteNotificationRequest.getDefaultInstance()))
               .setResponseMarshaller(ProtoUtils.marshaller(Empty.getDefaultInstance()))
               .build();
 
-  private static final MethodDescriptor<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigMethodDescriptor =
-          MethodDescriptor.<GetNotificationConfigRequest, NotificationConfig>newBuilder()
+  private static final MethodDescriptor<GetNotificationRequest, Notification>
+      getNotificationMethodDescriptor =
+          MethodDescriptor.<GetNotificationRequest, Notification>newBuilder()
               .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/GetNotificationConfig")
+              .setFullMethodName("google.storage.v2.Storage/GetNotification")
               .setRequestMarshaller(
-                  ProtoUtils.marshaller(GetNotificationConfigRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(NotificationConfig.getDefaultInstance()))
+                  ProtoUtils.marshaller(GetNotificationRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(Notification.getDefaultInstance()))
               .build();
 
-  private static final MethodDescriptor<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigMethodDescriptor =
-          MethodDescriptor.<CreateNotificationConfigRequest, NotificationConfig>newBuilder()
+  private static final MethodDescriptor<CreateNotificationRequest, Notification>
+      createNotificationMethodDescriptor =
+          MethodDescriptor.<CreateNotificationRequest, Notification>newBuilder()
               .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/CreateNotificationConfig")
+              .setFullMethodName("google.storage.v2.Storage/CreateNotification")
               .setRequestMarshaller(
-                  ProtoUtils.marshaller(CreateNotificationConfigRequest.getDefaultInstance()))
-              .setResponseMarshaller(ProtoUtils.marshaller(NotificationConfig.getDefaultInstance()))
+                  ProtoUtils.marshaller(CreateNotificationRequest.getDefaultInstance()))
+              .setResponseMarshaller(ProtoUtils.marshaller(Notification.getDefaultInstance()))
               .build();
 
-  private static final MethodDescriptor<
-          ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsMethodDescriptor =
-          MethodDescriptor
-              .<ListNotificationConfigsRequest, ListNotificationConfigsResponse>newBuilder()
+  private static final MethodDescriptor<ListNotificationsRequest, ListNotificationsResponse>
+      listNotificationsMethodDescriptor =
+          MethodDescriptor.<ListNotificationsRequest, ListNotificationsResponse>newBuilder()
               .setType(MethodDescriptor.MethodType.UNARY)
-              .setFullMethodName("google.storage.v2.Storage/ListNotificationConfigs")
+              .setFullMethodName("google.storage.v2.Storage/ListNotifications")
               .setRequestMarshaller(
-                  ProtoUtils.marshaller(ListNotificationConfigsRequest.getDefaultInstance()))
+                  ProtoUtils.marshaller(ListNotificationsRequest.getDefaultInstance()))
               .setResponseMarshaller(
-                  ProtoUtils.marshaller(ListNotificationConfigsResponse.getDefaultInstance()))
+                  ProtoUtils.marshaller(ListNotificationsResponse.getDefaultInstance()))
               .build();
 
   private static final MethodDescriptor<ComposeObjectRequest, Object>
@@ -394,16 +392,13 @@ public class GrpcStorageStub extends StorageStub {
   private final UnaryCallable<TestIamPermissionsRequest, TestIamPermissionsResponse>
       testIamPermissionsCallable;
   private final UnaryCallable<UpdateBucketRequest, Bucket> updateBucketCallable;
-  private final UnaryCallable<DeleteNotificationConfigRequest, Empty>
-      deleteNotificationConfigCallable;
-  private final UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable;
-  private final UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable;
-  private final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable;
-  private final UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable;
+  private final UnaryCallable<DeleteNotificationRequest, Empty> deleteNotificationCallable;
+  private final UnaryCallable<GetNotificationRequest, Notification> getNotificationCallable;
+  private final UnaryCallable<CreateNotificationRequest, Notification> createNotificationCallable;
+  private final UnaryCallable<ListNotificationsRequest, ListNotificationsResponse>
+      listNotificationsCallable;
+  private final UnaryCallable<ListNotificationsRequest, ListNotificationsPagedResponse>
+      listNotificationsPagedCallable;
   private final UnaryCallable<ComposeObjectRequest, Object> composeObjectCallable;
   private final UnaryCallable<DeleteObjectRequest, Empty> deleteObjectCallable;
   private final UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
@@ -439,8 +434,6 @@ public class GrpcStorageStub extends StorageStub {
   private static final PathTemplate GET_BUCKET_0_PATH_TEMPLATE = PathTemplate.create("{bucket=**}");
   private static final PathTemplate CREATE_BUCKET_0_PATH_TEMPLATE =
       PathTemplate.create("{project=**}");
-  private static final PathTemplate CREATE_BUCKET_1_PATH_TEMPLATE =
-      PathTemplate.create("{project=**}");
   private static final PathTemplate LIST_BUCKETS_0_PATH_TEMPLATE =
       PathTemplate.create("{project=**}");
   private static final PathTemplate LOCK_BUCKET_RETENTION_POLICY_0_PATH_TEMPLATE =
@@ -459,13 +452,13 @@ public class GrpcStorageStub extends StorageStub {
       PathTemplate.create("{bucket=projects/*/buckets/*}/objects/**");
   private static final PathTemplate UPDATE_BUCKET_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
-  private static final PathTemplate DELETE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE =
+  private static final PathTemplate DELETE_NOTIFICATION_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
-  private static final PathTemplate GET_NOTIFICATION_CONFIG_0_PATH_TEMPLATE =
+  private static final PathTemplate GET_NOTIFICATION_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=projects/*/buckets/*}/**");
-  private static final PathTemplate CREATE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE =
+  private static final PathTemplate CREATE_NOTIFICATION_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
-  private static final PathTemplate LIST_NOTIFICATION_CONFIGS_0_PATH_TEMPLATE =
+  private static final PathTemplate LIST_NOTIFICATIONS_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate COMPOSE_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
@@ -563,10 +556,6 @@ public class GrpcStorageStub extends StorageStub {
                 request -> {
                   RequestParamsBuilder builder = RequestParamsBuilder.create();
                   builder.add(request.getParent(), "project", CREATE_BUCKET_0_PATH_TEMPLATE);
-                  if (request.getBucket() != null) {
-                    builder.add(
-                        request.getBucket().getProject(), "project", CREATE_BUCKET_1_PATH_TEMPLATE);
-                  }
                   return builder.build();
                 })
             .build();
@@ -643,54 +632,45 @@ public class GrpcStorageStub extends StorageStub {
                   return builder.build();
                 })
             .build();
-    GrpcCallSettings<DeleteNotificationConfigRequest, Empty>
-        deleteNotificationConfigTransportSettings =
-            GrpcCallSettings.<DeleteNotificationConfigRequest, Empty>newBuilder()
-                .setMethodDescriptor(deleteNotificationConfigMethodDescriptor)
+    GrpcCallSettings<DeleteNotificationRequest, Empty> deleteNotificationTransportSettings =
+        GrpcCallSettings.<DeleteNotificationRequest, Empty>newBuilder()
+            .setMethodDescriptor(deleteNotificationMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", DELETE_NOTIFICATION_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .build();
+    GrpcCallSettings<GetNotificationRequest, Notification> getNotificationTransportSettings =
+        GrpcCallSettings.<GetNotificationRequest, Notification>newBuilder()
+            .setMethodDescriptor(getNotificationMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getName(), "bucket", GET_NOTIFICATION_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .build();
+    GrpcCallSettings<CreateNotificationRequest, Notification> createNotificationTransportSettings =
+        GrpcCallSettings.<CreateNotificationRequest, Notification>newBuilder()
+            .setMethodDescriptor(createNotificationMethodDescriptor)
+            .setParamsExtractor(
+                request -> {
+                  RequestParamsBuilder builder = RequestParamsBuilder.create();
+                  builder.add(request.getParent(), "bucket", CREATE_NOTIFICATION_0_PATH_TEMPLATE);
+                  return builder.build();
+                })
+            .build();
+    GrpcCallSettings<ListNotificationsRequest, ListNotificationsResponse>
+        listNotificationsTransportSettings =
+            GrpcCallSettings.<ListNotificationsRequest, ListNotificationsResponse>newBuilder()
+                .setMethodDescriptor(listNotificationsMethodDescriptor)
                 .setParamsExtractor(
                     request -> {
                       RequestParamsBuilder builder = RequestParamsBuilder.create();
                       builder.add(
-                          request.getName(), "bucket", DELETE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE);
-                      return builder.build();
-                    })
-                .build();
-    GrpcCallSettings<GetNotificationConfigRequest, NotificationConfig>
-        getNotificationConfigTransportSettings =
-            GrpcCallSettings.<GetNotificationConfigRequest, NotificationConfig>newBuilder()
-                .setMethodDescriptor(getNotificationConfigMethodDescriptor)
-                .setParamsExtractor(
-                    request -> {
-                      RequestParamsBuilder builder = RequestParamsBuilder.create();
-                      builder.add(
-                          request.getName(), "bucket", GET_NOTIFICATION_CONFIG_0_PATH_TEMPLATE);
-                      return builder.build();
-                    })
-                .build();
-    GrpcCallSettings<CreateNotificationConfigRequest, NotificationConfig>
-        createNotificationConfigTransportSettings =
-            GrpcCallSettings.<CreateNotificationConfigRequest, NotificationConfig>newBuilder()
-                .setMethodDescriptor(createNotificationConfigMethodDescriptor)
-                .setParamsExtractor(
-                    request -> {
-                      RequestParamsBuilder builder = RequestParamsBuilder.create();
-                      builder.add(
-                          request.getParent(),
-                          "bucket",
-                          CREATE_NOTIFICATION_CONFIG_0_PATH_TEMPLATE);
-                      return builder.build();
-                    })
-                .build();
-    GrpcCallSettings<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-        listNotificationConfigsTransportSettings =
-            GrpcCallSettings
-                .<ListNotificationConfigsRequest, ListNotificationConfigsResponse>newBuilder()
-                .setMethodDescriptor(listNotificationConfigsMethodDescriptor)
-                .setParamsExtractor(
-                    request -> {
-                      RequestParamsBuilder builder = RequestParamsBuilder.create();
-                      builder.add(
-                          request.getParent(), "bucket", LIST_NOTIFICATION_CONFIGS_0_PATH_TEMPLATE);
+                          request.getParent(), "bucket", LIST_NOTIFICATIONS_0_PATH_TEMPLATE);
                       return builder.build();
                     })
                 .build();
@@ -920,30 +900,28 @@ public class GrpcStorageStub extends StorageStub {
     this.updateBucketCallable =
         callableFactory.createUnaryCallable(
             updateBucketTransportSettings, settings.updateBucketSettings(), clientContext);
-    this.deleteNotificationConfigCallable =
+    this.deleteNotificationCallable =
         callableFactory.createUnaryCallable(
-            deleteNotificationConfigTransportSettings,
-            settings.deleteNotificationConfigSettings(),
+            deleteNotificationTransportSettings,
+            settings.deleteNotificationSettings(),
             clientContext);
-    this.getNotificationConfigCallable =
+    this.getNotificationCallable =
         callableFactory.createUnaryCallable(
-            getNotificationConfigTransportSettings,
-            settings.getNotificationConfigSettings(),
-            clientContext);
-    this.createNotificationConfigCallable =
+            getNotificationTransportSettings, settings.getNotificationSettings(), clientContext);
+    this.createNotificationCallable =
         callableFactory.createUnaryCallable(
-            createNotificationConfigTransportSettings,
-            settings.createNotificationConfigSettings(),
+            createNotificationTransportSettings,
+            settings.createNotificationSettings(),
             clientContext);
-    this.listNotificationConfigsCallable =
+    this.listNotificationsCallable =
         callableFactory.createUnaryCallable(
-            listNotificationConfigsTransportSettings,
-            settings.listNotificationConfigsSettings(),
+            listNotificationsTransportSettings,
+            settings.listNotificationsSettings(),
             clientContext);
-    this.listNotificationConfigsPagedCallable =
+    this.listNotificationsPagedCallable =
         callableFactory.createPagedCallable(
-            listNotificationConfigsTransportSettings,
-            settings.listNotificationConfigsSettings(),
+            listNotificationsTransportSettings,
+            settings.listNotificationsSettings(),
             clientContext);
     this.composeObjectCallable =
         callableFactory.createUnaryCallable(
@@ -1070,32 +1048,30 @@ public class GrpcStorageStub extends StorageStub {
   }
 
   @Override
-  public UnaryCallable<DeleteNotificationConfigRequest, Empty> deleteNotificationConfigCallable() {
-    return deleteNotificationConfigCallable;
+  public UnaryCallable<DeleteNotificationRequest, Empty> deleteNotificationCallable() {
+    return deleteNotificationCallable;
   }
 
   @Override
-  public UnaryCallable<GetNotificationConfigRequest, NotificationConfig>
-      getNotificationConfigCallable() {
-    return getNotificationConfigCallable;
+  public UnaryCallable<GetNotificationRequest, Notification> getNotificationCallable() {
+    return getNotificationCallable;
   }
 
   @Override
-  public UnaryCallable<CreateNotificationConfigRequest, NotificationConfig>
-      createNotificationConfigCallable() {
-    return createNotificationConfigCallable;
+  public UnaryCallable<CreateNotificationRequest, Notification> createNotificationCallable() {
+    return createNotificationCallable;
   }
 
   @Override
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsResponse>
-      listNotificationConfigsCallable() {
-    return listNotificationConfigsCallable;
+  public UnaryCallable<ListNotificationsRequest, ListNotificationsResponse>
+      listNotificationsCallable() {
+    return listNotificationsCallable;
   }
 
   @Override
-  public UnaryCallable<ListNotificationConfigsRequest, ListNotificationConfigsPagedResponse>
-      listNotificationConfigsPagedCallable() {
-    return listNotificationConfigsPagedCallable;
+  public UnaryCallable<ListNotificationsRequest, ListNotificationsPagedResponse>
+      listNotificationsPagedCallable() {
+    return listNotificationsPagedCallable;
   }
 
   @Override

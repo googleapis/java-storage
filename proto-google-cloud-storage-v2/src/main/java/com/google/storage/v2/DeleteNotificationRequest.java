@@ -22,29 +22,29 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for GetNotificationConfig.
+ * Request message for DeleteNotification.
  * </pre>
  *
- * Protobuf type {@code google.storage.v2.GetNotificationConfigRequest}
+ * Protobuf type {@code google.storage.v2.DeleteNotificationRequest}
  */
-public final class GetNotificationConfigRequest extends com.google.protobuf.GeneratedMessageV3
+public final class DeleteNotificationRequest extends com.google.protobuf.GeneratedMessageV3
     implements
-    // @@protoc_insertion_point(message_implements:google.storage.v2.GetNotificationConfigRequest)
-    GetNotificationConfigRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:google.storage.v2.DeleteNotificationRequest)
+    DeleteNotificationRequestOrBuilder {
   private static final long serialVersionUID = 0L;
-  // Use GetNotificationConfigRequest.newBuilder() to construct.
-  private GetNotificationConfigRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use DeleteNotificationRequest.newBuilder() to construct.
+  private DeleteNotificationRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
 
-  private GetNotificationConfigRequest() {
+  private DeleteNotificationRequest() {
     name_ = "";
   }
 
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-    return new GetNotificationConfigRequest();
+    return new DeleteNotificationRequest();
   }
 
   @java.lang.Override
@@ -54,17 +54,17 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_GetNotificationConfigRequest_descriptor;
+        .internal_static_google_storage_v2_DeleteNotificationRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_GetNotificationConfigRequest_fieldAccessorTable
+        .internal_static_google_storage_v2_DeleteNotificationRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.google.storage.v2.GetNotificationConfigRequest.class,
-            com.google.storage.v2.GetNotificationConfigRequest.Builder.class);
+            com.google.storage.v2.DeleteNotificationRequest.class,
+            com.google.storage.v2.DeleteNotificationRequest.Builder.class);
   }
 
   public static final int NAME_FIELD_NUMBER = 1;
@@ -75,9 +75,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
    *
    *
    * <pre>
-   * Required. The parent bucket of the NotificationConfig.
-   * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * Required. The parent bucket of the notification.
    * </pre>
    *
    * <code>
@@ -102,9 +100,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
    *
    *
    * <pre>
-   * Required. The parent bucket of the NotificationConfig.
-   * Format:
-   * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+   * Required. The parent bucket of the notification.
    * </pre>
    *
    * <code>
@@ -165,11 +161,11 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof com.google.storage.v2.GetNotificationConfigRequest)) {
+    if (!(obj instanceof com.google.storage.v2.DeleteNotificationRequest)) {
       return super.equals(obj);
     }
-    com.google.storage.v2.GetNotificationConfigRequest other =
-        (com.google.storage.v2.GetNotificationConfigRequest) obj;
+    com.google.storage.v2.DeleteNotificationRequest other =
+        (com.google.storage.v2.DeleteNotificationRequest) obj;
 
     if (!getName().equals(other.getName())) return false;
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -190,71 +186,71 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
     return hash;
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
-      java.nio.ByteBuffer data) throws com.google.protobuf.InvalidProtocolBufferException {
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(java.nio.ByteBuffer data)
+      throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(
       java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(byte[] data)
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(
       byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
-      java.io.InputStream input) throws java.io.IOException {
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(java.io.InputStream input)
+      throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseDelimitedFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseDelimitedFrom(
       java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseDelimitedFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseDelimitedFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(
       com.google.protobuf.CodedInputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest parseFrom(
+  public static com.google.storage.v2.DeleteNotificationRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -271,7 +267,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
     return DEFAULT_INSTANCE.toBuilder();
   }
 
-  public static Builder newBuilder(com.google.storage.v2.GetNotificationConfigRequest prototype) {
+  public static Builder newBuilder(com.google.storage.v2.DeleteNotificationRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
 
@@ -289,31 +285,31 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
    *
    *
    * <pre>
-   * Request message for GetNotificationConfig.
+   * Request message for DeleteNotification.
    * </pre>
    *
-   * Protobuf type {@code google.storage.v2.GetNotificationConfigRequest}
+   * Protobuf type {@code google.storage.v2.DeleteNotificationRequest}
    */
   public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:google.storage.v2.GetNotificationConfigRequest)
-      com.google.storage.v2.GetNotificationConfigRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:google.storage.v2.DeleteNotificationRequest)
+      com.google.storage.v2.DeleteNotificationRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetNotificationConfigRequest_descriptor;
+          .internal_static_google_storage_v2_DeleteNotificationRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetNotificationConfigRequest_fieldAccessorTable
+          .internal_static_google_storage_v2_DeleteNotificationRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.GetNotificationConfigRequest.class,
-              com.google.storage.v2.GetNotificationConfigRequest.Builder.class);
+              com.google.storage.v2.DeleteNotificationRequest.class,
+              com.google.storage.v2.DeleteNotificationRequest.Builder.class);
     }
 
-    // Construct using com.google.storage.v2.GetNotificationConfigRequest.newBuilder()
+    // Construct using com.google.storage.v2.DeleteNotificationRequest.newBuilder()
     private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
@@ -331,17 +327,17 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetNotificationConfigRequest_descriptor;
+          .internal_static_google_storage_v2_DeleteNotificationRequest_descriptor;
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetNotificationConfigRequest getDefaultInstanceForType() {
-      return com.google.storage.v2.GetNotificationConfigRequest.getDefaultInstance();
+    public com.google.storage.v2.DeleteNotificationRequest getDefaultInstanceForType() {
+      return com.google.storage.v2.DeleteNotificationRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetNotificationConfigRequest build() {
-      com.google.storage.v2.GetNotificationConfigRequest result = buildPartial();
+    public com.google.storage.v2.DeleteNotificationRequest build() {
+      com.google.storage.v2.DeleteNotificationRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -349,9 +345,9 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetNotificationConfigRequest buildPartial() {
-      com.google.storage.v2.GetNotificationConfigRequest result =
-          new com.google.storage.v2.GetNotificationConfigRequest(this);
+    public com.google.storage.v2.DeleteNotificationRequest buildPartial() {
+      com.google.storage.v2.DeleteNotificationRequest result =
+          new com.google.storage.v2.DeleteNotificationRequest(this);
       if (bitField0_ != 0) {
         buildPartial0(result);
       }
@@ -359,7 +355,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
       return result;
     }
 
-    private void buildPartial0(com.google.storage.v2.GetNotificationConfigRequest result) {
+    private void buildPartial0(com.google.storage.v2.DeleteNotificationRequest result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.name_ = name_;
@@ -401,16 +397,16 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
 
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.google.storage.v2.GetNotificationConfigRequest) {
-        return mergeFrom((com.google.storage.v2.GetNotificationConfigRequest) other);
+      if (other instanceof com.google.storage.v2.DeleteNotificationRequest) {
+        return mergeFrom((com.google.storage.v2.DeleteNotificationRequest) other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.google.storage.v2.GetNotificationConfigRequest other) {
-      if (other == com.google.storage.v2.GetNotificationConfigRequest.getDefaultInstance())
+    public Builder mergeFrom(com.google.storage.v2.DeleteNotificationRequest other) {
+      if (other == com.google.storage.v2.DeleteNotificationRequest.getDefaultInstance())
         return this;
       if (!other.getName().isEmpty()) {
         name_ = other.name_;
@@ -473,9 +469,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
      *
      *
      * <pre>
-     * Required. The parent bucket of the NotificationConfig.
-     * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * Required. The parent bucket of the notification.
      * </pre>
      *
      * <code>
@@ -499,9 +493,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
      *
      *
      * <pre>
-     * Required. The parent bucket of the NotificationConfig.
-     * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * Required. The parent bucket of the notification.
      * </pre>
      *
      * <code>
@@ -525,9 +517,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
      *
      *
      * <pre>
-     * Required. The parent bucket of the NotificationConfig.
-     * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * Required. The parent bucket of the notification.
      * </pre>
      *
      * <code>
@@ -550,9 +540,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
      *
      *
      * <pre>
-     * Required. The parent bucket of the NotificationConfig.
-     * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * Required. The parent bucket of the notification.
      * </pre>
      *
      * <code>
@@ -571,9 +559,7 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
      *
      *
      * <pre>
-     * Required. The parent bucket of the NotificationConfig.
-     * Format:
-     * `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
+     * Required. The parent bucket of the notification.
      * </pre>
      *
      * <code>
@@ -605,24 +591,24 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
       return super.mergeUnknownFields(unknownFields);
     }
 
-    // @@protoc_insertion_point(builder_scope:google.storage.v2.GetNotificationConfigRequest)
+    // @@protoc_insertion_point(builder_scope:google.storage.v2.DeleteNotificationRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:google.storage.v2.GetNotificationConfigRequest)
-  private static final com.google.storage.v2.GetNotificationConfigRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:google.storage.v2.DeleteNotificationRequest)
+  private static final com.google.storage.v2.DeleteNotificationRequest DEFAULT_INSTANCE;
 
   static {
-    DEFAULT_INSTANCE = new com.google.storage.v2.GetNotificationConfigRequest();
+    DEFAULT_INSTANCE = new com.google.storage.v2.DeleteNotificationRequest();
   }
 
-  public static com.google.storage.v2.GetNotificationConfigRequest getDefaultInstance() {
+  public static com.google.storage.v2.DeleteNotificationRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<GetNotificationConfigRequest> PARSER =
-      new com.google.protobuf.AbstractParser<GetNotificationConfigRequest>() {
+  private static final com.google.protobuf.Parser<DeleteNotificationRequest> PARSER =
+      new com.google.protobuf.AbstractParser<DeleteNotificationRequest>() {
         @java.lang.Override
-        public GetNotificationConfigRequest parsePartialFrom(
+        public DeleteNotificationRequest parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
@@ -641,17 +627,17 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
         }
       };
 
-  public static com.google.protobuf.Parser<GetNotificationConfigRequest> parser() {
+  public static com.google.protobuf.Parser<DeleteNotificationRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<GetNotificationConfigRequest> getParserForType() {
+  public com.google.protobuf.Parser<DeleteNotificationRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.storage.v2.GetNotificationConfigRequest getDefaultInstanceForType() {
+  public com.google.storage.v2.DeleteNotificationRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 }

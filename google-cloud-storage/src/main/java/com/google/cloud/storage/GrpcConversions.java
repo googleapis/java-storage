@@ -96,8 +96,8 @@ final class GrpcConversions {
       Codec.of(this::blobIdEncode, this::blobIdDecode);
   private final Codec<BlobInfo, Object> blobInfoCodec =
       Codec.of(this::blobInfoEncode, this::blobInfoDecode);
-  private final Codec<NotificationInfo, com.google.storage.v2.NotificationConfig>
-      notificationInfoCodec = Codec.of(this::notificationEncode, this::notificationDecode);
+  private final Codec<NotificationInfo, com.google.storage.v2.Notification> notificationInfoCodec =
+      Codec.of(this::notificationEncode, this::notificationDecode);
   private final Codec<Policy, com.google.iam.v1.Policy> policyCodec =
       Codec.of(this::policyEncode, this::policyDecode);
   private final Codec<Binding, com.google.iam.v1.Binding> bindingCodec =
@@ -199,7 +199,7 @@ final class GrpcConversions {
     return blobInfoCodec;
   }
 
-  Codec<NotificationInfo, com.google.storage.v2.NotificationConfig> notificationInfo() {
+  Codec<NotificationInfo, com.google.storage.v2.Notification> notificationInfo() {
     return notificationInfoCodec;
   }
 
@@ -917,11 +917,11 @@ final class GrpcConversions {
     return toBuilder.build();
   }
 
-  private com.google.storage.v2.NotificationConfig notificationEncode(NotificationInfo from) {
+  private com.google.storage.v2.Notification notificationEncode(NotificationInfo from) {
     return todo();
   }
 
-  private NotificationInfo notificationDecode(com.google.storage.v2.NotificationConfig from) {
+  private NotificationInfo notificationDecode(com.google.storage.v2.Notification from) {
     return todo();
   }
 

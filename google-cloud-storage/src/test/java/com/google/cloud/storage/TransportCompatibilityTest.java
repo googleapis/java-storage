@@ -22,7 +22,6 @@ import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.TransportCompatibility.Transport;
-import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.collect.ImmutableList;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -38,7 +37,7 @@ public final class TransportCompatibilityTest {
             .setCredentials(NoCredentials.getInstance())
             .build();
     @SuppressWarnings("resource")
-    Storage s = new GrpcStorageImpl(options, null, Opts.empty());
+    Storage s = new GrpcStorageImpl(options, null);
     ImmutableList<String> messages =
         Stream.<Supplier<?>>of(
                 s::batch,

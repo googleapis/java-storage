@@ -777,30 +777,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option for blob's data generation match. If this option is used the request will
-     * fail if blob's generation does not match the provided value.
-     */
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption generationMatch(long generation) {
-      return new BlobWriteOption(UnifiedOpts.generationMatch(generation));
-    }
-
-    /**
      * Returns an option for blob's data generation mismatch. If this option is used the request
      * will fail if generation matches.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption generationNotMatch() {
       return new BlobWriteOption(UnifiedOpts.generationNotMatchExtractor());
-    }
-
-    /**
-     * Returns an option for blob's data generation mismatch. If this option is used the request
-     * will fail if blob's generation does not match the provided value.
-     */
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption generationNotMatch(long generation) {
-      return new BlobWriteOption(UnifiedOpts.generationNotMatch(generation));
     }
 
     /**
@@ -813,30 +795,12 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option for blob's metageneration match. If this option is used the request will
-     * fail if blob's generation does not match the provided value.
-     */
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption metagenerationMatch(long metageneration) {
-      return new BlobWriteOption(UnifiedOpts.metagenerationMatch(metageneration));
-    }
-
-    /**
      * Returns an option for blob's metageneration mismatch. If this option is used the request will
      * fail if metageneration matches.
      */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption metagenerationNotMatch() {
       return new BlobWriteOption(UnifiedOpts.metagenerationNotMatchExtractor());
-    }
-
-    /**
-     * Returns an option for blob's metageneration mismatch. If this option is used the request will
-     * fail if blob's generation does not match the provided value.
-     */
-    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    public static BlobWriteOption metagenerationNotMatch(long metageneration) {
-      return new BlobWriteOption(UnifiedOpts.metagenerationNotMatch(metageneration));
     }
 
     /**

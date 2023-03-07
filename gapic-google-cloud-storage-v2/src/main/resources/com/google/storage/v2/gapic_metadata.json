@@ -22,8 +22,8 @@
             "CreateHmacKey": {
               "methods": ["createHmacKey", "createHmacKey", "createHmacKey", "createHmacKeyCallable"]
             },
-            "CreateNotificationConfig": {
-              "methods": ["createNotificationConfig", "createNotificationConfig", "createNotificationConfig", "createNotificationConfigCallable"]
+            "CreateNotification": {
+              "methods": ["createNotification", "createNotification", "createNotification", "createNotificationCallable"]
             },
             "DeleteBucket": {
               "methods": ["deleteBucket", "deleteBucket", "deleteBucket", "deleteBucketCallable"]
@@ -31,8 +31,8 @@
             "DeleteHmacKey": {
               "methods": ["deleteHmacKey", "deleteHmacKey", "deleteHmacKey", "deleteHmacKeyCallable"]
             },
-            "DeleteNotificationConfig": {
-              "methods": ["deleteNotificationConfig", "deleteNotificationConfig", "deleteNotificationConfig", "deleteNotificationConfigCallable"]
+            "DeleteNotification": {
+              "methods": ["deleteNotification", "deleteNotification", "deleteNotification", "deleteNotificationCallable"]
             },
             "DeleteObject": {
               "methods": ["deleteObject", "deleteObject", "deleteObject", "deleteObjectCallable"]
@@ -46,8 +46,8 @@
             "GetIamPolicy": {
               "methods": ["getIamPolicy", "getIamPolicy", "getIamPolicy", "getIamPolicyCallable"]
             },
-            "GetNotificationConfig": {
-              "methods": ["getNotificationConfig", "getNotificationConfig", "getNotificationConfig", "getNotificationConfigCallable"]
+            "GetNotification": {
+              "methods": ["getNotification", "getNotification", "getNotification", "getNotificationCallable"]
             },
             "GetObject": {
               "methods": ["getObject", "getObject", "getObject", "getObjectCallable"]
@@ -61,8 +61,8 @@
             "ListHmacKeys": {
               "methods": ["listHmacKeys", "listHmacKeys", "listHmacKeys", "listHmacKeysPagedCallable", "listHmacKeysCallable"]
             },
-            "ListNotificationConfigs": {
-              "methods": ["listNotificationConfigs", "listNotificationConfigs", "listNotificationConfigs", "listNotificationConfigsPagedCallable", "listNotificationConfigsCallable"]
+            "ListNotifications": {
+              "methods": ["listNotifications", "listNotifications", "listNotifications", "listNotificationsPagedCallable", "listNotificationsCallable"]
             },
             "ListObjects": {
               "methods": ["listObjects", "listObjects", "listObjects", "listObjectsPagedCallable", "listObjectsCallable"]

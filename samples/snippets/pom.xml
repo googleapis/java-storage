@@ -31,7 +31,7 @@
       <dependency>
         <groupId>com.google.cloud</groupId>
         <artifactId>libraries-bom</artifactId>
-        <version>26.9.0</version>
+        <version>26.4.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -72,7 +72,7 @@
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-pubsub</artifactId>
-      <version>1.123.4</version>
+      <version>1.123.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
