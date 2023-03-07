@@ -18,7 +18,7 @@ package com.google.storage.v2;
 
 import static com.google.storage.v2.StorageClient.ListBucketsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListHmacKeysPagedResponse;
-import static com.google.storage.v2.StorageClient.ListNotificationsPagedResponse;
+import static com.google.storage.v2.StorageClient.ListNotificationConfigsPagedResponse;
 import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.core.ApiFunction;
@@ -132,26 +132,31 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
     return ((StorageStubSettings) getStubSettings()).updateBucketSettings();
   }
 
-  /** Returns the object with the settings used for calls to deleteNotification. */
-  public UnaryCallSettings<DeleteNotificationRequest, Empty> deleteNotificationSettings() {
-    return ((StorageStubSettings) getStubSettings()).deleteNotificationSettings();
+  /** Returns the object with the settings used for calls to deleteNotificationConfig. */
+  public UnaryCallSettings<DeleteNotificationConfigRequest, Empty>
+      deleteNotificationConfigSettings() {
+    return ((StorageStubSettings) getStubSettings()).deleteNotificationConfigSettings();
   }
 
-  /** Returns the object with the settings used for calls to getNotification. */
-  public UnaryCallSettings<GetNotificationRequest, Notification> getNotificationSettings() {
-    return ((StorageStubSettings) getStubSettings()).getNotificationSettings();
+  /** Returns the object with the settings used for calls to getNotificationConfig. */
+  public UnaryCallSettings<GetNotificationConfigRequest, NotificationConfig>
+      getNotificationConfigSettings() {
+    return ((StorageStubSettings) getStubSettings()).getNotificationConfigSettings();
   }
 
-  /** Returns the object with the settings used for calls to createNotification. */
-  public UnaryCallSettings<CreateNotificationRequest, Notification> createNotificationSettings() {
-    return ((StorageStubSettings) getStubSettings()).createNotificationSettings();
+  /** Returns the object with the settings used for calls to createNotificationConfig. */
+  public UnaryCallSettings<CreateNotificationConfigRequest, NotificationConfig>
+      createNotificationConfigSettings() {
+    return ((StorageStubSettings) getStubSettings()).createNotificationConfigSettings();
   }
 
-  /** Returns the object with the settings used for calls to listNotifications. */
+  /** Returns the object with the settings used for calls to listNotificationConfigs. */
   public PagedCallSettings<
-          ListNotificationsRequest, ListNotificationsResponse, ListNotificationsPagedResponse>
-      listNotificationsSettings() {
-    return ((StorageStubSettings) getStubSettings()).listNotificationsSettings();
+          ListNotificationConfigsRequest,
+          ListNotificationConfigsResponse,
+          ListNotificationConfigsPagedResponse>
+      listNotificationConfigsSettings() {
+    return ((StorageStubSettings) getStubSettings()).listNotificationConfigsSettings();
   }
 
   /** Returns the object with the settings used for calls to composeObject. */
@@ -389,29 +394,31 @@ public class StorageSettings extends ClientSettings<StorageSettings> {
       return getStubSettingsBuilder().updateBucketSettings();
     }
 
-    /** Returns the builder for the settings used for calls to deleteNotification. */
-    public UnaryCallSettings.Builder<DeleteNotificationRequest, Empty>
-        deleteNotificationSettings() {
-      return getStubSettingsBuilder().deleteNotificationSettings();
+    /** Returns the builder for the settings used for calls to deleteNotificationConfig. */
+    public UnaryCallSettings.Builder<DeleteNotificationConfigRequest, Empty>
+        deleteNotificationConfigSettings() {
+      return getStubSettingsBuilder().deleteNotificationConfigSettings();
     }
 
-    /** Returns the builder for the settings used for calls to getNotification. */
-    public UnaryCallSettings.Builder<GetNotificationRequest, Notification>
-        getNotificationSettings() {
-      return getStubSettingsBuilder().getNotificationSettings();
+    /** Returns the builder for the settings used for calls to getNotificationConfig. */
+    public UnaryCallSettings.Builder<GetNotificationConfigRequest, NotificationConfig>
+        getNotificationConfigSettings() {
+      return getStubSettingsBuilder().getNotificationConfigSettings();
     }
 
-    /** Returns the builder for the settings used for calls to createNotification. */
-    public UnaryCallSettings.Builder<CreateNotificationRequest, Notification>
-        createNotificationSettings() {
-      return getStubSettingsBuilder().createNotificationSettings();
+    /** Returns the builder for the settings used for calls to createNotificationConfig. */
+    public UnaryCallSettings.Builder<CreateNotificationConfigRequest, NotificationConfig>
+        createNotificationConfigSettings() {
+      return getStubSettingsBuilder().createNotificationConfigSettings();
     }
 
-    /** Returns the builder for the settings used for calls to listNotifications. */
+    /** Returns the builder for the settings used for calls to listNotificationConfigs. */
     public PagedCallSettings.Builder<
-            ListNotificationsRequest, ListNotificationsResponse, ListNotificationsPagedResponse>
-        listNotificationsSettings() {
-      return getStubSettingsBuilder().listNotificationsSettings();
+            ListNotificationConfigsRequest,
+            ListNotificationConfigsResponse,
+            ListNotificationConfigsPagedResponse>
+        listNotificationConfigsSettings() {
+      return getStubSettingsBuilder().listNotificationConfigsSettings();
     }
 
     /** Returns the builder for the settings used for calls to composeObject. */

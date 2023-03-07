@@ -34,7 +34,7 @@ import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.DataGeneration;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
@@ -58,10 +58,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.threeten.bp.Clock;
@@ -88,8 +86,6 @@ public final class ITBlobWriteChannelTest {
   @Inject public TestBench testBench;
 
   @Inject public Generator generator;
-
-  @Rule public final DataGeneration dataGeneration = new DataGeneration(new Random(1234567890));
 
   /**
    * Test for unexpected EOF at the beginning of trying to read the json response.
@@ -146,9 +142,9 @@ public final class ITBlobWriteChannelTest {
     DateTimeFormatter formatter =
         DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
     String nowString = formatter.format(now);
-    BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
+    BucketInfo bucketInfo = BucketInfo.of(generator.randomBucketName());
     String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), nowString);
-    BlobId blobId = BlobId.of(dataGeneration.getBucketName(), blobPath);
+    BlobId blobId = BlobId.of(bucketInfo.getName(), blobPath);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
     storage.create(bucketInfo);
     storage.create(blobInfo);
@@ -164,7 +160,7 @@ public final class ITBlobWriteChannelTest {
   private void doJsonUnexpectedEOFTest(int contentSize, int cappedByteCount) throws IOException {
     String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), NOW_STRING);
 
-    BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
+    BucketInfo bucketInfo = BucketInfo.of(generator.randomBucketName());
     BlobInfo blobInfoGen0 = BlobInfo.newBuilder(bucketInfo, blobPath, 0L).build();
 
     RetryTestResource retryTestResource =
@@ -225,7 +221,7 @@ public final class ITBlobWriteChannelTest {
 
     testStorage.create(bucketInfo);
 
-    ByteBuffer content = dataGeneration.randByteBuffer(contentSize);
+    ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(contentSize);
     // create a duplicate to preserve the initial offset and limit for assertion later
     ByteBuffer expected = content.duplicate();
 
@@ -260,13 +256,13 @@ public final class ITBlobWriteChannelTest {
     DateTimeFormatter formatter =
         DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.from(ZoneOffset.UTC));
     String nowString = formatter.format(now);
-    BucketInfo bucketInfo = BucketInfo.of(dataGeneration.getBucketName());
+    BucketInfo bucketInfo = BucketInfo.of(generator.randomBucketName());
     String blobPath = String.format("%s/%s/blob", generator.randomObjectName(), nowString);
-    BlobId blobId = BlobId.of(dataGeneration.getBucketName(), blobPath);
+    BlobId blobId = BlobId.of(bucketInfo.getName(), blobPath);
     BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
 
-    ByteBuffer contentGen1 = dataGeneration.randByteBuffer(contentSize);
-    ByteBuffer contentGen2 = dataGeneration.randByteBuffer(contentSize);
+    ByteBuffer contentGen1 = DataGenerator.base64Characters().genByteBuffer(contentSize);
+    ByteBuffer contentGen2 = DataGenerator.base64Characters().genByteBuffer(contentSize);
     ByteBuffer contentGen2Expected = contentGen2.duplicate();
     HttpStorageOptions baseStorageOptions =
         StorageOptions.http()
@@ -302,7 +298,6 @@ public final class ITBlobWriteChannelTest {
                    * get on an object can result in a 404 because the object that is created while
                    * the BlobWriteChannel is executing will be a new generation.
                    */
-                  @SuppressWarnings("UnstableApiUsage")
                   @Override
                   public StorageRpc create(final StorageOptions options) {
                     return Reflection.newProxy(

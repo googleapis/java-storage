@@ -1,5 +1,63 @@
 # Changelog
 
+## [2.20.1](https://github.com/googleapis/java-storage/compare/v2.20.0...v2.20.1) (2023-03-07)
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.4.0 ([#1919](https://github.com/googleapis/java-storage/issues/1919)) ([fb42336](https://github.com/googleapis/java-storage/commit/fb42336145d19b0a0c73eddda4318b3c88015ad6))
+
+## [2.20.0](https://github.com/googleapis/java-storage/compare/v2.19.0...v2.20.0) (2023-03-01)
+
+
+### Features
+
+* Allow specifying a negative offset to ReadChannel ([#1916](https://github.com/googleapis/java-storage/issues/1916)) ([6df5469](https://github.com/googleapis/java-storage/commit/6df546945211a767f73190773ab2754bf7842e75))
+
+## [2.19.0](https://github.com/googleapis/java-storage/compare/v2.18.0...v2.19.0) (2023-02-21)
+
+
+### Features
+
+* Update routing annotation for CreateBucketRequest ([#1892](https://github.com/googleapis/java-storage/issues/1892)) ([581120f](https://github.com/googleapis/java-storage/commit/581120f00b9adc2d8d45ac038772685d7e134e61))
+
+
+### Bug Fixes
+
+* Update Default RetryStrategy to retry SSLException caused by SocketException ([#1900](https://github.com/googleapis/java-storage/issues/1900)) ([be2aba0](https://github.com/googleapis/java-storage/commit/be2aba0704bcdd55fdfeb233802dea532e6c7882))
+* Update GrpcStorageImpl handling to be aware of quotaProjectId ([#1877](https://github.com/googleapis/java-storage/issues/1877)) ([ca8510e](https://github.com/googleapis/java-storage/commit/ca8510e3c16a5cc2fac1499b1888af612aa8e5b2)), closes [#1736](https://github.com/googleapis/java-storage/issues/1736)
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.3.0 ([#1907](https://github.com/googleapis/java-storage/issues/1907)) ([85e22d7](https://github.com/googleapis/java-storage/commit/85e22d785b3abef152b2b4df4d394a7477555b08))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.20 ([#1904](https://github.com/googleapis/java-storage/issues/1904)) ([95b9aef](https://github.com/googleapis/java-storage/commit/95b9aef5fd390a1497bfe6baed3a7200e44f13cf))
+
+## [2.18.0](https://github.com/googleapis/java-storage/compare/v2.17.2...v2.18.0) (2023-02-06)
+
+
+### Features
+
+* Add Storage.BlobWriteOption.{meta,}generation{Not,}Match(long) methods to allow literal value construction ([#1875](https://github.com/googleapis/java-storage/issues/1875)) ([a9fab09](https://github.com/googleapis/java-storage/commit/a9fab098e23c93887f0aae8a5de6e3477d5f0f0c))
+* Setting up 2.15.x ([#1880](https://github.com/googleapis/java-storage/issues/1880)) ([1c88e83](https://github.com/googleapis/java-storage/commit/1c88e83974798d39a63ea4dd85d8f5bb9cb8f88c))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.2.0 ([#1886](https://github.com/googleapis/java-storage/issues/1886)) ([6928556](https://github.com/googleapis/java-storage/commit/6928556f0a0a61e8c68d9bf98403ce5b27a3bee2))
+
+## [2.17.2](https://github.com/googleapis/java-storage/compare/v2.17.1...v2.17.2) (2023-01-23)
+
+
+### Bug Fixes
+
+* Update BlobReadChannelV2 handling to correctly restart for decompressed object ([#1867](https://github.com/googleapis/java-storage/issues/1867)) ([93e8ed4](https://github.com/googleapis/java-storage/commit/93e8ed484224477cd1aeba24b3d84ed4003e9ee6))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.1.2 ([#1865](https://github.com/googleapis/java-storage/issues/1865)) ([ceb9a61](https://github.com/googleapis/java-storage/commit/ceb9a61921105f6c5dff80f4a1a41a0d3b51a06d))
+
 ## [2.17.1](https://github.com/googleapis/java-storage/compare/v2.17.0...v2.17.1) (2023-01-13)
 
 

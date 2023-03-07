@@ -47,6 +47,7 @@ final class BackendResources implements ManagedLifecycle {
       TestRunScopedInstance<BucketInfoShim> bucket,
       TestRunScopedInstance<BucketInfoShim> bucketRequesterPays,
       TestRunScopedInstance<ObjectsFixture> objectsFixture,
+      TestRunScopedInstance<ObjectsFixture> objectsFixtureRequesterPays,
       TestRunScopedInstance<KmsFixture> kmsFixture) {
     this.backend = backend;
     this.protectedBucketNames = protectedBucketNames;
@@ -63,8 +64,14 @@ final class BackendResources implements ManagedLifecycle {
                 backendIs(backend).and(isRequesterPaysBucket())),
             RegistryEntry.of(
                 7, BucketInfo.class, bucket, backendIs(backend).and(isDefaultBucket())),
-            RegistryEntry.of(8, ObjectsFixture.class, objectsFixture, backendIs(backend)),
-            RegistryEntry.of(9, KmsFixture.class, kmsFixture, backendIs(backend)));
+            RegistryEntry.of(
+                8, ObjectsFixture.class, objectsFixture, backendIs(backend).and(isDefaultBucket())),
+            RegistryEntry.of(
+                9,
+                ObjectsFixture.class,
+                objectsFixtureRequesterPays,
+                backendIs(backend).and(isRequesterPaysBucket())),
+            RegistryEntry.of(10, KmsFixture.class, kmsFixture, backendIs(backend)));
   }
 
   public ImmutableList<RegistryEntry<?>> getRegistryEntries() {
@@ -141,6 +148,11 @@ final class BackendResources implements ManagedLifecycle {
         TestRunScopedInstance.of(
             "OBJECTS_FIXTURE_" + backend.name(),
             () -> new ObjectsFixture(storageJson.get().getStorage(), bucket.get().getBucketInfo()));
+    TestRunScopedInstance<ObjectsFixture> objectsFixtureRequesterPays =
+        TestRunScopedInstance.of(
+            "OBJECTS_FIXTURE_REQUESTER_PAYS_" + backend.name(),
+            () ->
+                new ObjectsFixture(storageJson.get().getStorage(), bucketRp.get().getBucketInfo()));
     TestRunScopedInstance<KmsFixture> kmsFixture =
         TestRunScopedInstance.of(
             "KMS_FIXTURE_" + backend.name(), () -> KmsFixture.of(storageJson.get().getStorage()));
@@ -153,6 +165,7 @@ final class BackendResources implements ManagedLifecycle {
         bucket,
         bucketRp,
         objectsFixture,
+        objectsFixtureRequesterPays,
         kmsFixture);
   }
 }

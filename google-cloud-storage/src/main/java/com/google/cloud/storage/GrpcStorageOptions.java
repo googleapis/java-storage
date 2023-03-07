@@ -31,15 +31,19 @@ import com.google.api.gax.retrying.StreamResumptionStrategy;
 import com.google.api.gax.rpc.HeaderProvider;
 import com.google.api.gax.rpc.NoHeaderProvider;
 import com.google.api.gax.rpc.StatusCode.Code;
+import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
 import com.google.auth.Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
+import com.google.cloud.Tuple;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
 import com.google.cloud.storage.TransportCompatibility.Transport;
+import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.UnifiedOpts.UserProject;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
@@ -50,6 +54,10 @@ import com.google.storage.v2.StorageSettings;
 import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -99,6 +107,41 @@ public final class GrpcStorageOptions extends StorageOptions
 
   @InternalApi
   StorageSettings getStorageSettings() throws IOException {
+    return resolveSettingsAndOpts().x();
+  }
+
+  /**
+   * We have to perform several introspections and detections to cross-wire/support several features
+   * that are either gapic primitives, ServieOption primitives or GCS semantic requirements.
+   *
+   * <h2>Requester Pays, {@code quota_project_id} and {@code userProject}</h2>
+   *
+   * When using the JSON Api operations destined for requester pays buckets can identify the project
+   * for billing and quota attribution by specifying either {@code userProject} query parameter or
+   * {@code x-goog-user-project} HTTP Header.
+   *
+   * <p>If the credentials being used contain the property {@code quota_project_id} this value will
+   * automatically be set to the {@code x-goog-user-project} header for both JSON and GAPIC. In the
+   * case of JSON this isn't an issue, as any {@code userProject} query parameter takes precedence.
+   * However, in gRPC/GAPIC there isn't a {@code userProject} query parameter, instead we are adding
+   * {@code x-goog-user-project} to the request context as metadata. If the credentials set the
+   * request metadata and we set the request metadata it results in two different entries in the
+   * request. This creates ambiguity for GCS which then rejects the request.
+   *
+   * <p>To account for this and to provide a similarly level of precedence we are introspecting the
+   * credentials and service options to save any {@code quota_project_id} into an {@link
+   * UserProject} which is then used by {@link GrpcStorageImpl} to resolve individual request
+   * metadata.
+   *
+   * <h3>The precedence we want to provide is as follows</h3>
+   *
+   * <ol>
+   *   <li>Any "userProject" Option provided to an individual method
+   *   <li>Any Non-empty value for {@link #getQuotaProjectId()}
+   *   <li>Any {@code x-goog-user-project} provided by {@link #credentials}
+   * </ol>
+   */
+  private Tuple<StorageSettings, Opts<UserProject>> resolveSettingsAndOpts() throws IOException {
     String endpoint = getHost();
     URI uri = URI.create(endpoint);
     String scheme = uri.getScheme();
@@ -114,11 +157,33 @@ public final class GrpcStorageOptions extends StorageOptions
         break;
     }
 
+    Opts<UserProject> defaultOpts = Opts.empty();
     CredentialsProvider credentialsProvider;
     if (credentials instanceof NoCredentials) {
       credentialsProvider = NoCredentialsProvider.create();
     } else {
-      credentialsProvider = FixedCredentialsProvider.create(credentials);
+      boolean foundQuotaProject = false;
+      if (credentials.hasRequestMetadata()) {
+        Map<String, List<String>> requestMetadata = credentials.getRequestMetadata(uri);
+        for (Entry<String, List<String>> e : requestMetadata.entrySet()) {
+          String key = e.getKey();
+          if ("x-goog-user-project".equals(key.trim().toLowerCase(Locale.ENGLISH))) {
+            List<String> value = e.getValue();
+            if (!value.isEmpty()) {
+              foundQuotaProject = true;
+              defaultOpts = Opts.from(UnifiedOpts.userProject(value.get(0)));
+              break;
+            }
+          }
+        }
+      }
+      if (foundQuotaProject) {
+        // fix for https://github.com/googleapis/java-storage/issues/1736
+        credentialsProvider =
+            FixedCredentialsProvider.create(new QuotaProjectIdHidingCredentials(credentials));
+      } else {
+        credentialsProvider = FixedCredentialsProvider.create(credentials);
+      }
     }
 
     HeaderProvider internalHeaderProvider =
@@ -134,6 +199,12 @@ public final class GrpcStorageOptions extends StorageOptions
             .setEndpoint(endpoint)
             .setCredentialsProvider(credentialsProvider)
             .setClock(getClock());
+
+    // this MUST come after credentials, service options set value has higher priority than creds
+    String quotaProjectId = this.getQuotaProjectId();
+    if (quotaProjectId != null && !quotaProjectId.isEmpty()) {
+      defaultOpts = Opts.from(UnifiedOpts.userProject(quotaProjectId));
+    }
 
     builder.setHeaderProvider(this.getMergedHeaderProvider(new NoHeaderProvider()));
 
@@ -192,7 +263,7 @@ public final class GrpcStorageOptions extends StorageOptions
         // this is totally valid. instead we want to monitor if the stream is doing work and if not
         // timeout.
         .setIdleTimeout(totalTimeout);
-    return builder.build();
+    return Tuple.of(builder.build(), defaultOpts);
   }
 
   /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
@@ -502,8 +573,11 @@ public final class GrpcStorageOptions extends StorageOptions
       if (options instanceof GrpcStorageOptions) {
         GrpcStorageOptions grpcStorageOptions = (GrpcStorageOptions) options;
         try {
-          StorageSettings storageSettings = grpcStorageOptions.getStorageSettings();
-          return new GrpcStorageImpl(grpcStorageOptions, StorageClient.create(storageSettings));
+          Tuple<StorageSettings, Opts<UserProject>> t = grpcStorageOptions.resolveSettingsAndOpts();
+          StorageSettings storageSettings = t.x();
+          Opts<UserProject> defaultOpts = t.y();
+          return new GrpcStorageImpl(
+              grpcStorageOptions, StorageClient.create(storageSettings), defaultOpts);
         } catch (IOException e) {
           throw new IllegalStateException(
               "Unable to instantiate gRPC com.google.cloud.storage.Storage client.", e);
