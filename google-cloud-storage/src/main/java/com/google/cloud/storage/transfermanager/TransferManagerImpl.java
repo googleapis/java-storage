@@ -42,8 +42,9 @@ public final class TransferManagerImpl implements TransferManager {
     List<Future<UploadResult>> uploadTasks = new ArrayList<>();
     for (Path file : files) {
       if (Files.isDirectory(file)) throw new IllegalStateException("Directories are not supported");
-      String blobName = file.getFileName().toString();
+      String blobName = TransferManagerUtils.createBlobName(opts, file);
       BlobInfo blobInfo = BlobInfo.newBuilder(opts.getBucketName(), blobName).build();
+      // TODO: Apply opts per request
       UploadCallable callable = new UploadCallable(executor, transferManagerConfig, blobInfo, file);
       uploadTasks.add(executor.submit(callable));
     }
