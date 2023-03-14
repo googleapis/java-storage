@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.storage.transfermanager;
+package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -27,6 +27,11 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
+import com.google.cloud.storage.transfermanager.TransferManager;
+import com.google.cloud.storage.transfermanager.TransferManagerConfig;
+import com.google.cloud.storage.transfermanager.TransferManagerImpl;
+import com.google.cloud.storage.transfermanager.UploadJob;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -41,7 +46,7 @@ import org.junit.runner.RunWith;
 @CrossRun(
     transports = {Transport.HTTP},
     backends = {Backend.PROD})
-public class TransferManagerTest {
+public class ITTransferManagerTest {
   @Inject public BucketInfo bucket;
   @Inject public Generator generator;
 

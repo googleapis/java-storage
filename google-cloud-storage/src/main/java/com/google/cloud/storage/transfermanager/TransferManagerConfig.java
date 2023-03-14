@@ -88,7 +88,7 @@ public final class TransferManagerConfig {
     return new Builder();
   }
 
-  static class Builder {
+  public static class Builder {
 
     private int maxWorkers;
     private int perWorkerBufferSize;

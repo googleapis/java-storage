@@ -32,7 +32,7 @@ public final class TransferManagerImpl implements TransferManager {
   private final TransferManagerConfig transferManagerConfig;
   private final ExecutorService executor;
 
-  TransferManagerImpl(TransferManagerConfig transferManagerConfig) {
+  public TransferManagerImpl(TransferManagerConfig transferManagerConfig) {
     this.transferManagerConfig = transferManagerConfig;
     this.executor = Executors.newFixedThreadPool(transferManagerConfig.getMaxWorkers());
   }
