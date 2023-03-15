@@ -22,36 +22,25 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Future;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class UploadJob {
 
-  @NonNull private final List<UploadResult> successResponses;
-  @NonNull private final List<UploadResult> failedResponses;
+  @NonNull private final List<Future<UploadResult>> uploadResponses;
+
   @NonNull private final ParallelUploadConfig parallelUploadConfig;
-  private final boolean anyFailed;
 
   private UploadJob(
-      @NonNull List<UploadResult> successResponses,
-      @NonNull List<UploadResult> failedResponses,
+      @NonNull List<Future<UploadResult>> successResponses,
       @NonNull ParallelUploadConfig parallelUploadConfig) {
-    this.successResponses = successResponses;
-    this.failedResponses = failedResponses;
+    this.uploadResponses = successResponses;
     this.parallelUploadConfig = parallelUploadConfig;
-    this.anyFailed = !this.failedResponses.isEmpty();
   }
 
-  public List<UploadResult> getSuccessResponses() {
-    return successResponses;
-  }
-
-  public List<UploadResult> getFailedResponses() {
-    return failedResponses;
-  }
-
-  public boolean isAnyFailed() {
-    return anyFailed;
+  public List<Future<UploadResult>> getUploadResponses() {
+    return uploadResponses;
   }
 
   public ParallelUploadConfig getParallelUploadConfig() {
@@ -67,24 +56,20 @@ public final class UploadJob {
       return false;
     }
     UploadJob uploadJob = (UploadJob) o;
-    return anyFailed == uploadJob.anyFailed
-        && successResponses.equals(uploadJob.successResponses)
-        && failedResponses.equals(uploadJob.failedResponses)
+    return uploadResponses.equals(uploadJob.uploadResponses)
         && parallelUploadConfig.equals(uploadJob.parallelUploadConfig);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(successResponses, failedResponses, parallelUploadConfig, anyFailed);
+    return Objects.hash(uploadResponses, parallelUploadConfig);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("successResponses", successResponses)
-        .add("failedResponses", failedResponses)
+        .add("successResponses", uploadResponses)
         .add("parallelUploadConfig", parallelUploadConfig)
-        .add("anyFailed", anyFailed)
         .toString();
   }
 
@@ -94,23 +79,16 @@ public final class UploadJob {
 
   public static final class Builder {
 
-    private @NonNull List<UploadResult> successResponses;
-    private @NonNull List<UploadResult> failedResponses;
+    private @NonNull List<Future<UploadResult>> uploadResponses;
 
     private @MonotonicNonNull ParallelUploadConfig parallelUploadConfig;
 
     private Builder() {
-      this.successResponses = ImmutableList.of();
-      this.failedResponses = ImmutableList.of();
+      this.uploadResponses = ImmutableList.of();
     }
 
-    public Builder setSuccessResponses(@NonNull List<UploadResult> successResponses) {
-      this.successResponses = ImmutableList.copyOf(successResponses);
-      return this;
-    }
-
-    public Builder setFailedResponses(@NonNull List<UploadResult> failedResponses) {
-      this.failedResponses = ImmutableList.copyOf(failedResponses);
+    public Builder setUploadResponses(@NonNull List<Future<UploadResult>> uploadResponses) {
+      this.uploadResponses = ImmutableList.copyOf(uploadResponses);
       return this;
     }
 
@@ -120,10 +98,9 @@ public final class UploadJob {
     }
 
     public UploadJob build() {
-      checkNotNull(successResponses);
-      checkNotNull(failedResponses);
+      checkNotNull(uploadResponses);
       checkNotNull(parallelUploadConfig);
-      return new UploadJob(successResponses, failedResponses, parallelUploadConfig);
+      return new UploadJob(uploadResponses, parallelUploadConfig);
     }
   }
 }

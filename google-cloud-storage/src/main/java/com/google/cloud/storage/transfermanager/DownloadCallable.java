@@ -16,17 +16,4 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import com.google.cloud.storage.BlobInfo;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-import org.checkerframework.checker.nullness.qual.NonNull;
-
-public interface TransferManager {
-
-  @NonNull
-  UploadJob uploadFiles(List<Path> files, ParallelUploadConfig opts) throws IOException;
-
-  @NonNull
-  DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig opts);
-}
+public class DownloadCallable {}

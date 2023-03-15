@@ -16,17 +16,15 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import com.google.cloud.storage.BlobInfo;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface TransferManager {
+public class TransferManagerUtils {
 
-  @NonNull
-  UploadJob uploadFiles(List<Path> files, ParallelUploadConfig opts) throws IOException;
-
-  @NonNull
-  DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig opts);
+  public static String createBlobName(ParallelUploadConfig config, Path file) {
+    if (config.getPrefix().isEmpty()) {
+      return file.toString();
+    } else {
+      return config.getPrefix().concat(file.toString());
+    }
+  }
 }

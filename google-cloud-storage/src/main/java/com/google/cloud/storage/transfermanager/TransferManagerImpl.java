@@ -16,4 +16,46 @@
 
 package com.google.cloud.storage.transfermanager;
 
-public class TransferManagerImpl {}
+import com.google.cloud.storage.BlobInfo;
+import com.google.common.collect.ImmutableList;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+public final class TransferManagerImpl implements TransferManager {
+
+  private final TransferManagerConfig transferManagerConfig;
+  private final ExecutorService executor;
+
+  public TransferManagerImpl(TransferManagerConfig transferManagerConfig) {
+    this.transferManagerConfig = transferManagerConfig;
+    this.executor = Executors.newFixedThreadPool(transferManagerConfig.getMaxWorkers());
+  }
+
+  @Override
+  public @NonNull UploadJob uploadFiles(List<Path> files, ParallelUploadConfig opts) {
+    List<Future<UploadResult>> uploadTasks = new ArrayList<>();
+    for (Path file : files) {
+      if (Files.isDirectory(file)) throw new IllegalStateException("Directories are not supported");
+      String blobName = TransferManagerUtils.createBlobName(opts, file);
+      BlobInfo blobInfo = BlobInfo.newBuilder(opts.getBucketName(), blobName).build();
+      // TODO: Apply opts per request
+      UploadCallable callable = new UploadCallable(executor, transferManagerConfig, blobInfo, file);
+      uploadTasks.add(executor.submit(callable));
+    }
+    return UploadJob.newBuilder()
+        .setParallelUploadConfig(opts)
+        .setUploadResponses(ImmutableList.copyOf(uploadTasks))
+        .build();
+  }
+
+  @Override
+  public @NonNull DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig opts) {
+    return null;
+  }
+}

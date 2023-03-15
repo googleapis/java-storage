@@ -19,6 +19,7 @@ package com.google.cloud.storage.transfermanager;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.cloud.storage.Storage.BlobTargetOption;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -30,17 +31,21 @@ public final class ParallelUploadConfig {
   private final boolean skipIfExists;
   @NonNull private final String prefix;
   @NonNull private final String bucketName;
-  @NonNull private final List<BlobTargetOption> optionsPerRequest;
+  @NonNull private final List<BlobTargetOption> targetOptsPerRequest;
+
+  @NonNull private final List<BlobWriteOption> writeOptsPerRequest;
 
   private ParallelUploadConfig(
       boolean skipIfExists,
       @NonNull String prefix,
       @NonNull String bucketName,
-      @NonNull List<BlobTargetOption> optionsPerRequest) {
+      @NonNull List<BlobTargetOption> targetOptsPerRequest,
+      @NonNull List<BlobWriteOption> writeOptsPerRequest) {
     this.skipIfExists = skipIfExists;
     this.prefix = prefix;
     this.bucketName = bucketName;
-    this.optionsPerRequest = optionsPerRequest;
+    this.targetOptsPerRequest = targetOptsPerRequest;
+    this.writeOptsPerRequest = writeOptsPerRequest;
   }
 
   public boolean isSkipIfExists() {
@@ -55,8 +60,12 @@ public final class ParallelUploadConfig {
     return bucketName;
   }
 
-  public @NonNull List<BlobTargetOption> getOptionsPerRequest() {
-    return optionsPerRequest;
+  public @NonNull List<BlobTargetOption> getTargetOptsPerRequest() {
+    return targetOptsPerRequest;
+  }
+
+  public @NonNull List<BlobWriteOption> getWriteOptsPerRequest() {
+    return writeOptsPerRequest;
   }
 
   @Override
@@ -71,12 +80,12 @@ public final class ParallelUploadConfig {
     return skipIfExists == that.skipIfExists
         && prefix.equals(that.prefix)
         && bucketName.equals(that.bucketName)
-        && optionsPerRequest.equals(that.optionsPerRequest);
+        && targetOptsPerRequest.equals(that.targetOptsPerRequest);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(skipIfExists, prefix, bucketName, optionsPerRequest);
+    return Objects.hash(skipIfExists, prefix, bucketName, targetOptsPerRequest);
   }
 
   @Override
@@ -85,7 +94,7 @@ public final class ParallelUploadConfig {
         .add("skipIfExists", skipIfExists)
         .add("prefix", prefix)
         .add("bucketName", bucketName)
-        .add("optionsPerRequest", optionsPerRequest)
+        .add("optionsPerRequest", targetOptsPerRequest)
         .toString();
   }
 
@@ -100,10 +109,13 @@ public final class ParallelUploadConfig {
     private @NonNull String bucketName;
     private @NonNull List<BlobTargetOption> optionsPerRequest;
 
+    private @NonNull List<BlobWriteOption> writeOptsPerRequest;
+
     private Builder() {
       this.prefix = "";
       this.bucketName = "";
       this.optionsPerRequest = ImmutableList.of();
+      this.writeOptsPerRequest = ImmutableList.of();
     }
 
     public Builder setSkipIfExists(boolean skipIfExists) {
@@ -126,11 +138,18 @@ public final class ParallelUploadConfig {
       return this;
     }
 
+    public Builder setWriteOptsPerRequest(@NonNull List<BlobWriteOption> writeOptsPerRequest) {
+      this.writeOptsPerRequest = writeOptsPerRequest;
+      return this;
+    }
+
     public ParallelUploadConfig build() {
       checkNotNull(prefix);
       checkNotNull(bucketName);
       checkNotNull(optionsPerRequest);
-      return new ParallelUploadConfig(skipIfExists, prefix, bucketName, optionsPerRequest);
+      checkNotNull(writeOptsPerRequest);
+      return new ParallelUploadConfig(
+          skipIfExists, prefix, bucketName, optionsPerRequest, writeOptsPerRequest);
     }
   }
 }
