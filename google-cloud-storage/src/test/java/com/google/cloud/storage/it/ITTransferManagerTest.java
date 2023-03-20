@@ -18,8 +18,12 @@ package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.WriteChannel;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
+import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -27,6 +31,8 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.cloud.storage.transfermanager.DownloadJob;
+import com.google.cloud.storage.transfermanager.ParallelDownloadConfig;
 import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
@@ -34,7 +40,10 @@ import com.google.cloud.storage.transfermanager.TransferManagerImpl;
 import com.google.cloud.storage.transfermanager.UploadJob;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,6 +56,7 @@ import org.junit.runner.RunWith;
     transports = {Transport.HTTP},
     backends = {Backend.PROD})
 public class ITTransferManagerTest {
+  @Inject public Storage storage;
   @Inject public BucketInfo bucket;
   @Inject public Generator generator;
 
@@ -54,10 +64,30 @@ public class ITTransferManagerTest {
 
   private Path baseDir;
   private static final int objectContentSize = 64;
+  private List<BlobInfo> blobs = new ArrayList<>();
 
   @Before
   public void setUp() throws Exception {
     baseDir = tmpDir.getRoot().toPath();
+    BlobInfo blobInfo1 =
+        BlobInfo.newBuilder(
+                BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+            .build();
+    BlobInfo blobInfo2 =
+        BlobInfo.newBuilder(
+                BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+            .build();
+    BlobInfo blobInfo3 =
+        BlobInfo.newBuilder(
+                BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+            .build();
+    Collections.addAll(blobs, blobInfo1, blobInfo2, blobInfo3);
+    ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(108);
+    for (BlobInfo blob : blobs) {
+      try (WriteChannel writeChannel = storage.writer(blob)) {
+        writeChannel.write(content);
+      }
+    }
   }
 
   @Test
@@ -79,5 +109,14 @@ public class ITTransferManagerTest {
   }
 
   @Test
-  public void downloadBlobs() {}
+  public void downloadBlobs() throws IOException {
+    TransferManagerConfig config =
+        TransferManagerConfig.newBuilder().setAllowChunking(false).setMaxWorkers(1).build();
+    TransferManager transferManager = new TransferManagerImpl(config);
+    String bucketName = bucket.getName();
+    ParallelDownloadConfig parallelDownloadConfig =
+        ParallelDownloadConfig.newBuilder().setBucketName(bucketName).build();
+    DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+    assertThat(job.getDownloadResults()).hasSize(3);
+  }
 }
