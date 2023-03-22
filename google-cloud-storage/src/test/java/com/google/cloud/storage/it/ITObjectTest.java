@@ -571,7 +571,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlob() {
     String blobName = "test-update-blob";
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
@@ -585,7 +584,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlobReplaceMetadata() {
     String blobName = "test-update-blob-replace-metadata";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
@@ -607,7 +605,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlobMergeMetadata() {
     String blobName = "test-update-blob-merge-metadata";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
@@ -628,7 +625,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlobUnsetMetadata() {
 
     String blobName = "test-update-blob-unset-metadata";
@@ -1264,7 +1260,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testAttemptObjectDeleteWithEventBasedHold() {
     String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setEventBasedHold(true).build();
@@ -1281,7 +1276,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testAttemptDeletionObjectTemporaryHold() {
     String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
@@ -1410,7 +1404,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testBlobTimeStorageClassUpdated() {
 
     String blobName = generator.randomObjectName();
