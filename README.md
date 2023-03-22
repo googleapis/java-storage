@@ -64,6 +64,7 @@ If you are using SBT, add this to your dependencies:
 ```Scala
 libraryDependencies += "com.google.cloud" % "google-cloud-storage" % "2.20.1"
 ```
+<!-- {x-version-update-end} -->
 
 ## Authentication
 
