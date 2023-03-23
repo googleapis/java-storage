@@ -92,8 +92,7 @@ public class ITTransferManagerTest {
 
   @Test
   public void uploadFiles() throws IOException {
-    TransferManagerConfig config =
-        TransferManagerConfig.newBuilder().setAllowChunking(false).setMaxWorkers(1).build();
+    TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
     TransferManager transferManager = new TransferManagerImpl(config);
     try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
@@ -110,8 +109,7 @@ public class ITTransferManagerTest {
 
   @Test
   public void downloadBlobs() throws IOException {
-    TransferManagerConfig config =
-        TransferManagerConfig.newBuilder().setAllowChunking(false).setMaxWorkers(1).build();
+    TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
     TransferManager transferManager = new TransferManagerImpl(config);
     String bucketName = bucket.getName();
     ParallelDownloadConfig parallelDownloadConfig =
