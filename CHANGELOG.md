@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.20.2](https://github.com/googleapis/java-storage/compare/v2.20.1...v2.20.2) (2023-03-22)
+
+
+### Bug Fixes
+
+* Add service_yaml_parameters to `java_gapic_library` targets ([#1933](https://github.com/googleapis/java-storage/issues/1933)) ([ceaeb3f](https://github.com/googleapis/java-storage/commit/ceaeb3fa25cdc10f82c870bf2e9cc27b6a91affd))
+
+
+### Documentation
+
+* Add clarification on non-editable metadata ([#1939](https://github.com/googleapis/java-storage/issues/1939)) ([df57705](https://github.com/googleapis/java-storage/commit/df57705bf37e430d66ff6c7be4ee4a6246d8616e))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20230301-2.0.0 ([#1935](https://github.com/googleapis/java-storage/issues/1935)) ([dbc7534](https://github.com/googleapis/java-storage/commit/dbc7534b86c0629d31d322356675e18494b7175b))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.5.0 ([#1940](https://github.com/googleapis/java-storage/issues/1940)) ([fc55e41](https://github.com/googleapis/java-storage/commit/fc55e41dc6b5802fca46c03cb8443528670eb47d))
+
 ## [2.20.1](https://github.com/googleapis/java-storage/compare/v2.20.0...v2.20.1) (2023-03-07)
 
 
