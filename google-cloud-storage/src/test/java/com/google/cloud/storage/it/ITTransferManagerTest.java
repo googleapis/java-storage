@@ -24,6 +24,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -102,6 +103,26 @@ public class ITTransferManagerTest {
       String bucketName = bucket.getName();
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
+      assertThat(job.getUploadResponses()).hasSize(3);
+    }
+  }
+
+  @Test
+  public void uploadFilesWithOpts() throws IOException {
+    TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
+    TransferManager transferManager = new TransferManagerImpl(config);
+    try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
+        TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
+        TmpFile tmpFile2 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
+      List<Path> files =
+          ImmutableList.of(tmpFile.getPath(), tmpFile1.getPath(), tmpFile2.getPath());
+      String bucketName = bucket.getName();
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setWriteOptsPerRequest(Collections.singletonList(BlobWriteOption.doesNotExist()))
+              .build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
       assertThat(job.getUploadResponses()).hasSize(3);
     }
