@@ -22,37 +22,25 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Future;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class DownloadJob {
 
-  @NonNull private final List<DownloadResult> successResponses;
-  @NonNull private final List<DownloadResult> failedResponses;
+  @NonNull private final List<Future<DownloadResult>> downloadResults;
 
   @NonNull private final ParallelDownloadConfig parallelDownloadConfig;
-  private final boolean anyFailed;
 
   private DownloadJob(
-      @NonNull List<DownloadResult> successResponses,
-      @NonNull List<DownloadResult> failedResponses,
+      @NonNull List<Future<DownloadResult>> successResponses,
       @NonNull ParallelDownloadConfig parallelDownloadConfig) {
-    this.successResponses = successResponses;
-    this.failedResponses = failedResponses;
-    this.anyFailed = !failedResponses.isEmpty();
+    this.downloadResults = successResponses;
     this.parallelDownloadConfig = parallelDownloadConfig;
   }
 
-  public List<DownloadResult> getSuccessResponses() {
-    return successResponses;
-  }
-
-  public List<DownloadResult> getFailedResponses() {
-    return failedResponses;
-  }
-
-  public boolean isAnyFailed() {
-    return anyFailed;
+  public List<Future<DownloadResult>> getDownloadResults() {
+    return downloadResults;
   }
 
   public ParallelDownloadConfig getParallelDownloadConfig() {
@@ -68,24 +56,20 @@ public final class DownloadJob {
       return false;
     }
     DownloadJob that = (DownloadJob) o;
-    return anyFailed == that.anyFailed
-        && successResponses.equals(that.successResponses)
-        && failedResponses.equals(that.failedResponses)
+    return downloadResults.equals(that.downloadResults)
         && parallelDownloadConfig.equals(that.parallelDownloadConfig);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(successResponses, failedResponses, parallelDownloadConfig, anyFailed);
+    return Objects.hash(downloadResults, parallelDownloadConfig);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("successResponses", successResponses)
-        .add("failedResponses", failedResponses)
+        .add("successResponses", downloadResults)
         .add("parallelDownloadConfig", parallelDownloadConfig)
-        .add("anyFailed", anyFailed)
         .toString();
   }
 
@@ -95,22 +79,15 @@ public final class DownloadJob {
 
   public static final class Builder {
 
-    private @NonNull List<DownloadResult> successResponses;
-    private @NonNull List<DownloadResult> failedResponses;
+    private @NonNull List<Future<DownloadResult>> downloadResults;
     private @MonotonicNonNull ParallelDownloadConfig parallelDownloadConfig;
 
     private Builder() {
-      this.successResponses = ImmutableList.of();
-      this.failedResponses = ImmutableList.of();
+      this.downloadResults = ImmutableList.of();
     }
 
-    public Builder setSuccessResponses(@NonNull List<DownloadResult> successResponses) {
-      this.successResponses = ImmutableList.copyOf(successResponses);
-      return this;
-    }
-
-    public Builder setFailedResponses(@NonNull List<DownloadResult> failedResponses) {
-      this.failedResponses = ImmutableList.copyOf(failedResponses);
+    public Builder setDownloadResults(@NonNull List<Future<DownloadResult>> downloadResults) {
+      this.downloadResults = ImmutableList.copyOf(downloadResults);
       return this;
     }
 
@@ -121,10 +98,9 @@ public final class DownloadJob {
     }
 
     public DownloadJob build() {
-      checkNotNull(successResponses);
-      checkNotNull(failedResponses);
+      checkNotNull(downloadResults);
       checkNotNull(parallelDownloadConfig);
-      return new DownloadJob(successResponses, failedResponses, parallelDownloadConfig);
+      return new DownloadJob(downloadResults, parallelDownloadConfig);
     }
   }
 }

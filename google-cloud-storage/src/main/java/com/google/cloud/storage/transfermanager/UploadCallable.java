@@ -29,10 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
 
 public class UploadCallable implements Callable<UploadResult> {
-  private final ExecutorService executor;
   private final TransferManagerConfig transferManagerConfig;
 
   private final BlobInfo originalBlob;
@@ -40,11 +38,7 @@ public class UploadCallable implements Callable<UploadResult> {
   private final Path sourceFile;
 
   public UploadCallable(
-      ExecutorService executor,
-      TransferManagerConfig transferManagerConfig,
-      BlobInfo originalBlob,
-      Path sourceFile) {
-    this.executor = executor;
+      TransferManagerConfig transferManagerConfig, BlobInfo originalBlob, Path sourceFile) {
     this.transferManagerConfig = transferManagerConfig;
     this.originalBlob = originalBlob;
     this.sourceFile = sourceFile;

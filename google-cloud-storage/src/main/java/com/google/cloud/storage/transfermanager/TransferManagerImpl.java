@@ -45,7 +45,7 @@ public final class TransferManagerImpl implements TransferManager {
       String blobName = TransferManagerUtils.createBlobName(opts, file);
       BlobInfo blobInfo = BlobInfo.newBuilder(opts.getBucketName(), blobName).build();
       // TODO: Apply opts per request
-      UploadCallable callable = new UploadCallable(executor, transferManagerConfig, blobInfo, file);
+      UploadCallable callable = new UploadCallable(transferManagerConfig, blobInfo, file);
       uploadTasks.add(executor.submit(callable));
     }
     return UploadJob.newBuilder()
@@ -56,6 +56,14 @@ public final class TransferManagerImpl implements TransferManager {
 
   @Override
   public @NonNull DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig opts) {
-    return null;
+    List<Future<DownloadResult>> downloadTasks = new ArrayList<>();
+    for (BlobInfo blob : blobs) {
+      DownloadCallable callable = new DownloadCallable(transferManagerConfig, blob, opts);
+      downloadTasks.add(executor.submit(callable));
+    }
+    return DownloadJob.newBuilder()
+        .setDownloadResults(downloadTasks)
+        .setParallelDownloadConfig(opts)
+        .build();
   }
 }
