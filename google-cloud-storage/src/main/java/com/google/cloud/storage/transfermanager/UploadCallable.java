@@ -19,6 +19,7 @@ package com.google.cloud.storage.transfermanager;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
+import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,11 +38,17 @@ public class UploadCallable implements Callable<UploadResult> {
 
   private final Path sourceFile;
 
+  private final ParallelUploadConfig parallelUploadConfig;
+
   public UploadCallable(
-      TransferManagerConfig transferManagerConfig, BlobInfo originalBlob, Path sourceFile) {
+      TransferManagerConfig transferManagerConfig,
+      BlobInfo originalBlob,
+      Path sourceFile,
+      ParallelUploadConfig parallelUploadConfig) {
     this.transferManagerConfig = transferManagerConfig;
     this.originalBlob = originalBlob;
     this.sourceFile = sourceFile;
+    this.parallelUploadConfig = parallelUploadConfig;
   }
 
   public UploadResult call() throws Exception {
@@ -51,7 +58,15 @@ public class UploadCallable implements Callable<UploadResult> {
 
   private UploadResult uploadWithoutChunking() throws IOException {
     Optional<BlobInfo> newBlob;
-    WriteChannel wc = transferManagerConfig.getStorageOptions().getService().writer(originalBlob);
+    WriteChannel wc =
+        transferManagerConfig
+            .getStorageOptions()
+            .getService()
+            .writer(
+                originalBlob,
+                parallelUploadConfig
+                    .getWriteOptsPerRequest()
+                    .toArray(new Storage.BlobWriteOption[0]));
     try {
       InputStream inputStream = Files.newInputStream(sourceFile);
       uploadHelper(Channels.newChannel(inputStream), wc);
