@@ -99,7 +99,6 @@ import com.google.storage.v2.LockBucketRetentionPolicyRequest;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
-import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
@@ -190,12 +189,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    if (bucketInfo.getProject() == null || bucketInfo.getProject().trim().isEmpty()) {
+      bucketInfo = bucketInfo.toBuilder().setProject(getOptions().getProjectId()).build();
+    }
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     CreateBucketRequest.Builder builder =
         CreateBucketRequest.newBuilder()
             .setBucket(bucket)
             .setBucketId(bucketInfo.getName())
-            .setParent(ProjectName.format(getOptions().getProjectId()));
+            .setParent("projects/_");
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),

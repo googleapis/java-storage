@@ -18,8 +18,10 @@ package com.google.cloud.storage.jqwik;
 
 import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.ifNonNull;
 
+import com.google.cloud.storage.jqwik.StorageArbitraries.ProjectID;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.BucketName;
+import com.google.storage.v2.ProjectName;
 import java.util.Collections;
 import java.util.Set;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -72,9 +74,15 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                         StorageArbitraries.buckets().iamConfig().injectNull(0.5),
                         StorageArbitraries.buckets().labels(),
                         StorageArbitraries.etag())
+                    .as(Tuple::of),
+                Combinators.combine(
+                        StorageArbitraries.projectID().map(ProjectID::toProjectName),
+                        StorageArbitraries
+                            .alnum() // ignored for now, tuples can't be a single element
+                        )
                     .as(Tuple::of))
             .as(
-                (t1, t2, t3) -> {
+                (t1, t2, t3, t4) -> {
                   Bucket.Builder b = Bucket.newBuilder();
                   ifNonNull(t1.get1(), BucketName::getBucket, b::setBucketId);
                   ifNonNull(t1.get2(), BucketName::toString, b::setName);
@@ -100,6 +108,7 @@ public final class BucketArbitraryProvider implements ArbitraryProvider {
                   ifNonNull(t3.get6(), b::setIamConfig);
                   ifNonNull(t3.get7(), b::putAllLabels);
                   ifNonNull(t3.get8(), b::setEtag);
+                  ifNonNull(t4.get1(), ProjectName::toString, b::setProject);
                   // TODO: add CustomPlacementConfig
                   return b.build();
                 });

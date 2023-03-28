@@ -413,7 +413,7 @@ public final class TestBench implements ManagedLifecycle {
     private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
     private static final String DEFAULT_IMAGE_NAME =
         "gcr.io/cloud-devrel-public-resources/storage-testbench";
-    private static final String DEFAULT_IMAGE_TAG = "v0.33.0";
+    private static final String DEFAULT_IMAGE_TAG = "v0.35.0";
     private static final String DEFAULT_CONTAINER_NAME = "default";
 
     private boolean ignorePullError;
