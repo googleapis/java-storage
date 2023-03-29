@@ -76,7 +76,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * CRC32C digest of the object data. Computed by the Cloud Storage service for
    * all written objects.
-   * If set in an WriteObjectRequest, service will validate that the stored
+   * If set in a WriteObjectRequest, service will validate that the stored
    * object matches this checksum.
    * </pre>
    *
@@ -94,7 +94,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
    * <pre>
    * CRC32C digest of the object data. Computed by the Cloud Storage service for
    * all written objects.
-   * If set in an WriteObjectRequest, service will validate that the stored
+   * If set in a WriteObjectRequest, service will validate that the stored
    * object matches this checksum.
    * </pre>
    *
@@ -505,7 +505,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in an WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service will validate that the stored
      * object matches this checksum.
      * </pre>
      *
@@ -523,7 +523,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in an WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service will validate that the stored
      * object matches this checksum.
      * </pre>
      *
@@ -541,7 +541,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in an WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service will validate that the stored
      * object matches this checksum.
      * </pre>
      *
@@ -563,7 +563,7 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
      * <pre>
      * CRC32C digest of the object data. Computed by the Cloud Storage service for
      * all written objects.
-     * If set in an WriteObjectRequest, service will validate that the stored
+     * If set in a WriteObjectRequest, service will validate that the stored
      * object matches this checksum.
      * </pre>
      *

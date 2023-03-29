@@ -81,7 +81,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    * Required. Name of the bucket in which the object resides.
    * </pre>
    *
-   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bucket.
    */
@@ -104,7 +106,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
    * Required. Name of the bucket in which the object resides.
    * </pre>
    *
-   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for bucket.
    */
@@ -940,7 +944,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * Required. Name of the bucket in which the object resides.
      * </pre>
      *
-     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bucket.
      */
@@ -962,7 +968,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * Required. Name of the bucket in which the object resides.
      * </pre>
      *
-     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for bucket.
      */
@@ -984,7 +992,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * Required. Name of the bucket in which the object resides.
      * </pre>
      *
-     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The bucket to set.
      * @return This builder for chaining.
@@ -1005,7 +1015,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * Required. Name of the bucket in which the object resides.
      * </pre>
      *
-     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -1022,7 +1034,9 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
      * Required. Name of the bucket in which the object resides.
      * </pre>
      *
-     * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The bytes for bucket to set.
      * @return This builder for chaining.

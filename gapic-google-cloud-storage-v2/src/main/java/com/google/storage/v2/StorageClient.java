@@ -425,9 +425,11 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param parent Required. The project to which this bucket will belong.
-   * @param bucket Properties of the new bucket being inserted. The project and name of the bucket
-   *     are specified in the parent and bucket_id fields, respectively. Populating those fields in
-   *     `bucket` will result in an error.
+   * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
+   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -464,9 +466,11 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param parent Required. The project to which this bucket will belong.
-   * @param bucket Properties of the new bucket being inserted. The project and name of the bucket
-   *     are specified in the parent and bucket_id fields, respectively. Populating those fields in
-   *     `bucket` will result in an error.
+   * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
+   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -1270,8 +1274,7 @@ public class StorageClient implements BackgroundResource {
    *     field with the value `&#42;`. Note: not recommended. If a new field is introduced at a
    *     later time, an older client updating with the `&#42;` may accidentally reset the new
    *     field's value.
-   *     <p>Not specifying any fields is an error. Not specifying a field while setting that field
-   *     to a non-default value is an error.
+   *     <p>Not specifying any fields is an error.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Bucket updateBucket(Bucket bucket, FieldMask updateMask) {
@@ -1477,7 +1480,8 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   BucketName name = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   NotificationConfigName name =
+   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]");
    *   NotificationConfig response = storageClient.getNotificationConfig(name);
    * }
    * }</pre>
@@ -1486,7 +1490,7 @@ public class StorageClient implements BackgroundResource {
    *     `projects/{project}/buckets/{bucket}/notificationConfigs/{notificationConfig}`
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final NotificationConfig getNotificationConfig(BucketName name) {
+  public final NotificationConfig getNotificationConfig(NotificationConfigName name) {
     GetNotificationConfigRequest request =
         GetNotificationConfigRequest.newBuilder()
             .setName(name == null ? null : name.toString())
@@ -1507,7 +1511,8 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String name = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   String name =
+   *       NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]").toString();
    *   NotificationConfig response = storageClient.getNotificationConfig(name);
    * }
    * }</pre>
@@ -1537,7 +1542,9 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   GetNotificationConfigRequest request =
    *       GetNotificationConfigRequest.newBuilder()
-   *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setName(
+   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+   *                   .toString())
    *           .build();
    *   NotificationConfig response = storageClient.getNotificationConfig(request);
    * }
@@ -1565,7 +1572,9 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   GetNotificationConfigRequest request =
    *       GetNotificationConfigRequest.newBuilder()
-   *           .setName(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setName(
+   *               NotificationConfigName.of("[PROJECT]", "[BUCKET]", "[NOTIFICATION_CONFIG]")
+   *                   .toString())
    *           .build();
    *   ApiFuture<NotificationConfig> future =
    *       storageClient.getNotificationConfigCallable().futureCall(request);
@@ -1594,7 +1603,7 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   ProjectName parent = ProjectName.of("[PROJECT]");
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
    *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
    *   NotificationConfig response =
    *       storageClient.createNotificationConfig(parent, notificationConfig);
@@ -1606,7 +1615,7 @@ public class StorageClient implements BackgroundResource {
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final NotificationConfig createNotificationConfig(
-      ProjectName parent, NotificationConfig notificationConfig) {
+      BucketName parent, NotificationConfig notificationConfig) {
     CreateNotificationConfigRequest request =
         CreateNotificationConfigRequest.newBuilder()
             .setParent(parent == null ? null : parent.toString())
@@ -1630,7 +1639,7 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String parent = ProjectName.of("[PROJECT]").toString();
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
    *   NotificationConfig notificationConfig = NotificationConfig.newBuilder().build();
    *   NotificationConfig response =
    *       storageClient.createNotificationConfig(parent, notificationConfig);
@@ -1668,7 +1677,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   CreateNotificationConfigRequest request =
    *       CreateNotificationConfigRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setNotificationConfig(NotificationConfig.newBuilder().build())
    *           .build();
    *   NotificationConfig response = storageClient.createNotificationConfig(request);
@@ -1700,7 +1709,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   CreateNotificationConfigRequest request =
    *       CreateNotificationConfigRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setNotificationConfig(NotificationConfig.newBuilder().build())
    *           .build();
    *   ApiFuture<NotificationConfig> future =
@@ -1728,7 +1737,7 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   ProjectName parent = ProjectName.of("[PROJECT]");
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
    *   for (NotificationConfig element :
    *       storageClient.listNotificationConfigs(parent).iterateAll()) {
    *     // doThingsWith(element);
@@ -1739,7 +1748,7 @@ public class StorageClient implements BackgroundResource {
    * @param parent Required. Name of a Google Cloud Storage bucket.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final ListNotificationConfigsPagedResponse listNotificationConfigs(ProjectName parent) {
+  public final ListNotificationConfigsPagedResponse listNotificationConfigs(BucketName parent) {
     ListNotificationConfigsRequest request =
         ListNotificationConfigsRequest.newBuilder()
             .setParent(parent == null ? null : parent.toString())
@@ -1760,7 +1769,7 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String parent = ProjectName.of("[PROJECT]").toString();
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
    *   for (NotificationConfig element :
    *       storageClient.listNotificationConfigs(parent).iterateAll()) {
    *     // doThingsWith(element);
@@ -1792,7 +1801,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ListNotificationConfigsRequest request =
    *       ListNotificationConfigsRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .build();
@@ -1826,7 +1835,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ListNotificationConfigsRequest request =
    *       ListNotificationConfigsRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .build();
@@ -1859,7 +1868,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ListNotificationConfigsRequest request =
    *       ListNotificationConfigsRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .build();
@@ -1959,8 +1968,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the `generation` parameter is used.
+   * Deletes an object and its metadata.
+   *
+   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
+   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
+   * restored using RestoreObject until the soft delete retention period has passed.
    *
    * <p>Sample code:
    *
@@ -1971,7 +1983,44 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String bucket = "bucket-1378203158";
+   *   BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   String object = "object-1023368385";
+   *   storageClient.deleteObject(bucket, object);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. The name of the finalized object to delete. Note: If you want to delete
+   *     an unfinalized resumable upload please use `CancelResumableWrite`.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void deleteObject(BucketName bucket, String object) {
+    DeleteObjectRequest request =
+        DeleteObjectRequest.newBuilder()
+            .setBucket(bucket == null ? null : bucket.toString())
+            .setObject(object)
+            .build();
+    deleteObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes an object and its metadata.
+   *
+   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
+   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
+   * restored using RestoreObject until the soft delete retention period has passed.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String bucket = BucketName.of("[PROJECT]", "[BUCKET]").toString();
    *   String object = "object-1023368385";
    *   storageClient.deleteObject(bucket, object);
    * }
@@ -1990,8 +2039,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the `generation` parameter is used.
+   * Deletes an object and its metadata.
+   *
+   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
+   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
+   * restored using RestoreObject until the soft delete retention period has passed.
    *
    * <p>Sample code:
    *
@@ -2002,7 +2054,48 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String bucket = "bucket-1378203158";
+   *   BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   String object = "object-1023368385";
+   *   long generation = 305703192;
+   *   storageClient.deleteObject(bucket, object, generation);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. The name of the finalized object to delete. Note: If you want to delete
+   *     an unfinalized resumable upload please use `CancelResumableWrite`.
+   * @param generation If present, permanently deletes a specific revision of this object (as
+   *     opposed to the latest version, the default).
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final void deleteObject(BucketName bucket, String object, long generation) {
+    DeleteObjectRequest request =
+        DeleteObjectRequest.newBuilder()
+            .setBucket(bucket == null ? null : bucket.toString())
+            .setObject(object)
+            .setGeneration(generation)
+            .build();
+    deleteObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Deletes an object and its metadata.
+   *
+   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
+   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
+   * restored using RestoreObject until the soft delete retention period has passed.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String bucket = BucketName.of("[PROJECT]", "[BUCKET]").toString();
    *   String object = "object-1023368385";
    *   long generation = 305703192;
    *   storageClient.deleteObject(bucket, object, generation);
@@ -2028,8 +2121,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the `generation` parameter is used.
+   * Deletes an object and its metadata.
+   *
+   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
+   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
+   * restored using RestoreObject until the soft delete retention period has passed.
    *
    * <p>Sample code:
    *
@@ -2042,7 +2138,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   DeleteObjectRequest request =
    *       DeleteObjectRequest.newBuilder()
-   *           .setBucket("bucket-1378203158")
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
    *           .setIfGenerationMatch(-1086241088)
@@ -2064,8 +2160,11 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
-   * Deletes an object and its metadata. Deletions are permanent if versioning is not enabled for
-   * the bucket, or if the `generation` parameter is used.
+   * Deletes an object and its metadata.
+   *
+   * <p>Deletions are normally permanent when versioning is disabled or whenever the generation
+   * parameter is used. However, if soft delete is enabled for the bucket, deleted objects can be
+   * restored using RestoreObject until the soft delete retention period has passed.
    *
    * <p>Sample code:
    *
@@ -2078,7 +2177,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   DeleteObjectRequest request =
    *       DeleteObjectRequest.newBuilder()
-   *           .setBucket("bucket-1378203158")
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
    *           .setIfGenerationMatch(-1086241088)
@@ -2192,7 +2291,39 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String bucket = "bucket-1378203158";
+   *   BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   String object = "object-1023368385";
+   *   Object response = storageClient.getObject(bucket, object);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. Name of the object.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object getObject(BucketName bucket, String object) {
+    GetObjectRequest request =
+        GetObjectRequest.newBuilder()
+            .setBucket(bucket == null ? null : bucket.toString())
+            .setObject(object)
+            .build();
+    return getObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves an object's metadata.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String bucket = BucketName.of("[PROJECT]", "[BUCKET]").toString();
    *   String object = "object-1023368385";
    *   Object response = storageClient.getObject(bucket, object);
    * }
@@ -2221,7 +2352,43 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String bucket = "bucket-1378203158";
+   *   BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   String object = "object-1023368385";
+   *   long generation = 305703192;
+   *   Object response = storageClient.getObject(bucket, object, generation);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. Name of the object.
+   * @param generation If present, selects a specific revision of this object (as opposed to the
+   *     latest version, the default).
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object getObject(BucketName bucket, String object, long generation) {
+    GetObjectRequest request =
+        GetObjectRequest.newBuilder()
+            .setBucket(bucket == null ? null : bucket.toString())
+            .setObject(object)
+            .setGeneration(generation)
+            .build();
+    return getObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Retrieves an object's metadata.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String bucket = BucketName.of("[PROJECT]", "[BUCKET]").toString();
    *   String object = "object-1023368385";
    *   long generation = 305703192;
    *   Object response = storageClient.getObject(bucket, object, generation);
@@ -2259,7 +2426,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   GetObjectRequest request =
    *       GetObjectRequest.newBuilder()
-   *           .setBucket("bucket-1378203158")
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
    *           .setIfGenerationMatch(-1086241088)
@@ -2295,7 +2462,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   GetObjectRequest request =
    *       GetObjectRequest.newBuilder()
-   *           .setBucket("bucket-1378203158")
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
    *           .setIfGenerationMatch(-1086241088)
@@ -2330,7 +2497,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ReadObjectRequest request =
    *       ReadObjectRequest.newBuilder()
-   *           .setBucket("bucket-1378203158")
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
    *           .setReadOffset(-715377828)
@@ -2381,8 +2548,7 @@ public class StorageClient implements BackgroundResource {
    *     field with the value `&#42;`. Note: not recommended. If a new field is introduced at a
    *     later time, an older client updating with the `&#42;` may accidentally reset the new
    *     field's value.
-   *     <p>Not specifying any fields is an error. Not specifying a field while setting that field
-   *     to a non-default value is an error.
+   *     <p>Not specifying any fields is an error.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final Object updateObject(Object object, FieldMask updateMask) {
@@ -2561,7 +2727,7 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   ProjectName parent = ProjectName.of("[PROJECT]");
+   *   BucketName parent = BucketName.of("[PROJECT]", "[BUCKET]");
    *   for (Object element : storageClient.listObjects(parent).iterateAll()) {
    *     // doThingsWith(element);
    *   }
@@ -2571,7 +2737,7 @@ public class StorageClient implements BackgroundResource {
    * @param parent Required. Name of the bucket in which to look for objects.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
-  public final ListObjectsPagedResponse listObjects(ProjectName parent) {
+  public final ListObjectsPagedResponse listObjects(BucketName parent) {
     ListObjectsRequest request =
         ListObjectsRequest.newBuilder()
             .setParent(parent == null ? null : parent.toString())
@@ -2592,7 +2758,7 @@ public class StorageClient implements BackgroundResource {
    * // - It may require specifying regional endpoints when creating the service client as shown in
    * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
    * try (StorageClient storageClient = StorageClient.create()) {
-   *   String parent = ProjectName.of("[PROJECT]").toString();
+   *   String parent = BucketName.of("[PROJECT]", "[BUCKET]").toString();
    *   for (Object element : storageClient.listObjects(parent).iterateAll()) {
    *     // doThingsWith(element);
    *   }
@@ -2622,7 +2788,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ListObjectsRequest request =
    *       ListObjectsRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .setDelimiter("delimiter-250518009")
@@ -2661,7 +2827,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ListObjectsRequest request =
    *       ListObjectsRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .setDelimiter("delimiter-250518009")
@@ -2700,7 +2866,7 @@ public class StorageClient implements BackgroundResource {
    * try (StorageClient storageClient = StorageClient.create()) {
    *   ListObjectsRequest request =
    *       ListObjectsRequest.newBuilder()
-   *           .setParent(ProjectName.of("[PROJECT]").toString())
+   *           .setParent(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setPageSize(883849137)
    *           .setPageToken("pageToken873572522")
    *           .setDelimiter("delimiter-250518009")
@@ -2751,7 +2917,7 @@ public class StorageClient implements BackgroundResource {
    *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
    *                   .toString())
    *           .setDestination(Object.newBuilder().build())
-   *           .setSourceBucket("sourceBucket841604581")
+   *           .setSourceBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setSourceObject("sourceObject1196439354")
    *           .setSourceGeneration(1232209852)
    *           .setRewriteToken("rewriteToken80654285")
@@ -2803,7 +2969,7 @@ public class StorageClient implements BackgroundResource {
    *               CryptoKeyName.of("[PROJECT]", "[LOCATION]", "[KEY_RING]", "[CRYPTO_KEY]")
    *                   .toString())
    *           .setDestination(Object.newBuilder().build())
-   *           .setSourceBucket("sourceBucket841604581")
+   *           .setSourceBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setSourceObject("sourceObject1196439354")
    *           .setSourceGeneration(1232209852)
    *           .setRewriteToken("rewriteToken80654285")
@@ -3031,8 +3197,8 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   *     &lt;projectIdentifier&gt; can be the project ID or project number.
+   * @param project Required. Project ID, in the format of "projects/{projectIdentifier}".
+   *     {projectIdentifier} can be the project ID or project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount getServiceAccount(ProjectName project) {
@@ -3061,8 +3227,8 @@ public class StorageClient implements BackgroundResource {
    * }
    * }</pre>
    *
-   * @param project Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   *     &lt;projectIdentifier&gt; can be the project ID or project number.
+   * @param project Required. Project ID, in the format of "projects/{projectIdentifier}".
+   *     {projectIdentifier} can be the project ID or project number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ServiceAccount getServiceAccount(String project) {
@@ -3147,8 +3313,8 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param project Required. The project that the HMAC-owning service account lives in, in the
-   *     format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
-   *     project ID or project number.
+   *     format of "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or
+   *     project number.
    * @param serviceAccountEmail Required. The service account to create the HMAC for.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
@@ -3182,8 +3348,8 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param project Required. The project that the HMAC-owning service account lives in, in the
-   *     format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
-   *     project ID or project number.
+   *     format of "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or
+   *     project number.
    * @param serviceAccountEmail Required. The service account to create the HMAC for.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
@@ -3275,8 +3441,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
    * @param project Required. The project that owns the HMAC key, in the format of
-   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
-   *     project number.
+   *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
+   *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteHmacKey(String accessId, ProjectName project) {
@@ -3309,8 +3475,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
    * @param project Required. The project that owns the HMAC key, in the format of
-   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
-   *     project number.
+   *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
+   *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final void deleteHmacKey(String accessId, String project) {
@@ -3397,8 +3563,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
    * @param project Required. The project the HMAC key lies in, in the format of
-   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
-   *     project number.
+   *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
+   *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final HmacKeyMetadata getHmacKey(String accessId, ProjectName project) {
@@ -3431,8 +3597,8 @@ public class StorageClient implements BackgroundResource {
    *
    * @param accessId Required. The identifying key for the HMAC to delete.
    * @param project Required. The project the HMAC key lies in, in the format of
-   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
-   *     project number.
+   *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
+   *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final HmacKeyMetadata getHmacKey(String accessId, String project) {
@@ -3519,8 +3685,8 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param project Required. The project to list HMAC keys for, in the format of
-   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
-   *     project number.
+   *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
+   *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListHmacKeysPagedResponse listHmacKeys(ProjectName project) {
@@ -3552,8 +3718,8 @@ public class StorageClient implements BackgroundResource {
    * }</pre>
    *
    * @param project Required. The project to list HMAC keys for, in the format of
-   *     "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the project ID or
-   *     project number.
+   *     "projects/{projectIdentifier}". {projectIdentifier} can be the project ID or project
+   *     number.
    * @throws com.google.api.gax.rpc.ApiException if the remote call fails
    */
   public final ListHmacKeysPagedResponse listHmacKeys(String project) {

@@ -20,5 +20,16 @@
     <className>com/google/storage/v2/*Notification*</className>
   </difference>
 
+  <!-- Allow removal of Bucket.RetentionPolicy.retention_period field (replaced by retention_duration) -->
+  <difference>
+    <differenceType>6011</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <field>RETENTION_PERIOD_FIELD_NUMBER</field>
+  </difference>
+  <difference>
+    <differenceType>7002</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *RetentionPeriod*(*)</method>
+  </difference>
 
 </differences>

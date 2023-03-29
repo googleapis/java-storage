@@ -342,7 +342,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * Required. Name of the bucket in which to find the source object.
    * </pre>
    *
-   * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The sourceBucket.
    */
@@ -365,7 +367,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
    * Required. Name of the bucket in which to find the source object.
    * </pre>
    *
-   * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for sourceBucket.
    */
@@ -2663,7 +2667,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * Required. Name of the bucket in which to find the source object.
      * </pre>
      *
-     * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The sourceBucket.
      */
@@ -2685,7 +2691,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * Required. Name of the bucket in which to find the source object.
      * </pre>
      *
-     * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return The bytes for sourceBucket.
      */
@@ -2707,7 +2715,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * Required. Name of the bucket in which to find the source object.
      * </pre>
      *
-     * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The sourceBucket to set.
      * @return This builder for chaining.
@@ -2728,7 +2738,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * Required. Name of the bucket in which to find the source object.
      * </pre>
      *
-     * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @return This builder for chaining.
      */
@@ -2745,7 +2757,9 @@ public final class RewriteObjectRequest extends com.google.protobuf.GeneratedMes
      * Required. Name of the bucket in which to find the source object.
      * </pre>
      *
-     * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+     * <code>
+     * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+     * </code>
      *
      * @param value The bytes for sourceBucket to set.
      * @return This builder for chaining.

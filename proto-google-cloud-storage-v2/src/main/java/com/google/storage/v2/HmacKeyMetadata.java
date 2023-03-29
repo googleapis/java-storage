@@ -81,8 +81,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Immutable. Resource name ID of the key in the format
-   * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * {projectIdentifier}/{accessId}.
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -106,8 +106,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Immutable. Resource name ID of the key in the format
-   * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * {projectIdentifier}/{accessId}.
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -187,8 +187,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Immutable. Identifies the project that owns the service account of the
-   * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * specified HMAC key, in the format "projects/{projectIdentifier}".
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -214,8 +214,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
    *
    * <pre>
    * Immutable. Identifies the project that owns the service account of the
-   * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * specified HMAC key, in the format "projects/{projectIdentifier}".
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -1017,8 +1017,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Resource name ID of the key in the format
-     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * {projectIdentifier}/{accessId}.
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -1041,8 +1041,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Resource name ID of the key in the format
-     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * {projectIdentifier}/{accessId}.
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -1065,8 +1065,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Resource name ID of the key in the format
-     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * {projectIdentifier}/{accessId}.
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -1088,8 +1088,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Resource name ID of the key in the format
-     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * {projectIdentifier}/{accessId}.
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -1107,8 +1107,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Resource name ID of the key in the format
-     * &lt;projectIdentifier&gt;/&lt;accessId&gt;.
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * {projectIdentifier}/{accessId}.
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>string id = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -1239,8 +1239,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Identifies the project that owns the service account of the
-     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * specified HMAC key, in the format "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1265,8 +1265,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Identifies the project that owns the service account of the
-     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * specified HMAC key, in the format "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1291,8 +1291,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Identifies the project that owns the service account of the
-     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * specified HMAC key, in the format "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1316,8 +1316,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Identifies the project that owns the service account of the
-     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * specified HMAC key, in the format "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -1337,8 +1337,8 @@ public final class HmacKeyMetadata extends com.google.protobuf.GeneratedMessageV
      *
      * <pre>
      * Immutable. Identifies the project that owns the service account of the
-     * specified HMAC key, in the format "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * specified HMAC key, in the format "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
