@@ -33,7 +33,7 @@ public interface ReadObjectResponseOrBuilder
    * generate more data.
    * </pre>
    *
-   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
    *
    * @return Whether the checksummedData field is set.
    */
@@ -48,7 +48,7 @@ public interface ReadObjectResponseOrBuilder
    * generate more data.
    * </pre>
    *
-   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
    *
    * @return The checksummedData.
    */
@@ -63,7 +63,7 @@ public interface ReadObjectResponseOrBuilder
    * generate more data.
    * </pre>
    *
-   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
    */
   com.google.storage.v2.ChecksummedDataOrBuilder getChecksummedDataOrBuilder();
 

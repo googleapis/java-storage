@@ -77,7 +77,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    * generate more data.
    * </pre>
    *
-   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
    *
    * @return Whether the checksummedData field is set.
    */
@@ -95,7 +95,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    * generate more data.
    * </pre>
    *
-   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
    *
    * @return The checksummedData.
    */
@@ -115,7 +115,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
    * generate more data.
    * </pre>
    *
-   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+   * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
    */
   @java.lang.Override
   public com.google.storage.v2.ChecksummedDataOrBuilder getChecksummedDataOrBuilder() {
@@ -744,7 +744,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      *
      * @return Whether the checksummedData field is set.
      */
@@ -761,7 +761,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      *
      * @return The checksummedData.
      */
@@ -784,7 +784,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      */
     public Builder setChecksummedData(com.google.storage.v2.ChecksummedData value) {
       if (checksummedDataBuilder_ == null) {
@@ -809,7 +809,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      */
     public Builder setChecksummedData(
         com.google.storage.v2.ChecksummedData.Builder builderForValue) {
@@ -832,7 +832,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      */
     public Builder mergeChecksummedData(com.google.storage.v2.ChecksummedData value) {
       if (checksummedDataBuilder_ == null) {
@@ -860,7 +860,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      */
     public Builder clearChecksummedData() {
       bitField0_ = (bitField0_ & ~0x00000001);
@@ -882,7 +882,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      */
     public com.google.storage.v2.ChecksummedData.Builder getChecksummedDataBuilder() {
       bitField0_ |= 0x00000001;
@@ -899,7 +899,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      */
     public com.google.storage.v2.ChecksummedDataOrBuilder getChecksummedDataOrBuilder() {
       if (checksummedDataBuilder_ != null) {
@@ -920,7 +920,7 @@ public final class ReadObjectResponse extends com.google.protobuf.GeneratedMessa
      * generate more data.
      * </pre>
      *
-     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1 [ctype = CORD];</code>
+     * <code>.google.storage.v2.ChecksummedData checksummed_data = 1;</code>
      */
     private com.google.protobuf.SingleFieldBuilderV3<
             com.google.storage.v2.ChecksummedData,

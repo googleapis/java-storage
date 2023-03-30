@@ -1613,6 +1613,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Cancels an in-progress resumable upload.
+     * Any attempts to write to the resumable upload after cancelling the upload
+     * will fail.
+     * The behavior for currently in progress write operations is not guaranteed -
+     * they could either complete before the cancellation or fail if the
+     * cancellation completes first.
      * </pre>
      */
     default void cancelResumableWrite(
@@ -2209,6 +2214,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Cancels an in-progress resumable upload.
+     * Any attempts to write to the resumable upload after cancelling the upload
+     * will fail.
+     * The behavior for currently in progress write operations is not guaranteed -
+     * they could either complete before the cancellation or fail if the
+     * cancellation completes first.
      * </pre>
      */
     public void cancelResumableWrite(
@@ -2751,6 +2761,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Cancels an in-progress resumable upload.
+     * Any attempts to write to the resumable upload after cancelling the upload
+     * will fail.
+     * The behavior for currently in progress write operations is not guaranteed -
+     * they could either complete before the cancellation or fail if the
+     * cancellation completes first.
      * </pre>
      */
     public com.google.storage.v2.CancelResumableWriteResponse cancelResumableWrite(
@@ -3200,6 +3215,11 @@ public final class StorageGrpc {
      *
      * <pre>
      * Cancels an in-progress resumable upload.
+     * Any attempts to write to the resumable upload after cancelling the upload
+     * will fail.
+     * The behavior for currently in progress write operations is not guaranteed -
+     * they could either complete before the cancellation or fail if the
+     * cancellation completes first.
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<

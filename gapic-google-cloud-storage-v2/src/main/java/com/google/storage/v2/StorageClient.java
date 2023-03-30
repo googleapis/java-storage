@@ -2200,6 +2200,11 @@ public class StorageClient implements BackgroundResource {
   /**
    * Cancels an in-progress resumable upload.
    *
+   * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
+   *
+   * <p>The behavior for currently in progress write operations is not guaranteed - they could
+   * either complete before the cancellation or fail if the cancellation completes first.
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -2228,6 +2233,11 @@ public class StorageClient implements BackgroundResource {
   /**
    * Cancels an in-progress resumable upload.
    *
+   * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
+   *
+   * <p>The behavior for currently in progress write operations is not guaranteed - they could
+   * either complete before the cancellation or fail if the cancellation completes first.
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -2254,6 +2264,11 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Cancels an in-progress resumable upload.
+   *
+   * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
+   *
+   * <p>The behavior for currently in progress write operations is not guaranteed - they could
+   * either complete before the cancellation or fail if the cancellation completes first.
    *
    * <p>Sample code:
    *
