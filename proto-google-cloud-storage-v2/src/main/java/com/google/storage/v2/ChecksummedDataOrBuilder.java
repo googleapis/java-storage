@@ -30,7 +30,7 @@ public interface ChecksummedDataOrBuilder
    * The data.
    * </pre>
    *
-   * <code>bytes content = 1 [ctype = CORD];</code>
+   * <code>bytes content = 1;</code>
    *
    * @return The content.
    */
