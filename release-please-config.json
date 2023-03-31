@@ -1,0 +1,8 @@
+{
+  "release-type": "java-yoshi",
+  "packages": {
+    ".": {
+      "extra-files": ["README.md"]
+    }
+  }
+}
