@@ -43,18 +43,32 @@ public final class ParallelDownloadConfig {
     this.optionsPerRequest = optionsPerRequest;
   }
 
+  /**
+   * A common prefix that is removed from downloaded objects before they are written to
+   * the filesystem
+   */
   public @NonNull String getStripPrefix() {
     return stripPrefix;
   }
 
+  /**
+   * A common prefix that is applied to downloaded objects before they are written to
+   * the filesystem.
+   */
   public @NonNull String getPrefix() {
     return prefix;
   }
 
+  /**
+   * The bucket objects are being downloaded from
+   */
   public @NonNull String getBucketName() {
     return bucketName;
   }
 
+  /**
+   * A list of common BlobSourceOptions that are used for each download request
+   */
   public @NonNull List<BlobSourceOption> getOptionsPerRequest() {
     return optionsPerRequest;
   }
@@ -103,6 +117,7 @@ public final class ParallelDownloadConfig {
     private Builder() {
       this.stripPrefix = "";
       this.prefix = "";
+      this.bucketName = "";
       this.optionsPerRequest = ImmutableList.of();
     }
 
