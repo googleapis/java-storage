@@ -20,19 +20,17 @@ import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
+import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.common.io.ByteStreams;
+import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
-public class UploadCallable implements Callable<UploadResult> {
+final class UploadCallable implements Callable<UploadResult> {
   private final TransferManagerConfig transferManagerConfig;
+  private final Storage storage;
 
   private final BlobInfo originalBlob;
 
@@ -40,15 +38,21 @@ public class UploadCallable implements Callable<UploadResult> {
 
   private final ParallelUploadConfig parallelUploadConfig;
 
+  private final Storage.BlobWriteOption[] opts;
+
   public UploadCallable(
       TransferManagerConfig transferManagerConfig,
+      Storage storage,
       BlobInfo originalBlob,
       Path sourceFile,
-      ParallelUploadConfig parallelUploadConfig) {
+      ParallelUploadConfig parallelUploadConfig,
+      BlobWriteOption[] opts) {
     this.transferManagerConfig = transferManagerConfig;
+    this.storage = storage;
     this.originalBlob = originalBlob;
     this.sourceFile = sourceFile;
     this.parallelUploadConfig = parallelUploadConfig;
+    this.opts = opts;
   }
 
   public UploadResult call() throws Exception {
@@ -56,41 +60,27 @@ public class UploadCallable implements Callable<UploadResult> {
     return uploadWithoutChunking();
   }
 
-  private UploadResult uploadWithoutChunking() throws IOException {
-    Optional<BlobInfo> newBlob;
-    WriteChannel wc =
-        transferManagerConfig
-            .getStorageOptions()
-            .getService()
-            .writer(
-                originalBlob,
-                parallelUploadConfig
-                    .getWriteOptsPerRequest()
-                    .toArray(new Storage.BlobWriteOption[0]));
+  private UploadResult uploadWithoutChunking() {
     try {
-      InputStream inputStream = Files.newInputStream(sourceFile);
-      uploadHelper(Channels.newChannel(inputStream), wc);
-    } catch (IOException e) {
-      throw new StorageException(e);
-    } finally {
-      wc.close();
-    }
-    newBlob = PackagePrivateMethodWorkarounds.maybeGetBlobInfoFunction().apply(wc);
-    UploadResult result =
-        UploadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
-            .setUploadedBlob(newBlob.get())
-            .build();
-    return result;
-  }
-
-  private void uploadHelper(ReadableByteChannel reader, WriteChannel writer) throws IOException {
-    ByteBuffer buffer = ByteBuffer.allocate(transferManagerConfig.getPerWorkerBufferSize());
-    writer.setChunkSize(transferManagerConfig.getPerWorkerBufferSize());
-
-    while (reader.read(buffer) >= 0) {
-      buffer.flip();
-      writer.write(buffer);
-      buffer.clear();
+      Optional<BlobInfo> newBlob;
+      try (FileChannel r = FileChannel.open(sourceFile, StandardOpenOption.READ);
+          WriteChannel w =
+              storage.writer(
+                  originalBlob,
+                  parallelUploadConfig
+                      .getWriteOptsPerRequest()
+                      .toArray(new Storage.BlobWriteOption[0]))) {
+        w.setChunkSize(transferManagerConfig.getPerWorkerBufferSize());
+        ByteStreams.copy(r, w);
+        newBlob = PackagePrivateMethodWorkarounds.maybeGetBlobInfoFunction().apply(w);
+      }
+      return UploadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
+          .setUploadedBlob(newBlob.get())
+          .build();
+    } catch (Exception e) {
+      return UploadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
+          .setException(e)
+          .build();
     }
   }
 }

@@ -38,35 +38,28 @@ public final class TransferManagerConfig {
     this.storageOptions = storageOptions;
   }
 
-  /**
-   * Maximum amount of workers to be allocated to perform work in Transfer Manager
-   */
+  /** Maximum amount of workers to be allocated to perform work in Transfer Manager */
   public int getMaxWorkers() {
     return maxWorkers;
   }
 
-  /**
-   * Buffer size allowed to each worker
-   */
+  /** Buffer size allowed to each worker */
   public int getPerWorkerBufferSize() {
     return perWorkerBufferSize;
   }
 
   /**
-   * Allows Transfer Manager to perform chunked Uploads and chunked Downloads
-   * Transfer Manager will determine when files meet constraints to be chunked
+   * Allows Transfer Manager to perform chunked Uploads and chunked Downloads Transfer Manager will
+   * determine when files meet constraints to be chunked
    */
   public boolean isAllowChunking() {
     return allowChunking;
   }
 
-  /**
-   * Storage options that Transfer Manager will use to interact with GCS
-   */
+  /** Storage options that Transfer Manager will use to interact with GCS */
   public StorageOptions getStorageOptions() {
     return storageOptions;
   }
-
 
   public TransferManager getService() {
     return new TransferManagerImpl(this);

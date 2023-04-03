@@ -48,37 +48,27 @@ public final class ParallelUploadConfig {
     this.writeOptsPerRequest = writeOptsPerRequest;
   }
 
-  /**
-   * If a corresponding object already exists skip uploading the object
-   */
+  /** If a corresponding object already exists skip uploading the object */
   public boolean isSkipIfExists() {
     return skipIfExists;
   }
 
-  /**
-   * A common prefix that will be applied to all object paths in the destination bucket
-   */
+  /** A common prefix that will be applied to all object paths in the destination bucket */
   public @NonNull String getPrefix() {
     return prefix;
   }
 
-  /**
-   * The bucket objects are being uploaded from
-   */
+  /** The bucket objects are being uploaded from */
   public @NonNull String getBucketName() {
     return bucketName;
   }
 
-  /**
-   * A list of common BlobTargetOptions that are used for each upload request
-   */
+  /** A list of common BlobTargetOptions that are used for each upload request */
   public @NonNull List<BlobTargetOption> getTargetOptsPerRequest() {
     return targetOptsPerRequest;
   }
 
-  /**
-   * A list of common BlobWriteOptions that are used for each upload request
-   */
+  /** A list of common BlobWriteOptions that are used for each upload request */
   public @NonNull List<BlobWriteOption> getWriteOptsPerRequest() {
     return writeOptsPerRequest;
   }

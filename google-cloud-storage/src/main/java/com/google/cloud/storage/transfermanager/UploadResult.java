@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.StorageException;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -31,13 +30,13 @@ public final class UploadResult {
   @NonNull private final BlobInfo input;
   @NonNull private final TransferStatus status;
   @MonotonicNonNull private final BlobInfo uploadedBlob;
-  @MonotonicNonNull private final StorageException exception;
+  @MonotonicNonNull private final Exception exception;
 
   private UploadResult(
       @NonNull BlobInfo input,
       @NonNull TransferStatus status,
       BlobInfo uploadedBlob,
-      StorageException exception) {
+      Exception exception) {
     this.input = input;
     this.status = status;
     this.uploadedBlob = uploadedBlob;
@@ -60,7 +59,7 @@ public final class UploadResult {
     return uploadedBlob;
   }
 
-  public @NonNull StorageException getException() {
+  public @NonNull Exception getException() {
     checkState(
         status == TransferStatus.FAILED_TO_START || status == TransferStatus.FAILED_TO_FINISH,
         "getException() is only valid when an unexpected error has occurred but status was %s",
@@ -107,7 +106,7 @@ public final class UploadResult {
     private @NonNull BlobInfo input;
     private @NonNull TransferStatus status;
     private @MonotonicNonNull BlobInfo uploadedBlob;
-    private @MonotonicNonNull StorageException exception;
+    private @MonotonicNonNull Exception exception;
 
     private Builder(@NonNull BlobInfo input, @NonNull TransferStatus status) {
       this.input = input;
@@ -129,7 +128,7 @@ public final class UploadResult {
       return this;
     }
 
-    public Builder setException(@NonNull StorageException exception) {
+    public Builder setException(@NonNull Exception exception) {
       this.exception = exception;
       return this;
     }
