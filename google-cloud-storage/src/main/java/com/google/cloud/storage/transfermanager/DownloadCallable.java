@@ -22,8 +22,10 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
+import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -75,11 +77,19 @@ final class DownloadCallable implements Callable<DownloadResult> {
   }
 
   private Path createDestPath() {
-    // TODO: Handle case where stripPrefix does not match Blob prefix
-    return Paths.get(
+    File newFile = new File(
         originalBlob
             .getName()
             .replaceFirst(
                 parallelDownloadConfig.getStripPrefix(), parallelDownloadConfig.getPrefix()));
+    // Check to make sure the parent directories exist
+   if (Files.exists(newFile.getParentFile().toPath())) {
+     return newFile.toPath();
+    }
+   else {
+     // Make parent directories if they do not exist
+     newFile.getParentFile().mkdirs();
+     return newFile.toPath();
+    }
   }
 }
