@@ -1084,7 +1084,8 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
-      throw new UnsupportedOperationException("Option matchGlob is not supported for gRPC yet.");
+      return GrpcStorageImpl.throwHttpJsonOnly(
+          com.google.cloud.storage.Storage.BlobListOption.class, "matchGlob(String)");
     }
   }
 
