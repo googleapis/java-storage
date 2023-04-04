@@ -61,6 +61,7 @@ public interface StorageRpc extends ServiceRpc {
     DELIMITER("delimiter"),
     START_OFF_SET("startOffset"),
     END_OFF_SET("endOffset"),
+    MATCH_GLOB("matchGlob"),
     VERSIONS("versions"),
     FIELDS("fields"),
     CUSTOMER_SUPPLIED_KEY("customerSuppliedKey"),

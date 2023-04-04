@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
@@ -65,6 +66,7 @@ import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
@@ -540,6 +542,60 @@ public class ITObjectTest {
     assertThat(first.get().getBlobId()).isEqualTo(idSubDir);
 
     assertThat(actual).contains(PackagePrivateMethodWorkarounds.noAcl(obj2Gen1));
+  }
+
+  @Test
+  // When gRPC support is added for matchGlob, enable this test for gRPC.
+  @Exclude(transports = Transport.GRPC)
+  public void testListBlobsWithMatchGlob() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempBucket =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempBucket.getBucket();
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/bar").build()));
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/baz").build()));
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/foobar").build()));
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foobar").build()));
+
+      Page<Blob> page1 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo*bar"));
+      Page<Blob> page2 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo**bar"));
+      Page<Blob> page3 = storage.list(bucket.getName(), BlobListOption.matchGlob("**/foobar"));
+      Page<Blob> page4 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[rz]"));
+      Page<Blob> page5 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[!a-y]"));
+      Page<Blob> page6 =
+          storage.list(bucket.getName(), BlobListOption.matchGlob("**/{foobar,baz}"));
+      Page<Blob> page7 =
+          storage.list(bucket.getName(), BlobListOption.matchGlob("foo/{foo*,*baz}"));
+      assertAll(
+          () ->
+              assertThat(Iterables.transform(page1.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page2.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/bar", "foo/foobar", "foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page3.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/foobar", "foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page4.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/bar", "foo/baz")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page5.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/baz")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page6.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/baz", "foo/foobar", "foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page7.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/baz", "foo/foobar")
+                  .inOrder());
+    }
   }
 
   @Test
