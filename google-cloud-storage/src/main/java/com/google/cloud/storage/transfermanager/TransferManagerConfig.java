@@ -49,8 +49,8 @@ public final class TransferManagerConfig {
   }
 
   /**
-   * Allows Transfer Manager to perform chunked Uploads and chunked Downloads Transfer Manager will
-   * determine when files meet constraints to be chunked
+   * Whether to allow Transfer Manager to performing chunked Uploads/Downloads if it determines 
+   * chunking will be beneficial
    */
   public boolean isAllowChunking() {
     return allowChunking;
