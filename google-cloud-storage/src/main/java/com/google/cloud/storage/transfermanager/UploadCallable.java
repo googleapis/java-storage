@@ -64,12 +64,7 @@ final class UploadCallable implements Callable<UploadResult> {
     try {
       Optional<BlobInfo> newBlob;
       try (FileChannel r = FileChannel.open(sourceFile, StandardOpenOption.READ);
-          WriteChannel w =
-              storage.writer(
-                  originalBlob,
-                  parallelUploadConfig
-                      .getWriteOptsPerRequest()
-                      .toArray(new Storage.BlobWriteOption[0]))) {
+          WriteChannel w = storage.writer(originalBlob, opts)) {
         w.setChunkSize(transferManagerConfig.getPerWorkerBufferSize());
         ByteStreams.copy(r, w);
         newBlob = PackagePrivateMethodWorkarounds.maybeGetBlobInfoFunction().apply(w);
