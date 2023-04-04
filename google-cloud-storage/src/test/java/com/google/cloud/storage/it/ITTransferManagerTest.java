@@ -50,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -150,10 +149,9 @@ public class ITTransferManagerTest {
 
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
     // Cleanup downloaded blobs and the parent directory
-    for(DownloadResult res : results) {
+    for (DownloadResult res : results) {
       Files.delete(res.getOutputDestination());
       Files.delete(res.getOutputDestination().getParent());
     }
-
   }
 }

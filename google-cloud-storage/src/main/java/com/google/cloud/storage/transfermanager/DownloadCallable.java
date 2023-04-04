@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Callable;
 
@@ -77,19 +76,19 @@ final class DownloadCallable implements Callable<DownloadResult> {
   }
 
   private Path createDestPath() {
-    File newFile = new File(
-        originalBlob
-            .getName()
-            .replaceFirst(
-                parallelDownloadConfig.getStripPrefix(), parallelDownloadConfig.getPrefix()));
+    File newFile =
+        new File(
+            originalBlob
+                .getName()
+                .replaceFirst(
+                    parallelDownloadConfig.getStripPrefix(), parallelDownloadConfig.getPrefix()));
     // Check to make sure the parent directories exist
-   if (Files.exists(newFile.getParentFile().toPath())) {
-     return newFile.toPath();
-    }
-   else {
-     // Make parent directories if they do not exist
-     newFile.getParentFile().mkdirs();
-     return newFile.toPath();
+    if (Files.exists(newFile.getParentFile().toPath())) {
+      return newFile.toPath();
+    } else {
+      // Make parent directories if they do not exist
+      newFile.getParentFile().mkdirs();
+      return newFile.toPath();
     }
   }
 }
