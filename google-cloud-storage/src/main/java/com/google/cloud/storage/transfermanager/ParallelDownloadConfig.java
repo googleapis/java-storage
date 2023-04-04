@@ -44,8 +44,7 @@ public final class ParallelDownloadConfig {
   }
 
   /**
-   * A common prefix that is removed from downloaded object's name before written to the
-   * filesystem
+   * A common prefix that is removed from downloaded object's name before written to the filesystem
    */
   public @NonNull String getStripPrefix() {
     return stripPrefix;
