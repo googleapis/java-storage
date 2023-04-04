@@ -122,7 +122,8 @@ public final class BlobId implements Serializable {
     Matcher m = gsUtilUriPattern.matcher(gsUtilUri);
     if (!m.matches()) {
       throw new IllegalArgumentException(
-          gsUtilUri + " is not a valid gsutil URI (i.e. \"gs://bucket/blob\" or \"gs://bucket/blob#generation\")");
+          gsUtilUri
+              + " is not a valid gsutil URI (i.e. \"gs://bucket/blob\" or \"gs://bucket/blob#generation\")");
     }
 
     String bucket = m.group(1);
