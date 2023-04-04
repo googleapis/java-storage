@@ -124,8 +124,12 @@ public final class BlobId implements Serializable {
       throw new IllegalArgumentException(
           gsUtilUri + " is not a valid gsutil URI (i.e. \"gs://bucket/blob\" or \"gs://bucket/blob#generation\")");
     }
-    String generationGroup = m.group(3);
 
-    return BlobId.of(m.group(1), m.group(2), generationGroup == null ? null : Long.parseLong(generationGroup));
+    String bucket = m.group(1);
+    String name = m.group(2);
+    String generationGroup = m.group(3);
+    Long generation = generationGroup == null ? null : Long.parseLong(generationGroup);
+
+    return BlobId.of(bucket, name, generation);
   }
 }
