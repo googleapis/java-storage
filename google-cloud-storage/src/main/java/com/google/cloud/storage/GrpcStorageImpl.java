@@ -30,7 +30,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
@@ -39,7 +38,6 @@ import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
-import com.google.api.gax.rpc.UnimplementedException;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
@@ -84,18 +82,25 @@ import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
+import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
+import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetHmacKeyRequest;
+import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
+import com.google.storage.v2.ListNotificationConfigsRequest;
+import com.google.storage.v2.ListNotificationConfigsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.NotificationConfig;
+import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
@@ -103,13 +108,13 @@ import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
+import com.google.storage.v2.StorageClient.ListNotificationConfigsPage;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
-import io.grpc.Status.Code;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -1404,23 +1409,92 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Notification createNotification(String bucket, NotificationInfo notificationInfo) {
-    return throwNotYetImplemented(
-        fmtMethodName("createNotification", String.class, NotificationInfo.class));
+    NotificationConfig encode = codecs.notificationInfo().encode(notificationInfo);
+    CreateNotificationConfigRequest req =
+        CreateNotificationConfigRequest.newBuilder()
+            .setParent(bucketNameCodec.encode(bucket))
+            .setNotificationConfig(encode)
+            .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.createNotificationConfigCallable().call(req),
+        syntaxDecoders.notificationConfig);
   }
 
   @Override
   public Notification getNotification(String bucket, String notificationId) {
-    return throwNotYetImplemented(fmtMethodName("getNotification", String.class, String.class));
+    String name;
+    if (NotificationConfigName.isParsableFrom(notificationId)) {
+      name = notificationId;
+    } else {
+      NotificationConfigName configName = NotificationConfigName.of("_", bucket, notificationId);
+      name = configName.toString();
+    }
+    GetNotificationConfigRequest req =
+        GetNotificationConfigRequest.newBuilder().setName(name).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          try {
+            return storageClient.getNotificationConfigCallable().call(req);
+          } catch (NotFoundException e) {
+            return null;
+          }
+        },
+        syntaxDecoders.notificationConfig);
   }
 
   @Override
   public List<Notification> listNotifications(String bucket) {
-    return throwNotYetImplemented(fmtMethodName("listNotifications", String.class));
+    ListNotificationConfigsRequest req =
+        ListNotificationConfigsRequest.newBuilder()
+            .setParent(bucketNameCodec.encode(bucket))
+            .build();
+    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getFor(req);
+    return Retrying.run(
+        getOptions(),
+        algorithm,
+        () -> storageClient.listNotificationConfigsPagedCallable().call(req),
+        resp -> {
+          TransformingPageDecorator<
+                  ListNotificationConfigsRequest,
+                  ListNotificationConfigsResponse,
+                  NotificationConfig,
+                  ListNotificationConfigsPage,
+                  Notification>
+              page =
+                  new TransformingPageDecorator<>(
+                      resp.getPage(), syntaxDecoders.notificationConfig, getOptions(), algorithm);
+          return ImmutableList.copyOf(page.iterateAll());
+        });
   }
 
   @Override
   public boolean deleteNotification(String bucket, String notificationId) {
-    return throwNotYetImplemented(fmtMethodName("deleteNotification", String.class, String.class));
+    String name;
+    if (NotificationConfigName.isParsableFrom(notificationId)) {
+      name = notificationId;
+    } else {
+      NotificationConfigName configName = NotificationConfigName.of("_", bucket, notificationId);
+      name = configName.toString();
+    }
+    DeleteNotificationConfigRequest req =
+        DeleteNotificationConfigRequest.newBuilder().setName(name).build();
+    return Boolean.TRUE.equals(
+        Retrying.run(
+            getOptions(),
+            retryAlgorithmManager.getFor(req),
+            () -> {
+              try {
+                storageClient.deleteNotificationConfigCallable().call(req);
+                return true;
+              } catch (NotFoundException e) {
+                return false;
+              }
+            },
+            Decoder.identity()));
   }
 
   @Override
@@ -1448,6 +1522,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         o -> codecs.blobInfo().decode(o).asBlob(GrpcStorageImpl.this);
     final Decoder<com.google.storage.v2.Bucket, Bucket> bucket =
         b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
+    final Decoder<NotificationConfig, Notification> notificationConfig =
+        n -> codecs.notificationInfo().decode(n).asNotification(GrpcStorageImpl.this);
   }
 
   /**
@@ -1666,14 +1742,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             "%s#%s is only supported for HTTP_JSON transport. Please use StorageOptions.http() to construct a compatible instance.",
             clazz.getName(), methodName);
     throw new UnsupportedOperationException(message);
-  }
-
-  static <T> T throwNotYetImplemented(String methodName) {
-    String message =
-        String.format(
-            "%s#%s is not yet implemented for GRPC transport. Please use StorageOptions.http() to construct a compatible instance in the interim.",
-            Storage.class.getName(), methodName);
-    throw new UnimplementedException(message, null, GrpcStatusCode.of(Code.UNIMPLEMENTED), false);
   }
 
   private static String fmtMethodName(String name, Class<?>... args) {
