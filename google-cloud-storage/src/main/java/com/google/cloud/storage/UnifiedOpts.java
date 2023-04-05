@@ -413,6 +413,11 @@ final class UnifiedOpts {
     return new KmsKeyName(kmsKeyName);
   }
 
+  static MatchGlob matchGlob(@NonNull String glob) {
+    requireNonNull(glob, "glob must be non null");
+    return new MatchGlob(glob);
+  }
+
   static Md5Match md5Match(@NonNull String md5) {
     requireNonNull(md5, "md5 must be non null");
     return new Md5Match(md5);
@@ -1067,6 +1072,20 @@ final class UnifiedOpts {
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return b -> b.setDestinationKmsKey(val);
+    }
+  }
+
+  static final class MatchGlob extends RpcOptVal<String> implements ObjectListOpt {
+    private static final long serialVersionUID = 8819855597395473178L;
+
+    private MatchGlob(String val) {
+      super(StorageRpc.Option.MATCH_GLOB, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return GrpcStorageImpl.throwHttpJsonOnly(
+          com.google.cloud.storage.Storage.BlobListOption.class, "matchGlob(String)");
     }
   }
 
