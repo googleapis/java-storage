@@ -19,27 +19,34 @@ package com.google.cloud.storage.transfermanager;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
+import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.nio.file.Paths;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Callable;
 
-public class DownloadCallable implements Callable<DownloadResult> {
-  private final TransferManagerConfig transferManagerConfig;
+final class DownloadCallable implements Callable<DownloadResult> {
   private final BlobInfo originalBlob;
 
   private final ParallelDownloadConfig parallelDownloadConfig;
+  private final Storage storage;
 
-  public DownloadCallable(
-      TransferManagerConfig transferManagerConfig,
+  private final Storage.BlobSourceOption[] opts;
+
+  DownloadCallable(
+      Storage storage,
       BlobInfo originalBlob,
-      ParallelDownloadConfig parallelDownloadConfig) {
-    this.transferManagerConfig = transferManagerConfig;
+      ParallelDownloadConfig parallelDownloadConfig,
+      BlobSourceOption[] opts) {
     this.originalBlob = originalBlob;
     this.parallelDownloadConfig = parallelDownloadConfig;
+    this.storage = storage;
+    this.opts = opts;
   }
 
   @Override
@@ -49,31 +56,39 @@ public class DownloadCallable implements Callable<DownloadResult> {
   }
 
   private DownloadResult downloadWithoutChunking() {
-    try (ReadChannel rc =
-        transferManagerConfig
-            .getStorageOptions()
-            .getService()
-            .reader(
-                originalBlob.getBlobId(),
-                parallelDownloadConfig
-                    .getOptionsPerRequest()
-                    .toArray(new Storage.BlobSourceOption[0]))) {
+    Path path = createDestPath();
+    try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
       FileChannel destFile =
-          FileChannel.open(Paths.get(createDestPath()), StandardOpenOption.WRITE);
+          FileChannel.open(
+              path,
+              StandardOpenOption.WRITE,
+              StandardOpenOption.CREATE,
+              StandardOpenOption.TRUNCATE_EXISTING);
       ByteStreams.copy(rc, destFile);
     } catch (IOException e) {
       throw new StorageException(e);
     }
     DownloadResult result =
         DownloadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
-            .setOutputDestination(Paths.get(createDestPath()))
+            .setOutputDestination(path)
             .build();
     return result;
   }
 
-  private String createDestPath() {
-    return originalBlob
-        .getName()
-        .replaceFirst(parallelDownloadConfig.getStripPrefix(), parallelDownloadConfig.getPrefix());
+  private Path createDestPath() {
+    File newFile =
+        new File(
+            originalBlob
+                .getName()
+                .replaceFirst(
+                    parallelDownloadConfig.getStripPrefix(), parallelDownloadConfig.getPrefix()));
+    // Check to make sure the parent directories exist
+    if (Files.exists(newFile.getParentFile().toPath())) {
+      return newFile.toPath();
+    } else {
+      // Make parent directories if they do not exist
+      newFile.getParentFile().mkdirs();
+      return newFile.toPath();
+    }
   }
 }

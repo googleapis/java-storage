@@ -18,9 +18,11 @@ package com.google.cloud.storage.transfermanager;
 
 import java.nio.file.Path;
 
-public class TransferManagerUtils {
+final class TransferManagerUtils {
 
-  public static String createBlobName(ParallelUploadConfig config, Path file) {
+  private TransferManagerUtils() {}
+
+  static String createBlobName(ParallelUploadConfig config, Path file) {
     if (config.getPrefix().isEmpty()) {
       return file.toString();
     } else {

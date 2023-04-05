@@ -18,6 +18,7 @@ package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.api.core.ApiFutures;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -33,19 +34,22 @@ import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.transfermanager.DownloadJob;
+import com.google.cloud.storage.transfermanager.DownloadResult;
 import com.google.cloud.storage.transfermanager.ParallelDownloadConfig;
 import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
-import com.google.cloud.storage.transfermanager.TransferManagerImpl;
 import com.google.cloud.storage.transfermanager.UploadJob;
+import com.google.cloud.storage.transfermanager.UploadResult;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -92,9 +96,9 @@ public class ITTransferManagerTest {
   }
 
   @Test
-  public void uploadFiles() throws IOException {
+  public void uploadFiles() throws IOException, ExecutionException, InterruptedException {
     TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
-    TransferManager transferManager = new TransferManagerImpl(config);
+    TransferManager transferManager = config.getService();
     try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile2 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
@@ -104,14 +108,15 @@ public class ITTransferManagerTest {
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      assertThat(job.getUploadResponses()).hasSize(3);
+      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      assertThat(uploadResults).hasSize(3);
     }
   }
 
   @Test
-  public void uploadFilesWithOpts() throws IOException {
+  public void uploadFilesWithOpts() throws IOException, ExecutionException, InterruptedException {
     TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
-    TransferManager transferManager = new TransferManagerImpl(config);
+    TransferManager transferManager = config.getService();
     try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile2 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
@@ -124,18 +129,29 @@ public class ITTransferManagerTest {
               .setWriteOptsPerRequest(Collections.singletonList(BlobWriteOption.doesNotExist()))
               .build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      assertThat(job.getUploadResponses()).hasSize(3);
+      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      assertThat(uploadResults).hasSize(3);
     }
   }
 
   @Test
-  public void downloadBlobs() throws IOException {
+  public void downloadBlobs() throws IOException, ExecutionException, InterruptedException {
     TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
-    TransferManager transferManager = new TransferManagerImpl(config);
+    TransferManager transferManager = config.getService();
     String bucketName = bucket.getName();
     ParallelDownloadConfig parallelDownloadConfig =
         ParallelDownloadConfig.newBuilder().setBucketName(bucketName).build();
     DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
-    assertThat(job.getDownloadResults()).hasSize(3);
+    List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+    assertThat(downloadResults).hasSize(3);
+    cleanUpFiles(downloadResults);
+  }
+
+  private void cleanUpFiles(List<DownloadResult> results) throws IOException {
+    // Cleanup downloaded blobs and the parent directory
+    for (DownloadResult res : results) {
+      Files.delete(res.getOutputDestination());
+      Files.delete(res.getOutputDestination().getParent());
+    }
   }
 }

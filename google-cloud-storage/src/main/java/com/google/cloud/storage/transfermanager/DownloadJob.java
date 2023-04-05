@@ -18,28 +18,28 @@ package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.ApiFuture;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Future;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class DownloadJob {
 
-  @NonNull private final List<Future<DownloadResult>> downloadResults;
+  @NonNull private final List<ApiFuture<DownloadResult>> downloadResults;
 
   @NonNull private final ParallelDownloadConfig parallelDownloadConfig;
 
   private DownloadJob(
-      @NonNull List<Future<DownloadResult>> successResponses,
+      @NonNull List<ApiFuture<DownloadResult>> successResponses,
       @NonNull ParallelDownloadConfig parallelDownloadConfig) {
     this.downloadResults = successResponses;
     this.parallelDownloadConfig = parallelDownloadConfig;
   }
 
-  public List<Future<DownloadResult>> getDownloadResults() {
+  public List<ApiFuture<DownloadResult>> getDownloadResults() {
     return downloadResults;
   }
 
@@ -79,14 +79,14 @@ public final class DownloadJob {
 
   public static final class Builder {
 
-    private @NonNull List<Future<DownloadResult>> downloadResults;
+    private @NonNull List<ApiFuture<DownloadResult>> downloadResults;
     private @MonotonicNonNull ParallelDownloadConfig parallelDownloadConfig;
 
     private Builder() {
       this.downloadResults = ImmutableList.of();
     }
 
-    public Builder setDownloadResults(@NonNull List<Future<DownloadResult>> downloadResults) {
+    public Builder setDownloadResults(@NonNull List<ApiFuture<DownloadResult>> downloadResults) {
       this.downloadResults = ImmutableList.copyOf(downloadResults);
       return this;
     }

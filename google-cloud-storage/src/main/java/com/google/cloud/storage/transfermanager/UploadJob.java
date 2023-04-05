@@ -18,28 +18,28 @@ package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.ApiFuture;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Future;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class UploadJob {
 
-  @NonNull private final List<Future<UploadResult>> uploadResponses;
+  @NonNull private final List<ApiFuture<UploadResult>> uploadResponses;
 
   @NonNull private final ParallelUploadConfig parallelUploadConfig;
 
   private UploadJob(
-      @NonNull List<Future<UploadResult>> successResponses,
+      @NonNull List<ApiFuture<UploadResult>> successResponses,
       @NonNull ParallelUploadConfig parallelUploadConfig) {
     this.uploadResponses = successResponses;
     this.parallelUploadConfig = parallelUploadConfig;
   }
 
-  public List<Future<UploadResult>> getUploadResponses() {
+  public List<ApiFuture<UploadResult>> getUploadResponses() {
     return uploadResponses;
   }
 
@@ -79,7 +79,7 @@ public final class UploadJob {
 
   public static final class Builder {
 
-    private @NonNull List<Future<UploadResult>> uploadResponses;
+    private @NonNull List<ApiFuture<UploadResult>> uploadResponses;
 
     private @MonotonicNonNull ParallelUploadConfig parallelUploadConfig;
 
@@ -87,7 +87,7 @@ public final class UploadJob {
       this.uploadResponses = ImmutableList.of();
     }
 
-    public Builder setUploadResponses(@NonNull List<Future<UploadResult>> uploadResponses) {
+    public Builder setUploadResponses(@NonNull List<ApiFuture<UploadResult>> uploadResponses) {
       this.uploadResponses = ImmutableList.copyOf(uploadResponses);
       return this;
     }
