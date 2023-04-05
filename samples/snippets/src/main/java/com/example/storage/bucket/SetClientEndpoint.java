@@ -17,11 +17,26 @@
 package com.example.storage.bucket;
 
 // [START storage_set_client_endpoint]
-
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class SetClientEndpoint {
+
+  public static ServiceAccountCredentials setOAuthEndpoint(
+      String oauthEndpoint, String serviceAccountPath) throws IOException, URISyntaxException {
+    // The oauth endpoint you wish to target
+    // String oauthEndpoint = "https://oauth2.googleapis.com/token";
+
+    ServiceAccountCredentials credentials =
+        ServiceAccountCredentials.fromStream(new FileInputStream(serviceAccountPath));
+    credentials = credentials.toBuilder().setTokenServerUri(new URL(oauthEndpoint).toURI()).build();
+    return credentials;
+  }
 
   public static void setClientEndpoint(String projectId, String endpoint) {
     // The ID of your GCP project
@@ -30,8 +45,16 @@ public class SetClientEndpoint {
     // The endpoint you wish to target
     // String endpoint = "https://storage.googleapis.com"
 
+    // You might want to change the oauth2 endpoint as well
+    // ServiceAccountCredentials credentials = setOAuthEndpoint(oauthEndpoint, serviceAccountPath);
+
     Storage storage =
-        StorageOptions.newBuilder().setProjectId(projectId).setHost(endpoint).build().getService();
+        StorageOptions.newBuilder()
+            .setProjectId(projectId)
+            .setHost(endpoint)
+            // .setCredentials(credentials)
+            .build()
+            .getService();
 
     System.out.println(
         "Storage Client initialized with endpoint " + storage.getOptions().getHost());
