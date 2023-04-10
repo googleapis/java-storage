@@ -34,16 +34,18 @@ public final class LazyReadChannelTest {
 
   @Test
   public void repeatedCallsOfGetSessionMustReturnTheSameInstance() {
-    LazyReadChannel<String> lrc = new LazyReadChannel<>(this::newTestSession);
+    LazyReadChannel<BufferedReadableByteChannel, String> lrc =
+        new LazyReadChannel<>(this::newTestSession);
 
-    BufferedReadableByteChannelSession<String> session1 = lrc.getSession();
-    BufferedReadableByteChannelSession<String> session2 = lrc.getSession();
+    ReadableByteChannelSession<BufferedReadableByteChannel, String> session1 = lrc.getSession();
+    ReadableByteChannelSession<BufferedReadableByteChannel, String> session2 = lrc.getSession();
     assertThat(session1).isSameInstanceAs(session2);
   }
 
   @Test
   public void repeatedCallsOfGetChannelMustReturnTheSameInstance() {
-    LazyReadChannel<String> lrc = new LazyReadChannel<>(this::newTestSession);
+    LazyReadChannel<BufferedReadableByteChannel, String> lrc =
+        new LazyReadChannel<>(this::newTestSession);
 
     BufferedReadableByteChannel channel1 = lrc.getChannel();
     BufferedReadableByteChannel channel2 = lrc.getChannel();
@@ -52,7 +54,8 @@ public final class LazyReadChannelTest {
 
   @Test
   public void isNotOpenUntilGetChannelIsCalled() {
-    LazyReadChannel<String> lrc = new LazyReadChannel<>(this::newTestSession);
+    LazyReadChannel<BufferedReadableByteChannel, String> lrc =
+        new LazyReadChannel<>(this::newTestSession);
 
     assertThat(lrc.isOpen()).isFalse();
     BufferedReadableByteChannel channel = lrc.getChannel();
@@ -63,7 +66,8 @@ public final class LazyReadChannelTest {
 
   @Test
   public void closingUnderlyingChannelClosesTheLazyReadChannel() throws IOException {
-    LazyReadChannel<String> lrc = new LazyReadChannel<>(this::newTestSession);
+    LazyReadChannel<BufferedReadableByteChannel, String> lrc =
+        new LazyReadChannel<>(this::newTestSession);
 
     BufferedReadableByteChannel channel = lrc.getChannel();
     assertThat(channel.isOpen()).isTrue();
