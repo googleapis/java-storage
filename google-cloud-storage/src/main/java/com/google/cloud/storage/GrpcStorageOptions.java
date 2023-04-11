@@ -211,6 +211,7 @@ public final class GrpcStorageOptions extends StorageOptions
     InstantiatingGrpcChannelProvider.Builder channelProviderBuilder =
         InstantiatingGrpcChannelProvider.newBuilder()
             .setEndpoint(endpoint)
+            .setAllowNonDefaultServiceAccount(true)
             .setAttemptDirectPath(attemptDirectPath);
 
     if (scheme.equals("http")) {
