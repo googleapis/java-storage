@@ -52,9 +52,7 @@ public final class ParallelDownloadConfig {
     return stripPrefix;
   }
 
-  /**
-   * The base directory in which all objects will be placed when downloaded.
-   */
+  /** The base directory in which all objects will be placed when downloaded. */
   public @NonNull Path getDownloadDirectory() {
     return downloadDirectory;
   }
