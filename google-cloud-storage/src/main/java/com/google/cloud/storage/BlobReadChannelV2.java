@@ -21,6 +21,7 @@ import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
 import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRequest;
+import com.google.cloud.storage.HttpDownloadSessionBuilder.ReadableByteChannelSessionBuilder;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
@@ -56,16 +57,25 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
         apiaryReadRequest, blobReadChannelContext.getStorageOptions(), getChunkSize());
   }
 
-  protected LazyReadChannel<StorageObject> newLazyReadChannel() {
+  protected LazyReadChannel<?, StorageObject> newLazyReadChannel() {
     return new LazyReadChannel<>(
-        () ->
-            ResumableMedia.http()
-                .read()
-                .byteChannel(blobReadChannelContext)
-                .setAutoGzipDecompression(autoGzipDecompression)
-                .buffered(getBufferHandle())
-                .setApiaryReadRequest(getApiaryReadRequest())
-                .build());
+        () -> {
+          ReadableByteChannelSessionBuilder b =
+              ResumableMedia.http()
+                  .read()
+                  .byteChannel(blobReadChannelContext)
+                  .setAutoGzipDecompression(autoGzipDecompression);
+          BufferHandle bufferHandle = getBufferHandle();
+          // because we're erasing the specific type of channel, we need to declare it here.
+          // If we don't, the compiler complains we're not returning a compliant type.
+          ReadableByteChannelSession<?, StorageObject> session;
+          if (bufferHandle.capacity() > 0) {
+            session = b.buffered(bufferHandle).setApiaryReadRequest(getApiaryReadRequest()).build();
+          } else {
+            session = b.unbuffered().setApiaryReadRequest(getApiaryReadRequest()).build();
+          }
+          return session;
+        });
   }
 
   private ApiaryReadRequest getApiaryReadRequest() {
