@@ -123,7 +123,7 @@ public final class ParallelDownloadConfig {
       return this;
     }
 
-    public Builder setdownloadDirectory(Path downloadDirectory) {
+    public Builder setDownloadDirectory(Path downloadDirectory) {
       this.downloadDirectory = downloadDirectory;
       return this;
     }
