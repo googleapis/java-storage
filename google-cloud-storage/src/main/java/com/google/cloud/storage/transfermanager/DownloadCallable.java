@@ -22,7 +22,6 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
-import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -76,19 +75,22 @@ final class DownloadCallable implements Callable<DownloadResult> {
   }
 
   private Path createDestPath() {
-    File newFile =
-        new File(
-            originalBlob
-                .getName()
-                .replaceFirst(
-                    parallelDownloadConfig.getStripPrefix(), parallelDownloadConfig.getPrefix()));
+    Path newPath =
+        parallelDownloadConfig
+            .getDownloadDirectory()
+            .resolve(
+                originalBlob.getName().replaceFirst(parallelDownloadConfig.getStripPrefix(), ""));
     // Check to make sure the parent directories exist
-    if (Files.exists(newFile.getParentFile().toPath())) {
-      return newFile.toPath();
+    if (Files.exists(newPath.getParent())) {
+      return newPath;
     } else {
       // Make parent directories if they do not exist
-      newFile.getParentFile().mkdirs();
-      return newFile.toPath();
+      try {
+        Files.createDirectories(newPath.getParent());
+        return newPath;
+      } catch (IOException e) {
+        throw new StorageException(e);
+      }
     }
   }
 }

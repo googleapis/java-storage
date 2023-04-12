@@ -21,6 +21,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -28,17 +30,17 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public final class ParallelDownloadConfig {
 
   @NonNull private final String stripPrefix;
-  @NonNull private final String prefix;
+  @NonNull private final Path downloadDirectory;
   @NonNull private final String bucketName;
   @NonNull private final List<BlobSourceOption> optionsPerRequest;
 
   private ParallelDownloadConfig(
       @NonNull String stripPrefix,
-      @NonNull String prefix,
+      @NonNull Path downloadDirectory,
       @NonNull String bucketName,
       @NonNull List<BlobSourceOption> optionsPerRequest) {
     this.stripPrefix = stripPrefix;
-    this.prefix = prefix;
+    this.downloadDirectory = downloadDirectory;
     this.bucketName = bucketName;
     this.optionsPerRequest = optionsPerRequest;
   }
@@ -50,12 +52,9 @@ public final class ParallelDownloadConfig {
     return stripPrefix;
   }
 
-  /**
-   * A common prefix that is applied to downloaded objects before they are written to the
-   * filesystem.
-   */
-  public @NonNull String getPrefix() {
-    return prefix;
+  /** The base directory in which all objects will be placed when downloaded. */
+  public @NonNull Path getDownloadDirectory() {
+    return downloadDirectory;
   }
 
   /** The bucket objects are being downloaded from */
@@ -78,21 +77,21 @@ public final class ParallelDownloadConfig {
     }
     ParallelDownloadConfig that = (ParallelDownloadConfig) o;
     return stripPrefix.equals(that.stripPrefix)
-        && prefix.equals(that.prefix)
+        && downloadDirectory.equals(that.downloadDirectory)
         && bucketName.equals(that.bucketName)
         && optionsPerRequest.equals(that.optionsPerRequest);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(stripPrefix, prefix, bucketName, optionsPerRequest);
+    return Objects.hash(stripPrefix, downloadDirectory, bucketName, optionsPerRequest);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
         .add("stripPrefix", stripPrefix)
-        .add("prefix", prefix)
+        .add("downloadDirectory", downloadDirectory)
         .add("bucketName", bucketName)
         .add("optionsPerRequest", optionsPerRequest)
         .toString();
@@ -105,13 +104,13 @@ public final class ParallelDownloadConfig {
   public static final class Builder {
 
     @NonNull private String stripPrefix;
-    @NonNull private String prefix;
+    @NonNull private Path downloadDirectory;
     @NonNull private String bucketName;
     @NonNull private List<BlobSourceOption> optionsPerRequest;
 
     private Builder() {
       this.stripPrefix = "";
-      this.prefix = "";
+      this.downloadDirectory = Paths.get("");
       this.bucketName = "";
       this.optionsPerRequest = ImmutableList.of();
     }
@@ -121,8 +120,8 @@ public final class ParallelDownloadConfig {
       return this;
     }
 
-    public Builder setPrefix(String prefix) {
-      this.prefix = prefix;
+    public Builder setDownloadDirectory(Path downloadDirectory) {
+      this.downloadDirectory = downloadDirectory;
       return this;
     }
 
@@ -139,9 +138,10 @@ public final class ParallelDownloadConfig {
     public ParallelDownloadConfig build() {
       checkNotNull(bucketName);
       checkNotNull(stripPrefix);
-      checkNotNull(prefix);
+      checkNotNull(downloadDirectory);
       checkNotNull(optionsPerRequest);
-      return new ParallelDownloadConfig(stripPrefix, prefix, bucketName, optionsPerRequest);
+      return new ParallelDownloadConfig(
+          stripPrefix, downloadDirectory, bucketName, optionsPerRequest);
     }
   }
 }
