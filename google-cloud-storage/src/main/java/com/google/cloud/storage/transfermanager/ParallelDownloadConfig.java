@@ -53,8 +53,7 @@ public final class ParallelDownloadConfig {
   }
 
   /**
-   * A common prefix corresponding to the download directory that is applied to downloaded objects
-   * before they are written to the filesystem.
+   * The base directory in which all objects will be placed when downloaded.
    */
   public @NonNull Path getDownloadDirectory() {
     return downloadDirectory;
