@@ -38,8 +38,7 @@ final class TransferManagerUtils {
     Path newPath =
         config
             .getDownloadDirectory()
-            .resolve(
-                originalBlob.getName().replaceFirst(config.getStripPrefix(), ""));
+            .resolve(originalBlob.getName().replaceFirst(config.getStripPrefix(), ""));
     // Check to make sure the parent directories exist
     if (Files.exists(newPath.getParent())) {
       return newPath;

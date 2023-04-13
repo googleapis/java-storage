@@ -34,6 +34,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class TransferManagerImpl implements TransferManager {
 
+  private final Long DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD = Long.valueOf(32 * 1024 * 1024);
+
   private final TransferManagerConfig transferManagerConfig;
   private final ListeningExecutorService executor;
   private final Storage storage;
@@ -71,9 +73,17 @@ final class TransferManagerImpl implements TransferManager {
     Storage.BlobSourceOption[] opts =
         config.getOptionsPerRequest().toArray(new Storage.BlobSourceOption[0]);
     List<ApiFuture<DownloadResult>> downloadTasks = new ArrayList<>();
-    for (BlobInfo blob : blobs) {
-      DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
-      downloadTasks.add(convert(executor.submit(callable)));
+    if (!transferManagerConfig.isAllowChunking()) {
+      for (BlobInfo blob : blobs) {
+        DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
+        downloadTasks.add(convert(executor.submit(callable)));
+      }
+    } else {
+      for (BlobInfo blob : blobs) {
+        if(blob.getSize() > DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD) {
+          // Perform chunked download
+        }
+      }
     }
     return DownloadJob.newBuilder()
         .setDownloadResults(downloadTasks)
