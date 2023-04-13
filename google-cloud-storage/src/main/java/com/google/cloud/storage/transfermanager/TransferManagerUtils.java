@@ -16,6 +16,10 @@
 
 package com.google.cloud.storage.transfermanager;
 
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.StorageException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 final class TransferManagerUtils {
@@ -27,6 +31,26 @@ final class TransferManagerUtils {
       return file.toString();
     } else {
       return config.getPrefix().concat(file.toString());
+    }
+  }
+
+  static Path createDestPath(ParallelDownloadConfig config, BlobInfo originalBlob) {
+    Path newPath =
+        config
+            .getDownloadDirectory()
+            .resolve(
+                originalBlob.getName().replaceFirst(config.getStripPrefix(), ""));
+    // Check to make sure the parent directories exist
+    if (Files.exists(newPath.getParent())) {
+      return newPath;
+    } else {
+      // Make parent directories if they do not exist
+      try {
+        Files.createDirectories(newPath.getParent());
+        return newPath;
+      } catch (IOException e) {
+        throw new StorageException(e);
+      }
     }
   }
 }

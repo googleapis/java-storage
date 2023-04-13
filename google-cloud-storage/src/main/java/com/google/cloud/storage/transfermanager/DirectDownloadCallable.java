@@ -50,11 +50,7 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
 
   @Override
   public DownloadResult call() {
-    return downloadWithoutChunking();
-  }
-
-  private DownloadResult downloadWithoutChunking() {
-    Path path = createDestPath();
+    Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
     try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
       FileChannel destFile =
           FileChannel.open(
@@ -73,24 +69,4 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
     return result;
   }
 
-  // Move to Transfer manager utils
-  private Path createDestPath() {
-    Path newPath =
-        parallelDownloadConfig
-            .getDownloadDirectory()
-            .resolve(
-                originalBlob.getName().replaceFirst(parallelDownloadConfig.getStripPrefix(), ""));
-    // Check to make sure the parent directories exist
-    if (Files.exists(newPath.getParent())) {
-      return newPath;
-    } else {
-      // Make parent directories if they do not exist
-      try {
-        Files.createDirectories(newPath.getParent());
-        return newPath;
-      } catch (IOException e) {
-        throw new StorageException(e);
-      }
-    }
-  }
 }
