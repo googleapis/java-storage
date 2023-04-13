@@ -1,6 +1,7 @@
 bumpMinorPreMajor: true
 handleGHRelease: true
 releaseType: java-yoshi
+extraFiles: ["README.md"]
 branches:
   - bumpMinorPreMajor: true
     handleGHRelease: true
