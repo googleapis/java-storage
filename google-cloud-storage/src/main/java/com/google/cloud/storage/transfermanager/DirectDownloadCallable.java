@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Callable;
 
-final class DownloadCallable implements Callable<DownloadResult> {
+final class DirectDownloadCallable implements Callable<DownloadResult> {
   private final BlobInfo originalBlob;
 
   private final ParallelDownloadConfig parallelDownloadConfig;
@@ -37,7 +37,7 @@ final class DownloadCallable implements Callable<DownloadResult> {
 
   private final Storage.BlobSourceOption[] opts;
 
-  DownloadCallable(
+  DirectDownloadCallable(
       Storage storage,
       BlobInfo originalBlob,
       ParallelDownloadConfig parallelDownloadConfig,
@@ -49,8 +49,7 @@ final class DownloadCallable implements Callable<DownloadResult> {
   }
 
   @Override
-  public DownloadResult call() throws Exception {
-    // TODO: Check for chunking
+  public DownloadResult call() {
     return downloadWithoutChunking();
   }
 
@@ -74,6 +73,7 @@ final class DownloadCallable implements Callable<DownloadResult> {
     return result;
   }
 
+  // Move to Transfer manager utils
   private Path createDestPath() {
     Path newPath =
         parallelDownloadConfig

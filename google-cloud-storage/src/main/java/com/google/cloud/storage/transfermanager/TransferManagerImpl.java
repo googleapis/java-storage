@@ -72,7 +72,7 @@ final class TransferManagerImpl implements TransferManager {
         config.getOptionsPerRequest().toArray(new Storage.BlobSourceOption[0]);
     List<ApiFuture<DownloadResult>> downloadTasks = new ArrayList<>();
     for (BlobInfo blob : blobs) {
-      DownloadCallable callable = new DownloadCallable(storage, blob, config, opts);
+      DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
       downloadTasks.add(convert(executor.submit(callable)));
     }
     return DownloadJob.newBuilder()
