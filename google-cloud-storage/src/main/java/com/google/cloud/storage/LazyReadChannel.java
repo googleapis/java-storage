@@ -16,26 +16,26 @@
 
 package com.google.cloud.storage;
 
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
+import java.nio.channels.ReadableByteChannel;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class LazyReadChannel<T> {
+final class LazyReadChannel<RBC extends ReadableByteChannel, T> {
 
-  private final Supplier<BufferedReadableByteChannelSession<T>> sessionSupplier;
+  private final Supplier<ReadableByteChannelSession<RBC, T>> sessionSupplier;
 
-  @MonotonicNonNull private volatile BufferedReadableByteChannelSession<T> session;
-  @MonotonicNonNull private volatile BufferedReadableByteChannel channel;
+  @MonotonicNonNull private volatile ReadableByteChannelSession<RBC, T> session;
+  @MonotonicNonNull private volatile RBC channel;
 
   private boolean open = false;
 
-  LazyReadChannel(Supplier<BufferedReadableByteChannelSession<T>> sessionSupplier) {
+  LazyReadChannel(Supplier<ReadableByteChannelSession<RBC, T>> sessionSupplier) {
     this.sessionSupplier = sessionSupplier;
   }
 
   @NonNull
-  BufferedReadableByteChannel getChannel() {
+  RBC getChannel() {
     if (channel != null) {
       return channel;
     } else {
@@ -50,7 +50,7 @@ final class LazyReadChannel<T> {
   }
 
   @NonNull
-  BufferedReadableByteChannelSession<T> getSession() {
+  ReadableByteChannelSession<RBC, T> getSession() {
     if (session != null) {
       return session;
     } else {

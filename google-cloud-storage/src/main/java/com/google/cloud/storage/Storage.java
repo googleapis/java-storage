@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.api.gax.paging.Page;
 import com.google.auth.ServiceAccountSigner;
@@ -1298,6 +1299,18 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobListOption endOffset(@NonNull String endOffset) {
       return new BlobListOption(UnifiedOpts.endOffset(endOffset));
+    }
+
+    /**
+     * Returns an option to set a glob pattern to filter results to blobs that match the pattern.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/objects/list">List
+     *     Objects</a>
+     */
+    @BetaApi
+    @TransportCompatibility({Transport.HTTP})
+    public static BlobListOption matchGlob(@NonNull String glob) {
+      return new BlobListOption(UnifiedOpts.matchGlob(glob));
     }
 
     /**
@@ -4053,7 +4066,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the created notification
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Notification createNotification(String bucket, NotificationInfo notificationInfo);
 
   /**
@@ -4072,7 +4085,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the {@code Notification} object with the given id or {@code null} if not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Notification getNotification(String bucket, String notificationId);
 
   /**
@@ -4089,7 +4102,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a list of {@link Notification} objects added to the bucket.
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Notification> listNotifications(String bucket);
 
   /**
@@ -4113,7 +4126,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the notification has been deleted, {@code false} if not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteNotification(String bucket, String notificationId);
 
   /**

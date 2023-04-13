@@ -42,6 +42,7 @@ import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -108,6 +109,35 @@ public final class ITStorageReadChannelTest {
   }
 
   @Test
+  // @CrossRun.Exclude(transports = Transport.GRPC)
+  public void storageReadChannel_shouldAllowDisablingBufferingBySettingChunkSize_lteq0()
+      throws IOException {
+    int _512KiB = 512 * 1024;
+    int _1MiB = 1024 * 1024;
+
+    final BlobInfo info;
+    byte[] uncompressedBytes = DataGenerator.base64Characters().genBytes(_512KiB);
+    {
+      BlobInfo tmp = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+      Blob gen1 = storage.create(tmp, uncompressedBytes, BlobTargetOption.doesNotExist());
+      info = gen1.asBlobInfo();
+    }
+
+    try (ReadChannel c = storage.reader(info.getBlobId())) {
+      c.setChunkSize(0);
+
+      ByteBuffer buf = ByteBuffer.allocate(_1MiB);
+      // Because this is unbuffered, the underlying channel will not necessarily fill up the buf
+      // in a single read call. Repeatedly read until full or EOF.
+      int read = fillFrom(buf, c);
+      assertThat(read).isEqualTo(_512KiB);
+      String actual = xxd(buf);
+      String expected = xxd(uncompressedBytes);
+      assertThat(actual).isEqualTo(expected);
+    }
+  }
+
+  @Test
   public void storageReadChannel_getObject_404() {
     BlobId id = BlobId.of(bucket.getName(), generator.randomObjectName());
 
@@ -128,5 +158,18 @@ public final class ITStorageReadChannelTest {
     F aF = f.apply(actual);
     F eF = f.apply(expected);
     assertThat(aF).isEqualTo(eF);
+  }
+
+  static int fillFrom(ByteBuffer buf, ReadableByteChannel c) throws IOException {
+    int total = 0;
+    while (buf.hasRemaining()) {
+      int read = c.read(buf);
+      if (read != -1) {
+        total += read;
+      } else {
+        break;
+      }
+    }
+    return total;
   }
 }

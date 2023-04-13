@@ -152,6 +152,26 @@ final class Utils {
             }
           });
 
+  private static final String PUBSUB_PREFIX = "//pubsub.googleapis.com/";
+  static final Codec<String, String> topicNameCodec =
+      Codec.of(
+          topic -> {
+            requireNonNull(topic, "topic must be non null");
+            if (topic.startsWith(PUBSUB_PREFIX)) {
+              return topic;
+            } else {
+              return PUBSUB_PREFIX + topic;
+            }
+          },
+          resourceName -> {
+            requireNonNull(resourceName, "resourceName must be non null");
+            if (resourceName.startsWith(PUBSUB_PREFIX)) {
+              return resourceName.substring(PUBSUB_PREFIX.length());
+            } else {
+              return resourceName;
+            }
+          });
+
   static final Codec<Integer, String> crc32cCodec =
       Codec.of(Utils::crc32cEncode, Utils::crc32cDecode);
 

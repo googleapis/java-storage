@@ -89,6 +89,11 @@ final class ApiaryConversions {
   // when converting from gRPC to apiary or vice-versa we want to preserve this property. Until
   // such a time as the apiary model has a project field, we manually apply it with this name.
   private static final String PROJECT_ID_FIELD_NAME = "x_project";
+  // gRPC has a NotificationConfig.name property which contains the bucket the config is associated
+  // with which that apiary doesn't have yet.
+  // when converting from gRPC to apiary or vice-versa we want to preserve this property. Until
+  // such a time as the apiary model has a bucket field, we manually apply it with this name.
+  private static final String NOTIFICATION_BUCKET_FIELD_NAME = "x_bucket";
 
   private final Codec<Entity, String> entityCodec =
       Codec.of(this::entityEncode, this::entityDecode);
@@ -774,6 +779,7 @@ final class ApiaryConversions {
     to.setEtag(from.getEtag());
     to.setSelfLink(from.getSelfLink());
     to.setTopic(from.getTopic());
+    ifNonNull(from.getBucket(), b -> to.set(NOTIFICATION_BUCKET_FIELD_NAME, b));
     ifNonNull(from.getNotificationId(), to::setId);
     ifNonNull(from.getCustomAttributes(), to::setCustomAttributes);
     ifNonNull(from.getObjectNamePrefix(), to::setObjectNamePrefix);
@@ -799,6 +805,7 @@ final class ApiaryConversions {
   private NotificationInfo notificationDecode(
       com.google.api.services.storage.model.Notification from) {
     NotificationInfo.Builder builder = new NotificationInfo.BuilderImpl(from.getTopic());
+    ifNonNull(from.get(NOTIFICATION_BUCKET_FIELD_NAME), String.class::cast, builder::setBucket);
     ifNonNull(from.getId(), builder::setNotificationId);
     ifNonNull(from.getEtag(), builder::setEtag);
     ifNonNull(from.getCustomAttributes(), builder::setCustomAttributes);

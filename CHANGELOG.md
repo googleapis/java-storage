@@ -1,5 +1,55 @@
 # Changelog
 
+## [2.22.0](https://github.com/googleapis/java-storage/compare/v2.21.0...v2.22.0) (2023-04-12)
+
+
+### Features
+
+* Add matchGlob parameter to BlobListOption ([#1965](https://github.com/googleapis/java-storage/issues/1965)) ([93be97a](https://github.com/googleapis/java-storage/commit/93be97a9ae061241f510cbeb566f9f839063faa0))
+* Handle generation numbers in BlobId#{to,from}GsUtilUri ([#1929](https://github.com/googleapis/java-storage/issues/1929)) ([0a033b3](https://github.com/googleapis/java-storage/commit/0a033b36a2be7e1d92c8b2f7323f2851005034cf))
+* Implement GrpcStorageImpl#{get,list,create,delete}Notification ([#1958](https://github.com/googleapis/java-storage/issues/1958)) ([830052b](https://github.com/googleapis/java-storage/commit/830052b3f26337f50770436784f0ea9f3366dbca))
+* Make it possible to disable the buffer of ReadChannels returned from Storage.reader ([#1974](https://github.com/googleapis/java-storage/issues/1974)) ([702ab2b](https://github.com/googleapis/java-storage/commit/702ab2bb1ceb9f428296591adc6e09023b4a8484))
+
+
+### Bug Fixes
+
+* Update GrpcStorageOptions to set allowNonDefaultServiceAccount = true ([#1977](https://github.com/googleapis/java-storage/issues/1977)) ([f1b9493](https://github.com/googleapis/java-storage/commit/f1b94930509c87ecbdbe6627fec6118305331780))
+
+
+### Documentation
+
+* Update spec for WriteObjectRequest.object_size to clarify that it applies to both one-shot and resumable writes ([#1976](https://github.com/googleapis/java-storage/issues/1976)) ([7354e19](https://github.com/googleapis/java-storage/commit/7354e198521384cd2b8583f073217a5a6cb74fe0))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.7.0 ([#1978](https://github.com/googleapis/java-storage/issues/1978)) ([1f7e9c9](https://github.com/googleapis/java-storage/commit/1f7e9c9130a9516acfcdfda4b23e642fbe799146))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.21 ([#1979](https://github.com/googleapis/java-storage/issues/1979)) ([d6accdf](https://github.com/googleapis/java-storage/commit/d6accdf9c81419728c39a61e348a61683dc117ad))
+
+## [2.21.0](https://github.com/googleapis/java-storage/compare/v2.20.2...v2.21.0) (2023-03-31)
+
+
+### Features
+
+* Remove Bucket.retention_period, now that we've migrated to retention_duration ([#1955](https://github.com/googleapis/java-storage/issues/1955)) ([c0ffe7c](https://github.com/googleapis/java-storage/commit/c0ffe7c7cb50181cc375a945b9e79f97da9aa290))
+
+
+### Bug Fixes
+
+* Update bucket creation to set project as `bucket.project` ([#1912](https://github.com/googleapis/java-storage/issues/1912)) ([65993c0](https://github.com/googleapis/java-storage/commit/65993c0614987b96962ff28404de2aaea4ee679d))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.6.0 ([#1957](https://github.com/googleapis/java-storage/issues/1957)) ([af90f16](https://github.com/googleapis/java-storage/commit/af90f162ac038479a0f09fb45289b1aa258d1aec))
+* Update dependency net.jqwik:jqwik to v1.7.3 ([#1944](https://github.com/googleapis/java-storage/issues/1944)) ([a8b96c9](https://github.com/googleapis/java-storage/commit/a8b96c9a2da7fbdf9de5e15e833058117570c24e))
+
+
+### Documentation
+
+* Revert ChecksummedData message definition not to specify ctype=CORD, ([#1960](https://github.com/googleapis/java-storage/issues/1960)) ([3a2a643](https://github.com/googleapis/java-storage/commit/3a2a643ff389741efaad244bbabf494dcd9a799b))
+* Updated ChecksummedData message definition to specify ctype=CORD, and removed incorrect earlier attempt that set that annotation in the ReadObjectResponse message definition ([#1959](https://github.com/googleapis/java-storage/issues/1959)) ([3d97bdd](https://github.com/googleapis/java-storage/commit/3d97bddc668deb2059261260125f94c6e32aac76))
+
 ## [2.20.2](https://github.com/googleapis/java-storage/compare/v2.20.1...v2.20.2) (2023-03-22)
 
 
