@@ -24,7 +24,6 @@ import com.google.api.core.InternalApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.GaxProperties;
-import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.retrying.StreamResumptionStrategy;
@@ -33,6 +32,8 @@ import com.google.api.gax.rpc.NoHeaderProvider;
 import com.google.api.gax.rpc.StatusCode.Code;
 import com.google.api.gax.rpc.internal.QuotaProjectIdHidingCredentials;
 import com.google.auth.Credentials;
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.OAuth2Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceFactory;
 import com.google.cloud.ServiceOptions;
@@ -54,6 +55,8 @@ import com.google.storage.v2.StorageSettings;
 import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.net.URI;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -160,20 +163,34 @@ public final class GrpcStorageOptions extends StorageOptions
     Opts<UserProject> defaultOpts = Opts.empty();
     CredentialsProvider credentialsProvider;
     if (credentials instanceof NoCredentials) {
-      credentialsProvider = NoCredentialsProvider.create();
+      // com.google.api.gax.core.NoCredentialsProvider returns null as its credentials instance
+      // the returned value is passed blindly to gRPC credentials, which in the case of directpath
+      // will end up asserting non-null.
+      // To avoid this obscure NPE, create a factory that will return the NoCredentials instance
+      credentialsProvider = FixedCredentialsProvider.create(credentials);
     } else {
       boolean foundQuotaProject = false;
       if (credentials.hasRequestMetadata()) {
-        Map<String, List<String>> requestMetadata = credentials.getRequestMetadata(uri);
-        for (Entry<String, List<String>> e : requestMetadata.entrySet()) {
-          String key = e.getKey();
-          if ("x-goog-user-project".equals(key.trim().toLowerCase(Locale.ENGLISH))) {
-            List<String> value = e.getValue();
-            if (!value.isEmpty()) {
-              foundQuotaProject = true;
-              defaultOpts = Opts.from(UnifiedOpts.userProject(value.get(0)));
-              break;
+        try {
+          Map<String, List<String>> requestMetadata = credentials.getRequestMetadata(uri);
+          for (Entry<String, List<String>> e : requestMetadata.entrySet()) {
+            String key = e.getKey();
+            if ("x-goog-user-project".equals(key.trim().toLowerCase(Locale.ENGLISH))) {
+              List<String> value = e.getValue();
+              if (!value.isEmpty()) {
+                foundQuotaProject = true;
+                defaultOpts = Opts.from(UnifiedOpts.userProject(value.get(0)));
+                break;
+              }
             }
+          }
+        } catch (IllegalStateException e) {
+          // This happens when an instance of OAuth2Credentials attempts to refresh its
+          // access token during our attempt at getting request metadata.
+          // This is most easily reproduced by OAuth2Credentials.create(null);
+          // see com.google.auth.oauth2.OAuth2Credentials.refreshAccessToken
+          if (!e.getMessage().startsWith("OAuth2Credentials")) {
+            throw e;
           }
         }
       }
@@ -678,6 +695,40 @@ public final class GrpcStorageOptions extends StorageOptions
     protected StorageSettings.Builder setInternalHeaderProvider(
         HeaderProvider internalHeaderProvider) {
       return super.setInternalHeaderProvider(internalHeaderProvider);
+    }
+  }
+
+  private static final class DirectPathFriendlyNoCredentials extends OAuth2Credentials {
+    private static final DirectPathFriendlyNoCredentials INSTANCE =
+        new DirectPathFriendlyNoCredentials();
+
+    private static final AccessToken TOKEN =
+        AccessToken.newBuilder()
+            .setTokenValue("")
+            .setExpirationTime(Date.from(Instant.EPOCH))
+            .build();
+
+    DirectPathFriendlyNoCredentials() {
+      super(TOKEN, java.time.Duration.ZERO, java.time.Duration.ZERO);
+    }
+
+    @Override
+    public boolean hasRequestMetadata() {
+      return false;
+    }
+
+    @Override
+    public AccessToken refreshAccessToken() throws IOException {
+      return TOKEN;
+    }
+
+    public static DirectPathFriendlyNoCredentials getInstance() {
+      return INSTANCE;
+    }
+
+    /** prevent java serialization from using a new instance */
+    private Object readResolve() {
+      return INSTANCE;
     }
   }
 }
