@@ -40,6 +40,16 @@ public final class ITStorageOptionsTest {
   }
 
   @Test
+  public void clientShouldConstructCleanly_WithNoCredentials_dp() throws Exception {
+    StorageOptions options =
+        StorageOptions.grpc()
+            .setCredentials(NoCredentials.getInstance())
+            .setAttemptDirectPath(true)
+            .build();
+    doTest(options);
+  }
+
+  @Test
   public void clientShouldConstructCleanly_nullAccessToken_google_http() throws Exception {
     GoogleCredentials cred = GoogleCredentials.create(/* accessToken= */ null);
     StorageOptions options = StorageOptions.http().setCredentials(cred).build();
