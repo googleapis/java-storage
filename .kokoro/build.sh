@@ -59,7 +59,7 @@ javadoc)
     RETURN_CODE=$?
     ;;
 integration)
-    GOOGLE_CLOUD_ENABLE_DIRECT_PATH_XDS=true mvn -B ${INTEGRATION_TEST_ARGS} \
+    mvn -B ${INTEGRATION_TEST_ARGS} \
       -ntp \
       -Penable-integration-tests \
       -DtrimStackTrace=false \
@@ -71,13 +71,13 @@ integration)
     ;;
 graalvm)
     # Run Unit and Integration Tests with Native Image
-#    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
-    RETURN_CODE=1
+    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
+    RETURN_CODE=$?
     ;;
 graalvm17)
     # Run Unit and Integration Tests with Native Image
-#    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
-    RETURN_CODE=1
+    mvn -B ${INTEGRATION_TEST_ARGS} -ntp -Pnative test
+    RETURN_CODE=$?
     ;;
 samples)
     SAMPLES_DIR=samples
