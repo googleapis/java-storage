@@ -21,7 +21,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.cloud.storage.GapicUnbufferedWritableByteChannelTest.DirectWriteService;
+import com.google.cloud.storage.ITGapicUnbufferedWritableByteChannelTest.DirectWriteService;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.common.collect.ImmutableList;
@@ -50,7 +50,7 @@ import org.junit.rules.TemporaryFolder;
  * Verify some simplistic retries can take place and that we're constructing {@link
  * WriteObjectRequest}s as expected.
  */
-public final class GrpcStorageImplUploadRetryTest {
+public final class ITGrpcStorageImplUploadRetryTest {
   private static final String FORMATTED_BUCKET_NAME = "projects/_/buckets/buck";
   private static final int objectContentSize = 64;
   private static final byte[] bytes = DataGenerator.base64Characters().genBytes(objectContentSize);
