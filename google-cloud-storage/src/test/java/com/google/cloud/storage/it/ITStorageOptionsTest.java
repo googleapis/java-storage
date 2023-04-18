@@ -16,64 +16,63 @@
 
 package com.google.cloud.storage.it;
 
+import static org.junit.Assume.assumeTrue;
+
+import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.OAuth2Credentials;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.google.cloud.storage.TestUtils;
+import com.google.cloud.storage.it.ITStorageOptionsTest.CredentialsParameters;
+import com.google.cloud.storage.it.runner.StorageITRunner;
+import com.google.cloud.storage.it.runner.annotations.Backend;
+import com.google.cloud.storage.it.runner.annotations.Parameterized;
+import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
+import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
+import com.google.cloud.storage.it.runner.annotations.SingleBackend;
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+@RunWith(StorageITRunner.class)
+@SingleBackend(Backend.PROD)
+@Parameterized(CredentialsParameters.class)
 public final class ITStorageOptionsTest {
 
+  public static final class CredentialsParameters implements ParametersProvider {
+
+    @Override
+    public ImmutableList<?> parameters() {
+      return ImmutableList.of(
+          NoCredentials.getInstance(),
+          GoogleCredentials.create(/* accessToken= */ null),
+          OAuth2Credentials.create(null));
+    }
+  }
+
+  @Parameter public Credentials credentials;
+
   @Test
-  public void clientShouldConstructCleanly_WithNoCredentials_http() throws Exception {
+  public void clientShouldConstructCleanly_http() throws Exception {
+    StorageOptions options = StorageOptions.http().setCredentials(credentials).build();
+    doTest(options);
+  }
+
+  @Test
+  public void clientShouldConstructCleanly_grpc() throws Exception {
     StorageOptions options =
-        StorageOptions.http().setCredentials(NoCredentials.getInstance()).build();
+        StorageOptions.grpc().setCredentials(credentials).setAttemptDirectPath(false).build();
     doTest(options);
   }
 
   @Test
-  public void clientShouldConstructCleanly_WithNoCredentials_grpc() throws Exception {
+  public void clientShouldConstructCleanly_directPath() throws Exception {
+    assumeTrue(
+        "Unable to determine environment can access directPath", TestUtils.isOnComputeEngine());
     StorageOptions options =
-        StorageOptions.grpc().setCredentials(NoCredentials.getInstance()).build();
-    doTest(options);
-  }
-
-  @Test
-  public void clientShouldConstructCleanly_WithNoCredentials_dp() throws Exception {
-    StorageOptions options =
-        StorageOptions.grpc()
-            .setCredentials(NoCredentials.getInstance())
-            .setAttemptDirectPath(true)
-            .build();
-    doTest(options);
-  }
-
-  @Test
-  public void clientShouldConstructCleanly_nullAccessToken_google_http() throws Exception {
-    GoogleCredentials cred = GoogleCredentials.create(/* accessToken= */ null);
-    StorageOptions options = StorageOptions.http().setCredentials(cred).build();
-    doTest(options);
-  }
-
-  @Test
-  public void clientShouldConstructCleanly_nullAccessToken_google_grpc() throws Exception {
-    GoogleCredentials cred = GoogleCredentials.create(/* accessToken= */ null);
-    StorageOptions options = StorageOptions.grpc().setCredentials(cred).build();
-    doTest(options);
-  }
-
-  @Test
-  public void clientShouldConstructCleanly_nullAccessToken_oauth_http() throws Exception {
-    OAuth2Credentials cred = OAuth2Credentials.create(null);
-    StorageOptions options = StorageOptions.http().setCredentials(cred).build();
-    doTest(options);
-  }
-
-  @Test
-  public void clientShouldConstructCleanly_nullAccessToken_oauth_grpc() throws Exception {
-    OAuth2Credentials cred = OAuth2Credentials.create(null);
-    StorageOptions options = StorageOptions.grpc().setCredentials(cred).build();
+        StorageOptions.grpc().setCredentials(credentials).setAttemptDirectPath(true).build();
     doTest(options);
   }
 
