@@ -147,6 +147,21 @@ public class ITTransferManagerTest {
     cleanUpFiles(downloadResults);
   }
 
+  @Test
+  public void downloadBlobsAllowChunked()
+      throws IOException, ExecutionException, InterruptedException {
+    TransferManagerConfig config =
+        TransferManagerConfig.newBuilder().setMaxWorkers(1).setAllowChunking(true).build();
+    TransferManager transferManager = config.getService();
+    String bucketName = bucket.getName();
+    ParallelDownloadConfig parallelDownloadConfig =
+        ParallelDownloadConfig.newBuilder().setBucketName(bucketName).build();
+    DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+    List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+    assertThat(downloadResults).hasSize(3);
+    cleanUpFiles(downloadResults);
+  }
+
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
     // Cleanup downloaded blobs and the parent directory
     for (DownloadResult res : results) {

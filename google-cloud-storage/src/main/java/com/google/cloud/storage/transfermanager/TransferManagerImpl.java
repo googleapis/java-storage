@@ -18,6 +18,7 @@ package com.google.cloud.storage.transfermanager;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ListenableFutureToApiFuture;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -80,8 +81,12 @@ final class TransferManagerImpl implements TransferManager {
       }
     } else {
       for (BlobInfo blob : blobs) {
-        if(blob.getSize() > DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD) {
+        BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
+        if (validatedBlob.getSize() > DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD) {
           // Perform chunked download
+        } else {
+          DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
+          downloadTasks.add(convert(executor.submit(callable)));
         }
       }
     }
@@ -93,5 +98,15 @@ final class TransferManagerImpl implements TransferManager {
 
   private static <T> ApiFuture<T> convert(ListenableFuture<T> lf) {
     return new ListenableFutureToApiFuture<>(lf);
+  }
+
+  private BlobInfo retrieveSizeAndGeneration(
+      Storage storage, BlobInfo blobInfo, String bucketName) {
+    if (blobInfo.getGeneration() == null) {
+      return storage.get(BlobId.of(bucketName, blobInfo.getName()));
+    } else if (blobInfo.getSize() == null) {
+      return storage.get(BlobId.of(bucketName, blobInfo.getName(), blobInfo.getGeneration()));
+    }
+    return blobInfo;
   }
 }
