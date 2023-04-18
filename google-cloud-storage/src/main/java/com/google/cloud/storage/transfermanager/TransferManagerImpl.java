@@ -82,8 +82,19 @@ final class TransferManagerImpl implements TransferManager {
     } else {
       for (BlobInfo blob : blobs) {
         BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
-        if (validatedBlob.getSize() > DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD) {
+        long size = validatedBlob.getSize();
+        if (size > DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD) {
+          List<ApiFuture<DownloadSegment>> downloadSegmentTasks = new ArrayList<>();
           // Perform chunked download
+          long start = 0;
+          while (start < size) {
+            long chunkStart = start;
+            long chunkEnd = start + transferManagerConfig.getPerWorkerBufferSize() - 1;
+            chunkEnd = chunkEnd > size ? size : chunkEnd;
+            ChunkedDownloadCallable callable =
+                new ChunkedDownloadCallable(storage, blob, config, opts, chunkStart, chunkEnd);
+            downloadSegmentTasks.add(convert(executor.submit(callable)));
+          }
         } else {
           DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
           downloadTasks.add(convert(executor.submit(callable)));

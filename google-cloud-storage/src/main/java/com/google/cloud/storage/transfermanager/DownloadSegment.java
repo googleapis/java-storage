@@ -60,17 +60,26 @@ public final class DownloadSegment {
     return exception;
   }
 
+  public static Builder newBuilder(BlobInfo input, TransferStatus status) {
+    return new Builder(input, status);
+  }
+
   public Long getGeneration() {
     return generation;
   }
 
-  public static class Builder {
+  public static final class Builder {
 
     private BlobInfo input;
     private Path outputDestination;
     private TransferStatus status;
     private StorageException exception;
     private Long generation;
+
+    private Builder(BlobInfo input, TransferStatus status) {
+      this.input = input;
+      this.status = status;
+    }
 
     public Builder setInput(BlobInfo input) {
       this.input = input;
@@ -97,7 +106,7 @@ public final class DownloadSegment {
       return this;
     }
 
-    public DownloadSegment createDownloadSegment() {
+    public DownloadSegment build() {
       return new DownloadSegment(input, outputDestination, status, exception, generation);
     }
   }
