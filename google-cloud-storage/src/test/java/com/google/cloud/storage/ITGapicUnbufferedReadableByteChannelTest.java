@@ -47,7 +47,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
-public final class GapicUnbufferedReadableByteChannelTest {
+public final class ITGapicUnbufferedReadableByteChannelTest {
   private final byte[] bytes = DataGenerator.base64Characters().genBytes(40);
   private final ByteString data1 = ByteString.copyFrom(bytes, 0, 10);
   private final ByteString data2 = ByteString.copyFrom(bytes, 10, 10);

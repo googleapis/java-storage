@@ -54,9 +54,9 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.junit.Test;
 
-public final class GapicUnbufferedWritableByteChannelTest {
+public final class ITGapicUnbufferedWritableByteChannelTest {
   private static final Logger LOGGER =
-      Logger.getLogger(GapicUnbufferedWritableByteChannelTest.class.getName());
+      Logger.getLogger(ITGapicUnbufferedWritableByteChannelTest.class.getName());
 
   private static final ChunkSegmenter segmenter =
       new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 10, 5);
