@@ -33,6 +33,7 @@ import com.google.cloud.storage.it.runner.annotations.Parameterized.Parameter;
 import com.google.cloud.storage.it.runner.annotations.Parameterized.ParametersProvider;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.common.collect.ImmutableList;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -68,6 +69,7 @@ public final class ITStorageOptionsTest {
   }
 
   @Test
+  @Ignore("waiting on conformation from the backend team if this should even be possible")
   public void clientShouldConstructCleanly_directPath() throws Exception {
     assumeTrue(
         "Unable to determine environment can access directPath", TestUtils.isOnComputeEngine());
