@@ -40,9 +40,14 @@ import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import com.google.cloud.storage.it.runner.registry.ObjectsFixture;
+import com.google.common.io.ByteStreams;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -60,6 +65,8 @@ public final class ITStorageReadChannelTest {
   @Inject public BucketInfo bucket;
 
   @Inject public Generator generator;
+
+  @Inject public ObjectsFixture objectsFixture;
 
   @Test
   public void storageReadChannel_getObject_returns() throws Exception {
@@ -109,7 +116,6 @@ public final class ITStorageReadChannelTest {
   }
 
   @Test
-  // @CrossRun.Exclude(transports = Transport.GRPC)
   public void storageReadChannel_shouldAllowDisablingBufferingBySettingChunkSize_lteq0()
       throws IOException {
     int _512KiB = 512 * 1024;
@@ -134,6 +140,21 @@ public final class ITStorageReadChannelTest {
       String actual = xxd(buf);
       String expected = xxd(uncompressedBytes);
       assertThat(actual).isEqualTo(expected);
+    }
+  }
+
+  @Test
+  public void storageReadChannel_attemptToReadZeroBytes() throws IOException {
+    BlobInfo info1 = objectsFixture.getInfo1();
+    try (ReadChannel r = storage.reader(info1.getBlobId());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        WritableByteChannel w = Channels.newChannel(baos)) {
+      r.setChunkSize(10);
+      r.seek(10);
+      r.limit(10);
+
+      ByteStreams.copy(r, w);
+      assertThat(baos.toByteArray()).isEmpty();
     }
   }
 
