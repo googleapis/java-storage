@@ -869,13 +869,13 @@ public final class StorageProto {
           + "s.com/auth/devstorage.full_control,https"
           + "://www.googleapis.com/auth/devstorage.re"
           + "ad_only,https://www.googleapis.com/auth/"
-          + "devstorage.read_writeB\334\001\n\025com.google.sto"
-          + "rage.v2B\014StorageProtoP\001Z8google.golang.o"
-          + "rg/genproto/googleapis/storage/v2;storag"
-          + "e\352Ax\n!cloudkms.googleapis.com/CryptoKey\022"
-          + "Sprojects/{project}/locations/{location}"
-          + "/keyRings/{key_ring}/cryptoKeys/{crypto_"
-          + "key}b\006proto3"
+          + "devstorage.read_writeB\342\001\n\025com.google.sto"
+          + "rage.v2B\014StorageProtoP\001Z>cloud.google.co"
+          + "m/go/storage/internal/apiv2/storagepb;st"
+          + "oragepb\352Ax\n!cloudkms.googleapis.com/Cryp"
+          + "toKey\022Sprojects/{project}/locations/{loc"
+          + "ation}/keyRings/{key_ring}/cryptoKeys/{c"
+          + "rypto_key}b\006proto3"
     };
     descriptor =
         com.google.protobuf.Descriptors.FileDescriptor.internalBuildGeneratedFileFrom(
