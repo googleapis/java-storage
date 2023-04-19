@@ -82,17 +82,24 @@ public class ITTransferManagerTest {
         BlobInfo.newBuilder(
                 BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
             .build();
-    BlobInfo blobInfo3 =
+    BlobInfo blobInfoChunking =
         BlobInfo.newBuilder(
                 BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
             .build();
-    Collections.addAll(blobs, blobInfo1, blobInfo2, blobInfo3);
+    Collections.addAll(blobs, blobInfo1, blobInfo2);
     ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(108);
     for (BlobInfo blob : blobs) {
       try (WriteChannel writeChannel = storage.writer(blob)) {
         writeChannel.write(content);
       }
     }
+    long size = Long.valueOf(32 * 1024 * 1024);
+    size = size + Long.valueOf(100);
+    ByteBuffer chunkedContent = DataGenerator.base64Characters().genByteBuffer(size);
+    try (WriteChannel writeChannel = storage.writer(blobInfoChunking)) {
+      writeChannel.write(chunkedContent);
+    }
+    blobs.add(blobInfoChunking);
   }
 
   @Test

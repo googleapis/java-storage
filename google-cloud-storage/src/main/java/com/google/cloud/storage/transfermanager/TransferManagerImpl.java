@@ -17,6 +17,7 @@
 package com.google.cloud.storage.transfermanager;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -94,7 +95,9 @@ final class TransferManagerImpl implements TransferManager {
             ChunkedDownloadCallable callable =
                 new ChunkedDownloadCallable(storage, blob, config, opts, chunkStart, chunkEnd);
             downloadSegmentTasks.add(convert(executor.submit(callable)));
+            start = start + transferManagerConfig.getPerWorkerBufferSize();
           }
+          // TODO: collect download segments and translate to download result
         } else {
           DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
           downloadTasks.add(convert(executor.submit(callable)));
@@ -111,7 +114,7 @@ final class TransferManagerImpl implements TransferManager {
     return new ListenableFutureToApiFuture<>(lf);
   }
 
-  private BlobInfo retrieveSizeAndGeneration(
+  private static BlobInfo retrieveSizeAndGeneration(
       Storage storage, BlobInfo blobInfo, String bucketName) {
     if (blobInfo.getGeneration() == null) {
       return storage.get(BlobId.of(bucketName, blobInfo.getName()));
@@ -119,5 +122,9 @@ final class TransferManagerImpl implements TransferManager {
       return storage.get(BlobId.of(bucketName, blobInfo.getName(), blobInfo.getGeneration()));
     }
     return blobInfo;
+  }
+
+  private DownloadResult transformSegmentsToResult(List<DownloadSegment> segments) {
+
   }
 }

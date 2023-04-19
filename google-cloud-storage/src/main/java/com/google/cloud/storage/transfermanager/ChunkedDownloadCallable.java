@@ -62,6 +62,9 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
     try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
       FileChannel destFile =
           FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+      rc.seek(startPosition);
+      rc.limit(endPosition);
+      destFile.position(startPosition);
       ByteStreams.copy(rc, destFile);
     } catch (IOException e) {
       throw new StorageException(e);
