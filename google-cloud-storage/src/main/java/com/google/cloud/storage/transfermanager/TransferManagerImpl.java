@@ -97,7 +97,12 @@ final class TransferManagerImpl implements TransferManager {
             downloadSegmentTasks.add(convert(executor.submit(callable)));
             start = start + transferManagerConfig.getPerWorkerBufferSize();
           }
-          // TODO: collect download segments and translate to download result
+
+          downloadTasks.add(
+              ApiFutures.transform(
+                  ApiFutures.allAsList(downloadSegmentTasks),
+                  this::transformSegmentsToResult,
+                  MoreExecutors.directExecutor()));
         } else {
           DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
           downloadTasks.add(convert(executor.submit(callable)));
@@ -125,6 +130,15 @@ final class TransferManagerImpl implements TransferManager {
   }
 
   private DownloadResult transformSegmentsToResult(List<DownloadSegment> segments) {
-
+    for (DownloadSegment segment : segments) {
+      if (segment.getStatus() != TransferStatus.SUCCESS) {
+        return DownloadResult.newBuilder(segment.getInput(), segment.getStatus())
+            .setException(segment.getException())
+            .build();
+      }
+    }
+    return DownloadResult.newBuilder(segments.get(0).getInput(), segments.get(0).getStatus())
+        .setOutputDestination(segments.get(0).getOutputDestination())
+        .build();
   }
 }
