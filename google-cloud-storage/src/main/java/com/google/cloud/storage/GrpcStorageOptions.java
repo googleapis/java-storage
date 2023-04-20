@@ -164,16 +164,26 @@ public final class GrpcStorageOptions extends StorageOptions
     } else {
       boolean foundQuotaProject = false;
       if (credentials.hasRequestMetadata()) {
-        Map<String, List<String>> requestMetadata = credentials.getRequestMetadata(uri);
-        for (Entry<String, List<String>> e : requestMetadata.entrySet()) {
-          String key = e.getKey();
-          if ("x-goog-user-project".equals(key.trim().toLowerCase(Locale.ENGLISH))) {
-            List<String> value = e.getValue();
-            if (!value.isEmpty()) {
-              foundQuotaProject = true;
-              defaultOpts = Opts.from(UnifiedOpts.userProject(value.get(0)));
-              break;
+        try {
+          Map<String, List<String>> requestMetadata = credentials.getRequestMetadata(uri);
+          for (Entry<String, List<String>> e : requestMetadata.entrySet()) {
+            String key = e.getKey();
+            if ("x-goog-user-project".equals(key.trim().toLowerCase(Locale.ENGLISH))) {
+              List<String> value = e.getValue();
+              if (!value.isEmpty()) {
+                foundQuotaProject = true;
+                defaultOpts = Opts.from(UnifiedOpts.userProject(value.get(0)));
+                break;
+              }
             }
+          }
+        } catch (IllegalStateException e) {
+          // This happens when an instance of OAuth2Credentials attempts to refresh its
+          // access token during our attempt at getting request metadata.
+          // This is most easily reproduced by OAuth2Credentials.create(null);
+          // see com.google.auth.oauth2.OAuth2Credentials.refreshAccessToken
+          if (!e.getMessage().startsWith("OAuth2Credentials")) {
+            throw e;
           }
         }
       }
