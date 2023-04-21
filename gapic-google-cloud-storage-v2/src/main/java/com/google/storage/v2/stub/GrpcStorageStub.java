@@ -472,7 +472,7 @@ public class GrpcStorageStub extends StorageStub {
   private static final PathTemplate DELETE_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate CANCEL_RESUMABLE_WRITE_0_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}:**");
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate GET_OBJECT_0_PATH_TEMPLATE = PathTemplate.create("{bucket=**}");
   private static final PathTemplate READ_OBJECT_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
@@ -487,7 +487,7 @@ public class GrpcStorageStub extends StorageStub {
   private static final PathTemplate START_RESUMABLE_WRITE_0_PATH_TEMPLATE =
       PathTemplate.create("{bucket=**}");
   private static final PathTemplate QUERY_WRITE_STATUS_0_PATH_TEMPLATE =
-      PathTemplate.create("{bucket=projects/*/buckets/*}:**");
+      PathTemplate.create("{bucket=projects/*/buckets/*}/**");
   private static final PathTemplate GET_SERVICE_ACCOUNT_0_PATH_TEMPLATE =
       PathTemplate.create("{project=**}");
   private static final PathTemplate CREATE_HMAC_KEY_0_PATH_TEMPLATE =
