@@ -58,6 +58,7 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
 
   @Override
   public DownloadSegment call() throws Exception {
+    // TODO: Wrap Exceptions and put them in result
     Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
     try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
       FileChannel destFile =
