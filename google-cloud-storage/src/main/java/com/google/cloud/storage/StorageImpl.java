@@ -270,15 +270,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    final com.google.api.services.storage.model.Bucket bucketPb =
-        codecs.bucketInfo().encode(BucketInfo.of(bucket));
     ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForBucketsGet(bucketPb, optionsMap);
-    return run(
-        algorithm,
-        () -> storageRpc.get(bucketPb, optionsMap),
-        (b) -> Conversions.apiary().bucketInfo().decode(b).asBucket(this));
+    return internalBucketGet(bucket, optionsMap);
   }
 
   @Override
@@ -288,18 +281,9 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    final StorageObject storedObject = codecs.blobId().encode(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap =
         Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForObjectsGet(storedObject, optionsMap);
-    return run(
-        algorithm,
-        () -> storageRpc.get(storedObject, optionsMap),
-        (x) -> {
-          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
-          return info.asBlob(this);
-        });
+    return internalGetBlob(blob, optionsMap);
   }
 
   @Override
@@ -437,32 +421,42 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
-    final com.google.api.services.storage.model.Bucket bucketPb =
-        codecs.bucketInfo().encode(bucketInfo);
-    final Map<StorageRpc.Option, ?> optionsMap =
+    Map<StorageRpc.Option, ?> optionsMap =
         Opts.unwrap(options).resolveFrom(bucketInfo).getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForBucketsUpdate(bucketPb, optionsMap);
-    return run(
-        algorithm,
-        () -> storageRpc.patch(bucketPb, optionsMap),
-        (x) -> Conversions.apiary().bucketInfo().decode(x).asBucket(this));
+    if (bucketInfo.getModifiedFields().isEmpty()) {
+      return internalBucketGet(bucketInfo.getName(), optionsMap);
+    } else {
+      com.google.api.services.storage.model.Bucket bucketPb =
+          codecs.bucketInfo().encode(bucketInfo);
+      ResultRetryAlgorithm<?> algorithm =
+          retryAlgorithmManager.getForBucketsUpdate(bucketPb, optionsMap);
+      return run(
+          algorithm,
+          () -> storageRpc.patch(bucketPb, optionsMap),
+          (x) -> Conversions.apiary().bucketInfo().decode(x).asBucket(this));
+    }
   }
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    boolean unmodifiedBeforeOpts = blobInfo.getModifiedFields().isEmpty();
     BlobInfo updated = opts.blobInfoMapper().apply(blobInfo.toBuilder()).build();
-    StorageObject pb = codecs.blobInfo().encode(updated);
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsUpdate(pb, optionsMap);
-    return run(
-        algorithm,
-        () -> storageRpc.patch(pb, optionsMap),
-        (x) -> {
-          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
-          return info.asBlob(this);
-        });
+    boolean unmodifiedAfterOpts = updated.getModifiedFields().isEmpty();
+    if (unmodifiedBeforeOpts && unmodifiedAfterOpts) {
+      return internalGetBlob(blobInfo.getBlobId(), optionsMap);
+    } else {
+      StorageObject pb = codecs.blobInfo().encode(updated);
+      ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsUpdate(pb, optionsMap);
+      return run(
+          algorithm,
+          () -> storageRpc.patch(pb, optionsMap),
+          (x) -> {
+            BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+            return info.asBlob(this);
+          });
+    }
   }
 
   @Override
@@ -1526,5 +1520,29 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   @Override
   public HttpStorageOptions getOptions() {
     return (HttpStorageOptions) super.getOptions();
+  }
+
+  private Blob internalGetBlob(BlobId blob, Map<StorageRpc.Option, ?> optionsMap) {
+    StorageObject storedObject = codecs.blobId().encode(blob);
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForObjectsGet(storedObject, optionsMap);
+    return run(
+        algorithm,
+        () -> storageRpc.get(storedObject, optionsMap),
+        (x) -> {
+          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+          return info.asBlob(this);
+        });
+  }
+
+  private Bucket internalBucketGet(String bucket, Map<StorageRpc.Option, ?> optionsMap) {
+    com.google.api.services.storage.model.Bucket bucketPb =
+        codecs.bucketInfo().encode(BucketInfo.of(bucket));
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForBucketsGet(bucketPb, optionsMap);
+    return run(
+        algorithm,
+        () -> storageRpc.get(bucketPb, optionsMap),
+        (b) -> Conversions.apiary().bucketInfo().decode(b).asBucket(this));
   }
 }

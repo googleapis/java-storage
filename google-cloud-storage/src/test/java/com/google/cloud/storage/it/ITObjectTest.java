@@ -1497,4 +1497,15 @@ public class ITObjectTest {
         .isEqualTo(updatedBlob1.getTimeStorageClassUpdated());
     assertThat(updatedBlob2.delete()).isTrue();
   }
+
+  @Test
+  public void testUpdateBlob_noModification() {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+
+    // in grpc, create will return acls but update does not. re-get the metadata with default fields
+    Blob gen1 = storage.create(info);
+    gen1 = storage.get(gen1.getBlobId());
+    Blob gen2 = storage.update(gen1);
+    assertThat(gen2).isEqualTo(gen1);
+  }
 }

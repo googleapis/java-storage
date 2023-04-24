@@ -2328,6 +2328,16 @@ final class UnifiedOpts {
       return new Opts<>(list);
     }
 
+    /**
+     * Create a new instance of {@code Opts<R>} consisting of those {@code Opt}s which are also an
+     * {@code R}.
+     *
+     * <p>i.e. Given {@code Opts<ObjectTargetOpt>} produce {@code Opts<ObjectSourceOpt>}
+     */
+    <R extends Opt> Opts<R> constrainTo(Class<R> c) {
+      return new Opts<>(filterTo(c).collect(ImmutableList.toImmutableList()));
+    }
+
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {
       return fuseMappers(RpcOptVal.class, RpcOptVal::mapper);
     }
