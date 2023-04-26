@@ -70,7 +70,7 @@ public final class BlobId implements Serializable {
    * Returns this blob's Storage url which can be used with gsutil. If {@link #generation} is
    * non-null it will be included in the uri
    *
-   * @since 2.23.0
+   * @since 2.22.1
    */
   public String toGsUtilUriWithGeneration() {
     return "gs://" + bucket + "/" + name + (generation == null ? "" : ("#" + generation));
