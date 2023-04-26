@@ -123,6 +123,7 @@ final class RpcMethodMappings {
       methodGroupIs("storage.resumable.upload");
 
   static final int _2MiB = 2 * 1024 * 1024;
+  private static final ImmutableMap<String, String> MODIFY = ImmutableMap.of("a", "b");
   final Multimap<RpcMethod, RpcMethodMapping> funcMap;
 
   RpcMethodMappings() {
@@ -552,7 +553,16 @@ final class RpcMethodMappings {
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withTest(
                     (ctx, c) ->
-                        ctx.map(state -> state.with(ctx.getStorage().update(state.getBucket()))))
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .update(
+                                            state
+                                                .getBucket()
+                                                .toBuilder()
+                                                .setLabels(MODIFY)
+                                                .build()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(122, buckets.patch)
@@ -564,7 +574,7 @@ final class RpcMethodMappings {
                                 state.with(
                                     ctx.getStorage()
                                         .update(
-                                            state.getBucket(),
+                                            state.getBucket().toBuilder().setLabels(MODIFY).build(),
                                             BucketTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
@@ -577,12 +587,25 @@ final class RpcMethodMappings {
                                 state.with(
                                     state
                                         .getBucket()
+                                        .toBuilder()
+                                        .setLabels(MODIFY)
+                                        .build()
                                         .update(BucketTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(243, buckets.patch)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
-                .withTest((ctx, c) -> ctx.map(state -> state.with(state.getBucket().update())))
+                .withTest(
+                    (ctx, c) ->
+                        ctx.map(
+                            state ->
+                                state.with(
+                                    state
+                                        .getBucket()
+                                        .toBuilder()
+                                        .setLabels(MODIFY)
+                                        .build()
+                                        .update())))
                 .build());
       }
 
@@ -1860,7 +1883,15 @@ final class RpcMethodMappings {
                 .withTest(
                     (ctx, c) ->
                         ctx.map(
-                            state -> state.with(ctx.getStorage().update(ctx.getState().getBlob()))))
+                            state ->
+                                state.with(
+                                    ctx.getStorage()
+                                        .update(
+                                            ctx.getState()
+                                                .getBlob()
+                                                .toBuilder()
+                                                .setMetadata(MODIFY)
+                                                .build()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(57, objects.patch)
@@ -1872,13 +1903,21 @@ final class RpcMethodMappings {
                                 state.with(
                                     ctx.getStorage()
                                         .update(
-                                            ctx.getState().getBlob(),
+                                            ctx.getState()
+                                                .getBlob()
+                                                .toBuilder()
+                                                .setMetadata(MODIFY)
+                                                .build(),
                                             BlobTargetOption.metagenerationMatch()))))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(79, objects.patch)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
-                .withTest((ctx, c) -> ctx.peek(state -> state.getBlob().update()))
+                .withTest(
+                    (ctx, c) ->
+                        ctx.peek(
+                            state ->
+                                state.getBlob().toBuilder().setMetadata(MODIFY).build().update()))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(80, objects.patch)
@@ -1890,6 +1929,9 @@ final class RpcMethodMappings {
                                 state.with(
                                     state
                                         .getBlob()
+                                        .toBuilder()
+                                        .setMetadata(MODIFY)
+                                        .build()
                                         .update(BlobTargetOption.metagenerationMatch()))))
                 .build());
       }
