@@ -58,8 +58,21 @@ public final class BlobId implements Serializable {
     return generation;
   }
 
-  /** Returns this blob's Storage url which can be used with gsutil */
+  /**
+   * Returns this blob's Storage url which can be used with gsutil. If {@link #generation} is
+   * non-null it will not be included in the uri.
+   */
   public String toGsUtilUri() {
+    return "gs://" + bucket + "/" + name;
+  }
+
+  /**
+   * Returns this blob's Storage url which can be used with gsutil. If {@link #generation} is
+   * non-null it will be included in the uri
+   *
+   * @since 2.23.0
+   */
+  public String toGsUtilUriWithGeneration() {
     return "gs://" + bucket + "/" + name + (generation == null ? "" : ("#" + generation));
   }
 
