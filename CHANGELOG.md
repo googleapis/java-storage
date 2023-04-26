@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.22.1](https://github.com/googleapis/java-storage/compare/v2.22.0...v2.22.1) (2023-04-26)
+
+
+### Bug Fixes
+
+* Introduce new BlobId#toGsUtilUriWithGeneration ([#1998](https://github.com/googleapis/java-storage/issues/1998)) ([68de5c7](https://github.com/googleapis/java-storage/commit/68de5c7fae6df2f3df5c8c413b206bd7c7e230ea))
+* Update grpc x-goog-user-project handling gracefulness ([#1983](https://github.com/googleapis/java-storage/issues/1983)) ([f274739](https://github.com/googleapis/java-storage/commit/f2747391b6daadd6a12a2dcb54714cce237eb1ac))
+
+
+### Documentation
+
+* Update routing annotations for CancelResumableWriteRequest and QueryWriteStatusRequest ([#1992](https://github.com/googleapis/java-storage/issues/1992)) ([e36f8f1](https://github.com/googleapis/java-storage/commit/e36f8f1822d1290b984a8ae57efedd0276ca39f5))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.8.0 ([#1995](https://github.com/googleapis/java-storage/issues/1995)) ([b7fb037](https://github.com/googleapis/java-storage/commit/b7fb0373955cf9d60ce46a3827152041c19e943e))
+
 ## [2.22.0](https://github.com/googleapis/java-storage/compare/v2.21.0...v2.22.0) (2023-04-12)
 
 
