@@ -166,6 +166,11 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-rls</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>proto-google-cloud-kms-v1</artifactId>
       <version>0.110.0</version>
@@ -256,18 +261,19 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
           <configuration>
-            <!--
-              grpc-netty-shaded is a runtime dep, we pull it up to our level to raise its transitive dependencies priority
-              that overlap with our pubsub test deps.
-              -->
-            <usedDependencies>io.grpc:grpc-xds</usedDependencies>
             <ignoredDependencies>
+              <!--
+                grpc-netty-shaded is a runtime dep, we pull it up to our level to raise its transitive dependencies priority
+                that overlap with our pubsub test deps.
+                -->
               <dependency>io.grpc:grpc-netty-shaded</dependency>
               <!--
               defining a runtime dependency on this so it is on the default classpath for customers wanting
               to use direct path
               -->
               <dependency>io.grpc:grpc-googleapis</dependency>
+              <dependency>io.grpc:grpc-xds</dependency>
+              <dependency>io.grpc:grpc-rls</dependency>
               <!--
               We depend on `net.jqwik:jqwik` which itself has no classes, but depends on each of the other jars.
               In order to not churn on which of the sub apis we happen to be using at this time, we're flagging
