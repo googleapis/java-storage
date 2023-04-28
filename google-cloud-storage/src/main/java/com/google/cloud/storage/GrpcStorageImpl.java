@@ -146,6 +146,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @BetaApi
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
@@ -381,17 +382,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    GetBucketRequest.Builder builder =
-        GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
-    GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
-        syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
+    Opts<BucketSourceOpt> unwrap = Opts.unwrap(options);
+    return internalBucketGet(bucket, unwrap);
   }
 
   @Override
@@ -418,26 +410,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    GetObjectRequest.Builder builder =
-        GetObjectRequest.newBuilder()
-            .setBucket(bucketNameCodec.encode(blob.getBucket()))
-            .setObject(blob.getName());
-    ifNonNull(blob.getGeneration(), builder::setGeneration);
-    GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> {
-          try {
-            return storageClient.getObjectCallable().call(req, grpcCallContext);
-          } catch (NotFoundException ignore) {
-            return null;
-          }
-        },
-        syntaxDecoders.blob.andThen(opts.clearBlobFields()));
+    Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
+    return internalBlobGet(blob, unwrap);
   }
 
   @Override
@@ -493,7 +467,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
-    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
+    Opts<BucketTargetOpt> unwrap = Opts.unwrap(options);
+    if (bucketInfo.getModifiedFields().isEmpty()) {
+      return internalBucketGet(bucketInfo.getName(), unwrap.constrainTo(BucketSourceOpt.class));
+    }
+    Opts<BucketTargetOpt> opts = unwrap.resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
@@ -515,7 +493,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    Opts<ObjectTargetOpt> unwrap = Opts.unwrap(options);
+    if (blobInfo.getModifiedFields().isEmpty()) {
+      return internalBlobGet(blobInfo.getBlobId(), unwrap.constrainTo(ObjectSourceOpt.class));
+    }
+    Opts<ObjectTargetOpt> opts = unwrap.resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     Object object = codecs.blobInfo().encode(blobInfo);
@@ -1962,5 +1944,44 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         return Hasher.noop();
       }
     }
+  }
+
+  @Nullable
+  private Blob internalBlobGet(BlobId blob, Opts<ObjectSourceOpt> unwrap) {
+    Opts<ObjectSourceOpt> opts = unwrap.resolveFrom(blob).prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    GetObjectRequest.Builder builder =
+        GetObjectRequest.newBuilder()
+            .setBucket(bucketNameCodec.encode(blob.getBucket()))
+            .setObject(blob.getName());
+    ifNonNull(blob.getGeneration(), builder::setGeneration);
+    GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          try {
+            return storageClient.getObjectCallable().call(req, grpcCallContext);
+          } catch (NotFoundException ignore) {
+            return null;
+          }
+        },
+        syntaxDecoders.blob.andThen(opts.clearBlobFields()));
+  }
+
+  @Nullable
+  private Bucket internalBucketGet(String bucket, Opts<BucketSourceOpt> unwrap) {
+    Opts<BucketSourceOpt> opts = unwrap.prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    GetBucketRequest.Builder builder =
+        GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
+    GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
+        syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
   }
 }

@@ -39,6 +39,7 @@ import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -413,6 +414,24 @@ public class ITBucketTest {
       assertNotEquals(time, remoteBucket.getAutoclass().getToggleTime());
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
+    }
+  }
+
+  @Test
+  public void testUpdateBucket_noModification() throws Exception {
+    String bucketName = generator.randomBucketName();
+    BucketInfo bucketInfo = BucketInfo.newBuilder(bucketName).build();
+    try (TemporaryBucket tempB =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      // in grpc, create will return acls but update does not. re-get the metadata with default
+      // fields
+      BucketInfo bucket = tempB.getBucket();
+      Bucket gen1 =
+          storage.get(
+              bucket.getName(), BucketGetOption.metagenerationMatch(bucket.getMetageneration()));
+
+      Bucket gen2 = storage.update(gen1);
+      assertThat(gen2).isEqualTo(gen1);
     }
   }
 
