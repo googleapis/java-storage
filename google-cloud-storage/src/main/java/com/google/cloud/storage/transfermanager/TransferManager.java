@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public interface TransferManager {
+public interface TransferManager extends AutoCloseable {
 
   @NonNull
   UploadJob uploadFiles(List<Path> files, ParallelUploadConfig opts) throws IOException;

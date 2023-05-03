@@ -19,8 +19,9 @@ package com.google.cloud.storage.transfermanager;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageException;
 import java.nio.file.Path;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
-public final class DownloadSegment {
+final class DownloadSegment {
   private final BlobInfo input;
 
   private final Path outputDestination;
@@ -66,6 +67,27 @@ public final class DownloadSegment {
 
   public Long getGeneration() {
     return generation;
+  }
+
+  public DownloadResult toResult() {
+    DownloadResult.Builder b = DownloadResult.newBuilder(input, status);
+    if (exception != null) {
+      b.setException(exception);
+    }
+    if (outputDestination != null) {
+      b.setOutputDestination(outputDestination);
+    }
+    return b.build();
+  }
+
+  @NonNull
+  public static DownloadResult reduce(
+      @NonNull DownloadResult result, @NonNull DownloadSegment segment) {
+    if (TransferStatus.COMPARE_NULL_SAFE.compare(segment.getStatus(), result.getStatus()) <= 0) {
+      return result;
+    } else {
+      return segment.toResult();
+    }
   }
 
   public static final class Builder {

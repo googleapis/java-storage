@@ -32,7 +32,6 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
 
   private final BlobInfo originalBlob;
 
-  private final ParallelDownloadConfig parallelDownloadConfig;
   private final Storage storage;
 
   private final Storage.BlobSourceOption[] opts;
@@ -40,39 +39,39 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
   private final long startPosition;
 
   private final long endPosition;
+  private final Path destPath;
 
   ChunkedDownloadCallable(
       Storage storage,
       BlobInfo originalBlob,
-      ParallelDownloadConfig parallelDownloadConfig,
       BlobSourceOption[] opts,
+      Path destPath,
       long startPosition,
       long endPosition) {
     this.originalBlob = originalBlob;
-    this.parallelDownloadConfig = parallelDownloadConfig;
     this.storage = storage;
     this.opts = opts;
     this.startPosition = startPosition;
     this.endPosition = endPosition;
+    this.destPath = destPath;
   }
 
   @Override
   public DownloadSegment call() throws Exception {
     // TODO: Wrap Exceptions and put them in result
-    Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
     try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
-      FileChannel destFile =
-          FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+      FileChannel wc =
+          FileChannel.open(destPath, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
       rc.seek(startPosition);
       rc.limit(endPosition);
-      destFile.position(startPosition);
-      ByteStreams.copy(rc, destFile);
+      wc.position(startPosition);
+      ByteStreams.copy(rc, wc);
     } catch (IOException e) {
       throw new StorageException(e);
     }
     DownloadSegment result =
         DownloadSegment.newBuilder(originalBlob, TransferStatus.SUCCESS)
-            .setOutputDestination(path)
+            .setOutputDestination(destPath)
             .build();
     return result;
   }

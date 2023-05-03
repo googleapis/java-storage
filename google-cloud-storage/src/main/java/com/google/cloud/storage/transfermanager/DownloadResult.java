@@ -23,11 +23,14 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.StorageException;
 import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class DownloadResult {
+  static final Comparator<DownloadResult> COMPARATOR =
+      Comparator.comparingInt(dr -> dr.getStatus().ordinal());
 
   @NonNull private final BlobInfo input;
   @MonotonicNonNull private final Path outputDestination;

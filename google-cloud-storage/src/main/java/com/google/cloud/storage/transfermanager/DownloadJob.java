@@ -33,17 +33,17 @@ public final class DownloadJob {
   @NonNull private final ParallelDownloadConfig parallelDownloadConfig;
 
   private DownloadJob(
-      @NonNull List<ApiFuture<DownloadResult>> successResponses,
+      @NonNull List<ApiFuture<DownloadResult>> downloadResults,
       @NonNull ParallelDownloadConfig parallelDownloadConfig) {
-    this.downloadResults = successResponses;
+    this.downloadResults = downloadResults;
     this.parallelDownloadConfig = parallelDownloadConfig;
   }
 
-  public List<ApiFuture<DownloadResult>> getDownloadResults() {
+  public @NonNull List<ApiFuture<DownloadResult>> getDownloadResults() {
     return downloadResults;
   }
 
-  public ParallelDownloadConfig getParallelDownloadConfig() {
+  public @NonNull ParallelDownloadConfig getParallelDownloadConfig() {
     return parallelDownloadConfig;
   }
 
@@ -68,7 +68,7 @@ public final class DownloadJob {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("successResponses", downloadResults)
+        .add("downloadResults", downloadResults)
         .add("parallelDownloadConfig", parallelDownloadConfig)
         .toString();
   }

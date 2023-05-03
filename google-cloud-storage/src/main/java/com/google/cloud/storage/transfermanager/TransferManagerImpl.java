@@ -32,14 +32,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BinaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class TransferManagerImpl implements TransferManager {
 
-  private final Long DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD = Long.valueOf(32 * 1024 * 1024);
-
   private final TransferManagerConfig transferManagerConfig;
   private final ListeningExecutorService executor;
+  private final Qos qos;
   private final Storage storage;
 
   TransferManagerImpl(TransferManagerConfig transferManagerConfig) {
@@ -47,8 +48,15 @@ final class TransferManagerImpl implements TransferManager {
     this.executor =
         MoreExecutors.listeningDecorator(
             Executors.newFixedThreadPool(transferManagerConfig.getMaxWorkers()));
-
+    this.qos = transferManagerConfig.getQos();
     this.storage = transferManagerConfig.getStorageOptions().getService();
+  }
+
+  @Override
+  public void close() throws Exception {
+    // We only want to shutdown the executor service not the provided storage instance
+    executor.shutdownNow();
+    executor.awaitTermination(5, TimeUnit.MINUTES);
   }
 
   @Override
@@ -75,7 +83,7 @@ final class TransferManagerImpl implements TransferManager {
     Storage.BlobSourceOption[] opts =
         config.getOptionsPerRequest().toArray(new Storage.BlobSourceOption[0]);
     List<ApiFuture<DownloadResult>> downloadTasks = new ArrayList<>();
-    if (!transferManagerConfig.isAllowChunking()) {
+    if (!transferManagerConfig.isAllowDivideAndConquer()) {
       for (BlobInfo blob : blobs) {
         DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
         downloadTasks.add(convert(executor.submit(callable)));
@@ -83,25 +91,34 @@ final class TransferManagerImpl implements TransferManager {
     } else {
       for (BlobInfo blob : blobs) {
         BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
+        Path destPath = TransferManagerUtils.createDestPath(config, validatedBlob);
         long size = validatedBlob.getSize();
-        if (size > DOWNLOAD_IN_CHUNKS_FILE_SIZE_THRESHOLD) {
-          List<ApiFuture<DownloadSegment>> downloadSegmentTasks = new ArrayList<>();
-          // Perform chunked download
-          long start = 0;
-          while (start < size) {
-            long chunkStart = start;
-            long chunkEnd = start + transferManagerConfig.getPerWorkerBufferSize() - 1;
-            chunkEnd = chunkEnd > size ? size : chunkEnd;
-            ChunkedDownloadCallable callable =
-                new ChunkedDownloadCallable(storage, blob, config, opts, chunkStart, chunkEnd);
-            downloadSegmentTasks.add(convert(executor.submit(callable)));
-            start = start + transferManagerConfig.getPerWorkerBufferSize();
-          }
+        if (qos.divideAndConquer(size)) {
+
+          DownloadResult optimisticResult =
+              DownloadResult.newBuilder(validatedBlob, TransferStatus.SUCCESS)
+                  .setOutputDestination(destPath)
+                  .build();
+
+          List<ApiFuture<DownloadSegment>> downloadSegmentTasks =
+              computeRanges(size, transferManagerConfig.getPerWorkerBufferSize()).stream()
+                  .map(
+                      r ->
+                          new ChunkedDownloadCallable(
+                              storage, validatedBlob, opts, destPath, r.begin, r.end))
+                  .map(executor::submit)
+                  .map(TransferManagerImpl::convert)
+                  .collect(ImmutableList.toImmutableList());
 
           downloadTasks.add(
               ApiFutures.transform(
                   ApiFutures.allAsList(downloadSegmentTasks),
-                  this::transformSegmentsToResult,
+                  segments ->
+                      segments.stream()
+                          .reduce(
+                              optimisticResult,
+                              DownloadSegment::reduce,
+                              BinaryOperator.minBy(DownloadResult.COMPARATOR)),
                   MoreExecutors.directExecutor()));
         } else {
           DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
@@ -129,16 +146,30 @@ final class TransferManagerImpl implements TransferManager {
     return blobInfo;
   }
 
-  private DownloadResult transformSegmentsToResult(List<DownloadSegment> segments) {
-    for (DownloadSegment segment : segments) {
-      if (segment.getStatus() != TransferStatus.SUCCESS) {
-        return DownloadResult.newBuilder(segment.getInput(), segment.getStatus())
-            .setException(segment.getException())
-            .build();
+  private static ImmutableList<Range> computeRanges(long end, long segmentSize) {
+    ImmutableList.Builder<Range> b = ImmutableList.builder();
+
+    if (end <= segmentSize) {
+      b.add(Range.of(0, end));
+    } else {
+      for (long i = 0; i < end; i += segmentSize) {
+        b.add(Range.of(i, Math.min(i + segmentSize, end)));
       }
     }
-    return DownloadResult.newBuilder(segments.get(0).getInput(), segments.get(0).getStatus())
-        .setOutputDestination(segments.get(0).getOutputDestination())
-        .build();
+    return b.build();
+  }
+
+  private static final class Range {
+    private final long begin;
+    private final long end;
+
+    private Range(long begin, long end) {
+      this.begin = begin;
+      this.end = end;
+    }
+
+    public static Range of(long begin, long end) {
+      return new Range(begin, end);
+    }
   }
 }

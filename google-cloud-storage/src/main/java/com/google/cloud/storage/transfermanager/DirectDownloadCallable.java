@@ -51,19 +51,19 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
   public DownloadResult call() {
     Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
     try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
-      FileChannel destFile =
+      FileChannel wc =
           FileChannel.open(
               path,
               StandardOpenOption.WRITE,
               StandardOpenOption.CREATE,
               StandardOpenOption.TRUNCATE_EXISTING);
-      ByteStreams.copy(rc, destFile);
+      ByteStreams.copy(rc, wc);
     } catch (IOException e) {
       throw new StorageException(e);
     }
     DownloadResult result =
         DownloadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
-            .setOutputDestination(path)
+            .setOutputDestination(path.toAbsolutePath())
             .build();
     return result;
   }
