@@ -23,19 +23,22 @@ import java.util.Objects;
 public final class TransferManagerConfig {
   private final int maxWorkers;
   private final int perWorkerBufferSize;
-  private final boolean allowChunking;
+  private final boolean allowDivideAndConquer;
 
   private final StorageOptions storageOptions;
+  private final Qos qos;
 
   TransferManagerConfig(
       int maxWorkers,
       int perWorkerBufferSize,
-      boolean allowChunking,
-      StorageOptions storageOptions) {
+      boolean allowDivideAndConquer,
+      StorageOptions storageOptions,
+      Qos qos) {
     this.maxWorkers = maxWorkers;
     this.perWorkerBufferSize = perWorkerBufferSize;
-    this.allowChunking = allowChunking;
+    this.allowDivideAndConquer = allowDivideAndConquer;
     this.storageOptions = storageOptions;
+    this.qos = qos;
   }
 
   /** Maximum amount of workers to be allocated to perform work in Transfer Manager */
@@ -49,11 +52,11 @@ public final class TransferManagerConfig {
   }
 
   /**
-   * Whether to allow Transfer Manager to performing chunked Uploads/Downloads if it determines
+   * Whether to allow Transfer Manager to perform chunked Uploads/Downloads if it determines
    * chunking will be beneficial
    */
-  public boolean isAllowChunking() {
-    return allowChunking;
+  public boolean isAllowDivideAndConquer() {
+    return allowDivideAndConquer;
   }
 
   /** Storage options that Transfer Manager will use to interact with GCS */
@@ -63,6 +66,19 @@ public final class TransferManagerConfig {
 
   public TransferManager getService() {
     return new TransferManagerImpl(this);
+  }
+
+  public Builder toBuilder() {
+    return new Builder()
+        .setAllowDivideAndConquer(allowDivideAndConquer)
+        .setMaxWorkers(maxWorkers)
+        .setPerWorkerBufferSize(perWorkerBufferSize)
+        .setQos(qos)
+        .setStorageOptions(storageOptions);
+  }
+
+  Qos getQos() {
+    return qos;
   }
 
   @Override
@@ -76,13 +92,13 @@ public final class TransferManagerConfig {
     TransferManagerConfig that = (TransferManagerConfig) o;
     return maxWorkers == that.maxWorkers
         && perWorkerBufferSize == that.perWorkerBufferSize
-        && allowChunking == that.allowChunking
+        && allowDivideAndConquer == that.allowDivideAndConquer
         && Objects.equals(storageOptions, that.storageOptions);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(maxWorkers, perWorkerBufferSize, allowChunking, storageOptions);
+    return Objects.hash(maxWorkers, perWorkerBufferSize, allowDivideAndConquer, storageOptions);
   }
 
   @Override
@@ -90,7 +106,7 @@ public final class TransferManagerConfig {
     return MoreObjects.toStringHelper(this)
         .add("maxWorkers", maxWorkers)
         .add("perWorkerBufferSize", perWorkerBufferSize)
-        .add("allowChunking", allowChunking)
+        .add("allowChunking", allowDivideAndConquer)
         .add("storageOptions", storageOptions)
         .toString();
   }
@@ -103,15 +119,17 @@ public final class TransferManagerConfig {
 
     private int maxWorkers;
     private int perWorkerBufferSize;
-    private boolean allowChunking;
+    private boolean allowDivideAndConquer;
 
     private StorageOptions storageOptions;
+    private Qos qos;
 
     private Builder() {
       this.perWorkerBufferSize = 16 * 1024 * 1024;
       this.maxWorkers = 2 * Runtime.getRuntime().availableProcessors();
-      this.allowChunking = false;
+      this.allowDivideAndConquer = false;
       this.storageOptions = StorageOptions.getDefaultInstance();
+      this.qos = DefaultQos.of();
     }
 
     public Builder setMaxWorkers(int maxWorkers) {
@@ -124,18 +142,24 @@ public final class TransferManagerConfig {
       return this;
     }
 
-    public Builder setAllowChunking(boolean allowChunking) {
-      this.allowChunking = allowChunking;
+    public Builder setAllowDivideAndConquer(boolean allowDivideAndConquer) {
+      this.allowDivideAndConquer = allowDivideAndConquer;
       return this;
     }
 
-    public void setStorageOptions(StorageOptions storageOptions) {
+    public Builder setStorageOptions(StorageOptions storageOptions) {
       this.storageOptions = storageOptions;
+      return this;
+    }
+
+    Builder setQos(Qos qos) {
+      this.qos = qos;
+      return this;
     }
 
     public TransferManagerConfig build() {
       return new TransferManagerConfig(
-          maxWorkers, perWorkerBufferSize, allowChunking, storageOptions);
+          maxWorkers, perWorkerBufferSize, allowDivideAndConquer, storageOptions, qos);
     }
   }
 }

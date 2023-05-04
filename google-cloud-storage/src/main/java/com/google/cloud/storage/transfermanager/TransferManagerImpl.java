@@ -17,7 +17,9 @@
 package com.google.cloud.storage.transfermanager;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.ListenableFutureToApiFuture;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
@@ -30,12 +32,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BinaryOperator;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class TransferManagerImpl implements TransferManager {
 
   private final TransferManagerConfig transferManagerConfig;
   private final ListeningExecutorService executor;
+  private final Qos qos;
   private final Storage storage;
 
   TransferManagerImpl(TransferManagerConfig transferManagerConfig) {
@@ -43,8 +48,15 @@ final class TransferManagerImpl implements TransferManager {
     this.executor =
         MoreExecutors.listeningDecorator(
             Executors.newFixedThreadPool(transferManagerConfig.getMaxWorkers()));
-
+    this.qos = transferManagerConfig.getQos();
     this.storage = transferManagerConfig.getStorageOptions().getService();
+  }
+
+  @Override
+  public void close() throws Exception {
+    // We only want to shutdown the executor service not the provided storage instance
+    executor.shutdownNow();
+    executor.awaitTermination(5, TimeUnit.MINUTES);
   }
 
   @Override
@@ -71,9 +83,48 @@ final class TransferManagerImpl implements TransferManager {
     Storage.BlobSourceOption[] opts =
         config.getOptionsPerRequest().toArray(new Storage.BlobSourceOption[0]);
     List<ApiFuture<DownloadResult>> downloadTasks = new ArrayList<>();
-    for (BlobInfo blob : blobs) {
-      DownloadCallable callable = new DownloadCallable(storage, blob, config, opts);
-      downloadTasks.add(convert(executor.submit(callable)));
+    if (!transferManagerConfig.isAllowDivideAndConquer()) {
+      for (BlobInfo blob : blobs) {
+        DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
+        downloadTasks.add(convert(executor.submit(callable)));
+      }
+    } else {
+      for (BlobInfo blob : blobs) {
+        BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
+        Path destPath = TransferManagerUtils.createDestPath(config, validatedBlob);
+        long size = validatedBlob.getSize();
+        if (qos.divideAndConquer(size)) {
+
+          DownloadResult optimisticResult =
+              DownloadResult.newBuilder(validatedBlob, TransferStatus.SUCCESS)
+                  .setOutputDestination(destPath)
+                  .build();
+
+          List<ApiFuture<DownloadSegment>> downloadSegmentTasks =
+              computeRanges(size, transferManagerConfig.getPerWorkerBufferSize()).stream()
+                  .map(
+                      r ->
+                          new ChunkedDownloadCallable(
+                              storage, validatedBlob, opts, destPath, r.begin, r.end))
+                  .map(executor::submit)
+                  .map(TransferManagerImpl::convert)
+                  .collect(ImmutableList.toImmutableList());
+
+          downloadTasks.add(
+              ApiFutures.transform(
+                  ApiFutures.allAsList(downloadSegmentTasks),
+                  segments ->
+                      segments.stream()
+                          .reduce(
+                              optimisticResult,
+                              DownloadSegment::reduce,
+                              BinaryOperator.minBy(DownloadResult.COMPARATOR)),
+                  MoreExecutors.directExecutor()));
+        } else {
+          DirectDownloadCallable callable = new DirectDownloadCallable(storage, blob, config, opts);
+          downloadTasks.add(convert(executor.submit(callable)));
+        }
+      }
     }
     return DownloadJob.newBuilder()
         .setDownloadResults(downloadTasks)
@@ -83,5 +134,42 @@ final class TransferManagerImpl implements TransferManager {
 
   private static <T> ApiFuture<T> convert(ListenableFuture<T> lf) {
     return new ListenableFutureToApiFuture<>(lf);
+  }
+
+  private static BlobInfo retrieveSizeAndGeneration(
+      Storage storage, BlobInfo blobInfo, String bucketName) {
+    if (blobInfo.getGeneration() == null) {
+      return storage.get(BlobId.of(bucketName, blobInfo.getName()));
+    } else if (blobInfo.getSize() == null) {
+      return storage.get(BlobId.of(bucketName, blobInfo.getName(), blobInfo.getGeneration()));
+    }
+    return blobInfo;
+  }
+
+  private static ImmutableList<Range> computeRanges(long end, long segmentSize) {
+    ImmutableList.Builder<Range> b = ImmutableList.builder();
+
+    if (end <= segmentSize) {
+      b.add(Range.of(0, end));
+    } else {
+      for (long i = 0; i < end; i += segmentSize) {
+        b.add(Range.of(i, Math.min(i + segmentSize, end)));
+      }
+    }
+    return b.build();
+  }
+
+  private static final class Range {
+    private final long begin;
+    private final long end;
+
+    private Range(long begin, long end) {
+      this.begin = begin;
+      this.end = end;
+    }
+
+    public static Range of(long begin, long end) {
+      return new Range(begin, end);
+    }
   }
 }

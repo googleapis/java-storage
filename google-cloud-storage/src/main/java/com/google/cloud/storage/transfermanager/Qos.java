@@ -16,16 +16,7 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import java.util.Comparator;
+interface Qos {
 
-public enum TransferStatus {
-  FAILED_TO_START,
-  FAILED_TO_FINISH,
-  SKIPPED,
-  CANCELED,
-  SUCCESS;
-
-  /** A null value is considered to be greater than all values */
-  static final Comparator<TransferStatus> COMPARE_NULL_SAFE =
-      Comparator.nullsLast(Comparator.comparingInt(TransferStatus::ordinal));
+  boolean divideAndConquer(long objectSize);
 }

@@ -16,16 +16,22 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import java.util.Comparator;
+import com.google.cloud.storage.StorageOptions;
 
-public enum TransferStatus {
-  FAILED_TO_START,
-  FAILED_TO_FINISH,
-  SKIPPED,
-  CANCELED,
-  SUCCESS;
+public final class TransferManagerConfigTestingInstances {
+  private TransferManagerConfigTestingInstances() {}
 
-  /** A null value is considered to be greater than all values */
-  static final Comparator<TransferStatus> COMPARE_NULL_SAFE =
-      Comparator.nullsLast(Comparator.comparingInt(TransferStatus::ordinal));
+  public static TransferManagerConfig defaults() {
+    return defaults(StorageOptions.newBuilder().build());
+  }
+
+  public static TransferManagerConfig defaults(StorageOptions options) {
+    return TransferManagerConfig.newBuilder()
+        .setAllowDivideAndConquer(false)
+        .setMaxWorkers(1)
+        .setPerWorkerBufferSize(512 * 1024)
+        .setQos(DefaultQos.of(2 * 1024 * 1024))
+        .setStorageOptions(options)
+        .build();
+  }
 }

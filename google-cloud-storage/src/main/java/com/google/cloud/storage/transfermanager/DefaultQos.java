@@ -16,16 +16,24 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import java.util.Comparator;
+final class DefaultQos implements Qos {
 
-public enum TransferStatus {
-  FAILED_TO_START,
-  FAILED_TO_FINISH,
-  SKIPPED,
-  CANCELED,
-  SUCCESS;
+  private final long divideAndConquerThreshold;
 
-  /** A null value is considered to be greater than all values */
-  static final Comparator<TransferStatus> COMPARE_NULL_SAFE =
-      Comparator.nullsLast(Comparator.comparingInt(TransferStatus::ordinal));
+  private DefaultQos(long divideAndConquerThreshold) {
+    this.divideAndConquerThreshold = divideAndConquerThreshold;
+  }
+
+  @Override
+  public boolean divideAndConquer(long objectSize) {
+    return objectSize > divideAndConquerThreshold;
+  }
+
+  static DefaultQos of() {
+    return of(128L * 1024 * 1024);
+  }
+
+  static DefaultQos of(long divideAndConquerThreshold) {
+    return new DefaultQos(divideAndConquerThreshold);
+  }
 }

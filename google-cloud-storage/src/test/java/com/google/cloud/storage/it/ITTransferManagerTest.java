@@ -26,6 +26,7 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -39,6 +40,7 @@ import com.google.cloud.storage.transfermanager.ParallelDownloadConfig;
 import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
+import com.google.cloud.storage.transfermanager.TransferManagerConfigTestingInstances;
 import com.google.cloud.storage.transfermanager.UploadJob;
 import com.google.cloud.storage.transfermanager.UploadResult;
 import com.google.common.collect.ImmutableList;
@@ -48,8 +50,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,9 +61,15 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.HTTP},
+    transports = {Transport.HTTP, Transport.GRPC},
     backends = {Backend.PROD})
 public class ITTransferManagerTest {
+
+  private static final Comparator<BlobInfo> comp =
+      Comparator.comparing(info -> info.getBlobId().getName());
+  private static final Comparator<DownloadResult> comp2 =
+      Comparator.comparing(DownloadResult::getInput, comp);
+
   @Inject public Storage storage;
   @Inject public BucketInfo bucket;
   @Inject public Generator generator;
@@ -82,24 +91,32 @@ public class ITTransferManagerTest {
         BlobInfo.newBuilder(
                 BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
             .build();
-    BlobInfo blobInfo3 =
+    BlobInfo blobInfoChunking =
         BlobInfo.newBuilder(
                 BlobId.of(bucket.getName(), String.format("%s/src", generator.randomObjectName())))
             .build();
-    Collections.addAll(blobs, blobInfo1, blobInfo2, blobInfo3);
+    Collections.addAll(blobs, blobInfo1, blobInfo2);
     ByteBuffer content = DataGenerator.base64Characters().genByteBuffer(108);
     for (BlobInfo blob : blobs) {
       try (WriteChannel writeChannel = storage.writer(blob)) {
         writeChannel.write(content);
       }
     }
+    long size = 2L * 1024 * 1024;
+    size = size + 100L;
+    ByteBuffer chunkedContent = DataGenerator.base64Characters().genByteBuffer(size);
+    try (WriteChannel writeChannel = storage.writer(blobInfoChunking)) {
+      writeChannel.write(chunkedContent);
+    }
+    blobs.add(blobInfoChunking);
   }
 
   @Test
-  public void uploadFiles() throws IOException, ExecutionException, InterruptedException {
-    TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
-    TransferManager transferManager = config.getService();
-    try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
+  public void uploadFiles() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile2 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
       List<Path> files =
@@ -114,10 +131,11 @@ public class ITTransferManagerTest {
   }
 
   @Test
-  public void uploadFilesWithOpts() throws IOException, ExecutionException, InterruptedException {
-    TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
-    TransferManager transferManager = config.getService();
-    try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
+  public void uploadFilesWithOpts() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         TmpFile tmpFile2 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
       List<Path> files =
@@ -135,16 +153,67 @@ public class ITTransferManagerTest {
   }
 
   @Test
-  public void downloadBlobs() throws IOException, ExecutionException, InterruptedException {
-    TransferManagerConfig config = TransferManagerConfig.newBuilder().setMaxWorkers(1).build();
-    TransferManager transferManager = config.getService();
-    String bucketName = bucket.getName();
-    ParallelDownloadConfig parallelDownloadConfig =
-        ParallelDownloadConfig.newBuilder().setBucketName(bucketName).build();
-    DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
-    List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
-    assertThat(downloadResults).hasSize(3);
-    cleanUpFiles(downloadResults);
+  public void downloadBlobs() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName();
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .build();
+      DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      try {
+        assertThat(downloadResults).hasSize(3);
+      } finally {
+        cleanUpFiles(downloadResults);
+      }
+    }
+  }
+
+  @Test
+  public void downloadBlobsAllowChunked() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
+            .toBuilder()
+            .setAllowDivideAndConquer(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .build();
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName();
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .build();
+      DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      assertThat(downloadResults).hasSize(3);
+
+      List<String> expectedContents =
+          blobs.stream()
+              .sorted(comp)
+              .map(BlobInfo::getBlobId)
+              .map(storage::readAllBytes)
+              .map(TestUtils::xxd)
+              .collect(Collectors.toList());
+
+      List<String> actualContents =
+          downloadResults.stream()
+              .sorted(comp2)
+              .map(DownloadResult::getOutputDestination)
+              .map(ITTransferManagerTest::readAllPathBytes)
+              .map(TestUtils::xxd)
+              .collect(Collectors.toList());
+
+      try {
+        assertThat(actualContents).isEqualTo(expectedContents);
+      } finally {
+        cleanUpFiles(downloadResults);
+      }
+    }
   }
 
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
@@ -152,6 +221,14 @@ public class ITTransferManagerTest {
     for (DownloadResult res : results) {
       Files.delete(res.getOutputDestination());
       Files.delete(res.getOutputDestination().getParent());
+    }
+  }
+
+  private static byte[] readAllPathBytes(Path path) {
+    try {
+      return Files.readAllBytes(path);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
 }
