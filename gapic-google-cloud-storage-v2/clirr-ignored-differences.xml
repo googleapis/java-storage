@@ -43,4 +43,12 @@
     <className>com/google/storage/v2/StorageClient$ListNotification*</className>
   </difference>
 
+  <!-- Allow more specific parent resource method parameters -->
+  <difference>
+    <differenceType>7005</differenceType>
+    <className>com/google/storage/v2/StorageClient</className>
+    <method>* *(*Name*)</method>
+    <to>* *(*Name*)</to>
+  </difference>
+
 </differences>

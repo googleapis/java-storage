@@ -1309,6 +1309,27 @@ public class StorageImplMockitoTest {
   }
 
   @Test
+  public void testListBlobsMatchGlob() {
+    String cursor = "cursor";
+    String matchGlob = "foo*bar";
+    Map<StorageRpc.Option, ?> options = ImmutableMap.of(StorageRpc.Option.MATCH_GLOB, matchGlob);
+    ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
+    Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
+        Tuple.of(
+            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
+    doReturn(result)
+        .doThrow(UNEXPECTED_CALL_EXCEPTION)
+        .when(storageRpcMock)
+        .list(BUCKET_NAME1, options);
+
+    initializeService();
+    ImmutableList<Blob> blobList = ImmutableList.of(expectedBlob1, expectedBlob2);
+    Page<Blob> page = storage.list(BUCKET_NAME1, Storage.BlobListOption.matchGlob(matchGlob));
+    assertEquals(cursor, page.getNextPageToken());
+    assertArrayEquals(blobList.toArray(), Iterables.toArray(page.getValues(), Blob.class));
+  }
+
+  @Test
   public void testListBlobsWithException() {
     doThrow(STORAGE_FAILURE).when(storageRpcMock).list(BUCKET_NAME1, EMPTY_RPC_OPTIONS);
     initializeService();

@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.RestorableState;
+import com.google.cloud.storage.GapicDownloadSessionBuilder.ReadableByteChannelSessionBuilder;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
@@ -46,17 +47,27 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
   }
 
   @Override
-  protected LazyReadChannel<Object> newLazyReadChannel() {
+  protected LazyReadChannel<?, Object> newLazyReadChannel() {
     return new LazyReadChannel<>(
-        () ->
-            ResumableMedia.gapic()
-                .read()
-                .byteChannel(read)
-                .setHasher(Hasher.noop())
-                .setAutoGzipDecompression(autoGzipDecompression)
-                .buffered(getBufferHandle())
-                .setReadObjectRequest(getReadObjectRequest())
-                .build());
+        () -> {
+          ReadableByteChannelSessionBuilder b =
+              ResumableMedia.gapic()
+                  .read()
+                  .byteChannel(read)
+                  .setHasher(Hasher.noop())
+                  .setAutoGzipDecompression(autoGzipDecompression);
+          BufferHandle bufferHandle = getBufferHandle();
+          // because we're erasing the specific type of channel, we need to declare it here.
+          // If we don't, the compiler complains we're not returning a compliant type.
+          ReadableByteChannelSession<?, Object> session;
+          if (bufferHandle.capacity() > 0) {
+            session =
+                b.buffered(getBufferHandle()).setReadObjectRequest(getReadObjectRequest()).build();
+          } else {
+            session = b.unbuffered().setReadObjectRequest(getReadObjectRequest()).build();
+          }
+          return session;
+        });
   }
 
   @NonNull

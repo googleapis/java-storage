@@ -1,5 +1,91 @@
 # Changelog
 
+## [2.22.1](https://github.com/googleapis/java-storage/compare/v2.22.0...v2.22.1) (2023-04-26)
+
+
+### Bug Fixes
+
+* Introduce new BlobId#toGsUtilUriWithGeneration ([#1998](https://github.com/googleapis/java-storage/issues/1998)) ([68de5c7](https://github.com/googleapis/java-storage/commit/68de5c7fae6df2f3df5c8c413b206bd7c7e230ea))
+* Update grpc x-goog-user-project handling gracefulness ([#1983](https://github.com/googleapis/java-storage/issues/1983)) ([f274739](https://github.com/googleapis/java-storage/commit/f2747391b6daadd6a12a2dcb54714cce237eb1ac))
+
+
+### Documentation
+
+* Update routing annotations for CancelResumableWriteRequest and QueryWriteStatusRequest ([#1992](https://github.com/googleapis/java-storage/issues/1992)) ([e36f8f1](https://github.com/googleapis/java-storage/commit/e36f8f1822d1290b984a8ae57efedd0276ca39f5))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.8.0 ([#1995](https://github.com/googleapis/java-storage/issues/1995)) ([b7fb037](https://github.com/googleapis/java-storage/commit/b7fb0373955cf9d60ce46a3827152041c19e943e))
+
+## [2.22.0](https://github.com/googleapis/java-storage/compare/v2.21.0...v2.22.0) (2023-04-12)
+
+
+### Features
+
+* Add matchGlob parameter to BlobListOption ([#1965](https://github.com/googleapis/java-storage/issues/1965)) ([93be97a](https://github.com/googleapis/java-storage/commit/93be97a9ae061241f510cbeb566f9f839063faa0))
+* Handle generation numbers in BlobId#{to,from}GsUtilUri ([#1929](https://github.com/googleapis/java-storage/issues/1929)) ([0a033b3](https://github.com/googleapis/java-storage/commit/0a033b36a2be7e1d92c8b2f7323f2851005034cf))
+* Implement GrpcStorageImpl#{get,list,create,delete}Notification ([#1958](https://github.com/googleapis/java-storage/issues/1958)) ([830052b](https://github.com/googleapis/java-storage/commit/830052b3f26337f50770436784f0ea9f3366dbca))
+* Make it possible to disable the buffer of ReadChannels returned from Storage.reader ([#1974](https://github.com/googleapis/java-storage/issues/1974)) ([702ab2b](https://github.com/googleapis/java-storage/commit/702ab2bb1ceb9f428296591adc6e09023b4a8484))
+
+
+### Bug Fixes
+
+* Update GrpcStorageOptions to set allowNonDefaultServiceAccount = true ([#1977](https://github.com/googleapis/java-storage/issues/1977)) ([f1b9493](https://github.com/googleapis/java-storage/commit/f1b94930509c87ecbdbe6627fec6118305331780))
+
+
+### Documentation
+
+* Update spec for WriteObjectRequest.object_size to clarify that it applies to both one-shot and resumable writes ([#1976](https://github.com/googleapis/java-storage/issues/1976)) ([7354e19](https://github.com/googleapis/java-storage/commit/7354e198521384cd2b8583f073217a5a6cb74fe0))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.7.0 ([#1978](https://github.com/googleapis/java-storage/issues/1978)) ([1f7e9c9](https://github.com/googleapis/java-storage/commit/1f7e9c9130a9516acfcdfda4b23e642fbe799146))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.21 ([#1979](https://github.com/googleapis/java-storage/issues/1979)) ([d6accdf](https://github.com/googleapis/java-storage/commit/d6accdf9c81419728c39a61e348a61683dc117ad))
+
+## [2.21.0](https://github.com/googleapis/java-storage/compare/v2.20.2...v2.21.0) (2023-03-31)
+
+
+### Features
+
+* Remove Bucket.retention_period, now that we've migrated to retention_duration ([#1955](https://github.com/googleapis/java-storage/issues/1955)) ([c0ffe7c](https://github.com/googleapis/java-storage/commit/c0ffe7c7cb50181cc375a945b9e79f97da9aa290))
+
+
+### Bug Fixes
+
+* Update bucket creation to set project as `bucket.project` ([#1912](https://github.com/googleapis/java-storage/issues/1912)) ([65993c0](https://github.com/googleapis/java-storage/commit/65993c0614987b96962ff28404de2aaea4ee679d))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.6.0 ([#1957](https://github.com/googleapis/java-storage/issues/1957)) ([af90f16](https://github.com/googleapis/java-storage/commit/af90f162ac038479a0f09fb45289b1aa258d1aec))
+* Update dependency net.jqwik:jqwik to v1.7.3 ([#1944](https://github.com/googleapis/java-storage/issues/1944)) ([a8b96c9](https://github.com/googleapis/java-storage/commit/a8b96c9a2da7fbdf9de5e15e833058117570c24e))
+
+
+### Documentation
+
+* Revert ChecksummedData message definition not to specify ctype=CORD, ([#1960](https://github.com/googleapis/java-storage/issues/1960)) ([3a2a643](https://github.com/googleapis/java-storage/commit/3a2a643ff389741efaad244bbabf494dcd9a799b))
+* Updated ChecksummedData message definition to specify ctype=CORD, and removed incorrect earlier attempt that set that annotation in the ReadObjectResponse message definition ([#1959](https://github.com/googleapis/java-storage/issues/1959)) ([3d97bdd](https://github.com/googleapis/java-storage/commit/3d97bddc668deb2059261260125f94c6e32aac76))
+
+## [2.20.2](https://github.com/googleapis/java-storage/compare/v2.20.1...v2.20.2) (2023-03-22)
+
+
+### Bug Fixes
+
+* Add service_yaml_parameters to `java_gapic_library` targets ([#1933](https://github.com/googleapis/java-storage/issues/1933)) ([ceaeb3f](https://github.com/googleapis/java-storage/commit/ceaeb3fa25cdc10f82c870bf2e9cc27b6a91affd))
+
+
+### Documentation
+
+* Add clarification on non-editable metadata ([#1939](https://github.com/googleapis/java-storage/issues/1939)) ([df57705](https://github.com/googleapis/java-storage/commit/df57705bf37e430d66ff6c7be4ee4a6246d8616e))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20230301-2.0.0 ([#1935](https://github.com/googleapis/java-storage/issues/1935)) ([dbc7534](https://github.com/googleapis/java-storage/commit/dbc7534b86c0629d31d322356675e18494b7175b))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.5.0 ([#1940](https://github.com/googleapis/java-storage/issues/1940)) ([fc55e41](https://github.com/googleapis/java-storage/commit/fc55e41dc6b5802fca46c03cb8443528670eb47d))
+
 ## [2.20.1](https://github.com/googleapis/java-storage/compare/v2.20.0...v2.20.1) (2023-03-07)
 
 

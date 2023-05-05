@@ -12007,37 +12007,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * The duration in seconds that objects need to be retained. Retention
-     * duration must be greater than zero and less than 100 years. Note that
-     * enforcement of retention periods less than a day is not guaranteed. Such
-     * periods should only be used for testing purposes.
-     * </pre>
-     *
-     * <code>optional int64 retention_period = 3;</code>
-     *
-     * @return Whether the retentionPeriod field is set.
-     */
-    boolean hasRetentionPeriod();
-    /**
-     *
-     *
-     * <pre>
-     * The duration in seconds that objects need to be retained. Retention
-     * duration must be greater than zero and less than 100 years. Note that
-     * enforcement of retention periods less than a day is not guaranteed. Such
-     * periods should only be used for testing purposes.
-     * </pre>
-     *
-     * <code>optional int64 retention_period = 3;</code>
-     *
-     * @return The retentionPeriod.
-     */
-    long getRetentionPeriod();
-
-    /**
-     *
-     *
-     * <pre>
      * The duration that objects need to be retained. Retention duration must be
      * greater than zero and less than 100 years. Note that enforcement of
      * retention periods less than a day is not guaranteed. Such periods should
@@ -12128,7 +12097,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.storage.v2.Bucket.RetentionPolicy.Builder.class);
     }
 
-    private int bitField0_;
     public static final int EFFECTIVE_TIME_FIELD_NUMBER = 1;
     private com.google.protobuf.Timestamp effectiveTime_;
     /**
@@ -12198,45 +12166,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     @java.lang.Override
     public boolean getIsLocked() {
       return isLocked_;
-    }
-
-    public static final int RETENTION_PERIOD_FIELD_NUMBER = 3;
-    private long retentionPeriod_ = 0L;
-    /**
-     *
-     *
-     * <pre>
-     * The duration in seconds that objects need to be retained. Retention
-     * duration must be greater than zero and less than 100 years. Note that
-     * enforcement of retention periods less than a day is not guaranteed. Such
-     * periods should only be used for testing purposes.
-     * </pre>
-     *
-     * <code>optional int64 retention_period = 3;</code>
-     *
-     * @return Whether the retentionPeriod field is set.
-     */
-    @java.lang.Override
-    public boolean hasRetentionPeriod() {
-      return ((bitField0_ & 0x00000001) != 0);
-    }
-    /**
-     *
-     *
-     * <pre>
-     * The duration in seconds that objects need to be retained. Retention
-     * duration must be greater than zero and less than 100 years. Note that
-     * enforcement of retention periods less than a day is not guaranteed. Such
-     * periods should only be used for testing purposes.
-     * </pre>
-     *
-     * <code>optional int64 retention_period = 3;</code>
-     *
-     * @return The retentionPeriod.
-     */
-    @java.lang.Override
-    public long getRetentionPeriod() {
-      return retentionPeriod_;
     }
 
     public static final int RETENTION_DURATION_FIELD_NUMBER = 4;
@@ -12321,9 +12250,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (isLocked_ != false) {
         output.writeBool(2, isLocked_);
       }
-      if (((bitField0_ & 0x00000001) != 0)) {
-        output.writeInt64(3, retentionPeriod_);
-      }
       if (retentionDuration_ != null) {
         output.writeMessage(4, getRetentionDuration());
       }
@@ -12341,9 +12267,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (isLocked_ != false) {
         size += com.google.protobuf.CodedOutputStream.computeBoolSize(2, isLocked_);
-      }
-      if (((bitField0_ & 0x00000001) != 0)) {
-        size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, retentionPeriod_);
       }
       if (retentionDuration_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(4, getRetentionDuration());
@@ -12369,10 +12292,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (!getEffectiveTime().equals(other.getEffectiveTime())) return false;
       }
       if (getIsLocked() != other.getIsLocked()) return false;
-      if (hasRetentionPeriod() != other.hasRetentionPeriod()) return false;
-      if (hasRetentionPeriod()) {
-        if (getRetentionPeriod() != other.getRetentionPeriod()) return false;
-      }
       if (hasRetentionDuration() != other.hasRetentionDuration()) return false;
       if (hasRetentionDuration()) {
         if (!getRetentionDuration().equals(other.getRetentionDuration())) return false;
@@ -12394,10 +12313,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       hash = (37 * hash) + IS_LOCKED_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getIsLocked());
-      if (hasRetentionPeriod()) {
-        hash = (37 * hash) + RETENTION_PERIOD_FIELD_NUMBER;
-        hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getRetentionPeriod());
-      }
       if (hasRetentionDuration()) {
         hash = (37 * hash) + RETENTION_DURATION_FIELD_NUMBER;
         hash = (53 * hash) + getRetentionDuration().hashCode();
@@ -12549,7 +12464,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           effectiveTimeBuilder_ = null;
         }
         isLocked_ = false;
-        retentionPeriod_ = 0L;
         retentionDuration_ = null;
         if (retentionDurationBuilder_ != null) {
           retentionDurationBuilder_.dispose();
@@ -12598,18 +12512,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.isLocked_ = isLocked_;
         }
-        int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000004) != 0)) {
-          result.retentionPeriod_ = retentionPeriod_;
-          to_bitField0_ |= 0x00000001;
-        }
-        if (((from_bitField0_ & 0x00000008) != 0)) {
           result.retentionDuration_ =
               retentionDurationBuilder_ == null
                   ? retentionDuration_
                   : retentionDurationBuilder_.build();
         }
-        result.bitField0_ |= to_bitField0_;
       }
 
       @java.lang.Override
@@ -12665,9 +12573,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (other.getIsLocked() != false) {
           setIsLocked(other.getIsLocked());
         }
-        if (other.hasRetentionPeriod()) {
-          setRetentionPeriod(other.getRetentionPeriod());
-        }
         if (other.hasRetentionDuration()) {
           mergeRetentionDuration(other.getRetentionDuration());
         }
@@ -12709,17 +12614,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   bitField0_ |= 0x00000002;
                   break;
                 } // case 16
-              case 24:
-                {
-                  retentionPeriod_ = input.readInt64();
-                  bitField0_ |= 0x00000004;
-                  break;
-                } // case 24
               case 34:
                 {
                   input.readMessage(
                       getRetentionDurationFieldBuilder().getBuilder(), extensionRegistry);
-                  bitField0_ |= 0x00000008;
+                  bitField0_ |= 0x00000004;
                   break;
                 } // case 34
               default:
@@ -12986,86 +12885,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         return this;
       }
 
-      private long retentionPeriod_;
-      /**
-       *
-       *
-       * <pre>
-       * The duration in seconds that objects need to be retained. Retention
-       * duration must be greater than zero and less than 100 years. Note that
-       * enforcement of retention periods less than a day is not guaranteed. Such
-       * periods should only be used for testing purposes.
-       * </pre>
-       *
-       * <code>optional int64 retention_period = 3;</code>
-       *
-       * @return Whether the retentionPeriod field is set.
-       */
-      @java.lang.Override
-      public boolean hasRetentionPeriod() {
-        return ((bitField0_ & 0x00000004) != 0);
-      }
-      /**
-       *
-       *
-       * <pre>
-       * The duration in seconds that objects need to be retained. Retention
-       * duration must be greater than zero and less than 100 years. Note that
-       * enforcement of retention periods less than a day is not guaranteed. Such
-       * periods should only be used for testing purposes.
-       * </pre>
-       *
-       * <code>optional int64 retention_period = 3;</code>
-       *
-       * @return The retentionPeriod.
-       */
-      @java.lang.Override
-      public long getRetentionPeriod() {
-        return retentionPeriod_;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * The duration in seconds that objects need to be retained. Retention
-       * duration must be greater than zero and less than 100 years. Note that
-       * enforcement of retention periods less than a day is not guaranteed. Such
-       * periods should only be used for testing purposes.
-       * </pre>
-       *
-       * <code>optional int64 retention_period = 3;</code>
-       *
-       * @param value The retentionPeriod to set.
-       * @return This builder for chaining.
-       */
-      public Builder setRetentionPeriod(long value) {
-
-        retentionPeriod_ = value;
-        bitField0_ |= 0x00000004;
-        onChanged();
-        return this;
-      }
-      /**
-       *
-       *
-       * <pre>
-       * The duration in seconds that objects need to be retained. Retention
-       * duration must be greater than zero and less than 100 years. Note that
-       * enforcement of retention periods less than a day is not guaranteed. Such
-       * periods should only be used for testing purposes.
-       * </pre>
-       *
-       * <code>optional int64 retention_period = 3;</code>
-       *
-       * @return This builder for chaining.
-       */
-      public Builder clearRetentionPeriod() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        retentionPeriod_ = 0L;
-        onChanged();
-        return this;
-      }
-
       private com.google.protobuf.Duration retentionDuration_;
       private com.google.protobuf.SingleFieldBuilderV3<
               com.google.protobuf.Duration,
@@ -13088,7 +12907,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * @return Whether the retentionDuration field is set.
        */
       public boolean hasRetentionDuration() {
-        return ((bitField0_ & 0x00000008) != 0);
+        return ((bitField0_ & 0x00000004) != 0);
       }
       /**
        *
@@ -13136,7 +12955,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         } else {
           retentionDurationBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -13159,7 +12978,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         } else {
           retentionDurationBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -13178,7 +12997,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        */
       public Builder mergeRetentionDuration(com.google.protobuf.Duration value) {
         if (retentionDurationBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) != 0)
+          if (((bitField0_ & 0x00000004) != 0)
               && retentionDuration_ != null
               && retentionDuration_ != com.google.protobuf.Duration.getDefaultInstance()) {
             getRetentionDurationBuilder().mergeFrom(value);
@@ -13188,7 +13007,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         } else {
           retentionDurationBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -13206,7 +13025,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <code>.google.protobuf.Duration retention_duration = 4;</code>
        */
       public Builder clearRetentionDuration() {
-        bitField0_ = (bitField0_ & ~0x00000008);
+        bitField0_ = (bitField0_ & ~0x00000004);
         retentionDuration_ = null;
         if (retentionDurationBuilder_ != null) {
           retentionDurationBuilder_.dispose();
@@ -13229,7 +13048,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        * <code>.google.protobuf.Duration retention_duration = 4;</code>
        */
       public com.google.protobuf.Duration.Builder getRetentionDurationBuilder() {
-        bitField0_ |= 0x00000008;
+        bitField0_ |= 0x00000004;
         onChanged();
         return getRetentionDurationFieldBuilder().getBuilder();
       }
@@ -16667,8 +16486,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Immutable. The project which owns this bucket, in the format of
-   * "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * "projects/{projectIdentifier}".
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -16694,8 +16513,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Immutable. The project which owns this bucket, in the format of
-   * "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * "projects/{projectIdentifier}".
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -19641,8 +19460,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19667,8 +19486,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19693,8 +19512,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19718,8 +19537,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -19739,8 +19558,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The project which owns this bucket, in the format of
-     * "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>

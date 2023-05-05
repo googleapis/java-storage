@@ -126,7 +126,6 @@ public class ITBucketLifecycleTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testDeleteLifecycleRules() throws Exception {
     String bucketName = generator.randomBucketName();
     BucketInfo bucketInfo =

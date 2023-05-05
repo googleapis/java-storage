@@ -35,7 +35,7 @@
               "methods": ["deleteNotificationConfig", "deleteNotificationConfig", "deleteNotificationConfig", "deleteNotificationConfigCallable"]
             },
             "DeleteObject": {
-              "methods": ["deleteObject", "deleteObject", "deleteObject", "deleteObjectCallable"]
+              "methods": ["deleteObject", "deleteObject", "deleteObject", "deleteObject", "deleteObject", "deleteObjectCallable"]
             },
             "GetBucket": {
               "methods": ["getBucket", "getBucket", "getBucket", "getBucketCallable"]
@@ -50,7 +50,7 @@
               "methods": ["getNotificationConfig", "getNotificationConfig", "getNotificationConfig", "getNotificationConfigCallable"]
             },
             "GetObject": {
-              "methods": ["getObject", "getObject", "getObject", "getObjectCallable"]
+              "methods": ["getObject", "getObject", "getObject", "getObject", "getObject", "getObjectCallable"]
             },
             "GetServiceAccount": {
               "methods": ["getServiceAccount", "getServiceAccount", "getServiceAccount", "getServiceAccountCallable"]

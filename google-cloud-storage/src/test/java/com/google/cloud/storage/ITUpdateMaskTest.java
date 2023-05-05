@@ -50,7 +50,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 @RunWith(Enclosed.class)
-public final class UpdateMaskTest {
+public final class ITUpdateMaskTest {
 
   public static final class BlobInfoUpdateMask {
 

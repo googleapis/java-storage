@@ -30,7 +30,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
-import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
@@ -39,7 +38,6 @@ import com.google.api.gax.rpc.ApiExceptions;
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
-import com.google.api.gax.rpc.UnimplementedException;
 import com.google.cloud.BaseService;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
@@ -84,33 +82,39 @@ import com.google.storage.v2.ComposeObjectRequest;
 import com.google.storage.v2.ComposeObjectRequest.SourceObject;
 import com.google.storage.v2.CreateBucketRequest;
 import com.google.storage.v2.CreateHmacKeyRequest;
+import com.google.storage.v2.CreateNotificationConfigRequest;
 import com.google.storage.v2.DeleteBucketRequest;
 import com.google.storage.v2.DeleteHmacKeyRequest;
+import com.google.storage.v2.DeleteNotificationConfigRequest;
 import com.google.storage.v2.DeleteObjectRequest;
 import com.google.storage.v2.GetBucketRequest;
 import com.google.storage.v2.GetHmacKeyRequest;
+import com.google.storage.v2.GetNotificationConfigRequest;
 import com.google.storage.v2.GetObjectRequest;
 import com.google.storage.v2.GetServiceAccountRequest;
 import com.google.storage.v2.ListBucketsRequest;
 import com.google.storage.v2.ListHmacKeysRequest;
+import com.google.storage.v2.ListNotificationConfigsRequest;
+import com.google.storage.v2.ListNotificationConfigsResponse;
 import com.google.storage.v2.ListObjectsRequest;
 import com.google.storage.v2.ListObjectsResponse;
 import com.google.storage.v2.LockBucketRetentionPolicyRequest;
+import com.google.storage.v2.NotificationConfig;
+import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
 import com.google.storage.v2.ObjectChecksums;
-import com.google.storage.v2.ProjectName;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.StorageClient;
+import com.google.storage.v2.StorageClient.ListNotificationConfigsPage;
 import com.google.storage.v2.UpdateBucketRequest;
 import com.google.storage.v2.UpdateHmacKeyRequest;
 import com.google.storage.v2.UpdateObjectRequest;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import com.google.storage.v2.WriteObjectSpec;
-import io.grpc.Status.Code;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -142,6 +146,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 @BetaApi
 final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
@@ -190,12 +195,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    if (bucketInfo.getProject() == null || bucketInfo.getProject().trim().isEmpty()) {
+      bucketInfo = bucketInfo.toBuilder().setProject(getOptions().getProjectId()).build();
+    }
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
     CreateBucketRequest.Builder builder =
         CreateBucketRequest.newBuilder()
             .setBucket(bucket)
             .setBucketId(bucketInfo.getName())
-            .setParent(ProjectName.format(getOptions().getProjectId()));
+            .setParent("projects/_");
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
     return Retrying.run(
         getOptions(),
@@ -374,17 +382,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
-    Opts<BucketSourceOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    GetBucketRequest.Builder builder =
-        GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
-    GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
-        syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
+    Opts<BucketSourceOpt> unwrap = Opts.unwrap(options);
+    return internalBucketGet(bucket, unwrap);
   }
 
   @Override
@@ -411,26 +410,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob get(BlobId blob, BlobGetOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    GetObjectRequest.Builder builder =
-        GetObjectRequest.newBuilder()
-            .setBucket(bucketNameCodec.encode(blob.getBucket()))
-            .setObject(blob.getName());
-    ifNonNull(blob.getGeneration(), builder::setGeneration);
-    GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> {
-          try {
-            return storageClient.getObjectCallable().call(req, grpcCallContext);
-          } catch (NotFoundException ignore) {
-            return null;
-          }
-        },
-        syntaxDecoders.blob.andThen(opts.clearBlobFields()));
+    Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
+    return internalBlobGet(blob, unwrap);
   }
 
   @Override
@@ -486,7 +467,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Bucket update(BucketInfo bucketInfo, BucketTargetOption... options) {
-    Opts<BucketTargetOpt> opts = Opts.unwrap(options).resolveFrom(bucketInfo).prepend(defaultOpts);
+    Opts<BucketTargetOpt> unwrap = Opts.unwrap(options);
+    if (bucketInfo.getModifiedFields().isEmpty()) {
+      return internalBucketGet(bucketInfo.getName(), unwrap.constrainTo(BucketSourceOpt.class));
+    }
+    Opts<BucketTargetOpt> opts = unwrap.resolveFrom(bucketInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     com.google.storage.v2.Bucket bucket = codecs.bucketInfo().encode(bucketInfo);
@@ -508,7 +493,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Blob update(BlobInfo blobInfo, BlobTargetOption... options) {
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    Opts<ObjectTargetOpt> unwrap = Opts.unwrap(options);
+    if (blobInfo.getModifiedFields().isEmpty()) {
+      return internalBlobGet(blobInfo.getBlobId(), unwrap.constrainTo(ObjectSourceOpt.class));
+    }
+    Opts<ObjectTargetOpt> opts = unwrap.resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     Object object = codecs.blobInfo().encode(blobInfo);
@@ -1402,23 +1391,92 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   @Override
   public Notification createNotification(String bucket, NotificationInfo notificationInfo) {
-    return throwNotYetImplemented(
-        fmtMethodName("createNotification", String.class, NotificationInfo.class));
+    NotificationConfig encode = codecs.notificationInfo().encode(notificationInfo);
+    CreateNotificationConfigRequest req =
+        CreateNotificationConfigRequest.newBuilder()
+            .setParent(bucketNameCodec.encode(bucket))
+            .setNotificationConfig(encode)
+            .build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.createNotificationConfigCallable().call(req),
+        syntaxDecoders.notificationConfig);
   }
 
   @Override
   public Notification getNotification(String bucket, String notificationId) {
-    return throwNotYetImplemented(fmtMethodName("getNotification", String.class, String.class));
+    String name;
+    if (NotificationConfigName.isParsableFrom(notificationId)) {
+      name = notificationId;
+    } else {
+      NotificationConfigName configName = NotificationConfigName.of("_", bucket, notificationId);
+      name = configName.toString();
+    }
+    GetNotificationConfigRequest req =
+        GetNotificationConfigRequest.newBuilder().setName(name).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          try {
+            return storageClient.getNotificationConfigCallable().call(req);
+          } catch (NotFoundException e) {
+            return null;
+          }
+        },
+        syntaxDecoders.notificationConfig);
   }
 
   @Override
   public List<Notification> listNotifications(String bucket) {
-    return throwNotYetImplemented(fmtMethodName("listNotifications", String.class));
+    ListNotificationConfigsRequest req =
+        ListNotificationConfigsRequest.newBuilder()
+            .setParent(bucketNameCodec.encode(bucket))
+            .build();
+    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getFor(req);
+    return Retrying.run(
+        getOptions(),
+        algorithm,
+        () -> storageClient.listNotificationConfigsPagedCallable().call(req),
+        resp -> {
+          TransformingPageDecorator<
+                  ListNotificationConfigsRequest,
+                  ListNotificationConfigsResponse,
+                  NotificationConfig,
+                  ListNotificationConfigsPage,
+                  Notification>
+              page =
+                  new TransformingPageDecorator<>(
+                      resp.getPage(), syntaxDecoders.notificationConfig, getOptions(), algorithm);
+          return ImmutableList.copyOf(page.iterateAll());
+        });
   }
 
   @Override
   public boolean deleteNotification(String bucket, String notificationId) {
-    return throwNotYetImplemented(fmtMethodName("deleteNotification", String.class, String.class));
+    String name;
+    if (NotificationConfigName.isParsableFrom(notificationId)) {
+      name = notificationId;
+    } else {
+      NotificationConfigName configName = NotificationConfigName.of("_", bucket, notificationId);
+      name = configName.toString();
+    }
+    DeleteNotificationConfigRequest req =
+        DeleteNotificationConfigRequest.newBuilder().setName(name).build();
+    return Boolean.TRUE.equals(
+        Retrying.run(
+            getOptions(),
+            retryAlgorithmManager.getFor(req),
+            () -> {
+              try {
+                storageClient.deleteNotificationConfigCallable().call(req);
+                return true;
+              } catch (NotFoundException e) {
+                return false;
+              }
+            },
+            Decoder.identity()));
   }
 
   @Override
@@ -1446,6 +1504,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         o -> codecs.blobInfo().decode(o).asBlob(GrpcStorageImpl.this);
     final Decoder<com.google.storage.v2.Bucket, Bucket> bucket =
         b -> codecs.bucketInfo().decode(b).asBucket(GrpcStorageImpl.this);
+    final Decoder<NotificationConfig, Notification> notificationConfig =
+        n -> codecs.notificationInfo().decode(n).asNotification(GrpcStorageImpl.this);
   }
 
   /**
@@ -1666,14 +1726,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     throw new UnsupportedOperationException(message);
   }
 
-  static <T> T throwNotYetImplemented(String methodName) {
-    String message =
-        String.format(
-            "%s#%s is not yet implemented for GRPC transport. Please use StorageOptions.http() to construct a compatible instance in the interim.",
-            Storage.class.getName(), methodName);
-    throw new UnimplementedException(message, null, GrpcStatusCode.of(Code.UNIMPLEMENTED), false);
-  }
-
   private static String fmtMethodName(String name, Class<?>... args) {
     return name
         + "("
@@ -1892,5 +1944,44 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         return Hasher.noop();
       }
     }
+  }
+
+  @Nullable
+  private Blob internalBlobGet(BlobId blob, Opts<ObjectSourceOpt> unwrap) {
+    Opts<ObjectSourceOpt> opts = unwrap.resolveFrom(blob).prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    GetObjectRequest.Builder builder =
+        GetObjectRequest.newBuilder()
+            .setBucket(bucketNameCodec.encode(blob.getBucket()))
+            .setObject(blob.getName());
+    ifNonNull(blob.getGeneration(), builder::setGeneration);
+    GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          try {
+            return storageClient.getObjectCallable().call(req, grpcCallContext);
+          } catch (NotFoundException ignore) {
+            return null;
+          }
+        },
+        syntaxDecoders.blob.andThen(opts.clearBlobFields()));
+  }
+
+  @Nullable
+  private Bucket internalBucketGet(String bucket, Opts<BucketSourceOpt> unwrap) {
+    Opts<BucketSourceOpt> opts = unwrap.prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    GetBucketRequest.Builder builder =
+        GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
+    GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
+        syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
   }
 }

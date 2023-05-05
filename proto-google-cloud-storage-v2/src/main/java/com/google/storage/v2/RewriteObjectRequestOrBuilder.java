@@ -188,7 +188,9 @@ public interface RewriteObjectRequestOrBuilder
    * Required. Name of the bucket in which to find the source object.
    * </pre>
    *
-   * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The sourceBucket.
    */
@@ -200,7 +202,9 @@ public interface RewriteObjectRequestOrBuilder
    * Required. Name of the bucket in which to find the source object.
    * </pre>
    *
-   * <code>string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string source_bucket = 2 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for sourceBucket.
    */

@@ -413,6 +413,11 @@ final class UnifiedOpts {
     return new KmsKeyName(kmsKeyName);
   }
 
+  static MatchGlob matchGlob(@NonNull String glob) {
+    requireNonNull(glob, "glob must be non null");
+    return new MatchGlob(glob);
+  }
+
   static Md5Match md5Match(@NonNull String md5) {
     requireNonNull(md5, "md5 must be non null");
     return new Md5Match(md5);
@@ -1067,6 +1072,20 @@ final class UnifiedOpts {
     @Override
     public Mapper<RewriteObjectRequest.Builder> rewriteObject() {
       return b -> b.setDestinationKmsKey(val);
+    }
+  }
+
+  static final class MatchGlob extends RpcOptVal<String> implements ObjectListOpt {
+    private static final long serialVersionUID = 8819855597395473178L;
+
+    private MatchGlob(String val) {
+      super(StorageRpc.Option.MATCH_GLOB, val);
+    }
+
+    @Override
+    public Mapper<ListObjectsRequest.Builder> listObjects() {
+      return GrpcStorageImpl.throwHttpJsonOnly(
+          com.google.cloud.storage.Storage.BlobListOption.class, "matchGlob(String)");
     }
   }
 
@@ -2307,6 +2326,16 @@ final class UnifiedOpts {
               .flatMap(x -> x)
               .collect(ImmutableList.toImmutableList());
       return new Opts<>(list);
+    }
+
+    /**
+     * Create a new instance of {@code Opts<R>} consisting of those {@code Opt}s which are also an
+     * {@code R}.
+     *
+     * <p>i.e. Given {@code Opts<ObjectTargetOpt>} produce {@code Opts<ObjectSourceOpt>}
+     */
+    <R extends Opt> Opts<R> constrainTo(Class<R> c) {
+      return new Opts<>(filterTo(c).collect(ImmutableList.toImmutableList()));
     }
 
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {

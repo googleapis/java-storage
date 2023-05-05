@@ -21,6 +21,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -31,6 +32,7 @@ import java.util.regex.Pattern;
 public final class BlobId implements Serializable {
 
   private static final long serialVersionUID = 8201580858265557469L;
+  private static final Pattern gsUtilUriPattern = Pattern.compile("^gs://(.+?)/(.+?)(?:#(\\d+))?$");
   private final String bucket;
   private final String name;
   private final Long generation;
@@ -56,9 +58,22 @@ public final class BlobId implements Serializable {
     return generation;
   }
 
-  /** Returns this blob's Storage url which can be used with gsutil */
+  /**
+   * Returns this blob's Storage url which can be used with gsutil. If {@link #generation} is
+   * non-null it will not be included in the uri.
+   */
   public String toGsUtilUri() {
     return "gs://" + bucket + "/" + name;
+  }
+
+  /**
+   * Returns this blob's Storage url which can be used with gsutil. If {@link #generation} is
+   * non-null it will be included in the uri
+   *
+   * @since 2.22.1
+   */
+  public String toGsUtilUriWithGeneration() {
+    return "gs://" + bucket + "/" + name + (generation == null ? "" : ("#" + generation));
   }
 
   @Override
@@ -117,14 +132,18 @@ public final class BlobId implements Serializable {
    * @param gsUtilUri the Storage url to create the blob from
    */
   public static BlobId fromGsUtilUri(String gsUtilUri) {
-    if (!Pattern.matches("gs://.*/.*", gsUtilUri)) {
+    Matcher m = gsUtilUriPattern.matcher(gsUtilUri);
+    if (!m.matches()) {
       throw new IllegalArgumentException(
-          gsUtilUri + " is not a valid gsutil URI (i.e. \"gs://bucket/blob\")");
+          gsUtilUri
+              + " is not a valid gsutil URI (i.e. \"gs://bucket/blob\" or \"gs://bucket/blob#generation\")");
     }
-    int blobNameStartIndex = gsUtilUri.indexOf('/', 5);
-    String bucketName = gsUtilUri.substring(5, blobNameStartIndex);
-    String blobName = gsUtilUri.substring(blobNameStartIndex + 1);
 
-    return BlobId.of(bucketName, blobName);
+    String bucket = m.group(1);
+    String name = m.group(2);
+    String generationGroup = m.group(3);
+    Long generation = generationGroup == null ? null : Long.parseLong(generationGroup);
+
+    return BlobId.of(bucket, name, generation);
   }
 }

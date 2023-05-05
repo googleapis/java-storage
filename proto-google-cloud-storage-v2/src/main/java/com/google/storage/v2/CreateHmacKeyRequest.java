@@ -77,7 +77,7 @@ public final class CreateHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Required. The project that the HMAC-owning service account lives in, in the
-   * format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+   * format of "projects/{projectIdentifier}". {projectIdentifier} can be the
    * project ID or project number.
    * </pre>
    *
@@ -104,7 +104,7 @@ public final class CreateHmacKeyRequest extends com.google.protobuf.GeneratedMes
    *
    * <pre>
    * Required. The project that the HMAC-owning service account lives in, in the
-   * format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+   * format of "projects/{projectIdentifier}". {projectIdentifier} can be the
    * project ID or project number.
    * </pre>
    *
@@ -549,7 +549,7 @@ public final class CreateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Required. The project that the HMAC-owning service account lives in, in the
-     * format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+     * format of "projects/{projectIdentifier}". {projectIdentifier} can be the
      * project ID or project number.
      * </pre>
      *
@@ -575,7 +575,7 @@ public final class CreateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Required. The project that the HMAC-owning service account lives in, in the
-     * format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+     * format of "projects/{projectIdentifier}". {projectIdentifier} can be the
      * project ID or project number.
      * </pre>
      *
@@ -601,7 +601,7 @@ public final class CreateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Required. The project that the HMAC-owning service account lives in, in the
-     * format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+     * format of "projects/{projectIdentifier}". {projectIdentifier} can be the
      * project ID or project number.
      * </pre>
      *
@@ -626,7 +626,7 @@ public final class CreateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Required. The project that the HMAC-owning service account lives in, in the
-     * format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+     * format of "projects/{projectIdentifier}". {projectIdentifier} can be the
      * project ID or project number.
      * </pre>
      *
@@ -647,7 +647,7 @@ public final class CreateHmacKeyRequest extends com.google.protobuf.GeneratedMes
      *
      * <pre>
      * Required. The project that the HMAC-owning service account lives in, in the
-     * format of "projects/&lt;projectIdentifier&gt;". &lt;projectIdentifier&gt; can be the
+     * format of "projects/{projectIdentifier}". {projectIdentifier} can be the
      * project ID or project number.
      * </pre>
      *

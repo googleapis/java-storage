@@ -35,6 +35,7 @@ import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.rpc.DebugInfo;
@@ -45,10 +46,12 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.netty.shaded.io.netty.buffer.ByteBufUtil;
 import io.grpc.netty.shaded.io.netty.buffer.Unpooled;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -263,5 +266,22 @@ public final class TestUtils {
     map.put(k1, v1);
     map.put(k2, v2);
     return Collections.unmodifiableMap(map);
+  }
+
+  // copied with minor modification from
+  // com.google.api.gax.grpc.InstantiatingGrpcChannelProvider#isOnComputeEngine
+  public static boolean isOnComputeEngine() {
+    String osName = System.getProperty("os.name");
+    if ("Linux".equals(osName)) {
+      try {
+        String result =
+            Files.asCharSource(new File("/sys/class/dmi/id/product_name"), StandardCharsets.UTF_8)
+                .readFirstLine();
+        return result != null && (result.contains("Google") || result.contains("Compute Engine"));
+      } catch (IOException ignored) {
+        return false;
+      }
+    }
+    return false;
   }
 }

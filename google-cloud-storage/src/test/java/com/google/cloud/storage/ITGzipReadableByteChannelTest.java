@@ -44,7 +44,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 @RunWith(Enclosed.class)
-public class GzipReadableByteChannelTest {
+public class ITGzipReadableByteChannelTest {
 
   @SuppressWarnings("PointlessArithmeticExpression")
   private static final int _1KiB = 1 * 1024;

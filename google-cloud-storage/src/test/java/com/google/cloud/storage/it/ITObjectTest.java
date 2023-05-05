@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
@@ -65,6 +66,7 @@ import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
@@ -543,6 +545,60 @@ public class ITObjectTest {
   }
 
   @Test
+  // When gRPC support is added for matchGlob, enable this test for gRPC.
+  @Exclude(transports = Transport.GRPC)
+  public void testListBlobsWithMatchGlob() throws Exception {
+    BucketInfo bucketInfo = BucketInfo.newBuilder(generator.randomBucketName()).build();
+    try (TemporaryBucket tempBucket =
+        TemporaryBucket.newBuilder().setBucketInfo(bucketInfo).setStorage(storage).build()) {
+      BucketInfo bucket = tempBucket.getBucket();
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/bar").build()));
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/baz").build()));
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foo/foobar").build()));
+      assertNotNull(storage.create(BlobInfo.newBuilder(bucket, "foobar").build()));
+
+      Page<Blob> page1 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo*bar"));
+      Page<Blob> page2 = storage.list(bucket.getName(), BlobListOption.matchGlob("foo**bar"));
+      Page<Blob> page3 = storage.list(bucket.getName(), BlobListOption.matchGlob("**/foobar"));
+      Page<Blob> page4 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[rz]"));
+      Page<Blob> page5 = storage.list(bucket.getName(), BlobListOption.matchGlob("*/ba[!a-y]"));
+      Page<Blob> page6 =
+          storage.list(bucket.getName(), BlobListOption.matchGlob("**/{foobar,baz}"));
+      Page<Blob> page7 =
+          storage.list(bucket.getName(), BlobListOption.matchGlob("foo/{foo*,*baz}"));
+      assertAll(
+          () ->
+              assertThat(Iterables.transform(page1.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page2.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/bar", "foo/foobar", "foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page3.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/foobar", "foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page4.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/bar", "foo/baz")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page5.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/baz")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page6.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/baz", "foo/foobar", "foobar")
+                  .inOrder(),
+          () ->
+              assertThat(Iterables.transform(page7.iterateAll(), blob -> blob.getName()))
+                  .containsExactly("foo/baz", "foo/foobar")
+                  .inOrder());
+    }
+  }
+
+  @Test
   public void testListBlobsMultiplePages() {
     String basePath = generator.randomObjectName();
 
@@ -571,7 +627,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlob() {
     String blobName = "test-update-blob";
     BlobInfo blob = BlobInfo.newBuilder(bucket, blobName).build();
@@ -585,7 +640,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlobReplaceMetadata() {
     String blobName = "test-update-blob-replace-metadata";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
@@ -607,7 +661,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlobMergeMetadata() {
     String blobName = "test-update-blob-merge-metadata";
     ImmutableMap<String, String> metadata = ImmutableMap.of("k1", "a");
@@ -628,7 +681,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testUpdateBlobUnsetMetadata() {
 
     String blobName = "test-update-blob-unset-metadata";
@@ -1264,7 +1316,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testAttemptObjectDeleteWithEventBasedHold() {
     String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setEventBasedHold(true).build();
@@ -1281,7 +1332,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testAttemptDeletionObjectTemporaryHold() {
     String blobName = generator.randomObjectName();
     BlobInfo blobInfo = BlobInfo.newBuilder(bucket, blobName).setTemporaryHold(true).build();
@@ -1410,7 +1460,6 @@ public class ITObjectTest {
   }
 
   @Test
-  @CrossRun.Ignore(transports = Transport.GRPC) // todo(b/270215524)
   public void testBlobTimeStorageClassUpdated() {
 
     String blobName = generator.randomObjectName();
@@ -1447,5 +1496,16 @@ public class ITObjectTest {
     assertThat(updatedBlob2.getTimeStorageClassUpdated())
         .isEqualTo(updatedBlob1.getTimeStorageClassUpdated());
     assertThat(updatedBlob2.delete()).isTrue();
+  }
+
+  @Test
+  public void testUpdateBlob_noModification() {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+
+    // in grpc, create will return acls but update does not. re-get the metadata with default fields
+    Blob gen1 = storage.create(info);
+    gen1 = storage.get(gen1.getBlobId());
+    Blob gen2 = storage.update(gen1);
+    assertThat(gen2).isEqualTo(gen1);
   }
 }

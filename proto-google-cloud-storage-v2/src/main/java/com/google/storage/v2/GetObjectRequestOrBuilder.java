@@ -30,7 +30,9 @@ public interface GetObjectRequestOrBuilder
    * Required. Name of the bucket in which the object resides.
    * </pre>
    *
-   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bucket.
    */
@@ -42,7 +44,9 @@ public interface GetObjectRequestOrBuilder
    * Required. Name of the bucket in which the object resides.
    * </pre>
    *
-   * <code>string bucket = 1 [(.google.api.field_behavior) = REQUIRED];</code>
+   * <code>
+   * string bucket = 1 [(.google.api.field_behavior) = REQUIRED, (.google.api.resource_reference) = { ... }
+   * </code>
    *
    * @return The bytes for bucket.
    */

@@ -23,12 +23,12 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
-import com.google.cloud.storage.BufferedReadableByteChannelSession.BufferedReadableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.ReadableByteChannel;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
@@ -40,7 +40,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   private ByteRangeSpec byteRangeSpec;
   private int chunkSize = _2MiB;
   private BufferHandle bufferHandle;
-  private LazyReadChannel<T> lazyReadChannel;
+  private LazyReadChannel<?, T> lazyReadChannel;
 
   protected BaseStorageReadChannel(Decoder<T, BlobInfo> objectDecoder) {
     this.objectDecoder = objectDecoder;
@@ -64,15 +64,18 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   public final synchronized void close() {
     open = false;
     if (internalGetLazyChannel().isOpen()) {
-      StorageException.wrapIOException(internalGetLazyChannel().getChannel()::close);
+      ReadableByteChannel channel = internalGetLazyChannel().getChannel();
+      StorageException.wrapIOException(channel::close);
     }
   }
 
   @Override
   public final synchronized StorageReadChannel setByteRangeSpec(ByteRangeSpec byteRangeSpec) {
     requireNonNull(byteRangeSpec, "byteRangeSpec must be non null");
-    StorageException.wrapIOException(() -> maybeResetChannel(false));
-    this.byteRangeSpec = byteRangeSpec;
+    if (!this.byteRangeSpec.equals(byteRangeSpec)) {
+      StorageException.wrapIOException(() -> maybeResetChannel(false));
+      this.byteRangeSpec = byteRangeSpec;
+    }
     return this;
   }
 
@@ -95,7 +98,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
     }
     try {
       // trap if the fact that tmp is already closed, and instead return -1
-      BufferedReadableByteChannel tmp = internalGetLazyChannel().getChannel();
+      ReadableByteChannel tmp = internalGetLazyChannel().getChannel();
       if (!tmp.isOpen()) {
         return -1;
       }
@@ -146,7 +149,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
     }
   }
 
-  protected abstract LazyReadChannel<T> newLazyReadChannel();
+  protected abstract LazyReadChannel<?, T> newLazyReadChannel();
 
   private void maybeResetChannel(boolean freeBuffer) throws IOException {
     if (lazyReadChannel != null) {
@@ -162,9 +165,9 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
     }
   }
 
-  private LazyReadChannel<T> internalGetLazyChannel() {
+  private LazyReadChannel<?, T> internalGetLazyChannel() {
     if (lazyReadChannel == null) {
-      LazyReadChannel<T> tmp = newLazyReadChannel();
+      LazyReadChannel<?, T> tmp = newLazyReadChannel();
       ApiFuture<T> future = tmp.getSession().getResult();
       ApiFutures.addCallback(
           future,

@@ -56,7 +56,7 @@ import org.threeten.bp.Duration;
  * <p><i>NOTE:</i>Unfortunately, these tests are slow as they are waiting on wall clock time in
  * several circumstances.
  */
-public final class GapicReadTimeoutTest {
+public final class ITGapicReadTimeoutTest {
 
   private final String objectName = "name";
   private final Object expectedResult =

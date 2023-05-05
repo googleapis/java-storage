@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.api.core.BetaApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.api.gax.paging.Page;
 import com.google.auth.ServiceAccountSigner;
@@ -1301,6 +1302,18 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
+     * Returns an option to set a glob pattern to filter results to blobs that match the pattern.
+     *
+     * @see <a href="https://cloud.google.com/storage/docs/json_api/v1/objects/list">List
+     *     Objects</a>
+     */
+    @BetaApi
+    @TransportCompatibility({Transport.HTTP})
+    public static BlobListOption matchGlob(@NonNull String glob) {
+      return new BlobListOption(UnifiedOpts.matchGlob(glob));
+    }
+
+    /**
      * Returns an option to define the billing user project. This option is required by buckets with
      * `requester_pays` flag enabled to assign operation costs.
      *
@@ -2112,7 +2125,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
   Bucket create(BucketInfo bucketInfo, BucketTargetOption... options);
 
   /**
-   * Creates a new blob with no content.
+   * Creates a new blob with no content. Note that all <a
+   * href="https://cloud.google.com/storage/docs/metadata#fixed">non-editable metadata</a>, such as
+   * generation or metageneration, will be ignored even if it's present in the provided BlobInfo
+   * object.
    *
    * <p>Example of creating a blob with no content.
    *
@@ -2135,7 +2151,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * #writer} is recommended as it uses resumable upload. MD5 and CRC32C hashes of {@code content}
    * are computed and used for validating transferred data. Accepts an optional userProject {@link
    * BlobGetOption} option which defines the project id to assign operational costs. The content
-   * type is detected from the blob name if not explicitly set.
+   * type is detected from the blob name if not explicitly set. Note that all <a
+   * href="https://cloud.google.com/storage/docs/metadata#fixed">non-editable metadata</a>, such as
+   * generation or metageneration, will be ignored even if it's present in the provided BlobInfo
+   * object.
    *
    * <p>Example of creating a blob from a byte array:
    *
@@ -2159,7 +2178,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * {@code content}. For large content, {@link #writer} is recommended as it uses resumable upload.
    * MD5 and CRC32C hashes of {@code content} are computed and used for validating transferred data.
    * Accepts a userProject {@link BlobGetOption} option, which defines the project id to assign
-   * operational costs.
+   * operational costs. Note that all <a
+   * href="https://cloud.google.com/storage/docs/metadata#fixed">non-editable metadata</a>, such as
+   * generation or metageneration, will be ignored even if it's present in the provided BlobInfo
+   * object.
    *
    * <p>Example of creating a blob from a byte array:
    *
@@ -2184,7 +2206,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * #writer} is recommended as it uses resumable upload. By default any MD5 and CRC32C values in
    * the given {@code blobInfo} are ignored unless requested via the {@code
    * BlobWriteOption.md5Match} and {@code BlobWriteOption.crc32cMatch} options. The given input
-   * stream is closed upon success.
+   * stream is closed upon success. Note that all <a
+   * href="https://cloud.google.com/storage/docs/metadata#fixed">non-editable metadata</a>, such as
+   * generation or metageneration, will be ignored even if it's present in the provided BlobInfo
+   * object.
    *
    * <p>This method is marked as {@link Deprecated} because it cannot safely retry, given that it
    * accepts an {@link InputStream} which can only be consumed once.
@@ -2226,7 +2251,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * Uploads {@code path} to the blob using {@link #writer}. By default any MD5 and CRC32C values in
    * the given {@code blobInfo} are ignored unless requested via the {@link
    * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options. Folder upload is
-   * not supported.
+   * not supported. Note that all <a href="https://cloud.google.com/storage/docs/metadata#fixed">
+   * non-editable metadata</a>, such as generation or metageneration, will be ignored even if it's
+   * present in the provided BlobInfo object.
    *
    * <p>Example of uploading a file:
    *
@@ -2253,7 +2280,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * Uploads {@code path} to the blob using {@link #writer} and {@code bufferSize}. By default any
    * MD5 and CRC32C values in the given {@code blobInfo} are ignored unless requested via the {@link
    * BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options. Folder upload is
-   * not supported.
+   * not supported. Note that all <a href="https://cloud.google.com/storage/docs/metadata#fixed">
+   * non-editable metadata</a>, such as generation or metageneration, will be ignored even if it's
+   * present in the provided BlobInfo object.
    *
    * <p>{@link #createFrom(BlobInfo, Path, BlobWriteOption...)} invokes this method with a buffer
    * size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the upload
@@ -2288,6 +2317,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * Reads bytes from an input stream and uploads those bytes to the blob using {@link #writer}. By
    * default any MD5 and CRC32C values in the given {@code blobInfo} are ignored unless requested
    * via the {@link BlobWriteOption#md5Match()} and {@link BlobWriteOption#crc32cMatch()} options.
+   * Note that all <a href="https://cloud.google.com/storage/docs/metadata#fixed">non-editable
+   * metadata</a>, such as generation or metageneration, will be ignored even if it's present in the
+   * provided BlobInfo object.
    *
    * <p>Example of uploading data with CRC32C checksum:
    *
@@ -2316,7 +2348,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * Reads bytes from an input stream and uploads those bytes to the blob using {@link #writer} and
    * {@code bufferSize}. By default any MD5 and CRC32C values in the given {@code blobInfo} are
    * ignored unless requested via the {@link BlobWriteOption#md5Match()} and {@link
-   * BlobWriteOption#crc32cMatch()} options.
+   * BlobWriteOption#crc32cMatch()} options. Note that all <a
+   * href="https://cloud.google.com/storage/docs/metadata#fixed">non-editable metadata</a>, such as
+   * generation or metageneration, will be ignored even if it's present in the provided BlobInfo
+   * object.
    *
    * <p>{@link #createFrom(BlobInfo, InputStream, BlobWriteOption...)} )} invokes this method with a
    * buffer size of 15 MiB. Users can pass alternative values. Larger buffer sizes might improve the
@@ -4031,7 +4066,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the created notification
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Notification createNotification(String bucket, NotificationInfo notificationInfo);
 
   /**
@@ -4050,7 +4085,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return the {@code Notification} object with the given id or {@code null} if not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   Notification getNotification(String bucket, String notificationId);
 
   /**
@@ -4067,7 +4102,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return a list of {@link Notification} objects added to the bucket.
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   List<Notification> listNotifications(String bucket);
 
   /**
@@ -4091,7 +4126,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * @return {@code true} if the notification has been deleted, {@code false} if not found
    * @throws StorageException upon failure
    */
-  @TransportCompatibility({Transport.HTTP})
+  @TransportCompatibility({Transport.HTTP, Transport.GRPC})
   boolean deleteNotification(String bucket, String notificationId);
 
   /**

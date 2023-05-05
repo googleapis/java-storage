@@ -57,9 +57,12 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Properties of the new bucket being inserted.
-   * The project and name of the bucket are specified in the parent and
-   * bucket_id fields, respectively. Populating those fields in `bucket` will
-   * result in an error.
+   * The name of the bucket is specified in the `bucket_id` field. Populating
+   * `bucket.name` field will result in an error.
+   * The project of the bucket must be specified in the `bucket.project` field.
+   * This field must be in `projects/{projectIdentifier}` format,
+   * {projectIdentifier} can be the project ID or project number. The `parent`
+   * field must be either empty or `projects/_`.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 2;</code>
@@ -72,9 +75,12 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Properties of the new bucket being inserted.
-   * The project and name of the bucket are specified in the parent and
-   * bucket_id fields, respectively. Populating those fields in `bucket` will
-   * result in an error.
+   * The name of the bucket is specified in the `bucket_id` field. Populating
+   * `bucket.name` field will result in an error.
+   * The project of the bucket must be specified in the `bucket.project` field.
+   * This field must be in `projects/{projectIdentifier}` format,
+   * {projectIdentifier} can be the project ID or project number. The `parent`
+   * field must be either empty or `projects/_`.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 2;</code>
@@ -87,9 +93,12 @@ public interface CreateBucketRequestOrBuilder
    *
    * <pre>
    * Properties of the new bucket being inserted.
-   * The project and name of the bucket are specified in the parent and
-   * bucket_id fields, respectively. Populating those fields in `bucket` will
-   * result in an error.
+   * The name of the bucket is specified in the `bucket_id` field. Populating
+   * `bucket.name` field will result in an error.
+   * The project of the bucket must be specified in the `bucket.project` field.
+   * This field must be in `projects/{projectIdentifier}` format,
+   * {projectIdentifier} can be the project ID or project number. The `parent`
+   * field must be either empty or `projects/_`.
    * </pre>
    *
    * <code>.google.storage.v2.Bucket bucket = 2;</code>

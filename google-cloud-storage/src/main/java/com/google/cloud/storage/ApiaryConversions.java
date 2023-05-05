@@ -21,6 +21,7 @@ import static com.google.cloud.storage.Utils.durationSecondsCodec;
 import static com.google.cloud.storage.Utils.ifNonNull;
 import static com.google.cloud.storage.Utils.lift;
 import static com.google.cloud.storage.Utils.nullableDateTimeCodec;
+import static com.google.cloud.storage.Utils.projectNameCodec;
 import static com.google.common.base.MoreObjects.firstNonNull;
 
 import com.google.api.client.util.Data;
@@ -84,6 +85,15 @@ import java.util.stream.Collectors;
 @InternalApi
 final class ApiaryConversions {
   static final ApiaryConversions INSTANCE = new ApiaryConversions();
+  // gRPC has a Bucket.project property that apiary doesn't have yet.
+  // when converting from gRPC to apiary or vice-versa we want to preserve this property. Until
+  // such a time as the apiary model has a project field, we manually apply it with this name.
+  private static final String PROJECT_ID_FIELD_NAME = "x_project";
+  // gRPC has a NotificationConfig.name property which contains the bucket the config is associated
+  // with which that apiary doesn't have yet.
+  // when converting from gRPC to apiary or vice-versa we want to preserve this property. Until
+  // such a time as the apiary model has a bucket field, we manually apply it with this name.
+  private static final String NOTIFICATION_BUCKET_FIELD_NAME = "x_bucket";
 
   private final Codec<Entity, String> entityCodec =
       Codec.of(this::entityEncode, this::entityDecode);
@@ -323,6 +333,7 @@ final class ApiaryConversions {
 
   private Bucket bucketInfoEncode(BucketInfo from) {
     Bucket to = new Bucket();
+    ifNonNull(from.getProject(), projectNameCodec::encode, p -> to.set(PROJECT_ID_FIELD_NAME, p));
     ifNonNull(from.getAcl(), toListOf(bucketAcl()::encode), to::setAcl);
     ifNonNull(from.getCors(), toListOf(cors()::encode), to::setCors);
     ifNonNull(from.getCreateTimeOffsetDateTime(), dateTimeCodec::encode, to::setTimeCreated);
@@ -395,6 +406,10 @@ final class ApiaryConversions {
   @SuppressWarnings("deprecation")
   private BucketInfo bucketInfoDecode(com.google.api.services.storage.model.Bucket from) {
     BucketInfo.Builder to = new BucketInfo.BuilderImpl(from.getName());
+    ifNonNull(
+        from.get(PROJECT_ID_FIELD_NAME),
+        lift(String.class::cast).andThen(projectNameCodec::decode),
+        to::setProject);
     ifNonNull(from.getAcl(), toListOf(bucketAcl()::decode), to::setAcl);
     ifNonNull(from.getCors(), toListOf(cors()::decode), to::setCors);
     ifNonNull(from.getDefaultObjectAcl(), toListOf(objectAcl()::decode), to::setDefaultAcl);
@@ -764,6 +779,7 @@ final class ApiaryConversions {
     to.setEtag(from.getEtag());
     to.setSelfLink(from.getSelfLink());
     to.setTopic(from.getTopic());
+    ifNonNull(from.getBucket(), b -> to.set(NOTIFICATION_BUCKET_FIELD_NAME, b));
     ifNonNull(from.getNotificationId(), to::setId);
     ifNonNull(from.getCustomAttributes(), to::setCustomAttributes);
     ifNonNull(from.getObjectNamePrefix(), to::setObjectNamePrefix);
@@ -789,6 +805,7 @@ final class ApiaryConversions {
   private NotificationInfo notificationDecode(
       com.google.api.services.storage.model.Notification from) {
     NotificationInfo.Builder builder = new NotificationInfo.BuilderImpl(from.getTopic());
+    ifNonNull(from.get(NOTIFICATION_BUCKET_FIELD_NAME), String.class::cast, builder::setBucket);
     ifNonNull(from.getId(), builder::setNotificationId);
     ifNonNull(from.getEtag(), builder::setEtag);
     ifNonNull(from.getCustomAttributes(), builder::setCustomAttributes);

@@ -159,7 +159,8 @@ public final class ITOptionRegressionTest {
   public void storage_BucketTargetOption_projection_String() {
     Bucket bucket = s.create(BucketInfo.of(bucketName()));
     requestAuditing.clear();
-    s.update(bucket, BucketTargetOption.projection("noAcl"));
+    Bucket update = bucket.toBuilder().setLabels(ImmutableMap.of("a", "b")).build();
+    s.update(update, BucketTargetOption.projection("noAcl"));
     requestAuditing.assertQueryParam("projection", "noAcl");
   }
 

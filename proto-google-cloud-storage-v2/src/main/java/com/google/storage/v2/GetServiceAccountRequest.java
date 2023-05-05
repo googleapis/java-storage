@@ -75,8 +75,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * Required. Project ID, in the format of "projects/{projectIdentifier}".
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -101,8 +101,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
    *
    *
    * <pre>
-   * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-   * &lt;projectIdentifier&gt; can be the project ID or project number.
+   * Required. Project ID, in the format of "projects/{projectIdentifier}".
+   * {projectIdentifier} can be the project ID or project number.
    * </pre>
    *
    * <code>
@@ -470,8 +470,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. Project ID, in the format of "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -495,8 +495,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. Project ID, in the format of "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -520,8 +520,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. Project ID, in the format of "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -544,8 +544,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. Project ID, in the format of "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>
@@ -564,8 +564,8 @@ public final class GetServiceAccountRequest extends com.google.protobuf.Generate
      *
      *
      * <pre>
-     * Required. Project ID, in the format of "projects/&lt;projectIdentifier&gt;".
-     * &lt;projectIdentifier&gt; can be the project ID or project number.
+     * Required. Project ID, in the format of "projects/{projectIdentifier}".
+     * {projectIdentifier} can be the project ID or project number.
      * </pre>
      *
      * <code>

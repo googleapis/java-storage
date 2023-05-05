@@ -183,8 +183,6 @@ public interface UpdateBucketRequestOrBuilder
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
    * Not specifying any fields is an error.
-   * Not specifying a field while setting that field to a non-default value is
-   * an error.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
@@ -203,8 +201,6 @@ public interface UpdateBucketRequestOrBuilder
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
    * Not specifying any fields is an error.
-   * Not specifying a field while setting that field to a non-default value is
-   * an error.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];
@@ -223,8 +219,6 @@ public interface UpdateBucketRequestOrBuilder
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
    * Not specifying any fields is an error.
-   * Not specifying a field while setting that field to a non-default value is
-   * an error.
    * </pre>
    *
    * <code>.google.protobuf.FieldMask update_mask = 6 [(.google.api.field_behavior) = REQUIRED];

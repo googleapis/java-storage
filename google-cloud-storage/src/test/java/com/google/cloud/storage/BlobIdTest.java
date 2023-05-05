@@ -40,6 +40,16 @@ public class BlobIdTest {
   }
 
   @Test
+  public void testToFromGsUtilUriWithGeneration() {
+    BlobId blobId = BlobId.fromGsUtilUri("gs://bucket/path/to/blob#1360887697105000");
+    assertEquals("bucket", blobId.getBucket());
+    assertEquals("path/to/blob", blobId.getName());
+    assertEquals(Long.valueOf(1360887697105000L), blobId.getGeneration());
+    assertEquals("gs://bucket/path/to/blob", blobId.toGsUtilUri());
+    assertEquals("gs://bucket/path/to/blob#1360887697105000", blobId.toGsUtilUriWithGeneration());
+  }
+
+  @Test
   public void testEquals() {
     compareBlobIds(BLOB, BlobId.of("b", "n"));
   }
