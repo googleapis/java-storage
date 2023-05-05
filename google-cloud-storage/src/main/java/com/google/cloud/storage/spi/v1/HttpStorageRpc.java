@@ -182,6 +182,7 @@ public class HttpStorageRpc implements StorageRpc {
           newValue = invocationEntry;
         }
         headers.set("x-goog-api-client", newValue);
+        headers.set("x-goog-gcs-idempotency-token", invocationId);
       }
     }
   }

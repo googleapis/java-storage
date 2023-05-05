@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;
+import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -57,12 +58,19 @@ final class WriteFlushStrategy {
   static FlusherFactory fsyncEveryFlush(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
       RetryingDependencies deps,
-      ResultRetryAlgorithm<?> alg) {
+      ResultRetryAlgorithm<?> alg,
+      Supplier<GrpcCallContext> baseContextSupplier) {
     return (String bucketName,
         LongConsumer committedTotalBytesCallback,
         Consumer<WriteObjectResponse> onSuccessCallback) ->
         new FsyncEveryFlusher(
-            write, deps, alg, bucketName, committedTotalBytesCallback, onSuccessCallback);
+            write,
+            deps,
+            alg,
+            bucketName,
+            committedTotalBytesCallback,
+            onSuccessCallback,
+            baseContextSupplier);
   }
 
   /**
@@ -79,14 +87,14 @@ final class WriteFlushStrategy {
         new FsyncOnClose(write, bucketName, committedTotalBytesCallback, onSuccessCallback);
   }
 
-  private static GrpcCallContext contextWithBucketName(String bucketName) {
-    GrpcCallContext ret = GrpcCallContext.createDefault();
+  private static GrpcCallContext contextWithBucketName(
+      String bucketName, GrpcCallContext baseContext) {
     if (bucketName != null && !bucketName.isEmpty()) {
-      return ret.withExtraHeaders(
+      return baseContext.withExtraHeaders(
           ImmutableMap.of(
               "x-goog-request-params", ImmutableList.of(String.format("bucket=%s", bucketName))));
     }
-    return ret;
+    return baseContext;
   }
 
   /**
@@ -138,6 +146,7 @@ final class WriteFlushStrategy {
     private final String bucketName;
     private final LongConsumer sizeCallback;
     private final Consumer<WriteObjectResponse> completeCallback;
+    private final Supplier<GrpcCallContext> baseContextSupplier;
 
     private FsyncEveryFlusher(
         ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
@@ -145,13 +154,15 @@ final class WriteFlushStrategy {
         ResultRetryAlgorithm<?> alg,
         String bucketName,
         LongConsumer sizeCallback,
-        Consumer<WriteObjectResponse> completeCallback) {
+        Consumer<WriteObjectResponse> completeCallback,
+        Supplier<GrpcCallContext> baseContextSupplier) {
       this.write = write;
       this.deps = deps;
       this.alg = alg;
       this.bucketName = bucketName;
       this.sizeCallback = sizeCallback;
       this.completeCallback = completeCallback;
+      this.baseContextSupplier = baseContextSupplier;
     }
 
     public void flush(@NonNull List<WriteObjectRequest> segments) {
@@ -160,7 +171,8 @@ final class WriteFlushStrategy {
           alg,
           () -> {
             Observer observer = new Observer(sizeCallback, completeCallback);
-            GrpcCallContext internalContext = contextWithBucketName(bucketName);
+            GrpcCallContext internalContext =
+                contextWithBucketName(bucketName, baseContextSupplier.get());
             ApiStreamObserver<WriteObjectRequest> write =
                 this.write.withDefaultCallContext(internalContext).clientStreamingCall(observer);
 
@@ -230,7 +242,8 @@ final class WriteFlushStrategy {
       if (stream == null) {
         synchronized (this) {
           if (stream == null) {
-            GrpcCallContext internalContext = contextWithBucketName(bucketName);
+            GrpcCallContext internalContext =
+                contextWithBucketName(bucketName, GrpcCallContext.createDefault());
             stream =
                 this.write
                     .withDefaultCallContext(internalContext)

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.RestorableState;
@@ -78,7 +79,9 @@ final class GapicCopyWriter extends CopyWriter {
           RewriteObjectRequest.newBuilder()
               .setRewriteToken(mostRecentResponse.getRewriteToken())
               .build();
-      mostRecentResponse = Retrying.run(options, alg, () -> callable.call(req), Decoder.identity());
+      GrpcCallContext retryContext = Retrying.newCallContext();
+      mostRecentResponse =
+          Retrying.run(options, alg, () -> callable.call(req, retryContext), Decoder.identity());
     }
   }
 
