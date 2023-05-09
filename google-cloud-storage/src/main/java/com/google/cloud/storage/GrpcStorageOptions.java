@@ -224,6 +224,10 @@ public final class GrpcStorageOptions extends StorageOptions
             .setAllowNonDefaultServiceAccount(true)
             .setAttemptDirectPath(attemptDirectPath);
 
+    if (attemptDirectPath) {
+      channelProviderBuilder.setAttemptDirectPathXds();
+    }
+
     if (scheme.equals("http")) {
       channelProviderBuilder.setChannelConfigurator(ManagedChannelBuilder::usePlaintext);
     }
