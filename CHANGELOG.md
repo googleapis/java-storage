@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.22.2](https://github.com/googleapis/java-storage/compare/v2.22.1...v2.22.2) (2023-05-09)
+
+
+### Bug Fixes
+
+* Make Blob and Bucket update diff aware ([#1994](https://github.com/googleapis/java-storage/issues/1994)) ([0adeb14](https://github.com/googleapis/java-storage/commit/0adeb14479fc9aef35e32d286bcd9ae414eda25a))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.9.0 ([#2010](https://github.com/googleapis/java-storage/issues/2010)) ([27b9014](https://github.com/googleapis/java-storage/commit/27b9014a9dd67ee209c2ef59b0347a1a8beab257))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.9.3 ([#1996](https://github.com/googleapis/java-storage/issues/1996)) ([7839768](https://github.com/googleapis/java-storage/commit/7839768123d7e8a5a28076b6cc32dc0cd983d540))
+* Update junit-platform.version to v5.9.3 ([#1997](https://github.com/googleapis/java-storage/issues/1997)) ([5683340](https://github.com/googleapis/java-storage/commit/56833407f12f7efba423c0b7779a66c6f956777c))
+
 ## [2.22.1](https://github.com/googleapis/java-storage/compare/v2.22.0...v2.22.1) (2023-04-26)
 
 
