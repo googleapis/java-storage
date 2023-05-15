@@ -19,10 +19,8 @@ package com.google.cloud.storage.it;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.gax.paging.Page;
-import com.google.cloud.storage.Acl;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
-import com.google.cloud.storage.Rpo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketGetOption;
@@ -109,19 +107,7 @@ public final class ITBucketReadMaskTest {
                     assertThat(jsonT.getDefaultEventBasedHold()).isNull();
                     assertThat(grpcT.getDefaultEventBasedHold()).isFalse();
                   }),
-              new Args<>(
-                  BucketField.DEFAULT_OBJECT_ACL,
-                  (jsonT, grpcT) -> {
-                    List<Acl> jsonDefaultAcl = jsonT.getDefaultAcl();
-                    List<Acl> grpcDefaultAcl = grpcT.getDefaultAcl();
-                    if (!(jsonDefaultAcl == null || jsonDefaultAcl.isEmpty())
-                        && !(grpcDefaultAcl == null || grpcDefaultAcl.isEmpty())) {
-                      assertThat(grpcDefaultAcl).isEqualTo(jsonDefaultAcl);
-                    } else {
-                      assertThat(jsonDefaultAcl).isNotEmpty();
-                      assertThat(grpcDefaultAcl).isNull(); // workaround for b/261771961
-                    }
-                  }),
+              new Args<>(BucketField.DEFAULT_OBJECT_ACL, LazyAssertion.equal()),
               new Args<>(BucketField.ENCRYPTION, LazyAssertion.equal()),
               new Args<>(BucketField.ETAG, LazyAssertion.equal()),
               new Args<>(BucketField.IAMCONFIGURATION, LazyAssertion.equal()),
@@ -135,13 +121,7 @@ public final class ITBucketReadMaskTest {
               new Args<>(BucketField.NAME, LazyAssertion.equal()),
               new Args<>(BucketField.OWNER, LazyAssertion.equal()),
               new Args<>(BucketField.RETENTION_POLICY, LazyAssertion.equal()),
-              new Args<>(
-                  BucketField.RPO,
-                  (jsonT, grpcT) -> {
-                    assertThat(jsonT.getRpo()).isEqualTo(Rpo.DEFAULT);
-                    // TODO: cleanup allowed null value in mid nov
-                    assertThat(grpcT.getRpo()).isAnyOf(Rpo.DEFAULT, null);
-                  }),
+              new Args<>(BucketField.RPO, LazyAssertion.equal()),
               new Args<>(
                   BucketField.SELF_LINK,
                   (jsonT, grpcT) -> {
