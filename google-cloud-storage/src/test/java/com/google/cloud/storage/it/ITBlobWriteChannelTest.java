@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.api.client.json.JsonParser;
 import com.google.api.gax.rpc.FixedHeaderProvider;
-import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.conformance.storage.v1.InstructionList;
@@ -232,15 +231,15 @@ public final class ITBlobWriteChannelTest {
     RetryTestResource postRunState = testBench.getRetryTest(retryTest);
     assertTrue(postRunState.completed);
 
-    Optional<StorageObject> optionalStorageObject =
-        PackagePrivateMethodWorkarounds.maybeGetStorageObjectFunction().apply(w);
+    Optional<BlobInfo> optionalStorageObject =
+        PackagePrivateMethodWorkarounds.maybeGetBlobInfoFunction().apply(w);
 
     assertTrue(optionalStorageObject.isPresent());
-    StorageObject storageObject = optionalStorageObject.get();
-    assertThat(storageObject.getName()).isEqualTo(blobInfoGen0.getName());
+    BlobInfo internalInfo = optionalStorageObject.get();
+    assertThat(internalInfo.getName()).isEqualTo(blobInfoGen0.getName());
 
     // construct a new blob id, without a generation, so we get the latest when we perform a get
-    BlobId blobIdGen1 = BlobId.of(storageObject.getBucket(), storageObject.getName());
+    BlobId blobIdGen1 = BlobId.of(internalInfo.getBucket(), internalInfo.getName());
     Blob blobGen2 = testStorage.get(blobIdGen1);
     assertEquals(contentSize, (long) blobGen2.getSize());
     assertNotEquals(blobInfoGen0.getGeneration(), blobGen2.getGeneration());

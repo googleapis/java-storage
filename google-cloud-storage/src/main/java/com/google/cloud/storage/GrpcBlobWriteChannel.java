@@ -91,7 +91,11 @@ final class GrpcBlobWriteChannel implements WriteChannel {
 
   @Override
   public boolean isOpen() {
-    return lazyWriteChannel.isOpened() && lazyWriteChannel.getChannel().isOpen();
+    if (!writeCalledAtLeastOnce) {
+      return true;
+    } else {
+      return lazyWriteChannel.isOpened() && lazyWriteChannel.getChannel().isOpen();
+    }
   }
 
   @Override
