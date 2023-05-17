@@ -27,6 +27,7 @@ import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
+import com.google.auth.Retryable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -339,6 +340,8 @@ public final class DefaultRetryHandlingBehaviorTest {
     STORAGE_EXCEPTION_0_GSON_MALFORMED_EXCEPTION(
         new StorageException(0, "parse error", C.GSON_MALFORMED_EXCEPTION)),
     IO_EXCEPTION(new IOException("no retry")),
+    AUTH_RETRYABLE_TRUE(new RetryableException(true)),
+    AUTH_RETRYABLE_FALSE(new RetryableException(false)),
     ;
 
     private final Throwable throwable;
@@ -1042,7 +1045,52 @@ public final class DefaultRetryHandlingBehaviorTest {
                 ThrowableCategory.STORAGE_EXCEPTION_0_GSON_MALFORMED_EXCEPTION,
                 HandlerCategory.NONIDEMPOTENT,
                 ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.AUTH_RETRYABLE_TRUE,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.YES,
+                Behavior.DEFAULT_MORE_PERMISSIBLE),
+            new Case(
+                ThrowableCategory.AUTH_RETRYABLE_TRUE,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.AUTH_RETRYABLE_FALSE,
+                HandlerCategory.IDEMPOTENT,
+                ExpectRetry.NO,
+                Behavior.SAME),
+            new Case(
+                ThrowableCategory.AUTH_RETRYABLE_FALSE,
+                HandlerCategory.NONIDEMPOTENT,
+                ExpectRetry.NO,
                 Behavior.SAME))
         .build();
+  }
+
+  /**
+   * The auth library provides the interface {@link Retryable} to annotate an exception as
+   * retryable. Add a definition here. Explicitly extend IOException to ensure our handling of this
+   * type is sooner than IOExceptions
+   */
+  private static final class RetryableException extends IOException implements Retryable {
+
+    private final boolean isRetryable;
+
+    private RetryableException(boolean isRetryable) {
+      super(String.format("RetryableException{isRetryable=%s}", isRetryable));
+      this.isRetryable = isRetryable;
+    }
+
+    @Override
+    public boolean isRetryable() {
+      return isRetryable;
+    }
+
+    @Override
+    public int getRetryCount() {
+      return 0;
+    }
   }
 }

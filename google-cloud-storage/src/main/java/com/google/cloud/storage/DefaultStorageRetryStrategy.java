@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.google.api.client.http.HttpResponseException;
+import com.google.auth.Retryable;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.ExceptionHandler;
 import com.google.cloud.ExceptionHandler.Interceptor;
@@ -84,6 +85,9 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
       } else if (exception instanceof HttpResponseException) {
         int code = ((HttpResponseException) exception).getStatusCode();
         return shouldRetryCodeReason(code, null);
+      } else if (exception instanceof Retryable) {
+        Retryable retryable = (Retryable) exception;
+        return (idempotent && retryable.isRetryable()) ? RetryResult.RETRY : RetryResult.NO_RETRY;
       } else if (exception instanceof IOException) {
         IOException ioException = (IOException) exception;
         return shouldRetryIOException(ioException);
