@@ -22,7 +22,6 @@ public enum TransferStatus {
   FAILED_TO_START,
   FAILED_TO_FINISH,
   SKIPPED,
-  CANCELED,
   SUCCESS;
 
   /** A null value is considered to be greater than all values */
