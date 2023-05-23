@@ -25,6 +25,7 @@ import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.core.NoCredentialsProvider;
+import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.retrying.StreamResumptionStrategy;
@@ -46,11 +47,13 @@ import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
 import com.google.storage.v2.StorageClient;
 import com.google.storage.v2.StorageSettings;
+import io.grpc.ClientInterceptor;
 import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.net.URI;
@@ -77,6 +80,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final GrpcRetryAlgorithmManager retryAlgorithmManager;
   private final Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
+  private final GrpcInterceptorProvider grpcInterceptorProvider;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -88,6 +92,7 @@ public final class GrpcStorageOptions extends StorageOptions
         MoreObjects.firstNonNull(
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
+    this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
   }
 
   @Override
@@ -224,6 +229,10 @@ public final class GrpcStorageOptions extends StorageOptions
             .setAllowNonDefaultServiceAccount(true)
             .setAttemptDirectPath(attemptDirectPath);
 
+    if (!NoopGrpcInterceptorProvider.INSTANCE.equals(grpcInterceptorProvider)) {
+      channelProviderBuilder.setInterceptorProvider(grpcInterceptorProvider);
+    }
+
     if (attemptDirectPath) {
       channelProviderBuilder.setAttemptDirectPathXds();
     }
@@ -334,6 +343,8 @@ public final class GrpcStorageOptions extends StorageOptions
     private StorageRetryStrategy storageRetryStrategy;
     private Duration terminationAwaitDuration;
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
+    private GrpcInterceptorProvider grpcInterceptorProvider =
+        GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
 
     Builder() {}
 
@@ -488,6 +499,15 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
+    /** @since 2.22.3 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public GrpcStorageOptions.Builder setGrpcInterceptorProvider(
+        @NonNull GrpcInterceptorProvider grpcInterceptorProvider) {
+      requireNonNull(grpcInterceptorProvider, "grpcInterceptorProvider must be non null");
+      this.grpcInterceptorProvider = grpcInterceptorProvider;
+      return this;
+    }
+
     /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
     @BetaApi
     @Override
@@ -502,6 +522,8 @@ public final class GrpcStorageOptions extends StorageOptions
     static final GrpcStorageDefaults INSTANCE = new GrpcStorageOptions.GrpcStorageDefaults();
     static final StorageFactory STORAGE_FACTORY = new GrpcStorageFactory();
     static final StorageRpcFactory STORAGE_RPC_FACTORY = new GrpcStorageRpcFactory();
+    static final GrpcInterceptorProvider INTERCEPTOR_PROVIDER =
+        NoopGrpcInterceptorProvider.INSTANCE;
 
     private GrpcStorageDefaults() {}
 
@@ -542,6 +564,12 @@ public final class GrpcStorageOptions extends StorageOptions
     @BetaApi
     public boolean isAttemptDirectPath() {
       return false;
+    }
+
+    /** @since 2.22.3 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public GrpcInterceptorProvider grpcInterceptorProvider() {
+      return INTERCEPTOR_PROVIDER;
     }
   }
 
@@ -692,6 +720,20 @@ public final class GrpcStorageOptions extends StorageOptions
     protected StorageSettings.Builder setInternalHeaderProvider(
         HeaderProvider internalHeaderProvider) {
       return super.setInternalHeaderProvider(internalHeaderProvider);
+    }
+  }
+
+  private static final class NoopGrpcInterceptorProvider implements GrpcInterceptorProvider {
+    private static final NoopGrpcInterceptorProvider INSTANCE = new NoopGrpcInterceptorProvider();
+
+    @Override
+    public List<ClientInterceptor> getInterceptors() {
+      return ImmutableList.of();
+    }
+
+    /** prevent java serialization from using a new instance */
+    private Object readResolve() {
+      return INSTANCE;
     }
   }
 }
