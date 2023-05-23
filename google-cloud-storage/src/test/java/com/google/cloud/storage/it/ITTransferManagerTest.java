@@ -26,6 +26,7 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -232,6 +233,7 @@ public class ITTransferManagerTest {
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
       List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
       assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      assertThat(uploadResults.get(0).getException()).isInstanceOf(StorageException.class);
     }
   }
 
@@ -250,6 +252,8 @@ public class ITTransferManagerTest {
       assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
     }
   }
+
+
 
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
     // Cleanup downloaded blobs and the parent directory
