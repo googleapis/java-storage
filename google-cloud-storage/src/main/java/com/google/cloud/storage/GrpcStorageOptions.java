@@ -56,6 +56,7 @@ import com.google.storage.v2.StorageSettings;
 import io.grpc.ClientInterceptor;
 import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
@@ -723,7 +724,8 @@ public final class GrpcStorageOptions extends StorageOptions
     }
   }
 
-  private static final class NoopGrpcInterceptorProvider implements GrpcInterceptorProvider {
+  private static final class NoopGrpcInterceptorProvider
+      implements GrpcInterceptorProvider, Serializable {
     private static final NoopGrpcInterceptorProvider INSTANCE = new NoopGrpcInterceptorProvider();
 
     @Override
