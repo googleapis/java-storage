@@ -224,7 +224,7 @@ public class ITTransferManagerTest {
   public void uploadNonexistentBucket() throws Exception {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
-    String bucketName = "this-bucket-does-not-exist";
+    String bucketName = bucket.getName() + "-does-not-exist";
     try (TransferManager transferManager = config.getService();
         TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
       List<Path> files = ImmutableList.of(tmpFile.getPath());
@@ -252,8 +252,6 @@ public class ITTransferManagerTest {
       assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
     }
   }
-
-
 
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
     // Cleanup downloaded blobs and the parent directory
