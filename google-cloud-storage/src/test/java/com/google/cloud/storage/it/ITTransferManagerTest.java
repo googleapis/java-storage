@@ -26,6 +26,7 @@ import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.TransportCompatibility.Transport;
@@ -41,13 +42,16 @@ import com.google.cloud.storage.transfermanager.ParallelUploadConfig;
 import com.google.cloud.storage.transfermanager.TransferManager;
 import com.google.cloud.storage.transfermanager.TransferManagerConfig;
 import com.google.cloud.storage.transfermanager.TransferManagerConfigTestingInstances;
+import com.google.cloud.storage.transfermanager.TransferStatus;
 import com.google.cloud.storage.transfermanager.UploadJob;
 import com.google.cloud.storage.transfermanager.UploadResult;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -213,6 +217,39 @@ public class ITTransferManagerTest {
       } finally {
         cleanUpFiles(downloadResults);
       }
+    }
+  }
+
+  @Test
+  public void uploadNonexistentBucket() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
+    String bucketName = bucket.getName() + "-does-not-exist";
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
+      List<Path> files = ImmutableList.of(tmpFile.getPath());
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
+      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      assertThat(uploadResults.get(0).getException()).isInstanceOf(StorageException.class);
+    }
+  }
+
+  @Test
+  public void uploadNonexistentFile() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
+    String bucketName = bucket.getName();
+    try (TransferManager transferManager = config.getService()) {
+      List<Path> files = ImmutableList.of(Paths.get("this-file-does-not-exist.txt"));
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
+      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
     }
   }
 
