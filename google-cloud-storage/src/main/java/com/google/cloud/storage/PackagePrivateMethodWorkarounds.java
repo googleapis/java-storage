@@ -18,12 +18,13 @@ package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
 import com.google.common.collect.ImmutableList;
+import com.google.storage.v2.WriteObjectResponse;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -59,11 +60,26 @@ public final class PackagePrivateMethodWorkarounds {
     return new Blob(s, builder);
   }
 
-  public static Function<WriteChannel, Optional<StorageObject>> maybeGetStorageObjectFunction() {
+  public static Function<WriteChannel, Optional<BlobInfo>> maybeGetBlobInfoFunction() {
     return (w) -> {
+      BlobWriteChannel blobWriteChannel;
       if (w instanceof BlobWriteChannel) {
-        BlobWriteChannel blobWriteChannel = (BlobWriteChannel) w;
-        return Optional.of(blobWriteChannel.getStorageObject());
+        blobWriteChannel = (BlobWriteChannel) w;
+        return Optional.of(blobWriteChannel.getStorageObject())
+            .map(Conversions.apiary().blobInfo()::decode);
+      } else if (w instanceof GrpcBlobWriteChannel) {
+        GrpcBlobWriteChannel grpcBlobWriteChannel = (GrpcBlobWriteChannel) w;
+        return Optional.of(grpcBlobWriteChannel.getResults())
+            .map(
+                f -> {
+                  try {
+                    return f.get();
+                  } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                  }
+                })
+            .map(WriteObjectResponse::getResource)
+            .map(Conversions.grpc().blobInfo()::decode);
       } else {
         return Optional.empty();
       }
