@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.22.3](https://github.com/googleapis/java-storage/compare/v2.22.2...v2.22.3) (2023-05-30)
+
+
+### Bug Fixes
+
+* Add retries for auth service errors which are tagged Retryable ([#2026](https://github.com/googleapis/java-storage/issues/2026)) ([3675514](https://github.com/googleapis/java-storage/commit/367551439faab6e5e4ad516356ab146f10c96734))
+* Make GrpcBlobWriteChannel open upon construction ([#2022](https://github.com/googleapis/java-storage/issues/2022)) ([6549736](https://github.com/googleapis/java-storage/commit/65497365072a350be2587995e70fd4c9c75620a1))
+* Plumb GrpcInterceptorProvider to constructed InstantiatingGrpcChannelProvider ([#2031](https://github.com/googleapis/java-storage/issues/2031)) ([bfe0415](https://github.com/googleapis/java-storage/commit/bfe0415882e241c60147018abeacda3daabd6653))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.10.0 ([#2033](https://github.com/googleapis/java-storage/issues/2033)) ([54d6332](https://github.com/googleapis/java-storage/commit/54d633235c2bdb791cce15f119a7fbeb7c9c56f6))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.10.1 ([#2035](https://github.com/googleapis/java-storage/issues/2035)) ([0bdb5ec](https://github.com/googleapis/java-storage/commit/0bdb5ec111e25765550ffb73bba28f7ee580845d))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.22 ([#2016](https://github.com/googleapis/java-storage/issues/2016)) ([b4c4655](https://github.com/googleapis/java-storage/commit/b4c46558e9b443f65de3fb9461e81141a8364bb7))
+
 ## [2.22.2](https://github.com/googleapis/java-storage/compare/v2.22.1...v2.22.2) (2023-05-09)
 
 
