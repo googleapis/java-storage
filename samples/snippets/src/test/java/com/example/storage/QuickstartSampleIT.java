@@ -59,4 +59,18 @@ public class QuickstartSampleIT {
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
+
+  @Test
+  public void testQuickstartGrpc() throws Exception {
+    QuickstartGrpcSample.main(bucketName);
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(got).contains(String.format("Bucket %s created.", bucketName));
+  }
+
+  @Test
+  public void testQuickstartGrpcDp() throws Exception {
+    QuickstartGrpcDpSample.main(bucketName);
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(got).contains(String.format("Bucket %s created.", bucketName));
+  }
 }
