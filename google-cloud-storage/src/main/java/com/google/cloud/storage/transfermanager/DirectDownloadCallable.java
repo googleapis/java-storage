@@ -17,12 +17,11 @@
 package com.google.cloud.storage.transfermanager;
 
 import com.google.cloud.ReadChannel;
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
-import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -50,16 +49,26 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
   @Override
   public DownloadResult call() {
     Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
-    try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
+    long bytesCopied = 0L;
+    try (ReadChannel rc =
+        storage.reader(
+            BlobId.of(parallelDownloadConfig.getBucketName(), originalBlob.getName()), opts)) {
       FileChannel wc =
           FileChannel.open(
               path,
               StandardOpenOption.WRITE,
               StandardOpenOption.CREATE,
               StandardOpenOption.TRUNCATE_EXISTING);
-      ByteStreams.copy(rc, wc);
-    } catch (IOException e) {
-      throw new StorageException(e);
+      bytesCopied = ByteStreams.copy(rc, wc);
+    } catch (Exception e) {
+      if (bytesCopied == 0) {
+        return DownloadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_START)
+            .setException(e)
+            .build();
+      }
+      return DownloadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
+          .setException(e)
+          .build();
     }
     DownloadResult result =
         DownloadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)

@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.StorageException;
 import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -35,13 +34,13 @@ public final class DownloadResult {
   @NonNull private final BlobInfo input;
   @MonotonicNonNull private final Path outputDestination;
   @NonNull private final TransferStatus status;
-  @MonotonicNonNull private final StorageException exception;
+  @MonotonicNonNull private final Exception exception;
 
   private DownloadResult(
       @NonNull BlobInfo input,
       Path outputDestination,
       @NonNull TransferStatus status,
-      StorageException exception) {
+      Exception exception) {
     this.input = input;
     this.outputDestination = outputDestination;
     this.status = status;
@@ -64,7 +63,7 @@ public final class DownloadResult {
     return status;
   }
 
-  public @NonNull StorageException getException() {
+  public @NonNull Exception getException() {
     checkState(
         status == TransferStatus.FAILED_TO_FINISH || status == TransferStatus.FAILED_TO_START,
         "getException() is only valid when an unexpected error has occurred but status was %s",
@@ -111,7 +110,7 @@ public final class DownloadResult {
     private @NonNull BlobInfo input;
     private @MonotonicNonNull Path outputDestination;
     private @NonNull TransferStatus status;
-    private @MonotonicNonNull StorageException exception;
+    private @MonotonicNonNull Exception exception;
 
     private Builder(@NonNull BlobInfo input, @NonNull TransferStatus status) {
       this.input = input;
@@ -133,7 +132,7 @@ public final class DownloadResult {
       return this;
     }
 
-    public Builder setException(@NonNull StorageException exception) {
+    public Builder setException(@NonNull Exception exception) {
       this.exception = exception;
       return this;
     }
