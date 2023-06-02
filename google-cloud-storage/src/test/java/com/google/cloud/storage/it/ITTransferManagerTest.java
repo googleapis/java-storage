@@ -258,7 +258,7 @@ public class ITTransferManagerTest {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions());
     try (TransferManager transferManager = config.getService()) {
-      String bucketName = "this-bucket-does-not-exist";
+      String bucketName = bucket.getName() + "-does-not-exist";
       ParallelDownloadConfig parallelDownloadConfig =
           ParallelDownloadConfig.newBuilder()
               .setBucketName(bucketName)
@@ -279,7 +279,7 @@ public class ITTransferManagerTest {
             .setPerWorkerBufferSize(128 * 1024)
             .build();
     try (TransferManager transferManager = config.getService()) {
-      String bucketName = "this-bucket-does-not-exist";
+      String bucketName = bucket.getName() + "-does-not-exist";
       ParallelDownloadConfig parallelDownloadConfig =
           ParallelDownloadConfig.newBuilder()
               .setBucketName(bucketName)
