@@ -61,7 +61,7 @@ final class UploadCallable implements Callable<UploadResult> {
   }
 
   private UploadResult uploadWithoutChunking() {
-    long bytesCopied = 0L;
+    long bytesCopied = -1L;
     try {
       Optional<BlobInfo> newBlob;
       try (FileChannel r = FileChannel.open(sourceFile, StandardOpenOption.READ);
@@ -74,7 +74,7 @@ final class UploadCallable implements Callable<UploadResult> {
           .setUploadedBlob(newBlob.get())
           .build();
     } catch (Exception e) {
-      if (bytesCopied == 0) {
+      if (bytesCopied == -1) {
         return UploadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_START)
             .setException(e)
             .build();

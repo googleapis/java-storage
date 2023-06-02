@@ -49,7 +49,7 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
   @Override
   public DownloadResult call() {
     Path path = TransferManagerUtils.createDestPath(parallelDownloadConfig, originalBlob);
-    long bytesCopied = 0L;
+    long bytesCopied = -1L;
     try (ReadChannel rc =
         storage.reader(
             BlobId.of(parallelDownloadConfig.getBucketName(), originalBlob.getName()), opts)) {
@@ -61,7 +61,7 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
               StandardOpenOption.TRUNCATE_EXISTING);
       bytesCopied = ByteStreams.copy(rc, wc);
     } catch (Exception e) {
-      if (bytesCopied == 0) {
+      if (bytesCopied == -1) {
         return DownloadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_START)
             .setException(e)
             .build();
