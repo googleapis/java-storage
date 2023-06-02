@@ -270,6 +270,32 @@ public class ITTransferManagerTest {
     }
   }
 
+  @Test
+  public void downloadBlobsChunkedFail() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
+            .toBuilder()
+            .setAllowDivideAndConquer(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .build();
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = "this-bucket-does-not-exist";
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .build();
+      DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      assertThat(downloadResults).hasSize(3);
+      try {
+        assertThat(downloadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      } finally {
+        cleanUpFiles(downloadResults);
+      }
+    }
+  }
+
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
     // Cleanup downloaded blobs and the parent directory
     for (DownloadResult res : results) {
