@@ -16,7 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.RetryHelper.runWithRetries;
 import static java.util.Objects.requireNonNull;
 import static java.util.concurrent.Executors.callable;
 
@@ -28,6 +27,7 @@ import com.google.cloud.RestorableState;
 import com.google.cloud.RetryHelper;
 import com.google.cloud.WriteChannel;
 import java.math.BigInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -186,7 +186,9 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
   @Override
   protected void flushBuffer(final int length, final boolean lastChunk) {
     try {
-      runWithRetries(
+      Retrying.run(
+          getOptions(),
+          algorithmForWrite,
           callable(
               new Runnable() {
                 @Override
@@ -274,9 +276,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo> {
                   }
                 }
               }),
-          getOptions().getRetrySettings(),
-          algorithmForWrite,
-          getOptions().getClock());
+          Function.identity());
     } catch (RetryHelper.RetryHelperException e) {
       throw StorageException.translateAndThrow(e);
     }
