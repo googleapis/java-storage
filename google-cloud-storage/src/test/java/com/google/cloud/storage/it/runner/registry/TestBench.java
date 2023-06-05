@@ -30,9 +30,13 @@ import com.google.api.core.NanoClock;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.RetryHelper.RetryHelperException;
+import com.google.cloud.Tuple;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
+import com.google.cloud.storage.it.runner.SneakyException;
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -41,15 +45,20 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.SocketException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.threeten.bp.Duration;
 
 /**
@@ -411,9 +420,47 @@ public final class TestBench implements ManagedLifecycle {
   static final class Builder {
     private static final String DEFAULT_BASE_URI = "http://localhost:9000";
     private static final String DEFAULT_GRPC_BASE_URI = "http://localhost:9005";
-    private static final String DEFAULT_IMAGE_NAME =
-        "gcr.io/cloud-devrel-public-resources/storage-testbench";
-    private static final String DEFAULT_IMAGE_TAG = "v0.35.0";
+    private static final String DEFAULT_IMAGE_NAME;
+    private static final String DEFAULT_IMAGE_TAG;
+
+    static {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      Tuple<String, String> nameAndTag =
+          SneakyException.unwrap(
+                  () -> {
+                    InputStream dockerfileText =
+                        cl.getResourceAsStream(
+                            "com/google/cloud/storage/it/runner/registry/Dockerfile");
+                    //noinspection UnstableApiUsage
+                    return Optional.ofNullable(dockerfileText)
+                        .map(is -> new InputStreamReader(is, Charsets.UTF_8))
+                        .flatMap(
+                            reader ->
+                                SneakyException.sneaky(
+                                    () ->
+                                        CharStreams.readLines(reader).stream()
+                                            .filter(line -> !line.startsWith("#"))
+                                            .filter(line -> line.startsWith("FROM"))
+                                            .findFirst()
+                                            .flatMap(
+                                                from -> {
+                                                  Pattern pattern =
+                                                      Pattern.compile("FROM (.*?):(.*)$");
+                                                  Matcher matcher = pattern.matcher(from);
+                                                  if (matcher.matches()) {
+                                                    return Optional.of(
+                                                        Tuple.of(
+                                                            matcher.group(1), matcher.group(2)));
+                                                  } else {
+                                                    return Optional.empty();
+                                                  }
+                                                })));
+                  })
+              .orElse(Tuple.of(null, null));
+      DEFAULT_IMAGE_NAME = nameAndTag.x();
+      DEFAULT_IMAGE_TAG = nameAndTag.y();
+    }
+
     private static final String DEFAULT_CONTAINER_NAME = "default";
 
     private boolean ignorePullError;
@@ -483,8 +530,8 @@ public final class TestBench implements ManagedLifecycle {
           ignorePullError,
           baseUri,
           gRPCBaseUri,
-          dockerImageName,
-          dockerImageTag,
+          requireNonNull(dockerImageName, "dockerImageName must be non null"),
+          requireNonNull(dockerImageTag, "dockerImageTag must be non null"),
           String.format("storage-testbench_%s", containerName));
     }
   }
