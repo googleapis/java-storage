@@ -49,11 +49,6 @@ public final class CommonObjectRequestParams extends com.google.protobuf.Generat
     return new CommonObjectRequestParams();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_CommonObjectRequestParams_descriptor;

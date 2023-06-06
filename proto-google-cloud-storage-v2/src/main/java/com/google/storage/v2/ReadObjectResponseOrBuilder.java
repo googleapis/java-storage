@@ -71,9 +71,9 @@ public interface ReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. The client should compute one of
-   * these checksums over the downloaded object and compare it against the value
-   * provided here.
+   * The checksums of the complete object. If the object is downloaded in full,
+   * the client should compute one of these checksums over the downloaded object
+   * and compare it against the value provided here.
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 2;</code>
@@ -85,9 +85,9 @@ public interface ReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. The client should compute one of
-   * these checksums over the downloaded object and compare it against the value
-   * provided here.
+   * The checksums of the complete object. If the object is downloaded in full,
+   * the client should compute one of these checksums over the downloaded object
+   * and compare it against the value provided here.
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 2;</code>
@@ -99,9 +99,9 @@ public interface ReadObjectResponseOrBuilder
    *
    *
    * <pre>
-   * The checksums of the complete object. The client should compute one of
-   * these checksums over the downloaded object and compare it against the value
-   * provided here.
+   * The checksums of the complete object. If the object is downloaded in full,
+   * the client should compute one of these checksums over the downloaded object
+   * and compare it against the value provided here.
    * </pre>
    *
    * <code>.google.storage.v2.ObjectChecksums object_checksums = 2;</code>

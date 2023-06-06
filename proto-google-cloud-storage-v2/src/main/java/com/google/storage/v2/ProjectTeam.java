@@ -48,11 +48,6 @@ public final class ProjectTeam extends com.google.protobuf.GeneratedMessageV3
     return new ProjectTeam();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_ProjectTeam_descriptor;

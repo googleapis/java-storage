@@ -47,11 +47,6 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
     return new UpdateObjectRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_UpdateObjectRequest_descriptor;
@@ -334,10 +329,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. List of fields to be updated.
+   *
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
+   *
    * Not specifying any fields is an error.
    * </pre>
    *
@@ -355,10 +352,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. List of fields to be updated.
+   *
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
+   *
    * Not specifying any fields is an error.
    * </pre>
    *
@@ -376,10 +375,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
    *
    * <pre>
    * Required. List of fields to be updated.
+   *
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
+   *
    * Not specifying any fields is an error.
    * </pre>
    *
@@ -1639,10 +1640,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1659,10 +1662,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1685,10 +1690,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1713,10 +1720,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1738,10 +1747,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1769,10 +1780,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1794,10 +1807,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1814,10 +1829,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *
@@ -1838,10 +1855,12 @@ public final class UpdateObjectRequest extends com.google.protobuf.GeneratedMess
      *
      * <pre>
      * Required. List of fields to be updated.
+     *
      * To specify ALL fields, equivalent to the JSON API's "update" function,
      * specify a single field with the value `*`. Note: not recommended. If a new
      * field is introduced at a later time, an older client updating with the `*`
      * may accidentally reset the new field's value.
+     *
      * Not specifying any fields is an error.
      * </pre>
      *

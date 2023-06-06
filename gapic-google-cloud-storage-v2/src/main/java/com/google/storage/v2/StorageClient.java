@@ -426,10 +426,10 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
-   *     project of the bucket must be specified in the `bucket.project` field. This field must be
-   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
-   *     project number. The `parent` field must be either empty or `projects/_`.
+   *     in the `bucket_id` field. Populating `bucket.name` field will be ignored. The project of
+   *     the bucket must be specified in the `bucket.project` field. This field must be in
+   *     `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or project
+   *     number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -467,10 +467,10 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
-   *     project of the bucket must be specified in the `bucket.project` field. This field must be
-   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
-   *     project number. The `parent` field must be either empty or `projects/_`.
+   *     in the `bucket_id` field. Populating `bucket.name` field will be ignored. The project of
+   *     the bucket must be specified in the `bucket.project` field. This field must be in
+   *     `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or project
+   *     number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -2674,7 +2674,9 @@ public class StorageClient implements BackgroundResource {
    * were already persisted (without checking that it matches the previously written data), and
    * write only the data starting from the persisted offset. Even though the data isn't written, it
    * may still incur a performance cost over resuming at the correct write offset. This behavior can
-   * make client-side handling simpler in some cases.
+   * make client-side handling simpler in some cases. - Clients must only send data that is a
+   * multiple of 256 KiB per message, unless the object is being finished with `finish_write` set to
+   * `true`.
    *
    * <p>The service will not view the object as complete until the client has sent a
    * `WriteObjectRequest` with `finish_write` set to `true`. Sending any requests on a stream after

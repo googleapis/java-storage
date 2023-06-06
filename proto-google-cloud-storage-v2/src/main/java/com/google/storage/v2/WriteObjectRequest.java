@@ -45,11 +45,6 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
     return new WriteObjectRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_WriteObjectRequest_descriptor;
@@ -66,6 +61,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   }
 
   private int firstMessageCase_ = 0;
+
+  @SuppressWarnings("serial")
   private java.lang.Object firstMessage_;
 
   public enum FirstMessageCase
@@ -113,6 +110,8 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
   }
 
   private int dataCase_ = 0;
+
+  @SuppressWarnings("serial")
   private java.lang.Object data_;
 
   public enum DataCase
@@ -291,13 +290,16 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
    * <pre>
    * Required. The offset from the beginning of the object at which the data
    * should be written.
+   *
    * In the first `WriteObjectRequest` of a `WriteObject()` action, it
    * indicates the initial offset for the `Write()` call. The value **must** be
    * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
    * return (0 if this is the first write to the object).
+   *
    * On subsequent calls, this value **must** be no larger than the sum of the
    * first `write_offset` and the sizes of all `data` chunks sent previously on
    * this stream.
+   *
    * An incorrect value will cause an error.
    * </pre>
    *
@@ -371,7 +373,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specifified checksums the call will fail. May only be
+   * don't match the specified checksums the call will fail. May only be
    * provided in the first or last request (either with first_message, or
    * finish_write set).
    * </pre>
@@ -389,7 +391,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specifified checksums the call will fail. May only be
+   * don't match the specified checksums the call will fail. May only be
    * provided in the first or last request (either with first_message, or
    * finish_write set).
    * </pre>
@@ -409,7 +411,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
    *
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specifified checksums the call will fail. May only be
+   * don't match the specified checksums the call will fail. May only be
    * provided in the first or last request (either with first_message, or
    * finish_write set).
    * </pre>
@@ -1453,13 +1455,16 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * <pre>
      * Required. The offset from the beginning of the object at which the data
      * should be written.
+     *
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
      * indicates the initial offset for the `Write()` call. The value **must** be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
      * return (0 if this is the first write to the object).
+     *
      * On subsequent calls, this value **must** be no larger than the sum of the
      * first `write_offset` and the sizes of all `data` chunks sent previously on
      * this stream.
+     *
      * An incorrect value will cause an error.
      * </pre>
      *
@@ -1477,13 +1482,16 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * <pre>
      * Required. The offset from the beginning of the object at which the data
      * should be written.
+     *
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
      * indicates the initial offset for the `Write()` call. The value **must** be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
      * return (0 if this is the first write to the object).
+     *
      * On subsequent calls, this value **must** be no larger than the sum of the
      * first `write_offset` and the sizes of all `data` chunks sent previously on
      * this stream.
+     *
      * An incorrect value will cause an error.
      * </pre>
      *
@@ -1505,13 +1513,16 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      * <pre>
      * Required. The offset from the beginning of the object at which the data
      * should be written.
+     *
      * In the first `WriteObjectRequest` of a `WriteObject()` action, it
      * indicates the initial offset for the `Write()` call. The value **must** be
      * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
      * return (0 if this is the first write to the object).
+     *
      * On subsequent calls, this value **must** be no larger than the sum of the
      * first `write_offset` and the sizes of all `data` chunks sent previously on
      * this stream.
+     *
      * An incorrect value will cause an error.
      * </pre>
      *
@@ -1752,7 +1763,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1769,7 +1780,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1792,7 +1803,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1817,7 +1828,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1840,7 +1851,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1868,7 +1879,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1890,7 +1901,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1907,7 +1918,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>
@@ -1928,7 +1939,7 @@ public final class WriteObjectRequest extends com.google.protobuf.GeneratedMessa
      *
      * <pre>
      * Checksums for the complete object. If the checksums computed by the service
-     * don't match the specifified checksums the call will fail. May only be
+     * don't match the specified checksums the call will fail. May only be
      * provided in the first or last request (either with first_message, or
      * finish_write set).
      * </pre>

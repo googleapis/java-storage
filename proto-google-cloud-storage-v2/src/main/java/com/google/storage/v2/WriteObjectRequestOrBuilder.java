@@ -107,13 +107,16 @@ public interface WriteObjectRequestOrBuilder
    * <pre>
    * Required. The offset from the beginning of the object at which the data
    * should be written.
+   *
    * In the first `WriteObjectRequest` of a `WriteObject()` action, it
    * indicates the initial offset for the `Write()` call. The value **must** be
    * equal to the `persisted_size` that a call to `QueryWriteStatus()` would
    * return (0 if this is the first write to the object).
+   *
    * On subsequent calls, this value **must** be no larger than the sum of the
    * first `write_offset` and the sizes of all `data` chunks sent previously on
    * this stream.
+   *
    * An incorrect value will cause an error.
    * </pre>
    *
@@ -166,7 +169,7 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specifified checksums the call will fail. May only be
+   * don't match the specified checksums the call will fail. May only be
    * provided in the first or last request (either with first_message, or
    * finish_write set).
    * </pre>
@@ -181,7 +184,7 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specifified checksums the call will fail. May only be
+   * don't match the specified checksums the call will fail. May only be
    * provided in the first or last request (either with first_message, or
    * finish_write set).
    * </pre>
@@ -196,7 +199,7 @@ public interface WriteObjectRequestOrBuilder
    *
    * <pre>
    * Checksums for the complete object. If the checksums computed by the service
-   * don't match the specifified checksums the call will fail. May only be
+   * don't match the specified checksums the call will fail. May only be
    * provided in the first or last request (either with first_message, or
    * finish_write set).
    * </pre>
@@ -258,7 +261,7 @@ public interface WriteObjectRequestOrBuilder
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
 
-  public com.google.storage.v2.WriteObjectRequest.FirstMessageCase getFirstMessageCase();
+  com.google.storage.v2.WriteObjectRequest.FirstMessageCase getFirstMessageCase();
 
-  public com.google.storage.v2.WriteObjectRequest.DataCase getDataCase();
+  com.google.storage.v2.WriteObjectRequest.DataCase getDataCase();
 }

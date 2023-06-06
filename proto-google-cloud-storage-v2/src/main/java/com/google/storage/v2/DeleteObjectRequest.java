@@ -49,11 +49,6 @@ public final class DeleteObjectRequest extends com.google.protobuf.GeneratedMess
     return new DeleteObjectRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_DeleteObjectRequest_descriptor;

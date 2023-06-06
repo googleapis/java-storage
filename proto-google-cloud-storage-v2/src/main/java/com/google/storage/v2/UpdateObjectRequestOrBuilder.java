@@ -218,10 +218,12 @@ public interface UpdateObjectRequestOrBuilder
    *
    * <pre>
    * Required. List of fields to be updated.
+   *
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
+   *
    * Not specifying any fields is an error.
    * </pre>
    *
@@ -236,10 +238,12 @@ public interface UpdateObjectRequestOrBuilder
    *
    * <pre>
    * Required. List of fields to be updated.
+   *
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
+   *
    * Not specifying any fields is an error.
    * </pre>
    *
@@ -254,10 +258,12 @@ public interface UpdateObjectRequestOrBuilder
    *
    * <pre>
    * Required. List of fields to be updated.
+   *
    * To specify ALL fields, equivalent to the JSON API's "update" function,
    * specify a single field with the value `*`. Note: not recommended. If a new
    * field is introduced at a later time, an older client updating with the `*`
    * may accidentally reset the new field's value.
+   *
    * Not specifying any fields is an error.
    * </pre>
    *

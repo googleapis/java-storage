@@ -48,11 +48,6 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
     return new ChecksummedData();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_ChecksummedData_descriptor;
@@ -78,7 +73,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
    * The data.
    * </pre>
    *
-   * <code>bytes content = 1;</code>
+   * <code>bytes content = 1 [ctype = CORD];</code>
    *
    * @return The content.
    */
@@ -496,7 +491,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * The data.
      * </pre>
      *
-     * <code>bytes content = 1;</code>
+     * <code>bytes content = 1 [ctype = CORD];</code>
      *
      * @return The content.
      */
@@ -511,7 +506,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * The data.
      * </pre>
      *
-     * <code>bytes content = 1;</code>
+     * <code>bytes content = 1 [ctype = CORD];</code>
      *
      * @param value The content to set.
      * @return This builder for chaining.
@@ -532,7 +527,7 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      * The data.
      * </pre>
      *
-     * <code>bytes content = 1;</code>
+     * <code>bytes content = 1 [ctype = CORD];</code>
      *
      * @return This builder for chaining.
      */

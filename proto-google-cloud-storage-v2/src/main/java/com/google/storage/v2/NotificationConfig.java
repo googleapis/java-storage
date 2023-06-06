@@ -41,7 +41,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     name_ = "";
     topic_ = "";
     etag_ = "";
-    eventTypes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    eventTypes_ = com.google.protobuf.LazyStringArrayList.emptyList();
     objectNamePrefix_ = "";
     payloadFormat_ = "";
   }
@@ -50,11 +50,6 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
     return new NotificationConfig();
-  }
-
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
@@ -253,7 +248,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
   public static final int EVENT_TYPES_FIELD_NUMBER = 3;
 
   @SuppressWarnings("serial")
-  private com.google.protobuf.LazyStringList eventTypes_;
+  private com.google.protobuf.LazyStringArrayList eventTypes_ =
+      com.google.protobuf.LazyStringArrayList.emptyList();
   /**
    *
    *
@@ -818,8 +814,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       name_ = "";
       topic_ = "";
       etag_ = "";
-      eventTypes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000008);
+      eventTypes_ = com.google.protobuf.LazyStringArrayList.emptyList();
       internalGetMutableCustomAttributes().clear();
       objectNamePrefix_ = "";
       payloadFormat_ = "";
@@ -850,20 +845,11 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     public com.google.storage.v2.NotificationConfig buildPartial() {
       com.google.storage.v2.NotificationConfig result =
           new com.google.storage.v2.NotificationConfig(this);
-      buildPartialRepeatedFields(result);
       if (bitField0_ != 0) {
         buildPartial0(result);
       }
       onBuilt();
       return result;
-    }
-
-    private void buildPartialRepeatedFields(com.google.storage.v2.NotificationConfig result) {
-      if (((bitField0_ & 0x00000008) != 0)) {
-        eventTypes_ = eventTypes_.getUnmodifiableView();
-        bitField0_ = (bitField0_ & ~0x00000008);
-      }
-      result.eventTypes_ = eventTypes_;
     }
 
     private void buildPartial0(com.google.storage.v2.NotificationConfig result) {
@@ -876,6 +862,10 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       }
       if (((from_bitField0_ & 0x00000004) != 0)) {
         result.etag_ = etag_;
+      }
+      if (((from_bitField0_ & 0x00000008) != 0)) {
+        eventTypes_.makeImmutable();
+        result.eventTypes_ = eventTypes_;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
         result.customAttributes_ = internalGetCustomAttributes();
@@ -952,7 +942,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       if (!other.eventTypes_.isEmpty()) {
         if (eventTypes_.isEmpty()) {
           eventTypes_ = other.eventTypes_;
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ |= 0x00000008;
         } else {
           ensureEventTypesIsMutable();
           eventTypes_.addAll(other.eventTypes_);
@@ -1419,14 +1409,14 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       return this;
     }
 
-    private com.google.protobuf.LazyStringList eventTypes_ =
-        com.google.protobuf.LazyStringArrayList.EMPTY;
+    private com.google.protobuf.LazyStringArrayList eventTypes_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
 
     private void ensureEventTypesIsMutable() {
-      if (!((bitField0_ & 0x00000008) != 0)) {
+      if (!eventTypes_.isModifiable()) {
         eventTypes_ = new com.google.protobuf.LazyStringArrayList(eventTypes_);
-        bitField0_ |= 0x00000008;
       }
+      bitField0_ |= 0x00000008;
     }
     /**
      *
@@ -1441,7 +1431,8 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      * @return A list containing the eventTypes.
      */
     public com.google.protobuf.ProtocolStringList getEventTypesList() {
-      return eventTypes_.getUnmodifiableView();
+      eventTypes_.makeImmutable();
+      return eventTypes_;
     }
     /**
      *
@@ -1510,6 +1501,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       }
       ensureEventTypesIsMutable();
       eventTypes_.set(index, value);
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1532,6 +1524,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       }
       ensureEventTypesIsMutable();
       eventTypes_.add(value);
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1551,6 +1544,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
     public Builder addAllEventTypes(java.lang.Iterable<java.lang.String> values) {
       ensureEventTypesIsMutable();
       com.google.protobuf.AbstractMessageLite.Builder.addAll(values, eventTypes_);
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1567,8 +1561,9 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
      * @return This builder for chaining.
      */
     public Builder clearEventTypes() {
-      eventTypes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      eventTypes_ = com.google.protobuf.LazyStringArrayList.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
+      ;
       onChanged();
       return this;
     }
@@ -1592,6 +1587,7 @@ public final class NotificationConfig extends com.google.protobuf.GeneratedMessa
       checkByteStringIsUtf8(value);
       ensureEventTypesIsMutable();
       eventTypes_.add(value);
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }

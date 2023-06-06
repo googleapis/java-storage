@@ -48,11 +48,6 @@ public final class GetHmacKeyRequest extends com.google.protobuf.GeneratedMessag
     return new GetHmacKeyRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_GetHmacKeyRequest_descriptor;

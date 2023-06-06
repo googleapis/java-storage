@@ -92,5 +92,5 @@ public interface QueryWriteStatusResponseOrBuilder
    */
   com.google.storage.v2.ObjectOrBuilder getResourceOrBuilder();
 
-  public com.google.storage.v2.QueryWriteStatusResponse.WriteStatusCase getWriteStatusCase();
+  com.google.storage.v2.QueryWriteStatusResponse.WriteStatusCase getWriteStatusCase();
 }

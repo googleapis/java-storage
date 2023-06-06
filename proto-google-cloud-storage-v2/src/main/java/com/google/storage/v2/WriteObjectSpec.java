@@ -47,11 +47,6 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
     return new WriteObjectSpec();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_WriteObjectSpec_descriptor;
@@ -324,6 +319,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * The expected final object size being uploaded.
    * If this value is set, closing the stream after writing fewer or more than
    * `object_size` bytes will result in an OUT_OF_RANGE error.
+   *
    * This situation is considered a client error, and if such an error occurs
    * you must start the upload over from scratch, this time sending the correct
    * number of bytes.
@@ -344,6 +340,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
    * The expected final object size being uploaded.
    * If this value is set, closing the stream after writing fewer or more than
    * `object_size` bytes will result in an OUT_OF_RANGE error.
+   *
    * This situation is considered a client error, and if such an error occurs
    * you must start the upload over from scratch, this time sending the correct
    * number of bytes.
@@ -1482,6 +1479,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
      * `object_size` bytes will result in an OUT_OF_RANGE error.
+     *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
      * number of bytes.
@@ -1502,6 +1500,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
      * `object_size` bytes will result in an OUT_OF_RANGE error.
+     *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
      * number of bytes.
@@ -1522,6 +1521,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
      * `object_size` bytes will result in an OUT_OF_RANGE error.
+     *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
      * number of bytes.
@@ -1546,6 +1546,7 @@ public final class WriteObjectSpec extends com.google.protobuf.GeneratedMessageV
      * The expected final object size being uploaded.
      * If this value is set, closing the stream after writing fewer or more than
      * `object_size` bytes will result in an OUT_OF_RANGE error.
+     *
      * This situation is considered a client error, and if such an error occurs
      * you must start the upload over from scratch, this time sending the correct
      * number of bytes.

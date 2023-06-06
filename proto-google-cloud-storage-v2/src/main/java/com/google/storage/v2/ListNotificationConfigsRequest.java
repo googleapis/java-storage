@@ -49,11 +49,6 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
     return new ListNotificationConfigsRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_ListNotificationConfigsRequest_descriptor;
@@ -154,6 +149,7 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
    * <pre>
    * A page token, received from a previous `ListNotificationConfigs` call.
    * Provide this to retrieve the subsequent page.
+   *
    * When paginating, all other parameters provided to `ListNotificationConfigs`
    * must match the call that provided the page token.
    * </pre>
@@ -180,6 +176,7 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
    * <pre>
    * A page token, received from a previous `ListNotificationConfigs` call.
    * Provide this to retrieve the subsequent page.
+   *
    * When paginating, all other parameters provided to `ListNotificationConfigs`
    * must match the call that provided the page token.
    * </pre>
@@ -771,6 +768,7 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
      * <pre>
      * A page token, received from a previous `ListNotificationConfigs` call.
      * Provide this to retrieve the subsequent page.
+     *
      * When paginating, all other parameters provided to `ListNotificationConfigs`
      * must match the call that provided the page token.
      * </pre>
@@ -796,6 +794,7 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
      * <pre>
      * A page token, received from a previous `ListNotificationConfigs` call.
      * Provide this to retrieve the subsequent page.
+     *
      * When paginating, all other parameters provided to `ListNotificationConfigs`
      * must match the call that provided the page token.
      * </pre>
@@ -821,6 +820,7 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
      * <pre>
      * A page token, received from a previous `ListNotificationConfigs` call.
      * Provide this to retrieve the subsequent page.
+     *
      * When paginating, all other parameters provided to `ListNotificationConfigs`
      * must match the call that provided the page token.
      * </pre>
@@ -845,6 +845,7 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
      * <pre>
      * A page token, received from a previous `ListNotificationConfigs` call.
      * Provide this to retrieve the subsequent page.
+     *
      * When paginating, all other parameters provided to `ListNotificationConfigs`
      * must match the call that provided the page token.
      * </pre>
@@ -865,6 +866,7 @@ public final class ListNotificationConfigsRequest extends com.google.protobuf.Ge
      * <pre>
      * A page token, received from a previous `ListNotificationConfigs` call.
      * Provide this to retrieve the subsequent page.
+     *
      * When paginating, all other parameters provided to `ListNotificationConfigs`
      * must match the call that provided the page token.
      * </pre>
