@@ -46,6 +46,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,6 +71,13 @@ public final class ITGrpcIdempotencyTokenTest {
             .setGrpcInterceptorProvider(() -> ImmutableList.of(requestAuditing))
             .build()
             .getService();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    if (storage != null) {
+      storage.close();
+    }
   }
 
   @Test

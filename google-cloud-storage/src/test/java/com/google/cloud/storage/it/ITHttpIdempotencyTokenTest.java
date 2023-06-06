@@ -45,6 +45,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +65,13 @@ public final class ITHttpIdempotencyTokenTest {
   public void setUp() throws Exception {
     requestAuditing = new RequestAuditing();
     storage = StorageOptions.http().setTransportOptions(requestAuditing).build().getService();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    if (storage != null) {
+      storage.close();
+    }
   }
 
   @Test
