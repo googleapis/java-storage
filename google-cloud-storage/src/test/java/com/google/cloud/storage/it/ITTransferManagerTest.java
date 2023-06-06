@@ -253,6 +253,53 @@ public class ITTransferManagerTest {
     }
   }
 
+  @Test
+  public void downloadNonexistentBucket() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName() + "-does-not-exist";
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .build();
+      DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      List<DownloadResult> failedToStart =
+          downloadResults.stream()
+              .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
+              .collect(Collectors.toList());
+      assertThat(failedToStart).hasSize(3);
+    }
+  }
+
+  @Test
+  public void downloadBlobsChunkedFail() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
+            .toBuilder()
+            .setAllowDivideAndConquer(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .build();
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName() + "-does-not-exist";
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .build();
+      DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      assertThat(downloadResults).hasSize(3);
+      List<DownloadResult> failedToStart =
+          downloadResults.stream()
+              .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
+              .collect(Collectors.toList());
+      assertThat(failedToStart).hasSize(3);
+    }
+  }
+
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
     // Cleanup downloaded blobs and the parent directory
     for (DownloadResult res : results) {

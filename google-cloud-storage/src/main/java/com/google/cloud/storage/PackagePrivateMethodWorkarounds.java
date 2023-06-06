@@ -86,17 +86,6 @@ public final class PackagePrivateMethodWorkarounds {
     };
   }
 
-  public static Function<WriteChannel, Optional<BlobInfo>> maybeGetBlobInfoFunction() {
-    return writeChannel -> {
-      Optional<StorageObject> so = maybeGetStorageObjectFunction().apply(writeChannel);
-      if (so.isPresent()) {
-        return Optional.of(Conversions.apiary().blobInfo().decode(so.get()));
-      } else {
-        return Optional.empty();
-      }
-    };
-  }
-
   public static ApiFuture<BlobInfo> getBlobInfoFromReadChannelFunction(ReadChannel c) {
     if (c instanceof StorageReadChannel) {
       StorageReadChannel src = (StorageReadChannel) c;
