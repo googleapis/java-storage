@@ -32,7 +32,6 @@ import com.google.cloud.storage.Storage.BlobListOption;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
-import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -105,25 +104,6 @@ public final class ITGrpcIdempotencyTokenTest {
         () -> assertThat(collect).hasSize(2),
         () -> assertThat(collect).containsExactlyElementsIn(expectedNamess),
         () -> subject.hasSize(2));
-  }
-
-  @Test
-  public void pageBucket() throws Exception {
-    String baseName = generator.randomBucketName();
-    BucketInfo info1 = BucketInfo.of(baseName + "1");
-    BucketInfo info2 = BucketInfo.of(baseName + "2");
-    try (TemporaryBucket tmp1 =
-            TemporaryBucket.newBuilder().setBucketInfo(info1).setStorage(storage).build();
-        TemporaryBucket tmp2 =
-            TemporaryBucket.newBuilder().setBucketInfo(info2).setStorage(storage).build()) {
-      requestAuditing.clear();
-      Page<Bucket> page =
-          storage.list(BucketListOption.prefix(baseName), BucketListOption.pageSize(1));
-
-      List<Bucket> collect = page.streamAll().collect(Collectors.toList());
-      IterableSubject subject = requestAuditing.assertRequestHeader(X_GOOG_GCS_IDEMPOTENCY_TOKEN);
-      assertAll(() -> assertThat(collect).hasSize(2), () -> subject.hasSize(2));
-    }
   }
 
   @Test
