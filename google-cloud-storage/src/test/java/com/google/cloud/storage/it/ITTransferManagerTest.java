@@ -266,9 +266,10 @@ public class ITTransferManagerTest {
               .build();
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
       List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
-      List<DownloadResult> failedToStart = downloadResults.stream()
-          .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START).collect(
-              Collectors.toList());
+      List<DownloadResult> failedToStart =
+          downloadResults.stream()
+              .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
+              .collect(Collectors.toList());
       assertThat(failedToStart).hasSize(3);
     }
   }
@@ -291,9 +292,10 @@ public class ITTransferManagerTest {
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
       List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
       assertThat(downloadResults).hasSize(3);
-      List<DownloadResult> failedToStart = downloadResults.stream()
-          .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START).collect(
-              Collectors.toList());
+      List<DownloadResult> failedToStart =
+          downloadResults.stream()
+              .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
+              .collect(Collectors.toList());
       assertThat(failedToStart).hasSize(3);
     }
   }
