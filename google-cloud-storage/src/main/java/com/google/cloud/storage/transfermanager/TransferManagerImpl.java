@@ -91,17 +91,15 @@ final class TransferManagerImpl implements TransferManager {
     } else {
       for (BlobInfo blob : blobs) {
         BlobInfo validatedBlob = retrieveSizeAndGeneration(storage, blob, config.getBucketName());
-        Path destPath = TransferManagerUtils.createDestPath(config, validatedBlob);
-        long size = validatedBlob.getSize();
-        if (qos.divideAndConquer(size)) {
-
+        Path destPath = TransferManagerUtils.createDestPath(config, blob);
+        if (validatedBlob != null && qos.divideAndConquer(validatedBlob.getSize())) {
           DownloadResult optimisticResult =
               DownloadResult.newBuilder(validatedBlob, TransferStatus.SUCCESS)
                   .setOutputDestination(destPath)
                   .build();
 
           List<ApiFuture<DownloadSegment>> downloadSegmentTasks =
-              computeRanges(size, transferManagerConfig.getPerWorkerBufferSize()).stream()
+              computeRanges(validatedBlob.getSize(), transferManagerConfig.getPerWorkerBufferSize()).stream()
                   .map(
                       r ->
                           new ChunkedDownloadCallable(
