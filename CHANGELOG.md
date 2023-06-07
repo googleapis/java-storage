@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.22.4](https://github.com/googleapis/java-storage/compare/v2.22.3...v2.22.4) (2023-06-07)
+
+
+### Bug Fixes
+
+* Include invocation-id for resumable PUTs ([#2047](https://github.com/googleapis/java-storage/issues/2047)) ([a590ae3](https://github.com/googleapis/java-storage/commit/a590ae3856fe8cccde17def5ca6bef8cfeed5073))
+
+
+### Documentation
+
+* Add documentation about quantum write alignment, use of ObjectChecksums, Bucket.name format, and Object.delete_time ([#2032](https://github.com/googleapis/java-storage/issues/2032)) ([c39ec13](https://github.com/googleapis/java-storage/commit/c39ec13469342ed947b12dd7ab3d301ca1d4d01b))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.11.0 ([#2050](https://github.com/googleapis/java-storage/issues/2050)) ([88fffbd](https://github.com/googleapis/java-storage/commit/88fffbd56746ff212441fafd1e213177feac0cac))
+
 ## [2.22.3](https://github.com/googleapis/java-storage/compare/v2.22.2...v2.22.3) (2023-05-30)
 
 
