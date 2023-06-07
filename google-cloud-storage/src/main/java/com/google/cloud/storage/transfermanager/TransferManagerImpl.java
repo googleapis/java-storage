@@ -99,7 +99,8 @@ final class TransferManagerImpl implements TransferManager {
                   .build();
 
           List<ApiFuture<DownloadSegment>> downloadSegmentTasks =
-              computeRanges(validatedBlob.getSize(), transferManagerConfig.getPerWorkerBufferSize()).stream()
+              computeRanges(validatedBlob.getSize(), transferManagerConfig.getPerWorkerBufferSize())
+                  .stream()
                   .map(
                       r ->
                           new ChunkedDownloadCallable(
