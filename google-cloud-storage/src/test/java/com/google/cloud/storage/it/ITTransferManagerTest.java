@@ -299,6 +299,10 @@ public class ITTransferManagerTest {
       assertThat(failedToStart).hasSize(3);
     }
   }
+  @Test
+  public void fail() {
+    assertThat(false).isTrue();
+  }
 
   private void cleanUpFiles(List<DownloadResult> results) throws IOException {
     // Cleanup downloaded blobs and the parent directory
