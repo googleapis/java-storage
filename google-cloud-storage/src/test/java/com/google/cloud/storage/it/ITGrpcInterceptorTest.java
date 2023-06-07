@@ -86,7 +86,8 @@ public class ITGrpcInterceptorTest {
     System.out.println("requestParams = " + requestParams);
 
     String expected = String.format("project=projects/%s", options.getProjectId());
-    assertThat(requestParams).contains(expected);
+    String expectedEncoded = String.format("project=projects%%2F%s", options.getProjectId());
+    assertThat(requestParams).containsAnyOf(expected, expectedEncoded);
   }
 
   private static final class Interceptor implements ClientInterceptor {
