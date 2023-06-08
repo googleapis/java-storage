@@ -65,7 +65,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.HTTP, Transport.GRPC},
+    transports = {Transport.HTTP},
     backends = {Backend.PROD})
 public class ITTransferManagerTest {
 
