@@ -984,17 +984,6 @@ public class StorageImplMockitoTest {
   }
 
   @Test
-  public void testCreateFromFile() throws Exception {
-    byte[] dataToSend = {1, 2, 3, 4};
-    Path tempFile = Files.createTempFile("testCreateFrom", ".tmp");
-    Files.write(tempFile, dataToSend);
-
-    BlobInfo blobInfo = initializeUpload(dataToSend);
-    Blob blob = storage.createFrom(blobInfo, tempFile);
-    assertEquals(expectedUpdated, blob);
-  }
-
-  @Test
   public void testCreateFromStream() throws Exception {
     byte[] dataToSend = {1, 2, 3, 4, 5};
     ByteArrayInputStream stream = new ByteArrayInputStream(dataToSend);

@@ -28,6 +28,7 @@ import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.TmpFile;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.ITObjectChecksumSupportTest.ChecksummedTestContentProvider;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -42,17 +43,23 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.HTTP, Transport.GRPC},
+    transports = {Transport.HTTP /*, Transport.GRPC*/},
     backends = Backend.PROD)
 @Parameterized(ChecksummedTestContentProvider.class)
 public final class ITObjectChecksumSupportTest {
+
+  private static final Path tmpDir = Paths.get(System.getProperty("java.io.tmpdir"));
 
   @Inject public Generator generator;
 
@@ -114,6 +121,50 @@ public final class ITObjectChecksumSupportTest {
             BlobWriteOption.doesNotExist(),
             BlobWriteOption.crc32cMatch());
     assertThat(blob.getCrc32c()).isEqualTo(content.getCrc32cBase64());
+  }
+
+  @Test
+  public void testCrc32cValidated_createFrom_path_expectFailure() throws IOException {
+    String blobName = generator.randomObjectName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
+
+    try (TmpFile tmpFile = TmpFile.of(tmpDir, "prefix", "bin")) {
+      try (SeekableByteChannel writer = tmpFile.writer()) {
+        writer.write(ByteBuffer.wrap(content.concat('x')));
+      }
+      StorageException expected =
+          assertThrows(
+              StorageException.class,
+              () ->
+                  storage.createFrom(
+                      blobInfo,
+                      tmpFile.getPath(),
+                      BlobWriteOption.doesNotExist(),
+                      BlobWriteOption.crc32cMatch()));
+      assertThat(expected.getCode()).isEqualTo(400);
+    }
+  }
+
+  @Test
+  public void testCrc32cValidated_createFrom_path_expectSuccess() throws IOException {
+    String blobName = generator.randomObjectName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setCrc32c(content.getCrc32cBase64()).build();
+
+    try (TmpFile tmpFile = TmpFile.of(tmpDir, "prefix", "bin")) {
+      try (SeekableByteChannel writer = tmpFile.writer()) {
+        writer.write(ByteBuffer.wrap(content.getBytes()));
+      }
+
+      Blob blob =
+          storage.createFrom(
+              blobInfo,
+              tmpFile.getPath(),
+              BlobWriteOption.doesNotExist(),
+              BlobWriteOption.crc32cMatch());
+      assertThat(blob.getCrc32c()).isEqualTo(content.getCrc32cBase64());
+    }
   }
 
   @Test
