@@ -25,6 +25,7 @@ import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TestUtils;
@@ -288,6 +289,32 @@ public class ITTransferManagerTest {
           ParallelDownloadConfig.newBuilder()
               .setBucketName(bucketName)
               .setDownloadDirectory(baseDir)
+              .build();
+      DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      assertThat(downloadResults).hasSize(3);
+      List<DownloadResult> failedToStart =
+          downloadResults.stream()
+              .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
+              .collect(Collectors.toList());
+      assertThat(failedToStart).hasSize(3);
+    }
+  }
+
+  @Test
+  public void downloadBlobsPreconditionFailure() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions())
+            .toBuilder()
+            .setAllowDivideAndConquer(true)
+            .setPerWorkerBufferSize(128 * 1024)
+            .build();
+    try (TransferManager transferManager = config.getService()) {
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucket.getName())
+              .setDownloadDirectory(baseDir)
+              .setOptionsPerRequest(ImmutableList.of(BlobSourceOption.generationMatch(-1)))
               .build();
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
       List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
