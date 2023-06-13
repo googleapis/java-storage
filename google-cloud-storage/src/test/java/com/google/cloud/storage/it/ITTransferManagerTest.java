@@ -18,7 +18,6 @@ package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
 
-import com.google.api.core.ApiFutures;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -130,7 +129,7 @@ public class ITTransferManagerTest {
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults).hasSize(3);
     }
   }
@@ -152,7 +151,7 @@ public class ITTransferManagerTest {
               .setWriteOptsPerRequest(Collections.singletonList(BlobWriteOption.doesNotExist()))
               .build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults).hasSize(3);
     }
   }
@@ -169,7 +168,7 @@ public class ITTransferManagerTest {
               .setDownloadDirectory(baseDir)
               .build();
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
-      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      List<DownloadResult> downloadResults = job.getDownloadResults();
       try {
         assertThat(downloadResults).hasSize(3);
       } finally {
@@ -194,7 +193,7 @@ public class ITTransferManagerTest {
               .setDownloadDirectory(baseDir)
               .build();
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
-      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      List<DownloadResult> downloadResults = job.getDownloadResults();
       assertThat(downloadResults).hasSize(3);
 
       List<String> expectedContents =
@@ -232,7 +231,7 @@ public class ITTransferManagerTest {
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
       assertThat(uploadResults.get(0).getException()).isInstanceOf(StorageException.class);
     }
@@ -248,7 +247,7 @@ public class ITTransferManagerTest {
       ParallelUploadConfig parallelUploadConfig =
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      List<UploadResult> uploadResults = ApiFutures.allAsList(job.getUploadResponses()).get();
+      List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
       assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
     }
@@ -266,7 +265,7 @@ public class ITTransferManagerTest {
               .setDownloadDirectory(baseDir)
               .build();
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
-      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      List<DownloadResult> downloadResults = job.getDownloadResults();
       List<DownloadResult> failedToStart =
           downloadResults.stream()
               .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
@@ -291,7 +290,7 @@ public class ITTransferManagerTest {
               .setDownloadDirectory(baseDir)
               .build();
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
-      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      List<DownloadResult> downloadResults = job.getDownloadResults();
       assertThat(downloadResults).hasSize(3);
       List<DownloadResult> failedToStart =
           downloadResults.stream()

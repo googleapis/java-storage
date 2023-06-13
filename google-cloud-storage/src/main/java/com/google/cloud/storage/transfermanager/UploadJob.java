@@ -19,6 +19,8 @@ package com.google.cloud.storage.transfermanager;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.api.gax.rpc.ApiExceptions;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -28,19 +30,19 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class UploadJob {
 
-  @NonNull private final List<ApiFuture<UploadResult>> uploadResponses;
+  @NonNull private final List<ApiFuture<UploadResult>> uploadResults;
 
   @NonNull private final ParallelUploadConfig parallelUploadConfig;
 
   private UploadJob(
-      @NonNull List<ApiFuture<UploadResult>> successResponses,
+      @NonNull List<ApiFuture<UploadResult>> uploadResults,
       @NonNull ParallelUploadConfig parallelUploadConfig) {
-    this.uploadResponses = successResponses;
+    this.uploadResults = uploadResults;
     this.parallelUploadConfig = parallelUploadConfig;
   }
 
-  public List<ApiFuture<UploadResult>> getUploadResponses() {
-    return uploadResponses;
+  public List<UploadResult> getUploadResults() {
+    return ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(uploadResults));
   }
 
   public ParallelUploadConfig getParallelUploadConfig() {
@@ -56,19 +58,19 @@ public final class UploadJob {
       return false;
     }
     UploadJob uploadJob = (UploadJob) o;
-    return uploadResponses.equals(uploadJob.uploadResponses)
+    return uploadResults.equals(uploadJob.uploadResults)
         && parallelUploadConfig.equals(uploadJob.parallelUploadConfig);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(uploadResponses, parallelUploadConfig);
+    return Objects.hash(uploadResults, parallelUploadConfig);
   }
 
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("successResponses", uploadResponses)
+        .add("uploadResults", uploadResults)
         .add("parallelUploadConfig", parallelUploadConfig)
         .toString();
   }
@@ -79,16 +81,16 @@ public final class UploadJob {
 
   public static final class Builder {
 
-    private @NonNull List<ApiFuture<UploadResult>> uploadResponses;
+    private @NonNull List<ApiFuture<UploadResult>> uploadResults;
 
     private @MonotonicNonNull ParallelUploadConfig parallelUploadConfig;
 
     private Builder() {
-      this.uploadResponses = ImmutableList.of();
+      this.uploadResults = ImmutableList.of();
     }
 
-    public Builder setUploadResponses(@NonNull List<ApiFuture<UploadResult>> uploadResponses) {
-      this.uploadResponses = ImmutableList.copyOf(uploadResponses);
+    public Builder setUploadResponses(@NonNull List<ApiFuture<UploadResult>> uploadResults) {
+      this.uploadResults = ImmutableList.copyOf(uploadResults);
       return this;
     }
 
@@ -98,9 +100,9 @@ public final class UploadJob {
     }
 
     public UploadJob build() {
-      checkNotNull(uploadResponses);
+      checkNotNull(uploadResults);
       checkNotNull(parallelUploadConfig);
-      return new UploadJob(uploadResponses, parallelUploadConfig);
+      return new UploadJob(uploadResults, parallelUploadConfig);
     }
   }
 }

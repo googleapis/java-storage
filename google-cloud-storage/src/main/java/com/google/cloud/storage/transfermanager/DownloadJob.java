@@ -19,6 +19,8 @@ package com.google.cloud.storage.transfermanager;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
+import com.google.api.gax.rpc.ApiExceptions;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -39,8 +41,8 @@ public final class DownloadJob {
     this.parallelDownloadConfig = parallelDownloadConfig;
   }
 
-  public @NonNull List<ApiFuture<DownloadResult>> getDownloadResults() {
-    return downloadResults;
+  public @NonNull List<DownloadResult> getDownloadResults() {
+    return ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(downloadResults));
   }
 
   public @NonNull ParallelDownloadConfig getParallelDownloadConfig() {
