@@ -18,6 +18,11 @@ package com.google.cloud.storage;
 
 import com.google.cloud.storage.UnifiedOpts.Opt;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** Base class for Storage operation option. */
 @Deprecated
@@ -28,5 +33,33 @@ public abstract class Option<O extends Opt> extends UnifiedOpts.OptionShim<O>
 
   Option(O opt) {
     super(opt);
+  }
+
+  @SafeVarargs
+  static <O extends Option<?>> O[] dedupe(IntFunction<O[]> gen, O... os) {
+    return dedupe(gen, Arrays.stream(os));
+  }
+
+  @SafeVarargs
+  static <O extends Option<?>> O[] dedupe(IntFunction<O[]> gen, Collection<O> collection, O... os) {
+    return dedupe(gen, Stream.of(collection.stream(), Arrays.stream(os)).flatMap(s -> s));
+  }
+
+  @SafeVarargs
+  static <O extends Option<?>> O[] dedupe(IntFunction<O[]> gen, O[] array, O... os) {
+    return dedupe(gen, Stream.of(Arrays.stream(array), Arrays.stream(os)).flatMap(s -> s));
+  }
+
+  /**
+   * All Options contain an {@link Opt}, {@code Opt}s are distinct classes allowing us to group
+   * based on those classes. Once grouped, we select the last element to provide last wins behavior.
+   *
+   * <p>Each of these helpers is an internal implementation detail, primarily due to the fact that
+   * generic arrays can not be instantiated in Java and requires a factory to be passed in.
+   */
+  private static <O extends Option<?>> O[] dedupe(IntFunction<O[]> gen, Stream<O> s) {
+    return s.collect(Collectors.groupingBy(o -> o.getOpt().getClass())).values().stream()
+        .map(l -> l.get(l.size() - 1))
+        .toArray(gen);
   }
 }
