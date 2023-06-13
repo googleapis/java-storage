@@ -20,9 +20,7 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
-import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
-import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -57,17 +55,24 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
   }
 
   @Override
-  public DownloadSegment call() throws Exception {
-    // TODO: Wrap Exceptions and put them in result
+  public DownloadSegment call() {
+    long bytesCopied = -1L;
     try (ReadChannel rc = storage.reader(originalBlob.getBlobId(), opts)) {
       FileChannel wc =
           FileChannel.open(destPath, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
       rc.seek(startPosition);
       rc.limit(endPosition);
       wc.position(startPosition);
-      ByteStreams.copy(rc, wc);
-    } catch (IOException e) {
-      throw new StorageException(e);
+      bytesCopied = ByteStreams.copy(rc, wc);
+    } catch (Exception e) {
+      if (bytesCopied == -1) {
+        return DownloadSegment.newBuilder(originalBlob, TransferStatus.FAILED_TO_START)
+            .setException(e)
+            .build();
+      }
+      return DownloadSegment.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
+          .setException(e)
+          .build();
     }
     DownloadSegment result =
         DownloadSegment.newBuilder(originalBlob, TransferStatus.SUCCESS)

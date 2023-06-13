@@ -17,7 +17,6 @@
 package com.google.cloud.storage.transfermanager;
 
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.StorageException;
 import java.nio.file.Path;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -28,7 +27,7 @@ final class DownloadSegment {
 
   private final TransferStatus status;
 
-  private final StorageException exception;
+  private final Exception exception;
 
   private final Long generation;
 
@@ -36,7 +35,7 @@ final class DownloadSegment {
       BlobInfo input,
       Path outputDestination,
       TransferStatus status,
-      StorageException exception,
+      Exception exception,
       Long generation) {
     this.input = input;
     this.outputDestination = outputDestination;
@@ -57,7 +56,7 @@ final class DownloadSegment {
     return status;
   }
 
-  public StorageException getException() {
+  public Exception getException() {
     return exception;
   }
 
@@ -83,7 +82,7 @@ final class DownloadSegment {
   @NonNull
   public static DownloadResult reduce(
       @NonNull DownloadResult result, @NonNull DownloadSegment segment) {
-    if (TransferStatus.COMPARE_NULL_SAFE.compare(segment.getStatus(), result.getStatus()) <= 0) {
+    if (TransferStatus.COMPARE_NULL_SAFE.compare(result.getStatus(), segment.getStatus()) <= 0) {
       return result;
     } else {
       return segment.toResult();
@@ -95,7 +94,7 @@ final class DownloadSegment {
     private BlobInfo input;
     private Path outputDestination;
     private TransferStatus status;
-    private StorageException exception;
+    private Exception exception;
     private Long generation;
 
     private Builder(BlobInfo input, TransferStatus status) {
@@ -118,7 +117,7 @@ final class DownloadSegment {
       return this;
     }
 
-    public Builder setException(StorageException exception) {
+    public Builder setException(Exception exception) {
       this.exception = exception;
       return this;
     }
