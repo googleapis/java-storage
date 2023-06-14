@@ -20,6 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.BetaApi;
 import com.google.api.gax.rpc.ApiExceptions;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+@BetaApi
 public final class DownloadJob {
 
   @NonNull private final List<ApiFuture<DownloadResult>> downloadResults;
@@ -41,10 +43,12 @@ public final class DownloadJob {
     this.parallelDownloadConfig = parallelDownloadConfig;
   }
 
+  @BetaApi
   public @NonNull List<DownloadResult> getDownloadResults() {
     return ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(downloadResults));
   }
 
+  @BetaApi
   public @NonNull ParallelDownloadConfig getParallelDownloadConfig() {
     return parallelDownloadConfig;
   }
@@ -75,10 +79,12 @@ public final class DownloadJob {
         .toString();
   }
 
+  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
 
+  @BetaApi
   public static final class Builder {
 
     private @NonNull List<ApiFuture<DownloadResult>> downloadResults;
@@ -88,17 +94,20 @@ public final class DownloadJob {
       this.downloadResults = ImmutableList.of();
     }
 
+    @BetaApi
     public Builder setDownloadResults(@NonNull List<ApiFuture<DownloadResult>> downloadResults) {
       this.downloadResults = ImmutableList.copyOf(downloadResults);
       return this;
     }
 
+    @BetaApi
     public Builder setParallelDownloadConfig(
         @NonNull ParallelDownloadConfig parallelDownloadConfig) {
       this.parallelDownloadConfig = parallelDownloadConfig;
       return this;
     }
 
+    @BetaApi
     public DownloadJob build() {
       checkNotNull(downloadResults);
       checkNotNull(parallelDownloadConfig);

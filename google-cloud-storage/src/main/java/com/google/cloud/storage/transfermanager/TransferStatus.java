@@ -16,8 +16,10 @@
 
 package com.google.cloud.storage.transfermanager;
 
+import com.google.api.core.BetaApi;
 import java.util.Comparator;
 
+@BetaApi
 public enum TransferStatus {
   FAILED_TO_START,
   FAILED_TO_FINISH,

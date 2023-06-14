@@ -18,6 +18,7 @@ package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.common.base.MoreObjects;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+@BetaApi
 public final class ParallelUploadConfig {
 
   private final boolean skipIfExists;
@@ -49,26 +51,31 @@ public final class ParallelUploadConfig {
   }
 
   /** If a corresponding object already exists skip uploading the object */
+  @BetaApi
   public boolean isSkipIfExists() {
     return skipIfExists;
   }
 
   /** A common prefix that will be applied to all object paths in the destination bucket */
+  @BetaApi
   public @NonNull String getPrefix() {
     return prefix;
   }
 
   /** The bucket objects are being uploaded from */
+  @BetaApi
   public @NonNull String getBucketName() {
     return bucketName;
   }
 
   /** A list of common BlobTargetOptions that are used for each upload request */
+  @BetaApi
   public @NonNull List<BlobTargetOption> getTargetOptsPerRequest() {
     return targetOptsPerRequest;
   }
 
   /** A list of common BlobWriteOptions that are used for each upload request */
+  @BetaApi
   public @NonNull List<BlobWriteOption> getWriteOptsPerRequest() {
     return writeOptsPerRequest;
   }
@@ -107,6 +114,7 @@ public final class ParallelUploadConfig {
     return new Builder();
   }
 
+  @BetaApi
   public static final class Builder {
 
     private boolean skipIfExists;
@@ -123,31 +131,37 @@ public final class ParallelUploadConfig {
       this.writeOptsPerRequest = ImmutableList.of();
     }
 
+    @BetaApi
     public Builder setSkipIfExists(boolean skipIfExists) {
       this.skipIfExists = skipIfExists;
       return this;
     }
 
+    @BetaApi
     public Builder setPrefix(@NonNull String prefix) {
       this.prefix = prefix;
       return this;
     }
 
+    @BetaApi
     public Builder setBucketName(@NonNull String bucketName) {
       this.bucketName = bucketName;
       return this;
     }
 
+    @BetaApi
     public Builder setOptionsPerRequest(@NonNull List<BlobTargetOption> optionsPerRequest) {
       this.optionsPerRequest = ImmutableList.copyOf(optionsPerRequest);
       return this;
     }
 
+    @BetaApi
     public Builder setWriteOptsPerRequest(@NonNull List<BlobWriteOption> writeOptsPerRequest) {
       this.writeOptsPerRequest = writeOptsPerRequest;
       return this;
     }
 
+    @BetaApi
     public ParallelUploadConfig build() {
       checkNotNull(prefix);
       checkNotNull(bucketName);
