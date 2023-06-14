@@ -316,7 +316,7 @@ public class ITTransferManagerTest {
               .setOptionsPerRequest(ImmutableList.of(BlobSourceOption.generationMatch(-1)))
               .build();
       DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
-      List<DownloadResult> downloadResults = ApiFutures.allAsList(job.getDownloadResults()).get();
+      List<DownloadResult> downloadResults = job.getDownloadResults();
       assertThat(downloadResults).hasSize(3);
       List<DownloadResult> failedToStart =
           downloadResults.stream()
