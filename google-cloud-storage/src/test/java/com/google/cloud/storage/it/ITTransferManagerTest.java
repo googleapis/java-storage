@@ -157,6 +157,67 @@ public class ITTransferManagerTest {
   }
 
   @Test
+  public void uploadFilesOneFailure() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
+        TmpFile tmpFile1 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
+        TmpFile tmpFile2 = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
+      List<Path> files =
+          ImmutableList.of(
+              tmpFile.getPath(),
+              tmpFile1.getPath(),
+              tmpFile2.getPath(),
+              Paths.get("this-file-does-not-exist.txt"));
+      String bucketName = bucket.getName();
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
+      List<UploadResult> uploadResults = job.getUploadResults();
+      assertThat(uploadResults).hasSize(4);
+      assertThat(
+              uploadResults.stream()
+                  .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
+                  .collect(Collectors.toList()))
+          .hasSize(1);
+    }
+  }
+
+  @Test
+  public void uploadNonexistentBucket() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
+    String bucketName = bucket.getName() + "-does-not-exist";
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
+      List<Path> files = ImmutableList.of(tmpFile.getPath());
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
+      List<UploadResult> uploadResults = job.getUploadResults();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      assertThat(uploadResults.get(0).getException()).isInstanceOf(StorageException.class);
+    }
+  }
+
+  @Test
+  public void uploadNonexistentFile() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
+    String bucketName = bucket.getName();
+    try (TransferManager transferManager = config.getService()) {
+      List<Path> files = ImmutableList.of(Paths.get("this-file-does-not-exist.txt"));
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
+      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
+      List<UploadResult> uploadResults = job.getUploadResults();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
+    }
+  }
+
+  @Test
   public void downloadBlobs() throws Exception {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions());
@@ -217,39 +278,6 @@ public class ITTransferManagerTest {
       } finally {
         cleanUpFiles(downloadResults);
       }
-    }
-  }
-
-  @Test
-  public void uploadNonexistentBucket() throws Exception {
-    TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
-    String bucketName = bucket.getName() + "-does-not-exist";
-    try (TransferManager transferManager = config.getService();
-        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
-      List<Path> files = ImmutableList.of(tmpFile.getPath());
-      ParallelUploadConfig parallelUploadConfig =
-          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
-      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      List<UploadResult> uploadResults = job.getUploadResults();
-      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
-      assertThat(uploadResults.get(0).getException()).isInstanceOf(StorageException.class);
-    }
-  }
-
-  @Test
-  public void uploadNonexistentFile() throws Exception {
-    TransferManagerConfig config =
-        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
-    String bucketName = bucket.getName();
-    try (TransferManager transferManager = config.getService()) {
-      List<Path> files = ImmutableList.of(Paths.get("this-file-does-not-exist.txt"));
-      ParallelUploadConfig parallelUploadConfig =
-          ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
-      UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
-      List<UploadResult> uploadResults = job.getUploadResults();
-      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
-      assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
     }
   }
 
@@ -323,6 +351,42 @@ public class ITTransferManagerTest {
               .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
               .collect(Collectors.toList());
       assertThat(failedToStart).hasSize(3);
+    }
+  }
+
+  @Test
+  public void downloadBlobsOneFailure() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions());
+    try (TransferManager transferManager = config.getService()) {
+      String bucketName = bucket.getName();
+      ParallelDownloadConfig parallelDownloadConfig =
+          ParallelDownloadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setDownloadDirectory(baseDir)
+              .build();
+      List<BlobInfo> downloadBlobs = blobs;
+      BlobInfo nonexistentBlob =
+          BlobInfo.newBuilder(
+                  BlobId.of(
+                      bucket.getName(), String.format("%s/src", generator.randomObjectName())))
+              .build();
+      downloadBlobs.add(nonexistentBlob);
+      DownloadJob job = transferManager.downloadBlobs(blobs, parallelDownloadConfig);
+      List<DownloadResult> downloadResults = job.getDownloadResults();
+      try {
+        assertThat(downloadResults).hasSize(4);
+        assertThat(
+                downloadResults.stream()
+                    .filter(res -> res.getStatus() == TransferStatus.FAILED_TO_START)
+                    .collect(Collectors.toList()))
+            .hasSize(1);
+      } finally {
+        cleanUpFiles(
+            downloadResults.stream()
+                .filter(res -> res.getStatus() == TransferStatus.SUCCESS)
+                .collect(Collectors.toList()));
+      }
     }
   }
 
