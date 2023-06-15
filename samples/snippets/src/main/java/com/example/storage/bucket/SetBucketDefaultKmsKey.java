@@ -19,8 +19,8 @@ package com.example.storage.bucket;
 // [START storage_set_bucket_default_kms_key]
 
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
@@ -38,13 +38,19 @@ public class SetBucketDefaultKmsKey {
     // "projects/your-project-id/locations/us/keyRings/my_key_ring/cryptoKeys/my_key"
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    // first look up the bucket, so we will have its metageneration
+    Bucket bucket = storage.get(bucketName);
 
-    BucketInfo bucketInfo =
-        BucketInfo.newBuilder(bucketName).setDefaultKmsKeyName(kmsKeyName).build();
-    Bucket bucket = storage.update(bucketInfo);
+    Bucket updated =
+        storage.update(
+            bucket.toBuilder().setDefaultKmsKeyName(kmsKeyName).build(),
+            BucketTargetOption.metagenerationMatch());
 
     System.out.println(
-        "KMS Key " + bucket.getDefaultKmsKeyName() + "was set to default for bucket " + bucketName);
+        "KMS Key "
+            + updated.getDefaultKmsKeyName()
+            + "was set to default for bucket "
+            + bucketName);
   }
 }
 // [END storage_set_bucket_default_kms_key]

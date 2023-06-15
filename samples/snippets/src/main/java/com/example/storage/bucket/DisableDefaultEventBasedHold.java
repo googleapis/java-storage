@@ -18,8 +18,9 @@ package com.example.storage.bucket;
 
 // [START storage_disable_default_event_based_hold]
 
-import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
@@ -33,7 +34,11 @@ public class DisableDefaultEventBasedHold {
     // String bucketName = "your-unique-bucket-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    storage.update(BucketInfo.newBuilder(bucketName).setDefaultEventBasedHold(false).build());
+    // first look up the bucket, so we will have its metageneration
+    Bucket bucket = storage.get(bucketName);
+    storage.update(
+        bucket.toBuilder().setDefaultEventBasedHold(false).build(),
+        BucketTargetOption.metagenerationMatch());
 
     System.out.println("Default event-based hold was disabled for " + bucketName);
   }
