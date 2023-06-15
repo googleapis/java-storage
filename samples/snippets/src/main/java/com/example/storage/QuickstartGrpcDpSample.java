@@ -26,6 +26,8 @@ import com.google.cloud.storage.StorageOptions;
 public class QuickstartGrpcDpSample {
   public static void main(String... args) throws Exception {
 
+    // Create an instance of options which will use the Google Cloud Storage gRPC API for all
+    // operations
     StorageOptions options = StorageOptions.grpc().setAttemptDirectPath(true).build();
 
     // Instantiates a client in a try-with-resource to automatically cleanup underlying resources
@@ -33,7 +35,7 @@ public class QuickstartGrpcDpSample {
       // The name for the new bucket
       String bucketName = args[0]; // "my-new-bucket";
 
-      // Creates the new bucket
+      // Creates the new bucket using a request to the gRPC API
       Bucket bucket = storage.create(BucketInfo.of(bucketName));
 
       System.out.printf("Bucket %s created.%n", bucket.getName());

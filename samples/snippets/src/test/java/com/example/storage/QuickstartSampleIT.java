@@ -38,14 +38,14 @@ public class QuickstartSampleIT {
 
   private String bucketName;
 
-  private static final void deleteBucket(String bucketName) {
+  private static void deleteBucket(String bucketName) {
     Storage storage = StorageOptions.getDefaultInstance().getService();
     storage.delete(bucketName);
   }
 
   @Before
   public void setUp() {
-    bucketName = "my-new-bucket-" + UUID.randomUUID().toString();
+    bucketName = "my-new-bucket-" + UUID.randomUUID();
   }
 
   @After
