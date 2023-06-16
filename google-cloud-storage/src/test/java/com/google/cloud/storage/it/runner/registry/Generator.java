@@ -45,7 +45,9 @@ public final class Generator implements ManagedLifecycle {
       throw new IllegalStateException("No actively running test in registry.");
     }
     AtomicInteger counter = counters.computeIfAbsent(currentTest, (d) -> new AtomicInteger(1));
-    return String.format("%s-%04d", currentTest.getMethodName(), counter.getAndIncrement());
+    return String.format(
+        "%s.%s-%04d",
+        currentTest.getClassName(), currentTest.getMethodName(), counter.getAndIncrement());
   }
 
   @Override

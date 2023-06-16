@@ -281,7 +281,8 @@ final class GapicWritableByteChannelSessionBuilder {
         return new UnbufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             bindFunction(
-                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg), ResumableWrite::identity)
+                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg, Retrying::newCallContext),
+                    ResumableWrite::identity)
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
     }
@@ -309,7 +310,8 @@ final class GapicWritableByteChannelSessionBuilder {
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             bindFunction(
-                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg), ResumableWrite::identity)
+                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg, Retrying::newCallContext),
+                    ResumableWrite::identity)
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }

@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.ClientStreamingCallable;
@@ -47,7 +48,10 @@ public final class WriteFlushStrategyTest {
     doTest(
         write ->
             WriteFlushStrategy.fsyncEveryFlush(
-                write, RetryingDependencies.attemptOnce(), Retrying.neverRetry()),
+                write,
+                RetryingDependencies.attemptOnce(),
+                Retrying.neverRetry(),
+                GrpcCallContext::createDefault),
         "bucket-name",
         expectedHeaderNonNullNonEmpty);
   }
@@ -62,7 +66,10 @@ public final class WriteFlushStrategyTest {
     doTest(
         write ->
             WriteFlushStrategy.fsyncEveryFlush(
-                write, RetryingDependencies.attemptOnce(), Retrying.neverRetry()),
+                write,
+                RetryingDependencies.attemptOnce(),
+                Retrying.neverRetry(),
+                GrpcCallContext::createDefault),
         "",
         expectedHeaderNonNullEmpty);
   }
@@ -77,7 +84,10 @@ public final class WriteFlushStrategyTest {
     doTest(
         write ->
             WriteFlushStrategy.fsyncEveryFlush(
-                write, RetryingDependencies.attemptOnce(), Retrying.neverRetry()),
+                write,
+                RetryingDependencies.attemptOnce(),
+                Retrying.neverRetry(),
+                GrpcCallContext::createDefault),
         null,
         expectedHeaderNull);
   }

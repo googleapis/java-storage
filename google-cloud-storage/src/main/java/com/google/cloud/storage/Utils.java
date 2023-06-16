@@ -20,6 +20,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.client.util.DateTime;
 import com.google.api.core.InternalApi;
+import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiCallContext;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.common.annotations.VisibleForTesting;
@@ -288,5 +290,15 @@ final class Utils {
 
   private static String crc32cEncode(int from) {
     return BaseEncoding.base64().encode(Ints.toByteArray(from));
+  }
+
+  /**
+   * Type preserving method for {@link GrpcCallContext#merge(ApiCallContext)}
+   *
+   * @see GrpcCallContext#merge(ApiCallContext)
+   */
+  @NonNull
+  static GrpcCallContext merge(@NonNull GrpcCallContext l, @NonNull GrpcCallContext r) {
+    return (GrpcCallContext) l.merge(r);
   }
 }

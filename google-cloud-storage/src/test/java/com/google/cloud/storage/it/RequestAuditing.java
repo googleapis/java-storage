@@ -31,6 +31,7 @@ import com.google.cloud.ServiceOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.storage.it.CSEKSupport.EncryptionKeyTuple;
 import com.google.common.collect.ImmutableList;
+import com.google.common.truth.IterableSubject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -193,5 +194,19 @@ final class RequestAuditing extends HttpTransportOptions {
     assertWithMessage("Multipart json field " + jsonField)
         .that(collect)
         .isEqualTo(ImmutableList.of(expectedValue));
+  }
+
+  IterableSubject assertRequestHeader(String headerName) {
+    ImmutableList<HttpRequest> requests = getRequests();
+
+    List<Object> actual =
+        requests.stream()
+            .map(HttpRequest::getHeaders)
+            .map(headers -> headers.get(headerName))
+            .filter(Objects::nonNull)
+            .distinct()
+            .collect(Collectors.toList());
+
+    return assertWithMessage(String.format("Headers %s", headerName)).that(actual);
   }
 }
