@@ -45,7 +45,6 @@ import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
-import com.google.cloud.storage.UnifiedOpts.OptionShim;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -59,6 +58,7 @@ import java.net.URLConnection;
 import java.nio.file.Path;
 import java.security.Key;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -358,6 +358,39 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static BucketTargetOption projection(@NonNull String projection) {
       return new BucketTargetOption(UnifiedOpts.projection(projection));
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BucketTargetOption[] dedupe(BucketTargetOption... os) {
+      return Option.dedupe(BucketTargetOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    public static BucketTargetOption[] dedupe(
+        Collection<BucketTargetOption> collection, BucketTargetOption... os) {
+      return Option.dedupe(BucketTargetOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    public static BucketTargetOption[] dedupe(
+        BucketTargetOption[] array, BucketTargetOption... os) {
+      return Option.dedupe(BucketTargetOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying bucket source options. */
@@ -399,6 +432,41 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption requestedPolicyVersion(long version) {
       return new BucketSourceOption(UnifiedOpts.requestedPolicyVersion(version));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BucketSourceOption[] dedupe(BucketSourceOption... os) {
+      return Option.dedupe(BucketSourceOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketSourceOption[] dedupe(
+        Collection<BucketSourceOption> collection, BucketSourceOption... os) {
+      return Option.dedupe(BucketSourceOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketSourceOption[] dedupe(
+        BucketSourceOption[] array, BucketSourceOption... os) {
+      return Option.dedupe(BucketSourceOption[]::new, array, os);
     }
   }
 
@@ -456,6 +524,41 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static ListHmacKeysOption projectId(@NonNull String projectId) {
       return new ListHmacKeysOption(UnifiedOpts.projectId(projectId));
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static ListHmacKeysOption[] dedupe(ListHmacKeysOption... os) {
+      return Option.dedupe(ListHmacKeysOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static ListHmacKeysOption[] dedupe(
+        Collection<ListHmacKeysOption> collection, ListHmacKeysOption... os) {
+      return Option.dedupe(ListHmacKeysOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static ListHmacKeysOption[] dedupe(
+        ListHmacKeysOption[] array, ListHmacKeysOption... os) {
+      return Option.dedupe(ListHmacKeysOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying createHmacKey options */
@@ -482,6 +585,41 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static CreateHmacKeyOption projectId(@NonNull String projectId) {
       return new CreateHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static CreateHmacKeyOption[] dedupe(CreateHmacKeyOption... os) {
+      return Option.dedupe(CreateHmacKeyOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static CreateHmacKeyOption[] dedupe(
+        Collection<CreateHmacKeyOption> collection, CreateHmacKeyOption... os) {
+      return Option.dedupe(CreateHmacKeyOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static CreateHmacKeyOption[] dedupe(
+        CreateHmacKeyOption[] array, CreateHmacKeyOption... os) {
+      return Option.dedupe(CreateHmacKeyOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying getHmacKey options */
@@ -507,6 +645,40 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static GetHmacKeyOption projectId(@NonNull String projectId) {
       return new GetHmacKeyOption(UnifiedOpts.projectId(projectId));
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static GetHmacKeyOption[] dedupe(GetHmacKeyOption... os) {
+      return Option.dedupe(GetHmacKeyOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static GetHmacKeyOption[] dedupe(
+        Collection<GetHmacKeyOption> collection, GetHmacKeyOption... os) {
+      return Option.dedupe(GetHmacKeyOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static GetHmacKeyOption[] dedupe(GetHmacKeyOption[] array, GetHmacKeyOption... os) {
+      return Option.dedupe(GetHmacKeyOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying deleteHmacKey options */
@@ -523,6 +695,41 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static DeleteHmacKeyOption userProject(@NonNull String userProject) {
       return new DeleteHmacKeyOption(UnifiedOpts.userProject(userProject));
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static DeleteHmacKeyOption[] dedupe(DeleteHmacKeyOption... os) {
+      return Option.dedupe(DeleteHmacKeyOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static DeleteHmacKeyOption[] dedupe(
+        Collection<DeleteHmacKeyOption> collection, DeleteHmacKeyOption... os) {
+      return Option.dedupe(DeleteHmacKeyOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static DeleteHmacKeyOption[] dedupe(
+        DeleteHmacKeyOption[] array, DeleteHmacKeyOption... os) {
+      return Option.dedupe(DeleteHmacKeyOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying updateHmacKey options */
@@ -538,6 +745,41 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static UpdateHmacKeyOption userProject(@NonNull String userProject) {
       return new UpdateHmacKeyOption(UnifiedOpts.userProject(userProject));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static UpdateHmacKeyOption[] dedupe(UpdateHmacKeyOption... os) {
+      return Option.dedupe(UpdateHmacKeyOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static UpdateHmacKeyOption[] dedupe(
+        Collection<UpdateHmacKeyOption> collection, UpdateHmacKeyOption... os) {
+      return Option.dedupe(UpdateHmacKeyOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static UpdateHmacKeyOption[] dedupe(
+        UpdateHmacKeyOption[] array, UpdateHmacKeyOption... os) {
+      return Option.dedupe(UpdateHmacKeyOption[]::new, array, os);
     }
   }
 
@@ -592,6 +834,40 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
               .add(fields)
               .build();
       return new BucketGetOption(UnifiedOpts.fields(set));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BucketGetOption[] dedupe(BucketGetOption... os) {
+      return Option.dedupe(BucketGetOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketGetOption[] dedupe(
+        Collection<BucketGetOption> collection, BucketGetOption... os) {
+      return Option.dedupe(BucketGetOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketGetOption[] dedupe(BucketGetOption[] array, BucketGetOption... os) {
+      return Option.dedupe(BucketGetOption[]::new, array, os);
     }
   }
 
@@ -743,10 +1019,44 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static BlobTargetOption kmsKeyName(@NonNull String kmsKeyName) {
       return new BlobTargetOption(UnifiedOpts.kmsKeyName(kmsKeyName));
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobTargetOption[] dedupe(BlobTargetOption... os) {
+      return Option.dedupe(BlobTargetOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobTargetOption[] dedupe(
+        Collection<BlobTargetOption> collection, BlobTargetOption... os) {
+      return Option.dedupe(BlobTargetOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobTargetOption[] dedupe(BlobTargetOption[] array, BlobTargetOption... os) {
+      return Option.dedupe(BlobTargetOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying blob write options. */
-  class BlobWriteOption extends OptionShim<ObjectTargetOpt> implements Serializable {
+  class BlobWriteOption extends Option<ObjectTargetOpt> implements Serializable {
 
     private static final long serialVersionUID = 5536338021856320475L;
 
@@ -921,6 +1231,40 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static BlobWriteOption detectContentType() {
       return new BlobWriteOption(UnifiedOpts.detectContentType());
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobWriteOption[] dedupe(BlobWriteOption... os) {
+      return Option.dedupe(BlobWriteOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobWriteOption[] dedupe(
+        Collection<BlobWriteOption> collection, BlobWriteOption... os) {
+      return Option.dedupe(BlobWriteOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobWriteOption[] dedupe(BlobWriteOption[] array, BlobWriteOption... os) {
+      return Option.dedupe(BlobWriteOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying blob source options. */
@@ -1033,6 +1377,40 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
       return new BlobSourceOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobSourceOption[] dedupe(BlobSourceOption... os) {
+      return Option.dedupe(BlobSourceOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobSourceOption[] dedupe(
+        Collection<BlobSourceOption> collection, BlobSourceOption... os) {
+      return Option.dedupe(BlobSourceOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobSourceOption[] dedupe(BlobSourceOption[] array, BlobSourceOption... os) {
+      return Option.dedupe(BlobSourceOption[]::new, array, os);
     }
   }
 
@@ -1161,6 +1539,40 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     public static BlobGetOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
       return new BlobGetOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
     }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobGetOption[] dedupe(BlobGetOption... os) {
+      return Option.dedupe(BlobGetOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobGetOption[] dedupe(
+        Collection<BlobGetOption> collection, BlobGetOption... os) {
+      return Option.dedupe(BlobGetOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobGetOption[] dedupe(BlobGetOption[] array, BlobGetOption... os) {
+      return Option.dedupe(BlobGetOption[]::new, array, os);
+    }
   }
 
   /** Class for specifying bucket list options. */
@@ -1218,6 +1630,40 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
                       .map(f -> NamedField.prefixed("items/", f)))
               .collect(ImmutableSet.toImmutableSet());
       return new BucketListOption(UnifiedOpts.fields(set));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BucketListOption[] dedupe(BucketListOption... os) {
+      return Option.dedupe(BucketListOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketListOption[] dedupe(
+        Collection<BucketListOption> collection, BucketListOption... os) {
+      return Option.dedupe(BucketListOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketListOption[] dedupe(BucketListOption[] array, BucketListOption... os) {
+      return Option.dedupe(BucketListOption[]::new, array, os);
     }
   }
 
@@ -1350,6 +1796,40 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
                       .map(f -> NamedField.prefixed("items/", f)))
               .collect(ImmutableSet.toImmutableSet());
       return new BlobListOption(UnifiedOpts.fields(set));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobListOption[] dedupe(BlobListOption... os) {
+      return Option.dedupe(BlobListOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobListOption[] dedupe(
+        Collection<BlobListOption> collection, BlobListOption... os) {
+      return Option.dedupe(BlobListOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobListOption[] dedupe(BlobListOption[] array, BlobListOption... os) {
+      return Option.dedupe(BlobListOption[]::new, array, os);
     }
   }
 
