@@ -43,7 +43,12 @@ public class EnableUniformBucketLevelAccess {
         BucketInfo.IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build();
 
     storage.update(
-        bucket.toBuilder().setIamConfiguration(iamConfiguration).build(),
+        bucket
+            .toBuilder()
+            .setIamConfiguration(iamConfiguration)
+            .setAcl(null)
+            .setDefaultAcl(null)
+            .build(),
         BucketTargetOption.metagenerationMatch());
 
     System.out.println("Uniform bucket-level access was enabled for " + bucketName);
