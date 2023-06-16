@@ -30,7 +30,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 @BetaApi
 public final class DownloadResult {
-  @BetaApi
   static final Comparator<DownloadResult> COMPARATOR =
       Comparator.comparingInt(dr -> dr.getStatus().ordinal());
 

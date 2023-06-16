@@ -21,9 +21,13 @@ import java.util.Comparator;
 
 @BetaApi
 public enum TransferStatus {
+  @BetaApi
   FAILED_TO_START,
+  @BetaApi
   FAILED_TO_FINISH,
+  @BetaApi
   SKIPPED,
+  @BetaApi
   SUCCESS;
 
   /** A null value is considered to be greater than all values */

@@ -110,6 +110,7 @@ public final class ParallelUploadConfig {
         .toString();
   }
 
+  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
