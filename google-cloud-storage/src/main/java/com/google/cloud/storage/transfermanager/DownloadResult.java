@@ -19,6 +19,7 @@ package com.google.cloud.storage.transfermanager;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BlobInfo;
 import com.google.common.base.MoreObjects;
 import java.nio.file.Path;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+@BetaApi
 public final class DownloadResult {
   static final Comparator<DownloadResult> COMPARATOR =
       Comparator.comparingInt(dr -> dr.getStatus().ordinal());
@@ -47,10 +49,12 @@ public final class DownloadResult {
     this.exception = exception;
   }
 
+  @BetaApi
   public @NonNull BlobInfo getInput() {
     return input;
   }
 
+  @BetaApi
   public @NonNull Path getOutputDestination() {
     checkState(
         status == TransferStatus.SUCCESS,
@@ -59,10 +63,12 @@ public final class DownloadResult {
     return outputDestination;
   }
 
+  @BetaApi
   public @NonNull TransferStatus getStatus() {
     return status;
   }
 
+  @BetaApi
   public @NonNull Exception getException() {
     checkState(
         status == TransferStatus.FAILED_TO_FINISH || status == TransferStatus.FAILED_TO_START,
@@ -101,10 +107,12 @@ public final class DownloadResult {
         .toString();
   }
 
+  @BetaApi
   public static Builder newBuilder(@NonNull BlobInfo blobInfo, @NonNull TransferStatus status) {
     return new Builder(blobInfo, status);
   }
 
+  @BetaApi
   public static final class Builder {
 
     private @NonNull BlobInfo input;
@@ -117,26 +125,31 @@ public final class DownloadResult {
       this.status = status;
     }
 
+    @BetaApi
     public Builder setInput(@NonNull BlobInfo input) {
       this.input = input;
       return this;
     }
 
+    @BetaApi
     public Builder setOutputDestination(@NonNull Path outputDestination) {
       this.outputDestination = outputDestination;
       return this;
     }
 
+    @BetaApi
     public Builder setStatus(@NonNull TransferStatus status) {
       this.status = status;
       return this;
     }
 
+    @BetaApi
     public Builder setException(@NonNull Exception exception) {
       this.exception = exception;
       return this;
     }
 
+    @BetaApi
     public DownloadResult build() {
       checkNotNull(input);
       checkNotNull(status);

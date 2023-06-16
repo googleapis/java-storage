@@ -16,10 +16,12 @@
 
 package com.google.cloud.storage.transfermanager;
 
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
+@BetaApi
 public final class TransferManagerConfig {
   private final int maxWorkers;
   private final int perWorkerBufferSize;
@@ -42,11 +44,13 @@ public final class TransferManagerConfig {
   }
 
   /** Maximum amount of workers to be allocated to perform work in Transfer Manager */
+  @BetaApi
   public int getMaxWorkers() {
     return maxWorkers;
   }
 
   /** Buffer size allowed to each worker */
+  @BetaApi
   public int getPerWorkerBufferSize() {
     return perWorkerBufferSize;
   }
@@ -55,19 +59,23 @@ public final class TransferManagerConfig {
    * Whether to allow Transfer Manager to perform chunked Uploads/Downloads if it determines
    * chunking will be beneficial
    */
+  @BetaApi
   public boolean isAllowDivideAndConquer() {
     return allowDivideAndConquer;
   }
 
   /** Storage options that Transfer Manager will use to interact with GCS */
+  @BetaApi
   public StorageOptions getStorageOptions() {
     return storageOptions;
   }
 
+  @BetaApi
   public TransferManager getService() {
     return new TransferManagerImpl(this);
   }
 
+  @BetaApi
   public Builder toBuilder() {
     return new Builder()
         .setAllowDivideAndConquer(allowDivideAndConquer)
@@ -111,10 +119,12 @@ public final class TransferManagerConfig {
         .toString();
   }
 
+  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
 
+  @BetaApi
   public static class Builder {
 
     private int maxWorkers;
@@ -132,31 +142,37 @@ public final class TransferManagerConfig {
       this.qos = DefaultQos.of();
     }
 
+    @BetaApi
     public Builder setMaxWorkers(int maxWorkers) {
       this.maxWorkers = maxWorkers;
       return this;
     }
 
+    @BetaApi
     public Builder setPerWorkerBufferSize(int perWorkerBufferSize) {
       this.perWorkerBufferSize = perWorkerBufferSize;
       return this;
     }
 
+    @BetaApi
     public Builder setAllowDivideAndConquer(boolean allowDivideAndConquer) {
       this.allowDivideAndConquer = allowDivideAndConquer;
       return this;
     }
 
+    @BetaApi
     public Builder setStorageOptions(StorageOptions storageOptions) {
       this.storageOptions = storageOptions;
       return this;
     }
 
+    @BetaApi
     Builder setQos(Qos qos) {
       this.qos = qos;
       return this;
     }
 
+    @BetaApi
     public TransferManagerConfig build() {
       return new TransferManagerConfig(
           maxWorkers, perWorkerBufferSize, allowDivideAndConquer, storageOptions, qos);

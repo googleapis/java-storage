@@ -18,6 +18,7 @@ package com.google.cloud.storage.transfermanager;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.BetaApi;
 import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+@BetaApi
 public final class ParallelDownloadConfig {
 
   @NonNull private final String stripPrefix;
@@ -48,21 +50,25 @@ public final class ParallelDownloadConfig {
   /**
    * A common prefix that is removed from downloaded object's name before written to the filesystem
    */
+  @BetaApi
   public @NonNull String getStripPrefix() {
     return stripPrefix;
   }
 
   /** The base directory in which all objects will be placed when downloaded. */
+  @BetaApi
   public @NonNull Path getDownloadDirectory() {
     return downloadDirectory;
   }
 
   /** The bucket objects are being downloaded from */
+  @BetaApi
   public @NonNull String getBucketName() {
     return bucketName;
   }
 
   /** A list of common BlobSourceOptions that are used for each download request */
+  @BetaApi
   public @NonNull List<BlobSourceOption> getOptionsPerRequest() {
     return optionsPerRequest;
   }
@@ -97,10 +103,12 @@ public final class ParallelDownloadConfig {
         .toString();
   }
 
+  @BetaApi
   public static Builder newBuilder() {
     return new Builder();
   }
 
+  @BetaApi
   public static final class Builder {
 
     @NonNull private String stripPrefix;
@@ -115,26 +123,31 @@ public final class ParallelDownloadConfig {
       this.optionsPerRequest = ImmutableList.of();
     }
 
+    @BetaApi
     public Builder setStripPrefix(String stripPrefix) {
       this.stripPrefix = stripPrefix;
       return this;
     }
 
+    @BetaApi
     public Builder setDownloadDirectory(Path downloadDirectory) {
       this.downloadDirectory = downloadDirectory;
       return this;
     }
 
+    @BetaApi
     public Builder setBucketName(String bucketName) {
       this.bucketName = bucketName;
       return this;
     }
 
+    @BetaApi
     public Builder setOptionsPerRequest(List<BlobSourceOption> optionsPerRequest) {
       this.optionsPerRequest = ImmutableList.copyOf(optionsPerRequest);
       return this;
     }
 
+    @BetaApi
     public ParallelDownloadConfig build() {
       checkNotNull(bucketName);
       checkNotNull(stripPrefix);
