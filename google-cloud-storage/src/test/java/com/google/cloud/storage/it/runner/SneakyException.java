@@ -23,7 +23,7 @@ package com.google.cloud.storage.it.runner;
  * <p>This class provides some utility methods to sneakily (not method declared) throw exceptions
  * and later unwrap any sneakily wrapped exception if it's needed.
  */
-final class SneakyException extends RuntimeException {
+public final class SneakyException extends RuntimeException {
 
   public SneakyException(Throwable cause) {
     super(cause);
