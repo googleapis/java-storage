@@ -61,15 +61,17 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
               StandardOpenOption.CREATE,
               StandardOpenOption.TRUNCATE_EXISTING);
       bytesCopied = ByteStreams.copy(rc, wc);
-      if(originalBlob.getSize() != null) {
+      if (originalBlob.getSize() != null) {
         if (bytesCopied != originalBlob.getSize()) {
           return DownloadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
-              .setException(new StorageException(
-                  0,
-                  "Connection Closed Prematurely read "
-                      + bytesCopied
-                      + " expected "
-                      + originalBlob.getSize())).build();
+              .setException(
+                  new StorageException(
+                      0,
+                      "Connection Closed Prematurely read "
+                          + bytesCopied
+                          + " expected "
+                          + originalBlob.getSize()))
+              .build();
         }
       }
     } catch (Exception e) {
