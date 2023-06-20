@@ -71,10 +71,12 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
             .setException(
                 new StorageException(
                     0,
-                    "Connection Closed Prematurely read "
+                    "Unexpected end of stream, read "
                         + bytesCopied
                         + " expected "
-                        + bytesExpected))
+                        + bytesExpected
+                        + " from object "
+                        + originalBlob.getBlobId().toGsUtilUriWithGeneration()))
             .build();
       }
     } catch (Exception e) {

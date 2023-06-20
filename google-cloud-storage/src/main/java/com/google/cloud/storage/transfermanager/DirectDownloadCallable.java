@@ -67,10 +67,12 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
               .setException(
                   new StorageException(
                       0,
-                      "Connection Closed Prematurely read "
+                      "Unexpected end of stream, read "
                           + bytesCopied
                           + " expected "
-                          + originalBlob.getSize()))
+                          + originalBlob.getSize()
+                          + " from object "
+                          + originalBlob.getBlobId().toGsUtilUriWithGeneration()))
               .build();
         }
       }
