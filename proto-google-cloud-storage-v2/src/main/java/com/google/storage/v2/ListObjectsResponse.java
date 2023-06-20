@@ -39,7 +39,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
 
   private ListObjectsResponse() {
     objects_ = java.util.Collections.emptyList();
-    prefixes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    prefixes_ = com.google.protobuf.LazyStringArrayList.emptyList();
     nextPageToken_ = "";
   }
 
@@ -47,11 +47,6 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
     return new ListObjectsResponse();
-  }
-
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
@@ -142,7 +137,8 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
   public static final int PREFIXES_FIELD_NUMBER = 2;
 
   @SuppressWarnings("serial")
-  private com.google.protobuf.LazyStringList prefixes_;
+  private com.google.protobuf.LazyStringArrayList prefixes_ =
+      com.google.protobuf.LazyStringArrayList.emptyList();
   /**
    *
    *
@@ -491,8 +487,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
         objectsBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000001);
-      prefixes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-      bitField0_ = (bitField0_ & ~0x00000002);
+      prefixes_ = com.google.protobuf.LazyStringArrayList.emptyList();
       nextPageToken_ = "";
       return this;
     }
@@ -539,15 +534,14 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       } else {
         result.objects_ = objectsBuilder_.build();
       }
-      if (((bitField0_ & 0x00000002) != 0)) {
-        prefixes_ = prefixes_.getUnmodifiableView();
-        bitField0_ = (bitField0_ & ~0x00000002);
-      }
-      result.prefixes_ = prefixes_;
     }
 
     private void buildPartial0(com.google.storage.v2.ListObjectsResponse result) {
       int from_bitField0_ = bitField0_;
+      if (((from_bitField0_ & 0x00000002) != 0)) {
+        prefixes_.makeImmutable();
+        result.prefixes_ = prefixes_;
+      }
       if (((from_bitField0_ & 0x00000004) != 0)) {
         result.nextPageToken_ = nextPageToken_;
       }
@@ -628,7 +622,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       if (!other.prefixes_.isEmpty()) {
         if (prefixes_.isEmpty()) {
           prefixes_ = other.prefixes_;
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ |= 0x00000002;
         } else {
           ensurePrefixesIsMutable();
           prefixes_.addAll(other.prefixes_);
@@ -1055,14 +1049,14 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       return objectsBuilder_;
     }
 
-    private com.google.protobuf.LazyStringList prefixes_ =
-        com.google.protobuf.LazyStringArrayList.EMPTY;
+    private com.google.protobuf.LazyStringArrayList prefixes_ =
+        com.google.protobuf.LazyStringArrayList.emptyList();
 
     private void ensurePrefixesIsMutable() {
-      if (!((bitField0_ & 0x00000002) != 0)) {
+      if (!prefixes_.isModifiable()) {
         prefixes_ = new com.google.protobuf.LazyStringArrayList(prefixes_);
-        bitField0_ |= 0x00000002;
       }
+      bitField0_ |= 0x00000002;
     }
     /**
      *
@@ -1077,7 +1071,8 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
      * @return A list containing the prefixes.
      */
     public com.google.protobuf.ProtocolStringList getPrefixesList() {
-      return prefixes_.getUnmodifiableView();
+      prefixes_.makeImmutable();
+      return prefixes_;
     }
     /**
      *
@@ -1146,6 +1141,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       ensurePrefixesIsMutable();
       prefixes_.set(index, value);
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1168,6 +1164,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       }
       ensurePrefixesIsMutable();
       prefixes_.add(value);
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1187,6 +1184,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
     public Builder addAllPrefixes(java.lang.Iterable<java.lang.String> values) {
       ensurePrefixesIsMutable();
       com.google.protobuf.AbstractMessageLite.Builder.addAll(values, prefixes_);
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }
@@ -1203,8 +1201,9 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
      * @return This builder for chaining.
      */
     public Builder clearPrefixes() {
-      prefixes_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      prefixes_ = com.google.protobuf.LazyStringArrayList.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
+      ;
       onChanged();
       return this;
     }
@@ -1228,6 +1227,7 @@ public final class ListObjectsResponse extends com.google.protobuf.GeneratedMess
       checkByteStringIsUtf8(value);
       ensurePrefixesIsMutable();
       prefixes_.add(value);
+      bitField0_ |= 0x00000002;
       onChanged();
       return this;
     }

@@ -47,11 +47,6 @@ public final class ObjectChecksums extends com.google.protobuf.GeneratedMessageV
     return new ObjectChecksums();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_ObjectChecksums_descriptor;

@@ -57,11 +57,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
     return new Object();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto.internal_static_google_storage_v2_Object_descriptor;
   }
@@ -679,9 +674,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The deletion time of the object. Will be returned if and only
-   * if this version of the object has been deleted. Attempting to set or update
-   * this field will result in a
+   * Output only. If this object is noncurrent, this is the time when the object
+   * became noncurrent. Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -698,9 +692,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The deletion time of the object. Will be returned if and only
-   * if this version of the object has been deleted. Attempting to set or update
-   * this field will result in a
+   * Output only. If this object is noncurrent, this is the time when the object
+   * became noncurrent. Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -717,9 +710,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    *
    * <pre>
-   * Output only. The deletion time of the object. Will be returned if and only
-   * if this version of the object has been deleted. Attempting to set or update
-   * this field will result in a
+   * Output only. If this object is noncurrent, this is the time when the object
+   * became noncurrent. Attempting to set or update this field will result in a
    * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
@@ -1316,6 +1308,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * retention policy, except that the retention duration will be calculated
    * from the time the event based hold was lifted, rather than the time the
    * object was created.
+   *
    * In a WriteObject request, not setting this field implies that the value
    * should be taken from the parent bucket's "default_event_based_hold" field.
    * In a response, this field will always be set to true or false.
@@ -1340,6 +1333,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * retention policy, except that the retention duration will be calculated
    * from the time the event based hold was lifted, rather than the time the
    * object was created.
+   *
    * In a WriteObject request, not setting this field implies that the value
    * should be taken from the parent bucket's "default_event_based_hold" field.
    * In a response, this field will always be set to true or false.
@@ -4129,9 +4123,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4148,9 +4141,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4173,9 +4165,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4200,9 +4191,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4224,9 +4214,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4254,9 +4243,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4278,9 +4266,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4297,9 +4284,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -4320,9 +4306,8 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Output only. The deletion time of the object. Will be returned if and only
-     * if this version of the object has been deleted. Attempting to set or update
-     * this field will result in a
+     * Output only. If this object is noncurrent, this is the time when the object
+     * became noncurrent. Attempting to set or update this field will result in a
      * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
@@ -6041,6 +6026,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * retention policy, except that the retention duration will be calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
+     *
      * In a WriteObject request, not setting this field implies that the value
      * should be taken from the parent bucket's "default_event_based_hold" field.
      * In a response, this field will always be set to true or false.
@@ -6065,6 +6051,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * retention policy, except that the retention duration will be calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
+     *
      * In a WriteObject request, not setting this field implies that the value
      * should be taken from the parent bucket's "default_event_based_hold" field.
      * In a response, this field will always be set to true or false.
@@ -6089,6 +6076,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * retention policy, except that the retention duration will be calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
+     *
      * In a WriteObject request, not setting this field implies that the value
      * should be taken from the parent bucket's "default_event_based_hold" field.
      * In a response, this field will always be set to true or false.
@@ -6117,6 +6105,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * retention policy, except that the retention duration will be calculated
      * from the time the event based hold was lifted, rather than the time the
      * object was created.
+     *
      * In a WriteObject request, not setting this field implies that the value
      * should be taken from the parent bucket's "default_event_based_hold" field.
      * In a response, this field will always be set to true or false.

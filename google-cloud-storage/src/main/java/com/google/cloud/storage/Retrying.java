@@ -20,14 +20,19 @@ import static com.google.cloud.RetryHelper.runWithRetries;
 
 import com.google.api.core.ApiClock;
 import com.google.api.core.NanoClock;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.retrying.BasicResultRetryAlgorithm;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.RetryHelper.RetryHelperException;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.spi.v1.HttpRpcContext;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class Retrying {
 
@@ -113,6 +118,14 @@ final class Retrying {
     } catch (RetryHelperException e) {
       throw StorageException.coalesce(e.getCause());
     }
+  }
+
+  @NonNull
+  static GrpcCallContext newCallContext() {
+    return GrpcCallContext.createDefault()
+        .withExtraHeaders(
+            ImmutableMap.of(
+                "x-goog-gcs-idempotency-token", ImmutableList.of(UUID.randomUUID().toString())));
   }
 
   static ResultRetryAlgorithm<?> neverRetry() {

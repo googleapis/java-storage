@@ -49,11 +49,6 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
     return new ComposeObjectRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_ComposeObjectRequest_descriptor;
@@ -186,11 +181,6 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       return new SourceObject();
     }
 
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-      return this.unknownFields;
-    }
-
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
           .internal_static_google_storage_v2_ComposeObjectRequest_SourceObject_descriptor;
@@ -265,11 +255,6 @@ public final class ComposeObjectRequest extends com.google.protobuf.GeneratedMes
       @SuppressWarnings({"unused"})
       protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
         return new ObjectPreconditions();
-      }
-
-      @java.lang.Override
-      public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-        return this.unknownFields;
       }
 
       public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {

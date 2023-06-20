@@ -191,7 +191,8 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
               WriteFlushStrategy.fsyncEveryFlush(
                   sc.writeObjectCallable(),
                   RetryingDependencies.attemptOnce(),
-                  Retrying.neverRetry()));
+                  Retrying.neverRetry(),
+                  Retrying::newCallContext));
       ArrayList<String> debugMessages = new ArrayList<>();
       try {
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
@@ -279,7 +280,8 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
                     public boolean shouldRetry(Throwable t, Object ignore) {
                       return TestUtils.findThrowable(DataLossException.class, t) != null;
                     }
-                  }))) {
+                  },
+                  Retrying::newCallContext))) {
         writeCtx = c.getWriteCtx();
         ImmutableList<ByteBuffer> buffers = TestUtils.subDivide(bytes, 10);
         c.write(buffers.get(0));

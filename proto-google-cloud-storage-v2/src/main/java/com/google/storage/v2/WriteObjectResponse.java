@@ -45,11 +45,6 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
     return new WriteObjectResponse();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_WriteObjectResponse_descriptor;
@@ -66,6 +61,8 @@ public final class WriteObjectResponse extends com.google.protobuf.GeneratedMess
   }
 
   private int writeStatusCase_ = 0;
+
+  @SuppressWarnings("serial")
   private java.lang.Object writeStatus_;
 
   public enum WriteStatusCase

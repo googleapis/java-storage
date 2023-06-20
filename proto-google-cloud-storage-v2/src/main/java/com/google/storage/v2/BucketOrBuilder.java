@@ -28,6 +28,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Immutable. The name of the bucket.
+   * Format: `projects/{project}/buckets/{bucket}`
    * </pre>
    *
    * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -40,6 +41,7 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Immutable. The name of the bucket.
+   * Format: `projects/{project}/buckets/{bucket}`
    * </pre>
    *
    * <code>string name = 1 [(.google.api.field_behavior) = IMMUTABLE];</code>

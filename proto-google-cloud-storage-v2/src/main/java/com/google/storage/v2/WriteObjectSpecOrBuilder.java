@@ -208,6 +208,7 @@ public interface WriteObjectSpecOrBuilder
    * The expected final object size being uploaded.
    * If this value is set, closing the stream after writing fewer or more than
    * `object_size` bytes will result in an OUT_OF_RANGE error.
+   *
    * This situation is considered a client error, and if such an error occurs
    * you must start the upload over from scratch, this time sending the correct
    * number of bytes.
@@ -225,6 +226,7 @@ public interface WriteObjectSpecOrBuilder
    * The expected final object size being uploaded.
    * If this value is set, closing the stream after writing fewer or more than
    * `object_size` bytes will result in an OUT_OF_RANGE error.
+   *
    * This situation is considered a client error, and if such an error occurs
    * you must start the upload over from scratch, this time sending the correct
    * number of bytes.

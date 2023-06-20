@@ -49,11 +49,6 @@ public final class ListBucketsRequest extends com.google.protobuf.GeneratedMessa
     return new ListBucketsRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_ListBucketsRequest_descriptor;

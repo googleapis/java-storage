@@ -97,6 +97,7 @@ public interface ReadObjectRequestOrBuilder
    * <pre>
    * The offset for the first byte to return in the read, relative to the start
    * of the object.
+   *
    * A negative `read_offset` value will be interpreted as the number of bytes
    * back from the end of the object to be returned. For example, if an object's
    * length is 15 bytes, a ReadObjectRequest with `read_offset` = -5 and
@@ -118,6 +119,7 @@ public interface ReadObjectRequestOrBuilder
    * The maximum number of `data` bytes the server is allowed to return in the
    * sum of all `Object` messages. A `read_limit` of zero indicates that there
    * is no limit, and a negative `read_limit` will cause an error.
+   *
    * If the stream returns fewer bytes than allowed by the `read_limit` and no
    * error occurred, the stream includes all data from the `read_offset` to the
    * end of the resource.

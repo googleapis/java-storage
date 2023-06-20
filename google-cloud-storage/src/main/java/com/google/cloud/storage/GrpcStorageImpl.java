@@ -205,10 +205,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setBucketId(bucketInfo.getName())
             .setParent("projects/_");
     CreateBucketRequest req = opts.createBucketsRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.createBucketCallable().call(req, grpcCallContext),
+        () -> storageClient.createBucketCallable().call(req, merge),
         syntaxDecoders.bucket);
   }
 
@@ -233,6 +234,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     Hasher hasher = getHasherForRequest(req, Hasher.enabled());
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
@@ -240,8 +242,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
               ResumableMedia.gapic()
                   .write()
-                  .byteChannel(
-                      storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+                  .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
                   .setByteStringStrategy(ByteStringStrategy.noCopy())
                   .setHasher(hasher)
                   .direct()
@@ -286,23 +287,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
     Hasher hasher = getHasherForRequest(req, Hasher.enabled());
-    GapicWritableByteChannelSessionBuilder channelSessionBuilder =
-        ResumableMedia.gapic()
-            .write()
-            .byteChannel(
-                storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-            .setHasher(hasher)
-            .setByteStringStrategy(ByteStringStrategy.noCopy());
 
     long size = Files.size(path);
     if (size < bufferSize) {
       // ignore the bufferSize argument if the file is smaller than it
+      GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
       return Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(req),
           () -> {
             BufferedWritableByteChannelSession<WriteObjectResponse> session =
-                channelSessionBuilder
+                ResumableMedia.gapic()
+                    .write()
+                    .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
+                    .setHasher(hasher)
+                    .setByteStringStrategy(ByteStringStrategy.noCopy())
                     .direct()
                     .buffered(Buffers.allocate(size))
                     .setRequest(req)
@@ -320,7 +319,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     } else {
       ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
       BufferedWritableByteChannelSession<WriteObjectResponse> session =
-          channelSessionBuilder
+          ResumableMedia.gapic()
+              .write()
+              .byteChannel(
+                  storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+              .setHasher(hasher)
+              .setByteStringStrategy(ByteStringStrategy.noCopy())
               .resumable()
               .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
               .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
@@ -396,10 +400,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setBucket(bucketNameCodec.encode(bucket.getName()));
     LockBucketRetentionPolicyRequest req =
         opts.lockBucketRetentionPolicyRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.lockBucketRetentionPolicyCallable().call(req, grpcCallContext),
+        () -> storageClient.lockBucketRetentionPolicyCallable().call(req, merge),
         syntaxDecoders.bucket);
   }
 
@@ -431,10 +436,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .apply(ListBucketsRequest.newBuilder())
             .build();
     try {
+      GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
       return Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(request),
-          () -> storageClient.listBucketsPagedCallable().call(request, grpcCallContext),
+          () -> storageClient.listBucketsPagedCallable().call(request, merge),
           resp ->
               new TransformingPageDecorator<>(
                   resp.getPage(),
@@ -455,10 +461,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         ListObjectsRequest.newBuilder().setParent(bucketNameCodec.encode(bucket));
     ListObjectsRequest req = opts.listObjectsRequest().apply(builder).build();
     try {
+      GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
       return Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(req),
-          () -> storageClient.listObjectsCallable().call(req, grpcCallContext),
+          () -> storageClient.listObjectsCallable().call(req, merge),
           resp -> new ListObjectsWithSyntheticDirectoriesPage(grpcCallContext, req, resp));
     } catch (Exception e) {
       throw StorageException.coalesce(e);
@@ -484,10 +491,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                 .map(NamedField::getGrpcName)
                 .collect(ImmutableList.toImmutableList()));
     UpdateBucketRequest req = builder.build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.updateBucketCallable().call(req, grpcCallContext),
+        () -> storageClient.updateBucketCallable().call(req, merge),
         syntaxDecoders.bucket);
   }
 
@@ -510,10 +518,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                 .map(NamedField::getGrpcName)
                 .collect(ImmutableList.toImmutableList()));
     UpdateObjectRequest req = builder.build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.updateObjectCallable().call(req, grpcCallContext),
+        () -> storageClient.updateObjectCallable().call(req, merge),
         syntaxDecoders.blob);
   }
 
@@ -531,10 +540,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         DeleteBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
     DeleteBucketRequest req = opts.deleteBucketsRequest().apply(builder).build();
     try {
+      GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
       Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(req),
-          () -> storageClient.deleteBucketCallable().call(req, grpcCallContext),
+          () -> storageClient.deleteBucketCallable().call(req, merge),
           Decoder.identity());
       return true;
     } catch (StorageException e) {
@@ -558,13 +568,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setObject(blob.getName());
     ifNonNull(blob.getGeneration(), builder::setGeneration);
     DeleteObjectRequest req = opts.deleteObjectsRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Boolean.TRUE.equals(
         Retrying.run(
             getOptions(),
             retryAlgorithmManager.getFor(req),
             () -> {
               try {
-                storageClient.deleteObjectCallable().call(req, grpcCallContext);
+                storageClient.deleteObjectCallable().call(req, merge);
                 return true;
               } catch (NotFoundException e) {
                 return false;
@@ -593,10 +604,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     final Object target = codecs.blobInfo().encode(composeRequest.getTarget());
     builder.setDestination(target);
     ComposeObjectRequest req = opts.composeObjectsRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.composeObjectCallable().call(req, grpcCallContext),
+        () -> storageClient.composeObjectCallable().call(req, merge),
         syntaxDecoders.blob);
   }
 
@@ -646,10 +658,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         srcOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     UnaryCallable<RewriteObjectRequest, RewriteResponse> callable =
         storageClient.rewriteObjectCallable().withDefaultCallContext(grpcCallContext);
+    GrpcCallContext retryContext = Retrying.newCallContext();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> callable.call(req),
+        () -> callable.call(req, retryContext),
         (resp) -> new GapicCopyWriter(this, callable, retryAlgorithmManager.idempotent(), resp));
   }
 
@@ -687,7 +700,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
-    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
+    GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
         request,
@@ -1221,10 +1234,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .apply(CreateHmacKeyRequest.newBuilder())
             .setServiceAccountEmail(serviceAccount.getEmail())
             .build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(request),
-        () -> storageClient.createHmacKeyCallable().call(request, grpcCallContext),
+        () -> storageClient.createHmacKeyCallable().call(request, merge),
         resp -> {
           ByteString secretKeyBytes = resp.getSecretKeyBytes();
           String b64SecretKey = BaseEncoding.base64().encode(secretKeyBytes.toByteArray());
@@ -1247,10 +1261,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .apply(ListHmacKeysRequest.newBuilder())
             .build();
     try {
+      GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
       return Retrying.run(
           getOptions(),
           retryAlgorithmManager.getFor(request),
-          () -> storageClient.listHmacKeysPagedCallable().call(request, grpcCallContext),
+          () -> storageClient.listHmacKeysPagedCallable().call(request, merge),
           resp ->
               new TransformingPageDecorator<>(
                   resp.getPage(),
@@ -1274,10 +1289,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .apply(GetHmacKeyRequest.newBuilder())
             .setAccessId(accessId)
             .build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(request),
-        () -> storageClient.getHmacKeyCallable().call(request, grpcCallContext),
+        () -> storageClient.getHmacKeyCallable().call(request, merge),
         codecs.hmacKeyMetadata());
   }
 
@@ -1291,11 +1307,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setAccessId(hmacKeyMetadata.getAccessId())
             .setProject(projectNameCodec.encode(hmacKeyMetadata.getProjectId()))
             .build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
         () -> {
-          storageClient.deleteHmacKeyCallable().call(req, grpcCallContext);
+          storageClient.deleteHmacKeyCallable().call(req, merge);
           return null;
         },
         Decoder.identity());
@@ -1314,10 +1331,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.updateHmacKeysRequest().apply(UpdateHmacKeyRequest.newBuilder()).setHmacKey(encode);
     UpdateHmacKeyRequest request =
         builder.setUpdateMask(FieldMask.newBuilder().addPaths("state").build()).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(request),
-        () -> storageClient.updateHmacKeyCallable().call(request, grpcCallContext),
+        () -> storageClient.updateHmacKeyCallable().call(request, merge),
         codecs.hmacKeyMetadata());
   }
 
@@ -1329,10 +1347,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GetIamPolicyRequest.Builder builder =
         GetIamPolicyRequest.newBuilder().setResource(bucketNameCodec.encode(bucket));
     GetIamPolicyRequest req = opts.getIamPolicyRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getIamPolicyCallable().call(req, grpcCallContext),
+        () -> storageClient.getIamPolicyCallable().call(req, merge),
         codecs.policyCodec());
   }
 
@@ -1346,10 +1365,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setResource(bucketNameCodec.encode(bucket))
             .setPolicy(codecs.policyCodec().encode(policy))
             .build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.setIamPolicyCallable().call(req, grpcCallContext),
+        () -> storageClient.setIamPolicyCallable().call(req, merge),
         codecs.policyCodec());
   }
 
@@ -1364,10 +1384,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setResource(bucketNameCodec.encode(bucket))
             .addAllPermissions(permissions)
             .build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.testIamPermissionsCallable().call(req, grpcCallContext),
+        () -> storageClient.testIamPermissionsCallable().call(req, merge),
         resp -> {
           Set<String> heldPermissions = ImmutableSet.copyOf(resp.getPermissionsList());
           return permissions.stream()
@@ -1382,10 +1403,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         GetServiceAccountRequest.newBuilder()
             .setProject(projectNameCodec.encode(projectId))
             .build();
+    GrpcCallContext retryContext = Retrying.newCallContext();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getServiceAccountCallable().call(req),
+        () -> storageClient.getServiceAccountCallable().call(req, retryContext),
         codecs.serviceAccount());
   }
 
@@ -1397,10 +1419,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setParent(bucketNameCodec.encode(bucket))
             .setNotificationConfig(encode)
             .build();
+    GrpcCallContext retryContext = Retrying.newCallContext();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.createNotificationConfigCallable().call(req),
+        () -> storageClient.createNotificationConfigCallable().call(req, retryContext),
         syntaxDecoders.notificationConfig);
   }
 
@@ -1415,12 +1438,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     }
     GetNotificationConfigRequest req =
         GetNotificationConfigRequest.newBuilder().setName(name).build();
+    GrpcCallContext retryContext = Retrying.newCallContext();
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
         () -> {
           try {
-            return storageClient.getNotificationConfigCallable().call(req);
+            return storageClient.getNotificationConfigCallable().call(req, retryContext);
           } catch (NotFoundException e) {
             return null;
           }
@@ -1435,10 +1459,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setParent(bucketNameCodec.encode(bucket))
             .build();
     ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getFor(req);
+    GrpcCallContext retryContext = Retrying.newCallContext();
     return Retrying.run(
         getOptions(),
         algorithm,
-        () -> storageClient.listNotificationConfigsPagedCallable().call(req),
+        () -> storageClient.listNotificationConfigsPagedCallable().call(req, retryContext),
         resp -> {
           TransformingPageDecorator<
                   ListNotificationConfigsRequest,
@@ -1464,13 +1489,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     }
     DeleteNotificationConfigRequest req =
         DeleteNotificationConfigRequest.newBuilder().setName(name).build();
+    GrpcCallContext retryContext = Retrying.newCallContext();
     return Boolean.TRUE.equals(
         Retrying.run(
             getOptions(),
             retryAlgorithmManager.getFor(req),
             () -> {
               try {
-                storageClient.deleteNotificationConfigCallable().call(req);
+                storageClient.deleteNotificationConfigCallable().call(req, retryContext);
                 return true;
               } catch (NotFoundException e) {
                 return false;
@@ -1551,11 +1577,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
       ListObjectsRequest nextPageReq =
           req.toBuilder().setPageToken(resp.getNextPageToken()).build();
       try {
+        GrpcCallContext merge = Utils.merge(ctx, Retrying.newCallContext());
         ListObjectsResponse nextPageResp =
             Retrying.run(
                 GrpcStorageImpl.this.getOptions(),
                 retryAlgorithmManager.getFor(nextPageReq),
-                () -> storageClient.listObjectsCallable().call(nextPageReq, ctx),
+                () -> storageClient.listObjectsCallable().call(nextPageReq, merge),
                 Decoder.identity());
         return new ListObjectsWithSyntheticDirectoriesPage(ctx, nextPageReq, nextPageResp);
       } catch (Exception e) {
@@ -1649,6 +1676,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                   page,
                   p -> p != null && p.hasNextPage(),
                   prev -> {
+                    // TODO: retry token header
                     // explicitly define this callable rather than using the method reference to
                     // prevent a javac 1.8 exception
                     // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8056984
@@ -1773,7 +1801,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes =
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
-    GrpcCallContext grpcCallContext = GrpcCallContext.createDefault().withRetryableCodes(codes);
+    GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
     return ResumableMedia.gapic()
         .read()
         .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
@@ -1787,12 +1815,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   ApiFuture<ResumableWrite> startResumableWrite(
       GrpcCallContext grpcCallContext, WriteObjectRequest req) {
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return ResumableMedia.gapic()
         .write()
         .resumableWrite(
             storageClient
                 .startResumableWriteCallable()
-                .withDefaultCallContext(grpcCallContext.withRetryableCodes(codes)),
+                .withDefaultCallContext(merge.withRetryableCodes(codes)),
             req);
   }
 
@@ -1818,10 +1847,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setName(bucketNameCodec.encode(bucketName))
             .build();
 
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
+        () -> storageClient.getBucketCallable().call(req, merge),
         Decoder.identity());
   }
 
@@ -1837,19 +1867,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setName(bucketNameCodec.encode(bucketName))
             .build();
 
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
+        () -> storageClient.getBucketCallable().call(req, merge),
         Decoder.identity());
   }
 
   private com.google.storage.v2.Bucket updateBucket(UpdateBucketRequest req) {
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.updateBucketCallable().call(req, grpcCallContext),
+        () -> storageClient.updateBucketCallable().call(req, merge),
         Decoder.identity());
   }
 
@@ -1899,10 +1931,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setObject(obj.getName())
             .build();
 
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getObjectCallable().call(req, grpcCallContext),
+        () -> storageClient.getObjectCallable().call(req, merge),
         Decoder.identity());
   }
 
@@ -1926,10 +1959,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
   private Object updateObject(UpdateObjectRequest req) {
     GrpcCallContext grpcCallContext = GrpcCallContext.createDefault();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.updateObjectCallable().call(req, grpcCallContext),
+        () -> storageClient.updateObjectCallable().call(req, merge),
         Decoder.identity());
   }
 
@@ -1957,12 +1991,13 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             .setObject(blob.getName());
     ifNonNull(blob.getGeneration(), builder::setGeneration);
     GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
         () -> {
           try {
-            return storageClient.getObjectCallable().call(req, grpcCallContext);
+            return storageClient.getObjectCallable().call(req, merge);
           } catch (NotFoundException ignore) {
             return null;
           }
@@ -1978,10 +2013,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GetBucketRequest.Builder builder =
         GetBucketRequest.newBuilder().setName(bucketNameCodec.encode(bucket));
     GetBucketRequest req = opts.getBucketsRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> storageClient.getBucketCallable().call(req, grpcCallContext),
+        () -> storageClient.getBucketCallable().call(req, merge),
         syntaxDecoders.bucket.andThen(opts.clearBucketFields()));
   }
 }

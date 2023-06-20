@@ -47,11 +47,6 @@ public final class GetNotificationConfigRequest extends com.google.protobuf.Gene
     return new GetNotificationConfigRequest();
   }
 
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet getUnknownFields() {
-    return this.unknownFields;
-  }
-
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
         .internal_static_google_storage_v2_GetNotificationConfigRequest_descriptor;

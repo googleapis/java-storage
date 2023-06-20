@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.security.Key;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -161,6 +162,40 @@ public class Blob extends BlobInfo {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobSourceOption shouldReturnRawInputStream(boolean shouldReturnRawInputStream) {
       return new BlobSourceOption(UnifiedOpts.returnRawInputStream(shouldReturnRawInputStream));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobSourceOption[] dedupe(BlobSourceOption... os) {
+      return Option.dedupe(BlobSourceOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobSourceOption[] dedupe(
+        Collection<BlobSourceOption> collection, BlobSourceOption... os) {
+      return Option.dedupe(BlobSourceOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobSourceOption[] dedupe(BlobSourceOption[] array, BlobSourceOption... os) {
+      return Option.dedupe(BlobSourceOption[]::new, array, os);
     }
 
     static Storage.BlobSourceOption[] toSourceOptions(

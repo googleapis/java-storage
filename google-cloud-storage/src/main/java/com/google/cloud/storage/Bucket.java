@@ -30,7 +30,6 @@ import com.google.cloud.storage.UnifiedOpts.BucketOptExtractor;
 import com.google.cloud.storage.UnifiedOpts.BucketSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectOptExtractor;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
-import com.google.cloud.storage.UnifiedOpts.OptionShim;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.io.IOException;
@@ -41,6 +40,7 @@ import java.security.Key;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -97,6 +97,41 @@ public class Bucket extends BucketInfo {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketSourceOption userProject(@NonNull String userProject) {
       return new BucketSourceOption(UnifiedOpts.userProject(userProject));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BucketSourceOption[] dedupe(BucketSourceOption... os) {
+      return Option.dedupe(BucketSourceOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketSourceOption[] dedupe(
+        Collection<BucketSourceOption> collection, BucketSourceOption... os) {
+      return Option.dedupe(BucketSourceOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BucketSourceOption[] dedupe(
+        BucketSourceOption[] array, BucketSourceOption... os) {
+      return Option.dedupe(BucketSourceOption[]::new, array, os);
     }
 
     static Storage.BucketSourceOption[] toSourceOptions(
@@ -237,6 +272,40 @@ public class Bucket extends BucketInfo {
       return new BlobTargetOption(UnifiedOpts.userProject(userProject));
     }
 
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobTargetOption[] dedupe(BlobTargetOption... os) {
+      return Option.dedupe(BlobTargetOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobTargetOption[] dedupe(
+        Collection<BlobTargetOption> collection, BlobTargetOption... os) {
+      return Option.dedupe(BlobTargetOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobTargetOption[] dedupe(BlobTargetOption[] array, BlobTargetOption... os) {
+      return Option.dedupe(BlobTargetOption[]::new, array, os);
+    }
+
     static Storage.BlobTargetOption[] toTargetOptions(
         BlobInfo blobInfo, BlobTargetOption... options) {
       Storage.BlobTargetOption[] targetOptions = new Storage.BlobTargetOption[options.length];
@@ -255,7 +324,7 @@ public class Bucket extends BucketInfo {
   }
 
   /** Class for specifying blob write options when {@code Bucket} methods are used. */
-  public static class BlobWriteOption extends OptionShim<ObjectTargetOpt> implements Serializable {
+  public static class BlobWriteOption extends Option<ObjectTargetOpt> implements Serializable {
 
     private static final long serialVersionUID = 59762268190041584L;
 
@@ -364,6 +433,40 @@ public class Bucket extends BucketInfo {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobWriteOption userProject(@NonNull String userProject) {
       return new BlobWriteOption(UnifiedOpts.userProject(userProject));
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter. The value which comes last in {@code
+     * os} will be the value included in the return.
+     */
+    @BetaApi
+    public static BlobWriteOption[] dedupe(BlobWriteOption... os) {
+      return Option.dedupe(BlobWriteOption[]::new, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobWriteOption[] dedupe(
+        Collection<BlobWriteOption> collection, BlobWriteOption... os) {
+      return Option.dedupe(BlobWriteOption[]::new, collection, os);
+    }
+
+    /**
+     * Deduplicate any options which are the same parameter.
+     *
+     * <p>The value which comes last in {@code collection} and {@code os} will be the value included
+     * in the return. All options from {@code os} will override their counterparts in {@code
+     * collection}.
+     */
+    @BetaApi
+    public static BlobWriteOption[] dedupe(BlobWriteOption[] array, BlobWriteOption... os) {
+      return Option.dedupe(BlobWriteOption[]::new, array, os);
     }
 
     static Storage.BlobWriteOption[] toWriteOptions(BlobInfo blobInfo, BlobWriteOption... options) {
