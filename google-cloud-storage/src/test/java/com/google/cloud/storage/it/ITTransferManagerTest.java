@@ -248,6 +248,9 @@ public class ITTransferManagerTest {
       UploadJob failedSecondUpload =
           transferManager.uploadFiles(ImmutableList.of(tmpFile.getPath()), parallelUploadConfig);
       List<UploadResult> failedResult = failedSecondUpload.getUploadResults();
+      assertThat(failedResult.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_FINISH);
+      assertThat(failedResult.get(0).getException()).isInstanceOf(StorageException.class);
+      assertThat(failedResult.get(0).getException().getMessage()).contains("Precondition Failed");
     }
   }
 
