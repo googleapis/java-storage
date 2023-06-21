@@ -131,6 +131,11 @@ public class ITTransferManagerTest {
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
       List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults).hasSize(3);
+      assertThat(
+              uploadResults.stream()
+                  .filter(result -> result.getStatus() == TransferStatus.SUCCESS)
+                  .collect(Collectors.toList()))
+          .hasSize(3);
     }
   }
 
@@ -153,6 +158,11 @@ public class ITTransferManagerTest {
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
       List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults).hasSize(3);
+      assertThat(
+              uploadResults.stream()
+                  .filter(result -> result.getStatus() == TransferStatus.SUCCESS)
+                  .collect(Collectors.toList()))
+          .hasSize(3);
     }
   }
 
@@ -181,6 +191,11 @@ public class ITTransferManagerTest {
                   .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
                   .collect(Collectors.toList()))
           .hasSize(1);
+      assertThat(
+              uploadResults.stream()
+                  .filter(result -> result.getStatus() == TransferStatus.SUCCESS)
+                  .collect(Collectors.toList()))
+          .hasSize(3);
     }
   }
 
@@ -214,6 +229,25 @@ public class ITTransferManagerTest {
       List<UploadResult> uploadResults = job.getUploadResults();
       assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
       assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
+    }
+  }
+
+  @Test
+  public void uploadFailsSkipIfExists() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
+    String bucketName = bucket.getName();
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder().setBucketName(bucketName).setSkipIfExists(true).build();
+      UploadJob jobInitUpload =
+          transferManager.uploadFiles(ImmutableList.of(tmpFile.getPath()), parallelUploadConfig);
+      List<UploadResult> uploadResults = jobInitUpload.getUploadResults();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.SUCCESS);
+      UploadJob failedSecondUpload =
+          transferManager.uploadFiles(ImmutableList.of(tmpFile.getPath()), parallelUploadConfig);
+      List<UploadResult> failedResult = failedSecondUpload.getUploadResults();
     }
   }
 

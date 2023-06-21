@@ -47,7 +47,7 @@ public final class ParallelUploadConfig {
     this.prefix = prefix;
     this.bucketName = bucketName;
     this.targetOptsPerRequest = targetOptsPerRequest;
-    this.writeOptsPerRequest = writeOptsPerRequest;
+    this.writeOptsPerRequest = applySkipIfExists(skipIfExists, writeOptsPerRequest);
   }
 
   /** If a corresponding object already exists skip uploading the object */
@@ -113,6 +113,17 @@ public final class ParallelUploadConfig {
   @BetaApi
   public static Builder newBuilder() {
     return new Builder();
+  }
+
+  private static List<BlobWriteOption> applySkipIfExists(
+      boolean skipIfExists, List<BlobWriteOption> writeOptsPerRequest) {
+    if (skipIfExists) {
+      return writeOptsPerRequest.isEmpty()
+          ? ImmutableList.of(BlobWriteOption.generationMatch(0))
+          : ImmutableList.copyOf(
+              BlobWriteOption.dedupe(writeOptsPerRequest, BlobWriteOption.generationMatch(0L)));
+    }
+    return writeOptsPerRequest;
   }
 
   @BetaApi
