@@ -58,6 +58,10 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
   }
 
   static Crc32cLengthKnown of(int value, long length) {
+
+    // This is dummy statement to touch the Version class that is compiled for Java 11
+    System.out.println("org.graalvm.home.Version: " + org.graalvm.home.Version.parse("1.2.3"));
+
     return new Crc32cLengthKnown(value, length);
   }
 
