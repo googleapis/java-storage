@@ -1,7 +1,8 @@
 bumpMinorPreMajor: true
 handleGHRelease: true
 releaseType: java-yoshi
-extraFiles: ["README.md"]
+extraFiles:
+  - README.md
 branches:
   - bumpMinorPreMajor: true
     handleGHRelease: true
@@ -31,3 +32,9 @@ branches:
     handleGHRelease: true
     releaseType: java-backport
     branch: 2.15.x
+  - bumpMinorPreMajor: true
+    handleGHRelease: true
+    releaseType: java-backport
+    extraFiles:
+      - README.md
+    branch: 2.22.x
