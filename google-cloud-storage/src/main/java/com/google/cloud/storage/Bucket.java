@@ -922,8 +922,6 @@ public class Bucket extends BucketInfo {
     super(infoBuilder);
     this.storage = checkNotNull(storage);
     this.options = storage.getOptions();
-    // This is dummy statement to touch the Version class that is compiled for Java 11
-    System.out.println("org.graalvm.home.Version: " + org.graalvm.home.Version.parse("1.2.3"));
   }
 
   /**
