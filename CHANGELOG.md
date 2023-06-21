@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.23.0](https://github.com/googleapis/java-storage/compare/v2.22.4...v2.23.0) (2023-06-21)
+
+
+### Features
+
+* Add new dedup utility method to Option classes ([#2063](https://github.com/googleapis/java-storage/issues/2063)) ([2ad196c](https://github.com/googleapis/java-storage/commit/2ad196c063e67c7efdac344792b67de3479d789d))
+
+
+### Dependencies
+
+* Update dependencies io.grpc:* to v1.56.0 ([#2072](https://github.com/googleapis/java-storage/issues/2072)) ([e10bde2](https://github.com/googleapis/java-storage/commit/e10bde26416bcf17401516e43949e12246f4831c))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20230617-2.0.0 ([#2077](https://github.com/googleapis/java-storage/issues/2077)) ([9f618cd](https://github.com/googleapis/java-storage/commit/9f618cddbeb471f7bd0f2332c70e501afbaccc36))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.23 ([#2074](https://github.com/googleapis/java-storage/issues/2074)) ([427f330](https://github.com/googleapis/java-storage/commit/427f330793a20b0c3da4cbe5e85984a0df508c79))
+
 ## [2.22.4](https://github.com/googleapis/java-storage/compare/v2.22.3...v2.22.4) (2023-06-07)
 
 
