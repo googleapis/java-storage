@@ -493,6 +493,8 @@ public class Bucket extends BucketInfo {
     Builder(Bucket bucket) {
       this.storage = bucket.storage;
       this.infoBuilder = new BucketInfo.BuilderImpl(bucket);
+      // This is available only after Java 9+
+      List immutableList = List.of("one","two","three");
     }
 
     @Override
