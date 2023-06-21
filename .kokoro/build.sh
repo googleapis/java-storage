@@ -47,7 +47,13 @@ set +e
 
 case ${JOB_TYPE} in
 test)
-    mvn test -B -ntp -Dclirr.skip=true -Denforcer.skip=true
+    # Maven surefire plugin (unit tests) allows us to specify JVM to run the tests.
+    # https://maven.apache.org/surefire/maven-surefire-plugin/test-mojo.html#jvm
+    # If we rely on certain things only available in newer JVM than Java 8, this
+    # tests detect the usage.
+    echo "SUREFIRE_JVM_OPT: ${SUREFIRE_JVM_OPT}"
+    mvn test -B -ntp -Dclirr.skip=true -Denforcer.skip=true \
+        ${SUREFIRE_JVM_OPT}
     RETURN_CODE=$?
     ;;
 lint)
