@@ -64,7 +64,6 @@ public final class PackagePrivateMethodWorkarounds {
     return (w) -> {
       BlobWriteChannel blobWriteChannel;
       if (w instanceof BlobWriteChannel) {
-
         blobWriteChannel = (BlobWriteChannel) w;
         return Optional.of(blobWriteChannel.getStorageObject())
             .map(Conversions.apiary().blobInfo()::decode);
