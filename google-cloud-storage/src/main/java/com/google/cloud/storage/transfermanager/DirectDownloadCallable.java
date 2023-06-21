@@ -21,6 +21,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
+import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
@@ -60,6 +61,21 @@ final class DirectDownloadCallable implements Callable<DownloadResult> {
               StandardOpenOption.CREATE,
               StandardOpenOption.TRUNCATE_EXISTING);
       bytesCopied = ByteStreams.copy(rc, wc);
+      if (originalBlob.getSize() != null) {
+        if (bytesCopied != originalBlob.getSize()) {
+          return DownloadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
+              .setException(
+                  new StorageException(
+                      0,
+                      "Unexpected end of stream, read "
+                          + bytesCopied
+                          + " expected "
+                          + originalBlob.getSize()
+                          + " from object "
+                          + originalBlob.getBlobId().toGsUtilUriWithGeneration()))
+              .build();
+        }
+      }
     } catch (Exception e) {
       if (bytesCopied == -1) {
         return DownloadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_START)

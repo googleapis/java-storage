@@ -20,6 +20,7 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobSourceOption;
+import com.google.cloud.storage.StorageException;
 import com.google.common.io.ByteStreams;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
@@ -64,6 +65,20 @@ final class ChunkedDownloadCallable implements Callable<DownloadSegment> {
       rc.limit(endPosition);
       wc.position(startPosition);
       bytesCopied = ByteStreams.copy(rc, wc);
+      long bytesExpected = endPosition - startPosition;
+      if (bytesCopied != bytesExpected) {
+        return DownloadSegment.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
+            .setException(
+                new StorageException(
+                    0,
+                    "Unexpected end of stream, read "
+                        + bytesCopied
+                        + " expected "
+                        + bytesExpected
+                        + " from object "
+                        + originalBlob.getBlobId().toGsUtilUriWithGeneration()))
+            .build();
+      }
     } catch (Exception e) {
       if (bytesCopied == -1) {
         return DownloadSegment.newBuilder(originalBlob, TransferStatus.FAILED_TO_START)
