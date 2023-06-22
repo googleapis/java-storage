@@ -188,7 +188,7 @@ public class ITTransferManagerTest {
       assertThat(uploadResults).hasSize(4);
       assertThat(
               uploadResults.stream()
-                  .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_START)
+                  .filter(x -> x.getStatus() == TransferStatus.FAILED_TO_FINISH)
                   .collect(Collectors.toList()))
           .hasSize(1);
       assertThat(
@@ -211,7 +211,7 @@ public class ITTransferManagerTest {
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
       List<UploadResult> uploadResults = job.getUploadResults();
-      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_FINISH);
       assertThat(uploadResults.get(0).getException()).isInstanceOf(StorageException.class);
     }
   }
@@ -227,7 +227,7 @@ public class ITTransferManagerTest {
           ParallelUploadConfig.newBuilder().setBucketName(bucketName).build();
       UploadJob job = transferManager.uploadFiles(files, parallelUploadConfig);
       List<UploadResult> uploadResults = job.getUploadResults();
-      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_START);
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_FINISH);
       assertThat(uploadResults.get(0).getException()).isInstanceOf(NoSuchFileException.class);
     }
   }
@@ -248,9 +248,7 @@ public class ITTransferManagerTest {
       UploadJob failedSecondUpload =
           transferManager.uploadFiles(ImmutableList.of(tmpFile.getPath()), parallelUploadConfig);
       List<UploadResult> failedResult = failedSecondUpload.getUploadResults();
-      assertThat(failedResult.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_FINISH);
-      assertThat(failedResult.get(0).getException()).isInstanceOf(StorageException.class);
-      assertThat(failedResult.get(0).getException().getMessage()).contains("Precondition Failed");
+      assertThat(failedResult.get(0).getStatus()).isEqualTo(TransferStatus.SKIPPED);
     }
   }
 
@@ -275,9 +273,7 @@ public class ITTransferManagerTest {
       UploadJob failedSecondUpload =
           transferManager.uploadFiles(ImmutableList.of(tmpFile.getPath()), parallelUploadConfig);
       List<UploadResult> failedResult = failedSecondUpload.getUploadResults();
-      assertThat(failedResult.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_FINISH);
-      assertThat(failedResult.get(0).getException()).isInstanceOf(StorageException.class);
-      assertThat(failedResult.get(0).getException().getMessage()).contains("Precondition Failed");
+      assertThat(failedResult.get(0).getStatus()).isEqualTo(TransferStatus.SKIPPED);
     }
   }
 

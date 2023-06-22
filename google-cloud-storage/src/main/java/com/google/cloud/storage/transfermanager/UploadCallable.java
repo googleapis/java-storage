@@ -16,16 +16,12 @@
 
 package com.google.cloud.storage.transfermanager;
 
-import com.google.cloud.WriteChannel;
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.PackagePrivateMethodWorkarounds;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
-import com.google.common.io.ByteStreams;
-import java.nio.channels.FileChannel;
+import com.google.cloud.storage.StorageException;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 
 final class UploadCallable implements Callable<UploadResult> {
@@ -61,26 +57,23 @@ final class UploadCallable implements Callable<UploadResult> {
   }
 
   private UploadResult uploadWithoutChunking() {
-    long bytesCopied = -1L;
     try {
-      Optional<BlobInfo> newBlob;
-      WriteChannel w = storage.writer(originalBlob, opts);
-      try (FileChannel r = FileChannel.open(sourceFile, StandardOpenOption.READ)) {
-        w.setChunkSize(transferManagerConfig.getPerWorkerBufferSize());
-        bytesCopied = ByteStreams.copy(r, w);
-      } finally {
-        w.close();
-      }
-      newBlob = PackagePrivateMethodWorkarounds.maybeGetBlobInfoFunction().apply(w);
+      Blob from = storage.createFrom(originalBlob, sourceFile, opts);
       return UploadResult.newBuilder(originalBlob, TransferStatus.SUCCESS)
-          .setUploadedBlob(newBlob.get())
+          .setUploadedBlob(from.asBlobInfo())
           .build();
-    } catch (Exception e) {
-      if (bytesCopied == -1) {
-        return UploadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_START)
+    } catch (StorageException e) {
+      if (parallelUploadConfig.isSkipIfExists() && e.getCode() == 412) {
+        return UploadResult.newBuilder(originalBlob, TransferStatus.SKIPPED)
+            .setException(e)
+            .build();
+      } else {
+        // TODO: check for FAILED_TO_START conditions
+        return UploadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
             .setException(e)
             .build();
       }
+    } catch (Exception e) {
       return UploadResult.newBuilder(originalBlob, TransferStatus.FAILED_TO_FINISH)
           .setException(e)
           .build();
