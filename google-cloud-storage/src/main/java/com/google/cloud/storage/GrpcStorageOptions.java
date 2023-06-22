@@ -371,9 +371,6 @@ public final class GrpcStorageOptions extends StorageOptions
     /**
      * Option which signifies the client should attempt to connect to gcs via Direct Path.
      *
-     * <p>In order to use direct path, both this option must be true and the environment variable
-     * (not system property) {@code GOOGLE_CLOUD_ENABLE_DIRECT_PATH_XDS} must be true.
-     *
      * <p><i>NOTE</i>There is no need to specify a new endpoint via {@link #setHost(String)} as the
      * underlying code will translate the normal {@code https://storage.googleapis.com:443} into the
      * proper Direct Path URI for you.

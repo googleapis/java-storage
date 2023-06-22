@@ -35,7 +35,7 @@ public class QuickstartGrpcDpSample {
       // The name for the new bucket
       String bucketName = args[0]; // "my-new-bucket";
 
-      // Creates the new bucket using a request to the gRPC API
+      // Creates the new bucket using a request to the gRPC API via DirectPath
       Bucket bucket = storage.create(BucketInfo.of(bucketName));
 
       System.out.printf("Bucket %s created.%n", bucket.getName());
