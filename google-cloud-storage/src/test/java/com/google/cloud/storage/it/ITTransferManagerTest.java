@@ -255,6 +255,33 @@ public class ITTransferManagerTest {
   }
 
   @Test
+  public void uploadSkipIfExistsGenerationOverride() throws Exception {
+    TransferManagerConfig config =
+        TransferManagerConfigTestingInstances.defaults(storage.getOptions()).toBuilder().build();
+    String bucketName = bucket.getName();
+    try (TransferManager transferManager = config.getService();
+        TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize)) {
+      ParallelUploadConfig parallelUploadConfig =
+          ParallelUploadConfig.newBuilder()
+              .setBucketName(bucketName)
+              .setSkipIfExists(true)
+              .setWriteOptsPerRequest(ImmutableList.of(BlobWriteOption.generationMatch(5L)))
+              .build();
+      assertThat(parallelUploadConfig.getWriteOptsPerRequest()).hasSize(1);
+      UploadJob jobInitUpload =
+          transferManager.uploadFiles(ImmutableList.of(tmpFile.getPath()), parallelUploadConfig);
+      List<UploadResult> uploadResults = jobInitUpload.getUploadResults();
+      assertThat(uploadResults.get(0).getStatus()).isEqualTo(TransferStatus.SUCCESS);
+      UploadJob failedSecondUpload =
+          transferManager.uploadFiles(ImmutableList.of(tmpFile.getPath()), parallelUploadConfig);
+      List<UploadResult> failedResult = failedSecondUpload.getUploadResults();
+      assertThat(failedResult.get(0).getStatus()).isEqualTo(TransferStatus.FAILED_TO_FINISH);
+      assertThat(failedResult.get(0).getException()).isInstanceOf(StorageException.class);
+      assertThat(failedResult.get(0).getException().getMessage()).contains("Precondition Failed");
+    }
+  }
+
+  @Test
   public void downloadBlobs() throws Exception {
     TransferManagerConfig config =
         TransferManagerConfigTestingInstances.defaults(storage.getOptions());

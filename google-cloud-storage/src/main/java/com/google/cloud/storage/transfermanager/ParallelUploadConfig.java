@@ -118,10 +118,8 @@ public final class ParallelUploadConfig {
   private static List<BlobWriteOption> applySkipIfExists(
       boolean skipIfExists, List<BlobWriteOption> writeOptsPerRequest) {
     if (skipIfExists) {
-      return writeOptsPerRequest.isEmpty()
-          ? ImmutableList.of(BlobWriteOption.generationMatch(0))
-          : ImmutableList.copyOf(
-              BlobWriteOption.dedupe(writeOptsPerRequest, BlobWriteOption.generationMatch(0L)));
+      return ImmutableList.copyOf(
+          BlobWriteOption.dedupe(writeOptsPerRequest, BlobWriteOption.doesNotExist()));
     }
     return writeOptsPerRequest;
   }
