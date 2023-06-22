@@ -38,14 +38,14 @@ public class QuickstartSampleIT {
 
   private String bucketName;
 
-  private static final void deleteBucket(String bucketName) {
+  private static void deleteBucket(String bucketName) {
     Storage storage = StorageOptions.getDefaultInstance().getService();
     storage.delete(bucketName);
   }
 
   @Before
   public void setUp() {
-    bucketName = "my-new-bucket-" + UUID.randomUUID().toString();
+    bucketName = "my-new-bucket-" + UUID.randomUUID();
   }
 
   @After
@@ -56,6 +56,20 @@ public class QuickstartSampleIT {
   @Test
   public void testQuickstart() throws Exception {
     QuickstartSample.main(bucketName);
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(got).contains(String.format("Bucket %s created.", bucketName));
+  }
+
+  @Test
+  public void testQuickstartGrpc() throws Exception {
+    QuickstartGrpcSample.main(bucketName);
+    String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
+    assertThat(got).contains(String.format("Bucket %s created.", bucketName));
+  }
+
+  @Test
+  public void testQuickstartGrpcDp() throws Exception {
+    QuickstartGrpcDpSample.main(bucketName);
     String got = stdOutCaptureRule.getCapturedOutputAsUtf8String();
     assertThat(got).contains(String.format("Bucket %s created.", bucketName));
   }
