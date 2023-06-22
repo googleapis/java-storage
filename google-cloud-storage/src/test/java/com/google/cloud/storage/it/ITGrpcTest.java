@@ -58,7 +58,7 @@ import org.junit.runner.RunWith;
 @RunWith(StorageITRunner.class)
 @CrossRun(
     backends = {Backend.TEST_BENCH},
-    transports = {Transport.HTTP, Transport.GRPC})
+    transports = {Transport.GRPC})
 public final class ITGrpcTest {
 
   @Inject public Storage storage;
