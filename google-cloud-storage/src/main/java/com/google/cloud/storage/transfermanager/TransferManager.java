@@ -31,7 +31,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 public interface TransferManager extends AutoCloseable {
 
   /**
-   * Uploads a list of files in parallel.
+   * Uploads a list of files in parallel. This operation will not block the invoking thread,
+   * awaiting results should be done on the returned UploadJob.
    *
    * <p>Accepts a {@link ParallelUploadConfig} which defines the constraints of parallel uploads or
    * predefined defaults.
@@ -60,7 +61,8 @@ public interface TransferManager extends AutoCloseable {
   UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config);
 
   /**
-   * Downloads a list of blobs in parallel.
+   * Downloads a list of blobs in parallel. This operation will not block the invoking thread,
+   * awaiting results should be done on the returned DownloadJob.
    *
    * <p>Accepts a {@link ParallelDownloadConfig} which defines the constraints of parallel downloads
    * or predefined defaults.

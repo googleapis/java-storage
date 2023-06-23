@@ -54,19 +54,29 @@ public final class ParallelUploadConfig {
   /**
    * If set Transfer Manager will skip uploading an object if it already exists, equivalent to
    * providing {@link BlobWriteOption#doesNotExist()} in {@link #getWriteOptsPerRequest()}
+   *
+   * @see Builder#setSkipIfExists(boolean)
    */
   @BetaApi
   public boolean isSkipIfExists() {
     return skipIfExists;
   }
 
-  /** A common prefix that will be applied to all object paths in the destination bucket */
+  /**
+   * A common prefix that will be applied to all object paths in the destination bucket
+   *
+   * @see Builder#setPrefix(String)
+   */
   @BetaApi
   public @NonNull String getPrefix() {
     return prefix;
   }
 
-  /** The bucket objects are being uploaded from */
+  /**
+   * The bucket objects are being uploaded from
+   *
+   * @see Builder#setBucketName(String)
+   */
   @BetaApi
   public @NonNull String getBucketName() {
     return bucketName;
@@ -75,6 +85,8 @@ public final class ParallelUploadConfig {
   /**
    * A list of common BlobWriteOptions, note these options will be applied to every single upload
    * request.
+   *
+   * @see Builder#setWriteOptsPerRequest(List)
    */
   @BetaApi
   public @NonNull List<BlobWriteOption> getWriteOptsPerRequest() {
@@ -149,6 +161,7 @@ public final class ParallelUploadConfig {
      * object if it already exists.
      *
      * @return the builder instance with the value for skipIfExists modified.
+     * @see ParallelUploadConfig#isSkipIfExists()
      */
     @BetaApi
     public Builder setSkipIfExists(boolean skipIfExists) {
@@ -160,6 +173,7 @@ public final class ParallelUploadConfig {
      * Sets a common prefix that will be applied to all object paths in the destination bucket.
      *
      * @return the builder instance with the value for prefix modified.
+     * @see ParallelUploadConfig#getPrefix()
      */
     @BetaApi
     public Builder setPrefix(@NonNull String prefix) {
@@ -171,6 +185,7 @@ public final class ParallelUploadConfig {
      * Sets the bucketName that Transfer Manager will upload to. This field is required.
      *
      * @return the builder instance with the value for bucketName modified.
+     * @see ParallelUploadConfig#getBucketName()
      */
     @BetaApi
     public Builder setBucketName(@NonNull String bucketName) {
@@ -183,6 +198,7 @@ public final class ParallelUploadConfig {
      * will be applied to every single upload request.
      *
      * @return the builder instance with the value for WriteOptsPerRequest modified.
+     * @see ParallelUploadConfig#getWriteOptsPerRequest()
      */
     @BetaApi
     public Builder setWriteOptsPerRequest(@NonNull List<BlobWriteOption> writeOptsPerRequest) {

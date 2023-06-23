@@ -54,19 +54,29 @@ public final class ParallelDownloadConfig {
 
   /**
    * A common prefix removed from an object's name before being written to the filesystem.
+   *
+   * @see Builder#setStripPrefix(String)
    */
   @BetaApi
   public @NonNull String getStripPrefix() {
     return stripPrefix;
   }
 
-  /** The base directory in which all objects will be placed when downloaded. */
+  /**
+   * The base directory in which all objects will be placed when downloaded.
+   *
+   * @see Builder#setDownloadDirectory(Path)
+   */
   @BetaApi
   public @NonNull Path getDownloadDirectory() {
     return downloadDirectory;
   }
 
-  /** The bucket objects are being downloaded from. */
+  /**
+   * The bucket objects are being downloaded from.
+   *
+   * @see Builder#setBucketName(String)
+   */
   @BetaApi
   public @NonNull String getBucketName() {
     return bucketName;
@@ -75,6 +85,8 @@ public final class ParallelDownloadConfig {
   /**
    * A list of common BlobSourceOptions that are used for each download request. Note this list of
    * options will be applied to every single request.
+   *
+   * @see Builder#setOptionsPerRequest(List)
    */
   @BetaApi
   public @NonNull List<BlobSourceOption> getOptionsPerRequest() {
@@ -141,6 +153,7 @@ public final class ParallelDownloadConfig {
      * names before they are written to the filesystem.
      *
      * @return the builder instance with the value for stripPrefix modified.
+     * @see ParallelDownloadConfig#getStripPrefix()
      */
     @BetaApi
     public Builder setStripPrefix(String stripPrefix) {
@@ -152,6 +165,7 @@ public final class ParallelDownloadConfig {
      * Sets the base directory on the filesystem that all objects will be written to.
      *
      * @return the builder instance with the value for downloadDirectory modified.
+     * @see ParallelDownloadConfig#getDownloadDirectory()
      */
     @BetaApi
     public Builder setDownloadDirectory(Path downloadDirectory) {
@@ -163,6 +177,7 @@ public final class ParallelDownloadConfig {
      * Sets the bucketName that Transfer Manager will download from. This field is required.
      *
      * @return the builder instance with the value for bucketName modified.
+     * @see ParallelDownloadConfig#getBucketName()
      */
     @BetaApi
     public Builder setBucketName(String bucketName) {
@@ -175,6 +190,7 @@ public final class ParallelDownloadConfig {
      * will be applied to every single download request.
      *
      * @return the builder instance with the value for OptionsPerRequest modified.
+     * @see ParallelDownloadConfig#getOptionsPerRequest()
      */
     @BetaApi
     public Builder setOptionsPerRequest(List<BlobSourceOption> optionsPerRequest) {
