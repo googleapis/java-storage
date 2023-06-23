@@ -193,7 +193,7 @@ public final class ParallelUploadConfig {
     /**
      * Creates a ParallelUploadConfig object.
      *
-     * @return
+     * @return {@link ParallelUploadConfig}
      */
     @BetaApi
     public ParallelUploadConfig build() {
