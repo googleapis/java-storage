@@ -19,6 +19,7 @@ package com.example.storage.bucket;
 // [START storage_bucket_delete_default_kms_key]
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageOptions;
 
 public class RemoveBucketDefaultKmsKey {
@@ -30,8 +31,11 @@ public class RemoveBucketDefaultKmsKey {
     // String bucketName = "your-unique-bucket-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    // first look up the bucket, so we will have its metageneration
     Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder().setDefaultKmsKeyName(null).build().update();
+    storage.update(
+        bucket.toBuilder().setDefaultKmsKeyName(null).build(),
+        BucketTargetOption.metagenerationMatch());
 
     System.out.println("Default KMS key was removed from " + bucketName);
   }

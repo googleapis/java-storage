@@ -19,10 +19,11 @@ package com.example.storage.bucket;
 // [START storage_set_retention_policy]
 
 import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
+import java.time.Duration;
 
 public class SetRetentionPolicy {
   public static void setRetentionPolicy(
@@ -38,15 +39,21 @@ public class SetRetentionPolicy {
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
 
+    // first look up the bucket so we will have its metageneration
+    Bucket bucket = storage.get(bucketName);
     Bucket bucketWithRetentionPolicy =
         storage.update(
-            BucketInfo.newBuilder(bucketName).setRetentionPeriod(retentionPeriodSeconds).build());
+            bucket
+                .toBuilder()
+                .setRetentionPeriodDuration(Duration.ofSeconds(retentionPeriodSeconds))
+                .build(),
+            BucketTargetOption.metagenerationMatch());
 
     System.out.println(
         "Retention period for "
             + bucketName
             + " is now "
-            + bucketWithRetentionPolicy.getRetentionPeriod());
+            + bucketWithRetentionPolicy.getRetentionPeriodDuration());
   }
 }
 // [END storage_set_retention_policy]

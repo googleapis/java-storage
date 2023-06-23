@@ -18,8 +18,10 @@ package com.example.storage.bucket;
 
 // [START storage_enable_uniform_bucket_level_access]
 
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.StorageOptions;
 
@@ -33,10 +35,21 @@ public class EnableUniformBucketLevelAccess {
     // String bucketName = "your-unique-bucket-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+
+    // first look up the bucket, so we will have its metageneration
+    Bucket bucket = storage.get(bucketName);
+
     BucketInfo.IamConfiguration iamConfiguration =
         BucketInfo.IamConfiguration.newBuilder().setIsUniformBucketLevelAccessEnabled(true).build();
 
-    storage.update(BucketInfo.newBuilder(bucketName).setIamConfiguration(iamConfiguration).build());
+    storage.update(
+        bucket
+            .toBuilder()
+            .setIamConfiguration(iamConfiguration)
+            .setAcl(null)
+            .setDefaultAcl(null)
+            .build(),
+        BucketTargetOption.metagenerationMatch());
 
     System.out.println("Uniform bucket-level access was enabled for " + bucketName);
   }

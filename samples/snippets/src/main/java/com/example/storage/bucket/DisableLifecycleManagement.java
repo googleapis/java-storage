@@ -19,6 +19,7 @@ package com.example.storage.bucket;
 // [START storage_disable_bucket_lifecycle_management]
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageOptions;
 
 public class DisableLifecycleManagement {
@@ -30,8 +31,11 @@ public class DisableLifecycleManagement {
     // String bucketName = "your-unique-bucket-name";
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    // first look up the bucket, so we will have its metageneration
     Bucket bucket = storage.get(bucketName);
-    bucket.toBuilder().deleteLifecycleRules().build().update();
+    storage.update(
+        bucket.toBuilder().deleteLifecycleRules().build(),
+        BucketTargetOption.metagenerationMatch());
 
     System.out.println("Lifecycle management was disabled for bucket " + bucketName);
   }

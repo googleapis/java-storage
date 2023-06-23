@@ -16,6 +16,7 @@
 
 package com.example.storage;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -71,14 +72,18 @@ import com.example.storage.object.ReleaseEventBasedHold;
 import com.example.storage.object.ReleaseTemporaryHold;
 import com.example.storage.object.SetEventBasedHold;
 import com.example.storage.object.SetTemporaryHold;
+import com.google.api.gax.retrying.RetrySettings;
 import com.google.cloud.Identity;
 import com.google.cloud.ServiceOptions;
 import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
+import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Cors;
 import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.StorageRoles;
 import com.google.cloud.storage.testing.RemoteStorageHelper;
 import com.google.cloud.testing.junit4.StdOutCaptureRule;
@@ -93,12 +98,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.Timeout;
+import org.threeten.bp.Duration;
 
 public class ITBucketSnippets {
 
@@ -108,6 +113,13 @@ public class ITBucketSnippets {
   private static final String KMS_KEY_NAME =
       "projects/java-docs-samples-testing/locations/us/keyRings/"
           + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one";
+  private static final RetrySettings RETRY_SETTINGS =
+      RetrySettings.newBuilder()
+          .setInitialRetryDelay(Duration.ofSeconds(2))
+          .setRetryDelayMultiplier(1.75)
+          .setTotalTimeout(Duration.ofSeconds(90))
+          .setMaxRetryDelay(Duration.ofSeconds(10))
+          .build();
 
   private static Storage storage;
 
@@ -160,12 +172,14 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testChangeDefaultStorageClass() {
-    Bucket remoteBucket = storage.get(BUCKET);
-    assertEquals("STANDARD", remoteBucket.getStorageClass().name());
+  public void testChangeDefaultStorageClass() throws Throwable {
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> assertEquals("STANDARD", storage.get(BUCKET).getStorageClass().name()));
     ChangeDefaultStorageClass.changeDefaultStorageClass(PROJECT_ID, BUCKET);
-    remoteBucket = storage.get(BUCKET);
-    assertEquals("COLDLINE", remoteBucket.getStorageClass().name());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> assertEquals("COLDLINE", storage.get(BUCKET).getStorageClass().name()));
   }
 
   @Test
@@ -272,13 +286,14 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testEnableLifecycleManagement() {
+  public void testEnableLifecycleManagement() throws Throwable {
     EnableLifecycleManagement.enableLifecycleManagement(PROJECT_ID, BUCKET);
-    assertEquals(1, storage.get(BUCKET).getLifecycleRules().size());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertEquals(1, storage.get(BUCKET).getLifecycleRules().size()));
   }
 
   @Test
-  public void testDisableLifecycleManagement() {
+  public void testDisableLifecycleManagement() throws Throwable {
     storage
         .get(BUCKET)
         .toBuilder()
@@ -289,13 +304,15 @@ public class ITBucketSnippets {
                     BucketInfo.LifecycleRule.LifecycleCondition.newBuilder().setAge(5).build())))
         .build()
         .update();
-    assertEquals(1, storage.get(BUCKET).getLifecycleRules().size());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertEquals(1, storage.get(BUCKET).getLifecycleRules().size()));
     DisableLifecycleManagement.disableLifecycleManagement(PROJECT_ID, BUCKET);
-    assertEquals(0, storage.get(BUCKET).getLifecycleRules().size());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertEquals(0, storage.get(BUCKET).getLifecycleRules().size()));
   }
 
   @Test
-  public void testGetPublicAccessPrevention() {
+  public void testGetPublicAccessPrevention() throws Throwable {
     try {
       // By default a bucket PAP state is INHERITED and we are changing the state to validate
       // non-default state.
@@ -308,18 +325,14 @@ public class ITBucketSnippets {
                   .build())
           .build()
           .update();
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () ->
+              assertThat(storage.get(BUCKET).getIamConfiguration().getPublicAccessPrevention())
+                  .isEqualTo(PublicAccessPrevention.ENFORCED));
       GetPublicAccessPrevention.getPublicAccessPrevention(PROJECT_ID, BUCKET);
       String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
       assertTrue(snippetOutput.contains("enforced"));
-      storage
-          .get(BUCKET)
-          .toBuilder()
-          .setIamConfiguration(
-              BucketInfo.IamConfiguration.newBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
-                  .build())
-          .build()
-          .update();
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
       storage
@@ -335,21 +348,15 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testSetPublicAccessPreventionEnforced() {
+  public void testSetPublicAccessPreventionEnforced() throws Throwable {
     try {
       SetPublicAccessPreventionEnforced.setPublicAccessPreventionEnforced(PROJECT_ID, BUCKET);
-      assertEquals(
-          storage.get(BUCKET).getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.ENFORCED);
-      storage
-          .get(BUCKET)
-          .toBuilder()
-          .setIamConfiguration(
-              BucketInfo.IamConfiguration.newBuilder()
-                  .setPublicAccessPrevention(BucketInfo.PublicAccessPrevention.INHERITED)
-                  .build())
-          .build()
-          .update();
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () ->
+              assertEquals(
+                  storage.get(BUCKET).getIamConfiguration().getPublicAccessPrevention(),
+                  BucketInfo.PublicAccessPrevention.ENFORCED));
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
       storage
@@ -365,7 +372,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testSetPublicAccessPreventionInherited() {
+  public void testSetPublicAccessPreventionInherited() throws Throwable {
     try {
       storage
           .get(BUCKET)
@@ -376,10 +383,19 @@ public class ITBucketSnippets {
                   .build())
           .build()
           .update();
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () ->
+              assertThat(storage.get(BUCKET).getIamConfiguration().getPublicAccessPrevention())
+                  .isEqualTo(PublicAccessPrevention.ENFORCED));
+
       SetPublicAccessPreventionInherited.setPublicAccessPreventionInherited(PROJECT_ID, BUCKET);
-      assertEquals(
-          storage.get(BUCKET).getIamConfiguration().getPublicAccessPrevention(),
-          BucketInfo.PublicAccessPrevention.INHERITED);
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () ->
+              assertEquals(
+                  storage.get(BUCKET).getIamConfiguration().getPublicAccessPrevention(),
+                  BucketInfo.PublicAccessPrevention.INHERITED));
     } finally {
       // No matter what happens make sure test set bucket back to INHERITED
       storage
@@ -395,7 +411,7 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testAddListRemoveBucketIamMembers() {
+  public void testAddListRemoveBucketIamMembers() throws Throwable {
     storage.update(
         BucketInfo.newBuilder(BUCKET)
             .setIamConfiguration(
@@ -403,6 +419,7 @@ public class ITBucketSnippets {
                     .setIsUniformBucketLevelAccessEnabled(true)
                     .build())
             .build());
+    // todo:
     int originalSize = storage.getIamPolicy(BUCKET).getBindingsList().size();
     AddBucketIamMember.addBucketIamMember(PROJECT_ID, BUCKET);
     assertEquals(originalSize + 1, storage.getIamPolicy(BUCKET).getBindingsList().size());
@@ -414,7 +431,9 @@ public class ITBucketSnippets {
     AddBucketIamConditionalBinding.addBucketIamConditionalBinding(PROJECT_ID, BUCKET);
     assertEquals(originalSize + 1, storage.getIamPolicy(BUCKET).getBindingsList().size());
     RemoveBucketIamConditionalBinding.removeBucketIamConditionalBinding(PROJECT_ID, BUCKET);
-    assertEquals(originalSize, storage.getIamPolicy(BUCKET).getBindingsList().size());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> assertEquals(originalSize, storage.getIamPolicy(BUCKET).getBindingsList().size()));
     storage.update(
         BucketInfo.newBuilder(BUCKET)
             .setIamConfiguration(
@@ -425,18 +444,21 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testMakeBucketPublic() {
+  public void testMakeBucketPublic() throws Throwable {
     MakeBucketPublic.makeBucketPublic(PROJECT_ID, BUCKET);
-    assertTrue(
-        storage
-            .getIamPolicy(BUCKET)
-            .getBindings()
-            .get(StorageRoles.objectViewer())
-            .contains(Identity.allUsers()));
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () ->
+            assertTrue(
+                storage
+                    .getIamPolicy(BUCKET)
+                    .getBindings()
+                    .get(StorageRoles.objectViewer())
+                    .contains(Identity.allUsers())));
   }
 
   @Test
-  public void deleteBucketDefaultKmsKey() {
+  public void deleteBucketDefaultKmsKey() throws Throwable {
     storage
         .get(BUCKET)
         .toBuilder()
@@ -445,25 +467,33 @@ public class ITBucketSnippets {
                 + "jds_test_kms_key_ring/cryptoKeys/gcs_kms_key_one")
         .build()
         .update();
-    assertNotNull(storage.get(BUCKET).getDefaultKmsKeyName());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertNotNull(storage.get(BUCKET).getDefaultKmsKeyName()));
     RemoveBucketDefaultKmsKey.removeBucketDefaultKmsKey(PROJECT_ID, BUCKET);
-    assertNull(storage.get(BUCKET).getDefaultKmsKeyName());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertNull(storage.get(BUCKET).getDefaultKmsKeyName()));
   }
 
   @Test
-  public void testEnableDisableVersioning() {
+  public void testEnableDisableVersioning() throws Throwable {
     EnableBucketVersioning.enableBucketVersioning(PROJECT_ID, BUCKET);
-    assertTrue(storage.get(BUCKET).versioningEnabled());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertTrue(storage.get(BUCKET).versioningEnabled()));
     DisableBucketVersioning.disableBucketVersioning(PROJECT_ID, BUCKET);
-    Assert.assertFalse(storage.get(BUCKET).versioningEnabled());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertFalse(storage.get(BUCKET).versioningEnabled()));
   }
 
   @Test
-  public void testSetBucketWebsiteInfo() {
+  public void testSetBucketWebsiteInfo() throws Throwable {
     SetBucketWebsiteInfo.setBucketWesbiteInfo(PROJECT_ID, BUCKET, "index.html", "404.html");
-    Bucket bucket = storage.get(BUCKET);
-    assertEquals("index.html", bucket.getIndexPage());
-    assertEquals("404.html", bucket.getNotFoundPage());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> {
+          Bucket bucket = storage.get(BUCKET);
+          assertEquals("index.html", bucket.getIndexPage());
+          assertEquals("404.html", bucket.getNotFoundPage());
+        });
   }
 
   @Test
@@ -474,18 +504,22 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testConfigureBucketCors() {
+  public void testConfigureBucketCors() throws Throwable {
     ConfigureBucketCors.configureBucketCors(
         PROJECT_ID, BUCKET, "http://example.appspot.com", "Content-Type", 3600);
-    Cors cors = storage.get(BUCKET).getCors().get(0);
-    assertTrue(cors.getOrigins().get(0).toString().contains("example.appspot.com"));
-    assertTrue(cors.getResponseHeaders().contains("Content-Type"));
-    assertEquals(3600, cors.getMaxAgeSeconds().intValue());
-    assertTrue(cors.getMethods().get(0).toString().equalsIgnoreCase("GET"));
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> {
+          Cors cors = storage.get(BUCKET).getCors().get(0);
+          assertTrue(cors.getOrigins().get(0).toString().contains("example.appspot.com"));
+          assertTrue(cors.getResponseHeaders().contains("Content-Type"));
+          assertEquals(3600, cors.getMaxAgeSeconds().intValue());
+          assertTrue(cors.getMethods().get(0).toString().equalsIgnoreCase("GET"));
+        });
   }
 
   @Test
-  public void testRemoveBucketCors() {
+  public void testRemoveBucketCors() throws Throwable {
     storage
         .get(BUCKET)
         .toBuilder()
@@ -499,51 +533,66 @@ public class ITBucketSnippets {
                     .build()))
         .build()
         .update();
-    Cors cors = storage.get(BUCKET).getCors().get(0);
-    assertNotNull(cors);
-    assertTrue(cors.getOrigins().get(0).toString().contains("example.appspot.com"));
-    assertTrue(cors.getResponseHeaders().contains("Content-Type"));
-    assertEquals(3600, cors.getMaxAgeSeconds().intValue());
-    assertTrue(cors.getMethods().get(0).toString().equalsIgnoreCase("GET"));
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> {
+          Cors cors = storage.get(BUCKET).getCors().get(0);
+          assertNotNull(cors);
+          assertTrue(cors.getOrigins().get(0).toString().contains("example.appspot.com"));
+          assertTrue(cors.getResponseHeaders().contains("Content-Type"));
+          assertEquals(3600, cors.getMaxAgeSeconds().intValue());
+          assertTrue(cors.getMethods().get(0).toString().equalsIgnoreCase("GET"));
+        });
     RemoveBucketCors.removeBucketCors(PROJECT_ID, BUCKET);
-    assertNull(storage.get(BUCKET).getCors());
+    TestUtils.retryAssert(RETRY_SETTINGS, () -> assertNull(storage.get(BUCKET).getCors()));
   }
 
   @Test
-  public void testRequesterPays() throws Exception {
+  public void testRequesterPays() throws Throwable {
     EnableRequesterPays.enableRequesterPays(PROJECT_ID, BUCKET);
-    Bucket bucket = storage.get(BUCKET, Storage.BucketGetOption.userProject(PROJECT_ID));
-    assertTrue(bucket.requesterPays());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () ->
+            assertTrue(
+                storage
+                    .get(BUCKET, Storage.BucketGetOption.userProject(PROJECT_ID))
+                    .requesterPays()));
     String projectId = ServiceOptions.getDefaultProjectId();
     String blobName = "test-create-empty-blob-requester-pays";
     byte[] content = {0xD, 0xE, 0xA, 0xD};
     Blob remoteBlob =
-        bucket.create(blobName, content, Bucket.BlobTargetOption.userProject(projectId));
+        storage.create(
+            BlobInfo.newBuilder(BUCKET, blobName).build(),
+            content,
+            BlobTargetOption.userProject(projectId));
     assertNotNull(remoteBlob);
     DownloadRequesterPaysObject.downloadRequesterPaysObject(
         projectId, BUCKET, blobName, Paths.get(blobName));
     byte[] readBytes = Files.readAllBytes(Paths.get(blobName));
     assertArrayEquals(content, readBytes);
     DisableRequesterPays.disableRequesterPays(PROJECT_ID, BUCKET);
-    assertFalse(storage.get(BUCKET).requesterPays());
+    TestUtils.retryAssert(RETRY_SETTINGS, () -> assertFalse(storage.get(BUCKET).requesterPays()));
   }
 
   @Test
-  public void testRpo() throws Exception {
+  public void testRpo() throws Throwable {
     String rpoBucket = RemoteStorageHelper.generateBucketName();
     try {
       CreateBucketWithTurboReplication.createBucketWithTurboReplication(
           PROJECT_ID, rpoBucket, "NAM4");
-      Bucket bucket = storage.get(rpoBucket);
-      assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () -> assertEquals("ASYNC_TURBO", storage.get(rpoBucket).getRpo().toString()));
 
       SetDefaultRpo.setDefaultRpo(PROJECT_ID, rpoBucket);
-      bucket = storage.get(rpoBucket);
-      assertEquals("DEFAULT", bucket.getRpo().toString());
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () -> assertEquals("DEFAULT", storage.get(rpoBucket).getRpo().toString()));
 
       SetAsyncTurboRpo.setAsyncTurboRpo(PROJECT_ID, rpoBucket);
-      bucket = storage.get(rpoBucket);
-      assertEquals("ASYNC_TURBO", bucket.getRpo().toString());
+      TestUtils.retryAssert(
+          RETRY_SETTINGS,
+          () -> assertEquals("ASYNC_TURBO", storage.get(rpoBucket).getRpo().toString()));
 
       GetBucketRpo.getBucketRpo(PROJECT_ID, rpoBucket);
       String snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
@@ -554,16 +603,19 @@ public class ITBucketSnippets {
   }
 
   @Test
-  public void testDefaultKMSKey() {
+  public void testDefaultKMSKey() throws Throwable {
     SetBucketDefaultKmsKey.setBucketDefaultKmsKey(PROJECT_ID, BUCKET, KMS_KEY_NAME);
-    assertEquals(KMS_KEY_NAME, storage.get(BUCKET).getDefaultKmsKeyName());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS,
+        () -> assertEquals(KMS_KEY_NAME, storage.get(BUCKET).getDefaultKmsKeyName()));
 
     RemoveBucketDefaultKmsKey.removeBucketDefaultKmsKey(PROJECT_ID, BUCKET);
-    assertNull(storage.get(BUCKET).getDefaultKmsKeyName());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertNull(storage.get(BUCKET).getDefaultKmsKeyName()));
   }
 
   @Test
-  public void testBucketRetention() {
+  public void testBucketRetention() throws Throwable {
     Long retention = 5L;
     SetRetentionPolicy.setRetentionPolicy(PROJECT_ID, BUCKET, retention);
     Bucket bucket = storage.get(BUCKET);
@@ -575,7 +627,8 @@ public class ITBucketSnippets {
     assertTrue(snippetOutput.contains("5"));
 
     EnableDefaultEventBasedHold.enableDefaultEventBasedHold(PROJECT_ID, BUCKET);
-    assertTrue(storage.get(BUCKET).getDefaultEventBasedHold());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertTrue(storage.get(BUCKET).getDefaultEventBasedHold()));
 
     GetDefaultEventBasedHold.getDefaultEventBasedHold(PROJECT_ID, BUCKET);
     snippetOutput = stdOutCaptureRule.getCapturedOutputAsUtf8String();
@@ -585,17 +638,23 @@ public class ITBucketSnippets {
     String blobName = "test-create-empty-blob-retention-policy";
     bucket.create(blobName, content);
     SetEventBasedHold.setEventBasedHold(PROJECT_ID, BUCKET, blobName);
-    assertTrue(storage.get(BUCKET, blobName).getEventBasedHold());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertTrue(storage.get(BUCKET, blobName).getEventBasedHold()));
     ReleaseEventBasedHold.releaseEventBasedHold(PROJECT_ID, BUCKET, blobName);
-    assertFalse(storage.get(BUCKET, blobName).getEventBasedHold());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertFalse(storage.get(BUCKET, blobName).getEventBasedHold()));
     RemoveRetentionPolicy.removeRetentionPolicy(PROJECT_ID, BUCKET);
-    assertNull(storage.get(BUCKET).getRetentionPeriod());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertNull(storage.get(BUCKET).getRetentionPeriod()));
     DisableDefaultEventBasedHold.disableDefaultEventBasedHold(PROJECT_ID, BUCKET);
-    assertFalse(storage.get(BUCKET).getDefaultEventBasedHold());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertFalse(storage.get(BUCKET).getDefaultEventBasedHold()));
     SetTemporaryHold.setTemporaryHold(PROJECT_ID, BUCKET, blobName);
-    assertTrue(storage.get(BUCKET, blobName).getTemporaryHold());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertTrue(storage.get(BUCKET, blobName).getTemporaryHold()));
     ReleaseTemporaryHold.releaseTemporaryHold(PROJECT_ID, BUCKET, blobName);
-    assertFalse(storage.get(BUCKET, blobName).getTemporaryHold());
+    TestUtils.retryAssert(
+        RETRY_SETTINGS, () -> assertFalse(storage.get(BUCKET, blobName).getTemporaryHold()));
   }
 
   @Test
