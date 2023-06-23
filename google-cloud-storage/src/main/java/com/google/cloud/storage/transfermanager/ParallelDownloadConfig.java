@@ -72,7 +72,10 @@ public final class ParallelDownloadConfig {
     return bucketName;
   }
 
-  /** A list of common BlobSourceOptions that are used for each download request. Note this list of options will be applied to every single request. */
+  /**
+   * A list of common BlobSourceOptions that are used for each download request. Note this list of
+   * options will be applied to every single request.
+   */
   @BetaApi
   public @NonNull List<BlobSourceOption> getOptionsPerRequest() {
     return optionsPerRequest;
@@ -134,7 +137,9 @@ public final class ParallelDownloadConfig {
     }
 
     /**
-     * Sets the value for stripPrefix. This string will be removed from the beginning of all object names before they are written to the filesystem.
+     * Sets the value for stripPrefix. This string will be removed from the beginning of all object
+     * names before they are written to the filesystem.
+     *
      * @return the builder instance with the value for stripPrefix modified.
      */
     @BetaApi
@@ -145,6 +150,7 @@ public final class ParallelDownloadConfig {
 
     /**
      * Sets the base directory on the filesystem that all objects will be written to.
+     *
      * @return the builder instance with the value for downloadDirectory modified.
      */
     @BetaApi
@@ -155,6 +161,7 @@ public final class ParallelDownloadConfig {
 
     /**
      * Sets the bucketName that Transfer Manager will download from. This field is required.
+     *
      * @return the builder instance with the value for bucketName modified.
      */
     @BetaApi
@@ -166,6 +173,7 @@ public final class ParallelDownloadConfig {
     /**
      * Sets the BlobSourceOptions that will be applied to each download request. Note these options
      * will be applied to every single download request.
+     *
      * @return the builder instance with the value for OptionsPerRequest modified.
      */
     @BetaApi
@@ -176,6 +184,7 @@ public final class ParallelDownloadConfig {
 
     /**
      * Creates a ParallelDownloadConfig object.
+     *
      * @return {@link ParallelDownloadConfig}
      */
     @BetaApi
