@@ -19,7 +19,6 @@ package com.google.cloud.storage.transfermanager;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.core.BetaApi;
-import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
@@ -27,13 +26,17 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Configuration for performing Parallel Uploads with {@link TransferManager}.
+ *
+ * @see Builder
+ */
 @BetaApi
 public final class ParallelUploadConfig {
 
   private final boolean skipIfExists;
   @NonNull private final String prefix;
   @NonNull private final String bucketName;
-  @NonNull private final List<BlobTargetOption> targetOptsPerRequest;
 
   @NonNull private final List<BlobWriteOption> writeOptsPerRequest;
 
@@ -41,16 +44,17 @@ public final class ParallelUploadConfig {
       boolean skipIfExists,
       @NonNull String prefix,
       @NonNull String bucketName,
-      @NonNull List<BlobTargetOption> targetOptsPerRequest,
       @NonNull List<BlobWriteOption> writeOptsPerRequest) {
     this.skipIfExists = skipIfExists;
     this.prefix = prefix;
     this.bucketName = bucketName;
-    this.targetOptsPerRequest = targetOptsPerRequest;
     this.writeOptsPerRequest = applySkipIfExists(skipIfExists, writeOptsPerRequest);
   }
 
-  /** If a corresponding object already exists skip uploading the object */
+  /**
+   * If set Transfer Manager will skip uploading an object if it already exists, equivalent to
+   * setting the precondition doesNotExist {@link BlobWriteOption}
+   */
   @BetaApi
   public boolean isSkipIfExists() {
     return skipIfExists;
@@ -68,13 +72,10 @@ public final class ParallelUploadConfig {
     return bucketName;
   }
 
-  /** A list of common BlobTargetOptions that are used for each upload request */
-  @BetaApi
-  public @NonNull List<BlobTargetOption> getTargetOptsPerRequest() {
-    return targetOptsPerRequest;
-  }
-
-  /** A list of common BlobWriteOptions that are used for each upload request */
+  /**
+   * A list of common BlobWriteOptions, note these options will be applied to every single upload
+   * request.
+   */
   @BetaApi
   public @NonNull List<BlobWriteOption> getWriteOptsPerRequest() {
     return writeOptsPerRequest;
@@ -92,12 +93,12 @@ public final class ParallelUploadConfig {
     return skipIfExists == that.skipIfExists
         && prefix.equals(that.prefix)
         && bucketName.equals(that.bucketName)
-        && targetOptsPerRequest.equals(that.targetOptsPerRequest);
+        && writeOptsPerRequest.equals(that.writeOptsPerRequest);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(skipIfExists, prefix, bucketName, targetOptsPerRequest);
+    return Objects.hash(skipIfExists, prefix, bucketName, writeOptsPerRequest);
   }
 
   @Override
@@ -106,7 +107,7 @@ public final class ParallelUploadConfig {
         .add("skipIfExists", skipIfExists)
         .add("prefix", prefix)
         .add("bucketName", bucketName)
-        .add("optionsPerRequest", targetOptsPerRequest)
+        .add("writeOptsPerRequest", writeOptsPerRequest)
         .toString();
   }
 
@@ -124,61 +125,82 @@ public final class ParallelUploadConfig {
     return writeOptsPerRequest;
   }
 
+  /**
+   * Builds an instance of ParallelUploadConfig.
+   *
+   * @see ParallelUploadConfig
+   */
   @BetaApi
   public static final class Builder {
 
     private boolean skipIfExists;
     private @NonNull String prefix;
     private @NonNull String bucketName;
-    private @NonNull List<BlobTargetOption> optionsPerRequest;
-
     private @NonNull List<BlobWriteOption> writeOptsPerRequest;
 
     private Builder() {
       this.prefix = "";
       this.bucketName = "";
-      this.optionsPerRequest = ImmutableList.of();
       this.writeOptsPerRequest = ImmutableList.of();
     }
 
+    /**
+     * Sets the parameter for skipIfExists. When set to true Transfer Manager will skip uploading an
+     * object if it already exists.
+     *
+     * @return the builder instance with the value for skipIfExists modified.
+     */
     @BetaApi
     public Builder setSkipIfExists(boolean skipIfExists) {
       this.skipIfExists = skipIfExists;
       return this;
     }
 
+    /**
+     * Sets a common prefix that will be applied to all object paths in the destination bucket.
+     *
+     * @return the builder instance with the value for prefix modified.
+     */
     @BetaApi
     public Builder setPrefix(@NonNull String prefix) {
       this.prefix = prefix;
       return this;
     }
 
+    /**
+     * Sets the bucketName that Transfer Manager will upload to. This field is required.
+     *
+     * @return the builder instance with the value for bucketName modified.
+     */
     @BetaApi
     public Builder setBucketName(@NonNull String bucketName) {
       this.bucketName = bucketName;
       return this;
     }
 
-    @BetaApi
-    public Builder setOptionsPerRequest(@NonNull List<BlobTargetOption> optionsPerRequest) {
-      this.optionsPerRequest = ImmutableList.copyOf(optionsPerRequest);
-      return this;
-    }
-
+    /**
+     * Sets the BlobWriteOptions that will be applied to each upload request. Note these options
+     * will be applied to every single upload request.
+     *
+     * @return the builder instance with the value for WriteOptsPerRequest modified.
+     */
     @BetaApi
     public Builder setWriteOptsPerRequest(@NonNull List<BlobWriteOption> writeOptsPerRequest) {
       this.writeOptsPerRequest = writeOptsPerRequest;
       return this;
     }
 
+    /**
+     * Creates a ParallelUploadConfig object.
+     *
+     * @return
+     */
     @BetaApi
     public ParallelUploadConfig build() {
       checkNotNull(prefix);
       checkNotNull(bucketName);
-      checkNotNull(optionsPerRequest);
       checkNotNull(writeOptsPerRequest);
-      return new ParallelUploadConfig(
-          skipIfExists, prefix, bucketName, optionsPerRequest, writeOptsPerRequest);
+      return new ParallelUploadConfig(skipIfExists, prefix, bucketName, writeOptsPerRequest);
     }
   }
 }
