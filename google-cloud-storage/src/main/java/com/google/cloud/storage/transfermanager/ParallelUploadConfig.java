@@ -53,7 +53,7 @@ public final class ParallelUploadConfig {
 
   /**
    * If set Transfer Manager will skip uploading an object if it already exists, equivalent to
-   * setting the precondition doesNotExist {@link BlobWriteOption}
+   * providing {@link BlobWriteOption#doesNotExist()} in {@link #getWriteOptsPerRequest()}
    */
   @BetaApi
   public boolean isSkipIfExists() {
