@@ -62,6 +62,18 @@ public final class ITBlobWriteSessionTest {
   }
 
   @Test
+  public void bufferToTempDirThenUpload() throws Exception {
+    GrpcStorageOptions options =
+        ((GrpcStorageOptions) storage.getOptions())
+            .toBuilder()
+            .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
+            .build();
+    try (Storage s = options.getService()) {
+      doTest(s);
+    }
+  }
+
+  @Test
   public void overrideDefaultBufferSize() throws Exception {
     GrpcStorageOptions options =
         ((GrpcStorageOptions) storage.getOptions())

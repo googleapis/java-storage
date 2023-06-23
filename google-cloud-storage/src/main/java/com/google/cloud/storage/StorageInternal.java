@@ -21,9 +21,10 @@ import com.google.cloud.storage.UnifiedOpts.Opts;
 import java.io.IOException;
 import java.nio.file.Path;
 
-interface StorageInternal extends Storage {
+interface StorageInternal {
 
-  Blob internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts) throws IOException;
+  BlobInfo internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
+      throws IOException;
 
   StorageWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts);
 }

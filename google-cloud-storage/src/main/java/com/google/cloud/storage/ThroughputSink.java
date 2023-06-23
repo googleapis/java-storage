@@ -69,6 +69,10 @@ interface ThroughputSink {
     return new TeeThroughputSink(a, b);
   }
 
+  static ThroughputSink nullSink() {
+    return NullThroughputSink.INSTANCE;
+  }
+
   final class Record {
     private final long numBytes;
     private final Instant begin;
@@ -166,6 +170,11 @@ interface ThroughputSink {
     public WritableByteChannel decorate(WritableByteChannel wbc) {
       return new ThroughputRecordingWritableByteChannel(wbc, this, clock);
     }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("prefix", prefix).add("clock", clock).toString();
+    }
   }
 
   final class ThroughputRecordingWritableByteChannel implements WritableByteChannel {
@@ -206,6 +215,15 @@ interface ThroughputSink {
     public void close() throws IOException {
       delegate.close();
     }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("delegate", delegate)
+          .add("sink", sink)
+          .add("clock", clock)
+          .toString();
+    }
   }
 
   final class TeeThroughputSink implements ThroughputSink {
@@ -227,6 +245,11 @@ interface ThroughputSink {
     public WritableByteChannel decorate(WritableByteChannel wbc) {
       return b.decorate(a.decorate(wbc));
     }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("a", a).add("b", b).toString();
+    }
   }
 
   final class ThroughputMovingWindowThroughputSink implements ThroughputSink {
@@ -246,6 +269,25 @@ interface ThroughputSink {
     @Override
     public WritableByteChannel decorate(WritableByteChannel wbc) {
       return new ThroughputRecordingWritableByteChannel(wbc, this, clock);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this).add("w", w).add("clock", clock).toString();
+    }
+  }
+
+  final class NullThroughputSink implements ThroughputSink {
+    private static final NullThroughputSink INSTANCE = new NullThroughputSink();
+
+    private NullThroughputSink() {}
+
+    @Override
+    public void recordThroughput(Record r) {}
+
+    @Override
+    public WritableByteChannel decorate(WritableByteChannel wbc) {
+      return wbc;
     }
   }
 }
