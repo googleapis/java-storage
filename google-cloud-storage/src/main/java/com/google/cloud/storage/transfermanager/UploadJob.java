@@ -101,7 +101,11 @@ public final class UploadJob {
     return new Builder();
   }
 
-  /** Builds an instance of UploadJob */
+  /**
+   * Builds an instance of UploadJob
+   *
+   * @see UploadJob
+   */
   @BetaApi
   public static final class Builder {
 

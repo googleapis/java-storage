@@ -101,7 +101,11 @@ public final class DownloadJob {
     return new Builder();
   }
 
-  /** Builds an instance of DownloadJob */
+  /**
+   * Builds an instance of DownloadJob
+   *
+   * @see DownloadJob
+   */
   @BetaApi
   public static final class Builder {
 
