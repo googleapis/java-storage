@@ -28,6 +28,11 @@ import java.util.List;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Configuration for performing Parallel Downloads with {@link TransferManager}.
+ *
+ * @see Builder
+ */
 @BetaApi
 public final class ParallelDownloadConfig {
 
@@ -48,26 +53,41 @@ public final class ParallelDownloadConfig {
   }
 
   /**
-   * A common prefix that is removed from downloaded object's name before written to the filesystem
+   * A common prefix removed from an object's name before being written to the filesystem.
+   *
+   * @see Builder#setStripPrefix(String)
    */
   @BetaApi
   public @NonNull String getStripPrefix() {
     return stripPrefix;
   }
 
-  /** The base directory in which all objects will be placed when downloaded. */
+  /**
+   * The base directory in which all objects will be placed when downloaded.
+   *
+   * @see Builder#setDownloadDirectory(Path)
+   */
   @BetaApi
   public @NonNull Path getDownloadDirectory() {
     return downloadDirectory;
   }
 
-  /** The bucket objects are being downloaded from */
+  /**
+   * The bucket objects are being downloaded from.
+   *
+   * @see Builder#setBucketName(String)
+   */
   @BetaApi
   public @NonNull String getBucketName() {
     return bucketName;
   }
 
-  /** A list of common BlobSourceOptions that are used for each download request */
+  /**
+   * A list of common BlobSourceOptions that are used for each download request. Note this list of
+   * options will be applied to every single request.
+   *
+   * @see Builder#setOptionsPerRequest(List)
+   */
   @BetaApi
   public @NonNull List<BlobSourceOption> getOptionsPerRequest() {
     return optionsPerRequest;
@@ -103,6 +123,11 @@ public final class ParallelDownloadConfig {
         .toString();
   }
 
+  /**
+   * Builds an instance of ParallelDownloadConfig.
+   *
+   * @see ParallelDownloadConfig
+   */
   @BetaApi
   public static Builder newBuilder() {
     return new Builder();
@@ -123,30 +148,61 @@ public final class ParallelDownloadConfig {
       this.optionsPerRequest = ImmutableList.of();
     }
 
+    /**
+     * Sets the value for stripPrefix. This string will be removed from the beginning of all object
+     * names before they are written to the filesystem.
+     *
+     * @return the builder instance with the value for stripPrefix modified.
+     * @see ParallelDownloadConfig#getStripPrefix()
+     */
     @BetaApi
     public Builder setStripPrefix(String stripPrefix) {
       this.stripPrefix = stripPrefix;
       return this;
     }
 
+    /**
+     * Sets the base directory on the filesystem that all objects will be written to.
+     *
+     * @return the builder instance with the value for downloadDirectory modified.
+     * @see ParallelDownloadConfig#getDownloadDirectory()
+     */
     @BetaApi
     public Builder setDownloadDirectory(Path downloadDirectory) {
       this.downloadDirectory = downloadDirectory;
       return this;
     }
 
+    /**
+     * Sets the bucketName that Transfer Manager will download from. This field is required.
+     *
+     * @return the builder instance with the value for bucketName modified.
+     * @see ParallelDownloadConfig#getBucketName()
+     */
     @BetaApi
     public Builder setBucketName(String bucketName) {
       this.bucketName = bucketName;
       return this;
     }
 
+    /**
+     * Sets the BlobSourceOptions that will be applied to each download request. Note these options
+     * will be applied to every single download request.
+     *
+     * @return the builder instance with the value for OptionsPerRequest modified.
+     * @see ParallelDownloadConfig#getOptionsPerRequest()
+     */
     @BetaApi
     public Builder setOptionsPerRequest(List<BlobSourceOption> optionsPerRequest) {
       this.optionsPerRequest = ImmutableList.copyOf(optionsPerRequest);
       return this;
     }
 
+    /**
+     * Creates a ParallelDownloadConfig object.
+     *
+     * @return {@link ParallelDownloadConfig}
+     */
     @BetaApi
     public ParallelDownloadConfig build() {
       checkNotNull(bucketName);

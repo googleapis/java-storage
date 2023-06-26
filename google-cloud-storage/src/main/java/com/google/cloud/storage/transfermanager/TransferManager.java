@@ -18,19 +18,77 @@ package com.google.cloud.storage.transfermanager;
 
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.BlobInfo;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * An interface for a Transfer Manager.
+ *
+ * <p>Transfer Manager handles Parallel Uploads and Parallel Downloads.
+ */
 @BetaApi
 public interface TransferManager extends AutoCloseable {
 
+  /**
+   * Uploads a list of files in parallel. This operation will not block the invoking thread,
+   * awaiting results should be done on the returned UploadJob.
+   *
+   * <p>Accepts a {@link ParallelUploadConfig} which defines the constraints of parallel uploads or
+   * predefined defaults.
+   *
+   * <p>Example of creating a parallel upload with Transfer Manager.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * Path filePath = Paths.get("/path/to/my/file.txt");
+   * Path anotherFilePath = Paths.get("/path/to/another/file.txt");
+   * List<Path> files = List.of(filePath, anotherFilePath);
+   *
+   * ParallelUploadConfig parallelUploadConfig =
+   *           ParallelUploadConfig.newBuilder()
+   *               .setBucketName(bucketName)
+   *               .build();
+   *
+   * UploadJob uploadedFiles = transferManager.uploadFiles(files, config);
+   *
+   * }</pre>
+   *
+   * @return an {@link UploadJob}
+   */
   @BetaApi
   @NonNull
-  UploadJob uploadFiles(List<Path> files, ParallelUploadConfig opts) throws IOException;
+  UploadJob uploadFiles(List<Path> files, ParallelUploadConfig config);
 
+  /**
+   * Downloads a list of blobs in parallel. This operation will not block the invoking thread,
+   * awaiting results should be done on the returned DownloadJob.
+   *
+   * <p>Accepts a {@link ParallelDownloadConfig} which defines the constraints of parallel downloads
+   * or predefined defaults.
+   *
+   * <p>Example of creating a parallel download with Transfer Manager.
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+   * Path baseDir = Paths.get("/path/to/directory/");
+   *
+   * ParallelDownloadConfig parallelDownloadConfig =
+   *           ParallelDownloadConfig.newBuilder()
+   *               .setBucketName(bucketName)
+   *               .setDownloadDirectory(baseDir)
+   *               .build();
+   *
+   * DownloadJob downloadedBlobs = transferManager.downloadBlobs(files, config);
+   *
+   * }</pre>
+   *
+   * @return a {@link DownloadJob}
+   */
   @BetaApi
   @NonNull
-  DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig opts);
+  DownloadJob downloadBlobs(List<BlobInfo> blobs, ParallelDownloadConfig config);
 }
