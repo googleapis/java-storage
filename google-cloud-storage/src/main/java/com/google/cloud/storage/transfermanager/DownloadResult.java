@@ -83,7 +83,7 @@ public final class DownloadResult {
   /**
    * The status of the download operation. This field is required.
    *
-   * @see TransferStatus for acceptable values.
+   * @see TransferStatus
    * @see Builder#setStatus(TransferStatus)
    */
   @BetaApi
@@ -188,7 +188,7 @@ public final class DownloadResult {
     /**
      * Sets the status of the download.
      *
-     * @see TransferStatus for acceptable values
+     * @see TransferStatus
      * @return the instance of the Builder with the value for status modified.
      */
     @BetaApi

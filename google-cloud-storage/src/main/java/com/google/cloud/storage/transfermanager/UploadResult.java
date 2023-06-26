@@ -63,7 +63,7 @@ public final class UploadResult {
   /**
    * The status of the upload operation. This field is required.
    *
-   * @see TransferStatus for acceptable values.
+   * @see TransferStatus
    * @see Builder#setStatus(TransferStatus)
    */
   @BetaApi

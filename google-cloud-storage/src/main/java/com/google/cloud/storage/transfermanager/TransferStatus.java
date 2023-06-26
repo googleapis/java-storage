@@ -19,14 +19,23 @@ package com.google.cloud.storage.transfermanager;
 import com.google.api.core.BetaApi;
 import java.util.Comparator;
 
+/** The status of a Upload/Download operation performed by Transfer Manager. */
 @BetaApi
 public enum TransferStatus {
+  /** The transfer failed before bytes could be moved. */
   @BetaApi
   FAILED_TO_START,
+  /** The transfer failed after bytes could be moved. */
   @BetaApi
   FAILED_TO_FINISH,
+  /**
+   * The transfer failed because the object/file already exists and skipIfExists was set to true.
+   *
+   * @see ParallelUploadConfig
+   */
   @BetaApi
   SKIPPED,
+  /** The transfer was successful. */
   @BetaApi
   SUCCESS;
 
