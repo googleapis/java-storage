@@ -83,8 +83,7 @@ public final class ParallelUploadConfig {
   }
 
   /**
-   * A list of common BlobWriteOptions, note these options will be applied to each upload
-   * request.
+   * A list of common BlobWriteOptions, note these options will be applied to each upload request.
    *
    * @see Builder#setWriteOptsPerRequest(List)
    */
