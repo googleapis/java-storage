@@ -77,7 +77,7 @@ final class TransferManagerImpl implements TransferManager {
     }
     return UploadJob.newBuilder()
         .setParallelUploadConfig(config)
-        .setUploadResponses(ImmutableList.copyOf(uploadTasks))
+        .setUploadResults(ImmutableList.copyOf(uploadTasks))
         .build();
   }
 

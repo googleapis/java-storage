@@ -29,6 +29,11 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * A parallel upload job sent to Transfer Manager.
+ *
+ * @see Builder
+ */
 @BetaApi
 public final class UploadJob {
 
@@ -43,11 +48,23 @@ public final class UploadJob {
     this.parallelUploadConfig = parallelUploadConfig;
   }
 
+  /**
+   * The list of {@link UploadResult UploadResults} for each upload request Transfer Manager
+   * executed for this job. Note calling this method will block the invoking thread until the
+   * operation is complete.
+   *
+   * @see Builder#setUploadResults(List)
+   */
   @BetaApi
   public List<UploadResult> getUploadResults() {
     return ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(uploadResults));
   }
 
+  /**
+   * The {@link ParallelUploadConfig} used for this UploadJob.
+   *
+   * @see Builder#setParallelUploadConfig(ParallelUploadConfig)
+   */
   @BetaApi
   public ParallelUploadConfig getParallelUploadConfig() {
     return parallelUploadConfig;
@@ -84,6 +101,7 @@ public final class UploadJob {
     return new Builder();
   }
 
+  /** Builds an instance of UploadJob */
   @BetaApi
   public static final class Builder {
 
@@ -95,18 +113,35 @@ public final class UploadJob {
       this.uploadResults = ImmutableList.of();
     }
 
+    /**
+     * Sets the results for a UploadJob being performed by Transfer Manager.
+     *
+     * @return the instance of the Builder with UploadResults modified.
+     * @see UploadJob#getUploadResults()
+     */
     @BetaApi
-    public Builder setUploadResponses(@NonNull List<ApiFuture<UploadResult>> uploadResults) {
+    public Builder setUploadResults(@NonNull List<ApiFuture<UploadResult>> uploadResults) {
       this.uploadResults = ImmutableList.copyOf(uploadResults);
       return this;
     }
 
+    /**
+     * Sets the {@link ParallelUploadConfig} used for this UploadJob.
+     *
+     * @return the instance of the Builder with ParallelUploadConfig modified.
+     * @see UploadJob#getParallelUploadConfig()
+     */
     @BetaApi
     public Builder setParallelUploadConfig(@NonNull ParallelUploadConfig parallelUploadConfig) {
       this.parallelUploadConfig = parallelUploadConfig;
       return this;
     }
 
+    /**
+     * Creates a UploadJob object.
+     *
+     * @return {@link UploadJob}
+     */
     @BetaApi
     public UploadJob build() {
       checkNotNull(uploadResults);
