@@ -29,8 +29,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Result for a single download performed by Transfer Manager. This can be for a chunked download or
- * a direct download.
+ * Result for a single download performed by Transfer Manager.
  *
  * @see Builder
  */

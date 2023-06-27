@@ -50,8 +50,8 @@ public final class UploadJob {
 
   /**
    * The list of {@link UploadResult UploadResults} for each upload request Transfer Manager
-   * executed for this job. Note calling this method will block the invoking thread until the
-   * operation is complete.
+   * executed for this job. Note calling this method will block the invoking thread until all upload
+   * requests are complete.
    *
    * @see Builder#setUploadResults(List)
    */

@@ -50,8 +50,8 @@ public final class DownloadJob {
 
   /**
    * The list of {@link DownloadResult DownloadResults} for each download request Transfer Manager
-   * for this job. Note calling this method will block the invoking thread until the operation is
-   * complete.
+   * executed for this job. Note calling this method will block the invoking thread until all
+   * download requests are complete.
    *
    * @see Builder#setDownloadResults(List)
    */
