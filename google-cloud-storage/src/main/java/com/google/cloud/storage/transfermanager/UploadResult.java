@@ -51,7 +51,7 @@ public final class UploadResult {
   }
 
   /**
-   * The {@link BlobInfo} for the GCS Object requested for upload. This field is required.
+   * The {@link BlobInfo} for the object requested for upload.
    *
    * @see Builder#setInput(BlobInfo)
    */
@@ -61,7 +61,7 @@ public final class UploadResult {
   }
 
   /**
-   * The status of the upload operation. This field is required.
+   * The status of the upload operation.
    *
    * @see TransferStatus
    * @see Builder#setStatus(TransferStatus)
@@ -72,8 +72,8 @@ public final class UploadResult {
   }
 
   /**
-   * The {@link BlobInfo} for the Uploaded GCS Object. This field will only be populated if the
-   * Transfer was a {@link TransferStatus#SUCCESS SUCCESS}.
+   * The {@link BlobInfo} for the Uploaded object. This field will only be populated if the Transfer
+   * was {@link TransferStatus#SUCCESS success}ful.
    *
    * @see Builder#setUploadedBlob(BlobInfo)
    */
@@ -88,8 +88,8 @@ public final class UploadResult {
 
   /**
    * The exception produced by a failed upload operation. This field will only be populated if the
-   * Transfer was not a {@link TransferStatus#SUCCESS SUCCESS} or {@link TransferStatus#SKIPPED
-   * SKIPPED}
+   * Transfer was not {@link TransferStatus#SUCCESS success}ful or {@link TransferStatus#SKIPPED
+   * skipped}
    *
    * @see Builder#setException(Exception)
    */
@@ -156,7 +156,7 @@ public final class UploadResult {
     }
 
     /**
-     * Sets the {@link BlobInfo} for the GCS Object request for upload. This field is required.
+     * Sets the {@link BlobInfo} for the object request for upload. This field is required.
      *
      * @return the Builder instance with the value for BlobInfo modified.
      * @see UploadResult#getInput()
@@ -171,7 +171,7 @@ public final class UploadResult {
      * Sets the Status of the Upload request. This field is required.
      *
      * @return the Builder instance with the value for status modified.
-     * @see TransferStatus for acceptable values.
+     * @see TransferStatus
      * @see UploadResult#getStatus()
      */
     @BetaApi
@@ -181,11 +181,10 @@ public final class UploadResult {
     }
 
     /**
-     * Sets the {@link BlobInfo} for the uploaded GCS Object. This field will only be populated if
-     * the Transfer was a {@link TransferStatus#SUCCESS SUCCESS}.
+     * Sets the {@link BlobInfo} for the uploaded object. This field will only be populated if the
+     * Transfer was a {@link TransferStatus#SUCCESS SUCCESS}.
      *
-     * @param uploadedBlob
-     * @return
+     * @return the Builder instance with the value for uploadedBlob modified.
      */
     @BetaApi
     public Builder setUploadedBlob(@NonNull BlobInfo uploadedBlob) {
@@ -195,10 +194,11 @@ public final class UploadResult {
 
     /**
      * Sets the exception produced by a failed upload operation. This field will only be populated
-     * if the Transfer was not a {@link TransferStatus#SUCCESS SUCCESS} or {@link
-     * TransferStatus#SKIPPED SKIPPED}
+     * if the Transfer was not {@link TransferStatus#SUCCESS success}ful or {@link
+     * TransferStatus#SKIPPED skipped}
      *
      * @see UploadResult#getException()
+     * @return the Builder instance with the value for exception modified.
      */
     @BetaApi
     public Builder setException(@NonNull Exception exception) {

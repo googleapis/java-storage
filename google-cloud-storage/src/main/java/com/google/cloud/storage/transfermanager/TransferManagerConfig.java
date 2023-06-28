@@ -80,7 +80,7 @@ public final class TransferManagerConfig {
   }
 
   /**
-   * Storage options that Transfer Manager will use to interact with GCS
+   * Storage options that Transfer Manager will use to interact with Google Cloud Storage
    *
    * @see Builder#setStorageOptions(StorageOptions)
    */
