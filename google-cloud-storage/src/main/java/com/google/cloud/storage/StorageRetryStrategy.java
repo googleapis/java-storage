@@ -51,9 +51,8 @@ public interface StorageRetryStrategy extends Serializable {
    * <p>The set of retryable cases handled by this strategy is more comprehensive than that of the
    * legacy strategy and should always be preferred.
    *
-   * <p>The following HTTP Status Codes will be retried for all idempotent calls:
-   *
    * <table>
+   *   <caption>Retried HTTP status codes for idempotent calls</caption>
    *   <tr>
    *     <th>Code</th>
    *     <th>Name</th>

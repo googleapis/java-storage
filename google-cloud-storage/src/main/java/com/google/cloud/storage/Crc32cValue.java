@@ -25,7 +25,7 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
   /**
    * Concatenate {@code other} to {@code this} value.
    *
-   * <p>The concat operation satisfies the Left <a target="_blank" rel="noopener noreferrer"
+   * <p>The concat operation satisfies the Left <a target="_blank"
    * href="https://en.wikipedia.org/wiki/Distributive_property">Distributive property</a>.
    *
    * <p>This means, given the following instances:

@@ -3917,7 +3917,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * <h4>Behavioral Differences between HTTP and gRPC</h4>
    *
    * <ol>
-   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *   <li>Calling this method for a Bucket which has <a target="_blank"
    *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
    *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
    *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for
@@ -4060,7 +4060,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * <h4>Behavioral Differences between HTTP and gRPC</h4>
    *
    * <ol>
-   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *   <li>Calling this method for a Bucket which has <a target="_blank"
    *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
    *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
    *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for
@@ -4095,7 +4095,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * <h4>Behavioral Differences between HTTP and gRPC</h4>
    *
    * <ol>
-   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *   <li>Calling this method for a Bucket which has <a target="_blank"
    *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
    *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
    *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for
@@ -4188,7 +4188,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    * <h4>Behavioral Differences between HTTP and gRPC</h4>
    *
    * <ol>
-   *   <li>Calling this method for a Bucket which has <a target="_blank" rel="noopener noreferrer"
+   *   <li>Calling this method for a Bucket which has <a target="_blank"
    *       href="https://cloud.google.com/storage/docs/uniform-bucket-level-access">Uniform
    *       bucket-level access</a> enabled exhibits different behavior Depending on which {@link
    *       Transport} is used. For JSON, an HTTP 400 Bad Request error will be thrown. Whereas for

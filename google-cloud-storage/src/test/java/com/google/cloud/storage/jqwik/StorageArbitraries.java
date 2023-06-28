@@ -173,8 +173,7 @@ public final class StorageArbitraries {
     private Buckets() {}
 
     /**
-     * Generated bucket name based on the rules outlined in <a target="_blank" rel="noopener
-     * noreferrer"
+     * Generated bucket name based on the rules outlined in <a target="_blank"
      * href="https://cloud.google.com/storage/docs/naming-buckets#requirements">https://cloud.google.com/storage/docs/naming-buckets#requirements</a>
      */
     public Arbitrary<BucketName> name() {
@@ -454,8 +453,7 @@ public final class StorageArbitraries {
     private Objects() {}
 
     /**
-     * Generated object name based on the rules outlined in <a target="_blank" rel="noopener
-     * noreferrer"
+     * Generated object name based on the rules outlined in <a target="_blank"
      * href="https://cloud.google.com/storage/docs/naming-objects#objectnames">https://cloud.google.com/storage/docs/naming-objects#objectnames</a>
      */
     public Arbitrary<String> name() {
@@ -505,7 +503,7 @@ public final class StorageArbitraries {
     }
 
     /**
-     * Custom metadata from <a target="_blank" rel="noopener noreferrer"
+     * Custom metadata from <a target="_blank"
      * href="https://cloud.google.com/storage/docs/metadata">https://cloud.google.com/storage/docs/metadata</a>
      */
     public Arbitrary<Map<String, String>> customMetadata() {
@@ -529,7 +527,7 @@ public final class StorageArbitraries {
   }
 
   /**
-   * Fixed-key metadata from <a target="_blank" rel="noopener noreferrer"
+   * Fixed-key metadata from <a target="_blank"
    * href="https://cloud.google.com/storage/docs/metadata">https://cloud.google.com/storage/docs/metadata</a>
    */
   public static final class HttpHeaders {
@@ -597,7 +595,7 @@ public final class StorageArbitraries {
     }
 
     /**
-     * <a target="_blank" rel="noopener noreferrer"
+     * <a target="_blank"
      * href="https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource">https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource</a>
      */
     public Arbitrary<String> role() {
@@ -605,7 +603,7 @@ public final class StorageArbitraries {
     }
 
     /**
-     * <a target="_blank" rel="noopener noreferrer"
+     * <a target="_blank"
      * href="https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource">https://cloud.google.com/storage/docs/json_api/v1/objectAccessControls#resource</a>
      */
     public Arbitrary<String> team() {

@@ -44,8 +44,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  *
  * <p>In this class "fsync" is used to mean "complete the client stream to GCS and await its
  * response". We are loosely following the concept used in linux to flush data to disk <a
- * target="_blank" rel="noopener noreferrer"
- * href="https://man7.org/linux/man-pages/man2/fdatasync.2.html">fsync(2)</a>
+ * target="_blank" href="https://man7.org/linux/man-pages/man2/fdatasync.2.html">fsync(2)</a>
  */
 final class WriteFlushStrategy {
 

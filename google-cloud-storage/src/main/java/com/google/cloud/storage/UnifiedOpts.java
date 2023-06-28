@@ -79,10 +79,9 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * The set of all "Options" we currently support for per-call parameters.
  *
  * <p>Most often, each of the respective types correspond to one of the parameters from <a
- * target="_blank" rel="noopener noreferrer"
- * href="https://cloud.google.com/storage/docs/json_api/v1/parameters">HTTP headers and common query
- * string parameters for JSON</a>. In the case of gRPC, sometimes the parameters are in the specific
- * request message or in grpc metadata.
+ * target="_blank" href="https://cloud.google.com/storage/docs/json_api/v1/parameters">HTTP headers
+ * and common query string parameters for JSON</a>. In the case of gRPC, sometimes the parameters
+ * are in the specific request message or in grpc metadata.
  */
 @SuppressWarnings({"deprecation", "DeprecatedIsStillUsed"})
 final class UnifiedOpts {

@@ -62,7 +62,7 @@ import java.util.regex.Pattern;
 import org.threeten.bp.Duration;
 
 /**
- * A {@link ManagedLifecycle} which integrates with the <a target="_blank" rel="noopener noreferrer"
+ * A {@link ManagedLifecycle} which integrates with the <a target="_blank"
  * href="https://github.com/googleapis/storage-testbench">storage-testbench</a> by pulling the
  * docker image, starting the container, providing methods for interacting with the {@code
  * /retry_test} rest api, stopping the container.

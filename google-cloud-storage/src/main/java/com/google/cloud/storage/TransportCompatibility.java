@@ -43,7 +43,7 @@ public @interface TransportCompatibility {
    */
   enum Transport {
     /**
-     * Value indicating use of the <a target="_blank" rel="noopener noreferrer"
+     * Value indicating use of the <a target="_blank"
      * href="https://cloud.google.com/storage/docs/json_api">Cloud Storage JSON API</a>
      *
      * @see StorageOptions#http()
@@ -51,7 +51,7 @@ public @interface TransportCompatibility {
     HTTP,
 
     /**
-     * Value indicating usa of the <a target="_blank" rel="noopener noreferrer"
+     * Value indicating usa of the <a target="_blank"
      * href="https://github.com/googleapis/googleapis/blob/master/google/storage/v2/storage.proto">Cloud
      * Storage v2 gRPC API</a> TODO: link to public docs when published.
      *
