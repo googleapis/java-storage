@@ -80,7 +80,7 @@ public final class DownloadResult {
   }
 
   /**
-   * The status of the download operation. This field is required.
+   * The status of the download operation.
    *
    * @see TransferStatus
    * @see Builder#setStatus(TransferStatus)
@@ -92,7 +92,7 @@ public final class DownloadResult {
 
   /**
    * The exception produced by a failed download operation. This field will only be populated if the
-   * Transfer was not a {@link TransferStatus#SUCCESS SUCCESS} or {@link TransferStatus#SKIPPED
+   * Transfer was not {@link TransferStatus#SUCCESS SUCCESS} or {@link TransferStatus#SKIPPED
    * SKIPPED}
    *
    * @see Builder#setException(Exception)
@@ -173,7 +173,7 @@ public final class DownloadResult {
 
     /**
      * Sets the location on the Filesystem the object has been written to. This field will only be
-     * populated if the Transfer was a {@link TransferStatus#SUCCESS SUCCESS}.
+     * populated if the Transfer was {@link TransferStatus#SUCCESS SUCCESS}ful.
      *
      * @see DownloadResult#getOutputDestination()
      * @return the instance of the Builder with the value for outputDestination modified.
@@ -198,7 +198,7 @@ public final class DownloadResult {
 
     /**
      * Sets the Exception produced by a failed download operation. This field will only be populated
-     * if the Transfer was not a {@link TransferStatus#SUCCESS SUCCESS} or {@link
+     * if the Transfer was not {@link TransferStatus#SUCCESS SUCCESS}ful or {@link
      * TransferStatus#SKIPPED SKIPPED}
      *
      * @see DownloadResult#getException()

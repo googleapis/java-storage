@@ -169,6 +169,8 @@ public final class TransferManagerConfig {
 
     /**
      * Maximum amount of workers to be allocated to perform work in Transfer Manager
+     * <p><i>Default Value:</i> {@code 2 * }{@link Runtime#getRuntime()}{@code .}{@link
+     * Runtime#availableProcessors() availableProcessors()}
      *
      * @return the instance of Builder with the value for maxWorkers modified.
      * @see TransferManagerConfig#getMaxWorkers()

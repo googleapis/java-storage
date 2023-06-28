@@ -31,7 +31,7 @@ public enum TransferStatus {
   /**
    * The transfer failed because the object/file already exists and skipIfExists was set to true.
    *
-   * @see ParallelUploadConfig
+   * @see ParallelUploadConfig.Builder#setSkipIfExists(boolean)
    */
   @BetaApi
   SKIPPED,
