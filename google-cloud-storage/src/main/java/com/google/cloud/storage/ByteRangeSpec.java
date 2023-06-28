@@ -29,7 +29,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
- * Typeful sealed class hierarchy for representing an <a target="_blank" rel="noopener noreferrer"
+ * Typeful sealed class hierarchy for representing an <a target="_blank"
  * href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests#requesting_a_specific_range_from_a_server">HTTP
  * Range Header</a> There are certain subtleties when building these header values depending on
  * whether explicit boundaries or relative lengths are used. This class encapsulates the edge cases

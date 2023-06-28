@@ -1078,10 +1078,10 @@ public class BucketInfo implements Serializable {
       }
 
       /**
-       * Creates a new {@code LifecycleAction , with no specific supported action associated with it. This
-       * is only intended as a "backup" for when the library doesn't recognize the type, and should
-       * generally not be used, instead use the supported actions, and upgrade the library if necessary
-       * to get new supported actions.
+       * Creates a new {@code LifecycleAction}, with no specific supported action associated with
+       * it. This is only intended as a "backup" for when the library doesn't recognize the type,
+       * and should generally not be used, instead use the supported actions, and upgrade the
+       * library if necessary to get new supported actions.
        */
       public static LifecycleAction newLifecycleAction(@NonNull String actionType) {
         return new LifecycleAction(actionType);
@@ -2437,7 +2437,7 @@ public class BucketInfo implements Serializable {
    * Returns the bucket's recovery point objective (RPO). This defines how quickly data is
    * replicated between regions in a dual-region bucket. Not defined for single-region buckets.
    *
-   * @see <a href="https://cloud.google.com/storage/docs/turbo-replication"Turbo Replication"</a>
+   * @see <a href="https://cloud.google.com/storage/docs/turbo-replication">Turbo Replication"</a>
    */
   public Rpo getRpo() {
     return rpo;

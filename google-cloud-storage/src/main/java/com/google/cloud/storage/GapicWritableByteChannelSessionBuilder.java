@@ -156,7 +156,7 @@ final class GapicWritableByteChannelSessionBuilder {
      * Buffer using {@code byteBuffer} worth of space before attempting to flush.
      *
      * <p>The provided {@link ByteBuffer} <i>should</i> be aligned with GCSs block size of <a
-     * target="_blank" rel="noopener noreferrer"
+     * target="_blank"
      * href="https://cloud.google.com/storage/docs/performing-resumable-uploads#chunked-upload">256
      * KiB</a> if mu
      */
@@ -252,7 +252,7 @@ final class GapicWritableByteChannelSessionBuilder {
      * Buffer using {@code byteBuffer} worth of space before attempting to flush.
      *
      * <p>The provided {@link ByteBuffer} <i>should</i> be aligned with GCSs block size of <a
-     * target="_blank" rel="noopener noreferrer"
+     * target="_blank"
      * href="https://cloud.google.com/storage/docs/performing-resumable-uploads#chunked-upload">256
      * KiB</a>.
      */

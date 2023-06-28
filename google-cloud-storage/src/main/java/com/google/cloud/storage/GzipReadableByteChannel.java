@@ -130,7 +130,7 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
    * <p>This class decorates an InputStream to be optimistic about the number of available bytes
    * when reading data to encourage GzipInputStream to consume the entire stream.
    *
-   * <p>For a more in-depth write up see <a target="_blank" rel="noopener noreferrer"
+   * <p>For a more in-depth write up see <a target="_blank"
    * href="https://github.com/googleapis/google-http-java-client/pull/1608">google-http-java-client/pull/1608</a>
    *
    * <p><i>NOTE</i> This class is a copy of the private class from {@code
