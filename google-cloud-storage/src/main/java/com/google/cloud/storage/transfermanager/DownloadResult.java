@@ -55,7 +55,7 @@ public final class DownloadResult {
   }
 
   /**
-   * The {@link BlobInfo} for the GCS Object requested for download. This field is required.
+   * The {@link BlobInfo} for the object requested for download.
    *
    * @see Builder#setInput(BlobInfo)
    */
@@ -160,7 +160,7 @@ public final class DownloadResult {
     }
 
     /**
-     * Sets the {@link BlobInfo} for the GCS Object request for download. This field is required.
+     * Sets the {@link BlobInfo} for the object request for download. This field is required.
      *
      * @see DownloadResult#getInput()
      * @return the instance of the Builder with the value for input modified.

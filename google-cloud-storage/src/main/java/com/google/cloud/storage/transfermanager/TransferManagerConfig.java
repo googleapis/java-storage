@@ -169,6 +169,7 @@ public final class TransferManagerConfig {
 
     /**
      * Maximum amount of workers to be allocated to perform work in Transfer Manager
+     *
      * <p><i>Default Value:</i> {@code 2 * }{@link Runtime#getRuntime()}{@code .}{@link
      * Runtime#availableProcessors() availableProcessors()}
      *
@@ -207,7 +208,7 @@ public final class TransferManagerConfig {
     }
 
     /**
-     * Storage options that Transfer Manager will use to interact with GCS
+     * Storage options that Transfer Manager will use to interact with Google Cloud Storage
      *
      * @return the instance of Builder with the value for storageOptions modified.
      * @see TransferManagerConfig#getStorageOptions()
