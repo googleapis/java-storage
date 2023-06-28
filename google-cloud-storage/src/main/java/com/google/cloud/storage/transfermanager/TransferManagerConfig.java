@@ -185,6 +185,8 @@ public final class TransferManagerConfig {
     /**
      * Buffer size allowed to each worker
      *
+     * <p><i>Default Value:</i> 16MiB
+     *
      * @return the instance of Builder with the value for maxWorkers modified.
      * @see TransferManagerConfig#getPerWorkerBufferSize()
      */
@@ -198,6 +200,8 @@ public final class TransferManagerConfig {
      * Whether to allow Transfer Manager to perform chunked Uploads/Downloads if it determines
      * chunking will be beneficial
      *
+     * <p><i>Default Value:</i> false
+     *
      * @return the instance of Builder with the value for allowDivideAndConquer modified.
      * @see TransferManagerConfig#isAllowDivideAndConquer()
      */
@@ -209,6 +213,8 @@ public final class TransferManagerConfig {
 
     /**
      * Storage options that Transfer Manager will use to interact with Google Cloud Storage
+     *
+     * <p><i>Default Value:</i> {@link StorageOptions#getDefaultInstance()}
      *
      * @return the instance of Builder with the value for storageOptions modified.
      * @see TransferManagerConfig#getStorageOptions()
