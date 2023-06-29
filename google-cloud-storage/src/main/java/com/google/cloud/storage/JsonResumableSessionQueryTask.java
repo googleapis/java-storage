@@ -26,6 +26,7 @@ import com.google.api.client.http.HttpResponseException;
 import com.google.api.services.storage.model.StorageObject;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -101,6 +102,21 @@ final class JsonResumableSessionQueryTask
         }
       } else {
         HttpResponseException cause = new HttpResponseException(response);
+        String contentType = response.getHeaders().getContentType();
+        // If the content-range header value has run ahead of the backend, it will respond with
+        // a 503 with plain text content
+        // Attempt to detect this very loosely as to minimize impact of modified error message
+        // This is accurate circa 2023-06
+        if ((!JsonResumableSessionFailureScenario.isOk(code)
+                && !JsonResumableSessionFailureScenario.isContinue(code))
+            && contentType != null
+            && contentType.startsWith("text/plain")) {
+          String errorMessage = cause.getContent().toLowerCase(Locale.US);
+          if (errorMessage.contains("content-range")) {
+            throw JsonResumableSessionFailureScenario.SCENARIO_5.toStorageException(
+                uploadId, response, cause, cause::getContent);
+          }
+        }
         throw JsonResumableSessionFailureScenario.toStorageException(response, cause, uploadId);
       }
     } catch (StorageException se) {

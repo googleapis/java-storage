@@ -229,6 +229,7 @@ public final class ITJsonResumableSessionQueryTaskTest {
 
       StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
+      assertThat(se.getReason()).isEqualTo("dataLoss");
     }
   }
 }

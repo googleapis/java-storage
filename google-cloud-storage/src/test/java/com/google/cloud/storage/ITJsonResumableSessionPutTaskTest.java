@@ -195,7 +195,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
 
       StorageException se = assertThrows(StorageException.class, task::call);
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
     }
@@ -276,7 +276,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)));
 
       StorageException se = assertThrows(StorageException.class, () -> task.call());
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("invalid");
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
     }
@@ -345,7 +345,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               HttpContentRange.of(_256KiBL));
 
       StorageException se = assertThrows(StorageException.class, () -> task.call());
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("invalid");
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
     }
@@ -414,7 +414,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               HttpContentRange.of(_512KiBL));
 
       StorageException se = assertThrows(StorageException.class, () -> task.call());
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
     }
@@ -574,7 +574,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               HttpContentRange.of(_512KiBL));
 
       StorageException se = assertThrows(StorageException.class, () -> task.call());
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1);
     }
@@ -654,7 +654,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               HttpContentRange.of(_128KiBL));
 
       StorageException se = assertThrows(StorageException.class, () -> task.call());
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1);
     }
@@ -732,7 +732,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
 
       StorageException se = assertThrows(StorageException.class, () -> task.call());
-      assertThat(se.getCode()).isEqualTo(400);
+      assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1);
     }
