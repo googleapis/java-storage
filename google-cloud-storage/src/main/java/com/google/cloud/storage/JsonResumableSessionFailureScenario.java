@@ -36,25 +36,35 @@ enum JsonResumableSessionFailureScenario {
   // TODO: send more bytes than are in the Content-Range header
   SCENARIO_0(BaseServiceException.UNKNOWN_CODE, null, "Unknown Error"),
   SCENARIO_0_1(BaseServiceException.UNKNOWN_CODE, null, "Response not application/json."),
-  SCENARIO_1(400, "invalid", "Attempt to append to already finalized resumable session."),
+  SCENARIO_1(
+      BaseServiceException.UNKNOWN_CODE,
+      "invalid",
+      "Attempt to append to already finalized resumable session."),
   SCENARIO_2(
-      400,
+      BaseServiceException.UNKNOWN_CODE,
       "invalid",
       "Attempt to finalize resumable session with fewer bytes than the backend has received."),
   SCENARIO_3(
-      400,
+      BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
       "Attempt to finalize resumable session with more bytes than the backend has received."),
   SCENARIO_4(200, "ok", "Attempt to finalize an already finalized session with same object size"),
-  SCENARIO_4_1(400, "dataLoss", "Finalized resumable session, but object size less than expected."),
+  SCENARIO_4_1(
+      BaseServiceException.UNKNOWN_CODE,
+      "dataLoss",
+      "Finalized resumable session, but object size less than expected."),
   SCENARIO_4_2(
-      400, "dataLoss", "Finalized resumable session, but object size greater than expected."),
+      BaseServiceException.UNKNOWN_CODE,
+      "dataLoss",
+      "Finalized resumable session, but object size greater than expected."),
   SCENARIO_5(
-      400,
+      BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
       "Client side data loss detected. Attempt to append to a resumable session with an offset higher than the backend has"),
   SCENARIO_7(
-      400, "dataLoss", "Client side data loss detected. Bytes acked is more than client sent."),
+      BaseServiceException.UNKNOWN_CODE,
+      "dataLoss",
+      "Client side data loss detected. Bytes acked is more than client sent."),
   SCENARIO_9(503, "backendNotConnected", "Ack less than bytes sent"),
   QUERY_SCENARIO_1(503, "", "Missing Range header in response");
 

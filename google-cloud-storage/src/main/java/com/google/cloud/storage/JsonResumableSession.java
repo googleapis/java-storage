@@ -37,9 +37,6 @@ final class JsonResumableSession extends ResumableSession<StorageObject> {
   private final ResultRetryAlgorithm<?> alg;
   private final JsonResumableWrite resumableWrite;
 
-  // TODO: introduce the concept of being in a terminal state?
-  //   finalized, aborted, can any errors result in a terminal session?
-
   JsonResumableSession(
       HttpClientContext context,
       RetryingDependencies deps,
