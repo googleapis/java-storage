@@ -111,12 +111,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.9</h2>
+   * <h4>S.9</h4>
    *
    * Partial successful append to session
    *
    * <p>The client has sent N bytes, the server confirmed N bytes as committed. The client sends K
-   * bytes starting at offset N. The server responds with only N + L with 0 <= L < K bytes as
+   * bytes starting at offset N. The server responds with only N + L with 0 &lt;= L &lt; K bytes as
    * committed.
    */
   @Test
@@ -156,7 +156,7 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.7</h2>
+   * <h4>S.7</h4>
    *
    * GCS Acknowledges more bytes than were sent in the PUT
    *
@@ -204,11 +204,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.1</h2>
+   * <h4>S.1</h4>
    *
    * Attempting to append to a session which has already been finalized should raise an error
    *
    * <table>
+   *   <caption></caption>
    *   <tr>
    *     <td>server state</td>
    *     <td><pre>
@@ -284,11 +285,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.2</h2>
+   * <h4>S.2</h4>
    *
    * Attempting to finalize a session with fewer bytes than GCS acknowledges.
    *
    * <table>
+   *   <caption></caption>
    *   <tr>
    *     <td>server state</td>
    *     <td><pre>
@@ -352,11 +354,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.3</h2>
+   * <h4>S.3</h4>
    *
    * Attempting to finalize a session with more bytes than GCS acknowledges.
    *
    * <table>
+   *   <caption></caption>
    *   <tr>
    *     <td>server state</td>
    *     <td><pre>
@@ -420,11 +423,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.4</h2>
+   * <h4>S.4</h4>
    *
    * Attempting to finalize an already finalized session
    *
    * <table>
+   *   <caption></caption>
    *   <tr>
    *     <td>server state</td>
    *     <td><pre>
@@ -499,11 +503,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.4.1</h2>
+   * <h4>S.4.1</h4>
    *
-   * Attempting to finalize an already finalized session (ack < expected)
+   * Attempting to finalize an already finalized session (ack &lt; expected)
    *
    * <table>
+   *   <caption></caption>
    *   <tr>
    *     <td>server state</td>
    *     <td><pre>
@@ -578,11 +583,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.4.2</h2>
+   * <h4>S.4.2</h4>
    *
    * Attempting to finalize an already finalized session (ack > expected)
    *
    * <table>
+   *   <caption></caption>
    *   <tr>
    *     <td>server state</td>
    *     <td><pre>
@@ -657,11 +663,12 @@ public final class ITJsonResumableSessionPutTaskTest {
   /**
    *
    *
-   * <h2>S.5</h2>
+   * <h4>S.5</h4>
    *
    * Attempt to append to a resumable session with an offset higher than GCS has
    *
    * <table>
+   *   <caption></caption>
    *   <tr>
    *     <td>server state</td>
    *     <td><pre>
