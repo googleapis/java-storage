@@ -72,7 +72,6 @@ public final class JsonResumableSessionFailureScenarioTest {
               throw new Kaboom();
             });
 
-    storageException.printStackTrace();
     assertThat(storageException.getCode()).isEqualTo(400);
     assertThat(storageException).hasCauseThat().isInstanceOf(Cause.class);
     assertThat(storageException.getSuppressed()).isNotEmpty();
@@ -109,7 +108,6 @@ public final class JsonResumableSessionFailureScenarioTest {
         JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
             "uploadId", resp, null, () -> json);
 
-    storageException.printStackTrace();
     assertThat(storageException.getCode()).isEqualTo(0);
     assertThat(storageException).hasMessageThat().contains("\t|<   \"generation\": \"1\",\n");
   }
@@ -133,7 +131,6 @@ public final class JsonResumableSessionFailureScenarioTest {
         JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
             "uploadId", resp, null, () -> null);
 
-    storageException.printStackTrace();
     assertThat(storageException.getCode()).isEqualTo(0);
     assertThat(storageException).hasMessageThat().contains("|< x-goog-stored-content-length: 5");
     assertThat(storageException)

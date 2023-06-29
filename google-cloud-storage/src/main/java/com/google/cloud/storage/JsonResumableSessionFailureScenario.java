@@ -186,7 +186,6 @@ enum JsonResumableSessionFailureScenario {
     if (suppress != null) {
       storageException.addSuppressed(suppress);
     }
-    storageException.printStackTrace(); // todo: remove this
     return storageException;
   }
 
