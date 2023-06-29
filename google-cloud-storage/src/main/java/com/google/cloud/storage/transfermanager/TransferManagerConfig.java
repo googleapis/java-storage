@@ -21,6 +21,11 @@ import com.google.cloud.storage.StorageOptions;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
+/**
+ * Configuration for an instance of {@link TransferManager}
+ *
+ * @see Builder
+ */
 @BetaApi
 public final class TransferManagerConfig {
   private final int maxWorkers;
@@ -43,13 +48,21 @@ public final class TransferManagerConfig {
     this.qos = qos;
   }
 
-  /** Maximum amount of workers to be allocated to perform work in Transfer Manager */
+  /**
+   * Maximum amount of workers to be allocated to perform work in Transfer Manager
+   *
+   * @see Builder#setMaxWorkers(int)
+   */
   @BetaApi
   public int getMaxWorkers() {
     return maxWorkers;
   }
 
-  /** Buffer size allowed to each worker */
+  /**
+   * Buffer size allowed to each worker
+   *
+   * @see Builder#setPerWorkerBufferSize(int)
+   */
   @BetaApi
   public int getPerWorkerBufferSize() {
     return perWorkerBufferSize;
@@ -58,18 +71,25 @@ public final class TransferManagerConfig {
   /**
    * Whether to allow Transfer Manager to perform chunked Uploads/Downloads if it determines
    * chunking will be beneficial
+   *
+   * @see Builder#setAllowDivideAndConquer(boolean)
    */
   @BetaApi
   public boolean isAllowDivideAndConquer() {
     return allowDivideAndConquer;
   }
 
-  /** Storage options that Transfer Manager will use to interact with GCS */
+  /**
+   * Storage options that Transfer Manager will use to interact with Google Cloud Storage
+   *
+   * @see Builder#setStorageOptions(StorageOptions)
+   */
   @BetaApi
   public StorageOptions getStorageOptions() {
     return storageOptions;
   }
 
+  /** The service object for {@link TransferManager} */
   @BetaApi
   public TransferManager getService() {
     return new TransferManagerImpl(this);
@@ -124,6 +144,11 @@ public final class TransferManagerConfig {
     return new Builder();
   }
 
+  /**
+   * Builds an instance of TransferManagerConfig
+   *
+   * @see TransferManagerConfig
+   */
   @BetaApi
   public static class Builder {
 
@@ -142,24 +167,58 @@ public final class TransferManagerConfig {
       this.qos = DefaultQos.of();
     }
 
+    /**
+     * Maximum amount of workers to be allocated to perform work in Transfer Manager
+     *
+     * <p><i>Default Value:</i> {@code 2 * }{@link Runtime#getRuntime()}{@code .}{@link
+     * Runtime#availableProcessors() availableProcessors()}
+     *
+     * @return the instance of Builder with the value for maxWorkers modified.
+     * @see TransferManagerConfig#getMaxWorkers()
+     */
     @BetaApi
     public Builder setMaxWorkers(int maxWorkers) {
       this.maxWorkers = maxWorkers;
       return this;
     }
 
+    /**
+     * Buffer size allowed to each worker
+     *
+     * <p><i>Default Value:</i> 16MiB
+     *
+     * @return the instance of Builder with the value for maxWorkers modified.
+     * @see TransferManagerConfig#getPerWorkerBufferSize()
+     */
     @BetaApi
     public Builder setPerWorkerBufferSize(int perWorkerBufferSize) {
       this.perWorkerBufferSize = perWorkerBufferSize;
       return this;
     }
 
+    /**
+     * Whether to allow Transfer Manager to perform chunked Uploads/Downloads if it determines
+     * chunking will be beneficial
+     *
+     * <p><i>Default Value:</i> false
+     *
+     * @return the instance of Builder with the value for allowDivideAndConquer modified.
+     * @see TransferManagerConfig#isAllowDivideAndConquer()
+     */
     @BetaApi
     public Builder setAllowDivideAndConquer(boolean allowDivideAndConquer) {
       this.allowDivideAndConquer = allowDivideAndConquer;
       return this;
     }
 
+    /**
+     * Storage options that Transfer Manager will use to interact with Google Cloud Storage
+     *
+     * <p><i>Default Value:</i> {@link StorageOptions#getDefaultInstance()}
+     *
+     * @return the instance of Builder with the value for storageOptions modified.
+     * @see TransferManagerConfig#getStorageOptions()
+     */
     @BetaApi
     public Builder setStorageOptions(StorageOptions storageOptions) {
       this.storageOptions = storageOptions;
@@ -172,6 +231,11 @@ public final class TransferManagerConfig {
       return this;
     }
 
+    /**
+     * Creates a TransferManagerConfig object.
+     *
+     * @return {@link TransferManagerConfig}
+     */
     @BetaApi
     public TransferManagerConfig build() {
       return new TransferManagerConfig(

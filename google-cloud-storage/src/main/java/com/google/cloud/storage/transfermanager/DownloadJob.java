@@ -29,6 +29,11 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * A parallel download job sent to Transfer Manager.
+ *
+ * @see Builder
+ */
 @BetaApi
 public final class DownloadJob {
 
@@ -43,11 +48,23 @@ public final class DownloadJob {
     this.parallelDownloadConfig = parallelDownloadConfig;
   }
 
+  /**
+   * The list of {@link DownloadResult DownloadResults} for each download request Transfer Manager
+   * executed for this job. Note calling this method will block the invoking thread until all
+   * download requests are complete.
+   *
+   * @see Builder#setDownloadResults(List)
+   */
   @BetaApi
   public @NonNull List<DownloadResult> getDownloadResults() {
     return ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(downloadResults));
   }
 
+  /**
+   * The {@link ParallelDownloadConfig} used for this DownloadJob.
+   *
+   * @see Builder#setParallelDownloadConfig(ParallelDownloadConfig)
+   */
   @BetaApi
   public @NonNull ParallelDownloadConfig getParallelDownloadConfig() {
     return parallelDownloadConfig;
@@ -84,6 +101,11 @@ public final class DownloadJob {
     return new Builder();
   }
 
+  /**
+   * Builds an instance of DownloadJob
+   *
+   * @see DownloadJob
+   */
   @BetaApi
   public static final class Builder {
 
@@ -94,12 +116,24 @@ public final class DownloadJob {
       this.downloadResults = ImmutableList.of();
     }
 
+    /**
+     * Sets the results for a DownloadJob being performed by Transfer Manager.
+     *
+     * @return the instance of the Builder with DownloadResults modified.
+     * @see DownloadJob#getDownloadResults()
+     */
     @BetaApi
     public Builder setDownloadResults(@NonNull List<ApiFuture<DownloadResult>> downloadResults) {
       this.downloadResults = ImmutableList.copyOf(downloadResults);
       return this;
     }
 
+    /**
+     * Sets the {@link ParallelDownloadConfig} used for this DownloadJob.
+     *
+     * @return the instance of the Builder with ParallelDownloadConfig modified.
+     * @see DownloadJob#getParallelDownloadConfig()
+     */
     @BetaApi
     public Builder setParallelDownloadConfig(
         @NonNull ParallelDownloadConfig parallelDownloadConfig) {
@@ -107,6 +141,11 @@ public final class DownloadJob {
       return this;
     }
 
+    /**
+     * Creates a DownloadJob object.
+     *
+     * @return {@link DownloadJob}
+     */
     @BetaApi
     public DownloadJob build() {
       checkNotNull(downloadResults);

@@ -26,6 +26,11 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Result for a single upload performed by Transfer Manager.
+ *
+ * @see Builder
+ */
 @BetaApi
 public final class UploadResult {
 
@@ -45,16 +50,33 @@ public final class UploadResult {
     this.exception = exception;
   }
 
+  /**
+   * The {@link BlobInfo} for the object requested for upload.
+   *
+   * @see Builder#setInput(BlobInfo)
+   */
   @BetaApi
   public @NonNull BlobInfo getInput() {
     return input;
   }
 
+  /**
+   * The status of the upload operation.
+   *
+   * @see TransferStatus
+   * @see Builder#setStatus(TransferStatus)
+   */
   @BetaApi
   public @NonNull TransferStatus getStatus() {
     return status;
   }
 
+  /**
+   * The {@link BlobInfo} for the Uploaded object. This field will only be populated if the Transfer
+   * was {@link TransferStatus#SUCCESS success}ful.
+   *
+   * @see Builder#setUploadedBlob(BlobInfo)
+   */
   @BetaApi
   public @NonNull BlobInfo getUploadedBlob() {
     checkState(
@@ -64,6 +86,13 @@ public final class UploadResult {
     return uploadedBlob;
   }
 
+  /**
+   * The exception produced by a failed upload operation. This field will only be populated if the
+   * Transfer was not {@link TransferStatus#SUCCESS success}ful or {@link TransferStatus#SKIPPED
+   * skipped}
+   *
+   * @see Builder#setException(Exception)
+   */
   @BetaApi
   public @NonNull Exception getException() {
     checkState(
@@ -108,6 +137,11 @@ public final class UploadResult {
     return new Builder(input, status);
   }
 
+  /**
+   * Builds an instance of UploadResult
+   *
+   * @see UploadResult
+   */
   @BetaApi
   public static final class Builder {
 
@@ -121,30 +155,62 @@ public final class UploadResult {
       this.status = status;
     }
 
+    /**
+     * Sets the {@link BlobInfo} for the object request for upload. This field is required.
+     *
+     * @return the Builder instance with the value for BlobInfo modified.
+     * @see UploadResult#getInput()
+     */
     @BetaApi
     public Builder setInput(@NonNull BlobInfo input) {
       this.input = input;
       return this;
     }
 
+    /**
+     * Sets the Status of the Upload request. This field is required.
+     *
+     * @return the Builder instance with the value for status modified.
+     * @see TransferStatus
+     * @see UploadResult#getStatus()
+     */
     @BetaApi
     public Builder setStatus(@NonNull TransferStatus status) {
       this.status = status;
       return this;
     }
 
+    /**
+     * Sets the {@link BlobInfo} for the uploaded object. This field will only be populated if the
+     * Transfer was a {@link TransferStatus#SUCCESS SUCCESS}.
+     *
+     * @return the Builder instance with the value for uploadedBlob modified.
+     */
     @BetaApi
     public Builder setUploadedBlob(@NonNull BlobInfo uploadedBlob) {
       this.uploadedBlob = uploadedBlob;
       return this;
     }
 
+    /**
+     * Sets the exception produced by a failed upload operation. This field will only be populated
+     * if the Transfer was not {@link TransferStatus#SUCCESS success}ful or {@link
+     * TransferStatus#SKIPPED skipped}
+     *
+     * @see UploadResult#getException()
+     * @return the Builder instance with the value for exception modified.
+     */
     @BetaApi
     public Builder setException(@NonNull Exception exception) {
       this.exception = exception;
       return this;
     }
 
+    /**
+     * Creates an UploadResult object.
+     *
+     * @return {@link UploadResult}
+     */
     @BetaApi
     public UploadResult build() {
       checkNotNull(input);

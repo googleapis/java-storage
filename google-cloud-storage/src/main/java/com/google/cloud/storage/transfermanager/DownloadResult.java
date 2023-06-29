@@ -28,6 +28,11 @@ import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+/**
+ * Result for a single download performed by Transfer Manager.
+ *
+ * @see Builder
+ */
 @BetaApi
 public final class DownloadResult {
   static final Comparator<DownloadResult> COMPARATOR =
@@ -49,11 +54,22 @@ public final class DownloadResult {
     this.exception = exception;
   }
 
+  /**
+   * The {@link BlobInfo} for the object requested for download.
+   *
+   * @see Builder#setInput(BlobInfo)
+   */
   @BetaApi
   public @NonNull BlobInfo getInput() {
     return input;
   }
 
+  /**
+   * The destination on the Filesystem the object has been written to. This field will only be
+   * populated if the Transfer was a {@link TransferStatus#SUCCESS SUCCESS}.
+   *
+   * @see Builder#setOutputDestination(Path)
+   */
   @BetaApi
   public @NonNull Path getOutputDestination() {
     checkState(
@@ -63,11 +79,24 @@ public final class DownloadResult {
     return outputDestination;
   }
 
+  /**
+   * The status of the download operation.
+   *
+   * @see TransferStatus
+   * @see Builder#setStatus(TransferStatus)
+   */
   @BetaApi
   public @NonNull TransferStatus getStatus() {
     return status;
   }
 
+  /**
+   * The exception produced by a failed download operation. This field will only be populated if the
+   * Transfer was not {@link TransferStatus#SUCCESS success}ful or {@link TransferStatus#SKIPPED
+   * skipped}
+   *
+   * @see Builder#setException(Exception)
+   */
   @BetaApi
   public @NonNull Exception getException() {
     checkState(
@@ -112,6 +141,11 @@ public final class DownloadResult {
     return new Builder(blobInfo, status);
   }
 
+  /**
+   * Builds an instance of DownloadResult
+   *
+   * @see DownloadResult
+   */
   @BetaApi
   public static final class Builder {
 
@@ -125,30 +159,62 @@ public final class DownloadResult {
       this.status = status;
     }
 
+    /**
+     * Sets the {@link BlobInfo} for the object request for download. This field is required.
+     *
+     * @see DownloadResult#getInput()
+     * @return the instance of the Builder with the value for input modified.
+     */
     @BetaApi
     public Builder setInput(@NonNull BlobInfo input) {
       this.input = input;
       return this;
     }
 
+    /**
+     * Sets the location on the Filesystem the object has been written to. This field will only be
+     * populated if the Transfer was {@link TransferStatus#SUCCESS success}ful.
+     *
+     * @see DownloadResult#getOutputDestination()
+     * @return the instance of the Builder with the value for outputDestination modified.
+     */
     @BetaApi
     public Builder setOutputDestination(@NonNull Path outputDestination) {
       this.outputDestination = outputDestination;
       return this;
     }
 
+    /**
+     * Sets the status of the download.This field is required.
+     *
+     * @see TransferStatus
+     * @return the instance of the Builder with the value for status modified.
+     */
     @BetaApi
     public Builder setStatus(@NonNull TransferStatus status) {
       this.status = status;
       return this;
     }
 
+    /**
+     * Sets the Exception produced by a failed download operation. This field will only be populated
+     * if the Transfer was not {@link TransferStatus#SUCCESS success}ful or {@link
+     * TransferStatus#SKIPPED skipped}
+     *
+     * @see DownloadResult#getException()
+     * @return the instance of the Builder with the value for exception modified.
+     */
     @BetaApi
     public Builder setException(@NonNull Exception exception) {
       this.exception = exception;
       return this;
     }
 
+    /**
+     * Creates a DownloadResult object.
+     *
+     * @return {@link DownloadResult}
+     */
     @BetaApi
     public DownloadResult build() {
       checkNotNull(input);
