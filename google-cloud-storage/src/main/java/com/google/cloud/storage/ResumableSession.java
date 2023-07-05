@@ -29,8 +29,6 @@ abstract class ResumableSession<T> {
 
   abstract ResumableOperationResult<@Nullable T> query();
 
-  // TODO: abort()
-
   static JsonResumableSession json(
       HttpClientContext context,
       RetryingDependencies deps,

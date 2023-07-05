@@ -147,7 +147,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               RewindableHttpContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(503);
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
     }
@@ -275,7 +275,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               RewindableHttpContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("invalid");
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
@@ -344,7 +344,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               RewindableHttpContent.empty(),
               HttpContentRange.of(_256KiBL));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("invalid");
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
@@ -413,7 +413,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               RewindableHttpContent.empty(),
               HttpContentRange.of(_512KiBL));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1L);
@@ -573,7 +573,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               RewindableHttpContent.empty(),
               HttpContentRange.of(_512KiBL));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1);
@@ -653,7 +653,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               RewindableHttpContent.empty(),
               HttpContentRange.of(_128KiBL));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1);
@@ -665,7 +665,7 @@ public final class ITJsonResumableSessionPutTaskTest {
    *
    * <h4>S.5</h4>
    *
-   * Attempt to append to a resumable session with an offset higher than GCS has
+   * Attempt to append to a resumable session with an offset higher than GCS expects
    *
    * <table>
    *   <caption></caption>
@@ -731,7 +731,7 @@ public final class ITJsonResumableSessionPutTaskTest {
               RewindableHttpContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       assertThat(se.getCode()).isEqualTo(0);
       assertThat(se.getReason()).isEqualTo("dataLoss");
       assertThat(confirmedBytes.get()).isEqualTo(-1);
@@ -770,7 +770,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext, uploadUrl, RewindableHttpContent.empty(), HttpContentRange.of(0));
 
-      StorageException se = assertThrows(StorageException.class, () -> task.call());
+      StorageException se = assertThrows(StorageException.class, task::call);
       // the parse error happens while trying to read the success object, make sure we raise it as
       // a client side retryable exception
       assertThat(se.getCode()).isEqualTo(0);
