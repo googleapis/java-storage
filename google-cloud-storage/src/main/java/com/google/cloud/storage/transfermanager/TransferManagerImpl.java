@@ -20,11 +20,15 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.ListenableFutureToApiFuture;
+import com.google.api.gax.core.GaxProperties;
+import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.StorageOptions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -40,6 +44,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 @BetaApi
 final class TransferManagerImpl implements TransferManager {
 
+  private static final String USER_AGENT_ENTRY = "gcloud-tm/";
+  private static final String LIBRARY_VERSION =
+      GaxProperties.getLibraryVersion(TransferManagerConfig.class);
   private final TransferManagerConfig transferManagerConfig;
   private final ListeningExecutorService executor;
   private final Qos qos;
@@ -51,7 +58,18 @@ final class TransferManagerImpl implements TransferManager {
         MoreExecutors.listeningDecorator(
             Executors.newFixedThreadPool(transferManagerConfig.getMaxWorkers()));
     this.qos = transferManagerConfig.getQos();
-    this.storage = transferManagerConfig.getStorageOptions().getService();
+    StorageOptions storageOptions = transferManagerConfig.getStorageOptions();
+    String userAgent = storageOptions.getUserAgent();
+    if (userAgent == null || !userAgent.contains(USER_AGENT_ENTRY)) {
+      storageOptions =
+          storageOptions
+              .toBuilder()
+              .setHeaderProvider(
+                  FixedHeaderProvider.create(
+                      ImmutableMap.of("User-Agent", USER_AGENT_ENTRY + LIBRARY_VERSION)))
+              .build();
+    }
+    this.storage = storageOptions.getService();
   }
 
   @Override
