@@ -246,7 +246,6 @@ public final class ITGrpcStorageImplUploadRetryTest {
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setChecksummedData(checksummedData)
-            // .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(checksummedData.getCrc32C()))
             .setFinishWrite(true)
             .build();
     private static final WriteObjectResponse resp1 =
