@@ -241,12 +241,11 @@ public final class ITGrpcStorageImplUploadRetryTest {
         StartResumableWriteResponse.newBuilder().setUploadId(uploadId).build();
 
     private static final ChecksummedData checksummedData =
-        TestUtils.getChecksummedData(ByteString.copyFrom(bytes), Hasher.enabled());
+        TestUtils.getChecksummedData(ByteString.copyFrom(bytes), Hasher.noop());
     private static final WriteObjectRequest req1 =
         WriteObjectRequest.newBuilder()
             .setUploadId(uploadId)
             .setChecksummedData(checksummedData)
-            .setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(checksummedData.getCrc32C()))
             .setFinishWrite(true)
             .build();
     private static final WriteObjectResponse resp1 =

@@ -103,7 +103,6 @@ import com.google.storage.v2.NotificationConfig;
 import com.google.storage.v2.NotificationConfigName;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectAccessControl;
-import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
@@ -233,7 +232,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
-    Hasher hasher = getHasherForRequest(req, Hasher.enabled());
+    Hasher hasher = Hasher.enabled();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return Retrying.run(
         getOptions(),
@@ -286,8 +285,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
-    Hasher hasher = getHasherForRequest(req, Hasher.enabled());
-
     long size = Files.size(path);
     if (size < bufferSize) {
       // ignore the bufferSize argument if the file is smaller than it
@@ -300,7 +297,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
                 ResumableMedia.gapic()
                     .write()
                     .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
-                    .setHasher(hasher)
+                    .setHasher(Hasher.enabled())
                     .setByteStringStrategy(ByteStringStrategy.noCopy())
                     .direct()
                     .buffered(Buffers.allocate(size))
@@ -323,7 +320,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
               .write()
               .byteChannel(
                   storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-              .setHasher(hasher)
+              .setHasher(Hasher.noop())
               .setByteStringStrategy(ByteStringStrategy.noCopy())
               .resumable()
               .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
@@ -359,13 +356,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
 
     ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
 
-    Hasher hasher = getHasherForRequest(req, Hasher.enabled());
     BufferedWritableByteChannelSession<WriteObjectResponse> session =
         ResumableMedia.gapic()
             .write()
             .byteChannel(
                 storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-            .setHasher(hasher)
+            .setHasher(Hasher.noop())
             .setByteStringStrategy(ByteStringStrategy.noCopy())
             .resumable()
             .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
@@ -739,7 +735,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
-    Hasher hasher = getHasherForRequest(req, Hasher.enabled());
+    Hasher hasher = Hasher.noop();
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable(),
         getOptions(),
@@ -1965,19 +1961,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         retryAlgorithmManager.getFor(req),
         () -> storageClient.updateObjectCallable().call(req, merge),
         Decoder.identity());
-  }
-
-  private static Hasher getHasherForRequest(WriteObjectRequest req, Hasher defaultHasher) {
-    if (!req.hasObjectChecksums()) {
-      return defaultHasher;
-    } else {
-      ObjectChecksums checksums = req.getObjectChecksums();
-      if (!checksums.hasCrc32C() && checksums.getMd5Hash().isEmpty()) {
-        return defaultHasher;
-      } else {
-        return Hasher.noop();
-      }
-    }
   }
 
   @Nullable
