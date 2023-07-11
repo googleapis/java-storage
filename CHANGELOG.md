@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.24.0](https://github.com/googleapis/java-storage/compare/v2.23.0...v2.24.0) (2023-07-11)
+
+
+### Features
+
+* Add validation around bytes received vs bytes expected ([#2078](https://github.com/googleapis/java-storage/issues/2078)) ([45d142a](https://github.com/googleapis/java-storage/commit/45d142a7ba45a80fca05fc9d8c8d7ce376d3f39c))
+* Initial Preview of Transfer Manager [#2105](https://github.com/googleapis/java-storage/issues/2105) ([8b17574](https://github.com/googleapis/java-storage/commit/8b175745d306e3da58ec3c9307442f14a34fd4ef))
+
+
+### Bug Fixes
+
+* Update grpc upload logic to follow hashing behavior of json ([#2107](https://github.com/googleapis/java-storage/issues/2107)) ([ed05232](https://github.com/googleapis/java-storage/commit/ed05232889c0442f43eacde5dbc80f44f09ebe83))
+* Update UploadCallable to use createFrom to avoid NPE trying to resolve resulting object ([#2086](https://github.com/googleapis/java-storage/issues/2086)) ([6769a2b](https://github.com/googleapis/java-storage/commit/6769a2b3b06fb297ebce819fbdfba5ee377be147))
+
+
+### Documentation
+
+* Javadocs for remainder of Transfer Manager ([#2097](https://github.com/googleapis/java-storage/issues/2097)) ([0362e80](https://github.com/googleapis/java-storage/commit/0362e80386d8055811082204536f596ba948a963))
+* Javadocs for TransferManager interface and ParallelUploadConfig ([#2094](https://github.com/googleapis/java-storage/issues/2094)) ([63d8ed3](https://github.com/googleapis/java-storage/commit/63d8ed37a80304e57b3f48aae614af89a9543ffa))
+* **samples:** Add storage_grpc_quickstart samples ([#2041](https://github.com/googleapis/java-storage/issues/2041)) ([5f916fb](https://github.com/googleapis/java-storage/commit/5f916fbba789edd33c2b4195db885d2b0191f860))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.12.0 ([#2088](https://github.com/googleapis/java-storage/issues/2088)) ([18adb5a](https://github.com/googleapis/java-storage/commit/18adb5a18fc37eb3bb3553fe20648d68a53f987a))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.13.0 ([#2106](https://github.com/googleapis/java-storage/issues/2106)) ([734dee0](https://github.com/googleapis/java-storage/commit/734dee0402fc16a3cc8d842eb135cc5743586e35))
+* Update dependency io.grpc:grpc-bom to v1.56.1 ([#2101](https://github.com/googleapis/java-storage/issues/2101)) ([3102941](https://github.com/googleapis/java-storage/commit/31029414d8e758c01faaab398a701afebf5e934d))
+* Update dependency net.jqwik:jqwik to v1.7.4 ([#2103](https://github.com/googleapis/java-storage/issues/2103)) ([c681ccf](https://github.com/googleapis/java-storage/commit/c681ccfffe6b861c19b92e496363146adc7d862b))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.36.0 ([#2080](https://github.com/googleapis/java-storage/issues/2080)) ([ba5c11a](https://github.com/googleapis/java-storage/commit/ba5c11a1589d1c7ffefd15e921da914289bc219e))
+
 ## [2.23.0](https://github.com/googleapis/java-storage/compare/v2.22.4...v2.23.0) (2023-06-21)
 
 
