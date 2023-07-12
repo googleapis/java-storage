@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -132,8 +132,6 @@ final class HttpWritableByteChannelSessionBuilder {
       // To ensure we are using the specified values at the point in time they are bound to the
       // function read them into local variables which will be closed over rather than the class
       // fields.
-      // ByteStringStrategy boundStrategy = byteStringStrategy;
-      // Hasher boundHasher = hasher;
       RetryingDependencies boundDeps = deps;
       ResultRetryAlgorithm<?> boundAlg = alg;
       return (start, resultFuture) ->
