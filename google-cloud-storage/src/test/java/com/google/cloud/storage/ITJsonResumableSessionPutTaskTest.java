@@ -811,4 +811,28 @@ public final class ITJsonResumableSessionPutTaskTest {
       assertThat(operationResult.getPersistedSize()).isEqualTo(0L);
     }
   }
+
+  @Test
+  public void attemptToRewindOutOfBoundsThrows_lower() {
+    RewindableHttpContent content = RewindableHttpContent.of();
+    JsonResumableSessionPutTask task =
+        new JsonResumableSessionPutTask(
+            null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)));
+
+    IllegalArgumentException iae =
+        assertThrows(IllegalArgumentException.class, () -> task.rewindTo(9));
+    assertThat(iae).hasMessageThat().isEqualTo("Rewind offset is out of bounds. (10 <= 9 < 20)");
+  }
+
+  @Test
+  public void attemptToRewindOutOfBoundsThrows_upper() {
+    RewindableHttpContent content = RewindableHttpContent.of();
+    JsonResumableSessionPutTask task =
+        new JsonResumableSessionPutTask(
+            null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)));
+
+    IllegalArgumentException iae =
+        assertThrows(IllegalArgumentException.class, () -> task.rewindTo(20));
+    assertThat(iae).hasMessageThat().isEqualTo("Rewind offset is out of bounds. (10 <= 20 < 20)");
+  }
 }

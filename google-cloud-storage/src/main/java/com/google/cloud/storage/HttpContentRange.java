@@ -32,6 +32,8 @@ abstract class HttpContentRange {
 
   public abstract String getHeaderValue();
 
+  public abstract boolean endOffsetEquals(long e);
+
   public boolean isFinalizing() {
     return finalizing;
   }
@@ -93,6 +95,11 @@ abstract class HttpContentRange {
     }
 
     @Override
+    public boolean endOffsetEquals(long e) {
+      return e == spec.endOffset();
+    }
+
+    @Override
     public ByteRangeSpec range() {
       return spec;
     }
@@ -139,6 +146,11 @@ abstract class HttpContentRange {
     @Override
     public String getHeaderValue() {
       return String.format("bytes %d-%d/%d", spec.beginOffset(), spec.endOffsetInclusive(), size);
+    }
+
+    @Override
+    public boolean endOffsetEquals(long e) {
+      return e == spec.endOffset();
     }
 
     @Override
@@ -194,6 +206,11 @@ abstract class HttpContentRange {
     }
 
     @Override
+    public boolean endOffsetEquals(long e) {
+      return false;
+    }
+
+    @Override
     public long getSize() {
       return size;
     }
@@ -227,6 +244,11 @@ abstract class HttpContentRange {
 
     private Query() {
       super(false);
+    }
+
+    @Override
+    public boolean endOffsetEquals(long e) {
+      return false;
     }
 
     @Override

@@ -54,6 +54,10 @@ final class Buffers {
     b.position(position);
   }
 
+  static int position(Buffer b) {
+    return b.position();
+  }
+
   /**
    * attempt to drain all of {@code content} into {@code dsts} starting from {@code dsts[0]} through
    * {@code dsts[dsts.length - 1]}

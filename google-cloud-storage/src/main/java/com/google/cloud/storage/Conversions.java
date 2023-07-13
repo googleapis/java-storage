@@ -46,6 +46,10 @@ final class Conversions {
     static <X> Decoder<X, X> identity() {
       return (x) -> x;
     }
+
+    default <In> Decoder<In, To> compose(Decoder<In, From> before) {
+      return in -> this.decode(before.decode(in));
+    }
   }
 
   interface Codec<A, B> extends Encoder<A, B>, Decoder<B, A> {

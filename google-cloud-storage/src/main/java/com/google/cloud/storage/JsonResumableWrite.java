@@ -19,18 +19,30 @@ package com.google.cloud.storage;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.io.StringReader;
 import java.util.Map;
 import java.util.Objects;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class JsonResumableWrite {
-  @MonotonicNonNull private final StorageObject object;
+final class JsonResumableWrite implements Serializable {
+  private static final long serialVersionUID = 7934407897802252292L;
+  private static final Gson gson = new Gson();
+
+  @MonotonicNonNull private transient StorageObject object;
   @MonotonicNonNull private final Map<StorageRpc.Option, ?> options;
 
   @MonotonicNonNull private final String signedUrl;
 
   @NonNull private final String uploadId;
+
+  private volatile String objectJson;
 
   private JsonResumableWrite(
       StorageObject object,
@@ -75,6 +87,28 @@ final class JsonResumableWrite {
         .add("signedUrl", signedUrl)
         .add("uploadId", uploadId)
         .toString();
+  }
+
+  private String getObjectJson() {
+    if (objectJson == null) {
+      synchronized (this) {
+        if (objectJson == null) {
+          objectJson = gson.toJson(object);
+        }
+      }
+    }
+    return objectJson;
+  }
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    String ignore = getObjectJson();
+    out.defaultWriteObject();
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    JsonReader jsonReader = gson.newJsonReader(new StringReader(this.objectJson));
+    this.object = gson.fromJson(jsonReader, StorageObject.class);
   }
 
   static JsonResumableWrite of(

@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.Executors.callable;
 
+import com.google.api.core.ApiFuture;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.BucketAccessControl;
@@ -84,7 +85,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -274,14 +277,20 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       BlobInfo blobInfo, InputStream content, int bufferSize, BlobWriteOption... options)
       throws IOException {
 
-    BlobWriteChannel blobWriteChannel;
-    try (WriteChannel writer = writer(blobInfo, options)) {
-      blobWriteChannel = (BlobWriteChannel) writer;
+    ApiFuture<BlobInfo> objectFuture;
+    try (StorageWriteChannel writer = writer(blobInfo, options)) {
+      objectFuture = writer.getObject();
       uploadHelper(Channels.newChannel(content), writer, bufferSize);
     }
-    StorageObject objectProto = blobWriteChannel.getStorageObject();
-    BlobInfo info = Conversions.apiary().blobInfo().decode(objectProto);
-    return info.asBlob(this);
+    // keep these two try blocks separate for the time being
+    // leaving the above will cause the writer to close writing and finalizing the session and
+    // (hopefully, on successful finalization) resolve our future
+    try {
+      BlobInfo info = objectFuture.get(10, TimeUnit.SECONDS);
+      return info.asBlob(this);
+    } catch (ExecutionException | InterruptedException | TimeoutException e) {
+      throw StorageException.coalesce(e);
+    }
   }
 
   /*
@@ -646,38 +655,41 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   }
 
   @Override
-  public BlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
+  public StorageWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     BlobInfo.Builder builder = blobInfo.toBuilder().setMd5(null).setCrc32c(null);
     BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
-    return BlobWriteChannel.newBuilder()
-        .setStorageOptions(getOptions())
-        .setUploadIdSupplier(
-            ResumableMedia.startUploadForBlobInfo(
-                getOptions(),
-                updated,
-                optionsMap,
-                retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap)))
-        .setAlgorithmForWrite(retryAlgorithmManager.getForResumableUploadSessionWrite(optionsMap))
-        .build();
+
+    StorageObject encode = codecs.blobInfo().encode(updated);
+    // open the resumable session outside the write channel
+    // the exception behavior of open is different from #write(ByteBuffer)
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForBlobInfo(
+            getOptions(),
+            updated,
+            optionsMap,
+            retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
+    JsonResumableWrite jsonResumableWrite =
+        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get());
+    return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
   }
 
   @Override
-  public BlobWriteChannel writer(URL signedURL) {
+  public StorageWriteChannel writer(URL signedURL) {
+    // TODO: is it possible to know if a signed url is configured to have a constraint which makes
+    //   it idempotent?
     ResultRetryAlgorithm<?> forResumableUploadSessionCreate =
-        retryAlgorithmManager.getForResumableUploadSessionCreate(
-            Collections
-                .emptyMap()); // TODO: is it possible to know if a signed url is configured to have
-    // a constraint which makes it idempotent?
-    return BlobWriteChannel.newBuilder()
-        .setStorageOptions(getOptions())
-        .setUploadIdSupplier(
-            ResumableMedia.startUploadForSignedUrl(
-                getOptions(), signedURL, forResumableUploadSessionCreate))
-        .setAlgorithmForWrite(
-            retryAlgorithmManager.getForResumableUploadSessionWrite(Collections.emptyMap()))
-        .build();
+        retryAlgorithmManager.getForResumableUploadSessionCreate(Collections.emptyMap());
+    // open the resumable session outside the write channel
+    // the exception behavior of open is different from #write(ByteBuffer)
+    String signedUrlString = signedURL.toString();
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForSignedUrl(
+            getOptions(), signedURL, forResumableUploadSessionCreate);
+    JsonResumableWrite jsonResumableWrite =
+        JsonResumableWrite.of(signedUrlString, uploadIdSupplier.get());
+    return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
   }
 
   @Override

@@ -17,11 +17,23 @@
 package com.google.cloud.storage;
 
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.WritableByteChannel;
 
 interface UnbufferedWritableByteChannelSession<ResultT>
     extends WritableByteChannelSession<UnbufferedWritableByteChannel, ResultT> {
 
-  interface UnbufferedWritableByteChannel extends WritableByteChannel, GatheringByteChannel {}
+  interface UnbufferedWritableByteChannel extends WritableByteChannel, GatheringByteChannel {
+    @Override
+    default int write(ByteBuffer src) throws IOException {
+      return Math.toIntExact(write(new ByteBuffer[] {src}));
+    }
+
+    @Override
+    default long write(ByteBuffer[] srcs) throws IOException {
+      return write(srcs, 0, srcs.length);
+    }
+  }
 }

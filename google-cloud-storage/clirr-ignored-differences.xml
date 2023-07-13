@@ -4,8 +4,8 @@
   <!-- Not breaking, internal only interface and the new methods have default implementations -->
   <difference>
     <differenceType>7012</differenceType>
-    <className>com/google/cloud/storage/UnbufferedReadableByteChannelSession$UnbufferedReadableByteChannel</className>
-    <method>* read(*)</method>
+    <className>com/google/cloud/storage/UnbufferedWritableByteChannelSession$UnbufferedWritableByteChannel</className>
+    <method>* write(*)</method>
   </difference>
   <!-- Allow accessing the underlying Apiary instance -->
   <difference>

@@ -21,8 +21,10 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.services.storage.model.StorageObject;
+import com.google.cloud.storage.HttpContentRange.HasRange;
 import com.google.cloud.storage.StorageException.IOExceptionCallable;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import io.opencensus.common.Scope;
 import io.opencensus.trace.Span;
 import io.opencensus.trace.Status;
@@ -56,7 +58,22 @@ final class JsonResumableSessionPutTask
   }
 
   public void rewindTo(long offset) {
-    content.rewindTo(offset);
+    if (originalContentRange instanceof HasRange<?>) {
+      HasRange<?> hasRange = (HasRange<?>) originalContentRange;
+      ByteRangeSpec range = hasRange.range();
+      long originalBegin = range.beginOffset();
+      long contentOffset = offset - originalBegin;
+      Preconditions.checkArgument(
+          0 <= contentOffset && contentOffset < content.getLength(),
+          "Rewind offset is out of bounds. (%s <= %s < %s)",
+          range.beginOffset(),
+          offset,
+          range.endOffset());
+      content.rewindTo(contentOffset);
+    } else {
+      content.rewindTo(0);
+    }
+
     if (contentRange instanceof HttpContentRange.HasRange) {
       HttpContentRange.HasRange<?> range = (HttpContentRange.HasRange<?>) contentRange;
       contentRange = range.map(s -> s.withNewBeginOffset(offset));
@@ -195,7 +212,11 @@ final class JsonResumableSessionPutTask
         span.setStatus(Status.UNKNOWN.withDescription(se.getMessage()));
         throw se;
       }
-    } catch (StorageException e) {
+    } catch (StorageException | IllegalArgumentException e) {
+      // IllegalArgumentException can happen if there is no json in the body and we try to parse it
+      // Our retry algorithms have special case for this, so in an effort to keep compatibility
+      // with those existing behaviors, explicitly rethrow an IllegalArgumentException that may have
+      // happened
       span.setStatus(Status.UNKNOWN.withDescription(e.getMessage()));
       throw e;
     } catch (Exception e) {

@@ -16,38 +16,23 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.ByteSizeConstants._16MiB;
-import static com.google.cloud.storage.ByteSizeConstants._256KiB;
-
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
-import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Suppliers;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.function.Supplier;
 
-final class GrpcBlobWriteChannel implements WriteChannel {
+final class GrpcBlobWriteChannel extends BaseStorageWriteChannel<WriteObjectResponse> {
 
-  private final LazyWriteChannel lazyWriteChannel;
-
-  private int chunkSize = _16MiB;
-
-  /**
-   * This is tracked for compatibility with BlobWriteChannel, such that simply creating a writer
-   * will create an object.
-   *
-   * <p>In the future we should move away from this behavior, and only create an object if write is
-   * called.
-   */
-  private boolean writeCalledAtLeastOnce = false;
+  private final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write;
+  private final RetryingDependencies deps;
+  private final ResultRetryAlgorithm<?> alg;
+  private final Supplier<ApiFuture<ResumableWrite>> start;
+  private final Hasher hasher;
 
   GrpcBlobWriteChannel(
       ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write,
@@ -55,27 +40,12 @@ final class GrpcBlobWriteChannel implements WriteChannel {
       ResultRetryAlgorithm<?> alg,
       Supplier<ApiFuture<ResumableWrite>> start,
       Hasher hasher) {
-    lazyWriteChannel =
-        new LazyWriteChannel(
-            Suppliers.memoize(
-                () ->
-                    ResumableMedia.gapic()
-                        .write()
-                        .byteChannel(write)
-                        .setHasher(hasher)
-                        .setByteStringStrategy(ByteStringStrategy.copy())
-                        .resumable()
-                        .withRetryConfig(deps, alg)
-                        .buffered(BufferHandle.allocate(Buffers.alignSize(chunkSize, _256KiB)))
-                        .setStartAsync(start.get())
-                        .build()));
-  }
-
-  @Override
-  public void setChunkSize(int chunkSize) {
-    Preconditions.checkState(
-        !lazyWriteChannel.isOpened(), "Unable to change chunkSize after write");
-    this.chunkSize = chunkSize;
+    super(Conversions.grpc().blobInfo().compose(WriteObjectResponse::getResource));
+    this.write = write;
+    this.deps = deps;
+    this.alg = alg;
+    this.start = start;
+    this.hasher = hasher;
   }
 
   @Override
@@ -84,57 +54,18 @@ final class GrpcBlobWriteChannel implements WriteChannel {
   }
 
   @Override
-  public int write(ByteBuffer src) throws IOException {
-    writeCalledAtLeastOnce = true;
-    return lazyWriteChannel.getChannel().write(src);
-  }
-
-  @Override
-  public boolean isOpen() {
-    if (!writeCalledAtLeastOnce) {
-      return true;
-    } else {
-      return lazyWriteChannel.isOpened() && lazyWriteChannel.getChannel().isOpen();
-    }
-  }
-
-  @Override
-  public void close() throws IOException {
-    if (!writeCalledAtLeastOnce) {
-      lazyWriteChannel.getChannel().write(ByteBuffer.allocate(0));
-    }
-    if (isOpen()) {
-      lazyWriteChannel.getChannel().close();
-    }
-  }
-
-  ApiFuture<WriteObjectResponse> getResults() {
-    return lazyWriteChannel.session.get().getResult();
-  }
-
-  private static final class LazyWriteChannel {
-    private final Supplier<BufferedWritableByteChannelSession<WriteObjectResponse>> session;
-    private final Supplier<BufferedWritableByteChannel> channel;
-
-    private boolean opened = false;
-
-    public LazyWriteChannel(
-        Supplier<BufferedWritableByteChannelSession<WriteObjectResponse>> session) {
-      this.session = session;
-      this.channel =
-          Suppliers.memoize(
-              () -> {
-                opened = true;
-                return session.get().open();
-              });
-    }
-
-    public BufferedWritableByteChannel getChannel() {
-      return channel.get();
-    }
-
-    public boolean isOpened() {
-      return opened;
-    }
+  protected LazyWriteChannel<WriteObjectResponse> newLazyWriteChannel() {
+    return new LazyWriteChannel<>(
+        () ->
+            ResumableMedia.gapic()
+                .write()
+                .byteChannel(write)
+                .setHasher(hasher)
+                .setByteStringStrategy(ByteStringStrategy.copy())
+                .resumable()
+                .withRetryConfig(deps, alg)
+                .buffered(getBufferHandle())
+                .setStartAsync(start.get())
+                .build());
   }
 }

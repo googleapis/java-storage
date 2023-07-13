@@ -22,7 +22,6 @@ import com.google.cloud.ReadChannel;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.BucketInfo.BuilderImpl;
 import com.google.common.collect.ImmutableList;
-import com.google.storage.v2.WriteObjectResponse;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -62,14 +61,13 @@ public final class PackagePrivateMethodWorkarounds {
 
   public static Function<WriteChannel, Optional<BlobInfo>> maybeGetBlobInfoFunction() {
     return (w) -> {
-      BlobWriteChannel blobWriteChannel;
-      if (w instanceof BlobWriteChannel) {
-        blobWriteChannel = (BlobWriteChannel) w;
-        return Optional.of(blobWriteChannel.getStorageObject())
+      if (w instanceof BlobWriteChannelV2) {
+        BlobWriteChannelV2 blobWriteChannel = (BlobWriteChannelV2) w;
+        return Optional.ofNullable(blobWriteChannel.getResolvedObject())
             .map(Conversions.apiary().blobInfo()::decode);
       } else if (w instanceof GrpcBlobWriteChannel) {
         GrpcBlobWriteChannel grpcBlobWriteChannel = (GrpcBlobWriteChannel) w;
-        return Optional.of(grpcBlobWriteChannel.getResults())
+        return Optional.of(grpcBlobWriteChannel.getObject())
             .map(
                 f -> {
                   try {
@@ -77,9 +75,7 @@ public final class PackagePrivateMethodWorkarounds {
                   } catch (InterruptedException | ExecutionException e) {
                     throw new RuntimeException(e);
                   }
-                })
-            .map(WriteObjectResponse::getResource)
-            .map(Conversions.grpc().blobInfo()::decode);
+                });
       } else {
         return Optional.empty();
       }
