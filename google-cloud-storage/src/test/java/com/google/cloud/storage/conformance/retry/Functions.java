@@ -37,6 +37,10 @@ final class Functions {
       return (Ctx ctx, TestRetryConformance trc) -> f.apply(apply(ctx, trc), trc);
     }
 
+    default CtxFunction compose(CtxFunction f) {
+      return (Ctx ctx, TestRetryConformance trc) -> apply(f.apply(ctx, trc), trc);
+    }
+
     static CtxFunction identity() {
       return (ctx, c) -> ctx;
     }

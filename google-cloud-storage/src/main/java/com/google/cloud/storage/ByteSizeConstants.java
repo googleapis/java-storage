@@ -23,10 +23,16 @@ final class ByteSizeConstants {
   static final int _256KiB = 256 * _1KiB;
   static final int _384KiB = 384 * _1KiB;
   static final int _512KiB = 512 * _1KiB;
+  static final int _768KiB = 768 * _1KiB;
   static final int _1MiB = 1024 * _1KiB;
   static final int _2MiB = 2 * _1MiB;
   static final int _16MiB = 16 * _1MiB;
   static final int _32MiB = 32 * _1MiB;
+
+  static final long _128KiBL = 131072L;
+  static final long _256KiBL = 262144L;
+  static final long _512KiBL = 524288L;
+  static final long _768KiBL = 786432L;
 
   private ByteSizeConstants() {}
 }

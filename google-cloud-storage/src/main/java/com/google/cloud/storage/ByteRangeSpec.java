@@ -16,6 +16,9 @@
 
 package com.google.cloud.storage;
 
+import static com.google.api.client.util.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.api.core.InternalApi;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -122,6 +125,20 @@ abstract class ByteRangeSpec implements Serializable {
   static ByteRangeSpec explicitClosed(
       @Nullable Long beginOffset, @Nullable Long endOffsetInclusive) {
     return create(beginOffset, endOffsetInclusive, LeftClosedRightClosedByteRangeSpec::new);
+  }
+
+  static ByteRangeSpec parse(String string) {
+    checkNotNull(string, "Range header is null");
+    checkArgument(string.startsWith("bytes="), "malformed Range header value: %s", string);
+
+    int i = string.indexOf('-');
+    String minS = string.substring(6, i);
+    String maxS = string.substring(i + 1);
+
+    long min = Long.parseLong(minS);
+    long max = Long.parseLong(maxS);
+
+    return explicitClosed(min, max);
   }
 
   private static ByteRangeSpec create(

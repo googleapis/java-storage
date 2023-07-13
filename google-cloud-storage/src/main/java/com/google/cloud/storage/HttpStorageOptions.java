@@ -29,6 +29,7 @@ import com.google.cloud.ServiceRpc;
 import com.google.cloud.TransportOptions;
 import com.google.cloud.http.HttpTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.cloud.storage.spi.v1.HttpStorageRpc;
@@ -51,6 +52,7 @@ public class HttpStorageOptions extends StorageOptions {
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
   private final HttpRetryAlgorithmManager retryAlgorithmManager;
+  private final transient RetryDependenciesAdapter retryDepsAdapter;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -58,6 +60,7 @@ public class HttpStorageOptions extends StorageOptions {
         new HttpRetryAlgorithmManager(
             MoreObjects.firstNonNull(
                 builder.storageRetryStrategy, defaults().getStorageRetryStrategy()));
+    retryDepsAdapter = new RetryDependenciesAdapter();
   }
 
   @Override
@@ -100,6 +103,11 @@ public class HttpStorageOptions extends StorageOptions {
 
   public static HttpStorageDefaults defaults() {
     return HttpStorageDefaults.INSTANCE;
+  }
+
+  @InternalApi
+  RetryingDependencies asRetryDependencies() {
+    return retryDepsAdapter;
   }
 
   public static class Builder extends StorageOptions.Builder {
@@ -319,6 +327,25 @@ public class HttpStorageOptions extends StorageOptions {
       } else {
         throw new IllegalArgumentException("Only HttpStorageOptions supported");
       }
+    }
+  }
+
+  /**
+   * We don't yet want to make HttpStorageOptions itself implement {@link RetryingDependencies} but
+   * we do need use it in a couple places, for those we create this adapter.
+   */
+  private final class RetryDependenciesAdapter implements RetryingDependencies {
+
+    private RetryDependenciesAdapter() {}
+
+    @Override
+    public RetrySettings getRetrySettings() {
+      return HttpStorageOptions.this.getRetrySettings();
+    }
+
+    @Override
+    public ApiClock getClock() {
+      return HttpStorageOptions.this.getClock();
     }
   }
 }
