@@ -152,7 +152,7 @@ abstract class RewindableHttpContent extends AbstractHttpContent {
     void rewindTo(long offset) {
       Preconditions.checkArgument(
           offset < totalLength,
-          "provided offset must be less than totalLength (%d < %d",
+          "provided offset must be less than totalLength (%s < %s)",
           offset,
           totalLength);
       if (dirty || offset != this.offset) {

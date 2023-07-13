@@ -73,10 +73,11 @@ final class JsonResumableSession extends ResumableSession<StorageObject> {
         () -> {
           if (dirty.getAndSet(true)) {
             ResumableOperationResult<@Nullable StorageObject> query = query();
-            if (query.getObject() != null) {
+            long persistedSize = query.getPersistedSize();
+            if (contentRange.endOffsetEquals(persistedSize) || query.getObject() != null) {
               return query;
             } else {
-              task.rewindTo(query.getPersistedSize());
+              task.rewindTo(persistedSize);
             }
           }
           return task.call();
