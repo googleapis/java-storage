@@ -39,7 +39,7 @@ final class JsonResumableSessionPutTask
 
   private final HttpClientContext context;
   private final String uploadId;
-  private final RewindableHttpContent content;
+  private final RewindableContent content;
   private final HttpContentRange originalContentRange;
 
   private HttpContentRange contentRange;
@@ -48,7 +48,7 @@ final class JsonResumableSessionPutTask
   JsonResumableSessionPutTask(
       HttpClientContext httpClientContext,
       String uploadId,
-      RewindableHttpContent content,
+      RewindableContent content,
       HttpContentRange originalContentRange) {
     this.context = httpClientContext;
     this.uploadId = uploadId;
@@ -64,9 +64,9 @@ final class JsonResumableSessionPutTask
       long originalBegin = range.beginOffset();
       long contentOffset = offset - originalBegin;
       Preconditions.checkArgument(
-          0 <= contentOffset && contentOffset < content.getLength(),
+          0 <= contentOffset && contentOffset < range.length(),
           "Rewind offset is out of bounds. (%s <= %s < %s)",
-          range.beginOffset(),
+          originalBegin,
           offset,
           range.endOffset());
       content.rewindTo(contentOffset);

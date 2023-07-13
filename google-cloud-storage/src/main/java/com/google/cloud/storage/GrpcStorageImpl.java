@@ -28,6 +28,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.paging.AbstractPage;
@@ -35,6 +36,7 @@ import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ApiExceptions;
+import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.NotFoundException;
 import com.google.api.gax.rpc.StatusCode;
 import com.google.api.gax.rpc.UnaryCallable;
@@ -72,6 +74,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Streams;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.iam.v1.GetIamPolicyRequest;
 import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
@@ -123,7 +126,6 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
@@ -138,6 +140,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -285,55 +288,34 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
 
-    long size = Files.size(path);
-    if (size < bufferSize) {
-      // ignore the bufferSize argument if the file is smaller than it
-      GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-      return Retrying.run(
-          getOptions(),
-          retryAlgorithmManager.getFor(req),
-          () -> {
-            BufferedWritableByteChannelSession<WriteObjectResponse> session =
-                ResumableMedia.gapic()
-                    .write()
-                    .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
-                    .setHasher(Hasher.enabled())
-                    .setByteStringStrategy(ByteStringStrategy.noCopy())
-                    .direct()
-                    .buffered(Buffers.allocate(size))
-                    .setRequest(req)
-                    .build();
+    ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
+        storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
 
-            try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS);
-                BufferedWritableByteChannel dst = session.open()) {
-              ByteStreams.copy(src, dst);
-            } catch (Exception e) {
-              throw StorageException.coalesce(e);
-            }
-            return session.getResult();
-          },
-          this::getBlob);
-    } else {
-      ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
-      BufferedWritableByteChannelSession<WriteObjectResponse> session =
-          ResumableMedia.gapic()
-              .write()
-              .byteChannel(
-                  storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
-              .setHasher(Hasher.noop())
-              .setByteStringStrategy(ByteStringStrategy.noCopy())
-              .resumable()
-              .withRetryConfig(getOptions(), retryAlgorithmManager.idempotent())
-              .buffered(Buffers.allocateAligned(bufferSize, _256KiB))
-              .setStartAsync(start)
-              .build();
-      try (SeekableByteChannel src = Files.newByteChannel(path, READ_OPS);
-          BufferedWritableByteChannel dst = session.open()) {
-        ByteStreams.copy(src, dst);
-      } catch (Exception e) {
-        throw StorageException.coalesce(e);
+    ApiFuture<ResumableWrite> start = startResumableWrite(grpcCallContext, req);
+    ApiFuture<GrpcResumableSession> session2 =
+        ApiFutures.transform(
+            start,
+            rw ->
+                ResumableSession.grpc(
+                    getOptions(),
+                    retryAlgorithmManager.idempotent(),
+                    write,
+                    storageClient.queryWriteStatusCallable(),
+                    rw,
+                    Hasher.noop()),
+            MoreExecutors.directExecutor());
+    try {
+      GrpcResumableSession got = session2.get();
+      ResumableOperationResult<@Nullable Object> put = got.put(RewindableContent.of(path));
+      Object object = put.getObject();
+      if (object == null) {
+        // if by some odd chance the put didn't get the Object, query for it
+        ResumableOperationResult<@Nullable Object> query = got.query();
+        object = query.getObject();
       }
-      return getBlob(session.getResult());
+      return codecs.blobInfo().decode(object).asBlob(this);
+    } catch (InterruptedException | ExecutionException e) {
+      throw StorageException.coalesce(e);
     }
   }
 

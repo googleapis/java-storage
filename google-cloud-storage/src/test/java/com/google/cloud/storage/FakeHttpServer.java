@@ -36,6 +36,7 @@ import io.grpc.netty.shaded.io.netty.channel.socket.SocketChannel;
 import io.grpc.netty.shaded.io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.FullHttpResponse;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaders;
+import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpObjectAggregator;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpRequest;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpServerCodec;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpServerExpectContinueHandler;
@@ -84,6 +85,12 @@ final class FakeHttpServer implements AutoCloseable {
               protected void initChannel(SocketChannel ch) {
                 ChannelPipeline p = ch.pipeline();
                 p.addLast(new HttpServerCodec());
+                // Accept a request and content up to 100 MiB
+                // If we don't do this, sometimes the ordering on the wire will result in the server
+                // rejecting the request before the client has finished sending.
+                // While our client can handle this scenario and retry, it makes assertions more
+                // difficult due to the variability of request counts.
+                p.addLast(new HttpObjectAggregator(100 * 1024 * 1024));
                 p.addLast(new HttpServerExpectContinueHandler());
                 p.addLast(new Handler(server));
               }

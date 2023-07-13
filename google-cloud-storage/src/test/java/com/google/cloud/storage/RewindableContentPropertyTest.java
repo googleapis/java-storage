@@ -41,12 +41,12 @@ import net.jqwik.api.Provide;
 import net.jqwik.api.RandomDistribution;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-final class RewindableHttpContentPropertyTest {
+final class RewindableContentPropertyTest {
 
   @Property
   void path(@ForAll("PathScenario") PathScenario pathScenario) throws Exception {
     try (PathScenario s = pathScenario) {
-      RewindableHttpContent content = RewindableHttpContent.of(s.getPath());
+      RewindableContent content = RewindableContent.of(s.getPath());
       assertThrows(
           IOException.class,
           () -> {
@@ -68,7 +68,7 @@ final class RewindableHttpContentPropertyTest {
 
   @Property
   void byteBuffers(@ForAll("ByteBuffersScenario") ByteBuffersScenario s) throws IOException {
-    RewindableHttpContent content = RewindableHttpContent.of(s.getBuffers());
+    RewindableContent content = RewindableContent.of(s.getBuffers());
     assertThat(content.getLength()).isEqualTo(s.getFullLength());
     assertThrows(
         IOException.class,

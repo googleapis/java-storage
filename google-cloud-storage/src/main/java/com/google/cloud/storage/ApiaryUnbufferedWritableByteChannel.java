@@ -31,7 +31,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 @ParametersAreNonnullByDefault
 final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByteChannel {
 
-  private final ResumableSession<StorageObject> session;
+  private final JsonResumableSession session;
 
   private final SettableApiFuture<StorageObject> result;
   private final LongConsumer committedBytesCallback;
@@ -57,7 +57,7 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
     if (!open) {
       throw new ClosedChannelException();
     }
-    RewindableHttpContent content = RewindableHttpContent.of(Utils.subArray(srcs, offset, length));
+    RewindableContent content = RewindableContent.of(Utils.subArray(srcs, offset, length));
     long available = content.getLength();
     long newFinalByteOffset = cumulativeByteCount + available;
     final HttpContentRange header;
@@ -96,7 +96,7 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
     if (!finished) {
       try {
         ResumableOperationResult<@Nullable StorageObject> operationResult =
-            session.put(RewindableHttpContent.empty(), HttpContentRange.of(cumulativeByteCount));
+            session.put(RewindableContent.empty(), HttpContentRange.of(cumulativeByteCount));
         long persistedSize = operationResult.getPersistedSize();
         committedBytesCallback.accept(persistedSize);
         result.set(operationResult.getObject());
