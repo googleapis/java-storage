@@ -60,6 +60,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.junit.After;
@@ -209,7 +210,7 @@ public class ITRetryConformanceTest {
    * each defined scenario from google-cloud-conformance-tests and our defined {@link
    * RpcMethodMappings}.
    */
-  private static final class RetryTestCaseResolver {
+  static final class RetryTestCaseResolver {
     private static final String HEX_SHUFFLE_SEED_OVERRIDE =
         System.getProperty("HEX_SHUFFLE_SEED_OVERRIDE");
 
@@ -220,7 +221,7 @@ public class ITRetryConformanceTest {
     private final String host;
     private final String projectId;
 
-    RetryTestCaseResolver(
+    private RetryTestCaseResolver(
         String retryTestsJsonResourcePath,
         RpcMethodMappings mappings,
         BiPredicate<RpcMethod, TestRetryConformance> testAllowFilter,
@@ -383,8 +384,12 @@ public class ITRetryConformanceTest {
       return (m, c) -> set.contains(c.getMappingId());
     }
 
-    static BiPredicate<RpcMethod, TestRetryConformance> instructionsAre(String... instructions) {
-      return (m, trc) ->
+    static BiPredicate<RpcMethod, TestRetryConformance> lift(Predicate<TestRetryConformance> p) {
+      return (m, trc) -> p.test(trc);
+    }
+
+    static Predicate<TestRetryConformance> instructionsAre(String... instructions) {
+      return trc ->
           trc.getInstruction().getInstructionsList().equals(ImmutableList.copyOf(instructions));
     }
 
