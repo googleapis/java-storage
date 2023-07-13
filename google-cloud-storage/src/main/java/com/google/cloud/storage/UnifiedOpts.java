@@ -1083,7 +1083,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
-      return GrpcStorageImpl.throwHttpJsonOnly(
+      return CrossTransportUtils.throwHttpJsonOnly(
           com.google.cloud.storage.Storage.BlobListOption.class, "matchGlob(String)");
     }
   }

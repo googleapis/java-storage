@@ -18,6 +18,8 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._16MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
+import static com.google.cloud.storage.CrossTransportUtils.fmtMethodName;
+import static com.google.cloud.storage.CrossTransportUtils.throwHttpJsonOnly;
 import static com.google.cloud.storage.GrpcToHttpStatusCodeTranslation.resultRetryAlgorithmToCodes;
 import static com.google.cloud.storage.StorageV2ProtoUtils.bucketAclEntityOrAltEq;
 import static com.google.cloud.storage.StorageV2ProtoUtils.objectAclEntityOrAltEq;
@@ -51,6 +53,7 @@ import com.google.cloud.storage.HmacKey.HmacKeyState;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.Storage.ComposeRequest.SourceBlob;
+import com.google.cloud.storage.StorageWriterConfig.WriterFactory;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.UnifiedOpts.BucketListOpt;
@@ -131,7 +134,6 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -145,13 +147,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @BetaApi
-final class GrpcStorageImpl extends BaseService<StorageOptions> implements Storage {
+final class GrpcStorageImpl extends BaseService<StorageOptions> implements StorageInternal {
 
   private static final byte[] ZERO_BYTES = new byte[0];
   private static final Set<OpenOption> READ_OPS = ImmutableSet.of(StandardOpenOption.READ);
@@ -163,22 +164,30 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   private static final BucketSourceOption[] EMPTY_BUCKET_SOURCE_OPTIONS = new BucketSourceOption[0];
 
   final StorageClient storageClient;
+  final WriterFactory writerFactory;
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
+  private final Decoder<WriteObjectResponse, BlobInfo> writeObjectResponseBlobInfoDecoder;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
   @Deprecated private final ProjectId defaultProjectId;
 
   GrpcStorageImpl(
-      GrpcStorageOptions options, StorageClient storageClient, Opts<UserProject> defaultOpts) {
+      GrpcStorageOptions options,
+      StorageClient storageClient,
+      WriterFactory writerFactory,
+      Opts<UserProject> defaultOpts) {
     super(options);
     this.storageClient = storageClient;
+    this.writerFactory = writerFactory;
     this.defaultOpts = defaultOpts;
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
+    this.writeObjectResponseBlobInfoDecoder =
+        codecs.blobInfo().compose(WriteObjectResponse::getResource);
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
   }
 
@@ -278,15 +287,21 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public Blob createFrom(BlobInfo blobInfo, Path path, int bufferSize, BlobWriteOption... options)
       throws IOException {
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    return internalCreateFrom(path, blobInfo, opts);
+  }
+
+  @Override
+  public Blob internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
+      throws IOException {
     requireNonNull(path, "path must be non null");
     if (Files.isDirectory(path)) {
       throw new StorageException(0, path + " is a directory");
     }
 
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+    WriteObjectRequest req = getWriteObjectRequest(info, opts);
 
     ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> write =
         storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext);
@@ -1483,6 +1498,15 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
             Decoder.identity()));
   }
 
+  @BetaApi
+  @Override
+  public BlobWriteSession blobWriteSession(BlobInfo info, BlobWriteOption... options) {
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(info);
+    WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
+        writerFactory.writeSession(this, info, opts, writeObjectResponseBlobInfoDecoder);
+    return BlobWriteSessions.of(writableByteChannelSession);
+  }
+
   @Override
   public GrpcStorageOptions getOptions() {
     return (GrpcStorageOptions) super.getOptions();
@@ -1718,25 +1742,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
           }
         };
     return StreamSupport.stream(spliterator, false);
-  }
-
-  static <T> T throwHttpJsonOnly(String methodName) {
-    return throwHttpJsonOnly(Storage.class, methodName);
-  }
-
-  static <T> T throwHttpJsonOnly(Class<?> clazz, String methodName) {
-    String message =
-        String.format(
-            "%s#%s is only supported for HTTP_JSON transport. Please use StorageOptions.http() to construct a compatible instance.",
-            clazz.getName(), methodName);
-    throw new UnsupportedOperationException(message);
-  }
-
-  private static String fmtMethodName(String name, Class<?>... args) {
-    return name
-        + "("
-        + Arrays.stream(args).map(Class::getName).collect(Collectors.joining(", "))
-        + ")";
   }
 
   ReadObjectRequest getReadObjectRequest(BlobId blob, Opts<ObjectSourceOpt> opts) {

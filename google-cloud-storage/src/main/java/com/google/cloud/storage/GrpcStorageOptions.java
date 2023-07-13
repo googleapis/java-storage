@@ -58,6 +58,7 @@ import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.time.Clock;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -82,6 +83,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
+  private final StorageWriterConfig storageWriterConfig;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -94,6 +96,7 @@ public final class GrpcStorageOptions extends StorageOptions
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
+    this.storageWriterConfig = builder.storageWriterConfig;
   }
 
   @Override
@@ -346,6 +349,8 @@ public final class GrpcStorageOptions extends StorageOptions
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
     private GrpcInterceptorProvider grpcInterceptorProvider =
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
+    private StorageWriterConfig storageWriterConfig =
+        GrpcStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
 
     Builder() {}
 
@@ -506,6 +511,15 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
+    /** @since 2.24.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public GrpcStorageOptions.Builder setStorageWriterConfig(
+        @NonNull StorageWriterConfig storageWriterConfig) {
+      requireNonNull(storageWriterConfig, "storageWriterConfig must be non null");
+      this.storageWriterConfig = storageWriterConfig;
+      return this;
+    }
+
     /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
     @BetaApi
     @Override
@@ -569,6 +583,10 @@ public final class GrpcStorageOptions extends StorageOptions
     public GrpcInterceptorProvider grpcInterceptorProvider() {
       return INTERCEPTOR_PROVIDER;
     }
+
+    public StorageWriterConfig getDefaultStorageWriterConfig() {
+      return StorageWriterConfigs.getDefault();
+    }
   }
 
   /**
@@ -618,7 +636,10 @@ public final class GrpcStorageOptions extends StorageOptions
           StorageSettings storageSettings = t.x();
           Opts<UserProject> defaultOpts = t.y();
           return new GrpcStorageImpl(
-              grpcStorageOptions, StorageClient.create(storageSettings), defaultOpts);
+              grpcStorageOptions,
+              StorageClient.create(storageSettings),
+              grpcStorageOptions.storageWriterConfig.createFactory(Clock.systemUTC()),
+              defaultOpts);
         } catch (IOException e) {
           throw new IllegalStateException(
               "Unable to instantiate gRPC com.google.cloud.storage.Storage client.", e);

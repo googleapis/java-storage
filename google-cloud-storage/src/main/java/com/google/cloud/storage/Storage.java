@@ -4615,4 +4615,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    */
   @Override
   default void close() throws Exception {}
+
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  BlobWriteSession blobWriteSession(BlobInfo info, BlobWriteOption... options);
 }

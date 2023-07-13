@@ -87,6 +87,6 @@ final class GapicCopyWriter extends CopyWriter {
 
   @Override
   public RestorableState<CopyWriter> capture() {
-    return GrpcStorageImpl.throwHttpJsonOnly(CopyWriter.class, "capture");
+    return CrossTransportUtils.throwHttpJsonOnly(CopyWriter.class, "capture");
   }
 }
