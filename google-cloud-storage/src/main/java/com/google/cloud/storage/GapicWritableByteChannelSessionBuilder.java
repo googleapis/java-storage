@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
+import com.google.api.core.InternalApi;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
@@ -219,15 +220,23 @@ final class GapicWritableByteChannelSessionBuilder {
 
     private RetryingDependencies deps;
     private ResultRetryAlgorithm<?> alg;
+    private boolean fsyncEvery;
 
     ResumableUploadBuilder() {
       this.deps = RetryingDependencies.attemptOnce();
       this.alg = Retrying.neverRetry();
+      this.fsyncEvery = true;
     }
 
     ResumableUploadBuilder withRetryConfig(RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
       this.deps = requireNonNull(deps, "deps must be non null");
       this.alg = requireNonNull(alg, "alg must be non null");
+      return this;
+    }
+
+    @InternalApi
+    ResumableUploadBuilder setFsyncEvery(boolean fsyncEvery) {
+      this.fsyncEvery = fsyncEvery;
       return this;
     }
 
@@ -281,7 +290,10 @@ final class GapicWritableByteChannelSessionBuilder {
         return new UnbufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             bindFunction(
-                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg, Retrying::newCallContext),
+                    fsyncEvery
+                        ? WriteFlushStrategy.fsyncEveryFlush(
+                            write, deps, alg, Retrying::newCallContext)
+                        : WriteFlushStrategy.fsyncOnClose(write),
                     ResumableWrite::identity)
                 .andThen(StorageByteChannels.writable()::createSynchronized));
       }
@@ -310,7 +322,10 @@ final class GapicWritableByteChannelSessionBuilder {
         return new BufferedWriteSession<>(
             requireNonNull(start, "start must be non null"),
             bindFunction(
-                    WriteFlushStrategy.fsyncEveryFlush(write, deps, alg, Retrying::newCallContext),
+                    fsyncEvery
+                        ? WriteFlushStrategy.fsyncEveryFlush(
+                            write, deps, alg, Retrying::newCallContext)
+                        : WriteFlushStrategy.fsyncOnClose(write),
                     ResumableWrite::identity)
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));

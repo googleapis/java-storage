@@ -26,7 +26,7 @@ import io.opencensus.trace.EndSpanOptions;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-final class JsonResumableSession extends ResumableSession<StorageObject> {
+final class JsonResumableSession {
 
   static final String SPAN_NAME_WRITE =
       String.format("Sent.%s.write", HttpStorageRpc.class.getName());
@@ -53,14 +53,12 @@ final class JsonResumableSession extends ResumableSession<StorageObject> {
    * Not automatically retried. Usually called from within another retrying context. We don't yet
    * have the concept of nested retry handling.
    */
-  @Override
   ResumableOperationResult<@Nullable StorageObject> query() {
     return new JsonResumableSessionQueryTask(context, resumableWrite.getUploadId()).call();
   }
 
-  @Override
   ResumableOperationResult<@Nullable StorageObject> put(
-      RewindableHttpContent content, HttpContentRange contentRange) {
+      RewindableContent content, HttpContentRange contentRange) {
     JsonResumableSessionPutTask task =
         new JsonResumableSessionPutTask(
             context, resumableWrite.getUploadId(), content, contentRange);

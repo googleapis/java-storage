@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._128KiBL;
+import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiBL;
 import static com.google.cloud.storage.ByteSizeConstants._512KiBL;
 import static com.google.cloud.storage.ByteSizeConstants._768KiBL;
@@ -45,6 +46,7 @@ import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpHeaderNames;
 import io.grpc.netty.shaded.io.netty.handler.codec.http.HttpResponseStatus;
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -98,7 +100,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 0L), 0));
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
@@ -144,7 +146,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -191,7 +193,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(ByteRangeSpec.explicitClosed(0L, 10L)));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -272,7 +274,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.of(tmpFile.getPath()),
+              RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(0L, _256KiBL)));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -341,7 +343,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(_256KiBL));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -410,7 +412,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(_512KiBL));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -488,7 +490,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(_256KiBL));
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
@@ -570,7 +572,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(_512KiBL));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -650,7 +652,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.empty(),
+              RewindableContent.empty(),
               HttpContentRange.of(_128KiBL));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -728,7 +730,7 @@ public final class ITJsonResumableSessionPutTaskTest {
           new JsonResumableSessionPutTask(
               httpClientContext,
               uploadUrl,
-              RewindableHttpContent.of(tmpFile.getPath()),
+              RewindableContent.of(tmpFile.getPath()),
               HttpContentRange.of(ByteRangeSpec.explicit(_512KiBL, _768KiBL)));
 
       StorageException se = assertThrows(StorageException.class, task::call);
@@ -768,7 +770,7 @@ public final class ITJsonResumableSessionPutTaskTest {
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
-              httpClientContext, uploadUrl, RewindableHttpContent.empty(), HttpContentRange.of(0));
+              httpClientContext, uploadUrl, RewindableContent.empty(), HttpContentRange.of(0));
 
       StorageException se = assertThrows(StorageException.class, task::call);
       // the parse error happens while trying to read the success object, make sure we raise it as
@@ -803,7 +805,7 @@ public final class ITJsonResumableSessionPutTaskTest {
 
       JsonResumableSessionPutTask task =
           new JsonResumableSessionPutTask(
-              httpClientContext, uploadUrl, RewindableHttpContent.empty(), HttpContentRange.of(0));
+              httpClientContext, uploadUrl, RewindableContent.empty(), HttpContentRange.of(0));
 
       ResumableOperationResult<@Nullable StorageObject> operationResult = task.call();
       StorageObject call = operationResult.getObject();
@@ -814,7 +816,7 @@ public final class ITJsonResumableSessionPutTaskTest {
 
   @Test
   public void attemptToRewindOutOfBoundsThrows_lower() {
-    RewindableHttpContent content = RewindableHttpContent.of();
+    RewindableContent content = RewindableContent.of();
     JsonResumableSessionPutTask task =
         new JsonResumableSessionPutTask(
             null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)));
@@ -826,7 +828,7 @@ public final class ITJsonResumableSessionPutTaskTest {
 
   @Test
   public void attemptToRewindOutOfBoundsThrows_upper() {
-    RewindableHttpContent content = RewindableHttpContent.of();
+    RewindableContent content = RewindableContent.of();
     JsonResumableSessionPutTask task =
         new JsonResumableSessionPutTask(
             null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(10L, 10L)));
@@ -834,5 +836,39 @@ public final class ITJsonResumableSessionPutTaskTest {
     IllegalArgumentException iae =
         assertThrows(IllegalArgumentException.class, () -> task.rewindTo(20));
     assertThat(iae).hasMessageThat().isEqualTo("Rewind offset is out of bounds. (10 <= 20 < 20)");
+  }
+
+  @Test
+  public void repeatedRewindsToTheSameLocationWork() {
+    ByteBuffer buf1 = DataGenerator.base64Characters().genByteBuffer(_256KiB);
+    ByteBuffer buf2 = DataGenerator.base64Characters().genByteBuffer(_256KiB);
+    RewindableContent content = RewindableContent.of(buf1, buf2);
+    JsonResumableSessionPutTask task =
+        new JsonResumableSessionPutTask(
+            null, null, content, HttpContentRange.of(ByteRangeSpec.relativeLength(0L, _512KiBL)));
+
+    task.rewindTo(0);
+    assertThat(buf1.position()).isEqualTo(0);
+    assertThat(buf2.position()).isEqualTo(0);
+
+    int last = buf1.capacity();
+    buf1.position(last);
+    buf2.position(last);
+
+    task.rewindTo(_256KiBL);
+    assertThat(buf1.remaining()).isEqualTo(0);
+    assertThat(buf2.position()).isEqualTo(0);
+
+    task.rewindTo(_256KiBL);
+    assertThat(buf1.remaining()).isEqualTo(0);
+    assertThat(buf2.position()).isEqualTo(0);
+
+    task.rewindTo(_256KiBL + 13);
+    assertThat(buf1.remaining()).isEqualTo(0);
+    assertThat(buf2.position()).isEqualTo(13);
+
+    task.rewindTo(_256KiBL + 13);
+    assertThat(buf1.remaining()).isEqualTo(0);
+    assertThat(buf2.position()).isEqualTo(13);
   }
 }

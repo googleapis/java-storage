@@ -54,7 +54,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.HTTP /*, Transport.GRPC*/},
+    transports = {Transport.HTTP, Transport.GRPC},
     backends = Backend.PROD)
 @Parameterized(ChecksummedTestContentProvider.class)
 public final class ITObjectChecksumSupportTest {

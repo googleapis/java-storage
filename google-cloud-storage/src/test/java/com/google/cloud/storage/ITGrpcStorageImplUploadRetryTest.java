@@ -29,6 +29,8 @@ import com.google.protobuf.ByteString;
 import com.google.storage.v2.ChecksummedData;
 import com.google.storage.v2.Object;
 import com.google.storage.v2.ObjectChecksums;
+import com.google.storage.v2.QueryWriteStatusRequest;
+import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.StorageGrpc.StorageImplBase;
@@ -93,7 +95,7 @@ public final class ITGrpcStorageImplUploadRetryTest {
 
   @Test
   public void createFrom_path_smallerThanBufferSize() throws Exception {
-    Direct.FakeService service = Direct.FakeService.create();
+    Resumable.FakeService service = Resumable.FakeService.create();
 
     try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         FakeServer server = FakeServer.of(service);
@@ -287,8 +289,16 @@ public final class ITGrpcStorageImplUploadRetryTest {
         }
       }
 
+      @Override
+      public void queryWriteStatus(
+          QueryWriteStatusRequest request,
+          StreamObserver<QueryWriteStatusResponse> responseObserver) {
+        responseObserver.onNext(QueryWriteStatusResponse.newBuilder().setPersistedSize(0).build());
+        responseObserver.onCompleted();
+      }
+
       // a bit of constructor lifecycle hackery to appease the compiler
-      // Even though the thing past to super() is a lazy function, the closing over of the outer
+      // Even though the thing passed to super() is a lazy function, the closing over of the outer
       // fields happens earlier than they are available. To side step this fact, we provide the
       // AtomicBoolean as a constructor argument which can be closed over without issue, and then
       // bind it to the class field after super().

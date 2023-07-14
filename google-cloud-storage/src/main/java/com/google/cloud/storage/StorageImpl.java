@@ -255,7 +255,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     HttpContentRange contentRange =
         HttpContentRange.of(ByteRangeSpec.relativeLength(0L, size), size);
     ResumableOperationResult<StorageObject> put =
-        session.put(RewindableHttpContent.of(path), contentRange);
+        session.put(RewindableContent.of(path), contentRange);
     // all exception translation is taken care of down in the JsonResumableSession
     StorageObject object = put.getObject();
     if (object == null) {

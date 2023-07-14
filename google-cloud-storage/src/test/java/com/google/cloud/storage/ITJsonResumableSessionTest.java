@@ -119,7 +119,7 @@ public final class ITJsonResumableSessionTest {
               httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult =
-          session.put(RewindableHttpContent.of(tmpFile.getPath()), range1);
+          session.put(RewindableContent.of(tmpFile.getPath()), range1);
       StorageObject call = operationResult.getObject();
       assertThat(call).isNull();
       assertThat(operationResult.getPersistedSize()).isEqualTo(_512KiBL);
@@ -173,13 +173,13 @@ public final class ITJsonResumableSessionTest {
               httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult1 =
-          session.put(RewindableHttpContent.of(buf1), range1);
+          session.put(RewindableContent.of(buf1), range1);
       StorageObject call1 = operationResult1.getObject();
       assertThat(call1).isNull();
       assertThat(operationResult1.getPersistedSize()).isEqualTo(_512KiBL);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult2 =
-          session.put(RewindableHttpContent.of(buf2), range3);
+          session.put(RewindableContent.of(buf2), range3);
       StorageObject call2 = operationResult2.getObject();
       assertThat(call2).isNull();
       assertThat(operationResult2.getPersistedSize()).isEqualTo(_768KiBL);
@@ -240,13 +240,13 @@ public final class ITJsonResumableSessionTest {
               httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult1 =
-          session.put(RewindableHttpContent.of(buf1), range1);
+          session.put(RewindableContent.of(buf1), range1);
       StorageObject call1 = operationResult1.getObject();
       assertThat(call1).isNull();
       assertThat(operationResult1.getPersistedSize()).isEqualTo(_512KiBL);
 
       ResumableOperationResult<@Nullable StorageObject> operationResult2 =
-          session.put(RewindableHttpContent.of(buf2), range2);
+          session.put(RewindableContent.of(buf2), range2);
       StorageObject call2 = operationResult2.getObject();
       assertThat(call2).isNull();
       assertThat(operationResult2.getPersistedSize()).isEqualTo(_768KiBL);

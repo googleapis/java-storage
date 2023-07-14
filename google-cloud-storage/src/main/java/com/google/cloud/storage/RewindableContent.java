@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
@@ -32,9 +33,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
-abstract class RewindableHttpContent extends AbstractHttpContent {
+abstract class RewindableContent extends AbstractHttpContent {
 
-  private RewindableHttpContent() {
+  private RewindableContent() {
     super((HttpMediaType) null);
   }
 
@@ -43,24 +44,28 @@ abstract class RewindableHttpContent extends AbstractHttpContent {
 
   abstract void rewindTo(long offset);
 
+  abstract long writeTo(WritableByteChannel gbc) throws IOException;
+
+  abstract long writeTo(GatheringByteChannel gbc) throws IOException;
+
   @Override
   public final boolean retrySupported() {
     return false;
   }
 
-  static RewindableHttpContent empty() {
+  static RewindableContent empty() {
     return EmptyRewindableContent.INSTANCE;
   }
 
-  static RewindableHttpContent of(ByteBuffer... buffers) {
-    return new ByteBufferHttpContent(buffers);
+  static RewindableContent of(ByteBuffer... buffers) {
+    return new ByteBufferContent(buffers);
   }
 
-  static RewindableHttpContent of(Path path) throws IOException {
-    return new PathRewindableHttpContent(path);
+  static RewindableContent of(Path path) throws IOException {
+    return new PathRewindableContent(path);
   }
 
-  private static final class EmptyRewindableContent extends RewindableHttpContent {
+  private static final class EmptyRewindableContent extends RewindableContent {
     private static final EmptyRewindableContent INSTANCE = new EmptyRewindableContent();
 
     @Override
@@ -74,17 +79,27 @@ abstract class RewindableHttpContent extends AbstractHttpContent {
     }
 
     @Override
+    long writeTo(WritableByteChannel gbc) {
+      return 0;
+    }
+
+    @Override
+    long writeTo(GatheringByteChannel gbc) {
+      return 0;
+    }
+
+    @Override
     protected void rewindTo(long offset) {}
   }
 
-  private static final class PathRewindableHttpContent extends RewindableHttpContent {
+  private static final class PathRewindableContent extends RewindableContent {
 
     private final Path path;
     private final long size;
 
     private long readOffset;
 
-    private PathRewindableHttpContent(Path path) throws IOException {
+    private PathRewindableContent(Path path) throws IOException {
       this.path = path;
       this.size = Files.size(path);
       this.readOffset = 0;
@@ -110,9 +125,25 @@ abstract class RewindableHttpContent extends AbstractHttpContent {
         out.flush();
       }
     }
+
+    @Override
+    long writeTo(WritableByteChannel gbc) throws IOException {
+      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        in.position(readOffset);
+        return ByteStreams.copy(in, gbc);
+      }
+    }
+
+    @Override
+    long writeTo(GatheringByteChannel gbc) throws IOException {
+      try (SeekableByteChannel in = Files.newByteChannel(path, StandardOpenOption.READ)) {
+        in.position(readOffset);
+        return ByteStreams.copy(in, gbc);
+      }
+    }
   }
 
-  private static final class ByteBufferHttpContent extends RewindableHttpContent {
+  private static final class ByteBufferContent extends RewindableContent {
 
     private final ByteBuffer[] buffers;
     // keep an array of the positions in case we need to rewind them for retries
@@ -126,7 +157,7 @@ abstract class RewindableHttpContent extends AbstractHttpContent {
 
     private long offset;
 
-    private ByteBufferHttpContent(ByteBuffer[] buffers) {
+    private ByteBufferContent(ByteBuffer[] buffers) {
       this.buffers = buffers;
       this.positions = Arrays.stream(buffers).mapToInt(Buffers::position).toArray();
       this.totalLength = Arrays.stream(buffers).mapToLong(Buffer::remaining).sum();
@@ -146,6 +177,22 @@ abstract class RewindableHttpContent extends AbstractHttpContent {
         c.write(buffer);
       }
       out.flush();
+    }
+
+    @Override
+    long writeTo(WritableByteChannel gbc) throws IOException {
+      dirty = true;
+      int retVal = 0;
+      for (ByteBuffer buffer : buffers) {
+        retVal += gbc.write(buffer);
+      }
+      return retVal;
+    }
+
+    @Override
+    long writeTo(GatheringByteChannel gbc) throws IOException {
+      dirty = true;
+      return gbc.write(buffers);
     }
 
     @Override

@@ -21,7 +21,7 @@ import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import com.google.cloud.storage.RewindableHttpContentPropertyTest.ErroringOutputStream;
+import com.google.cloud.storage.RewindableContentPropertyTest.ErroringOutputStream;
 import com.google.protobuf.ByteString;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public final class RewindableByteBufferContentTest {
 
   @Test
   public void getLength() {
-    RewindableHttpContent content = RewindableHttpContent.of(buffers);
+    RewindableContent content = RewindableContent.of(buffers);
 
     assertThat(content.getLength()).isEqualTo(total);
   }
@@ -69,7 +69,7 @@ public final class RewindableByteBufferContentTest {
   @Test
   public void writeTo() throws IOException {
 
-    RewindableHttpContent content = RewindableHttpContent.of(buffers);
+    RewindableContent content = RewindableContent.of(buffers);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     content.writeTo(baos);
@@ -81,7 +81,7 @@ public final class RewindableByteBufferContentTest {
   @Test
   public void rewind() throws IOException {
 
-    RewindableHttpContent content = RewindableHttpContent.of(buffers);
+    RewindableContent content = RewindableContent.of(buffers);
 
     assertThrows(
         IOException.class,
@@ -100,7 +100,7 @@ public final class RewindableByteBufferContentTest {
 
   @Test
   public void rewindTo() throws Exception {
-    RewindableHttpContent content = RewindableHttpContent.of(buffers);
+    RewindableContent content = RewindableContent.of(buffers);
 
     ByteString reduce =
         Arrays.stream(buffers)
@@ -135,7 +135,7 @@ public final class RewindableByteBufferContentTest {
     int position = buf.position();
     int limit = buf.limit();
 
-    RewindableHttpContent content = RewindableHttpContent.of(buf);
+    RewindableContent content = RewindableContent.of(buf);
     int hackPosition = 2;
     // after content has initialized, mutate the position underneath it. We're doing this to detect
     // if rewind is actually modifying things. It shouldn't until the content is dirtied by calling
