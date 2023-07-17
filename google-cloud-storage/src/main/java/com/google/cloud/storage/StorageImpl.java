@@ -243,7 +243,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             optionsMap,
             retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
     JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get());
+        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
 
     JsonResumableSession session =
         ResumableSession.json(
@@ -671,7 +671,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             optionsMap,
             retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
     JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get());
+        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
     return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
   }
 
@@ -688,7 +688,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         ResumableMedia.startUploadForSignedUrl(
             getOptions(), signedURL, forResumableUploadSessionCreate);
     JsonResumableWrite jsonResumableWrite =
-        JsonResumableWrite.of(signedUrlString, uploadIdSupplier.get());
+        JsonResumableWrite.of(signedUrlString, uploadIdSupplier.get(), 0);
     return new BlobWriteChannelV2(BlobReadChannelContext.from(getOptions()), jsonResumableWrite);
   }
 

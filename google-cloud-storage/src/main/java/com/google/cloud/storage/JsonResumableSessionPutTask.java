@@ -153,7 +153,7 @@ final class JsonResumableSessionPutTask
           success = true;
           //noinspection DataFlowIssue  compareTo result will filter out actualSize == null
           return ResumableOperationResult.complete(storageObject, actualSize.longValue());
-        } else if (compare < 0) {
+        } else if (compare > 0) {
           StorageException se =
               JsonResumableSessionFailureScenario.SCENARIO_4_1.toStorageException(
                   uploadId, response, null, toString(storageObject));

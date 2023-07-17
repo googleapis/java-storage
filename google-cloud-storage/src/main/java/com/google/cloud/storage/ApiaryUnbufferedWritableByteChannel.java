@@ -36,9 +36,9 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
   private final SettableApiFuture<StorageObject> result;
   private final LongConsumer committedBytesCallback;
 
-  private boolean open = true;
+  private boolean open;
   private long cumulativeByteCount;
-  private boolean finished = false;
+  private boolean finished;
 
   ApiaryUnbufferedWritableByteChannel(
       HttpClientContext httpClientContext,
@@ -50,6 +50,9 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
     this.session = ResumableSession.json(httpClientContext, deps, alg, resumableWrite);
     this.result = result;
     this.committedBytesCallback = committedBytesCallback;
+    this.open = true;
+    this.cumulativeByteCount = resumableWrite.getBeginOffset();
+    this.finished = false;
   }
 
   @Override
