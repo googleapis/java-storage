@@ -216,7 +216,8 @@ public class SerializationTest extends BaseSerializationTest {
             JsonResumableWrite.of(
                 Conversions.apiary().blobInfo().encode(BlobInfo.newBuilder("b", "n").build()),
                 ImmutableMap.of(),
-                "upload-id"));
+                "upload-id",
+                0));
     return new Restorable<?>[] {readerV2, writer};
   }
 
