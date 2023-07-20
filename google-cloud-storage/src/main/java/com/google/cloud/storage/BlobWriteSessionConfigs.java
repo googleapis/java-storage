@@ -19,12 +19,12 @@ package com.google.cloud.storage;
 import com.google.api.core.BetaApi;
 
 @BetaApi
-public final class StorageWriterConfigs {
+public final class BlobWriteSessionConfigs {
 
-  private StorageWriterConfigs() {}
+  private BlobWriteSessionConfigs() {}
 
   @BetaApi
-  public static DefaultStorageWriterConfig getDefault() {
-    return new DefaultStorageWriterConfig(ByteSizeConstants._16MiB);
+  public static DefaultBlobWriteSessionConfig getDefault() {
+    return new DefaultBlobWriteSessionConfig(ByteSizeConstants._16MiB);
   }
 }

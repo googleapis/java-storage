@@ -20,11 +20,12 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BlobWriteSession;
+import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageWriterConfigs;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -60,7 +61,7 @@ public final class ITBlobWriteSessionTest {
     GrpcStorageOptions options =
         ((GrpcStorageOptions) storage.getOptions())
             .toBuilder()
-            .setStorageWriterConfig(StorageWriterConfigs.getDefault().withChunkSize(256 * 1024))
+            .setStorageWriterConfig(BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
             .build();
     try (Storage s = options.getService()) {
       doTest(s);
@@ -70,7 +71,8 @@ public final class ITBlobWriteSessionTest {
   private void doTest(Storage underTest) throws Exception {
     BlobWriteSession sess =
         underTest.blobWriteSession(
-            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build());
+            BlobInfo.newBuilder(bucket, generator.randomObjectName()).build(),
+            BlobWriteOption.doesNotExist());
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(512 * 1024);
     try (WritableByteChannel w = sess.open()) {

@@ -42,12 +42,12 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 @BetaApi
-public final class DefaultStorageWriterConfig extends StorageWriterConfig {
+public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig {
 
   private final int chunkSize;
 
   @InternalApi
-  DefaultStorageWriterConfig(int chunkSize) {
+  DefaultBlobWriteSessionConfig(int chunkSize) {
     this.chunkSize = chunkSize;
   }
 
@@ -56,12 +56,12 @@ public final class DefaultStorageWriterConfig extends StorageWriterConfig {
   }
 
   @BetaApi
-  public DefaultStorageWriterConfig withChunkSize(int chunkSize) {
+  public DefaultBlobWriteSessionConfig withChunkSize(int chunkSize) {
     Preconditions.checkArgument(
         chunkSize >= ByteSizeConstants._256KiB,
         "chunkSize must be >= %d",
         ByteSizeConstants._256KiB);
-    return new DefaultStorageWriterConfig(chunkSize);
+    return new DefaultBlobWriteSessionConfig(chunkSize);
   }
 
   @Override
@@ -96,7 +96,7 @@ public final class DefaultStorageWriterConfig extends StorageWriterConfig {
             writer.newLazyWriteChannel().getSession();
         return new DecoratedWritableByteChannelSession<>(session, d);
       }
-      return CrossTransportUtils.throwGrpcOnly(DefaultStorageWriterConfig.class, "");
+      return CrossTransportUtils.throwGrpcOnly(DefaultBlobWriteSessionConfig.class, "");
     }
   }
 

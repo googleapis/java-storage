@@ -24,10 +24,10 @@ import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.time.Clock;
 
-public abstract class StorageWriterConfig {
+public abstract class BlobWriteSessionConfig {
 
   @InternalApi
-  StorageWriterConfig() {}
+  BlobWriteSessionConfig() {}
 
   @InternalApi
   abstract WriterFactory createFactory(Clock clock) throws IOException;

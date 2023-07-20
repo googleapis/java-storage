@@ -83,7 +83,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
-  private final StorageWriterConfig storageWriterConfig;
+  private final BlobWriteSessionConfig blobWriteSessionConfig;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -96,7 +96,7 @@ public final class GrpcStorageOptions extends StorageOptions
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
-    this.storageWriterConfig = builder.storageWriterConfig;
+    this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
 
   @Override
@@ -349,7 +349,7 @@ public final class GrpcStorageOptions extends StorageOptions
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
     private GrpcInterceptorProvider grpcInterceptorProvider =
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
-    private StorageWriterConfig storageWriterConfig =
+    private BlobWriteSessionConfig blobWriteSessionConfig =
         GrpcStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
 
     Builder() {}
@@ -514,9 +514,9 @@ public final class GrpcStorageOptions extends StorageOptions
     /** @since 2.24.0 This new api is in preview and is subject to breaking changes. */
     @BetaApi
     public GrpcStorageOptions.Builder setStorageWriterConfig(
-        @NonNull StorageWriterConfig storageWriterConfig) {
-      requireNonNull(storageWriterConfig, "storageWriterConfig must be non null");
-      this.storageWriterConfig = storageWriterConfig;
+        @NonNull BlobWriteSessionConfig blobWriteSessionConfig) {
+      requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
+      this.blobWriteSessionConfig = blobWriteSessionConfig;
       return this;
     }
 
@@ -584,8 +584,8 @@ public final class GrpcStorageOptions extends StorageOptions
       return INTERCEPTOR_PROVIDER;
     }
 
-    public StorageWriterConfig getDefaultStorageWriterConfig() {
-      return StorageWriterConfigs.getDefault();
+    public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
+      return BlobWriteSessionConfigs.getDefault();
     }
   }
 
@@ -638,7 +638,7 @@ public final class GrpcStorageOptions extends StorageOptions
           return new GrpcStorageImpl(
               grpcStorageOptions,
               StorageClient.create(storageSettings),
-              grpcStorageOptions.storageWriterConfig.createFactory(Clock.systemUTC()),
+              grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
               defaultOpts);
         } catch (IOException e) {
           throw new IllegalStateException(
