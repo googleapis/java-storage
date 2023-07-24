@@ -1,5 +1,32 @@
 # Changelog
 
+## [2.25.0](https://github.com/googleapis/java-storage/compare/v2.24.0...v2.25.0) (2023-07-24)
+
+
+### Features
+
+* BlobWriteChannelV2 - same throughput less GC ([#2110](https://github.com/googleapis/java-storage/issues/2110)) ([1b52a10](https://github.com/googleapis/java-storage/commit/1b52a1053130620011515060787bada10c324c0b))
+* Update Storage.createFrom(BlobInfo, Path) to have 150% higher throughput ([#2059](https://github.com/googleapis/java-storage/issues/2059)) ([4c2f44e](https://github.com/googleapis/java-storage/commit/4c2f44e28a1ff19ffb2a02e3cefc062a1dd98fdc))
+
+
+### Bug Fixes
+
+* Update BlobWriteChannelV2 to properly carry forward offset after incremental flush ([#2125](https://github.com/googleapis/java-storage/issues/2125)) ([c099a2f](https://github.com/googleapis/java-storage/commit/c099a2f4f8ea9afa6953270876653916b021fd9f))
+* Update GrpcStorageImpl.createFrom(BlobInfo, Path) to use RewindableContent ([#2112](https://github.com/googleapis/java-storage/issues/2112)) ([c805051](https://github.com/googleapis/java-storage/commit/c80505129baa831e492a5514e937875407211595))
+
+
+### Documentation
+
+* Fix broken link for TESTING.md ([#2126](https://github.com/googleapis/java-storage/issues/2126)) ([fe9662d](https://github.com/googleapis/java-storage/commit/fe9662d7e552aabfc9012e582ae634f46af1f255))
+
+
+### Dependencies
+
+* **test:** Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.37.0 ([#2130](https://github.com/googleapis/java-storage/issues/2130)) ([9e8b6d3](https://github.com/googleapis/java-storage/commit/9e8b6d324bfef84e2c2ee93c424b2e7fcb601945))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.13.1 ([#2129](https://github.com/googleapis/java-storage/issues/2129)) ([a7e854e](https://github.com/googleapis/java-storage/commit/a7e854ecb4d7fa9508a8d0844fc08d9eeab6f653))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.10.0 ([#2132](https://github.com/googleapis/java-storage/issues/2132)) ([f5477e4](https://github.com/googleapis/java-storage/commit/f5477e4eb168dfd3151d0e2c0462e5b35eb3de37))
+* Update junit-platform.version to v5.10.0 ([#2133](https://github.com/googleapis/java-storage/issues/2133)) ([3d22686](https://github.com/googleapis/java-storage/commit/3d2268642dcecea8ca55e78479ad4e4390075814))
+
 ## [2.24.0](https://github.com/googleapis/java-storage/compare/v2.23.0...v2.24.0) (2023-07-11)
 
 
