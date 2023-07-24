@@ -25,7 +25,6 @@ import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.BlobWriteSession;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.CopyWriter;
@@ -477,11 +476,6 @@ abstract class AbstractStorageProxy implements Storage {
   @Override
   public boolean deleteNotification(String bucket, String notificationId) {
     return delegate.deleteNotification(bucket, notificationId);
-  }
-
-  @Override
-  public BlobWriteSession blobWriteSession(BlobInfo info, BlobWriteOption... options) {
-    return delegate.blobWriteSession(info, options);
   }
 
   @Override

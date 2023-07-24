@@ -42,6 +42,7 @@ import com.google.cloud.TransportOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
@@ -511,9 +512,15 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
-    /** @since 2.24.0 This new api is in preview and is subject to breaking changes. */
+    /**
+     * @see BlobWriteSessionConfig
+     * @see BlobWriteSessionConfigs
+     * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+     * @see GrpcStorageDefaults#getDefaultStorageWriterConfig()
+     * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+     */
     @BetaApi
-    public GrpcStorageOptions.Builder setStorageWriterConfig(
+    public GrpcStorageOptions.Builder setBlobWriteSessionConfig(
         @NonNull BlobWriteSessionConfig blobWriteSessionConfig) {
       requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
       this.blobWriteSessionConfig = blobWriteSessionConfig;
@@ -584,6 +591,8 @@ public final class GrpcStorageOptions extends StorageOptions
       return INTERCEPTOR_PROVIDER;
     }
 
+    /** @since 2.26.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
     public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
       return BlobWriteSessionConfigs.getDefault();
     }

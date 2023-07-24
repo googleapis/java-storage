@@ -17,12 +17,31 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.BetaApi;
+import com.google.cloud.storage.GrpcStorageOptions.GrpcStorageDefaults;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 
+/**
+ * Factory class to select and construct {@link BlobWriteSessionConfig}s.
+ *
+ * @see BlobWriteSessionConfig
+ * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
+ * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+ * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+ */
 @BetaApi
 public final class BlobWriteSessionConfigs {
 
   private BlobWriteSessionConfigs() {}
 
+  /**
+   * Factory to produce the default configuration for uploading an object to Cloud Storage.
+   *
+   * <p>Configuration of the chunk size can be performed via {@link
+   * DefaultBlobWriteSessionConfig#withChunkSize(int)}.
+   *
+   * @see GrpcStorageDefaults#getDefaultStorageWriterConfig()
+   * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public static DefaultBlobWriteSessionConfig getDefault() {
     return new DefaultBlobWriteSessionConfig(ByteSizeConstants._16MiB);

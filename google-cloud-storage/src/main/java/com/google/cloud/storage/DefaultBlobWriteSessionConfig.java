@@ -32,13 +32,23 @@ import java.time.Clock;
 import javax.annotation.concurrent.Immutable;
 
 /**
- * Configure a writer which is logically equivalent to the following:
+ * Default Configuration to represent uploading to Google Cloud Storage in a chunked manner.
+ *
+ * <p>Perform a resumable upload, uploading at most {@code chunkSize} bytes each PUT.
+ *
+ * <p>Configuration of chunk size can be performed via {@link
+ * DefaultBlobWriteSessionConfig#withChunkSize(int)}.
+ *
+ * <p>An instance of this class will provide a {@link BlobWriteSession} is logically equivalent to
+ * the following:
  *
  * <pre>{@code
  * Storage storage = ...;
  * WriteChannel writeChannel = storage.writer(BlobInfo, BlobWriteOption);
  * writeChannel.setChunkSize(chunkSize);
  * }</pre>
+ *
+ * @since 2.26.0 This new api is in preview and is subject to breaking changes.
  */
 @Immutable
 @BetaApi
@@ -51,10 +61,28 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
     this.chunkSize = chunkSize;
   }
 
+  /**
+   * The number of bytes each chunk can be.
+   *
+   * <p><i>Default:</i> {@code 16777216 (16 MiB)}
+   *
+   * @see #withChunkSize(int)
+   * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+   */
   public int getChunkSize() {
     return chunkSize;
   }
 
+  /**
+   * Create a new instance with the {@code chunkSize} set to the specified value.
+   *
+   * <p><i>Default:</i> {@code 16777216 (16 MiB)}
+   *
+   * @param chunkSize The number of bytes each chunk should be. Must be >= {@code 262144 (256 KiB)}
+   * @return The new instance
+   * @see #getChunkSize()
+   * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+   */
   @BetaApi
   public DefaultBlobWriteSessionConfig withChunkSize(int chunkSize) {
     Preconditions.checkArgument(

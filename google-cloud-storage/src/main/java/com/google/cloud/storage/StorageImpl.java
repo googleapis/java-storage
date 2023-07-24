@@ -16,8 +16,6 @@
 
 package com.google.cloud.storage;
 
-import static com.google.cloud.storage.CrossTransportUtils.fmtMethodName;
-import static com.google.cloud.storage.CrossTransportUtils.throwGrpcOnly;
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -26,7 +24,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.concurrent.Executors.callable;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.core.BetaApi;
 import com.google.api.gax.paging.Page;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.services.storage.model.BucketAccessControl;
@@ -1563,12 +1560,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         algorithm,
         () -> storageRpc.deleteNotification(bucket, notificationId),
         Function.identity());
-  }
-
-  @BetaApi
-  @Override
-  public BlobWriteSession blobWriteSession(BlobInfo info, BlobWriteOption... options) {
-    return throwGrpcOnly(fmtMethodName("blobWriteSession", BlobInfo.class, BlobWriteOption.class));
   }
 
   @Override

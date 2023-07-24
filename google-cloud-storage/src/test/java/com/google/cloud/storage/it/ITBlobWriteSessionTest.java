@@ -61,7 +61,8 @@ public final class ITBlobWriteSessionTest {
     GrpcStorageOptions options =
         ((GrpcStorageOptions) storage.getOptions())
             .toBuilder()
-            .setStorageWriterConfig(BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
+            .setBlobWriteSessionConfig(
+                BlobWriteSessionConfigs.getDefault().withChunkSize(256 * 1024))
             .build();
     try (Storage s = options.getService()) {
       doTest(s);
