@@ -42,6 +42,7 @@ import com.google.cloud.TransportOptions;
 import com.google.cloud.Tuple;
 import com.google.cloud.grpc.GrpcTransportOptions;
 import com.google.cloud.spi.ServiceRpcFactory;
+import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
@@ -58,6 +59,7 @@ import io.grpc.ManagedChannelBuilder;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.time.Clock;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -82,6 +84,7 @@ public final class GrpcStorageOptions extends StorageOptions
   private final Duration terminationAwaitDuration;
   private final boolean attemptDirectPath;
   private final GrpcInterceptorProvider grpcInterceptorProvider;
+  private final BlobWriteSessionConfig blobWriteSessionConfig;
 
   private GrpcStorageOptions(Builder builder, GrpcStorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -94,6 +97,7 @@ public final class GrpcStorageOptions extends StorageOptions
             builder.terminationAwaitDuration, serviceDefaults.getTerminationAwaitDuration());
     this.attemptDirectPath = builder.attemptDirectPath;
     this.grpcInterceptorProvider = builder.grpcInterceptorProvider;
+    this.blobWriteSessionConfig = builder.blobWriteSessionConfig;
   }
 
   @Override
@@ -346,6 +350,8 @@ public final class GrpcStorageOptions extends StorageOptions
     private boolean attemptDirectPath = GrpcStorageDefaults.INSTANCE.isAttemptDirectPath();
     private GrpcInterceptorProvider grpcInterceptorProvider =
         GrpcStorageDefaults.INSTANCE.grpcInterceptorProvider();
+    private BlobWriteSessionConfig blobWriteSessionConfig =
+        GrpcStorageDefaults.INSTANCE.getDefaultStorageWriterConfig();
 
     Builder() {}
 
@@ -506,6 +512,21 @@ public final class GrpcStorageOptions extends StorageOptions
       return this;
     }
 
+    /**
+     * @see BlobWriteSessionConfig
+     * @see BlobWriteSessionConfigs
+     * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+     * @see GrpcStorageDefaults#getDefaultStorageWriterConfig()
+     * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public GrpcStorageOptions.Builder setBlobWriteSessionConfig(
+        @NonNull BlobWriteSessionConfig blobWriteSessionConfig) {
+      requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
+      this.blobWriteSessionConfig = blobWriteSessionConfig;
+      return this;
+    }
+
     /** @since 2.14.0 This new api is in preview and is subject to breaking changes. */
     @BetaApi
     @Override
@@ -569,6 +590,12 @@ public final class GrpcStorageOptions extends StorageOptions
     public GrpcInterceptorProvider grpcInterceptorProvider() {
       return INTERCEPTOR_PROVIDER;
     }
+
+    /** @since 2.26.0 This new api is in preview and is subject to breaking changes. */
+    @BetaApi
+    public BlobWriteSessionConfig getDefaultStorageWriterConfig() {
+      return BlobWriteSessionConfigs.getDefault();
+    }
   }
 
   /**
@@ -618,7 +645,10 @@ public final class GrpcStorageOptions extends StorageOptions
           StorageSettings storageSettings = t.x();
           Opts<UserProject> defaultOpts = t.y();
           return new GrpcStorageImpl(
-              grpcStorageOptions, StorageClient.create(storageSettings), defaultOpts);
+              grpcStorageOptions,
+              StorageClient.create(storageSettings),
+              grpcStorageOptions.blobWriteSessionConfig.createFactory(Clock.systemUTC()),
+              defaultOpts);
         } catch (IOException e) {
           throw new IllegalStateException(
               "Unable to instantiate gRPC com.google.cloud.storage.Storage client.", e);

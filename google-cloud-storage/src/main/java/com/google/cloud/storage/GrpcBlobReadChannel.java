@@ -43,7 +43,7 @@ final class GrpcBlobReadChannel extends BaseStorageReadChannel<Object> {
 
   @Override
   public RestorableState<ReadChannel> capture() {
-    return GrpcStorageImpl.throwHttpJsonOnly(ReadChannel.class, "capture");
+    return CrossTransportUtils.throwHttpJsonOnly(ReadChannel.class, "capture");
   }
 
   @Override
