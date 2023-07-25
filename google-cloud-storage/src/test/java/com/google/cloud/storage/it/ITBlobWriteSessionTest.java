@@ -17,6 +17,7 @@
 package com.google.cloud.storage.it;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.BlobWriteSession;
@@ -26,6 +27,7 @@ import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.GrpcStorageOptions;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.StorageException;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -33,9 +35,12 @@ import com.google.cloud.storage.it.runner.annotations.Inject;
 import com.google.cloud.storage.it.runner.annotations.SingleBackend;
 import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -67,6 +72,33 @@ public final class ITBlobWriteSessionTest {
     try (Storage s = options.getService()) {
       doTest(s);
     }
+  }
+
+  @Test
+  public void closingAnOpenedSessionWithoutCallingWriteShouldMakeAnEmptyObject()
+      throws IOException, ExecutionException, InterruptedException, TimeoutException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    BlobWriteSession session = storage.blobWriteSession(info, BlobWriteOption.doesNotExist());
+
+    WritableByteChannel open = session.open();
+    open.close();
+    BlobInfo gen1 = session.getResult().get(1, TimeUnit.SECONDS);
+    System.out.println("gen1 = " + gen1);
+
+    assertThat(gen1.getSize()).isEqualTo(0);
+  }
+
+  @Test
+  public void attemptingToOpenASessionWhichResultsInFailureShouldThrowAStorageException() {
+    // attempt to write to a bucket which we have not created
+    String badBucketName = bucket.getName() + "x";
+    BlobInfo info = BlobInfo.newBuilder(badBucketName, generator.randomObjectName()).build();
+
+    BlobWriteSession session = storage.blobWriteSession(info, BlobWriteOption.doesNotExist());
+    StorageException se = assertThrows(StorageException.class, () -> session.open().close());
+
+    assertThat(se.getCode()).isEqualTo(404);
+    assertThat(se).hasMessageThat().contains(badBucketName);
   }
 
   private void doTest(Storage underTest) throws Exception {

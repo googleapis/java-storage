@@ -118,7 +118,7 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
       //   make GrpcBlobWriteChannel use this factory to produce its WriteSession
       if (s instanceof GrpcStorageImpl) {
         GrpcStorageImpl g = (GrpcStorageImpl) s;
-        GrpcBlobWriteChannel writer = g.writer(info);
+        GrpcBlobWriteChannel writer = g.internalWriter(info, opts);
         writer.setChunkSize(chunkSize);
         WritableByteChannelSession<BufferedWritableByteChannel, WriteObjectResponse> session =
             writer.newLazyWriteChannel().getSession();
@@ -132,12 +132,21 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
       implements WritableByteChannelSession<WBC, BlobInfo> {
 
     private final WritableByteChannelSession<WBC, T> delegate;
-    private final Decoder<T, BlobInfo> d;
+    private final Decoder<T, BlobInfo> decoder;
 
     private DecoratedWritableByteChannelSession(
-        WritableByteChannelSession<WBC, T> delegate, Decoder<T, BlobInfo> d) {
+        WritableByteChannelSession<WBC, T> delegate, Decoder<T, BlobInfo> decoder) {
       this.delegate = delegate;
-      this.d = d;
+      this.decoder = decoder;
+    }
+
+    @Override
+    public WBC open() {
+      try {
+        return WritableByteChannelSession.super.open();
+      } catch (Exception e) {
+        throw StorageException.coalesce(e);
+      }
     }
 
     @Override
@@ -147,7 +156,8 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
 
     @Override
     public ApiFuture<BlobInfo> getResult() {
-      return ApiFutures.transform(delegate.getResult(), d::decode, MoreExecutors.directExecutor());
+      return ApiFutures.transform(
+          delegate.getResult(), decoder::decode, MoreExecutors.directExecutor());
     }
   }
 }

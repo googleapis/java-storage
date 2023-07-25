@@ -729,9 +729,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions> implements Stora
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    return internalWriter(blobInfo, opts);
+  }
+
+  @Override
+  public GrpcBlobWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+    WriteObjectRequest req = getWriteObjectRequest(info, opts);
     Hasher hasher = Hasher.noop();
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable(),

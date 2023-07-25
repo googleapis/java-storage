@@ -24,4 +24,6 @@ import java.nio.file.Path;
 interface StorageInternal extends Storage {
 
   Blob internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts) throws IOException;
+
+  StorageWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts);
 }
