@@ -48,6 +48,7 @@ import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.UnifiedOpts.UserProject;
 import com.google.cloud.storage.spi.StorageRpcFactory;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.storage.v2.ReadObjectRequest;
@@ -169,6 +170,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
     Opts<UserProject> defaultOpts = Opts.empty();
     CredentialsProvider credentialsProvider;
+    Preconditions.checkState(credentials != null, "Unable to resolve credentials");
     if (credentials instanceof NoCredentials) {
       credentialsProvider = NoCredentialsProvider.create();
     } else {
