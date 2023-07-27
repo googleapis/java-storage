@@ -8,4 +8,11 @@
     <method>com.google.cloud.storage.BlobWriteSession blobWriteSession(com.google.cloud.storage.BlobInfo, com.google.cloud.storage.Storage$BlobWriteOption[])</method>
   </difference>
 
+  <!-- Not breaking, new method has a default implementation -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/cloud/storage/UnbufferedWritableByteChannelSession$UnbufferedWritableByteChannel</className>
+    <method>* writeAndClose(*)</method>
+  </difference>
+
 </differences>

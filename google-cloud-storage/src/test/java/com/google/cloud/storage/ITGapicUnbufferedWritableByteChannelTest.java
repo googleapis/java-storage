@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.TestUtils.apiException;
+import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.SettableApiFuture;
@@ -25,6 +26,7 @@ import com.google.api.gax.rpc.DataLossException;
 import com.google.api.gax.rpc.PermissionDeniedException;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
+import com.google.cloud.storage.WriteFlushStrategy.Flusher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -48,10 +50,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 
 public final class ITGapicUnbufferedWritableByteChannelTest {
@@ -305,6 +310,52 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
 
     assertThat(writeCtx.getTotalSentBytes().get()).isEqualTo(40);
     assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(40);
+  }
+
+  @Test
+  public void resumableUpload_finalizeWhenWriteAndCloseCalledEvenWhenQuantumAligned()
+      throws IOException, InterruptedException, ExecutionException {
+    int quantum = 10;
+    ChunkSegmenter segmenter =
+        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 50, quantum);
+    SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
+
+    AtomicReference<List<WriteObjectRequest>> actualFlush = new AtomicReference<>();
+    WriteObjectRequest closeRequestSentinel =
+        WriteObjectRequest.newBuilder().setUploadId("sentinel").build();
+    AtomicReference<WriteObjectRequest> actualClose = new AtomicReference<>(closeRequestSentinel);
+    GapicUnbufferedWritableByteChannel<?> c =
+        new GapicUnbufferedWritableByteChannel<>(
+            result,
+            segmenter,
+            reqFactory,
+            (bucketName, committedTotalBytesCallback, onSuccessCallback) ->
+                new Flusher() {
+                  @Override
+                  public void flush(@NonNull List<WriteObjectRequest> segments) {
+                    actualFlush.compareAndSet(null, segments);
+                  }
+
+                  @Override
+                  public void close(@Nullable WriteObjectRequest req) {
+                    actualClose.compareAndSet(closeRequestSentinel, req);
+                  }
+                });
+
+    byte[] bytes = DataGenerator.base64Characters().genBytes(quantum);
+
+    long written = c.writeAndClose(ByteBuffer.wrap(bytes));
+    WriteObjectRequest expectedRequest =
+        WriteObjectRequest.newBuilder()
+            .setUploadId(uploadId)
+            .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes), Hasher.noop()))
+            .setFinishWrite(true)
+            .build();
+
+    assertThat(written).isEqualTo(10);
+    assertThat(actualFlush.get()).isEqualTo(ImmutableList.of(expectedRequest));
+    // calling close is okay, as long as the provided request is null
+    assertThat(actualClose.get()).isAnyOf(closeRequestSentinel, null);
   }
 
   static class DirectWriteService extends StorageImplBase {

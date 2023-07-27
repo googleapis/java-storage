@@ -145,7 +145,7 @@ final class DefaultStorageRetryStrategy implements StorageRetryStrategy {
     public RetryResult beforeEval(Exception exception) {
       if (exception instanceof IllegalArgumentException) {
         IllegalArgumentException illegalArgumentException = (IllegalArgumentException) exception;
-        if (illegalArgumentException.getMessage().equals("no JSON input found")) {
+        if ("no JSON input found".equals(illegalArgumentException.getMessage())) {
           return RetryResult.RETRY;
         }
       }
