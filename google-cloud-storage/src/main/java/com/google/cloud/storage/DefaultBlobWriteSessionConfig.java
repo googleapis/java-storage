@@ -53,6 +53,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @BetaApi
 public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig {
+  private static final long serialVersionUID = -6873740918589930633L;
 
   private final int chunkSize;
 

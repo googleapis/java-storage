@@ -23,6 +23,7 @@ import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
+import java.io.Serializable;
 import java.time.Clock;
 
 /**
@@ -39,7 +40,7 @@ import java.time.Clock;
  */
 // When we have java modules, actually seal this to internal extension only
 @InternalApi
-public abstract class BlobWriteSessionConfig {
+public abstract class BlobWriteSessionConfig implements Serializable {
 
   @InternalApi
   BlobWriteSessionConfig() {}
