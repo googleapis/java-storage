@@ -28,12 +28,26 @@ interface UnbufferedWritableByteChannelSession<ResultT>
   interface UnbufferedWritableByteChannel extends WritableByteChannel, GatheringByteChannel {
     @Override
     default int write(ByteBuffer src) throws IOException {
-      return Math.toIntExact(write(new ByteBuffer[] {src}));
+      return Math.toIntExact(write(new ByteBuffer[] {src}, 0, 1));
     }
 
     @Override
     default long write(ByteBuffer[] srcs) throws IOException {
       return write(srcs, 0, srcs.length);
+    }
+
+    default int writeAndClose(ByteBuffer src) throws IOException {
+      return Math.toIntExact(writeAndClose(new ByteBuffer[] {src}, 0, 1));
+    }
+
+    default long writeAndClose(ByteBuffer[] srcs) throws IOException {
+      return writeAndClose(srcs, 0, srcs.length);
+    }
+
+    default long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
+      long write = write(srcs, offset, length);
+      close();
+      return write;
     }
   }
 }

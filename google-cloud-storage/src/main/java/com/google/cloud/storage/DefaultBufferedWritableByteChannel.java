@@ -160,8 +160,17 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
 
   @Override
   public void close() throws IOException {
-    try (UnbufferedWritableByteChannel ignored = channel) {
-      flush();
+    if (enqueuedBytes()) {
+      ByteBuffer buffer = handle.get();
+      Buffers.flip(buffer);
+      channel.writeAndClose(buffer);
+      if (buffer.hasRemaining()) {
+        buffer.compact();
+      } else {
+        Buffers.clear(buffer);
+      }
+    } else {
+      channel.close();
     }
   }
 

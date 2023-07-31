@@ -91,6 +91,7 @@ final class GrpcResumableSession {
             if (query.getObject() != null) {
               return query;
             } else {
+              handle.get().clear();
               content.rewindTo(query.getPersistedSize());
             }
           }

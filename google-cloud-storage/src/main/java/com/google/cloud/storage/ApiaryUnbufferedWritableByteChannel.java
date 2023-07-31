@@ -57,35 +57,14 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
 
   @Override
   public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
-    if (!open) {
-      throw new ClosedChannelException();
-    }
-    RewindableContent content = RewindableContent.of(Utils.subArray(srcs, offset, length));
-    long available = content.getLength();
-    long newFinalByteOffset = cumulativeByteCount + available;
-    final HttpContentRange header;
-    ByteRangeSpec rangeSpec = ByteRangeSpec.explicit(cumulativeByteCount, newFinalByteOffset);
-    if (available % ByteSizeConstants._256KiB == 0) {
-      header = HttpContentRange.of(rangeSpec);
-    } else {
-      header = HttpContentRange.of(rangeSpec, newFinalByteOffset);
-      finished = true;
-    }
-    try {
-      ResumableOperationResult<@Nullable StorageObject> operationResult =
-          session.put(content, header);
-      long persistedSize = operationResult.getPersistedSize();
-      committedBytesCallback.accept(persistedSize);
-      this.cumulativeByteCount = persistedSize;
-      if (finished) {
-        StorageObject storageObject = operationResult.getObject();
-        result.set(storageObject);
-      }
-      return available;
-    } catch (Exception e) {
-      result.setException(e);
-      throw StorageException.coalesce(e);
-    }
+    return internalWrite(srcs, offset, length, false);
+  }
+
+  @Override
+  public long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
+    long write = internalWrite(srcs, offset, length, true);
+    close();
+    return write;
   }
 
   @Override
@@ -107,6 +86,43 @@ final class ApiaryUnbufferedWritableByteChannel implements UnbufferedWritableByt
         result.setException(e);
         throw StorageException.coalesce(e);
       }
+    }
+  }
+
+  private long internalWrite(ByteBuffer[] srcs, int offset, int length, boolean finalize)
+      throws ClosedChannelException {
+    if (!open) {
+      throw new ClosedChannelException();
+    }
+    RewindableContent content = RewindableContent.of(Utils.subArray(srcs, offset, length));
+    long available = content.getLength();
+    long newFinalByteOffset = cumulativeByteCount + available;
+    final HttpContentRange header;
+    ByteRangeSpec rangeSpec = ByteRangeSpec.explicit(cumulativeByteCount, newFinalByteOffset);
+    boolean quantumAligned = available % ByteSizeConstants._256KiB == 0;
+    if (quantumAligned && finalize) {
+      header = HttpContentRange.of(rangeSpec, newFinalByteOffset);
+      finished = true;
+    } else if (quantumAligned) {
+      header = HttpContentRange.of(rangeSpec);
+    } else { // not quantum aligned, have to finalize
+      header = HttpContentRange.of(rangeSpec, newFinalByteOffset);
+      finished = true;
+    }
+    try {
+      ResumableOperationResult<@Nullable StorageObject> operationResult =
+          session.put(content, header);
+      long persistedSize = operationResult.getPersistedSize();
+      committedBytesCallback.accept(persistedSize);
+      this.cumulativeByteCount = persistedSize;
+      if (finished) {
+        StorageObject storageObject = operationResult.getObject();
+        result.set(storageObject);
+      }
+      return available;
+    } catch (Exception e) {
+      result.setException(e);
+      throw StorageException.coalesce(e);
     }
   }
 }

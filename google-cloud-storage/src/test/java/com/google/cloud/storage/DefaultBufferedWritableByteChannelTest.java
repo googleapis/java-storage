@@ -17,9 +17,11 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ChunkSegmenterTest.TestData.fmt;
+import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
@@ -36,6 +38,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.jqwik.api.Arbitraries;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Combinators;
@@ -341,6 +344,60 @@ public final class DefaultBufferedWritableByteChannelTest {
     WriteOps expected = new WriteOps(bytes, bufferSize, writeSize, writes, flushes, z);
     WriteOps actual = WriteOps.of(dataSize, bufferSize, writeSize);
     assertThat(actual).isEqualTo(expected);
+  }
+
+  @Example
+  @SuppressWarnings("JUnit5AssertionsConverter")
+  void callingCloseWithBufferedDataShouldCallWriteAndClose() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    AtomicBoolean closed = new AtomicBoolean(false);
+    UnbufferedWritableByteChannel delegate =
+        new UnbufferedWritableByteChannel() {
+          @Override
+          public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
+            fail("unexpected write(ByteBuffer[], int, int) call");
+            return 0;
+          }
+
+          @Override
+          public long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
+            long total = 0;
+            try (WritableByteChannel out = Channels.newChannel(baos)) {
+              for (ByteBuffer src : srcs) {
+                total += out.write(src);
+              }
+            }
+            closed.compareAndSet(false, true);
+            return total;
+          }
+
+          @Override
+          public boolean isOpen() {
+            return !closed.get();
+          }
+
+          @Override
+          public void close() throws IOException {
+            fail("unexpected close() call");
+          }
+        };
+    DefaultBufferedWritableByteChannel test =
+        new DefaultBufferedWritableByteChannel(BufferHandle.allocate(20), delegate);
+
+    byte[] bytes = DataGenerator.base64Characters().genBytes(10);
+    String expected = xxd(bytes);
+
+    int write = test.write(ByteBuffer.wrap(bytes));
+    assertThat(write).isEqualTo(10);
+
+    assertThat(closed.get()).isFalse();
+
+    test.close();
+
+    String actual = xxd(baos.toByteArray());
+    assertThat(actual).isEqualTo(expected);
+    assertThat(closed.get()).isTrue();
   }
 
   @Property

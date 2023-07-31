@@ -63,56 +63,15 @@ final class GapicUnbufferedWritableByteChannel<
   }
 
   @Override
-  public long write(ByteBuffer[] srcs, int srcsOffset, int srcLength) throws IOException {
-    if (!open) {
-      throw new ClosedChannelException();
-    }
+  public long write(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
+    return internalWrite(srcs, srcsOffset, srcsLength, false);
+  }
 
-    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcLength);
-
-    List<WriteObjectRequest> messages = new ArrayList<>();
-
-    int bytesConsumed = 0;
-    for (ChunkSegment datum : data) {
-      Crc32cLengthKnown crc32c = datum.getCrc32c();
-      ByteString b = datum.getB();
-      int contentSize = b.size();
-      long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
-      Crc32cLengthKnown cumulative =
-          writeCtx
-              .getCumulativeCrc32c()
-              .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
-      ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
-      if (crc32c != null) {
-        checksummedData.setCrc32C(crc32c.getValue());
-      }
-      WriteObjectRequest.Builder builder =
-          writeCtx
-              .newRequestBuilder()
-              .setWriteOffset(offset)
-              .setChecksummedData(checksummedData.build());
-      if (!datum.isOnlyFullBlocks()) {
-        builder.setFinishWrite(true);
-        if (cumulative != null) {
-          builder.setObjectChecksums(
-              ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
-        }
-        finished = true;
-      }
-
-      WriteObjectRequest build = builder.build();
-      messages.add(build);
-      bytesConsumed += contentSize;
-    }
-
-    try {
-      flusher.flush(messages);
-    } catch (RuntimeException e) {
-      resultFuture.setException(e);
-      throw e;
-    }
-
-    return bytesConsumed;
+  @Override
+  public long writeAndClose(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
+    long write = internalWrite(srcs, srcsOffset, srcsLength, true);
+    close();
+    return write;
   }
 
   @Override
@@ -149,5 +108,58 @@ final class GapicUnbufferedWritableByteChannel<
   @VisibleForTesting
   WriteCtx<RequestFactoryT> getWriteCtx() {
     return writeCtx;
+  }
+
+  private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength, boolean finalize)
+      throws ClosedChannelException {
+    if (!open) {
+      throw new ClosedChannelException();
+    }
+
+    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
+
+    List<WriteObjectRequest> messages = new ArrayList<>();
+
+    int bytesConsumed = 0;
+    for (ChunkSegment datum : data) {
+      Crc32cLengthKnown crc32c = datum.getCrc32c();
+      ByteString b = datum.getB();
+      int contentSize = b.size();
+      long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
+      Crc32cLengthKnown cumulative =
+          writeCtx
+              .getCumulativeCrc32c()
+              .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
+      ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
+      if (crc32c != null) {
+        checksummedData.setCrc32C(crc32c.getValue());
+      }
+      WriteObjectRequest.Builder builder =
+          writeCtx
+              .newRequestBuilder()
+              .setWriteOffset(offset)
+              .setChecksummedData(checksummedData.build());
+      if (!datum.isOnlyFullBlocks() || finalize) {
+        builder.setFinishWrite(true);
+        if (cumulative != null) {
+          builder.setObjectChecksums(
+              ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
+        }
+        finished = true;
+      }
+
+      WriteObjectRequest build = builder.build();
+      messages.add(build);
+      bytesConsumed += contentSize;
+    }
+
+    try {
+      flusher.flush(messages);
+    } catch (RuntimeException e) {
+      resultFuture.setException(e);
+      throw e;
+    }
+
+    return bytesConsumed;
   }
 }
