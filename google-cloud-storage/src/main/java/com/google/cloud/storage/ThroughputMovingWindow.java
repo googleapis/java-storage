@@ -38,12 +38,12 @@ final class ThroughputMovingWindow {
   }
 
   void add(Instant now, Throughput value) {
-    houseKeeping(now);
+    removeExpiredEntries(now);
     values.add(new Entry(now, value));
   }
 
   Throughput avg(Instant now) {
-    houseKeeping(now);
+    removeExpiredEntries(now);
     return values.stream()
         .map(Entry::getValue)
         .reduce(
@@ -51,7 +51,7 @@ final class ThroughputMovingWindow {
             (tp1, tp2) -> Throughput.of(tp1.getNumBytes() + tp2.getNumBytes(), window));
   }
 
-  private void houseKeeping(Instant now) {
+  private void removeExpiredEntries(Instant now) {
     Instant newMin = now.minus(window);
     values.removeIf(e -> lteq(e.getAt(), newMin));
   }
