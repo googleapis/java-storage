@@ -152,7 +152,8 @@ import java.util.stream.StreamSupport;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @BetaApi
-final class GrpcStorageImpl extends BaseService<StorageOptions> implements StorageInternal {
+final class GrpcStorageImpl extends BaseService<StorageOptions>
+    implements Storage, StorageInternal {
 
   private static final byte[] ZERO_BYTES = new byte[0];
   private static final Set<OpenOption> READ_OPS = ImmutableSet.of(StandardOpenOption.READ);

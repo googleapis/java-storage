@@ -170,35 +170,47 @@ public class SerializationTest extends BaseSerializationTest {
             .add(UnifiedOpts.md5MatchExtractor())
             .build();
 
-    return new Serializable[] {
-      ACL_DOMAIN,
-      ACL_GROUP,
-      ACL_PROJECT_,
-      ACL_USER,
-      ACL_RAW,
-      ACL,
-      BLOB_INFO,
-      BLOB,
-      BUCKET_INFO,
-      BUCKET,
-      ORIGIN,
-      CORS,
-      PAGE_RESULT,
-      BLOB_LIST_OPTIONS,
-      BLOB_SOURCE_OPTIONS,
-      BLOB_TARGET_OPTIONS,
-      BUCKET_LIST_OPTIONS,
-      BUCKET_SOURCE_OPTIONS,
-      BUCKET_TARGET_OPTIONS,
-      STORAGE_EXCEPTION,
-      optionsDefault1,
-      optionsDefault2,
-      optionsHttp1,
-      optionsHttp2,
-      optionsGrpc1,
-      optionsGrpc2,
-      serializableOpts
-    };
+    try {
+      GrpcStorageOptions grpcStorageOptionsBufferToTemp =
+          StorageOptions.grpc()
+              .setCredentials(NoCredentials.getInstance())
+              .setProjectId("project1")
+              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
+              .build();
+
+      return new Serializable[] {
+        ACL_DOMAIN,
+        ACL_GROUP,
+        ACL_PROJECT_,
+        ACL_USER,
+        ACL_RAW,
+        ACL,
+        BLOB_INFO,
+        BLOB,
+        BUCKET_INFO,
+        BUCKET,
+        ORIGIN,
+        CORS,
+        PAGE_RESULT,
+        BLOB_LIST_OPTIONS,
+        BLOB_SOURCE_OPTIONS,
+        BLOB_TARGET_OPTIONS,
+        BUCKET_LIST_OPTIONS,
+        BUCKET_SOURCE_OPTIONS,
+        BUCKET_TARGET_OPTIONS,
+        STORAGE_EXCEPTION,
+        optionsDefault1,
+        optionsDefault2,
+        optionsHttp1,
+        optionsHttp2,
+        optionsGrpc1,
+        optionsGrpc2,
+        serializableOpts,
+        grpcStorageOptionsBufferToTemp
+      };
+    } catch (IOException ioe) {
+      throw new AssertionError(ioe);
+    }
   }
 
   @Override

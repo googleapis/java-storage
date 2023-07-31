@@ -19,6 +19,11 @@ package com.google.cloud.storage;
 import com.google.api.core.BetaApi;
 import com.google.cloud.storage.GrpcStorageOptions.GrpcStorageDefaults;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
 
 /**
  * Factory class to select and construct {@link BlobWriteSessionConfig}s.
@@ -45,5 +50,55 @@ public final class BlobWriteSessionConfigs {
   @BetaApi
   public static DefaultBlobWriteSessionConfig getDefault() {
     return new DefaultBlobWriteSessionConfig(ByteSizeConstants._16MiB);
+  }
+
+  /**
+   * Create a new {@link BlobWriteSessionConfig} which will first buffer the content of the object
+   * to a temporary file under {@code java.io.tmpdir}.
+   *
+   * <p>Once the file on disk is closed, the entire file will then be uploaded to Google Cloud
+   * Storage.
+   *
+   * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+   * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
+   */
+  @BetaApi
+  public static BlobWriteSessionConfig bufferToTempDirThenUpload() throws IOException {
+    return bufferToDiskThenUpload(
+        Paths.get(System.getProperty("java.io.tmpdir"), "google-cloud-storage"));
+  }
+
+  /**
+   * Create a new {@link BlobWriteSessionConfig} which will first buffer the content of the object
+   * to a temporary file under the specified {@code path}.
+   *
+   * <p>Once the file on disk is closed, the entire file will then be uploaded to Google Cloud
+   * Storage.
+   *
+   * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+   * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
+   */
+  @BetaApi
+  public static BufferToDiskThenUpload bufferToDiskThenUpload(Path path) throws IOException {
+    return bufferToDiskThenUpload(ImmutableList.of(path));
+  }
+
+  /**
+   * Create a new {@link BlobWriteSessionConfig} which will first buffer the content of the object
+   * to a temporary file under one of the specified {@code paths}.
+   *
+   * <p>Once the file on disk is closed, the entire file will then be uploaded to Google Cloud
+   * Storage.
+   *
+   * <p>The specifics of how the work is spread across multiple paths is undefined and subject to
+   * change.
+   *
+   * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
+   * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
+   */
+  @BetaApi
+  public static BufferToDiskThenUpload bufferToDiskThenUpload(Collection<Path> paths)
+      throws IOException {
+    return new BufferToDiskThenUpload(ImmutableList.copyOf(paths), false);
   }
 }
