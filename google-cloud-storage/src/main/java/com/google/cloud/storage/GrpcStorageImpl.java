@@ -164,6 +164,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
           StandardOpenOption.TRUNCATE_EXISTING);
   private static final BucketSourceOption[] EMPTY_BUCKET_SOURCE_OPTIONS = new BucketSourceOption[0];
 
+  private static final Opts<Fields> ALL_BLOB_FIELDS =
+      Opts.from(UnifiedOpts.fields(ImmutableSet.copyOf(BlobField.values())));
+  private static final Opts<Fields> ALL_BUCKET_FIELDS =
+      Opts.from(UnifiedOpts.fields(ImmutableSet.copyOf(BucketField.values())));
+
   final StorageClient storageClient;
   final WriterFactory writerFactory;
   final GrpcConversions codecs;
@@ -420,7 +425,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Page<Bucket> list(BucketListOption... options) {
-    Opts<BucketListOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
+    Opts<BucketListOpt> opts = Opts.unwrap(options).prepend(defaultOpts).prepend(ALL_BUCKET_FIELDS);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListBucketsRequest request =
@@ -448,7 +453,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Page<Blob> list(String bucket, BlobListOption... options) {
-    Opts<ObjectListOpt> opts = Opts.unwrap(options).prepend(defaultOpts);
+    Opts<ObjectListOpt> opts = Opts.unwrap(options).prepend(defaultOpts).prepend(ALL_BLOB_FIELDS);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ListObjectsRequest.Builder builder =
@@ -1958,7 +1963,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Nullable
   private Blob internalBlobGet(BlobId blob, Opts<ObjectSourceOpt> unwrap) {
-    Opts<ObjectSourceOpt> opts = unwrap.resolveFrom(blob).prepend(defaultOpts);
+    Opts<ObjectSourceOpt> opts =
+        unwrap.resolveFrom(blob).prepend(defaultOpts).prepend(ALL_BLOB_FIELDS);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetObjectRequest.Builder builder =
@@ -1983,7 +1989,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Nullable
   private Bucket internalBucketGet(String bucket, Opts<BucketSourceOpt> unwrap) {
-    Opts<BucketSourceOpt> opts = unwrap.prepend(defaultOpts);
+    Opts<BucketSourceOpt> opts = unwrap.prepend(defaultOpts).prepend(ALL_BUCKET_FIELDS);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetBucketRequest.Builder builder =

@@ -145,7 +145,6 @@ public final class ITBlobWriteChannelTest {
   @Test
   public void changeChunkSizeAfterWrite() throws IOException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
-    System.out.println("info = " + info);
 
     int _512KiB = 512 * 1024;
     byte[] bytes = DataGenerator.base64Characters().genBytes(_512KiB + 13);
