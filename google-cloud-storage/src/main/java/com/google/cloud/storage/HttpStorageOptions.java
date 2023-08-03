@@ -52,7 +52,7 @@ public class HttpStorageOptions extends StorageOptions {
   private static final String DEFAULT_HOST = "https://storage.googleapis.com";
 
   private final HttpRetryAlgorithmManager retryAlgorithmManager;
-  private final transient RetryDependenciesAdapter retryDepsAdapter;
+  private final RetryDependenciesAdapter retryDepsAdapter;
 
   private HttpStorageOptions(Builder builder, StorageDefaults serviceDefaults) {
     super(builder, serviceDefaults);
@@ -334,7 +334,7 @@ public class HttpStorageOptions extends StorageOptions {
    * We don't yet want to make HttpStorageOptions itself implement {@link RetryingDependencies} but
    * we do need use it in a couple places, for those we create this adapter.
    */
-  private final class RetryDependenciesAdapter implements RetryingDependencies {
+  private final class RetryDependenciesAdapter implements RetryingDependencies, Serializable {
 
     private RetryDependenciesAdapter() {}
 

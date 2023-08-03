@@ -40,9 +40,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Base64;
 import java.util.Collections;
@@ -210,6 +212,29 @@ public class SerializationTest extends BaseSerializationTest {
       };
     } catch (IOException ioe) {
       throw new AssertionError(ioe);
+    }
+  }
+
+  @Test
+  public void avoidNpeHttpStorageOptions_retryDeps() throws IOException, ClassNotFoundException {
+    HttpStorageOptions optionsHttp1 =
+        StorageOptions.http()
+            .setProjectId("http1")
+            .setCredentials(NoCredentials.getInstance())
+            .build();
+
+    assertThat(optionsHttp1.asRetryDependencies()).isNotNull();
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+      oos.writeObject(optionsHttp1);
+    }
+
+    byte[] byteArray = baos.toByteArray();
+    try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArray))) {
+      Object o = ois.readObject();
+      HttpStorageOptions hso = (HttpStorageOptions) o;
+      assertThat(hso.asRetryDependencies()).isNotNull();
     }
   }
 
