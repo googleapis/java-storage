@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.26.0](https://github.com/googleapis/java-storage/compare/v2.25.0...v2.26.0) (2023-08-03)
+
+
+### Features
+
+* Implement BufferToDiskThenUpload BlobWriteSessionConfig ([#2139](https://github.com/googleapis/java-storage/issues/2139)) ([4dad2d5](https://github.com/googleapis/java-storage/commit/4dad2d5c3a81eda7190ad4f95316471e7fa30f66))
+* Introduce new BlobWriteSession ([#2123](https://github.com/googleapis/java-storage/issues/2123)) ([e0191b5](https://github.com/googleapis/java-storage/commit/e0191b518e50a49fae0691894b50f0c5f33fc6af))
+
+
+### Bug Fixes
+
+* **grpc:** Return error if credentials are detected to be null ([#2142](https://github.com/googleapis/java-storage/issues/2142)) ([b61a976](https://github.com/googleapis/java-storage/commit/b61a9764a9d953d2b214edb2b543b8df42fbfa06))
+* Possible NPE when HttpStorageOptions deserialized ([#2153](https://github.com/googleapis/java-storage/issues/2153)) ([68ad8e7](https://github.com/googleapis/java-storage/commit/68ad8e7357097e3dd161c2ab5f7a42a060a3702c))
+* Update grpc default metadata projection to include acl same as json ([#2150](https://github.com/googleapis/java-storage/issues/2150)) ([330e795](https://github.com/googleapis/java-storage/commit/330e795040592e5df22d44fb5216ad7cf2448e81))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.14.0 ([#2151](https://github.com/googleapis/java-storage/issues/2151)) ([eba8b6a](https://github.com/googleapis/java-storage/commit/eba8b6a235919a27d1f6dadf770140c7d143aa1a))
+
 ## [2.25.0](https://github.com/googleapis/java-storage/compare/v2.24.0...v2.25.0) (2023-07-24)
 
 
