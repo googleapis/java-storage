@@ -16,19 +16,20 @@
 
 package com.google.cloud;
 
+import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "ssbcli")
+@Command(name = "ssb")
 public class StorageSharedBenchmarkingCli implements Runnable {
   // TODO: check what input validation is needed for option values.
-  @Option(names = "-project", description = "GCP Project Identifier")
+  @Option(names = "-project", description = "GCP Project Identifier", required = true)
   String project;
 
-  @Option(names = "-bucket", description = "Name of the bucket to use")
+  @Option(names = "-bucket", description = "Name of the bucket to use", required = true)
   String bucket;
 
   @Option(names = "-samples", defaultValue = "8000", description = "Number of samples to report")
@@ -56,13 +57,13 @@ public class StorageSharedBenchmarkingCli implements Runnable {
   String outputType;
 
   public static void main(String[] args) {
-    CommandLine cmd = new CommandLine(StorageSharedBenchmarkingCli.class).setUsageHelpWidth(100);
+    CommandLine cmd = new CommandLine(StorageSharedBenchmarkingCli.class);
     System.exit(cmd.execute(args));
   }
 
   @Override
   public void run() {
     Storage storageClient = StorageOptions.newBuilder().setProjectId(project).build().getService();
-    
+    Bucket bucketToUse = storageClient.get(bucket);
   }
 }
