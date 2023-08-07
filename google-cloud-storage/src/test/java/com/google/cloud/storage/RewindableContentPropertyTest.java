@@ -143,7 +143,7 @@ final class RewindableContentPropertyTest {
   }
 
   @NonNull
-  private static Arbitrary<ByteBuffer[]> byteBuffers(int perBufferMinSize, int perBufferMaxSize) {
+  static Arbitrary<ByteBuffer[]> byteBuffers(int perBufferMinSize, int perBufferMaxSize) {
     return byteBuffer(perBufferMinSize, perBufferMaxSize)
         .array(ByteBuffer[].class)
         .ofMinSize(1)
@@ -155,7 +155,7 @@ final class RewindableContentPropertyTest {
    * limit
    */
   @NonNull
-  private static Arbitrary<ByteBuffer> byteBuffer(int minSize, int maxSize) {
+  static Arbitrary<ByteBuffer> byteBuffer(int minSize, int maxSize) {
     return Arbitraries.integers()
         .between(minSize, maxSize)
         .withDistribution(RandomDistribution.uniform())
