@@ -34,6 +34,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicUnbufferedWritableByteChannel<
         RequestFactoryT extends WriteObjectRequestBuilderFactory>
@@ -82,16 +83,7 @@ final class GapicUnbufferedWritableByteChannel<
   @Override
   public void close() throws IOException {
     if (!finished) {
-      long offset = writeCtx.getTotalSentBytes().get();
-      Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
-
-      WriteObjectRequest.Builder b =
-          writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
-      if (crc32cValue != null) {
-        b.setObjectChecksums(
-            ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
-      }
-      WriteObjectRequest message = b.build();
+      WriteObjectRequest message = finishMessage();
       try {
         flusher.close(message);
         finished = true;
@@ -139,7 +131,7 @@ final class GapicUnbufferedWritableByteChannel<
               .newRequestBuilder()
               .setWriteOffset(offset)
               .setChecksummedData(checksummedData.build());
-      if (!datum.isOnlyFullBlocks() || finalize) {
+      if (!datum.isOnlyFullBlocks()) {
         builder.setFinishWrite(true);
         if (cumulative != null) {
           builder.setObjectChecksums(
@@ -152,6 +144,10 @@ final class GapicUnbufferedWritableByteChannel<
       messages.add(build);
       bytesConsumed += contentSize;
     }
+    if (finalize && !finished) {
+      messages.add(finishMessage());
+      finished = true;
+    }
 
     try {
       flusher.flush(messages);
@@ -161,5 +157,19 @@ final class GapicUnbufferedWritableByteChannel<
     }
 
     return bytesConsumed;
+  }
+
+  @NonNull
+  private WriteObjectRequest finishMessage() {
+    long offset = writeCtx.getTotalSentBytes().get();
+    Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
+
+    WriteObjectRequest.Builder b =
+        writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
+    if (crc32cValue != null) {
+      b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
+    }
+    WriteObjectRequest message = b.build();
+    return message;
   }
 }
