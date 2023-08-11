@@ -32,6 +32,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.StorageClient;
@@ -63,8 +64,9 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
   private static final Logger LOGGER =
       Logger.getLogger(ITGapicUnbufferedWritableByteChannelTest.class.getName());
 
+  private static final Hasher HASHER = Hasher.enabled();
   private static final ChunkSegmenter segmenter =
-      new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 10, 5);
+      new ChunkSegmenter(HASHER, ByteStringStrategy.copy(), 10, 5);
 
   private static final String uploadId = "upload-id";
 
@@ -80,31 +82,35 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
   private static final WriteObjectRequest req1 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 0, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 0, 10), HASHER))
           .build();
   private static final WriteObjectRequest req2 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(10)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 10, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 10, 10), HASHER))
           .build();
   private static final WriteObjectRequest req3 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(20)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 20, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 20, 10), HASHER))
           .build();
   private static final WriteObjectRequest req4 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(30)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 30, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 30, 10), HASHER))
           .build();
   private static final WriteObjectRequest req5 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(40)
           .setFinishWrite(true)
+          .setObjectChecksums(
+              ObjectChecksums.newBuilder()
+                  .setCrc32C(HASHER.hash(ByteBuffer.wrap(bytes)).getValue())
+                  .build())
           .build();
 
   private static final WriteObjectResponse resp1 =
@@ -123,35 +129,24 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
 
   @Test
   public void directUpload() throws IOException, InterruptedException, ExecutionException {
-    Object obj = Object.newBuilder().setBucket("buck").setName("obj").build();
-    WriteObjectSpec spec = WriteObjectSpec.newBuilder().setResource(obj).build();
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(40);
     WriteObjectRequest req1 =
-        WriteObjectRequest.newBuilder()
+        ITGapicUnbufferedWritableByteChannelTest.req1
+            .toBuilder()
+            .clearUploadId()
             .setWriteObjectSpec(spec)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 0, 10)))
             .build();
     WriteObjectRequest req2 =
-        WriteObjectRequest.newBuilder()
-            .setWriteOffset(10)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 10, 10)))
-            .build();
+        ITGapicUnbufferedWritableByteChannelTest.req2.toBuilder().clearUploadId().build();
     WriteObjectRequest req3 =
-        WriteObjectRequest.newBuilder()
-            .setWriteOffset(20)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 20, 10)))
-            .build();
+        ITGapicUnbufferedWritableByteChannelTest.req3.toBuilder().clearUploadId().build();
     WriteObjectRequest req4 =
-        WriteObjectRequest.newBuilder()
-            .setWriteOffset(30)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 30, 10)))
-            .build();
+        ITGapicUnbufferedWritableByteChannelTest.req4.toBuilder().clearUploadId().build();
     WriteObjectRequest req5 =
-        WriteObjectRequest.newBuilder().setWriteOffset(40).setFinishWrite(true).build();
+        ITGapicUnbufferedWritableByteChannelTest.req5.toBuilder().clearUploadId().build();
 
-    WriteObjectResponse resp =
-        WriteObjectResponse.newBuilder().setResource(obj.toBuilder().setSize(40)).build();
+    WriteObjectResponse resp = resp5;
 
     WriteObjectRequest base = WriteObjectRequest.newBuilder().setWriteObjectSpec(spec).build();
     WriteObjectRequestBuilderFactory reqFactory = WriteObjectRequestBuilderFactory.simple(base);
@@ -314,10 +309,7 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
 
   @Test
   public void resumableUpload_finalizeWhenWriteAndCloseCalledEvenWhenQuantumAligned()
-      throws IOException, InterruptedException, ExecutionException {
-    int quantum = 10;
-    ChunkSegmenter segmenter =
-        new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 50, quantum);
+      throws IOException {
     SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
 
     AtomicReference<List<WriteObjectRequest>> actualFlush = new AtomicReference<>();
@@ -342,18 +334,10 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
                   }
                 });
 
-    byte[] bytes = DataGenerator.base64Characters().genBytes(quantum);
-
     long written = c.writeAndClose(ByteBuffer.wrap(bytes));
-    WriteObjectRequest expectedRequest =
-        WriteObjectRequest.newBuilder()
-            .setUploadId(uploadId)
-            .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes), Hasher.noop()))
-            .setFinishWrite(true)
-            .build();
 
-    assertThat(written).isEqualTo(10);
-    assertThat(actualFlush.get()).isEqualTo(ImmutableList.of(expectedRequest));
+    assertThat(written).isEqualTo(40);
+    assertThat(actualFlush.get()).isEqualTo(ImmutableList.of(req1, req2, req3, req4, req5));
     // calling close is okay, as long as the provided request is null
     assertThat(actualClose.get()).isAnyOf(closeRequestSentinel, null);
   }

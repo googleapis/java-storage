@@ -113,7 +113,11 @@ final class WriteFlushStrategy {
     }
 
     if (message.getWriteOffset() > 0) {
-      b.clearWriteObjectSpec().clearObjectChecksums();
+      b.clearWriteObjectSpec();
+    }
+
+    if (message.getWriteOffset() > 0 && !message.getFinishWrite()) {
+      b.clearObjectChecksums();
     }
     return b.build();
   }
