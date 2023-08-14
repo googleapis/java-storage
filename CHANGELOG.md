@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.26.1](https://github.com/googleapis/java-storage/compare/v2.26.0...v2.26.1) (2023-08-14)
+
+
+### Bug Fixes
+
+* Make use of ImmutableMap.Builder#buildOrThrow graceful ([#2159](https://github.com/googleapis/java-storage/issues/2159)) ([e9746f8](https://github.com/googleapis/java-storage/commit/e9746f856e9204c1c0ec62f19e6f71ff8a0b9750))
+* Update gRPC writeAndClose to only set finish_write on the last message ([#2163](https://github.com/googleapis/java-storage/issues/2163)) ([95df758](https://github.com/googleapis/java-storage/commit/95df758d6753005226556177e68a3e9c630c789b))
+
+
+### Dependencies
+
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.24 ([#2158](https://github.com/googleapis/java-storage/issues/2158)) ([4f5682a](https://github.com/googleapis/java-storage/commit/4f5682a4f6d6d5372a2d382ae3e47dace490ca0d))
+
 ## [2.26.0](https://github.com/googleapis/java-storage/compare/v2.25.0...v2.26.0) (2023-08-03)
 
 
