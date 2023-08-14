@@ -34,7 +34,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -63,9 +65,9 @@ public class StorageSharedBenchmarkingCli implements Runnable {
 
   @Option(
       names = "-object_size",
-      defaultValue = "1048576",
+      defaultValue = "1048576...1048576",
       description = "Object size in bytes to use for the workload")
-  int objectSize;
+  String objectSize;
 
   @Option(
       names = "-output_type",
@@ -97,22 +99,54 @@ public class StorageSharedBenchmarkingCli implements Runnable {
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = alwaysRetryStorageOptions.getService();
     Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
-    try {
-      ListeningExecutorService executorService =
-          MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
-      List<ApiFuture<String>> workloadRuns = new ArrayList<>();
-      for (int i = 0; i < samples; i++) {
-        TmpFile file = DataGenerator.base64Characters().tempFile(tempDir, objectSize);
+    ListeningExecutorService executorService =
+        MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
+    List<ApiFuture<String>> workloadRuns = new ArrayList<>();
+    Range objectSizeRange = Range.of(objectSize);
+    for (int i = 0; i < samples; i++) {
+      try (TmpFile file =
+          DataGenerator.base64Characters()
+              .tempFile(tempDir, getRandomInt(objectSizeRange.min, objectSizeRange.max))) {
         BlobInfo blob = BlobInfo.newBuilder(bucket, file.toString()).build();
         workloadRuns.add(convert(executorService.submit(new Workload1(file, blob, storageClient))));
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
-      ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(workloadRuns));
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
+    ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(workloadRuns));
+  }
+
+  public static int getRandomInt(int min, int max) {
+    Random random = new Random();
+    return random.nextInt((max - min) + 1) + min;
   }
 
   private static <T> ApiFuture<T> convert(ListenableFuture<T> lf) {
     return new ListenableFutureToApiFuture<>(lf);
+  }
+
+  private static final class Range {
+    private final int min;
+    private final int max;
+
+    private Range(int min, int max) {
+      this.min = min;
+      this.max = max;
+    }
+
+    public static Range of(int min, int max) {
+      return new Range(min, max);
+    }
+    // Takes an object size range of format min...max and creates a range object
+    public static Range of(String range) {
+      Pattern p = Pattern.compile("...");
+      String[] splitRangeVals = p.split(range);
+      if (splitRangeVals.length == 2) {
+        String min = splitRangeVals[0];
+        String max = splitRangeVals[1];
+        return of(Integer.parseInt(min), Integer.parseInt(max));
+      }
+      throw new IllegalStateException("Expected a size range of format min..max, but got " + range);
+    }
   }
 }
