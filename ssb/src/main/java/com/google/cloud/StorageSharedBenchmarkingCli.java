@@ -42,8 +42,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "ssb")
-public class StorageSharedBenchmarkingCli implements Runnable {
-  public static long SSB_SIZE_THRESHOLD_BYTES = 1048576;
+public final class StorageSharedBenchmarkingCli implements Runnable {
   // TODO: check what input validation is needed for option values.
   @Option(names = "-project", description = "GCP Project Identifier", required = true)
   String project;
@@ -58,10 +57,10 @@ public class StorageSharedBenchmarkingCli implements Runnable {
       names = "-workers",
       defaultValue = "16",
       description = "Number of workers to run in parallel for the workload")
-  static int workers;
+  int workers;
 
   @Option(names = "-api", defaultValue = "JSON", description = "API to use")
-  static String api;
+  String api;
 
   @Option(
       names = "-object_size",
@@ -104,11 +103,14 @@ public class StorageSharedBenchmarkingCli implements Runnable {
     List<ApiFuture<String>> workloadRuns = new ArrayList<>();
     Range objectSizeRange = Range.of(objectSize);
     for (int i = 0; i < samples; i++) {
-      try (TmpFile file =
-          DataGenerator.base64Characters()
-              .tempFile(tempDir, getRandomInt(objectSizeRange.min, objectSizeRange.max))) {
+      try {
+        TmpFile file =
+            DataGenerator.base64Characters()
+                .tempFile(tempDir, getRandomInt(objectSizeRange.min, objectSizeRange.max));
         BlobInfo blob = BlobInfo.newBuilder(bucket, file.toString()).build();
-        workloadRuns.add(convert(executorService.submit(new Workload1(file, blob, storageClient))));
+        workloadRuns.add(
+            convert(
+                executorService.submit(new Workload1(file, blob, storageClient, workers, api))));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
@@ -117,6 +119,7 @@ public class StorageSharedBenchmarkingCli implements Runnable {
   }
 
   public static int getRandomInt(int min, int max) {
+    if (min == max) return min;
     Random random = new Random();
     return random.nextInt((max - min) + 1) + min;
   }
@@ -139,7 +142,7 @@ public class StorageSharedBenchmarkingCli implements Runnable {
     }
     // Takes an object size range of format min...max and creates a range object
     public static Range of(String range) {
-      Pattern p = Pattern.compile("...");
+      Pattern p = Pattern.compile("\\.\\.\\.");
       String[] splitRangeVals = p.split(range);
       if (splitRangeVals.length == 2) {
         String min = splitRangeVals[0];

@@ -78,6 +78,28 @@ final class CloudMonitoringResult {
   }
 
   @Override
+  public String toString() {
+    return MoreObjects.toStringHelper(this)
+        .add("library", library)
+        .add("api", api)
+        .add("op", op)
+        .add("workers", workers)
+        .add("object_size", object_size)
+        .add("app_buffer_size", app_buffer_size)
+        .add("chunksize", chunksize)
+        .add("crc32c_enabled", crc32c_enabled)
+        .add("md5_enabled", md5_enabled)
+        .add("cpu_time_us", cpu_time_us)
+        .add("bucket_name", bucket_name)
+        .add("status", status)
+        .add("transfer_size", transfer_size)
+        .add("transfer_offset", transfer_offset)
+        .add("failure_msg", failure_msg)
+        .add("throughput", throughput)
+        .toString();
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
@@ -93,6 +115,7 @@ final class CloudMonitoringResult {
         && crc32c_enabled == result.crc32c_enabled
         && md5_enabled == result.md5_enabled
         && cpu_time_us == result.cpu_time_us
+        && Double.compare(result.throughput, throughput) == 0
         && Objects.equals(library, result.library)
         && Objects.equals(api, result.api)
         && Objects.equals(op, result.op)
@@ -120,28 +143,8 @@ final class CloudMonitoringResult {
         status,
         transfer_size,
         transfer_offset,
-        failure_msg);
-  }
-
-  @Override
-  public String toString() {
-    return MoreObjects.toStringHelper(this)
-        .add("library", library)
-        .add("api", api)
-        .add("op", op)
-        .add("workers", workers)
-        .add("object_size", object_size)
-        .add("app_buffer_size", app_buffer_size)
-        .add("chunksize", chunksize)
-        .add("crc32c_enabled", crc32c_enabled)
-        .add("md5_enabled", md5_enabled)
-        .add("cpu_time_us", cpu_time_us)
-        .add("bucket_name", bucket_name)
-        .add("status", status)
-        .add("transfer_size", transfer_size)
-        .add("transfer_offset", transfer_offset)
-        .add("failure_msg", failure_msg)
-        .toString();
+        failure_msg,
+        throughput);
   }
 
   public static class Builder {

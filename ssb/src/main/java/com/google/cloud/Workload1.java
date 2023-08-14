@@ -16,10 +16,16 @@
 
 package com.google.cloud;
 
+import static com.google.cloud.StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS;
+import static com.google.cloud.StorageSharedBenchmarkingUtils.calculateThroughput;
+import static com.google.cloud.StorageSharedBenchmarkingUtils.cleanupObject;
+
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.TmpFile;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
@@ -29,11 +35,15 @@ final class Workload1 implements Callable<String> {
   private final TmpFile file;
   private final BlobInfo blob;
   private final Storage storage;
+  private final int workers;
+  private final String api;
 
-  Workload1(TmpFile file, BlobInfo blob, Storage storage) {
+  Workload1(TmpFile file, BlobInfo blob, Storage storage, int workers, String api) {
     this.file = file;
     this.blob = blob;
     this.storage = storage;
+    this.workers = workers;
+    this.api = api;
   }
 
   @Override
@@ -44,12 +54,28 @@ final class Workload1 implements Callable<String> {
     Instant startTime = clock.instant();
     Blob created = storage.createFrom(blob, file.getPath());
     Instant endTime = clock.instant();
-    Duration elapsedTime = Duration.between(startTime, endTime);
-    double throughput =
-        created.getSize() >= StorageSharedBenchmarkingCli.SSB_SIZE_THRESHOLD_BYTES
-            ? created.getSize() / 1024 / 1024 / (elapsedTime.toNanos())
-            : created.getSize() / 1024 / 1024 / (elapsedTime.toNanos());
-    System.out.println(generateCloudMonitoringResult("WRITE", throughput, created).toString());
+    Duration elapsedTimeUpload = Duration.between(startTime, endTime);
+    System.out.println(
+        generateCloudMonitoringResult(
+                "WRITE",
+                calculateThroughput(created.getSize().longValue(), elapsedTimeUpload),
+                created)
+            .toString());
+    Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
+    for (int i = 0; i <= DEFAULT_NUMBER_OF_READS; i++) {
+      TmpFile dest = TmpFile.of(tempDir, "prefix", "bin");
+      startTime = clock.instant();
+      storage.downloadTo(created.getBlobId(), dest.getPath());
+      endTime = clock.instant();
+      Duration elapsedTimeDownload = Duration.between(startTime, endTime);
+      System.out.println(
+          generateCloudMonitoringResult(
+                  "READ[" + i + "]",
+                  calculateThroughput(created.getSize().longValue(), elapsedTimeDownload),
+                  created)
+              .toString());
+    }
+    cleanupObject(storage, created);
     return "OK";
   }
 
@@ -58,9 +84,9 @@ final class Workload1 implements Callable<String> {
     CloudMonitoringResult result =
         CloudMonitoringResult.newBuilder()
             .setLibrary("java")
-            .setApi(StorageSharedBenchmarkingCli.api)
+            .setApi(api)
             .setOp(op)
-            .setWorkers(StorageSharedBenchmarkingCli.workers)
+            .setWorkers(workers)
             .setObjectSize(created.getSize().intValue())
             .setChunksize(created.getSize().intValue())
             .setCrc32cEnabled(false)
