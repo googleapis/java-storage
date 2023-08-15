@@ -7,18 +7,15 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 
 package com.google.cloud;
-
-import static com.google.cloud.StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS;
-import static com.google.cloud.StorageSharedBenchmarkingUtils.calculateThroughput;
-import static com.google.cloud.StorageSharedBenchmarkingUtils.cleanupObject;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
@@ -58,11 +55,11 @@ final class Workload1 implements Callable<String> {
     System.out.println(
         generateCloudMonitoringResult(
                 "WRITE",
-                calculateThroughput(created.getSize().longValue(), elapsedTimeUpload),
+                StorageSharedBenchmarkingUtils.calculateThroughput(created.getSize().longValue(), elapsedTimeUpload),
                 created)
             .toString());
     Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
-    for (int i = 0; i <= DEFAULT_NUMBER_OF_READS; i++) {
+    for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
       TmpFile dest = TmpFile.of(tempDir, "prefix", "bin");
       startTime = clock.instant();
       storage.downloadTo(created.getBlobId(), dest.getPath());
@@ -71,11 +68,11 @@ final class Workload1 implements Callable<String> {
       System.out.println(
           generateCloudMonitoringResult(
                   "READ[" + i + "]",
-                  calculateThroughput(created.getSize().longValue(), elapsedTimeDownload),
+                  StorageSharedBenchmarkingUtils.calculateThroughput(created.getSize().longValue(), elapsedTimeDownload),
                   created)
               .toString());
     }
-    cleanupObject(storage, created);
+    StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
     return "OK";
   }
 

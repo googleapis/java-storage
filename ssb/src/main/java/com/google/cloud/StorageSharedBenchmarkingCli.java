@@ -7,11 +7,12 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
  */
 
 package com.google.cloud;
@@ -64,8 +65,8 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
 
   @Option(
       names = "-object_size",
-      defaultValue = "1048576...1048576",
-      description = "Object size in bytes to use for the workload")
+      defaultValue = "1048576..1048576",
+      description = "any positive integer, or an inclusive range such as min..max where min and max are positive integers")
   String objectSize;
 
   @Option(
@@ -94,9 +95,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   private void runWorkload1() {
     RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
 
-    StorageOptions alwaysRetryStorageOptions =
+    StorageOptions retryStorageOptions =
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
-    Storage storageClient = alwaysRetryStorageOptions.getService();
+    Storage storageClient = retryStorageOptions.getService();
     Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
@@ -140,9 +141,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     public static Range of(int min, int max) {
       return new Range(min, max);
     }
-    // Takes an object size range of format min...max and creates a range object
+    // Takes an object size range of format min..max and creates a range object
     public static Range of(String range) {
-      Pattern p = Pattern.compile("\\.\\.\\.");
+      Pattern p = Pattern.compile("\\.\\.");
       String[] splitRangeVals = p.split(range);
       if (splitRangeVals.length == 2) {
         String min = splitRangeVals[0];
