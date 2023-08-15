@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.CrossTransportUtils.fmtMethodName;
+import static com.google.cloud.storage.CrossTransportUtils.throwGrpcOnly;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
@@ -4615,4 +4617,52 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
    */
   @Override
   default void close() throws Exception {}
+
+  /**
+   * Create a new {@link BlobWriteSession} for the specified {@code blobInfo} and {@code options}.
+   *
+   * <p>The returned {@code BlobWriteSession} can be used to write an individual version, a new
+   * session must be created each time you want to create a new version.
+   *
+   * <p>By default, any MD5 value in the provided {@code blobInfo} is ignored unless the option
+   * {@link BlobWriteOption#md5Match()} is included in {@code options}.
+   *
+   * <p>By default, any CRC32c value in the provided {@code blobInfo} is ignored unless the option
+   * {@link BlobWriteOption#crc32cMatch()} is included in {@code options}.
+   *
+   * <h4>Example of creating an object using {@code BlobWriteSession}:</h4>
+   *
+   * <pre>{@code
+   * String bucketName = "my-unique-bucket";
+   * String blobName = "my-blob-name";
+   * BlobId blobId = BlobId.of(bucketName, blobName);
+   * BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+   * ReadableByteChannel readableByteChannel = ...;
+   * BlobWriteSession blobWriteSession = storage.blobWriteSession(blobInfo, BlobWriteOption.doesNotExist());
+   *
+   * // open the channel for writing
+   * try (WritableByteChannel writableByteChannel = blobWriteSession.open()) {
+   *   // copy all bytes
+   *   ByteStreams.copy(readableByteChannel, writableByteChannel);
+   * } catch (IOException e) {
+   *   // handle IOException
+   * }
+   *
+   * // get the resulting object metadata
+   * ApiFuture<BlobInfo> resultFuture = blobWriteSession.getResult();
+   * BlobInfo gen1 = resultFuture.get();
+   * }</pre>
+   *
+   * @param blobInfo blob to create
+   * @param options blob write options
+   * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+   * @see BlobWriteSessionConfig
+   * @see BlobWriteSessionConfigs
+   * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
+   */
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  default BlobWriteSession blobWriteSession(BlobInfo blobInfo, BlobWriteOption... options) {
+    return throwGrpcOnly(fmtMethodName("blobWriteSession", BlobInfo.class, BlobWriteOption.class));
+  }
 }

@@ -40,9 +40,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Base64;
 import java.util.Collections;
@@ -170,35 +172,70 @@ public class SerializationTest extends BaseSerializationTest {
             .add(UnifiedOpts.md5MatchExtractor())
             .build();
 
-    return new Serializable[] {
-      ACL_DOMAIN,
-      ACL_GROUP,
-      ACL_PROJECT_,
-      ACL_USER,
-      ACL_RAW,
-      ACL,
-      BLOB_INFO,
-      BLOB,
-      BUCKET_INFO,
-      BUCKET,
-      ORIGIN,
-      CORS,
-      PAGE_RESULT,
-      BLOB_LIST_OPTIONS,
-      BLOB_SOURCE_OPTIONS,
-      BLOB_TARGET_OPTIONS,
-      BUCKET_LIST_OPTIONS,
-      BUCKET_SOURCE_OPTIONS,
-      BUCKET_TARGET_OPTIONS,
-      STORAGE_EXCEPTION,
-      optionsDefault1,
-      optionsDefault2,
-      optionsHttp1,
-      optionsHttp2,
-      optionsGrpc1,
-      optionsGrpc2,
-      serializableOpts
-    };
+    try {
+      GrpcStorageOptions grpcStorageOptionsBufferToTemp =
+          StorageOptions.grpc()
+              .setCredentials(NoCredentials.getInstance())
+              .setProjectId("project1")
+              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
+              .build();
+
+      return new Serializable[] {
+        ACL_DOMAIN,
+        ACL_GROUP,
+        ACL_PROJECT_,
+        ACL_USER,
+        ACL_RAW,
+        ACL,
+        BLOB_INFO,
+        BLOB,
+        BUCKET_INFO,
+        BUCKET,
+        ORIGIN,
+        CORS,
+        PAGE_RESULT,
+        BLOB_LIST_OPTIONS,
+        BLOB_SOURCE_OPTIONS,
+        BLOB_TARGET_OPTIONS,
+        BUCKET_LIST_OPTIONS,
+        BUCKET_SOURCE_OPTIONS,
+        BUCKET_TARGET_OPTIONS,
+        STORAGE_EXCEPTION,
+        optionsDefault1,
+        optionsDefault2,
+        optionsHttp1,
+        optionsHttp2,
+        optionsGrpc1,
+        optionsGrpc2,
+        serializableOpts,
+        grpcStorageOptionsBufferToTemp
+      };
+    } catch (IOException ioe) {
+      throw new AssertionError(ioe);
+    }
+  }
+
+  @Test
+  public void avoidNpeHttpStorageOptions_retryDeps() throws IOException, ClassNotFoundException {
+    HttpStorageOptions optionsHttp1 =
+        StorageOptions.http()
+            .setProjectId("http1")
+            .setCredentials(NoCredentials.getInstance())
+            .build();
+
+    assertThat(optionsHttp1.asRetryDependencies()).isNotNull();
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+      oos.writeObject(optionsHttp1);
+    }
+
+    byte[] byteArray = baos.toByteArray();
+    try (ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(byteArray))) {
+      Object o = ois.readObject();
+      HttpStorageOptions hso = (HttpStorageOptions) o;
+      assertThat(hso.asRetryDependencies()).isNotNull();
+    }
   }
 
   @Override
@@ -216,7 +253,8 @@ public class SerializationTest extends BaseSerializationTest {
             JsonResumableWrite.of(
                 Conversions.apiary().blobInfo().encode(BlobInfo.newBuilder("b", "n").build()),
                 ImmutableMap.of(),
-                "upload-id"));
+                "upload-id",
+                0));
     return new Restorable<?>[] {readerV2, writer};
   }
 

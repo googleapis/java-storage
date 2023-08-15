@@ -113,7 +113,8 @@ public final class ITJsonResumableSessionTest {
       URI endpoint = fakeHttpServer.getEndpoint();
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
-      JsonResumableWrite resumableWrite = JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl);
+      JsonResumableWrite resumableWrite =
+          JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
       JsonResumableSession session =
           new JsonResumableSession(
               httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
@@ -167,7 +168,8 @@ public final class ITJsonResumableSessionTest {
       URI endpoint = fakeHttpServer.getEndpoint();
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
-      JsonResumableWrite resumableWrite = JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl);
+      JsonResumableWrite resumableWrite =
+          JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
       JsonResumableSession session =
           new JsonResumableSession(
               httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);
@@ -234,7 +236,8 @@ public final class ITJsonResumableSessionTest {
       URI endpoint = fakeHttpServer.getEndpoint();
       String uploadUrl = String.format("%s/upload/%s", endpoint.toString(), UUID.randomUUID());
 
-      JsonResumableWrite resumableWrite = JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl);
+      JsonResumableWrite resumableWrite =
+          JsonResumableWrite.of(null, ImmutableMap.of(), uploadUrl, 0);
       JsonResumableSession session =
           new JsonResumableSession(
               httpClientContext, RETRYING_DEPENDENCIES, RETRY_ALGORITHM, resumableWrite);

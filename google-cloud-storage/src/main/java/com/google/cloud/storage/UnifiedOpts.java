@@ -1083,7 +1083,7 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<ListObjectsRequest.Builder> listObjects() {
-      return GrpcStorageImpl.throwHttpJsonOnly(
+      return CrossTransportUtils.throwHttpJsonOnly(
           com.google.cloud.storage.Storage.BlobListOption.class, "matchGlob(String)");
     }
   }
@@ -2086,6 +2086,21 @@ final class UnifiedOpts {
    */
   @SuppressWarnings("unchecked")
   static final class Opts<T extends Opt> {
+    private static final Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> mapBuild;
+
+    static {
+      Function<ImmutableMap.Builder<?, ?>, ImmutableMap<?, ?>> tmp;
+      // buildOrThrow was added in guava 31.0
+      // if it fails, fallback to the older build() method instead.
+      // The behavior was the same, but the new name makes the behavior clear
+      try {
+        ImmutableMap.builder().buildOrThrow();
+        tmp = ImmutableMap.Builder::buildOrThrow;
+      } catch (NoSuchMethodError e) {
+        tmp = ImmutableMap.Builder::build;
+      }
+      mapBuild = tmp;
+    }
 
     private final ImmutableList<T> opts;
 
@@ -2172,7 +2187,7 @@ final class UnifiedOpts {
     ImmutableMap<StorageRpc.Option, ?> getRpcOptions() {
       ImmutableMap.Builder<StorageRpc.Option, Object> builder =
           rpcOptionMapper().apply(ImmutableMap.builder());
-      return builder.buildOrThrow();
+      return (ImmutableMap<StorageRpc.Option, ?>) mapBuild.apply(builder);
     }
 
     Mapper<GrpcCallContext> grpcMetadataMapper() {

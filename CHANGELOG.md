@@ -1,5 +1,65 @@
 # Changelog
 
+## [2.26.1](https://github.com/googleapis/java-storage/compare/v2.26.0...v2.26.1) (2023-08-14)
+
+
+### Bug Fixes
+
+* Make use of ImmutableMap.Builder#buildOrThrow graceful ([#2159](https://github.com/googleapis/java-storage/issues/2159)) ([e9746f8](https://github.com/googleapis/java-storage/commit/e9746f856e9204c1c0ec62f19e6f71ff8a0b9750))
+* Update gRPC writeAndClose to only set finish_write on the last message ([#2163](https://github.com/googleapis/java-storage/issues/2163)) ([95df758](https://github.com/googleapis/java-storage/commit/95df758d6753005226556177e68a3e9c630c789b))
+
+
+### Dependencies
+
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.24 ([#2158](https://github.com/googleapis/java-storage/issues/2158)) ([4f5682a](https://github.com/googleapis/java-storage/commit/4f5682a4f6d6d5372a2d382ae3e47dace490ca0d))
+
+## [2.26.0](https://github.com/googleapis/java-storage/compare/v2.25.0...v2.26.0) (2023-08-03)
+
+
+### Features
+
+* Implement BufferToDiskThenUpload BlobWriteSessionConfig ([#2139](https://github.com/googleapis/java-storage/issues/2139)) ([4dad2d5](https://github.com/googleapis/java-storage/commit/4dad2d5c3a81eda7190ad4f95316471e7fa30f66))
+* Introduce new BlobWriteSession ([#2123](https://github.com/googleapis/java-storage/issues/2123)) ([e0191b5](https://github.com/googleapis/java-storage/commit/e0191b518e50a49fae0691894b50f0c5f33fc6af))
+
+
+### Bug Fixes
+
+* **grpc:** Return error if credentials are detected to be null ([#2142](https://github.com/googleapis/java-storage/issues/2142)) ([b61a976](https://github.com/googleapis/java-storage/commit/b61a9764a9d953d2b214edb2b543b8df42fbfa06))
+* Possible NPE when HttpStorageOptions deserialized ([#2153](https://github.com/googleapis/java-storage/issues/2153)) ([68ad8e7](https://github.com/googleapis/java-storage/commit/68ad8e7357097e3dd161c2ab5f7a42a060a3702c))
+* Update grpc default metadata projection to include acl same as json ([#2150](https://github.com/googleapis/java-storage/issues/2150)) ([330e795](https://github.com/googleapis/java-storage/commit/330e795040592e5df22d44fb5216ad7cf2448e81))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.14.0 ([#2151](https://github.com/googleapis/java-storage/issues/2151)) ([eba8b6a](https://github.com/googleapis/java-storage/commit/eba8b6a235919a27d1f6dadf770140c7d143aa1a))
+
+## [2.25.0](https://github.com/googleapis/java-storage/compare/v2.24.0...v2.25.0) (2023-07-24)
+
+
+### Features
+
+* BlobWriteChannelV2 - same throughput less GC ([#2110](https://github.com/googleapis/java-storage/issues/2110)) ([1b52a10](https://github.com/googleapis/java-storage/commit/1b52a1053130620011515060787bada10c324c0b))
+* Update Storage.createFrom(BlobInfo, Path) to have 150% higher throughput ([#2059](https://github.com/googleapis/java-storage/issues/2059)) ([4c2f44e](https://github.com/googleapis/java-storage/commit/4c2f44e28a1ff19ffb2a02e3cefc062a1dd98fdc))
+
+
+### Bug Fixes
+
+* Update BlobWriteChannelV2 to properly carry forward offset after incremental flush ([#2125](https://github.com/googleapis/java-storage/issues/2125)) ([c099a2f](https://github.com/googleapis/java-storage/commit/c099a2f4f8ea9afa6953270876653916b021fd9f))
+* Update GrpcStorageImpl.createFrom(BlobInfo, Path) to use RewindableContent ([#2112](https://github.com/googleapis/java-storage/issues/2112)) ([c805051](https://github.com/googleapis/java-storage/commit/c80505129baa831e492a5514e937875407211595))
+
+
+### Documentation
+
+* Fix broken link for TESTING.md ([#2126](https://github.com/googleapis/java-storage/issues/2126)) ([fe9662d](https://github.com/googleapis/java-storage/commit/fe9662d7e552aabfc9012e582ae634f46af1f255))
+
+
+### Dependencies
+
+* **test:** Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.37.0 ([#2130](https://github.com/googleapis/java-storage/issues/2130)) ([9e8b6d3](https://github.com/googleapis/java-storage/commit/9e8b6d324bfef84e2c2ee93c424b2e7fcb601945))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.13.1 ([#2129](https://github.com/googleapis/java-storage/issues/2129)) ([a7e854e](https://github.com/googleapis/java-storage/commit/a7e854ecb4d7fa9508a8d0844fc08d9eeab6f653))
+* Update dependency org.junit.vintage:junit-vintage-engine to v5.10.0 ([#2132](https://github.com/googleapis/java-storage/issues/2132)) ([f5477e4](https://github.com/googleapis/java-storage/commit/f5477e4eb168dfd3151d0e2c0462e5b35eb3de37))
+* Update junit-platform.version to v5.10.0 ([#2133](https://github.com/googleapis/java-storage/issues/2133)) ([3d22686](https://github.com/googleapis/java-storage/commit/3d2268642dcecea8ca55e78479ad4e4390075814))
+
 ## [2.24.0](https://github.com/googleapis/java-storage/compare/v2.23.0...v2.24.0) (2023-07-11)
 
 

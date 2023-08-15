@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.TestUtils.apiException;
+import static com.google.cloud.storage.TestUtils.getChecksummedData;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.api.core.SettableApiFuture;
@@ -25,11 +26,13 @@ import com.google.api.gax.rpc.DataLossException;
 import com.google.api.gax.rpc.PermissionDeniedException;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
+import com.google.cloud.storage.WriteFlushStrategy.Flusher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.ByteString;
 import com.google.storage.v2.Object;
+import com.google.storage.v2.ObjectChecksums;
 import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.StorageClient;
@@ -48,18 +51,22 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.Test;
 
 public final class ITGapicUnbufferedWritableByteChannelTest {
   private static final Logger LOGGER =
       Logger.getLogger(ITGapicUnbufferedWritableByteChannelTest.class.getName());
 
+  private static final Hasher HASHER = Hasher.enabled();
   private static final ChunkSegmenter segmenter =
-      new ChunkSegmenter(Hasher.noop(), ByteStringStrategy.copy(), 10, 5);
+      new ChunkSegmenter(HASHER, ByteStringStrategy.copy(), 10, 5);
 
   private static final String uploadId = "upload-id";
 
@@ -75,31 +82,35 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
   private static final WriteObjectRequest req1 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 0, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 0, 10), HASHER))
           .build();
   private static final WriteObjectRequest req2 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(10)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 10, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 10, 10), HASHER))
           .build();
   private static final WriteObjectRequest req3 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(20)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 20, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 20, 10), HASHER))
           .build();
   private static final WriteObjectRequest req4 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(30)
-          .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 30, 10)))
+          .setChecksummedData(getChecksummedData(ByteString.copyFrom(bytes, 30, 10), HASHER))
           .build();
   private static final WriteObjectRequest req5 =
       WriteObjectRequest.newBuilder()
           .setUploadId(uploadId)
           .setWriteOffset(40)
           .setFinishWrite(true)
+          .setObjectChecksums(
+              ObjectChecksums.newBuilder()
+                  .setCrc32C(HASHER.hash(ByteBuffer.wrap(bytes)).getValue())
+                  .build())
           .build();
 
   private static final WriteObjectResponse resp1 =
@@ -118,35 +129,24 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
 
   @Test
   public void directUpload() throws IOException, InterruptedException, ExecutionException {
-    Object obj = Object.newBuilder().setBucket("buck").setName("obj").build();
-    WriteObjectSpec spec = WriteObjectSpec.newBuilder().setResource(obj).build();
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(40);
     WriteObjectRequest req1 =
-        WriteObjectRequest.newBuilder()
+        ITGapicUnbufferedWritableByteChannelTest.req1
+            .toBuilder()
+            .clearUploadId()
             .setWriteObjectSpec(spec)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 0, 10)))
             .build();
     WriteObjectRequest req2 =
-        WriteObjectRequest.newBuilder()
-            .setWriteOffset(10)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 10, 10)))
-            .build();
+        ITGapicUnbufferedWritableByteChannelTest.req2.toBuilder().clearUploadId().build();
     WriteObjectRequest req3 =
-        WriteObjectRequest.newBuilder()
-            .setWriteOffset(20)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 20, 10)))
-            .build();
+        ITGapicUnbufferedWritableByteChannelTest.req3.toBuilder().clearUploadId().build();
     WriteObjectRequest req4 =
-        WriteObjectRequest.newBuilder()
-            .setWriteOffset(30)
-            .setChecksummedData(TestUtils.getChecksummedData(ByteString.copyFrom(bytes, 30, 10)))
-            .build();
+        ITGapicUnbufferedWritableByteChannelTest.req4.toBuilder().clearUploadId().build();
     WriteObjectRequest req5 =
-        WriteObjectRequest.newBuilder().setWriteOffset(40).setFinishWrite(true).build();
+        ITGapicUnbufferedWritableByteChannelTest.req5.toBuilder().clearUploadId().build();
 
-    WriteObjectResponse resp =
-        WriteObjectResponse.newBuilder().setResource(obj.toBuilder().setSize(40)).build();
+    WriteObjectResponse resp = resp5;
 
     WriteObjectRequest base = WriteObjectRequest.newBuilder().setWriteObjectSpec(spec).build();
     WriteObjectRequestBuilderFactory reqFactory = WriteObjectRequestBuilderFactory.simple(base);
@@ -305,6 +305,41 @@ public final class ITGapicUnbufferedWritableByteChannelTest {
 
     assertThat(writeCtx.getTotalSentBytes().get()).isEqualTo(40);
     assertThat(writeCtx.getConfirmedBytes().get()).isEqualTo(40);
+  }
+
+  @Test
+  public void resumableUpload_finalizeWhenWriteAndCloseCalledEvenWhenQuantumAligned()
+      throws IOException {
+    SettableApiFuture<WriteObjectResponse> result = SettableApiFuture.create();
+
+    AtomicReference<List<WriteObjectRequest>> actualFlush = new AtomicReference<>();
+    WriteObjectRequest closeRequestSentinel =
+        WriteObjectRequest.newBuilder().setUploadId("sentinel").build();
+    AtomicReference<WriteObjectRequest> actualClose = new AtomicReference<>(closeRequestSentinel);
+    GapicUnbufferedWritableByteChannel<?> c =
+        new GapicUnbufferedWritableByteChannel<>(
+            result,
+            segmenter,
+            reqFactory,
+            (bucketName, committedTotalBytesCallback, onSuccessCallback) ->
+                new Flusher() {
+                  @Override
+                  public void flush(@NonNull List<WriteObjectRequest> segments) {
+                    actualFlush.compareAndSet(null, segments);
+                  }
+
+                  @Override
+                  public void close(@Nullable WriteObjectRequest req) {
+                    actualClose.compareAndSet(closeRequestSentinel, req);
+                  }
+                });
+
+    long written = c.writeAndClose(ByteBuffer.wrap(bytes));
+
+    assertThat(written).isEqualTo(40);
+    assertThat(actualFlush.get()).isEqualTo(ImmutableList.of(req1, req2, req3, req4, req5));
+    // calling close is okay, as long as the provided request is null
+    assertThat(actualClose.get()).isAnyOf(closeRequestSentinel, null);
   }
 
   static class DirectWriteService extends StorageImplBase {

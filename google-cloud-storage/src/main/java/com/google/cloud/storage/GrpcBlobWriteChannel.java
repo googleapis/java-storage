@@ -50,7 +50,7 @@ final class GrpcBlobWriteChannel extends BaseStorageWriteChannel<WriteObjectResp
 
   @Override
   public RestorableState<WriteChannel> capture() {
-    return GrpcStorageImpl.throwHttpJsonOnly(WriteChannel.class, "capture");
+    return CrossTransportUtils.throwHttpJsonOnly(WriteChannel.class, "capture");
   }
 
   @Override

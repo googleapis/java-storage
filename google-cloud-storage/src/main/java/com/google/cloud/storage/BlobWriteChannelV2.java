@@ -107,6 +107,10 @@ final class BlobWriteChannelV2 extends BaseStorageWriteChannel<StorageObject> {
 
     @Override
     public WriteChannel restore() {
+      JsonResumableWrite resumableWrite = this.resumableWrite;
+      if (position != null) {
+        resumableWrite = resumableWrite.withBeginOffset(position);
+      }
       BlobWriteChannelV2 channel =
           new BlobWriteChannelV2(BlobReadChannelContext.from(options), resumableWrite);
       if (chunkSize != null) {

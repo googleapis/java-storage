@@ -38,7 +38,7 @@ public final class TransportCompatibilityTest {
             .setCredentials(NoCredentials.getInstance())
             .build();
     @SuppressWarnings("resource")
-    Storage s = new GrpcStorageImpl(options, null, Opts.empty());
+    Storage s = new GrpcStorageImpl(options, null, null, Opts.empty());
     ImmutableList<String> messages =
         Stream.<Supplier<?>>of(
                 s::batch,

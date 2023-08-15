@@ -34,6 +34,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
 import java.util.List;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicUnbufferedWritableByteChannel<
         RequestFactoryT extends WriteObjectRequestBuilderFactory>
@@ -63,12 +64,51 @@ final class GapicUnbufferedWritableByteChannel<
   }
 
   @Override
-  public long write(ByteBuffer[] srcs, int srcsOffset, int srcLength) throws IOException {
+  public long write(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
+    return internalWrite(srcs, srcsOffset, srcsLength, false);
+  }
+
+  @Override
+  public long writeAndClose(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
+    long write = internalWrite(srcs, srcsOffset, srcsLength, true);
+    close();
+    return write;
+  }
+
+  @Override
+  public boolean isOpen() {
+    return open;
+  }
+
+  @Override
+  public void close() throws IOException {
+    if (!finished) {
+      WriteObjectRequest message = finishMessage();
+      try {
+        flusher.close(message);
+        finished = true;
+      } catch (RuntimeException e) {
+        resultFuture.setException(e);
+        throw e;
+      }
+    } else {
+      flusher.close(null);
+    }
+    open = false;
+  }
+
+  @VisibleForTesting
+  WriteCtx<RequestFactoryT> getWriteCtx() {
+    return writeCtx;
+  }
+
+  private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength, boolean finalize)
+      throws ClosedChannelException {
     if (!open) {
       throw new ClosedChannelException();
     }
 
-    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcLength);
+    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
 
     List<WriteObjectRequest> messages = new ArrayList<>();
 
@@ -104,6 +144,10 @@ final class GapicUnbufferedWritableByteChannel<
       messages.add(build);
       bytesConsumed += contentSize;
     }
+    if (finalize && !finished) {
+      messages.add(finishMessage());
+      finished = true;
+    }
 
     try {
       flusher.flush(messages);
@@ -115,39 +159,17 @@ final class GapicUnbufferedWritableByteChannel<
     return bytesConsumed;
   }
 
-  @Override
-  public boolean isOpen() {
-    return open;
-  }
+  @NonNull
+  private WriteObjectRequest finishMessage() {
+    long offset = writeCtx.getTotalSentBytes().get();
+    Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
 
-  @Override
-  public void close() throws IOException {
-    if (!finished) {
-      long offset = writeCtx.getTotalSentBytes().get();
-      Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
-
-      WriteObjectRequest.Builder b =
-          writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
-      if (crc32cValue != null) {
-        b.setObjectChecksums(
-            ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
-      }
-      WriteObjectRequest message = b.build();
-      try {
-        flusher.close(message);
-        finished = true;
-      } catch (RuntimeException e) {
-        resultFuture.setException(e);
-        throw e;
-      }
-    } else {
-      flusher.close(null);
+    WriteObjectRequest.Builder b =
+        writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
+    if (crc32cValue != null) {
+      b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
     }
-    open = false;
-  }
-
-  @VisibleForTesting
-  WriteCtx<RequestFactoryT> getWriteCtx() {
-    return writeCtx;
+    WriteObjectRequest message = b.build();
+    return message;
   }
 }

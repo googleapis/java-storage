@@ -185,6 +185,22 @@ final class StorageByteChannels {
     }
 
     @Override
+    public synchronized int writeAndClose(ByteBuffer src) throws IOException {
+      return delegate.writeAndClose(src);
+    }
+
+    @Override
+    public synchronized long writeAndClose(ByteBuffer[] srcs) throws IOException {
+      return delegate.writeAndClose(srcs);
+    }
+
+    @Override
+    public synchronized long writeAndClose(ByteBuffer[] srcs, int offset, int length)
+        throws IOException {
+      return delegate.writeAndClose(srcs, offset, length);
+    }
+
+    @Override
     public boolean isOpen() {
       return delegate.isOpen();
     }

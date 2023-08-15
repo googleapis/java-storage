@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.base.MoreObjects;
@@ -41,6 +43,7 @@ final class JsonResumableWrite implements Serializable {
   @MonotonicNonNull private final String signedUrl;
 
   @NonNull private final String uploadId;
+  private final long beginOffset;
 
   private volatile String objectJson;
 
@@ -48,15 +51,30 @@ final class JsonResumableWrite implements Serializable {
       StorageObject object,
       Map<StorageRpc.Option, ?> options,
       String signedUrl,
-      @NonNull String uploadId) {
+      @NonNull String uploadId,
+      long beginOffset) {
     this.object = object;
     this.options = options;
     this.signedUrl = signedUrl;
     this.uploadId = uploadId;
+    this.beginOffset = beginOffset;
   }
 
   public @NonNull String getUploadId() {
     return uploadId;
+  }
+
+  public long getBeginOffset() {
+    return beginOffset;
+  }
+
+  public JsonResumableWrite withBeginOffset(long newBeginOffset) {
+    checkArgument(
+        newBeginOffset >= beginOffset,
+        "New beginOffset must be >= existing beginOffset (%s >= %s)",
+        newBeginOffset,
+        beginOffset);
+    return new JsonResumableWrite(object, options, signedUrl, uploadId, newBeginOffset);
   }
 
   @Override
@@ -68,15 +86,16 @@ final class JsonResumableWrite implements Serializable {
       return false;
     }
     JsonResumableWrite that = (JsonResumableWrite) o;
-    return Objects.equals(object, that.object)
+    return beginOffset == that.beginOffset
+        && Objects.equals(object, that.object)
         && Objects.equals(options, that.options)
         && Objects.equals(signedUrl, that.signedUrl)
-        && uploadId.equals(that.uploadId);
+        && Objects.equals(uploadId, that.uploadId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(object, options, signedUrl, uploadId);
+    return Objects.hash(object, options, signedUrl, uploadId, beginOffset);
   }
 
   @Override
@@ -86,6 +105,7 @@ final class JsonResumableWrite implements Serializable {
         .add("options", options)
         .add("signedUrl", signedUrl)
         .add("uploadId", uploadId)
+        .add("beginOffset", beginOffset)
         .toString();
   }
 
@@ -112,11 +132,11 @@ final class JsonResumableWrite implements Serializable {
   }
 
   static JsonResumableWrite of(
-      StorageObject req, Map<StorageRpc.Option, ?> options, String uploadId) {
-    return new JsonResumableWrite(req, options, null, uploadId);
+      StorageObject req, Map<StorageRpc.Option, ?> options, String uploadId, long beginOffset) {
+    return new JsonResumableWrite(req, options, null, uploadId, beginOffset);
   }
 
-  static JsonResumableWrite of(String signedUrl, String uploadId) {
-    return new JsonResumableWrite(null, null, signedUrl, uploadId);
+  static JsonResumableWrite of(String signedUrl, String uploadId, long beginOffset) {
+    return new JsonResumableWrite(null, null, signedUrl, uploadId, beginOffset);
   }
 }

@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage.it;
 
+import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertArrayEquals;
@@ -27,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.api.client.json.JsonParser;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.NoCredentials;
+import com.google.cloud.RestorableState;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
@@ -53,6 +55,7 @@ import com.google.common.collect.ImmutableMap;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -142,7 +145,6 @@ public final class ITBlobWriteChannelTest {
   @Test
   public void changeChunkSizeAfterWrite() throws IOException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
-    System.out.println("info = " + info);
 
     int _512KiB = 512 * 1024;
     byte[] bytes = DataGenerator.base64Characters().genBytes(_512KiB + 13);
@@ -151,6 +153,39 @@ public final class ITBlobWriteChannelTest {
       writer.write(ByteBuffer.wrap(bytes, 0, _512KiB));
       assertThrows(IllegalStateException.class, () -> writer.setChunkSize(768 * 1024));
     }
+  }
+
+  @Test
+  public void restoreProperlyPlumbsBeginOffset() throws IOException {
+    BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();
+    int _256KiB = 256 * 1024;
+
+    byte[] bytes1 = DataGenerator.base64Characters().genBytes(_256KiB);
+    byte[] bytes2 = DataGenerator.base64Characters().genBytes(73);
+
+    int allLength = bytes1.length + bytes2.length;
+    byte[] expected = Arrays.copyOf(bytes1, allLength);
+    System.arraycopy(bytes2, 0, expected, bytes1.length, bytes2.length);
+    String xxdExpected = xxd(expected);
+
+    RestorableState<WriteChannel> capture;
+    {
+      WriteChannel writer = storage.writer(info, BlobWriteOption.doesNotExist());
+      writer.setChunkSize(_256KiB);
+      writer.write(ByteBuffer.wrap(bytes1));
+      // explicitly do not close writer, it will finalize the session
+      capture = writer.capture();
+    }
+
+    assertThat(capture).isNotNull();
+    WriteChannel restored = capture.restore();
+    restored.write(ByteBuffer.wrap(bytes2));
+    restored.close();
+
+    byte[] readAllBytes = storage.readAllBytes(info.getBlobId());
+    assertThat(readAllBytes).hasLength(expected.length);
+    String xxdActual = xxd(readAllBytes);
+    assertThat(xxdActual).isEqualTo(xxdExpected);
   }
 
   private void doJsonUnexpectedEOFTest(int contentSize, int cappedByteCount) throws IOException {
