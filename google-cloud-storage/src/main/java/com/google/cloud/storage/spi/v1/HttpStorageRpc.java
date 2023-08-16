@@ -123,14 +123,15 @@ public class HttpStorageRpc implements StorageRpc {
     this.options = options;
 
     // Open Census initialization
+    String applicationName = options.getApplicationName();
     CensusHttpModule censusHttpModule = new CensusHttpModule(tracer, IS_RECORD_EVENTS);
     initializer = censusHttpModule.getHttpRequestInitializer(initializer);
-    initializer = new InvocationIdInitializer(initializer);
+    initializer = new InvocationIdInitializer(initializer, applicationName);
     batchRequestInitializer = censusHttpModule.getHttpRequestInitializer(null);
     storage =
         new Storage.Builder(transport, jsonFactory, initializer)
             .setRootUrl(options.getHost())
-            .setApplicationName(options.getApplicationName())
+            .setApplicationName(applicationName)
             .build();
   }
 
@@ -140,9 +141,12 @@ public class HttpStorageRpc implements StorageRpc {
 
   private static final class InvocationIdInitializer implements HttpRequestInitializer {
     @Nullable HttpRequestInitializer initializer;
+    @Nullable private final String applicationName;
 
-    private InvocationIdInitializer(@Nullable HttpRequestInitializer initializer) {
+    private InvocationIdInitializer(
+        @Nullable HttpRequestInitializer initializer, @Nullable String applicationName) {
       this.initializer = initializer;
+      this.applicationName = applicationName;
     }
 
     @Override
@@ -151,15 +155,19 @@ public class HttpStorageRpc implements StorageRpc {
       if (this.initializer != null) {
         this.initializer.initialize(request);
       }
-      request.setInterceptor(new InvocationIdInterceptor(request.getInterceptor()));
+      request.setInterceptor(
+          new InvocationIdInterceptor(request.getInterceptor(), applicationName));
     }
   }
 
   private static final class InvocationIdInterceptor implements HttpExecuteInterceptor {
-    @Nullable HttpExecuteInterceptor interceptor;
+    @Nullable private final HttpExecuteInterceptor interceptor;
+    @Nullable private final String applicationName;
 
-    private InvocationIdInterceptor(@Nullable HttpExecuteInterceptor interceptor) {
+    private InvocationIdInterceptor(
+        @Nullable HttpExecuteInterceptor interceptor, @Nullable String applicationName) {
       this.interceptor = interceptor;
+      this.applicationName = applicationName;
     }
 
     @Override
@@ -183,6 +191,13 @@ public class HttpStorageRpc implements StorageRpc {
         }
         headers.set("x-goog-api-client", newValue);
         headers.set("x-goog-gcs-idempotency-token", invocationId);
+
+        String userAgent = headers.getUserAgent();
+        if ((userAgent == null
+            || userAgent.isEmpty()
+            || (applicationName != null && !userAgent.contains(applicationName)))) {
+          headers.setUserAgent(applicationName);
+        }
       }
     }
   }
