@@ -20,7 +20,6 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.ListenableFutureToApiFuture;
-import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -45,8 +44,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 final class TransferManagerImpl implements TransferManager {
 
   private static final String USER_AGENT_ENTRY = "gcloud-tm/";
-  private static final String LIBRARY_VERSION =
-      GaxProperties.getLibraryVersion(TransferManagerConfig.class);
+  private static final String LIBRARY_VERSION = StorageOptions.version();
   private final TransferManagerConfig transferManagerConfig;
   private final ListeningExecutorService executor;
   private final Qos qos;
