@@ -5,17 +5,16 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package com.google.cloud;
+package com.google.cloud.storage.benchmarking;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -66,7 +65,8 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
   @Option(
       names = "-object_size",
       defaultValue = "1048576..1048576",
-      description = "any positive integer, or an inclusive range such as min..max where min and max are positive integers")
+      description =
+          "any positive integer, or an inclusive range such as min..max where min and max are positive integers")
   String objectSize;
 
   @Option(
@@ -88,8 +88,13 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
 
   @Override
   public void run() {
-    // TODO: Make this a switch once we add more workloads
-    runWorkload1();
+    switch (testType) {
+      case "w1r3":
+        runWorkload1();
+        break;
+      default:
+        throw new IllegalStateException("Specify a workload to run");
+    }
   }
 
   private void runWorkload1() {
