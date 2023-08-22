@@ -616,7 +616,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
 
   /** Returns the default service endpoint. */
   public static String getDefaultEndpoint() {
-    return "storage.test-endpoint:443";
+    return "storage.googleapis.com:443";
   }
 
   /** Returns the default mTLS service endpoint. */
@@ -939,7 +939,7 @@ public class StorageStubSettings extends StubSettings<StorageStubSettings> {
       builder.setTransportChannelProvider(defaultTransportChannelProvider());
       builder.setCredentialsProvider(defaultCredentialsProviderBuilder().build());
       builder.setInternalHeaderProvider(defaultApiClientHeaderProviderBuilder().build());
-      builder.setEndpoint(getDefaultEndpoint());
+      builder.setEndpoint("storage.test-endpoint.com:443");
       builder.setMtlsEndpoint(getDefaultMtlsEndpoint());
       builder.setSwitchToMtlsEndpointAllowed(true);
 
