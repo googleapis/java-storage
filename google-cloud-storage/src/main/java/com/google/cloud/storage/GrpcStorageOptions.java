@@ -23,7 +23,6 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.api.gax.core.GaxProperties;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.GrpcInterceptorProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
@@ -210,9 +209,7 @@ public final class GrpcStorageOptions extends StorageOptions
 
     HeaderProvider internalHeaderProvider =
         StorageSettings.defaultApiClientHeaderProviderBuilder()
-            .setClientLibToken(
-                ServiceOptions.getGoogApiClientLibName(),
-                GaxProperties.getLibraryVersion(this.getClass()))
+            .setClientLibToken(ServiceOptions.getGoogApiClientLibName(), getLibraryVersion())
             .build();
 
     StorageSettings.Builder builder =

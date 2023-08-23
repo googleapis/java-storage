@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.BetaApi;
+import com.google.api.core.InternalApi;
 import com.google.cloud.NoCredentials;
 import com.google.cloud.ServiceDefaults;
 import com.google.cloud.ServiceOptions;
@@ -26,10 +27,38 @@ import com.google.cloud.storage.HttpStorageOptions.HttpStorageFactory;
 import com.google.cloud.storage.HttpStorageOptions.HttpStorageRpcFactory;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.spi.StorageRpcFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public abstract class StorageOptions extends ServiceOptions<Storage, StorageOptions> {
 
   private static final long serialVersionUID = -7295846567928013233L;
+  private static final String VERSION;
+
+  static {
+    String tmp = "unresolved";
+    final Properties props = new Properties();
+    try {
+      String resourcePath =
+          String.format(
+              "/META-INF/maven/%s/%s/pom.properties", "com.google.cloud", "google-cloud-storage");
+      InputStream resourceAsStream = StorageOptions.class.getResourceAsStream(resourcePath);
+      if (resourceAsStream == null) {
+        // some classloaders don't like a leading slash
+        resourceAsStream = StorageOptions.class.getResourceAsStream(resourcePath.substring(1));
+      }
+      if (resourceAsStream != null) {
+        props.load(resourceAsStream);
+        resourceAsStream.close();
+
+        tmp = props.getProperty("version", "unknown-version");
+      }
+    } catch (IOException ignore) {
+      // ignored
+    }
+    VERSION = tmp;
+  }
 
   /** @deprecated Use {@link HttpStorageFactory} */
   @Deprecated
@@ -84,6 +113,17 @@ public abstract class StorageOptions extends ServiceOptions<Storage, StorageOpti
   @Override
   protected boolean projectIdRequired() {
     return false;
+  }
+
+  @Override
+  public String getLibraryVersion() {
+    return VERSION;
+  }
+
+  /* This can break at any time, the value produce is intended to be informative not authoritative */
+  @InternalApi
+  public static String version() {
+    return VERSION;
   }
 
   @SuppressWarnings("unchecked")
