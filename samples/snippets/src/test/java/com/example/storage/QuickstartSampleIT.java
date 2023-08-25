@@ -45,7 +45,7 @@ public class QuickstartSampleIT {
 
   @Before
   public void setUp() {
-    bucketName = "my-new-bucket-" + UUID.randomUUID();
+    bucketName = "java-storage-grpc-" + UUID.randomUUID();
   }
 
   @After
