@@ -139,6 +139,25 @@ public final class JsonResumableSessionFailureScenarioTest {
     assertThat(storageException).hasMessageThat().contains("|< x-goog-stored-something: blah");
   }
 
+  @Test
+  public void xGoogGcsIdempotencyTokenHeadersIncludedIfPresent() throws IOException {
+    HttpRequest req =
+        new MockHttpTransport()
+            .createRequestFactory()
+            .buildPutRequest(new GenericUrl("http://localhost:80980"), new EmptyContent());
+    req.getHeaders().setContentLength(0L);
+
+    HttpResponse resp = req.execute();
+    resp.getHeaders().set("X-Goog-Gcs-Idempotency-Token", "5").setContentLength(0L);
+
+    StorageException storageException =
+        JsonResumableSessionFailureScenario.SCENARIO_0.toStorageException(
+            "uploadId", resp, null, () -> null);
+
+    assertThat(storageException.getCode()).isEqualTo(0);
+    assertThat(storageException).hasMessageThat().contains("|< x-goog-gcs-idempotency-token: 5");
+  }
+
   private static final class Cause extends RuntimeException {
 
     private Cause() {

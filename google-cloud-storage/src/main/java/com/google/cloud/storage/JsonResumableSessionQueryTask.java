@@ -92,13 +92,14 @@ final class JsonResumableSessionQueryTask
         }
       } else if (JsonResumableSessionFailureScenario.isContinue(code)) {
         String range1 = response.getHeaders().getRange();
+        //
         if (range1 != null) {
           ByteRangeSpec range = ByteRangeSpec.parse(range1);
           long endOffset = range.endOffset();
           return ResumableOperationResult.incremental(endOffset);
         } else {
-          throw JsonResumableSessionFailureScenario.QUERY_SCENARIO_1.toStorageException(
-              uploadId, response);
+          // https://cloud.google.com/storage/docs/performing-resumable-uploads#status-check
+          return ResumableOperationResult.incremental(0);
         }
       } else {
         HttpResponseException cause = new HttpResponseException(response);

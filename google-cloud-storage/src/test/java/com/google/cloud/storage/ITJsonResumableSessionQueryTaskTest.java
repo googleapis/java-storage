@@ -141,10 +141,6 @@ public final class ITJsonResumableSessionQueryTaskTest {
     }
   }
 
-  /**
-   * This is a hard failure from the perspective of GCS as a range header is a required header to be
-   * included in the response to a query upload request.
-   */
   @Test
   public void incompleteSession_missingRangeHeader() throws Exception {
     HttpRequestHandler handler =
@@ -156,9 +152,9 @@ public final class ITJsonResumableSessionQueryTaskTest {
       JsonResumableSessionQueryTask task =
           new JsonResumableSessionQueryTask(httpClientContext, uploadUrl);
 
-      StorageException se = assertThrows(StorageException.class, task::call);
-      assertThat(se.getCode()).isEqualTo(503);
-      assertThat(se).hasMessageThat().contains("Range");
+      ResumableOperationResult<@Nullable StorageObject> result = task.call();
+      assertThat(result.getPersistedSize()).isEqualTo(0);
+      assertThat(result.getObject()).isNull();
     }
   }
 

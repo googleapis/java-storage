@@ -65,8 +65,7 @@ enum JsonResumableSessionFailureScenario {
       BaseServiceException.UNKNOWN_CODE,
       "dataLoss",
       "Client side data loss detected. Bytes acked is more than client sent."),
-  SCENARIO_9(503, "backendNotConnected", "Ack less than bytes sent"),
-  QUERY_SCENARIO_1(503, "", "Missing Range header in response");
+  SCENARIO_9(503, "backendNotConnected", "Ack less than bytes sent");
 
   private static final String PREFIX_I = "\t|< ";
   private static final String PREFIX_O = "\t|> ";
@@ -79,6 +78,7 @@ enum JsonResumableSessionFailureScenario {
           .or(matches("Content-Type"))
           .or(matches("Range"))
           .or(startsWith("X-Goog-Stored-"))
+          .or(matches("X-Goog-GCS-Idempotency-Token"))
           .or(matches("X-GUploader-UploadID"));
 
   private static final Predicate<Map.Entry<String, ?>> includeHeader =
