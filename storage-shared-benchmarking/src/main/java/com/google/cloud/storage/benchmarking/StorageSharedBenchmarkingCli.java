@@ -21,15 +21,12 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.ListenableFutureToApiFuture;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.ApiExceptions;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.storage.TmpFile;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -81,6 +78,12 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       required = true)
   String testType;
 
+  @Option(
+      names = "-temp_dir_location",
+      defaultValue = "/tmp",
+      description = "Specify the path where the temporary directory should be located")
+  String tempDirLocation;
+
   public static void main(String[] args) {
     CommandLine cmd = new CommandLine(StorageSharedBenchmarkingCli.class);
     System.exit(cmd.execute(args));
@@ -103,23 +106,18 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     StorageOptions retryStorageOptions =
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = retryStorageOptions.getService();
-    Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
+    Path tempDir = Paths.get(tempDirLocation);
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
     List<ApiFuture<String>> workloadRuns = new ArrayList<>();
     Range objectSizeRange = Range.of(objectSize);
     for (int i = 0; i < samples; i++) {
-      try {
-        TmpFile file =
-            DataGenerator.base64Characters()
-                .tempFile(tempDir, getRandomInt(objectSizeRange.min, objectSizeRange.max));
-        BlobInfo blob = BlobInfo.newBuilder(bucket, file.toString()).build();
-        workloadRuns.add(
-            convert(
-                executorService.submit(new Workload1(file, blob, storageClient, workers, api))));
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+      int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
+      PrintWriter pw = new PrintWriter(System.out);
+      workloadRuns.add(
+          convert(
+              executorService.submit(
+                  new W1R3(storageClient, workers, api, pw, objectSize, tempDir, bucket))));
     }
     ApiExceptions.callAndTranslateApiException(ApiFutures.allAsList(workloadRuns));
   }

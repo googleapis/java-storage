@@ -18,60 +18,77 @@ package com.google.cloud.storage.benchmarking;
 
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.TmpFile;
+import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.Callable;
 
-final class Workload1 implements Callable<String> {
-  private final TmpFile file;
-  private final BlobInfo blob;
+final class W1R3 implements Callable<String> {
+
   private final Storage storage;
   private final int workers;
   private final String api;
+  private final PrintWriter printWriter;
+  private final int objectSize;
+  private final Path tempDirectory;
+  private final String bucketName;
 
-  Workload1(TmpFile file, BlobInfo blob, Storage storage, int workers, String api) {
-    this.file = file;
-    this.blob = blob;
+  W1R3(
+      Storage storage,
+      int workers,
+      String api,
+      PrintWriter printWriter,
+      int objectSize,
+      Path tempDirectory,
+      String bucketName) {
     this.storage = storage;
     this.workers = workers;
     this.api = api;
+    this.printWriter = printWriter;
+    this.objectSize = objectSize;
+    this.tempDirectory = tempDirectory;
+    this.bucketName = bucketName;
   }
 
   @Override
   public String call() throws Exception {
-    Clock clock = Clock.systemDefaultZone();
+    // Create the file to be uploaded and fill it with data
+    TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize);
+    BlobInfo blob = BlobInfo.newBuilder(bucketName, file.toString()).build();
 
     // Get the start time
+    Clock clock = Clock.systemDefaultZone();
     Instant startTime = clock.instant();
     Blob created = storage.createFrom(blob, file.getPath());
     Instant endTime = clock.instant();
     Duration elapsedTimeUpload = Duration.between(startTime, endTime);
-    System.out.println(
+    printWriter.println(
         generateCloudMonitoringResult(
                 "WRITE",
                 StorageSharedBenchmarkingUtils.calculateThroughput(
                     created.getSize().longValue(), elapsedTimeUpload),
                 created)
             .toString());
-    Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
+    printWriter.flush();
     for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
-      TmpFile dest = TmpFile.of(tempDir, "prefix", "bin");
+      TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin");
       startTime = clock.instant();
       storage.downloadTo(created.getBlobId(), dest.getPath());
       endTime = clock.instant();
       Duration elapsedTimeDownload = Duration.between(startTime, endTime);
-      System.out.println(
+      printWriter.println(
           generateCloudMonitoringResult(
                   "READ[" + i + "]",
                   StorageSharedBenchmarkingUtils.calculateThroughput(
                       created.getSize().longValue(), elapsedTimeDownload),
                   created)
               .toString());
+      printWriter.flush();
     }
     StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
     return "OK";
