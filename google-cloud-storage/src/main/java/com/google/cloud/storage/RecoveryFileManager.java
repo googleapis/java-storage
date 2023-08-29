@@ -66,7 +66,7 @@ final class RecoveryFileManager {
     return of(volumes, p -> ThroughputSink.nullSink());
   }
 
-  static RecoveryFileManager of(List<Path> volumes, RecoverVolumeSinkFactory factory)
+  static RecoveryFileManager of(List<Path> volumes, RecoveryVolumeSinkFactory factory)
       throws IOException {
     checkArgument(!volumes.isEmpty(), "At least one volume must be specified");
     checkArgument(
@@ -86,7 +86,7 @@ final class RecoveryFileManager {
   }
 
   @FunctionalInterface
-  interface RecoverVolumeSinkFactory {
+  interface RecoveryVolumeSinkFactory {
     ThroughputSink apply(Path p);
   }
 

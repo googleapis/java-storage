@@ -229,6 +229,10 @@ public final class TestUtils {
     return xxd(true, bytes);
   }
 
+  public static String xxd(ByteString bytes) {
+    return xxd(false, bytes.asReadOnlyByteBuffer());
+  }
+
   public static String xxd(boolean flip, ByteBuffer bytes) {
     ByteBuffer dup = bytes.duplicate();
     if (flip) dup.flip();

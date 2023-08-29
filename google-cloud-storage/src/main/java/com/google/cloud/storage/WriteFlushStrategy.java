@@ -86,8 +86,7 @@ final class WriteFlushStrategy {
         new FsyncOnClose(write, bucketName, committedTotalBytesCallback, onSuccessCallback);
   }
 
-  private static GrpcCallContext contextWithBucketName(
-      String bucketName, GrpcCallContext baseContext) {
+  static GrpcCallContext contextWithBucketName(String bucketName, GrpcCallContext baseContext) {
     if (bucketName != null && !bucketName.isEmpty()) {
       return baseContext.withExtraHeaders(
           ImmutableMap.of(
@@ -257,7 +256,7 @@ final class WriteFlushStrategy {
     }
   }
 
-  private static class Observer implements ApiStreamObserver<WriteObjectResponse> {
+  static class Observer implements ApiStreamObserver<WriteObjectResponse> {
 
     private final LongConsumer sizeCallback;
     private final Consumer<WriteObjectResponse> completeCallback;
@@ -265,7 +264,7 @@ final class WriteFlushStrategy {
     private final SettableApiFuture<Void> invocationHandle;
     private volatile WriteObjectResponse last;
 
-    private Observer(LongConsumer sizeCallback, Consumer<WriteObjectResponse> completeCallback) {
+    Observer(LongConsumer sizeCallback, Consumer<WriteObjectResponse> completeCallback) {
       this.sizeCallback = sizeCallback;
       this.completeCallback = completeCallback;
       this.invocationHandle = SettableApiFuture.create();
@@ -304,7 +303,7 @@ final class WriteFlushStrategy {
       invocationHandle.set(null);
     }
 
-    private void await() {
+    void await() {
       try {
         invocationHandle.get();
       } catch (InterruptedException | ExecutionException e) {

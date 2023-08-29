@@ -16,8 +16,10 @@
 
 package com.google.cloud.storage;
 
+import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.function.Consumer;
 
 /**
@@ -136,5 +138,20 @@ final class Buffers {
       alignedSize = (size + alignmentMultiple - 1) / alignmentMultiple * alignmentMultiple;
     } // else size is already aligned
     return alignedSize;
+  }
+
+  static int fillFrom(ByteBuffer buf, ReadableByteChannel c) throws IOException {
+    int total = 0;
+    while (buf.hasRemaining()) {
+      int read = c.read(buf);
+      if (read != -1) {
+        total += read;
+      } else if (total == 0) {
+        return -1;
+      } else {
+        break;
+      }
+    }
+    return total;
   }
 }

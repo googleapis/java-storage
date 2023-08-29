@@ -79,7 +79,8 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
    *
    * <p><i>Default:</i> {@code 16777216 (16 MiB)}
    *
-   * @param chunkSize The number of bytes each chunk should be. Must be >= {@code 262144 (256 KiB)}
+   * @param chunkSize The number of bytes each chunk should be. Must be &gt;= {@code 262144 (256
+   *     KiB)}
    * @return The new instance
    * @see #getChunkSize()
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.

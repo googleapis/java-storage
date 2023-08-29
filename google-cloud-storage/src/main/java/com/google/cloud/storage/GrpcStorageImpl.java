@@ -1768,7 +1768,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return opts.readObjectRequest().apply(builder).build();
   }
 
-  private WriteObjectRequest getWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
+  WriteObjectRequest getWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
         object

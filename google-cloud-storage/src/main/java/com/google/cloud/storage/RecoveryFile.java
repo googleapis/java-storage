@@ -19,6 +19,8 @@ package com.google.cloud.storage;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
@@ -33,18 +35,27 @@ import java.util.Set;
  * upload recovery in the case an upload is interrupted.
  */
 final class RecoveryFile implements AutoCloseable {
-  private static final Set<OpenOption> writeOps =
-      ImmutableSet.of(StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+  private static final Set<OpenOption> writeOpsNew =
+      ImmutableSet.of(
+          StandardOpenOption.CREATE,
+          StandardOpenOption.WRITE,
+          StandardOpenOption.TRUNCATE_EXISTING);
+  private static final Set<OpenOption> writeOpsExisting =
+      ImmutableSet.of(
+          StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
   private static final Set<OpenOption> readOps = ImmutableSet.of(StandardOpenOption.READ);
 
   private final Path path;
   private final ThroughputSink throughputSink;
   private final Runnable onCloseCallback;
 
+  private boolean newFile;
+
   RecoveryFile(Path path, ThroughputSink throughputSink, Runnable onCloseCallback) {
     this.path = path;
     this.throughputSink = throughputSink;
     this.onCloseCallback = onCloseCallback;
+    this.newFile = true;
   }
 
   public Path getPath() {
@@ -52,6 +63,7 @@ final class RecoveryFile implements AutoCloseable {
   }
 
   public Path touch() throws IOException {
+    newFile = false;
     return Files.createFile(path);
   }
 
@@ -60,12 +72,26 @@ final class RecoveryFile implements AutoCloseable {
   }
 
   public WritableByteChannel writer() throws IOException {
-    return throughputSink.decorate(Files.newByteChannel(path, writeOps));
+    try {
+      return throughputSink.decorate(
+          Files.newByteChannel(path, newFile ? writeOpsNew : writeOpsExisting));
+    } finally {
+      newFile = false;
+    }
+  }
+
+  public GatheringByteChannel syncingChannel() throws IOException {
+    try {
+      return throughputSink.decorate(
+          new SyncingFileChannel(FileChannel.open(path, newFile ? writeOpsNew : writeOpsExisting)));
+    } finally {
+      newFile = false;
+    }
   }
 
   @Override
   public void close() throws IOException {
-    Files.delete(path);
+    Files.deleteIfExists(path);
     onCloseCallback.run();
   }
 

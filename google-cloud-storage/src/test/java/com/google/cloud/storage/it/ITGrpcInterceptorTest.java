@@ -83,8 +83,6 @@ public class ITGrpcInterceptorTest {
             .map(m -> m.get(X_GOOG_REQUEST_PARAMS))
             .collect(Collectors.toList());
 
-    System.out.println("requestParams = " + requestParams);
-
     String expected = String.format("project=projects/%s", options.getProjectId());
     String expectedEncoded = String.format("project=projects%%2F%s", options.getProjectId());
     assertThat(requestParams).containsAnyOf(expected, expectedEncoded);

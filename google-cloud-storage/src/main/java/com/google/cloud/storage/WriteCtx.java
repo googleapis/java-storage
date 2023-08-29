@@ -40,6 +40,10 @@ final class WriteCtx<RequestFactoryT extends WriteObjectRequestBuilderFactory> {
     this.cumulativeCrc32c = new AtomicReference<>();
   }
 
+  public RequestFactoryT getRequestFactory() {
+    return requestFactory;
+  }
+
   public WriteObjectRequest.Builder newRequestBuilder() {
     return requestFactory.newBuilder();
   }
