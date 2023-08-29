@@ -92,13 +92,15 @@ final class JsonResumableSessionQueryTask
         }
       } else if (JsonResumableSessionFailureScenario.isContinue(code)) {
         String range1 = response.getHeaders().getRange();
-        //
         if (range1 != null) {
           ByteRangeSpec range = ByteRangeSpec.parse(range1);
           long endOffset = range.endOffset();
           return ResumableOperationResult.incremental(endOffset);
         } else {
-          // https://cloud.google.com/storage/docs/performing-resumable-uploads#status-check
+          // According to
+          // https://cloud.google.com/storage/docs/performing-resumable-uploads#status-check a 308
+          // response that does not contain a Range header should be interpreted as GCS having
+          // received no data.
           return ResumableOperationResult.incremental(0);
         }
       } else {
