@@ -113,7 +113,7 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     Range objectSizeRange = Range.of(objectSize);
     for (int i = 0; i < samples; i++) {
       int objectSize = getRandomInt(objectSizeRange.min, objectSizeRange.max);
-      PrintWriter pw = new PrintWriter(System.out);
+      PrintWriter pw = new PrintWriter(System.out, true);
       workloadRuns.add(
           convert(
               executorService.submit(
