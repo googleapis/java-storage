@@ -97,8 +97,11 @@ final class JsonResumableSessionQueryTask
           long endOffset = range.endOffset();
           return ResumableOperationResult.incremental(endOffset);
         } else {
-          throw JsonResumableSessionFailureScenario.QUERY_SCENARIO_1.toStorageException(
-              uploadId, response);
+          // According to
+          // https://cloud.google.com/storage/docs/performing-resumable-uploads#status-check a 308
+          // response that does not contain a Range header should be interpreted as GCS having
+          // received no data.
+          return ResumableOperationResult.incremental(0);
         }
       } else {
         HttpResponseException cause = new HttpResponseException(response);
