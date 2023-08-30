@@ -73,7 +73,7 @@ final class W1R3 implements Callable<String> {
                 StorageSharedBenchmarkingUtils.calculateThroughput(
                     created.getSize().longValue(), elapsedTimeUpload),
                 created)
-            .toString());
+            .generateCustomMetric());
     for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
       TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin");
       startTime = clock.instant();
@@ -86,7 +86,7 @@ final class W1R3 implements Callable<String> {
                   StorageSharedBenchmarkingUtils.calculateThroughput(
                       created.getSize().longValue(), elapsedTimeDownload),
                   created)
-              .toString());
+              .generateCustomMetric());
     }
     StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
     return "OK";

@@ -147,6 +147,23 @@ final class CloudMonitoringResult {
         throughput);
   }
 
+  public String generateCustomMetric() {
+    return String.format(
+        "throughput{library=%s,api=%s,op=%s,object_size=%d,chunksize=%d,workers=%d,crc32c_enabled=%b,md5_enabled=%b,bucket_name=%s,status=%s,app_buffer_size=%d}%.1f",
+        library,
+        api,
+        op,
+        object_size,
+        chunksize,
+        workers,
+        crc32c_enabled,
+        md5_enabled,
+        bucket_name,
+        status,
+        app_buffer_size,
+        throughput);
+  }
+
   public static class Builder {
 
     private String library;
