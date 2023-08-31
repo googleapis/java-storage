@@ -28,17 +28,17 @@ final class CloudMonitoringResult {
   @NonNull private final String op;
 
   private final int workers;
-  private final int object_size;
-  private final int app_buffer_size;
+  private final int objectSize;
+  private final int appBufferSize;
   private final int chunksize;
-  private final boolean crc32c_enabled;
-  private final boolean md5_enabled;
-  private final int cpu_time_us;
-  @NonNull private final String bucket_name;
+  private final boolean crc32CEnabled;
+  private final boolean md5Enabled;
+  private final int cpuTimeUs;
+  @NonNull private final String bucketName;
   @NonNull private final String status;
-  @NonNull private final String transfer_size;
-  @NonNull private final String transfer_offset;
-  @NonNull private final String failure_msg;
+  @NonNull private final String transferSize;
+  @NonNull private final String transferOffset;
+  @NonNull private final String failureMsg;
   private final double throughput;
 
   CloudMonitoringResult(
@@ -62,17 +62,17 @@ final class CloudMonitoringResult {
     this.api = api;
     this.op = op;
     this.workers = workers;
-    this.object_size = objectSize;
-    this.app_buffer_size = appBufferSize;
+    this.objectSize = objectSize;
+    this.appBufferSize = appBufferSize;
     this.chunksize = chunksize;
-    this.crc32c_enabled = crc32cEnabled;
-    this.md5_enabled = md5Enabled;
-    this.cpu_time_us = cpuTimeUs;
-    this.bucket_name = bucketName;
+    this.crc32CEnabled = crc32cEnabled;
+    this.md5Enabled = md5Enabled;
+    this.cpuTimeUs = cpuTimeUs;
+    this.bucketName = bucketName;
     this.status = status;
-    this.transfer_size = transferSize;
-    this.transfer_offset = transferOffset;
-    this.failure_msg = failureMsg;
+    this.transferSize = transferSize;
+    this.transferOffset = transferOffset;
+    this.failureMsg = failureMsg;
     this.throughput = throughput;
   }
 
@@ -87,17 +87,17 @@ final class CloudMonitoringResult {
         .add("api", api)
         .add("op", op)
         .add("workers", workers)
-        .add("object_size", object_size)
-        .add("app_buffer_size", app_buffer_size)
+        .add("objectSize", objectSize)
+        .add("appBufferSize", appBufferSize)
         .add("chunksize", chunksize)
-        .add("crc32c_enabled", crc32c_enabled)
-        .add("md5_enabled", md5_enabled)
-        .add("cpu_time_us", cpu_time_us)
-        .add("bucket_name", bucket_name)
+        .add("crc32CEnabled", crc32CEnabled)
+        .add("md5Enabled", md5Enabled)
+        .add("cpuTimeUs", cpuTimeUs)
+        .add("bucketName", bucketName)
         .add("status", status)
-        .add("transfer_size", transfer_size)
-        .add("transfer_offset", transfer_offset)
-        .add("failure_msg", failure_msg)
+        .add("transferSize", transferSize)
+        .add("transferOffset", transferOffset)
+        .add("failureMsg", failureMsg)
         .add("throughput", throughput)
         .toString();
   }
@@ -112,21 +112,21 @@ final class CloudMonitoringResult {
     }
     CloudMonitoringResult result = (CloudMonitoringResult) o;
     return workers == result.workers
-        && object_size == result.object_size
-        && app_buffer_size == result.app_buffer_size
+        && objectSize == result.objectSize
+        && appBufferSize == result.appBufferSize
         && chunksize == result.chunksize
-        && crc32c_enabled == result.crc32c_enabled
-        && md5_enabled == result.md5_enabled
-        && cpu_time_us == result.cpu_time_us
+        && crc32CEnabled == result.crc32CEnabled
+        && md5Enabled == result.md5Enabled
+        && cpuTimeUs == result.cpuTimeUs
         && Double.compare(result.throughput, throughput) == 0
         && Objects.equals(library, result.library)
         && Objects.equals(api, result.api)
         && Objects.equals(op, result.op)
-        && Objects.equals(bucket_name, result.bucket_name)
+        && Objects.equals(bucketName, result.bucketName)
         && Objects.equals(status, result.status)
-        && Objects.equals(transfer_size, result.transfer_size)
-        && Objects.equals(transfer_offset, result.transfer_offset)
-        && Objects.equals(failure_msg, result.failure_msg);
+        && Objects.equals(transferSize, result.transferSize)
+        && Objects.equals(transferOffset, result.transferOffset)
+        && Objects.equals(failureMsg, result.failureMsg);
   }
 
   @Override
@@ -136,17 +136,17 @@ final class CloudMonitoringResult {
         api,
         op,
         workers,
-        object_size,
-        app_buffer_size,
+        objectSize,
+        appBufferSize,
         chunksize,
-        crc32c_enabled,
-        md5_enabled,
-        cpu_time_us,
-        bucket_name,
+        crc32CEnabled,
+        md5Enabled,
+        cpuTimeUs,
+        bucketName,
         status,
-        transfer_size,
-        transfer_offset,
-        failure_msg,
+        transferSize,
+        transferOffset,
+        failureMsg,
         throughput);
   }
 
@@ -156,14 +156,14 @@ final class CloudMonitoringResult {
         library,
         api,
         op,
-        object_size,
+        objectSize,
         chunksize,
         workers,
-        crc32c_enabled,
-        md5_enabled,
-        bucket_name,
+        crc32CEnabled,
+        md5Enabled,
+        bucketName,
         status,
-        app_buffer_size,
+        appBufferSize,
         throughput);
   }
 
