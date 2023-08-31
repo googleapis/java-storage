@@ -16,13 +16,16 @@
 
 package com.google.cloud.storage.benchmarking;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class CloudMonitoringResult {
-  private final String library;
-  private final String api;
-  private final String op;
+  @NonNull private final String library;
+  @NonNull private final String api;
+  @NonNull private final String op;
 
   private final int workers;
   private final int object_size;
@@ -31,11 +34,11 @@ final class CloudMonitoringResult {
   private final boolean crc32c_enabled;
   private final boolean md5_enabled;
   private final int cpu_time_us;
-  private final String bucket_name;
-  private final String status;
-  private final String transfer_size;
-  private final String transfer_offset;
-  private final String failure_msg;
+  @NonNull private final String bucket_name;
+  @NonNull private final String status;
+  @NonNull private final String transfer_size;
+  @NonNull private final String transfer_offset;
+  @NonNull private final String failure_msg;
   private final double throughput;
 
   CloudMonitoringResult(
@@ -147,7 +150,7 @@ final class CloudMonitoringResult {
         throughput);
   }
 
-  public String generateCustomMetric() {
+  public String formatAsCustomMetric() {
     return String.format(
         "throughput{library=%s,api=%s,op=%s,object_size=%d,chunksize=%d,workers=%d,crc32c_enabled=%b,md5_enabled=%b,bucket_name=%s,status=%s,app_buffer_size=%d}%.1f",
         library,
@@ -166,9 +169,9 @@ final class CloudMonitoringResult {
 
   public static class Builder {
 
-    private String library;
-    private String api;
-    private String op;
+    @NonNull private String library;
+    @NonNull private String api;
+    @NonNull private String op;
     private int workers;
     private int objectSize;
     private int appBufferSize;
@@ -176,12 +179,23 @@ final class CloudMonitoringResult {
     private boolean crc32cEnabled;
     private boolean md5Enabled;
     private int cpuTimeUs;
-    private String bucketName;
-    private String status;
-    private String transferSize;
-    private String transferOffset;
-    private String failureMsg;
+    @NonNull private String bucketName;
+    @NonNull private String status;
+    @NonNull private String transferSize;
+    @NonNull private String transferOffset;
+    @NonNull private String failureMsg;
     private double throughput;
+
+    Builder() {
+      library = "";
+      api = "";
+      op = "";
+      bucketName = "";
+      status = "";
+      transferSize = "";
+      transferOffset = "";
+      failureMsg = "";
+    }
 
     public Builder setLibrary(String library) {
       this.library = library;
@@ -264,6 +278,14 @@ final class CloudMonitoringResult {
     }
 
     public CloudMonitoringResult build() {
+      checkNotNull(library);
+      checkNotNull(api);
+      checkNotNull(op);
+      checkNotNull(bucketName);
+      checkNotNull(status);
+      checkNotNull(transferSize);
+      checkNotNull(transferOffset);
+      checkNotNull(failureMsg);
       return new CloudMonitoringResult(
           library,
           api,
