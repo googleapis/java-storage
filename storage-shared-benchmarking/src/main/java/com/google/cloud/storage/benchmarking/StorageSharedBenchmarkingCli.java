@@ -80,7 +80,6 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
 
   @Option(
       names = "-temp_dir_location",
-      defaultValue = "/tmp",
       description = "Specify the path where the temporary directory should be located")
   String tempDirLocation;
 
@@ -106,7 +105,10 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     StorageOptions retryStorageOptions =
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = retryStorageOptions.getService();
-    Path tempDir = Paths.get(tempDirLocation);
+    Path tempDir =
+        tempDirLocation != null
+            ? Paths.get(tempDirLocation)
+            : Paths.get(System.getProperty("java.io.tmpdir"));
     ListeningExecutorService executorService =
         MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(workers));
     List<ApiFuture<String>> workloadRuns = new ArrayList<>();
