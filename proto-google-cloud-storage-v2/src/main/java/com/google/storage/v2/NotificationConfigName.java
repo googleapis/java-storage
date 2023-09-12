@@ -159,7 +159,7 @@ public class NotificationConfigName implements ResourceName {
     if (o == this) {
       return true;
     }
-    if (o != null || getClass() == o.getClass()) {
+    if (o != null && getClass() == o.getClass()) {
       NotificationConfigName that = ((NotificationConfigName) o);
       return Objects.equals(this.project, that.project)
           && Objects.equals(this.bucket, that.bucket)
