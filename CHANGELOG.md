@@ -1,5 +1,35 @@
 # Changelog
 
+## [2.27.0](https://github.com/googleapis/java-storage/compare/v2.26.1...v2.27.0) (2023-09-12)
+
+
+### Features
+
+* Add new JournalingBlobWriteSessionConfig usable with gRPC transport ([#2194](https://github.com/googleapis/java-storage/issues/2194)) ([8880d94](https://github.com/googleapis/java-storage/commit/8880d94c3d1a737dd4492cf66a16ba5e08633a70))
+* Follow-up CLI Improvements ([#2184](https://github.com/googleapis/java-storage/issues/2184)) ([d985976](https://github.com/googleapis/java-storage/commit/d9859768081ea6f872097851d3e318b5bad384d9))
+* Initial CLI for SSB integration and Workload 1 ([#2166](https://github.com/googleapis/java-storage/issues/2166)) ([a349735](https://github.com/googleapis/java-storage/commit/a349735e7fe108e623a330afec0c8cd608ebeef9))
+
+
+### Bug Fixes
+
+* A resumable session without a Range header should be interpreted as 0 length ([#2182](https://github.com/googleapis/java-storage/issues/2182)) ([5302201](https://github.com/googleapis/java-storage/commit/53022011d83e6a8515a5ba008fc45fc2dae39cea))
+* Update User-Agent handling for resumable uploads ([#2168](https://github.com/googleapis/java-storage/issues/2168)) ([665b714](https://github.com/googleapis/java-storage/commit/665b714f421d3c13b557d0ff71460c328c010856))
+* Update version resolution logic to be more resilient ([#2169](https://github.com/googleapis/java-storage/issues/2169)) ([c89d275](https://github.com/googleapis/java-storage/commit/c89d27508039a014ea5a6dd8d4889f63d07db73f))
+
+
+### Dependencies
+
+* Update actions/checkout action to v4 ([#2188](https://github.com/googleapis/java-storage/issues/2188)) ([c10267e](https://github.com/googleapis/java-storage/commit/c10267e176bda21cd5755dfb0e96d0504fbc1d54))
+* Update actions/checkout action to v4 ([#2189](https://github.com/googleapis/java-storage/issues/2189)) ([5c048c4](https://github.com/googleapis/java-storage/commit/5c048c499eef224dade8f4409dfae732cb5a7017))
+* Update actions/checkout action to v4 ([#2190](https://github.com/googleapis/java-storage/issues/2190)) ([45e66e8](https://github.com/googleapis/java-storage/commit/45e66e89373ef016eff9b7deb30dbdfa818770d2))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20230710-2.0.0 ([#2162](https://github.com/googleapis/java-storage/issues/2162)) ([73a9f75](https://github.com/googleapis/java-storage/commit/73a9f75d000d2a59cd680fd383a9f9e1b91570cf))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20230907-2.0.0 ([#2200](https://github.com/googleapis/java-storage/issues/2200)) ([1fa49db](https://github.com/googleapis/java-storage/commit/1fa49db2810f6ffbd46755b4eb1f5efdcf980edb))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.15.0 ([#2197](https://github.com/googleapis/java-storage/issues/2197)) ([26552f4](https://github.com/googleapis/java-storage/commit/26552f4b78f77d90df4e3dfb829c3f9c092fc817))
+* Update dependency info.picocli:picocli to v4.7.4 ([#2177](https://github.com/googleapis/java-storage/issues/2177)) ([0c90814](https://github.com/googleapis/java-storage/commit/0c908147375fe58ac280179f5fba10bdd3886003))
+* Update dependency info.picocli:picocli to v4.7.5 ([#2183](https://github.com/googleapis/java-storage/issues/2183)) ([f244861](https://github.com/googleapis/java-storage/commit/f2448615ded6d9f43344bf1b9cda7ae3b191223b))
+* Update dependency net.jqwik:jqwik to v1.8.0 ([#2187](https://github.com/googleapis/java-storage/issues/2187)) ([aedbd6a](https://github.com/googleapis/java-storage/commit/aedbd6a811c4fcfedff68d7d46bb68e93bf9eeee))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.26 ([#2196](https://github.com/googleapis/java-storage/issues/2196)) ([4f8bb65](https://github.com/googleapis/java-storage/commit/4f8bb658e9ff3cba5e745acae13ec4094a1a48d5))
+
 ## [2.26.1](https://github.com/googleapis/java-storage/compare/v2.26.0...v2.26.1) (2023-08-14)
 
 
