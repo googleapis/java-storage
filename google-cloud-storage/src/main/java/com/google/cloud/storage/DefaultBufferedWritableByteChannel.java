@@ -145,7 +145,8 @@ final class DefaultBufferedWritableByteChannel implements BufferedWritableByteCh
           ByteBuffer slice = src.slice();
           Buffers.limit(slice, bufferRemaining);
           int write = channel.write(slice);
-          Buffers.position(src, srcPosition + write);
+          int newPosition = srcPosition + write;
+          Buffers.position(src, newPosition);
           bytesConsumed += write;
         }
       }

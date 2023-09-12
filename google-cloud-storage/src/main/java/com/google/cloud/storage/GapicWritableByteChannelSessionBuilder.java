@@ -24,12 +24,15 @@ import com.google.api.core.InternalApi;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ClientStreamingCallable;
+import com.google.api.gax.rpc.UnaryCallable;
 import com.google.cloud.storage.ChannelSession.BufferedWriteSession;
 import com.google.cloud.storage.ChannelSession.UnbufferedWriteSession;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.cloud.storage.UnbufferedWritableByteChannelSession.UnbufferedWritableByteChannel;
 import com.google.cloud.storage.WriteCtx.WriteObjectRequestBuilderFactory;
 import com.google.cloud.storage.WriteFlushStrategy.FlusherFactory;
+import com.google.storage.v2.QueryWriteStatusRequest;
+import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.ServiceConstants.Values;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
@@ -104,6 +107,10 @@ final class GapicWritableByteChannelSessionBuilder {
    */
   ResumableUploadBuilder resumable() {
     return new ResumableUploadBuilder();
+  }
+
+  JournalingResumableUploadBuilder journaling() {
+    return new JournalingResumableUploadBuilder();
   }
 
   /**
@@ -329,6 +336,104 @@ final class GapicWritableByteChannelSessionBuilder {
                     ResumableWrite::identity)
                 .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
                 .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
+    }
+  }
+
+  final class JournalingResumableUploadBuilder {
+
+    private RetryingDependencies deps;
+    private ResultRetryAlgorithm<?> alg;
+    private BufferHandle bufferHandle;
+    private BufferHandle recoveryBuffer;
+    private RecoveryFile recoveryFile;
+    private UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> query;
+
+    JournalingResumableUploadBuilder() {
+      this.deps = RetryingDependencies.attemptOnce();
+      this.alg = Retrying.neverRetry();
+    }
+
+    JournalingResumableUploadBuilder withRetryConfig(
+        RetryingDependencies deps,
+        ResultRetryAlgorithm<?> alg,
+        UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> query) {
+      this.deps = requireNonNull(deps, "deps must be non null");
+      this.alg = requireNonNull(alg, "alg must be non null");
+      this.query = requireNonNull(query, "query must be non null");
+      return this;
+    }
+
+    JournalingResumableUploadBuilder withBuffer(BufferHandle bufferHandle) {
+      this.bufferHandle = requireNonNull(bufferHandle, "bufferHandle must be non null");
+      return this;
+    }
+
+    JournalingResumableUploadBuilder withRecoveryBuffer(BufferHandle bufferHandle) {
+      this.recoveryBuffer = requireNonNull(bufferHandle, "bufferHandle must be non null");
+      return this;
+    }
+
+    JournalingResumableUploadBuilder withRecoveryFile(RecoveryFile recoveryFile) {
+      this.recoveryFile = requireNonNull(recoveryFile, "recoveryFile must be non null");
+      return this;
+    }
+
+    /**
+     * Set the Future which will contain the ResumableWrite information necessary to open the Write
+     * stream.
+     */
+    BuildableJournalingResumableUploadBuilder setStartAsync(
+        ApiFuture<WriteCtx<ResumableWrite>> start) {
+      requireNonNull(start, "start must be non null");
+      return new BuildableJournalingResumableUploadBuilder(start);
+    }
+
+    final class BuildableJournalingResumableUploadBuilder {
+      private final ApiFuture<WriteCtx<ResumableWrite>> start;
+
+      private BuildableJournalingResumableUploadBuilder(ApiFuture<WriteCtx<ResumableWrite>> start) {
+        this.start = start;
+      }
+
+      BufferedWritableByteChannelSession<WriteObjectResponse> build() {
+        return new BufferedWriteSession<>(
+            requireNonNull(start, "start must be non null"),
+            bindFunction()
+                .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
+                .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
+
+      private BiFunction<
+              WriteCtx<ResumableWrite>,
+              SettableApiFuture<WriteObjectResponse>,
+              UnbufferedWritableByteChannel>
+          bindFunction() {
+        // it is theoretically possible that the setter methods for the following variables could
+        // be called again between when this method is invoked and the resulting function is
+        // invoked.
+        // To ensure we are using the specified values at the point in time they are bound to the
+        // function read them into local variables which will be closed over rather than the class
+        // fields.
+        RetryingDependencies deps = JournalingResumableUploadBuilder.this.deps;
+        ResultRetryAlgorithm<?> alg = JournalingResumableUploadBuilder.this.alg;
+        BufferHandle recoveryBuffer = JournalingResumableUploadBuilder.this.recoveryBuffer;
+        RecoveryFile recoveryFile = JournalingResumableUploadBuilder.this.recoveryFile;
+        UnaryCallable<QueryWriteStatusRequest, QueryWriteStatusResponse> query =
+            JournalingResumableUploadBuilder.this.query;
+        ByteStringStrategy boundStrategy = byteStringStrategy;
+        Hasher boundHasher = hasher;
+        return (writeCtx, resultFuture) ->
+            new SyncAndUploadUnbufferedWritableByteChannel(
+                write,
+                query,
+                resultFuture,
+                new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
+                deps,
+                alg,
+                writeCtx,
+                recoveryFile,
+                recoveryBuffer);
       }
     }
   }

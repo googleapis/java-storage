@@ -18,11 +18,14 @@ package com.google.cloud.storage;
 
 import com.google.common.base.MoreObjects;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -35,6 +38,8 @@ interface ThroughputSink {
   void recordThroughput(Record r);
 
   WritableByteChannel decorate(WritableByteChannel wbc);
+
+  GatheringByteChannel decorate(GatheringByteChannel gbc);
 
   static void computeThroughput(Clock clock, ThroughputSink sink, long numBytes, IO io)
       throws IOException {
@@ -172,6 +177,11 @@ interface ThroughputSink {
     }
 
     @Override
+    public GatheringByteChannel decorate(GatheringByteChannel gbc) {
+      return new ThroughputRecordingGatheringByteChannel(gbc, this, clock);
+    }
+
+    @Override
     public String toString() {
       return MoreObjects.toStringHelper(this).add("prefix", prefix).add("clock", clock).toString();
     }
@@ -191,6 +201,30 @@ interface ThroughputSink {
 
     @Override
     public int write(ByteBuffer src) throws IOException {
+      return ThroughputRecordingWritableByteChannel.write(src, clock, delegate, sink);
+    }
+
+    @Override
+    public boolean isOpen() {
+      return delegate.isOpen();
+    }
+
+    @Override
+    public void close() throws IOException {
+      delegate.close();
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+          .add("delegate", delegate)
+          .add("sink", sink)
+          .add("clock", clock)
+          .toString();
+    }
+
+    static int write(ByteBuffer src, Clock clock, WritableByteChannel delegate, ThroughputSink sink)
+        throws IOException {
       boolean exception = false;
       int remaining = src.remaining();
       Instant begin = clock.instant();
@@ -202,6 +236,60 @@ interface ThroughputSink {
       } finally {
         Instant end = clock.instant();
         Record record = Record.of(remaining - src.remaining(), begin, end, exception);
+        sink.recordThroughput(record);
+      }
+    }
+  }
+
+  final class ThroughputRecordingGatheringByteChannel implements GatheringByteChannel {
+    private final GatheringByteChannel delegate;
+    private final ThroughputSink sink;
+    private final Clock clock;
+
+    private ThroughputRecordingGatheringByteChannel(
+        GatheringByteChannel delegate, ThroughputSink sink, Clock clock) {
+      this.delegate = delegate;
+      this.sink = sink;
+      this.clock = clock;
+    }
+
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+      return ThroughputRecordingWritableByteChannel.write(src, clock, delegate, sink);
+    }
+
+    @Override
+    public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
+      boolean exception = false;
+      long available = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+      Instant begin = clock.instant();
+      try {
+        return delegate.write(srcs, offset, length);
+      } catch (IOException e) {
+        exception = true;
+        throw e;
+      } finally {
+        Instant end = clock.instant();
+        long remaining = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+        Record record = Record.of(available - remaining, begin, end, exception);
+        sink.recordThroughput(record);
+      }
+    }
+
+    @Override
+    public long write(ByteBuffer[] srcs) throws IOException {
+      boolean exception = false;
+      long available = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+      Instant begin = clock.instant();
+      try {
+        return delegate.write(srcs);
+      } catch (IOException e) {
+        exception = true;
+        throw e;
+      } finally {
+        Instant end = clock.instant();
+        long remaining = Arrays.stream(srcs).mapToLong(Buffer::remaining).sum();
+        Record record = Record.of(available - remaining, begin, end, exception);
         sink.recordThroughput(record);
       }
     }
@@ -247,6 +335,11 @@ interface ThroughputSink {
     }
 
     @Override
+    public GatheringByteChannel decorate(GatheringByteChannel gbc) {
+      return b.decorate(a.decorate(gbc));
+    }
+
+    @Override
     public String toString() {
       return MoreObjects.toStringHelper(this).add("a", a).add("b", b).toString();
     }
@@ -272,6 +365,11 @@ interface ThroughputSink {
     }
 
     @Override
+    public GatheringByteChannel decorate(GatheringByteChannel gbc) {
+      return new ThroughputRecordingGatheringByteChannel(gbc, this, clock);
+    }
+
+    @Override
     public String toString() {
       return MoreObjects.toStringHelper(this).add("w", w).add("clock", clock).toString();
     }
@@ -288,6 +386,11 @@ interface ThroughputSink {
     @Override
     public WritableByteChannel decorate(WritableByteChannel wbc) {
       return wbc;
+    }
+
+    @Override
+    public GatheringByteChannel decorate(GatheringByteChannel gbc) {
+      return gbc;
     }
   }
 }

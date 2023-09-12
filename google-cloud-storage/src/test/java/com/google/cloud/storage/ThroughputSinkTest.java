@@ -22,6 +22,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.storage.ThroughputSink.Record;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.time.Duration;
 import java.time.Instant;
@@ -256,6 +257,11 @@ public final class ThroughputSinkTest {
 
     @Override
     public WritableByteChannel decorate(WritableByteChannel wbc) {
+      return null;
+    }
+
+    @Override
+    public GatheringByteChannel decorate(GatheringByteChannel wbc) {
       return null;
     }
   }

@@ -50,6 +50,10 @@ final class ChunkSegmenter {
     return hasher;
   }
 
+  ChunkSegment[] segmentBuffer(ByteBuffer bb) {
+    return segmentBuffers(new ByteBuffer[] {bb}, 0, 1);
+  }
+
   /**
    * Given {@code bbs}, yield N segments, where each segment is at most {@code maxSegmentSize}
    * bytes.

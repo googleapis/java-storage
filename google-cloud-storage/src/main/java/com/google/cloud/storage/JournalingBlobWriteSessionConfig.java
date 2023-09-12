@@ -17,31 +17,34 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
-import com.google.api.core.SettableApiFuture;
+import com.google.api.gax.grpc.GrpcCallContext;
+import com.google.api.gax.rpc.ApiExceptions;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.RecoveryFileManager.RecoveryVolumeSinkFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.ThroughputSink.Record;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.storage.v2.ServiceConstants.Values;
 import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Clock;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.stream.Collector;
 import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
@@ -51,16 +54,21 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
  * BlobWriteSessionConfig} allows augmenting an instance of storage to produce {@link
  * BlobWriteSession}s which will buffer to disk rather than holding things in memory.
  *
- * <p>Once the file on disk is closed, the entire file will then be uploaded to GCS.
+ * <p>If we have disk available we can checkpoint the contents of an object to disk before
+ * transmitting to GCS. The checkpointed data on disk allows arbitrary rewind in the case of failure
+ * but allows the upload to happen as soon as the checkpoint ack is complete.
+ *
+ * <p>Due to the details of how Resumable Upload Sessions are implemented in the GCS gRPC API this
+ * is possible. However, this approach will not work with the HTTP transports Resumable Upload
+ * Session spec.
  *
  * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
  * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
- * @see BlobWriteSessionConfigs#bufferToDiskThenUpload(Path)
- * @see BlobWriteSessionConfigs#bufferToDiskThenUpload(Collection)
  */
 @Immutable
 @BetaApi
-public final class BufferToDiskThenUpload extends BlobWriteSessionConfig {
+@TransportCompatibility(Transport.GRPC)
+public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConfig {
   private static final long serialVersionUID = 9059242302276891867L;
 
   /**
@@ -75,15 +83,15 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig {
   @MonotonicNonNull private volatile ArrayList<String> absolutePaths;
 
   @InternalApi
-  BufferToDiskThenUpload(ImmutableList<Path> paths, boolean includeLoggingSink) throws IOException {
+  JournalingBlobWriteSessionConfig(ImmutableList<Path> paths, boolean includeLoggingSink) {
     this.paths = paths;
     this.includeLoggingSink = includeLoggingSink;
   }
 
   @VisibleForTesting
   @InternalApi
-  BufferToDiskThenUpload withIncludeLoggingSink() throws IOException {
-    return new BufferToDiskThenUpload(paths, true);
+  JournalingBlobWriteSessionConfig withIncludeLoggingSink() {
+    return new JournalingBlobWriteSessionConfig(paths, true);
   }
 
   @InternalApi
@@ -155,81 +163,94 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig {
         BlobInfo info,
         Opts<ObjectTargetOpt> opts,
         Decoder<WriteObjectResponse, BlobInfo> d) {
-      return new Factory.WriteToFileThenUpload(
-          storage, info, opts, recoveryFileManager.newRecoveryFile(info));
+      if (storage instanceof GrpcStorageImpl) {
+        GrpcStorageImpl grpcStorage = (GrpcStorageImpl) storage;
+        RecoveryFile recoveryFile = recoveryFileManager.newRecoveryFile(info);
+        ApiFuture<ResumableWrite> f =
+            grpcStorage.startResumableWrite(
+                GrpcCallContext.createDefault(), grpcStorage.getWriteObjectRequest(info, opts));
+        ApiFuture<WriteCtx<ResumableWrite>> start =
+            ApiFutures.transform(f, WriteCtx::new, MoreExecutors.directExecutor());
+
+        BufferedWritableByteChannelSession<WriteObjectResponse> session =
+            ResumableMedia.gapic()
+                .write()
+                .byteChannel(grpcStorage.storageClient.writeObjectCallable())
+                .setHasher(Hasher.noop())
+                .setByteStringStrategy(ByteStringStrategy.copy())
+                .journaling()
+                .withRetryConfig(
+                    grpcStorage.getOptions(),
+                    grpcStorage.retryAlgorithmManager.idempotent(),
+                    grpcStorage.storageClient.queryWriteStatusCallable())
+                .withBuffer(BufferHandle.allocate(Values.MAX_WRITE_CHUNK_BYTES_VALUE))
+                .withRecoveryBuffer(BufferHandle.allocate(Values.MAX_WRITE_CHUNK_BYTES_VALUE))
+                .withRecoveryFile(recoveryFile)
+                .setStartAsync(start)
+                .build();
+
+        return new JournalingUpload<>(session, start, d);
+      } else {
+        return CrossTransportUtils.throwHttpJsonOnly(BlobWriteSessionConfigs.class, "journaling");
+      }
     }
 
-    private final class WriteToFileThenUpload
-        implements WritableByteChannelSession<WritableByteChannel, BlobInfo> {
+    private final class JournalingUpload<WBC extends WritableByteChannel>
+        implements WritableByteChannelSession<WBC, BlobInfo> {
 
-      private final StorageInternal storage;
-      private final BlobInfo info;
-      private final Opts<ObjectTargetOpt> opts;
-      private final RecoveryFile rf;
-      private final SettableApiFuture<BlobInfo> result;
+      private final WritableByteChannelSession<WBC, WriteObjectResponse> session;
+      private final ApiFuture<WriteCtx<ResumableWrite>> start;
+      private final Decoder<WriteObjectResponse, BlobInfo> decoder;
 
-      private WriteToFileThenUpload(
-          StorageInternal storage, BlobInfo info, Opts<ObjectTargetOpt> opts, RecoveryFile rf) {
-        this.info = info;
-        this.opts = opts;
-        this.rf = rf;
-        this.storage = storage;
-        this.result = SettableApiFuture.create();
+      public JournalingUpload(
+          WritableByteChannelSession<WBC, WriteObjectResponse> session,
+          ApiFuture<WriteCtx<ResumableWrite>> start,
+          Decoder<WriteObjectResponse, BlobInfo> decoder) {
+        this.session = session;
+        this.start = start;
+        this.decoder = decoder;
       }
 
       @Override
-      public ApiFuture<WritableByteChannel> openAsync() {
-        try {
-          ApiFuture<WritableByteChannel> f = ApiFutures.immediateFuture(rf.writer());
-          return ApiFutures.transform(
-              f, Factory.WriteToFileThenUpload.Flusher::new, MoreExecutors.directExecutor());
-        } catch (IOException e) {
-          throw StorageException.coalesce(e);
-        }
+      public ApiFuture<WBC> openAsync() {
+        // register a callback on the result future to record our throughput estimate
+        Instant begin = clock.instant();
+        ApiFutures.addCallback(
+            session.getResult(),
+            new ApiFutureCallback<WriteObjectResponse>() {
+              @Override
+              public void onFailure(Throwable t) {
+                Instant end = clock.instant();
+                // start MUST have completed in order for result to resolve, use the utility method
+                // to take care of the checked exception handling
+                WriteCtx<ResumableWrite> writeCtx =
+                    ApiExceptions.callAndTranslateApiException(start);
+                long totalSentBytes = writeCtx.getTotalSentBytes().get();
+                gcs.recordThroughput(Record.of(totalSentBytes, begin, end, true));
+              }
+
+              @Override
+              public void onSuccess(WriteObjectResponse result) {
+                Instant end = clock.instant();
+                long totalSentBytes = -1;
+                if (result.hasResource()) {
+                  totalSentBytes = result.getResource().getSize();
+                } else if (result.hasPersistedSize()) {
+                  totalSentBytes = result.getPersistedSize();
+                }
+                if (totalSentBytes > -1) {
+                  gcs.recordThroughput(Record.of(totalSentBytes, begin, end, false));
+                }
+              }
+            },
+            MoreExecutors.directExecutor());
+        return session.openAsync();
       }
 
       @Override
       public ApiFuture<BlobInfo> getResult() {
-        return result;
-      }
-
-      private final class Flusher implements WritableByteChannel {
-
-        private final WritableByteChannel delegate;
-
-        private Flusher(WritableByteChannel delegate) {
-          this.delegate = delegate;
-        }
-
-        @Override
-        public int write(ByteBuffer src) throws IOException {
-          return delegate.write(src);
-        }
-
-        @Override
-        public boolean isOpen() {
-          return delegate.isOpen();
-        }
-
-        @Override
-        public void close() throws IOException {
-          delegate.close();
-          try (RecoveryFile rf = Factory.WriteToFileThenUpload.this.rf) {
-            Path path = rf.getPath();
-            long size = Files.size(path);
-            ThroughputSink.computeThroughput(
-                clock,
-                gcs,
-                size,
-                () -> {
-                  BlobInfo blob = storage.internalCreateFrom(path, info, opts);
-                  result.set(blob);
-                });
-          } catch (StorageException | IOException e) {
-            result.setException(e);
-            throw e;
-          }
-        }
+        return ApiFutures.transform(
+            session.getResult(), decoder::decode, MoreExecutors.directExecutor());
       }
     }
   }
