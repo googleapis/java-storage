@@ -58,7 +58,7 @@ final class W1R3 implements Callable<String> {
   @Override
   public String call() throws Exception {
     // Create the file to be uploaded and fill it with data
-    try(TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize)) {
+    try (TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize)) {
       BlobInfo blob = BlobInfo.newBuilder(bucketName, file.toString()).build();
 
       // Get the start time
@@ -69,10 +69,10 @@ final class W1R3 implements Callable<String> {
       Duration elapsedTimeUpload = Duration.between(startTime, endTime);
       printWriter.println(
           generateCloudMonitoringResult(
-              "WRITE",
-              StorageSharedBenchmarkingUtils.calculateThroughput(
-                  created.getSize().longValue(), elapsedTimeUpload),
-              created)
+                  "WRITE",
+                  StorageSharedBenchmarkingUtils.calculateThroughput(
+                      created.getSize().longValue(), elapsedTimeUpload),
+                  created)
               .formatAsCustomMetric());
       for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
         try (TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin")) {
@@ -82,10 +82,10 @@ final class W1R3 implements Callable<String> {
           Duration elapsedTimeDownload = Duration.between(startTime, endTime);
           printWriter.println(
               generateCloudMonitoringResult(
-                  "READ[" + i + "]",
-                  StorageSharedBenchmarkingUtils.calculateThroughput(
-                      created.getSize().longValue(), elapsedTimeDownload),
-                  created)
+                      "READ[" + i + "]",
+                      StorageSharedBenchmarkingUtils.calculateThroughput(
+                          created.getSize().longValue(), elapsedTimeDownload),
+                      created)
                   .formatAsCustomMetric());
         }
       }
