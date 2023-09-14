@@ -16,7 +16,10 @@
 
 package com.google.cloud.storage;
 
+import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
 import com.google.common.collect.ImmutableList;
@@ -33,6 +36,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Stream;
 import org.junit.Rule;
 import org.junit.Test;
@@ -141,6 +145,42 @@ public final class RecoveryFileManagerTest {
 
       assertThat(paths).hasSize(3);
       assertThat(parentDirs).isEqualTo(ImmutableSet.of(tempDir1, tempDir2, tempDir3));
+    }
+  }
+
+  @Test
+  public void multipleRecoveryFilesForEqualBlobInfoAreAbleToExistConcurrently() throws Exception {
+    Path tempDir = temporaryFolder.newFolder(testName.getMethodName()).toPath();
+    RecoveryFileManager rfm =
+        RecoveryFileManager.of(
+            ImmutableList.of(tempDir),
+            path -> ThroughputSink.logged(path.toAbsolutePath().toString(), clock));
+
+    BlobInfo info = BlobInfo.newBuilder("bucket", "object").build();
+    try (RecoveryFile rf1 = rfm.newRecoveryFile(info);
+        RecoveryFile rf2 = rfm.newRecoveryFile(info); ) {
+
+      Random rand = new Random(467123);
+      byte[] bytes1 = DataGenerator.rand(rand).genBytes(7);
+      byte[] bytes2 = DataGenerator.rand(rand).genBytes(41);
+      try (WritableByteChannel writer = rf1.writer()) {
+        writer.write(ByteBuffer.wrap(bytes1));
+      }
+      try (WritableByteChannel writer = rf2.writer()) {
+        writer.write(ByteBuffer.wrap(bytes2));
+      }
+
+      byte[] actual1 = ByteStreams.toByteArray(Files.newInputStream(rf1.getPath()));
+      byte[] actual2 = ByteStreams.toByteArray(Files.newInputStream(rf2.getPath()));
+
+      String expected1 = xxd(bytes1);
+      String expected2 = xxd(bytes2);
+
+      String xxd1 = xxd(actual1);
+      String xxd2 = xxd(actual2);
+      assertAll(
+          () -> assertWithMessage("rf1 should contain bytes1").that(xxd1).isEqualTo(expected1),
+          () -> assertWithMessage("rf2 should contain bytes2").that(xxd2).isEqualTo(expected2));
     }
   }
 }
