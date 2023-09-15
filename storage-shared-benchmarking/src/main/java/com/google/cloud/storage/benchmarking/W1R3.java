@@ -69,10 +69,10 @@ final class W1R3 implements Callable<String> {
       Duration elapsedTimeUpload = Duration.between(startTime, endTime);
       printWriter.println(
           generateCloudMonitoringResult(
-              "WRITE",
-              StorageSharedBenchmarkingUtils.calculateThroughput(
-                  created.getSize().doubleValue(), elapsedTimeUpload),
-              created)
+                  "WRITE",
+                  StorageSharedBenchmarkingUtils.calculateThroughput(
+                      created.getSize().doubleValue(), elapsedTimeUpload),
+                  created)
               .formatAsCustomMetric());
       for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
         try (TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin")) {
@@ -82,10 +82,10 @@ final class W1R3 implements Callable<String> {
           Duration elapsedTimeDownload = Duration.between(startTime, endTime);
           printWriter.println(
               generateCloudMonitoringResult(
-                  "READ[" + i + "]",
-                  StorageSharedBenchmarkingUtils.calculateThroughput(
-                      created.getSize().doubleValue(), elapsedTimeDownload),
-                  created)
+                      "READ[" + i + "]",
+                      StorageSharedBenchmarkingUtils.calculateThroughput(
+                          created.getSize().doubleValue(), elapsedTimeDownload),
+                      created)
                   .formatAsCustomMetric());
         }
       }
