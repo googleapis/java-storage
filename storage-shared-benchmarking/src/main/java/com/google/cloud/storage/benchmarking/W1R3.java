@@ -58,37 +58,39 @@ final class W1R3 implements Callable<String> {
   @Override
   public String call() throws Exception {
     // Create the file to be uploaded and fill it with data
-    TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize);
-    BlobInfo blob = BlobInfo.newBuilder(bucketName, file.toString()).build();
+    try (TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize)) {
+      BlobInfo blob = BlobInfo.newBuilder(bucketName, file.toString()).build();
 
-    // Get the start time
-    Clock clock = Clock.systemDefaultZone();
-    Instant startTime = clock.instant();
-    Blob created = storage.createFrom(blob, file.getPath());
-    Instant endTime = clock.instant();
-    Duration elapsedTimeUpload = Duration.between(startTime, endTime);
-    printWriter.println(
-        generateCloudMonitoringResult(
-                "WRITE",
-                StorageSharedBenchmarkingUtils.calculateThroughput(
-                    created.getSize().longValue(), elapsedTimeUpload),
-                created)
-            .formatAsCustomMetric());
-    for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
-      TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin");
-      startTime = clock.instant();
-      storage.downloadTo(created.getBlobId(), dest.getPath());
-      endTime = clock.instant();
-      Duration elapsedTimeDownload = Duration.between(startTime, endTime);
+      // Get the start time
+      Clock clock = Clock.systemDefaultZone();
+      Instant startTime = clock.instant();
+      Blob created = storage.createFrom(blob, file.getPath());
+      Instant endTime = clock.instant();
+      Duration elapsedTimeUpload = Duration.between(startTime, endTime);
       printWriter.println(
           generateCloudMonitoringResult(
-                  "READ[" + i + "]",
+                  "WRITE",
                   StorageSharedBenchmarkingUtils.calculateThroughput(
-                      created.getSize().longValue(), elapsedTimeDownload),
+                      created.getSize().longValue(), elapsedTimeUpload),
                   created)
               .formatAsCustomMetric());
+      for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
+        try (TmpFile dest = TmpFile.of(tempDirectory, "prefix", "bin")) {
+          startTime = clock.instant();
+          storage.downloadTo(created.getBlobId(), dest.getPath());
+          endTime = clock.instant();
+          Duration elapsedTimeDownload = Duration.between(startTime, endTime);
+          printWriter.println(
+              generateCloudMonitoringResult(
+                      "READ[" + i + "]",
+                      StorageSharedBenchmarkingUtils.calculateThroughput(
+                          created.getSize().longValue(), elapsedTimeDownload),
+                      created)
+                  .formatAsCustomMetric());
+        }
+      }
+      StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
     }
-    StorageSharedBenchmarkingUtils.cleanupObject(storage, created);
     return "OK";
   }
 
