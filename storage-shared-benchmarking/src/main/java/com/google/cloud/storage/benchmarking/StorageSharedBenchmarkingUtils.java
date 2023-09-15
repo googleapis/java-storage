@@ -28,9 +28,12 @@ class StorageSharedBenchmarkingUtils {
         created.getBlobId(), Storage.BlobSourceOption.generationMatch(created.getGeneration()));
   }
 
-  public static double calculateThroughput(long size, Duration elapsedTime) {
-    return size >= StorageSharedBenchmarkingUtils.SSB_SIZE_THRESHOLD_BYTES
-        ? size / 1024 / 1024 / (elapsedTime.toNanos())
-        : size / 1024 / (elapsedTime.toNanos());
+  public static double calculateThroughput(double size, Duration elapsedTime) {
+    double adjustedSize =
+        size >= StorageSharedBenchmarkingUtils.SSB_SIZE_THRESHOLD_BYTES
+            ? (size / 1024D) / 1024D
+            : size / 1024D;
+    double throughput = adjustedSize / (elapsedTime.toMillis() / 1000D);
+    return throughput;
   }
 }
