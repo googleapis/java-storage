@@ -590,10 +590,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Blob compose(ComposeRequest composeRequest) {
-    Opts<ObjectTargetOpt> opts =
-        Opts.unwrap(composeRequest.getTargetOptions())
-            .resolveFrom(composeRequest.getTarget())
-            .prepend(defaultOpts);
+    Opts<ObjectTargetOpt> opts = composeRequest.getTargetOpts().prepend(defaultOpts);
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     ComposeObjectRequest.Builder builder = ComposeObjectRequest.newBuilder();

@@ -2352,6 +2352,23 @@ final class UnifiedOpts {
       return new Opts<>(filterTo(c).collect(ImmutableList.toImmutableList()));
     }
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Opts)) {
+        return false;
+      }
+      Opts<?> opts1 = (Opts<?>) o;
+      return Objects.equals(opts, opts1.opts);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(opts);
+    }
+
     private Mapper<ImmutableMap.Builder<StorageRpc.Option, Object>> rpcOptionMapper() {
       return fuseMappers(RpcOptVal.class, RpcOptVal::mapper);
     }

@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.BetaApi;
+import com.google.api.core.InternalApi;
 import com.google.api.core.InternalExtensionOnly;
 import com.google.api.gax.paging.Page;
 import com.google.auth.ServiceAccountSigner;
@@ -47,12 +48,14 @@ import com.google.cloud.storage.UnifiedOpts.NamedField;
 import com.google.cloud.storage.UnifiedOpts.ObjectListOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URL;
@@ -2169,6 +2172,8 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     private final BlobInfo target;
     private final List<BlobTargetOption> targetOptions;
 
+    private transient Opts<ObjectTargetOpt> targetOpts;
+
     /** Class for Compose source blobs. */
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static class SourceBlob implements Serializable {
@@ -2196,11 +2201,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       }
     }
 
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static class Builder {
 
       private final List<SourceBlob> sourceBlobs = new LinkedList<>();
       private final Set<BlobTargetOption> targetOptions = new LinkedHashSet<>();
       private BlobInfo target;
+      private Opts<ObjectTargetOpt> opts = Opts.empty();
 
       /** Add source blobs for compose operation. */
       public Builder addSource(Iterable<String> blobs) {
@@ -2227,6 +2234,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
         return this;
       }
 
+      Builder setTargetOpts(Opts<ObjectTargetOpt> opts) {
+        this.opts = opts;
+        return this;
+      }
+
       /** Sets compose operation's target blob options. */
       public Builder setTargetOptions(BlobTargetOption... options) {
         Collections.addAll(targetOptions, options);
@@ -2243,6 +2255,7 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       public ComposeRequest build() {
         checkArgument(!sourceBlobs.isEmpty());
         checkNotNull(target);
+        checkNotNull(opts);
         return new ComposeRequest(this);
       }
     }
@@ -2250,7 +2263,9 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     private ComposeRequest(Builder builder) {
       sourceBlobs = ImmutableList.copyOf(builder.sourceBlobs);
       target = builder.target;
+      // keep targetOptions for serialization even though we will read targetOpts
       targetOptions = ImmutableList.copyOf(builder.targetOptions);
+      targetOpts = builder.opts.prepend(Opts.unwrap(targetOptions).resolveFrom(target));
     }
 
     /** Returns compose operation's source blobs. */
@@ -2268,12 +2283,27 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return targetOptions;
     }
 
+    @InternalApi
+    Opts<ObjectTargetOpt> getTargetOpts() {
+      return targetOpts;
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+      in.defaultReadObject();
+      if (this.targetOptions != null) {
+        this.targetOpts = Opts.unwrap(this.targetOptions);
+      } else {
+        this.targetOpts = Opts.empty();
+      }
+    }
+
     /**
      * Creates a {@code ComposeRequest} object.
      *
      * @param sources source blobs names
      * @param target target blob
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ComposeRequest of(Iterable<String> sources, BlobInfo target) {
       return newBuilder().setTarget(target).addSource(sources).build();
     }
@@ -2285,11 +2315,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
      * @param sources source blobs names
      * @param target target blob name
      */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static ComposeRequest of(String bucket, Iterable<String> sources, String target) {
       return of(sources, BlobInfo.newBuilder(BlobId.of(bucket, target)).build());
     }
 
     /** Returns a {@code ComposeRequest} builder. */
+    @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static Builder newBuilder() {
       return new Builder();
     }
