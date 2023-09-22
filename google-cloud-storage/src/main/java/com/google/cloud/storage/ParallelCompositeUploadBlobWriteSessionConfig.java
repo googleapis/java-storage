@@ -19,14 +19,23 @@ package com.google.cloud.storage;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
+import com.google.api.core.SettableApiFuture;
+import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
+import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.MetadataField.PartRange;
+import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
@@ -41,16 +50,62 @@ import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Immutable config builder for a Parallel Composite Upload
+ * Immutable config builder for a Parallel Composite Upload todo: include note about object lock and
+ * retention policy todo: fix this formatting
  *
- * @see <a
- *     href="https://cloud.google.com/storage/docs/composing-objects">https://cloud.google.com/storage/docs/composing-objects</a>
+ * <ol>
+ *   <li>Performing parallel composite uploads costs more money. <a
+ *       href="https://cloud.google.com/storage/pricing#operations-by-class">Class A</a> operations
+ *       are performed to create each part and to perform each compose. If a storage tier other than
+ *       <a href="https://cloud.google.com/storage/docs/storage-classes"><code>STANDARD</code></a>
+ *       is used, early deletion fees apply to deletion of the parts.
+ *       <p>An illustrative example. Upload a 5GiB object using 64MiB as the max size per part. <br>
+ *       <ol>
+ *         <li>80 Parts will be created (Class A)
+ *         <li>3 compose calls will be performed (Class A)
+ *         <li>Delete 80 Parts along with 2 intermediary Compose objects (Free tier as long as
+ *             {@code STANDARD} class)
+ *       </ol>
+ *       Once the parts and intermediary compose objects are deleted, there will be no storage
+ *       charges related to those temporary objects.
+ *   <li>The service account/credentials used to perform the parallel composite upload require <a
+ *       href="https://cloud.google.com/storage/docs/access-control/iam-permissions#object_permissions">{@code
+ *       storage.objects.delete}</a> in order to cleanup the temporary part and intermediary compose
+ *       objects. <br>
+ *       <i>To handle handle part and intermediary compose object deletion out of band</i> passing
+ *       {@link PartCleanupStrategy#never()} to {@link
+ *       ParallelCompositeUploadBlobWriteSessionConfig#withPartCleanupStrategy(PartCleanupStrategy)}
+ *       will prevent automatic cleanup.
+ *   <li>A failed upload can leave part and intermediary compose objects behind which will count as
+ *       storage usage, and you will be billed for it. <br>
+ *       By default if an upload fails, an attempt to cleanup the part and intermediary compose will
+ *       be made. However if the program were to crash there is no means for the client to perform
+ *       the cleanup. <br>
+ *       Every part and intermediary compose object will be created with a name which ends in {@code
+ *       .part}. An Object Lifecycle Management rule can be setup on your bucket to automatically
+ *       cleanup objects with the suffix after some period of time. See <a
+ *       href="https://cloud.google.com/storage/docs/lifecycle">Object Lifecycle Management</a> for
+ *       full details and a guide on how to setup a <a
+ *       href="https://cloud.google.com/storage/docs/lifecycle#delete">Delete</a> rule with a <a
+ *       href="https://cloud.google.com/storage/docs/lifecycle#matchesprefix-suffix">suffix
+ *       match</a> condition.
+ *   <li>Using parallel composite uploads are not a silver bullet. They have very real overhead
+ *       until uploading a large enough object. The inflection point is dependent upon many factors,
+ *       and there is no one size fits all value. You will need to experiment with your deployment
+ *       and workload to determine if parallel composite uploads are useful to you.
+ *       <p>In general if you object sizes are smaller than several hundred megabytes it is unlikely
+ *       parallel composite uploads will be beneficial to overall throughput.
+ * </ol>
+ *
+ * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
+ * @see BlobWriteSessionConfigs#parallelCompositeUpload()
+ * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
  * @see <a
  *     href="https://cloud.google.com/storage/docs/parallel-composite-uploads">https://cloud.google.com/storage/docs/parallel-composite-uploads</a>
  */
 @Immutable
 @BetaApi
-final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig {
+public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig {
 
   private static final int MAX_PARTS_PER_COMPOSE = 32;
   private final int maxPartsPerCompose;
@@ -86,6 +141,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
         partCleanupStrategy);
   }
 
+  /**
+   * Specify a specific executor supplier where work will be submitted when performing a parallel
+   * composite upload.
+   *
+   * <p><i>Default: </i> {@link ExecutorSupplier#cachedPool()}
+   */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withExecutorSupplier(
       ExecutorSupplier executorSupplier) {
@@ -98,6 +159,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
         partCleanupStrategy);
   }
 
+  /**
+   * Specify a specific buffering strategy which will dictate how buffers are allocated and used
+   * when performing a parallel composite upload.
+   *
+   * <p><i>Default: </i> {@link BufferStrategy#simple(int) BufferStrategy#simple(16MiB)}
+   */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withBufferStrategy(
       BufferStrategy bufferStrategy) {
@@ -110,6 +177,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
         partCleanupStrategy);
   }
 
+  /**
+   * Specify a specific naming strategy which will dictate how individual part and intermediary
+   * compose objects will be named when performing a parallel composite upload.
+   *
+   * <p><i>Default: </i> {@link PartNamingStrategy#noPrefix()}
+   */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withPartNamingStrategy(
       PartNamingStrategy partNamingStrategy) {
@@ -122,6 +195,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
         partCleanupStrategy);
   }
 
+  /**
+   * Specify a specific cleanup strategy which will dictate what cleanup operations are performed
+   * automatically when performing a parallel composite upload.
+   *
+   * <p><i>Default: </i> {@link PartCleanupStrategy#always()}
+   */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withPartCleanupStrategy(
       PartCleanupStrategy partCleanupStrategy) {
@@ -135,7 +214,7 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
   }
 
   @BetaApi
-  static ParallelCompositeUploadBlobWriteSessionConfig of() {
+  static ParallelCompositeUploadBlobWriteSessionConfig withDefaults() {
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         MAX_PARTS_PER_COMPOSE,
         ExecutorSupplier.cachedPool(),
@@ -149,20 +228,42 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
   WriterFactory createFactory(Clock clock) throws IOException {
     Executor executor = executorSupplier.get();
     BufferHandlePool bufferHandlePool = bufferStrategy.get();
-    throw new IllegalStateException("Not yet implemented");
+    return new ParallelCompositeUploadWriterFactory(clock, executor, bufferHandlePool);
   }
 
+  /**
+   * A strategy which dictates how buffers are to be used for individual parts. The chosen strategy
+   * will apply to all instances of {@link BlobWriteSession} created from a single instance of
+   * {@link Storage}.
+   *
+   * @see #withBufferStrategy(BufferStrategy)
+   */
   @BetaApi
   @Immutable
   public abstract static class BufferStrategy extends Factory<BufferHandlePool> {
 
     private BufferStrategy() {}
 
+    /**
+     * Create a buffer strategy which will rely upon standard garbage collection. Each buffer will
+     * be used once and then garbage collected.
+     *
+     * @param capacity the number of bytes each buffer should be
+     * @see #withBufferStrategy(BufferStrategy)
+     */
     @BetaApi
     public static BufferStrategy simple(int capacity) {
       return new SimpleBufferStrategy(capacity);
     }
 
+    /**
+     * Create a buffer strategy which will have a fixed size pool of buffers. Each buffer will be
+     * lazily allocated.
+     *
+     * @param bufferCount the number of buffers the pool will be
+     * @param bufferCapacity the number of bytes each buffer should be
+     * @see #withBufferStrategy(BufferStrategy)
+     */
     @BetaApi
     public static BufferStrategy fixedPool(int bufferCount, int bufferCapacity) {
       return new FixedBufferStrategy(bufferCount, bufferCapacity);
@@ -199,6 +300,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
     }
   }
 
+  /**
+   * Class which will be used to supply an Executor where work will be submitted when performing a
+   * parallel composite upload.
+   *
+   * @see #withExecutorSupplier(ExecutorSupplier)
+   */
   @BetaApi
   @Immutable
   public abstract static class ExecutorSupplier extends Factory<Executor> {
@@ -206,6 +313,11 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
 
     private ExecutorSupplier() {}
 
+    /**
+     * Use a cached thread pool for submitting work
+     *
+     * @see #withExecutorSupplier(ExecutorSupplier)
+     */
     @BetaApi
     public static ExecutorSupplier cachedPool() {
       return new ExecutorSupplier() {
@@ -217,6 +329,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
       };
     }
 
+    /**
+     * create a fixed thread pool for submitting work
+     *
+     * @param poolSize the number of threads in the pool
+     * @see #withExecutorSupplier(ExecutorSupplier)
+     */
     @BetaApi
     public static ExecutorSupplier fixedPool(int poolSize) {
       return new ExecutorSupplier() {
@@ -228,6 +346,11 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
       };
     }
 
+    /**
+     * Wrap an existing executor instance which will be used for submitting work
+     *
+     * @param executor the executor to use
+     */
     @BetaApi
     public static ExecutorSupplier useExecutor(Executor executor) {
       return new SuppliedExecutorSupplier(executor);
@@ -256,6 +379,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
     }
   }
 
+  /**
+   * A naming strategy which will be used to generate a name for a part or intermediary compose
+   * object.
+   *
+   * @see #withPartNamingStrategy(PartNamingStrategy)
+   */
   @BetaApi
   @Immutable
   public abstract static class PartNamingStrategy {
@@ -285,12 +414,40 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
 
     protected abstract String fmtFields(String randomKey, String nameDigest, String partRange);
 
+    /**
+     * Default strategy in which no stable prefix is defined.
+     *
+     * <p>General format is
+     *
+     * <pre><code>
+     *   {randomKeyDigest};{objectNameDigest};{partIndex}.part
+     * </code></pre>
+     *
+     * @see #withPartNamingStrategy(PartNamingStrategy)
+     */
     @BetaApi
     public static PartNamingStrategy noPrefix() {
       SecureRandom rand = new SecureRandom();
       return new NoPrefix(rand);
     }
 
+    /**
+     * Default strategy in which and explicit stable prefix is present on each part and intermediary
+     * compose object.
+     *
+     * <p>General format is
+     *
+     * <pre><code>
+     *   {prefixPattern}/{randomKeyDigest};{objectNameDigest};{partIndex}.part
+     * </code></pre>
+     *
+     * <p>Care must be taken when choosing to specify a stable prefix as this can create hotspots in
+     * the keyspace for object names. See <a
+     * href="https://cloud.google.com/storage/docs/request-rate#naming-convention">Object Naming
+     * Convention Guidelines</a> for more details.
+     *
+     * @see #withPartNamingStrategy(PartNamingStrategy)
+     */
     @BetaApi
     public static PartNamingStrategy prefix(String prefixPattern) {
       checkNotNull(prefixPattern, "prefixPattern must be non null");
@@ -342,6 +499,12 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
     }
   }
 
+  /**
+   * A cleanup strategy which will dictate what cleanup operations are performed automatically when
+   * performing a parallel composite upload.
+   *
+   * @see #withPartCleanupStrategy(PartCleanupStrategy)
+   */
   @BetaApi
   @Immutable
   public static class PartCleanupStrategy {
@@ -364,17 +527,31 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
     /**
      * If an unrecoverable error is encountered, define whether to attempt to delete any object
      * parts already uploaded.
+     *
+     * <p><i>Default:</i> {@code true}
      */
     @BetaApi
     public PartCleanupStrategy withDeleteOnError(boolean deleteOnError) {
       return new PartCleanupStrategy(deleteParts, deleteOnError);
     }
 
+    /**
+     * Cleanup strategy which will always attempt to cleanup part and intermediary compose objects
+     * either on success or on error.
+     *
+     * @see #withPartCleanupStrategy(PartCleanupStrategy)
+     */
     @BetaApi
     public static PartCleanupStrategy always() {
       return new PartCleanupStrategy(true, true);
     }
 
+    /**
+     * Cleanup strategy which will never attempt to cleanup part and intermediary compose objects
+     * either on success or on error.
+     *
+     * @see #withPartCleanupStrategy(PartCleanupStrategy)
+     */
     @BetaApi
     public static PartCleanupStrategy never() {
       return new PartCleanupStrategy(false, false);
@@ -383,5 +560,66 @@ final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessi
 
   private abstract static class Factory<T> {
     abstract T get();
+  }
+
+  private class ParallelCompositeUploadWriterFactory implements WriterFactory {
+
+    private final Clock clock;
+    private final Executor executor;
+    private final BufferHandlePool bufferHandlePool;
+
+    private ParallelCompositeUploadWriterFactory(
+        Clock clock, Executor executor, BufferHandlePool bufferHandlePool) {
+      this.clock = clock;
+      this.executor = executor;
+      this.bufferHandlePool = bufferHandlePool;
+    }
+
+    @Override
+    public WritableByteChannelSession<?, BlobInfo> writeSession(
+        StorageInternal s,
+        BlobInfo info,
+        Opts<ObjectTargetOpt> opts,
+        Decoder<WriteObjectResponse, BlobInfo> d) {
+      return new PCUSession(s, info, opts);
+    }
+
+    private final class PCUSession
+        implements WritableByteChannelSession<BufferedWritableByteChannel, BlobInfo> {
+
+      private final SettableApiFuture<BlobInfo> result;
+      private final StorageInternal storageInternal;
+      private final BlobInfo info;
+      private final Opts<ObjectTargetOpt> opts;
+
+      private PCUSession(
+          StorageInternal storageInternal, BlobInfo info, Opts<ObjectTargetOpt> opts) {
+        this.storageInternal = storageInternal;
+        this.info = info;
+        this.opts = opts;
+        result = SettableApiFuture.create();
+      }
+
+      @Override
+      public ApiFuture<BufferedWritableByteChannel> openAsync() {
+        ParallelCompositeUploadWritableByteChannel channel =
+            new ParallelCompositeUploadWritableByteChannel(
+                bufferHandlePool,
+                executor,
+                partNamingStrategy,
+                partCleanupStrategy,
+                maxPartsPerCompose,
+                result,
+                storageInternal,
+                info,
+                opts);
+        return ApiFutures.immediateFuture(channel);
+      }
+
+      @Override
+      public ApiFuture<BlobInfo> getResult() {
+        return result;
+      }
+    }
   }
 }
