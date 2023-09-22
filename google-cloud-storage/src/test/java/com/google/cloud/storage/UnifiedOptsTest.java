@@ -20,15 +20,19 @@ import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
+import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
+import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.crypto.SecretKey;
 import org.junit.Test;
 import org.junit.runners.model.MultipleFailureException;
 
@@ -139,6 +143,41 @@ public final class UnifiedOptsTest {
   @Test
   public void validateFactoryMethodEnforceNonNull_storage_updateHmacKeyOption() throws Exception {
     validateFactoryMethodEnforceNonNull(Storage.UpdateHmacKeyOption.class);
+  }
+
+  @Test
+  public void transformTo() {
+    SecretKey key =
+        new SecretKey() {
+          @Override
+          public String getAlgorithm() {
+            return "fake";
+          }
+
+          @Override
+          public String getFormat() {
+            return null;
+          }
+
+          @Override
+          public byte[] getEncoded() {
+            return "fake".getBytes(StandardCharsets.UTF_8);
+          }
+        };
+
+    Opts<ObjectTargetOpt> targetOpts =
+        Opts.from(
+            // encryptionKey should project as a decryptionKey
+            UnifiedOpts.encryptionKey(key),
+            // userProject implements both target and source
+            UnifiedOpts.userProject("user-project"),
+            // crc32c is not a source opt or a ProjectToSource opt, it should be excluded
+            UnifiedOpts.crc32cMatch(1));
+    Opts<ObjectSourceOpt> sourceOpts = targetOpts.transformTo(ObjectSourceOpt.class);
+
+    Opts<ObjectSourceOpt> expected =
+        Opts.from(UnifiedOpts.decryptionKey(key), UnifiedOpts.userProject("user-project"));
+    assertThat(sourceOpts).isEqualTo(expected);
   }
 
   private static void validateFactoryMethodEnforceNonNull(Class<?> classToSearch) throws Exception {

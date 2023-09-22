@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import com.google.cloud.storage.Storage.ComposeRequest;
+import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import java.io.IOException;
@@ -38,6 +40,14 @@ interface StorageInternal {
   }
 
   default boolean delete(BlobId id) {
+    throw new UnsupportedOperationException("not implemented");
+  }
+
+  default BlobInfo compose(ComposeRequest composeRequest) {
+    throw new UnsupportedOperationException("not implemented");
+  }
+
+  default BlobInfo internalObjectGet(BlobId blobId, Opts<ObjectSourceOpt> opts) {
     throw new UnsupportedOperationException("not implemented");
   }
 }
