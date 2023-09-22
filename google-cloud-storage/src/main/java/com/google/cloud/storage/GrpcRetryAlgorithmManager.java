@@ -96,6 +96,9 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteObjectRequest req) {
+    if (req.getGeneration() > 0 || req.hasIfGenerationMatch()) {
+      return retryStrategy.getIdempotentHandler();
+    }
     return retryStrategy.getNonidempotentHandler();
   }
 
