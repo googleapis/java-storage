@@ -244,35 +244,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Blob create(
       BlobInfo blobInfo, byte[] content, int offset, int length, BlobTargetOption... options) {
-    requireNonNull(blobInfo, "blobInfo must be non null");
-    requireNonNull(content, "content must be non null");
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
-    Hasher hasher = Hasher.enabled();
-    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Retrying.run(
-        getOptions(),
-        retryAlgorithmManager.getFor(req),
-        () -> {
-          UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
-              ResumableMedia.gapic()
-                  .write()
-                  .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
-                  .setByteStringStrategy(ByteStringStrategy.noCopy())
-                  .setHasher(hasher)
-                  .direct()
-                  .unbuffered()
-                  .setRequest(req)
-                  .build();
-
-          try (UnbufferedWritableByteChannel c = session.open()) {
-            c.write(ByteBuffer.wrap(content, offset, length));
-          }
-          return session.getResult();
-        },
-        this::getBlob);
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+    return internalDirectUpload(blobInfo, opts, ByteBuffer.wrap(content, offset, length))
+        .asBlob(this);
   }
 
   @Override
@@ -747,6 +721,42 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         retryAlgorithmManager.idempotent(),
         () -> startResumableWrite(grpcCallContext, req),
         hasher);
+  }
+
+  @Override
+  public BlobInfo internalDirectUpload(
+      BlobInfo blobInfo, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+    requireNonNull(blobInfo, "blobInfo must be non null");
+    requireNonNull(buf, "content must be non null");
+    Opts<ObjectTargetOpt> optsWithDefaults = opts.prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        optsWithDefaults.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, optsWithDefaults);
+    Hasher hasher = Hasher.enabled();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
+    RewindableContent content = RewindableContent.of(buf);
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          content.rewindTo(0);
+          UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+              ResumableMedia.gapic()
+                  .write()
+                  .byteChannel(storageClient.writeObjectCallable().withDefaultCallContext(merge))
+                  .setByteStringStrategy(ByteStringStrategy.noCopy())
+                  .setHasher(hasher)
+                  .direct()
+                  .unbuffered()
+                  .setRequest(req)
+                  .build();
+
+          try (UnbufferedWritableByteChannel c = session.open()) {
+            content.writeTo(c);
+          }
+          return session.getResult();
+        },
+        this::getBlob);
   }
 
   @Override

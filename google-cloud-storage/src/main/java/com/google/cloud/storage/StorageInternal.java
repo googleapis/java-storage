@@ -19,12 +19,25 @@ package com.google.cloud.storage;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Path;
 
 interface StorageInternal {
 
-  BlobInfo internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
-      throws IOException;
+  default BlobInfo internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
+      throws IOException {
+    throw new UnsupportedOperationException("not implemented");
+  }
 
-  StorageWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts);
+  default StorageWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts) {
+    throw new UnsupportedOperationException("not implemented");
+  }
+
+  default BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+    throw new UnsupportedOperationException("not implemented");
+  }
+
+  default boolean delete(BlobId id) {
+    throw new UnsupportedOperationException("not implemented");
+  }
 }
