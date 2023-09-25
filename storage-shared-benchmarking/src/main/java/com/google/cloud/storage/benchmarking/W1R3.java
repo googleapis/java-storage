@@ -58,9 +58,9 @@ final class W1R3 implements Callable<String> {
   @Override
   public String call() throws Exception {
     // Create the file to be uploaded and fill it with data
+
     try (TmpFile file = DataGenerator.base64Characters().tempFile(tempDirectory, objectSize)) {
       BlobInfo blob = BlobInfo.newBuilder(bucketName, file.toString()).build();
-
       // Get the start time
       Clock clock = Clock.systemDefaultZone();
       Instant startTime = clock.instant();
@@ -71,7 +71,7 @@ final class W1R3 implements Callable<String> {
           generateCloudMonitoringResult(
                   "WRITE",
                   StorageSharedBenchmarkingUtils.calculateThroughput(
-                      created.getSize().longValue(), elapsedTimeUpload),
+                      created.getSize().doubleValue(), elapsedTimeUpload),
                   created)
               .formatAsCustomMetric());
       for (int i = 0; i <= StorageSharedBenchmarkingUtils.DEFAULT_NUMBER_OF_READS; i++) {
@@ -84,7 +84,7 @@ final class W1R3 implements Callable<String> {
               generateCloudMonitoringResult(
                       "READ[" + i + "]",
                       StorageSharedBenchmarkingUtils.calculateThroughput(
-                          created.getSize().longValue(), elapsedTimeDownload),
+                          created.getSize().doubleValue(), elapsedTimeDownload),
                       created)
                   .formatAsCustomMetric());
         }
