@@ -1126,8 +1126,9 @@ final class RpcMethodMappings {
                     (ctx, c) ->
                         ctx.map(
                             state -> {
-                              boolean success =
-                                  ctx.getStorage().delete(state.getBlob().getBlobId());
+                              BlobId id = state.getBlob().getBlobId();
+                              BlobId idWithoutGeneration = BlobId.of(id.getBucket(), id.getName());
+                              boolean success = ctx.getStorage().delete(idWithoutGeneration);
                               assertTrue(success);
                               return state.with(success);
                             }))
@@ -1169,7 +1170,17 @@ final class RpcMethodMappings {
         a.add(
             RpcMethodMapping.newBuilder(67, objects.delete)
                 .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
-                .withTest((ctx, c) -> ctx.peek(state -> state.getBlob().delete()))
+                .withTest(
+                    (ctx, c) ->
+                        ctx.peek(
+                            state -> {
+                              Blob blob = state.getBlob();
+                              Blob blobWithoutGeneration =
+                                  blob.toBuilder()
+                                      .setBlobId(BlobId.of(blob.getBucket(), blob.getName()))
+                                      .build();
+                              blobWithoutGeneration.delete();
+                            }))
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(68, objects.delete)

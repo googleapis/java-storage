@@ -203,6 +203,7 @@ final class HttpRetryAlgorithmManager implements Serializable {
   public ResultRetryAlgorithm<?> getForObjectsDelete(
       StorageObject pb, Map<StorageRpc.Option, ?> optionsMap) {
     return optionsMap.containsKey(StorageRpc.Option.IF_GENERATION_MATCH)
+            || (pb.getGeneration() != null && pb.getGeneration() > 0)
         ? retryStrategy.getIdempotentHandler()
         : retryStrategy.getNonidempotentHandler();
   }
