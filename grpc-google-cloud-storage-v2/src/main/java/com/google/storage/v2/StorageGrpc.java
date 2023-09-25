@@ -49,7 +49,7 @@ public final class StorageGrpc {
 
   private StorageGrpc() {}
 
-  public static final String SERVICE_NAME = "google.storage.v2.Storage";
+  public static final java.lang.String SERVICE_NAME = "google.storage.v2.Storage";
 
   // Static method descriptors that strictly reflect the proto.
   private static volatile io.grpc.MethodDescriptor<
@@ -3851,9 +3851,9 @@ public final class StorageGrpc {
 
   private static final class StorageMethodDescriptorSupplier extends StorageBaseDescriptorSupplier
       implements io.grpc.protobuf.ProtoMethodDescriptorSupplier {
-    private final String methodName;
+    private final java.lang.String methodName;
 
-    StorageMethodDescriptorSupplier(String methodName) {
+    StorageMethodDescriptorSupplier(java.lang.String methodName) {
       this.methodName = methodName;
     }
 
