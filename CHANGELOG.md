@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.27.1](https://github.com/googleapis/java-storage/compare/v2.27.0...v2.27.1) (2023-09-25)
+
+
+### Bug Fixes
+
+* Consider Storage#delete(BlobId) idempotent when id has generation ([#2222](https://github.com/googleapis/java-storage/issues/2222)) ([453dd63](https://github.com/googleapis/java-storage/commit/453dd63e63d899197b25b58452c08fa0b41f75b0))
+* Update RecoveryFileManager to allow distinct files for multiple invocations of equivalent info ([#2207](https://github.com/googleapis/java-storage/issues/2207)) ([44e9dd5](https://github.com/googleapis/java-storage/commit/44e9dd558bb979f0c7607ad24f07e6d03a641c66))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20230914-2.0.0 ([#2213](https://github.com/googleapis/java-storage/issues/2213)) ([0af39d6](https://github.com/googleapis/java-storage/commit/0af39d6be333dd6993785491f14e1bd8942573ea))
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20230922-2.0.0 ([#2223](https://github.com/googleapis/java-storage/issues/2223)) ([844fe80](https://github.com/googleapis/java-storage/commit/844fe803af925c7501910a5ea89f9ddadc18b5b9))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.16.0 ([#2219](https://github.com/googleapis/java-storage/issues/2219)) ([7401f21](https://github.com/googleapis/java-storage/commit/7401f2173f60f34506d5d65396b3baadd52de5cc))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.16.1 ([#2225](https://github.com/googleapis/java-storage/issues/2225)) ([f092c4e](https://github.com/googleapis/java-storage/commit/f092c4ebbbbf378511c6e1d663c4656dc03a0724))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.27 ([#2210](https://github.com/googleapis/java-storage/issues/2210)) ([3c77530](https://github.com/googleapis/java-storage/commit/3c77530392dac2eca04585506e839d3215d44f0c))
+* Update gapic-generator-java to 2.26.0 ([#2224](https://github.com/googleapis/java-storage/issues/2224)) ([a105736](https://github.com/googleapis/java-storage/commit/a105736535429418740e8e8d72e92e5c705575f1))
+
 ## [2.27.0](https://github.com/googleapis/java-storage/compare/v2.26.1...v2.27.0) (2023-09-12)
 
 
