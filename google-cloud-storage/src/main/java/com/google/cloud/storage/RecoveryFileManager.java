@@ -19,8 +19,12 @@ package com.google.cloud.storage;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Ints;
+import com.google.common.hash.HashCode;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -28,12 +32,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 final class RecoveryFileManager {
 
   private final ImmutableList<RecoveryVolume> volumes;
   /** Keep track of active info and file */
   private final Map<BlobInfo, RecoveryFile> files;
+
+  private final HashFunction hashFunction;
 
   /**
    * Round-robin assign recovery files to the configured volumes. Use this index to keep track of
@@ -45,13 +52,18 @@ final class RecoveryFileManager {
     this.volumes = ImmutableList.copyOf(volumes);
     this.files = Collections.synchronizedMap(new HashMap<>());
     this.nextVolumeIndex = 0;
+    this.hashFunction = Hashing.goodFastHash(64);
   }
 
+  @SuppressWarnings("UnstableApiUsage")
   public RecoveryFile newRecoveryFile(BlobInfo info) {
     int i = getNextVolumeIndex();
     RecoveryVolume v = volumes.get(i);
-    int hashCode = info.hashCode();
-    String fileName = Base64.getUrlEncoder().encodeToString(Ints.toByteArray(hashCode));
+    UUID uuid = UUID.randomUUID();
+    String string = uuid.toString();
+    Hasher hasher = hashFunction.newHasher();
+    HashCode hash = hasher.putString(string, StandardCharsets.UTF_8).hash();
+    String fileName = Base64.getUrlEncoder().encodeToString(hash.asBytes());
     Path path = v.basePath.resolve(fileName);
     RecoveryFile recoveryFile = new RecoveryFile(path, v.sink, () -> files.remove(info));
     files.put(info, recoveryFile);
