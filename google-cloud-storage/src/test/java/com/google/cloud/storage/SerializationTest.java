@@ -32,9 +32,12 @@ import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelV2State;
 import com.google.cloud.storage.BlobWriteChannelV2.BlobWriteChannelV2State;
+import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
+import com.google.cloud.storage.Storage.ComposeRequest;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.UnifiedOpts.Opt;
+import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -315,6 +318,35 @@ public class SerializationTest extends BaseSerializationTest {
       assertThat(restore).isInstanceOf(BlobWriteChannelV2.class);
       RestorableState<WriteChannel> capture = restore.capture();
       assertThat(capture).isInstanceOf(BlobWriteChannelV2State.class);
+    }
+  }
+
+  @Test
+  public void composeRequest() throws IOException, ClassNotFoundException {
+
+    Properties properties = new Properties();
+    try (InputStream is =
+        SerializationTest.class
+            .getClassLoader()
+            .getResourceAsStream("com/google/cloud/storage/composeRequest.ser.properties")) {
+      properties.load(is);
+    }
+    String b64bytes = properties.getProperty("b64bytes");
+    assertThat(b64bytes).isNotEmpty();
+
+    byte[] decode = Base64.getDecoder().decode(b64bytes);
+    try (ByteArrayInputStream bais = new ByteArrayInputStream(decode);
+        ObjectInputStream ois = new ObjectInputStream(bais)) {
+      Object o = ois.readObject();
+      assertThat(o).isInstanceOf(ComposeRequest.class);
+      ComposeRequest composeRequest = (ComposeRequest) o;
+      assertThat(composeRequest.getSourceBlobs()).hasSize(4);
+      assertThat(composeRequest.getTarget().getBucket()).isEqualTo("buck");
+      assertThat(composeRequest.getTarget().getName()).isEqualTo("comp");
+      assertThat(composeRequest.getTargetOptions())
+          .containsExactly(BlobTargetOption.doesNotExist());
+      assertThat(composeRequest.getTargetOpts())
+          .isEqualTo(Opts.from(UnifiedOpts.generationMatch(0)));
     }
   }
 

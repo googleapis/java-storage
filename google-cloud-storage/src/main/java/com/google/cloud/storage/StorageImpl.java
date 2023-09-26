@@ -551,8 +551,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                               target.getBucket(), sourceBlob.getName(), sourceBlob.getGeneration()))
                       .build()));
     }
-    Opts<ObjectTargetOpt> targetOpts =
-        Opts.unwrap(composeRequest.getTargetOptions()).resolveFrom(target);
+    Opts<ObjectTargetOpt> targetOpts = composeRequest.getTargetOpts();
     StorageObject targetPb = codecs.blobInfo().encode(composeRequest.getTarget());
     Map<StorageRpc.Option, ?> targetOptions = targetOpts.getRpcOptions();
     ResultRetryAlgorithm<?> algorithm =
