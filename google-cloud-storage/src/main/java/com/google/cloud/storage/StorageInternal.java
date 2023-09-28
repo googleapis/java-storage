@@ -39,7 +39,9 @@ interface StorageInternal {
     throw new UnsupportedOperationException("not implemented");
   }
 
-  default boolean delete(BlobId id) {
+  // Void to allow easier mapping/use within streams and other mapping contexts
+  @SuppressWarnings("UnusedReturnValue")
+  default Void internalObjectDelete(BlobId id, Opts<ObjectSourceOpt> opts) {
     throw new UnsupportedOperationException("not implemented");
   }
 

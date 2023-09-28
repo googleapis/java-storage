@@ -22,6 +22,7 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.SettableApiFuture;
 import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiExceptionFactory;
+import com.google.api.gax.rpc.NotFoundException;
 import com.google.cloud.BaseServiceException;
 import com.google.cloud.storage.ApiFutureUtils.OnFailureApiFutureCallback;
 import com.google.cloud.storage.ApiFutureUtils.OnSuccessApiFutureCallback;
@@ -117,6 +118,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
 
   // immutable bootstrapped state
   private final Opts<ObjectTargetOpt> partOpts;
+  private final Opts<ObjectSourceOpt> srcOpts;
   private final AsyncAppendingQueue<BlobInfo> queue;
   private final FailureForwarder failureForwarder;
   // mutable running state
@@ -154,6 +156,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     this.totalObjectOffset = 0;
 
     this.partOpts = getPartOpts(opts);
+    this.srcOpts = partOpts.transformTo(ObjectSourceOpt.class);
     this.cumulativeHasher = Hashing.crc32c().newHasher();
     this.failureForwarder = new FailureForwarder();
   }
@@ -250,14 +253,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     if (partCleanupStrategy.isDeleteOnError()) {
       ApiFuture<BlobInfo> cleaningFuture =
           ApiFutures.catchingAsync(
-              validatingTransform,
-              Throwable.class,
-              t -> {
-                // todo:
-                return ApiFutures.immediateFailedFuture(t);
-              },
-              exec);
-      // todo: verify this gets the first failure and not one from cleaning
+              validatingTransform, Throwable.class, this::asyncCleanupAfterFailure, exec);
       ApiFutures.addCallback(cleaningFuture, failureForwarder, exec);
     } else {
       ApiFutures.addCallback(validatingTransform, failureForwarder, exec);
@@ -288,7 +284,6 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
                 // a precondition failure usually means the part was created, but we didn't get the
                 // response. And when we tried to retry the object already exists.
                 if (e.getCode() == 412) {
-                  Opts<ObjectSourceOpt> srcOpts = partOpts.transformTo(ObjectSourceOpt.class);
                   return storage.internalObjectGet(info.getBlobId(), srcOpts);
                 } else {
                   throw e;
@@ -320,23 +315,46 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       }
 
       Throwable cause = e.getCause();
-      // create our exception containing information about the upload context
-      ParallelCompositeUploadException pcue =
-          buildParallelCompositeUploadException(cause, exec, pendingParts, successfulParts);
-      BaseServiceException storageException = StorageException.coalesce(pcue);
-
-      // asynchronously fail the finalObject future
-      CancellationException cancellationException =
-          new CancellationException(storageException.getMessage());
-      cancellationException.initCause(storageException);
-      ApiFutures.addCallback(
-          ApiFutures.immediateFailedFuture(cancellationException),
-          (OnFailureApiFutureCallback<BlobInfo>) failureForwarder::onFailure,
-          exec);
+      BaseServiceException storageException;
       if (partCleanupStrategy.isDeleteOnError()) {
-        // TODO: cleanup
+        storageException = StorageException.coalesce(cause);
+        ApiFuture<Object> cleanupFutures = asyncCleanupAfterFailure(storageException);
+        // asynchronously fail the finalObject future
+        CancellationException cancellationException =
+            new CancellationException(storageException.getMessage());
+        cancellationException.initCause(storageException);
+        ApiFutures.addCallback(
+            cleanupFutures,
+            new ApiFutureCallback<Object>() {
+              @Override
+              public void onFailure(Throwable throwable) {
+                cancellationException.addSuppressed(throwable);
+                failureForwarder.onFailure(cancellationException);
+              }
+
+              @Override
+              public void onSuccess(Object o) {
+                failureForwarder.onFailure(cancellationException);
+              }
+            },
+            exec);
+        // this will throw out if anything fails
+        ApiFutureUtils.await(cleanupFutures);
+      } else {
+        // create our exception containing information about the upload context
+        ParallelCompositeUploadException pcue =
+            buildParallelCompositeUploadException(cause, exec, pendingParts, successfulParts);
+        storageException = StorageException.coalesce(pcue);
+        // asynchronously fail the finalObject future
+        CancellationException cancellationException =
+            new CancellationException(storageException.getMessage());
+        cancellationException.initCause(storageException);
+        ApiFutures.addCallback(
+            ApiFutures.immediateFailedFuture(cancellationException),
+            (OnFailureApiFutureCallback<BlobInfo>) failureForwarder::onFailure,
+            exec);
+        throw storageException;
       }
-      throw storageException;
     } finally {
       current = null;
     }
@@ -383,13 +401,16 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
         successfulParts.stream()
             // make sure we don't delete the object we're wanting to create
             .filter(id -> !id.equals(finalInfo.getBlobId()))
-            .map(ApiFutures::immediateFuture)
-            .map(f -> ApiFutures.transform(f, storage::delete, exec))
+            .map(this::deleteAsync)
             .collect(Collectors.toList());
 
     ApiFuture<List<Boolean>> deletes2 = ApiFutureUtils.quietAllAsList(deletes);
 
-    return ApiFutures.transform(deletes2, ignore -> finalInfo, exec);
+    return ApiFutures.catchingAsync(
+        ApiFutures.transform(deletes2, ignore -> finalInfo, exec),
+        Throwable.class,
+        cause -> ApiFutures.immediateFailedFuture(StorageException.coalesce(cause)),
+        exec);
   }
 
   private BlobInfo definePart(BlobInfo ultimateObject, PartRange partRange, long offset) {
@@ -407,6 +428,75 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     OBJECT_OFFSET.appendTo(offset, builder);
     b.setMetadata(builder.build());
     return b.build();
+  }
+
+  private <R> ApiFuture<R> asyncCleanupAfterFailure(Throwable originalFailure) {
+    ApiFuture<ImmutableList<BlobId>> pendingAndSuccessfulBlobIds =
+        getPendingAndSuccessfulBlobIds(exec, pendingParts, successfulParts);
+    return ApiFutures.transformAsync(
+        pendingAndSuccessfulBlobIds,
+        blobIds -> {
+          ImmutableList<ApiFuture<Boolean>> pendingDeletes =
+              blobIds.stream().map(this::deleteAsync).collect(ImmutableList.toImmutableList());
+
+          ApiFuture<List<Boolean>> futureDeleteResults =
+              ApiFutures.successfulAsList(pendingDeletes);
+
+          return ApiFutures.transformAsync(
+              futureDeleteResults,
+              deleteResults -> {
+                List<BlobId> failedDeletes = new ArrayList<>();
+                for (int i = 0; i < blobIds.size(); i++) {
+                  BlobId id = blobIds.get(i);
+                  Boolean deleteResult = deleteResults.get(i);
+                  // deleteResult not equal to true means the request completed but was
+                  //   unsuccessful
+                  // deleteResult being null means the future failed
+                  if (!Boolean.TRUE.equals(deleteResult)) {
+                    failedDeletes.add(id);
+                  }
+                }
+
+                if (!failedDeletes.isEmpty()) {
+                  String failedGsUris =
+                      failedDeletes.stream()
+                          .map(BlobId::toGsUtilUriWithGeneration)
+                          .collect(Collectors.joining(",\n", "[\n", "\n]"));
+
+                  String message =
+                      String.format(
+                          "Incomplete parallel composite upload cleanup after previous error. Unknown object ids: %s",
+                          failedGsUris);
+                  StorageException storageException = new StorageException(0, message, null);
+                  originalFailure.addSuppressed(storageException);
+                }
+                return ApiFutures.immediateFailedFuture(originalFailure);
+              },
+              exec);
+        },
+        exec);
+  }
+
+  @NonNull
+  private ApiFuture<Boolean> deleteAsync(BlobId id) {
+    return ApiFutures.transform(
+        ApiFutures.immediateFuture(id),
+        v -> {
+          try {
+            storage.internalObjectDelete(v, srcOpts);
+            return true;
+          } catch (NotFoundException e) {
+            // not found means the part doesn't exist, which is what we want
+            return true;
+          } catch (StorageException e) {
+            if (e.getCode() == 404) {
+              return true;
+            } else {
+              throw e;
+            }
+          }
+        },
+        exec);
   }
 
   @VisibleForTesting
@@ -468,6 +558,15 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       Executor exec,
       List<ApiFuture<BlobInfo>> pendingParts,
       List<BlobId> successfulParts) {
+    ApiFuture<ImmutableList<BlobId>> fCreatedObjects =
+        getPendingAndSuccessfulBlobIds(exec, pendingParts, successfulParts);
+
+    return ParallelCompositeUploadException.of(cause, fCreatedObjects);
+  }
+
+  @NonNull
+  private static ApiFuture<ImmutableList<BlobId>> getPendingAndSuccessfulBlobIds(
+      Executor exec, List<ApiFuture<BlobInfo>> pendingParts, List<BlobId> successfulParts) {
     ApiFuture<List<BlobInfo>> successfulList = ApiFutures.successfulAsList(pendingParts);
     // suppress any failure that might happen when waiting for any pending futures to resolve
     ApiFuture<List<BlobInfo>> catching =
@@ -490,7 +589,6 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
                     .distinct()
                     .collect(ImmutableList.toImmutableList()),
             exec);
-
-    return ParallelCompositeUploadException.of(cause, fCreatedObjects);
+    return fCreatedObjects;
   }
 }

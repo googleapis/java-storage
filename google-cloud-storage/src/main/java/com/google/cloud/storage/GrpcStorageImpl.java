@@ -534,34 +534,40 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public boolean delete(BlobId blob, BlobSourceOption... options) {
-    Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
-    GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    DeleteObjectRequest.Builder builder =
-        DeleteObjectRequest.newBuilder()
-            .setBucket(bucketNameCodec.encode(blob.getBucket()))
-            .setObject(blob.getName());
-    ifNonNull(blob.getGeneration(), builder::setGeneration);
-    DeleteObjectRequest req = opts.deleteObjectsRequest().apply(builder).build();
-    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
-    return Boolean.TRUE.equals(
-        Retrying.run(
-            getOptions(),
-            retryAlgorithmManager.getFor(req),
-            () -> {
-              try {
-                storageClient.deleteObjectCallable().call(req, merge);
-                return true;
-              } catch (NotFoundException e) {
-                return false;
-              }
-            },
-            Decoder.identity()));
+    Opts<ObjectSourceOpt> opts = Opts.unwrap(options);
+    try {
+      internalObjectDelete(blob, opts);
+      return true;
+    } catch (NotFoundException e) {
+      return false;
+    }
   }
 
   @Override
   public boolean delete(BlobId blob) {
     return delete(blob, new BlobSourceOption[0]);
+  }
+
+  @Override
+  public Void internalObjectDelete(BlobId id, Opts<ObjectSourceOpt> opts) {
+    Opts<ObjectSourceOpt> finalOpts = opts.resolveFrom(id).prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        finalOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    DeleteObjectRequest.Builder builder =
+        DeleteObjectRequest.newBuilder()
+            .setBucket(bucketNameCodec.encode(id.getBucket()))
+            .setObject(id.getName());
+    ifNonNull(id.getGeneration(), builder::setGeneration);
+    DeleteObjectRequest req = finalOpts.deleteObjectsRequest().apply(builder).build();
+    GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
+    return Retrying.run(
+        getOptions(),
+        retryAlgorithmManager.getFor(req),
+        () -> {
+          storageClient.deleteObjectCallable().call(req, merge);
+          return null;
+        },
+        Decoder.identity());
   }
 
   @Override
