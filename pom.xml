@@ -208,5 +208,11 @@
         <module>samples</module>
       </modules>
     </profile>
+    <profile>
+      <id>include-storage-shared-benchmarking</id>
+      <modules>
+        <module>storage-shared-benchmarking</module>
+      </modules>
+    </profile>
   </profiles>
 </project>
