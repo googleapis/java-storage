@@ -19,6 +19,7 @@ package com.google.cloud.storage;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import com.google.api.services.storage.model.StorageObject;
 import com.google.cloud.BaseSerializationTest;
@@ -32,6 +33,10 @@ import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelV2State;
 import com.google.cloud.storage.BlobWriteChannelV2.BlobWriteChannelV2State;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.ComposeRequest;
@@ -46,6 +51,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -53,6 +59,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -367,5 +374,39 @@ public class SerializationTest extends BaseSerializationTest {
       assertEquals(obj.toString(), copy.toString());
       assertEquals(copy, copy);
     }
+  }
+
+  @Test
+  public void blobWriteSessionConfig_pcu() throws IOException, ClassNotFoundException {
+    ParallelCompositeUploadBlobWriteSessionConfig pcu1 =
+        BlobWriteSessionConfigs.parallelCompositeUpload();
+    ParallelCompositeUploadBlobWriteSessionConfig pcu1copy = serializeAndDeserialize(pcu1);
+    assertThat(pcu1copy).isNotNull();
+
+    ParallelCompositeUploadBlobWriteSessionConfig pcu2 =
+        BlobWriteSessionConfigs.parallelCompositeUpload()
+            .withBufferStrategy(BufferStrategy.fixedPool(1, 3))
+            .withPartCleanupStrategy(PartCleanupStrategy.never())
+            .withPartNamingStrategy(PartNamingStrategy.prefix("prefix"))
+            .withExecutorSupplier(ExecutorSupplier.fixedPool(5));
+    ParallelCompositeUploadBlobWriteSessionConfig pcu2copy = serializeAndDeserialize(pcu2);
+    assertThat(pcu2copy).isNotNull();
+
+    InvalidClassException invalidClassException =
+        assertThrows(
+            InvalidClassException.class,
+            () -> {
+              Executor executor = command -> {};
+              ParallelCompositeUploadBlobWriteSessionConfig pcu3 =
+                  BlobWriteSessionConfigs.parallelCompositeUpload()
+                      .withExecutorSupplier(ExecutorSupplier.useExecutor(executor));
+              // executor is not serializable, this should throw an exception
+              serializeAndDeserialize(pcu3);
+            });
+
+    assertThat(invalidClassException)
+        .hasMessageThat()
+        .isEqualTo(
+            "com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig$ExecutorSupplier$SuppliedExecutorSupplier; Not serializable");
   }
 }

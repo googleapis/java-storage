@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -37,6 +38,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Clock;
@@ -257,7 +260,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    */
   @BetaApi
   @Immutable
-  public abstract static class BufferStrategy extends Factory<BufferHandlePool> {
+  public abstract static class BufferStrategy extends Factory<BufferHandlePool>
+      implements Serializable {
 
     private BufferStrategy() {}
 
@@ -289,6 +293,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     private static class SimpleBufferStrategy extends BufferStrategy {
+      private static final long serialVersionUID = 8884826090481043434L;
 
       private final int capacity;
 
@@ -303,6 +308,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     private static class FixedBufferStrategy extends BufferStrategy {
+      private static final long serialVersionUID = 3288902741819257066L;
 
       private final int bufferCount;
       private final int bufferCapacity;
@@ -328,7 +334,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    */
   @BetaApi
   @Immutable
-  public abstract static class ExecutorSupplier extends Factory<Executor> {
+  public abstract static class ExecutorSupplier extends Factory<Executor> implements Serializable {
     private static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(1);
 
     private ExecutorSupplier() {}
@@ -341,13 +347,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static ExecutorSupplier cachedPool() {
-      return new ExecutorSupplier() {
-        @Override
-        Executor get() {
-          ThreadFactory threadFactory = newThreadFactory();
-          return Executors.newCachedThreadPool(threadFactory);
-        }
-      };
+      return new CachedSupplier();
     }
 
     /**
@@ -359,13 +359,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static ExecutorSupplier fixedPool(int poolSize) {
-      return new ExecutorSupplier() {
-        @Override
-        Executor get() {
-          ThreadFactory threadFactory = newThreadFactory();
-          return Executors.newFixedThreadPool(poolSize, threadFactory);
-        }
-      };
+      return new FixedSupplier(poolSize);
     }
 
     /**
@@ -380,6 +374,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      */
     @BetaApi
     public static ExecutorSupplier useExecutor(Executor executor) {
+      requireNonNull(executor, "executor must be non null");
       return new SuppliedExecutorSupplier(executor);
     }
 
@@ -403,6 +398,36 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       Executor get() {
         return executor;
       }
+
+      private void writeObject(ObjectOutputStream out) throws IOException {
+        throw new java.io.InvalidClassException(this.getClass().getName() + "; Not serializable");
+      }
+    }
+
+    private static class CachedSupplier extends ExecutorSupplier implements Serializable {
+      private static final long serialVersionUID = 7768210719775319260L;
+
+      @Override
+      Executor get() {
+        ThreadFactory threadFactory = newThreadFactory();
+        return Executors.newCachedThreadPool(threadFactory);
+      }
+    }
+
+    private static class FixedSupplier extends ExecutorSupplier implements Serializable {
+      private static final long serialVersionUID = 7771825977551614347L;
+
+      private final int poolSize;
+
+      public FixedSupplier(int poolSize) {
+        this.poolSize = poolSize;
+      }
+
+      @Override
+      Executor get() {
+        ThreadFactory threadFactory = newThreadFactory();
+        return Executors.newFixedThreadPool(poolSize, threadFactory);
+      }
     }
   }
 
@@ -415,7 +440,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    */
   @BetaApi
   @Immutable
-  public abstract static class PartNamingStrategy {
+  public abstract static class PartNamingStrategy implements Serializable {
+    private static final long serialVersionUID = 8343436026774231869L;
     private static final String FIELD_SEPARATOR = ";";
     private static final Encoder B64 = Base64.getUrlEncoder().withoutPadding();
     private static final HashFunction OBJECT_NAME_HASH_FUNCTION = Hashing.goodFastHash(128);
@@ -496,6 +522,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     static final class WithPrefix extends PartNamingStrategy {
+      private static final long serialVersionUID = 5709330763161570411L;
 
       private final String prefix;
 
@@ -518,6 +545,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     static final class NoPrefix extends PartNamingStrategy {
+      private static final long serialVersionUID = 5202415556658566017L;
+
       public NoPrefix(SecureRandom rand) {
         super(rand);
       }
@@ -548,34 +577,35 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    */
   @BetaApi
   @Immutable
-  public static class PartCleanupStrategy {
-    private final boolean deleteParts;
-    private final boolean deleteOnError;
+  public static class PartCleanupStrategy implements Serializable {
+    private static final long serialVersionUID = -1434253614347199051L;
+    private final boolean deletePartsOnSuccess;
+    private final boolean deleteAllOnError;
 
-    private PartCleanupStrategy(boolean deleteParts, boolean deleteOnError) {
-      this.deleteParts = deleteParts;
-      this.deleteOnError = deleteOnError;
+    private PartCleanupStrategy(boolean deletePartsOnSuccess, boolean deleteAllOnError) {
+      this.deletePartsOnSuccess = deletePartsOnSuccess;
+      this.deleteAllOnError = deleteAllOnError;
     }
 
-    boolean isDeleteParts() {
-      return deleteParts;
+    public boolean isDeletePartsOnSuccess() {
+      return deletePartsOnSuccess;
     }
 
-    boolean isDeleteOnError() {
-      return deleteOnError;
+    public boolean isDeleteAllOnError() {
+      return deleteAllOnError;
     }
 
     /**
-     * If an unrecoverable error is encountered, define whether to attempt to delete any object
-     * parts already uploaded.
+     * If an unrecoverable error is encountered, define whether to attempt to delete any objects
+     * already uploaded.
      *
      * <p><i>Default:</i> {@code true}
      *
      * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    PartCleanupStrategy withDeleteOnError(boolean deleteOnError) {
-      return new PartCleanupStrategy(deleteParts, deleteOnError);
+    PartCleanupStrategy withDeleteAllOnError(boolean deleteAllOnError) {
+      return new PartCleanupStrategy(deletePartsOnSuccess, deleteAllOnError);
     }
 
     /**
@@ -615,7 +645,11 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
   }
 
-  private abstract static class Factory<T> {
+  private abstract static class Factory<T> implements Serializable {
+    private static final long serialVersionUID = 271806144227661056L;
+
+    private Factory() {}
+
     abstract T get();
   }
 

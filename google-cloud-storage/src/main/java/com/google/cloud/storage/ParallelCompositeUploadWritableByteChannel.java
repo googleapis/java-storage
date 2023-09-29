@@ -250,7 +250,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
             },
             exec);
 
-    if (partCleanupStrategy.isDeleteOnError()) {
+    if (partCleanupStrategy.isDeleteAllOnError()) {
       ApiFuture<BlobInfo> cleaningFuture =
           ApiFutures.catchingAsync(
               validatingTransform, Throwable.class, this::asyncCleanupAfterFailure, exec);
@@ -316,7 +316,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
 
       Throwable cause = e.getCause();
       BaseServiceException storageException;
-      if (partCleanupStrategy.isDeleteOnError()) {
+      if (partCleanupStrategy.isDeleteAllOnError()) {
         storageException = StorageException.coalesce(cause);
         ApiFuture<Object> cleanupFutures = asyncCleanupAfterFailure(storageException);
         // asynchronously fail the finalObject future
@@ -394,7 +394,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   }
 
   private ApiFuture<BlobInfo> cleanupParts(BlobInfo finalInfo) {
-    if (!partCleanupStrategy.isDeleteParts()) {
+    if (!partCleanupStrategy.isDeletePartsOnSuccess()) {
       return ApiFutures.immediateFuture(finalInfo);
     }
     List<ApiFuture<Boolean>> deletes =
