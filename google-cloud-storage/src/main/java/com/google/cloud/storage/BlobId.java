@@ -18,6 +18,7 @@ package com.google.cloud.storage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.api.core.InternalApi;
 import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.util.Objects;
@@ -102,6 +103,11 @@ public final class BlobId implements Serializable {
     return Objects.equals(bucket, other.bucket)
         && Objects.equals(name, other.name)
         && Objects.equals(generation, other.generation);
+  }
+
+  @InternalApi
+  BlobId withGeneration(long generation) {
+    return new BlobId(bucket, name, generation);
   }
 
   /**

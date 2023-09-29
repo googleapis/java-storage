@@ -17,6 +17,7 @@
 package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._16MiB;
+import static com.google.cloud.storage.ByteSizeConstants._1MiB;
 import static com.google.cloud.storage.ByteSizeConstants._256KiB;
 import static com.google.cloud.storage.CrossTransportUtils.fmtMethodName;
 import static com.google.cloud.storage.CrossTransportUtils.throwHttpJsonOnly;
@@ -149,6 +150,7 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @BetaApi
@@ -620,7 +622,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     }
 
     if (copyRequest.getMegabytesCopiedPerChunk() != null) {
-      b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk());
+      b.setMaxBytesRewrittenPerCall(copyRequest.getMegabytesCopiedPerChunk() * _1MiB);
     }
 
     RewriteObjectRequest req = mapper.apply(b).build();
@@ -1968,30 +1970,44 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
         Decoder.identity());
   }
 
-  @Nullable
-  private Blob internalBlobGet(BlobId blob, Opts<ObjectSourceOpt> unwrap) {
-    Opts<ObjectSourceOpt> opts =
-        unwrap.resolveFrom(blob).prepend(defaultOpts).prepend(ALL_BLOB_FIELDS);
+  @NonNull
+  @Override
+  public BlobInfo internalObjectGet(BlobId blobId, Opts<ObjectSourceOpt> opts) {
+    Opts<ObjectSourceOpt> finalOpts = opts.prepend(defaultOpts).prepend(ALL_BLOB_FIELDS);
     GrpcCallContext grpcCallContext =
-        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+        finalOpts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
     GetObjectRequest.Builder builder =
         GetObjectRequest.newBuilder()
-            .setBucket(bucketNameCodec.encode(blob.getBucket()))
-            .setObject(blob.getName());
-    ifNonNull(blob.getGeneration(), builder::setGeneration);
-    GetObjectRequest req = opts.getObjectsRequest().apply(builder).build();
+            .setBucket(bucketNameCodec.encode(blobId.getBucket()))
+            .setObject(blobId.getName());
+    ifNonNull(blobId.getGeneration(), builder::setGeneration);
+    GetObjectRequest req = finalOpts.getObjectsRequest().apply(builder).build();
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
+    //noinspection DataFlowIssue
     return Retrying.run(
         getOptions(),
         retryAlgorithmManager.getFor(req),
-        () -> {
-          try {
-            return storageClient.getObjectCallable().call(req, merge);
-          } catch (NotFoundException ignore) {
-            return null;
-          }
-        },
-        syntaxDecoders.blob.andThen(opts.clearBlobFields()));
+        () -> storageClient.getObjectCallable().call(req, merge),
+        resp -> {
+          BlobInfo tmp = codecs.blobInfo().decode(resp);
+          return finalOpts.clearBlobFields().decode(tmp);
+        });
+  }
+
+  @Nullable
+  private Blob internalBlobGet(BlobId blob, Opts<ObjectSourceOpt> unwrap) {
+    Opts<ObjectSourceOpt> opts = unwrap.resolveFrom(blob);
+    try {
+      return internalObjectGet(blob, opts).asBlob(this);
+    } catch (StorageException e) {
+      if (e.getCause() instanceof NotFoundException) {
+        return null;
+      } else {
+        throw e;
+      }
+    } catch (NotFoundException nfe) {
+      return null;
+    }
   }
 
   @Nullable

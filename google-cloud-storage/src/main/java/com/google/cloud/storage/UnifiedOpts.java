@@ -127,7 +127,7 @@ final class UnifiedOpts {
   private interface ApplicableHmacKey {}
 
   /** Base interface for those Opts which may expose their values via gRPC Metadata */
-  private interface GrpcMetadataMapper {
+  private interface GrpcMetadataMapper extends Opt {
     default Mapper<GrpcCallContext> getGrpcMetadataMapper() {
       return Mapper.identity();
     }
@@ -646,11 +646,17 @@ final class UnifiedOpts {
   }
 
   /** @see DecryptionKey */
-  static final class EncryptionKey extends RpcOptVal<Key> implements ObjectTargetOpt {
+  static final class EncryptionKey extends RpcOptVal<Key>
+      implements ObjectTargetOpt, ProjectAsSource<DecryptionKey> {
     private static final long serialVersionUID = -7335988656032764620L;
 
     private EncryptionKey(Key val) {
       super(StorageRpc.Option.CUSTOMER_SUPPLIED_KEY, val);
+    }
+
+    @Override
+    public DecryptionKey asSource() {
+      return new DecryptionKey(val);
     }
 
     @Override
@@ -798,13 +804,13 @@ final class UnifiedOpts {
      * However, refactoring the whole model pipeline for both json and grpc is going to be a large
      * change.
      */
-    Decoder<Blob, Blob> clearUnselectedBlobFields() {
+    Decoder<BlobInfo, BlobInfo> clearUnselectedBlobFields() {
       return b -> {
         if (val.isEmpty()) {
           return b;
         } else {
           Set<String> names = getPaths();
-          Blob.Builder bldr = b.toBuilder();
+          BlobInfo.Builder bldr = b.toBuilder();
           blobInfoFieldClearers.entrySet().stream()
               .filter(e -> !names.contains(e.getKey()))
               .map(Entry::getValue)
@@ -2307,7 +2313,7 @@ final class UnifiedOpts {
       return filterTo(ReturnRawInputStream.class).findFirst().map(r -> r.val).orElse(true);
     }
 
-    Decoder<Blob, Blob> clearBlobFields() {
+    Decoder<BlobInfo, BlobInfo> clearBlobFields() {
       return filterTo(Fields.class)
           .findFirst()
           .map(Fields::clearUnselectedBlobFields)
@@ -2352,6 +2358,32 @@ final class UnifiedOpts {
       return new Opts<>(filterTo(c).collect(ImmutableList.toImmutableList()));
     }
 
+    Opts<T> filter(Predicate<T> p) {
+      return new Opts<>(opts.stream().filter(p).collect(ImmutableList.toImmutableList()));
+    }
+
+    <R extends Opt> Opts<R> transformTo(Class<R> c) {
+      return new Opts<>(
+          opts.stream()
+              .map(
+                  o -> {
+                    if (o instanceof ProjectAsSource) {
+                      ProjectAsSource<?> projectAsSource = (ProjectAsSource<?>) o;
+                      Opt asSource = projectAsSource.asSource();
+                      if (c.isAssignableFrom(asSource.getClass())) {
+                        return c.cast(asSource);
+                      }
+                    }
+                    if (c.isAssignableFrom(o.getClass())) {
+                      return c.cast(o);
+                    } else {
+                      return null;
+                    }
+                  })
+              .filter(Objects::nonNull)
+              .collect(ImmutableList.toImmutableList()));
+    }
+
     @Override
     public boolean equals(Object o) {
       if (this == o) {
@@ -2373,12 +2405,12 @@ final class UnifiedOpts {
       return fuseMappers(RpcOptVal.class, RpcOptVal::mapper);
     }
 
-    private <R, O> Mapper<O> fuseMappers(Class<R> c, Function<R, Mapper<O>> f) {
+    private <R extends Opt, O> Mapper<O> fuseMappers(Class<R> c, Function<R, Mapper<O>> f) {
       return filterTo(c).map(f).reduce(Mapper.identity(), Mapper::andThen);
     }
 
     @SuppressWarnings("unchecked")
-    private <R> Stream<R> filterTo(Class<R> c) {
+    private <R extends Opt> Stream<R> filterTo(Class<R> c) {
       // TODO: figure out if there is need for an "isApplicableTo" predicate
       return opts.stream().filter(isInstanceOf(c)).map(x -> (R) x);
     }
@@ -2416,7 +2448,7 @@ final class UnifiedOpts {
     }
 
     /** Create a predicate which is able to effectively perform an {@code instanceof} check */
-    private static <T> Predicate<T> isInstanceOf(Class<?> c) {
+    private static <T extends Opt, O extends Opt> Predicate<T> isInstanceOf(Class<O> c) {
       return t -> c.isAssignableFrom(t.getClass());
     }
   }

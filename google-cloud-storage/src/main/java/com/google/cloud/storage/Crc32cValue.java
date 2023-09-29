@@ -16,6 +16,8 @@
 
 package com.google.cloud.storage;
 
+import java.util.Objects;
+
 abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
 
   private Crc32cValue() {}
@@ -95,6 +97,23 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
     public Crc32cLengthKnown withLength(long length) {
       return new Crc32cLengthKnown(value, length);
     }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Crc32cLengthUnknown)) {
+        return false;
+      }
+      Crc32cLengthUnknown that = (Crc32cLengthUnknown) o;
+      return value == that.value;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value);
+    }
   }
 
   static final class Crc32cLengthKnown extends Crc32cValue<Crc32cLengthKnown> {
@@ -129,6 +148,23 @@ abstract class Crc32cValue<Res extends Crc32cValue<Res>> {
     @Override
     public String debugString() {
       return fmtCrc32cValue(value);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Crc32cLengthKnown)) {
+        return false;
+      }
+      Crc32cLengthKnown that = (Crc32cLengthKnown) o;
+      return value == that.value && length == that.length;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(value, length);
     }
   }
 }

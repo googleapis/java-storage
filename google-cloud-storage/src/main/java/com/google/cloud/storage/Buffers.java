@@ -60,6 +60,11 @@ final class Buffers {
     return b.position();
   }
 
+  /** attempt to drain all of {@code content} into {@code dst} */
+  static long copy(ByteBuffer content, ByteBuffer dst) {
+    return copy(content, new ByteBuffer[] {dst}, 0, 1);
+  }
+
   /**
    * attempt to drain all of {@code content} into {@code dsts} starting from {@code dsts[0]} through
    * {@code dsts[dsts.length - 1]}
