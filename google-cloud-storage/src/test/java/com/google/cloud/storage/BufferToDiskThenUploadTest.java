@@ -66,11 +66,6 @@ public final class BufferToDiskThenUploadTest {
                 actualBytes.compareAndSet(null, actual);
                 return info;
               }
-
-              @Override
-              public StorageWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts) {
-                return null;
-              }
             },
             blobInfo,
             Opts.empty(),

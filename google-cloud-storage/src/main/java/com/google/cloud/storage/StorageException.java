@@ -136,10 +136,15 @@ public final class StorageException extends BaseHttpServiceException {
     }
     // If there is a gRPC exception in our cause change pull it's error message up to be our
     // message otherwise, create a generic error message with the status code.
-    String message =
-        Utils.firstNonNull(
-            () -> getStatusExceptionMessage(apiEx),
-            () -> String.format("Error: %s", statusCode.getCode().name()));
+    String statusCodeName = statusCode.getCode().name();
+    String statusExceptionMessage = getStatusExceptionMessage(apiEx);
+
+    String message;
+    if (statusExceptionMessage != null) {
+      message = statusCodeName + ": " + statusExceptionMessage;
+    } else {
+      message = "Error: " + statusCodeName;
+    }
 
     // It'd be better to use ExceptionData and BaseServiceException#<init>(ExceptionData) but,
     // BaseHttpServiceException does not pass that through so we're stuck using this for now.
@@ -191,12 +196,16 @@ public final class StorageException extends BaseHttpServiceException {
   }
 
   @Nullable
-  private static String getStatusExceptionMessage(ApiException apiEx) {
-    Throwable cause = apiEx.getCause();
-    if (cause instanceof StatusRuntimeException || cause instanceof StatusException) {
-      return cause.getMessage();
+  private static String getStatusExceptionMessage(Exception apiEx) {
+    if (apiEx.getMessage() != null) {
+      return apiEx.getMessage();
+    } else {
+      Throwable cause = apiEx.getCause();
+      if (cause instanceof StatusRuntimeException || cause instanceof StatusException) {
+        return cause.getMessage();
+      }
+      return null;
     }
-    return null;
   }
 
   @Nullable

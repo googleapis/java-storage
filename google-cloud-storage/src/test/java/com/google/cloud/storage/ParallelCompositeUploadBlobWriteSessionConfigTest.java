@@ -1,0 +1,79 @@
+/*
+ * Copyright 2023 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.cloud.storage;
+
+import static com.google.cloud.storage.TestUtils.assertAll;
+import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
+
+import com.google.cloud.storage.MetadataField.PartRange;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
+import com.google.common.truth.StringSubject;
+import org.junit.Test;
+
+public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
+
+  @Test
+  public void partNameStrategy_noPrefix() throws Exception {
+    PartNamingStrategy strategy = PartNamingStrategy.noPrefix();
+
+    String fmt = strategy.fmtName("object23", PartRange.of(1, 32));
+    assertAll(
+        // random digest to spread over keyspace
+        () -> assertField(fmt, 0).hasLength(22),
+        // name digest
+        () -> assertField(fmt, 1).hasLength(22),
+        () -> assertField(fmt, 2).isEqualTo("0001-0032.part"));
+  }
+
+  @Test
+  public void partNameStrategy_prefix() throws Exception {
+    PartNamingStrategy strategy = PartNamingStrategy.prefix("asdf");
+
+    String fmt = strategy.fmtName("301object23", PartRange.of(1, 96));
+    assertAll(
+        // random digest with prefix to spread over keyspace
+        // digest is 22, prefix is 4, slash is 1
+        () -> assertField(fmt, 0).hasLength(22 + 5),
+        // name digest
+        () -> assertField(fmt, 1).hasLength(22),
+        () -> assertField(fmt, 2).isEqualTo("0001-0096.part"),
+        () -> assertThat(fmt).startsWith("asdf/"));
+  }
+
+  @Test
+  public void partNameStrategy_prefix_stillWorksWithFmtPattern() throws Exception {
+    PartNamingStrategy strategy = PartNamingStrategy.prefix("[%s]");
+
+    String fmt = strategy.fmtName("301object23", PartRange.of(1, 96));
+    assertAll(
+        // random digest with prefix to spread over keyspace
+        // digest is 22, prefix is 4, slash is 1
+        () -> assertField(fmt, 0).hasLength(22 + 5),
+        // name digest
+        () -> assertField(fmt, 1).hasLength(22),
+        () -> assertField(fmt, 2).isEqualTo("0001-0096.part"),
+        () -> assertThat(fmt).startsWith("[%s]/"));
+  }
+
+  private static StringSubject assertField(String fmt, int idx) {
+    String[] split = fmt.split(";");
+    String s = split[idx];
+    return assertWithMessage(String.format("Formatted name '%s', field[%d] = %s", fmt, idx, s))
+        .that(s);
+  }
+}
