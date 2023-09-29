@@ -540,6 +540,11 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       return true;
     } catch (NotFoundException e) {
       return false;
+    } catch (StorageException e) {
+      if (e.getCode() == 404) {
+        return false;
+      }
+      throw e;
     }
   }
 
