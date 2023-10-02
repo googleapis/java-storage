@@ -50,8 +50,11 @@ import javax.annotation.concurrent.Immutable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- * Immutable config builder for a Parallel Composite Upload todo: include note about object lock and
- * retention policy todo: fix this formatting
+ * Immutable config builder to configure BlobWriteSession instances to perform Parallel Composite
+ * Uploads.
+ *
+ * <p>Parallel Composite Uploads can yield higher throughput when uploading large objects. However,
+ * there are some things which must be kept in mind when choosing to use this strategy.
  *
  * <ol>
  *   <li>Performing parallel composite uploads costs more money. <a
@@ -76,6 +79,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *       {@link PartCleanupStrategy#never()} to {@link
  *       ParallelCompositeUploadBlobWriteSessionConfig#withPartCleanupStrategy(PartCleanupStrategy)}
  *       will prevent automatic cleanup.
+ *   <li>Please see the <a href="https://cloud.google.com/storage/docs/parallel-composite-uploads">
+ *       Parallel composite uploads</a> documentation for a more in depth explanation of the
+ *       limitations of Parallel composite uploads.
  *   <li>A failed upload can leave part and intermediary compose objects behind which will count as
  *       storage usage, and you will be billed for it. <br>
  *       By default if an upload fails, an attempt to cleanup the part and intermediary compose will
@@ -102,6 +108,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @see Storage#blobWriteSession(BlobInfo, BlobWriteOption...)
  * @see <a
  *     href="https://cloud.google.com/storage/docs/parallel-composite-uploads">https://cloud.google.com/storage/docs/parallel-composite-uploads</a>
+ * @since 2.28.0 This new api is in preview and is subject to breaking changes.
  */
 @Immutable
 @BetaApi
@@ -146,6 +153,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * composite upload.
    *
    * <p><i>Default: </i> {@link ExecutorSupplier#cachedPool()}
+   *
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withExecutorSupplier(
@@ -164,6 +173,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * when performing a parallel composite upload.
    *
    * <p><i>Default: </i> {@link BufferStrategy#simple(int) BufferStrategy#simple(16MiB)}
+   *
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withBufferStrategy(
@@ -182,6 +193,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * compose objects will be named when performing a parallel composite upload.
    *
    * <p><i>Default: </i> {@link PartNamingStrategy#noPrefix()}
+   *
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withPartNamingStrategy(
@@ -200,6 +213,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * automatically when performing a parallel composite upload.
    *
    * <p><i>Default: </i> {@link PartCleanupStrategy#always()}
+   *
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   public ParallelCompositeUploadBlobWriteSessionConfig withPartCleanupStrategy(
@@ -237,6 +252,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * {@link Storage}.
    *
    * @see #withBufferStrategy(BufferStrategy)
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
@@ -250,6 +266,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      *
      * @param capacity the number of bytes each buffer should be
      * @see #withBufferStrategy(BufferStrategy)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static BufferStrategy simple(int capacity) {
@@ -263,6 +280,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * @param bufferCount the number of buffers the pool will be
      * @param bufferCapacity the number of bytes each buffer should be
      * @see #withBufferStrategy(BufferStrategy)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static BufferStrategy fixedPool(int bufferCount, int bufferCapacity) {
@@ -305,6 +323,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * parallel composite upload.
    *
    * @see #withExecutorSupplier(ExecutorSupplier)
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
@@ -317,6 +336,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * Use a cached thread pool for submitting work
      *
      * @see #withExecutorSupplier(ExecutorSupplier)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static ExecutorSupplier cachedPool() {
@@ -334,6 +354,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      *
      * @param poolSize the number of threads in the pool
      * @see #withExecutorSupplier(ExecutorSupplier)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static ExecutorSupplier fixedPool(int poolSize) {
@@ -349,7 +370,12 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     /**
      * Wrap an existing executor instance which will be used for submitting work
      *
+     * <p><b><i>Choosing to use this supplier type will make your instance of {@link StorageOptions}
+     * unable to be serialized.</i></b>
+     *
      * @param executor the executor to use
+     * @see #withExecutorSupplier(ExecutorSupplier)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static ExecutorSupplier useExecutor(Executor executor) {
@@ -384,6 +410,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * object.
    *
    * @see #withPartNamingStrategy(PartNamingStrategy)
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
@@ -424,6 +451,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * </code></pre>
      *
      * @see #withPartNamingStrategy(PartNamingStrategy)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static PartNamingStrategy noPrefix() {
@@ -447,6 +475,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * Convention Guidelines</a> for more details.
      *
      * @see #withPartNamingStrategy(PartNamingStrategy)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static PartNamingStrategy prefix(String prefixPattern) {
@@ -504,6 +533,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * performing a parallel composite upload.
    *
    * @see #withPartCleanupStrategy(PartCleanupStrategy)
+   * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
@@ -529,6 +559,8 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * parts already uploaded.
      *
      * <p><i>Default:</i> {@code true}
+     *
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public PartCleanupStrategy withDeleteOnError(boolean deleteOnError) {
@@ -540,6 +572,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * either on success or on error.
      *
      * @see #withPartCleanupStrategy(PartCleanupStrategy)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static PartCleanupStrategy always() {
@@ -551,6 +584,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * either on success or on error.
      *
      * @see #withPartCleanupStrategy(PartCleanupStrategy)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
     public static PartCleanupStrategy never() {
