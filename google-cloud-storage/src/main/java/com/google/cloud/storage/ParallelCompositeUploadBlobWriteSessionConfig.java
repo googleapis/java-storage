@@ -95,13 +95,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *       href="https://cloud.google.com/storage/docs/lifecycle#delete">Delete</a> rule with a <a
  *       href="https://cloud.google.com/storage/docs/lifecycle#matchesprefix-suffix">suffix
  *       match</a> condition.
- *   <li>Using parallel composite uploads are not a silver bullet. They have very real overhead
- *       until uploading a large enough object. The inflection point is dependent upon many factors,
- *       and there is no one size fits all value. You will need to experiment with your deployment
- *       and workload to determine if parallel composite uploads are useful to you.
- *       <p>In general if you object sizes are smaller than several hundred megabytes it is unlikely
- *       parallel composite uploads will be beneficial to overall throughput.
+ *   <li>Using parallel composite uploads are not a a one size fits all solution. They have very
+ *       real overhead until uploading a large enough object. The inflection point is dependent upon
+ *       many factors, and there is no one size fits all value. You will need to experiment with
+ *       your deployment and workload to determine if parallel composite uploads are useful to you.
  * </ol>
+ *
+ * <p>In general if you object sizes are smaller than several hundred megabytes it is unlikely
+ * parallel composite uploads will be beneficial to overall throughput.
  *
  * @see GrpcStorageOptions.Builder#setBlobWriteSessionConfig(BlobWriteSessionConfig)
  * @see BlobWriteSessionConfigs#parallelCompositeUpload()
@@ -333,7 +334,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     private ExecutorSupplier() {}
 
     /**
-     * Use a cached thread pool for submitting work
+     * Create a cached thread pool for submitting work
      *
      * @see #withExecutorSupplier(ExecutorSupplier)
      * @since 2.28.0 This new api is in preview and is subject to breaking changes.
@@ -350,7 +351,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     /**
-     * create a fixed thread pool for submitting work
+     * Create a fixed size thread pool for submitting work
      *
      * @param poolSize the number of threads in the pool
      * @see #withExecutorSupplier(ExecutorSupplier)
@@ -447,8 +448,13 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * <p>General format is
      *
      * <pre><code>
-     *   {randomKeyDigest};{objectNameDigest};{partIndex}.part
+     *   {randomKeyDigest};{objectInfoDigest};{partIndex}.part
      * </code></pre>
+     *
+     * <p>{@code {objectInfoDigest}} will be fixed for an individual {@link BlobWriteSession}.
+     *
+     * <p><b><i>NOTE:</i></b>The way in which both {@code randomKeyDigest} and {@code
+     * objectInfoDigest} are generated is undefined and subject to change at any time.
      *
      * @see #withPartNamingStrategy(PartNamingStrategy)
      * @since 2.28.0 This new api is in preview and is subject to breaking changes.
@@ -460,14 +466,19 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     /**
-     * Default strategy in which and explicit stable prefix is present on each part and intermediary
-     * compose object.
+     * Strategy in which an explicit stable prefix is present on each part and intermediary compose
+     * object.
      *
      * <p>General format is
      *
      * <pre><code>
-     *   {prefixPattern}/{randomKeyDigest};{objectNameDigest};{partIndex}.part
+     *   {prefixPattern}/{randomKeyDigest};{objectInfoDigest};{partIndex}.part
      * </code></pre>
+     *
+     * <p>{@code {objectInfoDigest}} will be fixed for an individual {@link BlobWriteSession}.
+     *
+     * <p><b><i>NOTE:</i></b>The way in which both {@code randomKeyDigest} and {@code
+     * objectInfoDigest} are generated is undefined and subject to change at any time.
      *
      * <p>Care must be taken when choosing to specify a stable prefix as this can create hotspots in
      * the keyspace for object names. See <a
@@ -563,12 +574,12 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public PartCleanupStrategy withDeleteOnError(boolean deleteOnError) {
+    PartCleanupStrategy withDeleteOnError(boolean deleteOnError) {
       return new PartCleanupStrategy(deleteParts, deleteOnError);
     }
 
     /**
-     * Cleanup strategy which will always attempt to cleanup part and intermediary compose objects
+     * Cleanup strategy which will always attempt to clean up part and intermediary compose objects
      * either on success or on error.
      *
      * @see #withPartCleanupStrategy(PartCleanupStrategy)
@@ -580,7 +591,19 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     }
 
     /**
-     * Cleanup strategy which will never attempt to cleanup part and intermediary compose objects
+     * Cleanup strategy which will only attempt to clean up parts and intermediary compose objects
+     * either on success.
+     *
+     * @see #withPartCleanupStrategy(PartCleanupStrategy)
+     * @since 2.28.0 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static PartCleanupStrategy onlyOnSuccess() {
+      return new PartCleanupStrategy(true, false);
+    }
+
+    /**
+     * Cleanup strategy which will never attempt to clean up parts or intermediary compose objects
      * either on success or on error.
      *
      * @see #withPartCleanupStrategy(PartCleanupStrategy)

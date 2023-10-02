@@ -209,10 +209,11 @@ import java.util.Collection;
  *           rule with a <a href="https://cloud.google.com/storage/docs/lifecycle#matchesprefix-suffix">suffix match</a> condition.
  *         </li>
  *         <li>
- *           Using parallel composite uploads are not a silver bullet. They have very real overhead
- *           until uploading a large enough object. The inflection point is dependent upon many
- *           factors, and there is no one size fits all value. You will need to experiment with your
- *           deployment and workload to determine if parallel composite uploads are useful to you.
+ *           Using parallel composite uploads are not a one size fits all solution. They have very
+ *           real overhead until uploading a large enough object. The inflection point is dependent
+ *           upon many factors, and there is no one size fits all value. You will need to experiment
+ *           with your deployment and workload to determine if parallel composite uploads are useful
+ *           to you.
  *         </li>
  *       </ol>
  *     </td>
