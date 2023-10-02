@@ -460,7 +460,7 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
             bufferHandlePool,
             MoreExecutors.directExecutor(),
             partNamingStrategy,
-            PartCleanupStrategy.never(),
+            PartCleanupStrategy.always(),
             3,
             finalObject,
             new FakeStorageInternal() {
@@ -839,9 +839,13 @@ public final class ParallelCompositeUploadWritableByteChannelTest {
     }
 
     @Override
-    public boolean delete(BlobId id) {
+    public Void internalObjectDelete(BlobId id, Opts<ObjectSourceOpt> opts) {
       deleteRequests.add(id);
-      return addedObjects.containsKey(id);
+      boolean containsKey = addedObjects.containsKey(id);
+      if (!containsKey) {
+        throw ApiExceptionFactory.createException(null, GrpcStatusCode.of(Code.NOT_FOUND), false);
+      }
+      return null;
     }
 
     @Override
