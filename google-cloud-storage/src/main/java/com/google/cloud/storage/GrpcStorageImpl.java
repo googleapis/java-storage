@@ -1815,7 +1815,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes =
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
-    GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
     return ResumableMedia.gapic()
         .read()
         .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
