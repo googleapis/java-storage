@@ -29,7 +29,7 @@ import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.GrpcStorageOptions;
-import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
@@ -105,8 +105,8 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
             .setBlobWriteSessionConfig(
                 BlobWriteSessionConfigs.parallelCompositeUpload()
                     .withExecutorSupplier(ExecutorSupplier.useExecutor(exec))
-                    // deinfe a max part size that is fairly small to aid in test speed
-                    .withBufferStrategy(BufferStrategy.simple(_1MiB))
+                    // define a max part size that is fairly small to aid in test speed
+                    .withBufferAllocationStrategy(BufferAllocationStrategy.simple(_1MiB))
                     .withPartNamingStrategy(PartNamingStrategy.prefix("prefix-a"))
                     // let our fixtures take care of cleaning things up
                     .withPartCleanupStrategy(PartCleanupStrategy.never()))
