@@ -41,10 +41,10 @@ import java.util.Collection;
  *     <th>Strategy</th>
  *     <th>Factory Method(s)</th>
  *     <th>Description</th>
- *     <th>Retry Support</th>
- *     <th>Transports Supported</th>
- *     <th>Cloud Storage API used</th>
+ *     <th>Transport(s) Supported</th>
  *     <th>Considerations</th>
+ *     <th>Retry Support</th>
+ *     <th>Cloud Storage API used</th>
  *   </tr>
  *   <tr>
  *     <td>Default (Chunk based upload)</td>
@@ -54,12 +54,7 @@ import java.util.Collection;
  *       full or close. Buffer size is configurable via
  *       {@link DefaultBlobWriteSessionConfig#withChunkSize(int)}
  *     </td>
- *     <td>
- *       Each chunk is retried up to the limitations specified in
- *       {@link StorageOptions#getRetrySettings()}
- *     </td>
  *     <td>gRPC</td>
- *     <td><a href="https://cloud.google.com/storage/docs/resumable-uploads">Resumable Upload</a></td>
  *     <td>The network will only be used for the following operations:
  *     <ol>
  *       <li>Creating the Resumable Upload Session</li>
@@ -71,6 +66,11 @@ import java.util.Collection;
  *       </li>
  *     </ol>
  *     </td>
+ *     <td>
+ *       Each chunk is retried up to the limitations specified in
+ *       {@link StorageOptions#getRetrySettings()}
+ *     </td>
+ *     <td><a href="https://cloud.google.com/storage/docs/resumable-uploads">Resumable Upload</a></td>
  *   </tr>
  *   <tr>
  *     <td>Buffer to disk then upload</td>
@@ -85,12 +85,7 @@ import java.util.Collection;
  *       Buffer bytes to a temporary file on disk. On {@link WritableByteChannel#close() close()}
  *       upload the entire files contents to Cloud Storage. Delete the temporary file.
  *     </td>
- *     <td>
- *       Upload the file in the fewest number of RPC possible retrying within the limitations
- *       specified in {@link StorageOptions#getRetrySettings()}
- *     </td>
  *     <td>gRPC</td>
- *     <td><a href="https://cloud.google.com/storage/docs/resumable-uploads">Resumable Upload</a></td>
  *     <td>
  *       <ol>
  *         <li>A Resumable Upload Session will be used to upload the file on disk.</li>
@@ -100,6 +95,11 @@ import java.util.Collection;
  *         </li>
  *       </ol>
  *     </td>
+ *     <td>
+ *       Upload the file in the fewest number of RPC possible retrying within the limitations
+ *       specified in {@link StorageOptions#getRetrySettings()}
+ *     </td>
+ *     <td><a href="https://cloud.google.com/storage/docs/resumable-uploads">Resumable Upload</a></td>
  *   </tr>
  *   <tr>
  *     <td>Journal to disk while uploading</td>
@@ -110,12 +110,7 @@ import java.util.Collection;
  *       retryable error query the offset of the Resumable Upload Session, then open the recovery
  *       file from the offset and transmit the bytes to Cloud Storage.
  *     </td>
- *     <td>
- *       Opening the stream for upload will be retried up to the limitations specified in {@link StorageOptions#getRetrySettings()}
- *       All bytes are buffered to disk and allow for recovery from any arbitrary offset.
- *     </td>
  *     <td>gRPC</td>
- *     <td><a href="https://cloud.google.com/storage/docs/resumable-uploads">Resumable Upload</a></td>
  *     <td>
  *       <ol>
  *         <li>
@@ -133,6 +128,11 @@ import java.util.Collection;
  *         </li>
  *       </ol>
  *     </td>
+ *     <td>
+ *       Opening the stream for upload will be retried up to the limitations specified in {@link StorageOptions#getRetrySettings()}
+ *       All bytes are buffered to disk and allow for recovery from any arbitrary offset.
+ *     </td>
+ *     <td><a href="https://cloud.google.com/storage/docs/resumable-uploads">Resumable Upload</a></td>
  *   </tr>
  *   <tr>
  *     <td>Parallel Composite Upload</td>
@@ -141,29 +141,7 @@ import java.util.Collection;
  *       Break the stream of bytes into smaller part objects uploading each part in parallel. Then
  *       composing the parts together to make the ultimate object.
  *     </td>
- *     <td>
- *       Automatic retires will be applied for the following:
- *       <ol>
- *         <li>Creation of each individual part</li>
- *         <li>Performing an intermediary compose</li>
- *         <li>Performing a delete to cleanup each part and intermediary compose object</li>
- *       </ol>
- *
- *       Retrying the creation of the final object is contingent upon if an appropriate precondition
- *       is supplied when calling {@link Storage#blobWriteSession(BlobInfo, BlobWriteOption...)}.
- *       Either {@link BlobTargetOption#doesNotExist()} or {@link Storage.BlobTargetOption#generationMatch(long)}
- *       should be specified in order to make the final request idempotent.
- *       <p>Each operation will be retried up to the limitations specified in {@link StorageOptions#getRetrySettings()}
- *     </td>
  *     <td>gRPC</td>
- *     <td>
- *       <ul>
- *         <li><a href="https://cloud.google.com/storage/docs/parallel-composite-uploads">Parallel composite uploads</a></li>
- *         <li><a href="https://cloud.google.com/storage/docs/uploading-objects-from-memory">Direct uploads</a></li>
- *         <li><a href="https://cloud.google.com/storage/docs/composite-objects">Compose</a></li>
- *         <li><a href="https://cloud.google.com/storage/docs/deleting-objects">Object delete</a></li>
- *       </ul>
- *     </td>
  *     <td>
  *       <ol>
  *         <li>
@@ -216,6 +194,28 @@ import java.util.Collection;
  *           to you.
  *         </li>
  *       </ol>
+ *     </td>
+ *     <td>
+ *       Automatic retires will be applied for the following:
+ *       <ol>
+ *         <li>Creation of each individual part</li>
+ *         <li>Performing an intermediary compose</li>
+ *         <li>Performing a delete to cleanup each part and intermediary compose object</li>
+ *       </ol>
+ *
+ *       Retrying the creation of the final object is contingent upon if an appropriate precondition
+ *       is supplied when calling {@link Storage#blobWriteSession(BlobInfo, BlobWriteOption...)}.
+ *       Either {@link BlobTargetOption#doesNotExist()} or {@link Storage.BlobTargetOption#generationMatch(long)}
+ *       should be specified in order to make the final request idempotent.
+ *       <p>Each operation will be retried up to the limitations specified in {@link StorageOptions#getRetrySettings()}
+ *     </td>
+ *     <td>
+ *       <ul>
+ *         <li><a href="https://cloud.google.com/storage/docs/parallel-composite-uploads">Parallel composite uploads</a></li>
+ *         <li><a href="https://cloud.google.com/storage/docs/uploading-objects-from-memory">Direct uploads</a></li>
+ *         <li><a href="https://cloud.google.com/storage/docs/composite-objects">Compose</a></li>
+ *         <li><a href="https://cloud.google.com/storage/docs/deleting-objects">Object delete</a></li>
+ *       </ul>
  *     </td>
  *   </tr>
  * </table>
