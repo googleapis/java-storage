@@ -21,28 +21,42 @@ import com.google.api.gax.grpc.GrpcStatusCode;
 import com.google.api.gax.rpc.ApiException;
 import com.google.api.gax.rpc.ErrorDetails;
 import com.google.api.gax.rpc.StatusCode;
-import com.google.common.collect.ImmutableList;
 import io.grpc.Status.Code;
+import java.util.List;
 
-final class ParallelCompositeUploadException extends ApiException {
+/**
+ * An exception which provides access to created objects during a Parallel Composite Upload that did
+ * not finish successfully.
+ *
+ * <p>This exception can occur when calling any method on the {@link
+ * java.nio.channels.WritableByteChannel} returned from {@link BlobWriteSession#open()}, in which
+ * case it will be the cause of a {@link StorageException}.
+ *
+ * <p>Similarly, this exception will be the cause of a {@link
+ * java.util.concurrent.CancellationException} thrown by the {@link BlobWriteSession#getResult()}.
+ */
+public final class ParallelCompositeUploadException extends ApiException {
 
-  private final ApiFuture<ImmutableList<BlobId>> createdObjects;
+  private final ApiFuture<List<BlobId>> createdObjects;
 
   private ParallelCompositeUploadException(
       Throwable cause,
       StatusCode statusCode,
       ErrorDetails errorDetails,
-      ApiFuture<ImmutableList<BlobId>> createdObjects) {
+      ApiFuture<List<BlobId>> createdObjects) {
     super(cause, statusCode, false, errorDetails);
     this.createdObjects = createdObjects;
   }
 
-  public ApiFuture<ImmutableList<BlobId>> getCreatedObjects() {
+  /**
+   * A future list of the {@link BlobId}s which were created during the Parallel Composite Upload
+   * but may not have successfully been cleaned up.
+   */
+  public ApiFuture<List<BlobId>> getCreatedObjects() {
     return createdObjects;
   }
 
-  static ParallelCompositeUploadException of(
-      Throwable t, ApiFuture<ImmutableList<BlobId>> createdObjects) {
+  static ParallelCompositeUploadException of(Throwable t, ApiFuture<List<BlobId>> createdObjects) {
     StatusCode statusCode;
     ErrorDetails errorDetails;
 
