@@ -66,12 +66,12 @@ public final class ITStorageLifecycleTest {
     service1.close();
 
     // expect a new instance to be returned
-    Storage service3 = options.getService();
-
-    assertThat(service3).isNotSameInstanceAs(service1);
-    // make sure an RPC can be done
-    StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
-        .collect(Collectors.toList());
+    try (Storage service3 = options.getService()) {
+      assertThat(service3).isNotSameInstanceAs(service1);
+      // make sure an RPC can be done
+      StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
+          .collect(Collectors.toList());
+    }
   }
 
   @Test
@@ -95,11 +95,12 @@ public final class ITStorageLifecycleTest {
     service1.close(); // this should be a no-op for http
 
     // expect the original instance to still be returned
-    Storage service3 = options.getService();
+    try (Storage service3 = options.getService()) {
 
-    assertThat(service3).isSameInstanceAs(service1);
-    // make sure an RPC can be done
-    StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
-        .collect(Collectors.toList());
+      assertThat(service3).isSameInstanceAs(service1);
+      // make sure an RPC can be done
+      StreamSupport.stream(service3.list().iterateAll().spliterator(), false)
+          .collect(Collectors.toList());
+    }
   }
 }
