@@ -431,7 +431,7 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   }
 
   private <R> ApiFuture<R> asyncCleanupAfterFailure(Throwable originalFailure) {
-    ApiFuture<ImmutableList<BlobId>> pendingAndSuccessfulBlobIds =
+    ApiFuture<List<BlobId>> pendingAndSuccessfulBlobIds =
         getPendingAndSuccessfulBlobIds(exec, pendingParts, successfulParts);
     return ApiFutures.transformAsync(
         pendingAndSuccessfulBlobIds,
@@ -558,21 +558,21 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
       Executor exec,
       List<ApiFuture<BlobInfo>> pendingParts,
       List<BlobId> successfulParts) {
-    ApiFuture<ImmutableList<BlobId>> fCreatedObjects =
+    ApiFuture<List<BlobId>> fCreatedObjects =
         getPendingAndSuccessfulBlobIds(exec, pendingParts, successfulParts);
 
     return ParallelCompositeUploadException.of(cause, fCreatedObjects);
   }
 
   @NonNull
-  private static ApiFuture<ImmutableList<BlobId>> getPendingAndSuccessfulBlobIds(
+  private static ApiFuture<List<BlobId>> getPendingAndSuccessfulBlobIds(
       Executor exec, List<ApiFuture<BlobInfo>> pendingParts, List<BlobId> successfulParts) {
     ApiFuture<List<BlobInfo>> successfulList = ApiFutures.successfulAsList(pendingParts);
     // suppress any failure that might happen when waiting for any pending futures to resolve
     ApiFuture<List<BlobInfo>> catching =
         ApiFutures.catching(successfulList, Throwable.class, t2 -> ImmutableList.of(), exec);
 
-    ApiFuture<ImmutableList<BlobId>> fCreatedObjects =
+    ApiFuture<List<BlobId>> fCreatedObjects =
         ApiFutures.transform(
             catching,
             l ->
