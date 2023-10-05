@@ -121,19 +121,19 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   private static final int MAX_PARTS_PER_COMPOSE = 32;
   private final int maxPartsPerCompose;
   private final ExecutorSupplier executorSupplier;
-  private final BufferStrategy bufferStrategy;
+  private final BufferAllocationStrategy bufferAllocationStrategy;
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
 
   private ParallelCompositeUploadBlobWriteSessionConfig(
       int maxPartsPerCompose,
       ExecutorSupplier executorSupplier,
-      BufferStrategy bufferStrategy,
+      BufferAllocationStrategy bufferAllocationStrategy,
       PartNamingStrategy partNamingStrategy,
       PartCleanupStrategy partCleanupStrategy) {
     this.maxPartsPerCompose = maxPartsPerCompose;
     this.executorSupplier = executorSupplier;
-    this.bufferStrategy = bufferStrategy;
+    this.bufferAllocationStrategy = bufferAllocationStrategy;
     this.partNamingStrategy = partNamingStrategy;
     this.partCleanupStrategy = partCleanupStrategy;
   }
@@ -147,7 +147,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         maxPartsPerCompose,
         executorSupplier,
-        bufferStrategy,
+        bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy);
   }
@@ -167,7 +167,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         maxPartsPerCompose,
         executorSupplier,
-        bufferStrategy,
+        bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy);
   }
@@ -176,18 +176,19 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * Specify a specific buffering strategy which will dictate how buffers are allocated and used
    * when performing a parallel composite upload.
    *
-   * <p><i>Default: </i> {@link BufferStrategy#simple(int) BufferStrategy#simple(16MiB)}
+   * <p><i>Default: </i> {@link BufferAllocationStrategy#simple(int)
+   * BufferAllocationStrategy#simple(16MiB)}
    *
    * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  public ParallelCompositeUploadBlobWriteSessionConfig withBufferStrategy(
-      BufferStrategy bufferStrategy) {
-    checkNotNull(bufferStrategy, "bufferStrategy must be non null");
+  public ParallelCompositeUploadBlobWriteSessionConfig withBufferAllocationStrategy(
+      BufferAllocationStrategy bufferAllocationStrategy) {
+    checkNotNull(bufferAllocationStrategy, "bufferAllocationStrategy must be non null");
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         maxPartsPerCompose,
         executorSupplier,
-        bufferStrategy,
+        bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy);
   }
@@ -207,7 +208,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         maxPartsPerCompose,
         executorSupplier,
-        bufferStrategy,
+        bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy);
   }
@@ -227,7 +228,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         maxPartsPerCompose,
         executorSupplier,
-        bufferStrategy,
+        bufferAllocationStrategy,
         partNamingStrategy,
         partCleanupStrategy);
   }
@@ -237,7 +238,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
     return new ParallelCompositeUploadBlobWriteSessionConfig(
         MAX_PARTS_PER_COMPOSE,
         ExecutorSupplier.cachedPool(),
-        BufferStrategy.simple(ByteSizeConstants._16MiB),
+        BufferAllocationStrategy.simple(ByteSizeConstants._16MiB),
         PartNamingStrategy.noPrefix(),
         PartCleanupStrategy.always());
   }
@@ -246,7 +247,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   @Override
   WriterFactory createFactory(Clock clock) throws IOException {
     Executor executor = executorSupplier.get();
-    BufferHandlePool bufferHandlePool = bufferStrategy.get();
+    BufferHandlePool bufferHandlePool = bufferAllocationStrategy.get();
     return new ParallelCompositeUploadWriterFactory(clock, executor, bufferHandlePool);
   }
 
@@ -255,27 +256,27 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
    * will apply to all instances of {@link BlobWriteSession} created from a single instance of
    * {@link Storage}.
    *
-   * @see #withBufferStrategy(BufferStrategy)
+   * @see #withBufferAllocationStrategy(BufferAllocationStrategy)
    * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
   @Immutable
-  public abstract static class BufferStrategy extends Factory<BufferHandlePool>
+  public abstract static class BufferAllocationStrategy extends Factory<BufferHandlePool>
       implements Serializable {
 
-    private BufferStrategy() {}
+    private BufferAllocationStrategy() {}
 
     /**
      * Create a buffer strategy which will rely upon standard garbage collection. Each buffer will
      * be used once and then garbage collected.
      *
      * @param capacity the number of bytes each buffer should be
-     * @see #withBufferStrategy(BufferStrategy)
+     * @see #withBufferAllocationStrategy(BufferAllocationStrategy)
      * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public static BufferStrategy simple(int capacity) {
-      return new SimpleBufferStrategy(capacity);
+    public static BufferAllocationStrategy simple(int capacity) {
+      return new SimpleBufferAllocationStrategy(capacity);
     }
 
     /**
@@ -284,20 +285,20 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
      *
      * @param bufferCount the number of buffers the pool will be
      * @param bufferCapacity the number of bytes each buffer should be
-     * @see #withBufferStrategy(BufferStrategy)
+     * @see #withBufferAllocationStrategy(BufferAllocationStrategy)
      * @since 2.28.0 This new api is in preview and is subject to breaking changes.
      */
     @BetaApi
-    public static BufferStrategy fixedPool(int bufferCount, int bufferCapacity) {
-      return new FixedBufferStrategy(bufferCount, bufferCapacity);
+    public static BufferAllocationStrategy fixedPool(int bufferCount, int bufferCapacity) {
+      return new FixedPoolBufferAllocationStrategy(bufferCount, bufferCapacity);
     }
 
-    private static class SimpleBufferStrategy extends BufferStrategy {
+    private static class SimpleBufferAllocationStrategy extends BufferAllocationStrategy {
       private static final long serialVersionUID = 8884826090481043434L;
 
       private final int capacity;
 
-      private SimpleBufferStrategy(int capacity) {
+      private SimpleBufferAllocationStrategy(int capacity) {
         this.capacity = capacity;
       }
 
@@ -307,13 +308,13 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       }
     }
 
-    private static class FixedBufferStrategy extends BufferStrategy {
+    private static class FixedPoolBufferAllocationStrategy extends BufferAllocationStrategy {
       private static final long serialVersionUID = 3288902741819257066L;
 
       private final int bufferCount;
       private final int bufferCapacity;
 
-      private FixedBufferStrategy(int bufferCount, int bufferCapacity) {
+      private FixedPoolBufferAllocationStrategy(int bufferCount, int bufferCapacity) {
         this.bufferCount = bufferCount;
         this.bufferCapacity = bufferCapacity;
       }

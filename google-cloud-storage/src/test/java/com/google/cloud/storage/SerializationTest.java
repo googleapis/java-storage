@@ -33,7 +33,7 @@ import com.google.cloud.storage.Acl.Project.ProjectRole;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelV2State;
 import com.google.cloud.storage.BlobWriteChannelV2.BlobWriteChannelV2State;
-import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferStrategy;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartNamingStrategy;
@@ -385,7 +385,7 @@ public class SerializationTest extends BaseSerializationTest {
 
     ParallelCompositeUploadBlobWriteSessionConfig pcu2 =
         BlobWriteSessionConfigs.parallelCompositeUpload()
-            .withBufferStrategy(BufferStrategy.fixedPool(1, 3))
+            .withBufferAllocationStrategy(BufferAllocationStrategy.fixedPool(1, 3))
             .withPartCleanupStrategy(PartCleanupStrategy.never())
             .withPartNamingStrategy(PartNamingStrategy.prefix("prefix"))
             .withExecutorSupplier(ExecutorSupplier.fixedPool(5));
