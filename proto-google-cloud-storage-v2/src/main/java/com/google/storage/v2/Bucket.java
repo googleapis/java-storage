@@ -15416,6 +15416,90 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * </code>
      */
     com.google.protobuf.TimestampOrBuilder getToggleTimeOrBuilder();
+
+    /**
+     *
+     *
+     * <pre>
+     * An object in an Autoclass bucket will eventually cool down to the
+     * terminal storage class if there is no access to the object.
+     * The only valid values are NEARLINE and ARCHIVE.
+     * </pre>
+     *
+     * <code>optional string terminal_storage_class = 3;</code>
+     *
+     * @return Whether the terminalStorageClass field is set.
+     */
+    boolean hasTerminalStorageClass();
+    /**
+     *
+     *
+     * <pre>
+     * An object in an Autoclass bucket will eventually cool down to the
+     * terminal storage class if there is no access to the object.
+     * The only valid values are NEARLINE and ARCHIVE.
+     * </pre>
+     *
+     * <code>optional string terminal_storage_class = 3;</code>
+     *
+     * @return The terminalStorageClass.
+     */
+    java.lang.String getTerminalStorageClass();
+    /**
+     *
+     *
+     * <pre>
+     * An object in an Autoclass bucket will eventually cool down to the
+     * terminal storage class if there is no access to the object.
+     * The only valid values are NEARLINE and ARCHIVE.
+     * </pre>
+     *
+     * <code>optional string terminal_storage_class = 3;</code>
+     *
+     * @return The bytes for terminalStorageClass.
+     */
+    com.google.protobuf.ByteString getTerminalStorageClassBytes();
+
+    /**
+     *
+     *
+     * <pre>
+     * Latest instant at which the autoclass terminal storage class was updated.
+     * </pre>
+     *
+     * <code>
+     * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     *
+     * @return Whether the terminalStorageClassUpdateTime field is set.
+     */
+    boolean hasTerminalStorageClassUpdateTime();
+    /**
+     *
+     *
+     * <pre>
+     * Latest instant at which the autoclass terminal storage class was updated.
+     * </pre>
+     *
+     * <code>
+     * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     *
+     * @return The terminalStorageClassUpdateTime.
+     */
+    com.google.protobuf.Timestamp getTerminalStorageClassUpdateTime();
+    /**
+     *
+     *
+     * <pre>
+     * Latest instant at which the autoclass terminal storage class was updated.
+     * </pre>
+     *
+     * <code>
+     * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     */
+    com.google.protobuf.TimestampOrBuilder getTerminalStorageClassUpdateTimeOrBuilder();
   }
   /**
    *
@@ -15436,7 +15520,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       super(builder);
     }
 
-    private Autoclass() {}
+    private Autoclass() {
+      terminalStorageClass_ = "";
+    }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
@@ -15459,6 +15545,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
               com.google.storage.v2.Bucket.Autoclass.Builder.class);
     }
 
+    private int bitField0_;
     public static final int ENABLED_FIELD_NUMBER = 1;
     private boolean enabled_ = false;
     /**
@@ -15538,6 +15625,134 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       return toggleTime_ == null ? com.google.protobuf.Timestamp.getDefaultInstance() : toggleTime_;
     }
 
+    public static final int TERMINAL_STORAGE_CLASS_FIELD_NUMBER = 3;
+
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object terminalStorageClass_ = "";
+    /**
+     *
+     *
+     * <pre>
+     * An object in an Autoclass bucket will eventually cool down to the
+     * terminal storage class if there is no access to the object.
+     * The only valid values are NEARLINE and ARCHIVE.
+     * </pre>
+     *
+     * <code>optional string terminal_storage_class = 3;</code>
+     *
+     * @return Whether the terminalStorageClass field is set.
+     */
+    @java.lang.Override
+    public boolean hasTerminalStorageClass() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An object in an Autoclass bucket will eventually cool down to the
+     * terminal storage class if there is no access to the object.
+     * The only valid values are NEARLINE and ARCHIVE.
+     * </pre>
+     *
+     * <code>optional string terminal_storage_class = 3;</code>
+     *
+     * @return The terminalStorageClass.
+     */
+    @java.lang.Override
+    public java.lang.String getTerminalStorageClass() {
+      java.lang.Object ref = terminalStorageClass_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        terminalStorageClass_ = s;
+        return s;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * An object in an Autoclass bucket will eventually cool down to the
+     * terminal storage class if there is no access to the object.
+     * The only valid values are NEARLINE and ARCHIVE.
+     * </pre>
+     *
+     * <code>optional string terminal_storage_class = 3;</code>
+     *
+     * @return The bytes for terminalStorageClass.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString getTerminalStorageClassBytes() {
+      java.lang.Object ref = terminalStorageClass_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b =
+            com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+        terminalStorageClass_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TERMINAL_STORAGE_CLASS_UPDATE_TIME_FIELD_NUMBER = 4;
+    private com.google.protobuf.Timestamp terminalStorageClassUpdateTime_;
+    /**
+     *
+     *
+     * <pre>
+     * Latest instant at which the autoclass terminal storage class was updated.
+     * </pre>
+     *
+     * <code>
+     * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     *
+     * @return Whether the terminalStorageClassUpdateTime field is set.
+     */
+    @java.lang.Override
+    public boolean hasTerminalStorageClassUpdateTime() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Latest instant at which the autoclass terminal storage class was updated.
+     * </pre>
+     *
+     * <code>
+     * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     *
+     * @return The terminalStorageClassUpdateTime.
+     */
+    @java.lang.Override
+    public com.google.protobuf.Timestamp getTerminalStorageClassUpdateTime() {
+      return terminalStorageClassUpdateTime_ == null
+          ? com.google.protobuf.Timestamp.getDefaultInstance()
+          : terminalStorageClassUpdateTime_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Latest instant at which the autoclass terminal storage class was updated.
+     * </pre>
+     *
+     * <code>
+     * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+     * </code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.TimestampOrBuilder getTerminalStorageClassUpdateTimeOrBuilder() {
+      return terminalStorageClassUpdateTime_ == null
+          ? com.google.protobuf.Timestamp.getDefaultInstance()
+          : terminalStorageClassUpdateTime_;
+    }
+
     private byte memoizedIsInitialized = -1;
 
     @java.lang.Override
@@ -15558,6 +15773,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (toggleTime_ != null) {
         output.writeMessage(2, getToggleTime());
       }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, terminalStorageClass_);
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeMessage(4, getTerminalStorageClassUpdateTime());
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -15572,6 +15793,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (toggleTime_ != null) {
         size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getToggleTime());
+      }
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, terminalStorageClass_);
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size +=
+            com.google.protobuf.CodedOutputStream.computeMessageSize(
+                4, getTerminalStorageClassUpdateTime());
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -15593,6 +15822,16 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (hasToggleTime()) {
         if (!getToggleTime().equals(other.getToggleTime())) return false;
       }
+      if (hasTerminalStorageClass() != other.hasTerminalStorageClass()) return false;
+      if (hasTerminalStorageClass()) {
+        if (!getTerminalStorageClass().equals(other.getTerminalStorageClass())) return false;
+      }
+      if (hasTerminalStorageClassUpdateTime() != other.hasTerminalStorageClassUpdateTime())
+        return false;
+      if (hasTerminalStorageClassUpdateTime()) {
+        if (!getTerminalStorageClassUpdateTime().equals(other.getTerminalStorageClassUpdateTime()))
+          return false;
+      }
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -15609,6 +15848,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       if (hasToggleTime()) {
         hash = (37 * hash) + TOGGLE_TIME_FIELD_NUMBER;
         hash = (53 * hash) + getToggleTime().hashCode();
+      }
+      if (hasTerminalStorageClass()) {
+        hash = (37 * hash) + TERMINAL_STORAGE_CLASS_FIELD_NUMBER;
+        hash = (53 * hash) + getTerminalStorageClass().hashCode();
+      }
+      if (hasTerminalStorageClassUpdateTime()) {
+        hash = (37 * hash) + TERMINAL_STORAGE_CLASS_UPDATE_TIME_FIELD_NUMBER;
+        hash = (53 * hash) + getTerminalStorageClassUpdateTime().hashCode();
       }
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
@@ -15741,10 +15988,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
 
       // Construct using com.google.storage.v2.Bucket.Autoclass.newBuilder()
-      private Builder() {}
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
 
       private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
         super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getToggleTimeFieldBuilder();
+          getTerminalStorageClassUpdateTimeFieldBuilder();
+        }
       }
 
       @java.lang.Override
@@ -15756,6 +16013,12 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (toggleTimeBuilder_ != null) {
           toggleTimeBuilder_.dispose();
           toggleTimeBuilder_ = null;
+        }
+        terminalStorageClass_ = "";
+        terminalStorageClassUpdateTime_ = null;
+        if (terminalStorageClassUpdateTimeBuilder_ != null) {
+          terminalStorageClassUpdateTimeBuilder_.dispose();
+          terminalStorageClassUpdateTimeBuilder_ = null;
         }
         return this;
       }
@@ -15800,6 +16063,19 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           result.toggleTime_ =
               toggleTimeBuilder_ == null ? toggleTime_ : toggleTimeBuilder_.build();
         }
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.terminalStorageClass_ = terminalStorageClass_;
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.terminalStorageClassUpdateTime_ =
+              terminalStorageClassUpdateTimeBuilder_ == null
+                  ? terminalStorageClassUpdateTime_
+                  : terminalStorageClassUpdateTimeBuilder_.build();
+          to_bitField0_ |= 0x00000002;
+        }
+        result.bitField0_ |= to_bitField0_;
       }
 
       @java.lang.Override
@@ -15855,6 +16131,14 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         if (other.hasToggleTime()) {
           mergeToggleTime(other.getToggleTime());
         }
+        if (other.hasTerminalStorageClass()) {
+          terminalStorageClass_ = other.terminalStorageClass_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        if (other.hasTerminalStorageClassUpdateTime()) {
+          mergeTerminalStorageClassUpdateTime(other.getTerminalStorageClassUpdateTime());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -15893,6 +16177,20 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                   bitField0_ |= 0x00000002;
                   break;
                 } // case 18
+              case 26:
+                {
+                  terminalStorageClass_ = input.readStringRequireUtf8();
+                  bitField0_ |= 0x00000004;
+                  break;
+                } // case 26
+              case 34:
+                {
+                  input.readMessage(
+                      getTerminalStorageClassUpdateTimeFieldBuilder().getBuilder(),
+                      extensionRegistry);
+                  bitField0_ |= 0x00000008;
+                  break;
+                } // case 34
               default:
                 {
                   if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -16191,6 +16489,341 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
           toggleTime_ = null;
         }
         return toggleTimeBuilder_;
+      }
+
+      private java.lang.Object terminalStorageClass_ = "";
+      /**
+       *
+       *
+       * <pre>
+       * An object in an Autoclass bucket will eventually cool down to the
+       * terminal storage class if there is no access to the object.
+       * The only valid values are NEARLINE and ARCHIVE.
+       * </pre>
+       *
+       * <code>optional string terminal_storage_class = 3;</code>
+       *
+       * @return Whether the terminalStorageClass field is set.
+       */
+      public boolean hasTerminalStorageClass() {
+        return ((bitField0_ & 0x00000004) != 0);
+      }
+      /**
+       *
+       *
+       * <pre>
+       * An object in an Autoclass bucket will eventually cool down to the
+       * terminal storage class if there is no access to the object.
+       * The only valid values are NEARLINE and ARCHIVE.
+       * </pre>
+       *
+       * <code>optional string terminal_storage_class = 3;</code>
+       *
+       * @return The terminalStorageClass.
+       */
+      public java.lang.String getTerminalStorageClass() {
+        java.lang.Object ref = terminalStorageClass_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs = (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          terminalStorageClass_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * An object in an Autoclass bucket will eventually cool down to the
+       * terminal storage class if there is no access to the object.
+       * The only valid values are NEARLINE and ARCHIVE.
+       * </pre>
+       *
+       * <code>optional string terminal_storage_class = 3;</code>
+       *
+       * @return The bytes for terminalStorageClass.
+       */
+      public com.google.protobuf.ByteString getTerminalStorageClassBytes() {
+        java.lang.Object ref = terminalStorageClass_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b =
+              com.google.protobuf.ByteString.copyFromUtf8((java.lang.String) ref);
+          terminalStorageClass_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * An object in an Autoclass bucket will eventually cool down to the
+       * terminal storage class if there is no access to the object.
+       * The only valid values are NEARLINE and ARCHIVE.
+       * </pre>
+       *
+       * <code>optional string terminal_storage_class = 3;</code>
+       *
+       * @param value The terminalStorageClass to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTerminalStorageClass(java.lang.String value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        terminalStorageClass_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * An object in an Autoclass bucket will eventually cool down to the
+       * terminal storage class if there is no access to the object.
+       * The only valid values are NEARLINE and ARCHIVE.
+       * </pre>
+       *
+       * <code>optional string terminal_storage_class = 3;</code>
+       *
+       * @return This builder for chaining.
+       */
+      public Builder clearTerminalStorageClass() {
+        terminalStorageClass_ = getDefaultInstance().getTerminalStorageClass();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * An object in an Autoclass bucket will eventually cool down to the
+       * terminal storage class if there is no access to the object.
+       * The only valid values are NEARLINE and ARCHIVE.
+       * </pre>
+       *
+       * <code>optional string terminal_storage_class = 3;</code>
+       *
+       * @param value The bytes for terminalStorageClass to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTerminalStorageClassBytes(com.google.protobuf.ByteString value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        checkByteStringIsUtf8(value);
+        terminalStorageClass_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      private com.google.protobuf.Timestamp terminalStorageClassUpdateTime_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          terminalStorageClassUpdateTimeBuilder_;
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       *
+       * @return Whether the terminalStorageClassUpdateTime field is set.
+       */
+      public boolean hasTerminalStorageClassUpdateTime() {
+        return ((bitField0_ & 0x00000008) != 0);
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       *
+       * @return The terminalStorageClassUpdateTime.
+       */
+      public com.google.protobuf.Timestamp getTerminalStorageClassUpdateTime() {
+        if (terminalStorageClassUpdateTimeBuilder_ == null) {
+          return terminalStorageClassUpdateTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : terminalStorageClassUpdateTime_;
+        } else {
+          return terminalStorageClassUpdateTimeBuilder_.getMessage();
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public Builder setTerminalStorageClassUpdateTime(com.google.protobuf.Timestamp value) {
+        if (terminalStorageClassUpdateTimeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          terminalStorageClassUpdateTime_ = value;
+        } else {
+          terminalStorageClassUpdateTimeBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public Builder setTerminalStorageClassUpdateTime(
+          com.google.protobuf.Timestamp.Builder builderForValue) {
+        if (terminalStorageClassUpdateTimeBuilder_ == null) {
+          terminalStorageClassUpdateTime_ = builderForValue.build();
+        } else {
+          terminalStorageClassUpdateTimeBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public Builder mergeTerminalStorageClassUpdateTime(com.google.protobuf.Timestamp value) {
+        if (terminalStorageClassUpdateTimeBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) != 0)
+              && terminalStorageClassUpdateTime_ != null
+              && terminalStorageClassUpdateTime_
+                  != com.google.protobuf.Timestamp.getDefaultInstance()) {
+            getTerminalStorageClassUpdateTimeBuilder().mergeFrom(value);
+          } else {
+            terminalStorageClassUpdateTime_ = value;
+          }
+        } else {
+          terminalStorageClassUpdateTimeBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public Builder clearTerminalStorageClassUpdateTime() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        terminalStorageClassUpdateTime_ = null;
+        if (terminalStorageClassUpdateTimeBuilder_ != null) {
+          terminalStorageClassUpdateTimeBuilder_.dispose();
+          terminalStorageClassUpdateTimeBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public com.google.protobuf.Timestamp.Builder getTerminalStorageClassUpdateTimeBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getTerminalStorageClassUpdateTimeFieldBuilder().getBuilder();
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      public com.google.protobuf.TimestampOrBuilder getTerminalStorageClassUpdateTimeOrBuilder() {
+        if (terminalStorageClassUpdateTimeBuilder_ != null) {
+          return terminalStorageClassUpdateTimeBuilder_.getMessageOrBuilder();
+        } else {
+          return terminalStorageClassUpdateTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : terminalStorageClassUpdateTime_;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Latest instant at which the autoclass terminal storage class was updated.
+       * </pre>
+       *
+       * <code>
+       * optional .google.protobuf.Timestamp terminal_storage_class_update_time = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];
+       * </code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          getTerminalStorageClassUpdateTimeFieldBuilder() {
+        if (terminalStorageClassUpdateTimeBuilder_ == null) {
+          terminalStorageClassUpdateTimeBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.protobuf.Timestamp,
+                  com.google.protobuf.Timestamp.Builder,
+                  com.google.protobuf.TimestampOrBuilder>(
+                  getTerminalStorageClassUpdateTime(), getParentForChildren(), isClean());
+          terminalStorageClassUpdateTime_ = null;
+        }
+        return terminalStorageClassUpdateTimeBuilder_;
       }
 
       @java.lang.Override

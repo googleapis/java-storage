@@ -291,4 +291,35 @@ public interface ListObjectsRequestOrBuilder
    * @return The bytes for lexicographicEnd.
    */
   com.google.protobuf.ByteString getLexicographicEndBytes();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Filter results to objects and prefixes that match this glob
+   * pattern. See [List Objects Using
+   * Glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)
+   * for the full syntax.
+   * </pre>
+   *
+   * <code>string match_glob = 14 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The matchGlob.
+   */
+  java.lang.String getMatchGlob();
+  /**
+   *
+   *
+   * <pre>
+   * Optional. Filter results to objects and prefixes that match this glob
+   * pattern. See [List Objects Using
+   * Glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)
+   * for the full syntax.
+   * </pre>
+   *
+   * <code>string match_glob = 14 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The bytes for matchGlob.
+   */
+  com.google.protobuf.ByteString getMatchGlobBytes();
 }

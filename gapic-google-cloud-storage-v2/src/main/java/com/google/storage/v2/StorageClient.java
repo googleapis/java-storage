@@ -2815,6 +2815,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   for (Object element : storageClient.listObjects(request).iterateAll()) {
    *     // doThingsWith(element);
@@ -2854,6 +2855,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   ApiFuture<Object> future = storageClient.listObjectsPagedCallable().futureCall(request);
    *   // Do something.
@@ -2893,6 +2895,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   while (true) {
    *     ListObjectsResponse response = storageClient.listObjectsCallable().call(request);
