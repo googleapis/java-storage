@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.28.0](https://github.com/googleapis/java-storage/compare/v2.27.1...v2.28.0) (2023-10-10)
+
+
+### Features
+
+* Add @BetaApi BlobWriteSession#parallelCompositeUpload ([#2239](https://github.com/googleapis/java-storage/issues/2239)) ([f8f4e22](https://github.com/googleapis/java-storage/commit/f8f4e221ae81cf69387827014c9f98a466bb7f19))
+
+
+### Dependencies
+
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.17.0 ([#2250](https://github.com/googleapis/java-storage/issues/2250)) ([df687f2](https://github.com/googleapis/java-storage/commit/df687f2604be214f05d2bebc94e4d81421003577))
+* Update gcr.io/cloud-devrel-public-resources/storage-testbench docker tag to v0.39.0 ([#2249](https://github.com/googleapis/java-storage/issues/2249)) ([fe85df9](https://github.com/googleapis/java-storage/commit/fe85df9bf46d76f067819ce3ed94d874818a739e))
+
+
+### Documentation
+
+* Reorder columns in table of BlobWriteSessionConfigs.java ([#2242](https://github.com/googleapis/java-storage/issues/2242)) ([98e694f](https://github.com/googleapis/java-storage/commit/98e694f3182b194f5e6fbde4fb0a924f17a06c40))
+
 ## [2.27.1](https://github.com/googleapis/java-storage/compare/v2.27.0...v2.27.1) (2023-09-25)
 
 
