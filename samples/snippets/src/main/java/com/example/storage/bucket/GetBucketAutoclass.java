@@ -20,7 +20,9 @@ package com.example.storage.bucket;
 
 import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageOptions;
+import java.time.OffsetDateTime;
 
 public class GetBucketAutoclass {
   public static void getBucketAutoclass(String projectId, String bucketName) {
@@ -34,6 +36,8 @@ public class GetBucketAutoclass {
     Autoclass autoclass = storage.get(bucketName).getAutoclass();
     String status = autoclass.getEnabled() ? "enabled" : "disabled";
     String toggleTime = autoclass.getToggleTime().toString();
+    StorageClass terminalStorageClass = autoclass.getTerminalStorageClass();
+    OffsetDateTime terminalStorageClassUpdateTime = autoclass.getTerminalStorageClassUpdateTime();
 
     System.out.println(
         "Autoclass is currently "
@@ -41,7 +45,11 @@ public class GetBucketAutoclass {
             + " for bucket "
             + bucketName
             + " and was last changed at "
-            + toggleTime);
+            + toggleTime
+            + ". The terminal storage class is set to be "
+            + terminalStorageClass.name()
+            + " last updated at "
+            + terminalStorageClassUpdateTime.toString());
   }
 }
 // [END storage_get_autoclass]

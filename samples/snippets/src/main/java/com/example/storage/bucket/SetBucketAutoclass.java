@@ -21,32 +21,54 @@ package com.example.storage.bucket;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.Storage.BucketTargetOption;
+import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageOptions;
 
 public class SetBucketAutoclass {
-  public static void setBucketAutoclass(String projectId, String bucketName) {
+  public static void setBucketAutoclass(
+      String projectId, String bucketName, StorageClass storageClass) throws Exception {
     // The ID of your GCP project
     // String projectId = "your-project-id";
 
     // The ID of your GCS bucket
     // String bucketName = "your-unique-bucket-name";
 
-    // Whether to set Autoclass to on or off.
-    // Note: Only update requests that disable qutoclass are currently supported.
-    // To enable autoclass, you must enable it at bucket creation time.
-    boolean enabled = false;
+    // The storage class that objects in an Autoclass bucket eventually transition to if not read
+    // for a certain length of time
+    // StorageClass storageClass = StorageClass.ARCHIVE;
 
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    Bucket bucket = storage.get(bucketName);
+    // Configure the Autoclass setting for a bucket.
 
-    bucket
-        .toBuilder()
-        .setAutoclass(Autoclass.newBuilder().setEnabled(enabled).build())
-        .build()
-        .update();
+    // Note:  terminal_storage_class field is optional and defaults to NEARLINE if not otherwise
+    // specified. Valid terminal_storage_class values are NEARLINE and ARCHIVE.
+    boolean enabled = true;
 
-    System.out.println(
-        "Autoclass for bucket " + bucketName + " was " + (enabled ? "enabled." : "disabled."));
+    try (Storage storage =
+        StorageOptions.newBuilder().setProjectId(projectId).build().getService()) {
+      Bucket bucket = storage.get(bucketName);
+
+      Bucket toUpdate =
+          bucket
+              .toBuilder()
+              .setAutoclass(
+                  Autoclass.newBuilder()
+                      .setEnabled(enabled)
+                      .setTerminalStorageClass(storageClass)
+                      .build())
+              .build();
+
+      Bucket updated = storage.update(toUpdate, BucketTargetOption.metagenerationMatch());
+
+      System.out.println(
+          "Autoclass for bucket "
+              + bucketName
+              + " was "
+              + (updated.getAutoclass().getEnabled() ? "enabled." : "disabled."));
+      System.out.println(
+          "Autoclass terminal storage class is "
+              + updated.getAutoclass().getTerminalStorageClass().toString());
+    }
   }
 }
 // [END storage_set_autoclass]
