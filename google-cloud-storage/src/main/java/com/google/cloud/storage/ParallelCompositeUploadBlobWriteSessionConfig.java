@@ -467,7 +467,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       return fmtFields(randomKey, nameDigest, partRange.encode());
     }
 
-    protected abstract String fmtFields(String randomKey, String nameDigest, String partRange);
+    abstract String fmtFields(String randomKey, String nameDigest, String partRange);
 
     /**
      * Default strategy in which no stable prefix is defined.
@@ -588,11 +588,11 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       this.deleteAllOnError = deleteAllOnError;
     }
 
-    public boolean isDeletePartsOnSuccess() {
+    boolean isDeletePartsOnSuccess() {
       return deletePartsOnSuccess;
     }
 
-    public boolean isDeleteAllOnError() {
+    boolean isDeleteAllOnError() {
       return deleteAllOnError;
     }
 
