@@ -183,9 +183,11 @@ public class BlobInfo implements Serializable {
       private Mode(String constant) {
         super(constant);
       }
+
       private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
 
-      private static final StringEnumType<Mode> type = new StringEnumType<>(Mode.class, CONSTRUCTOR);
+      private static final StringEnumType<Mode> type =
+          new StringEnumType<>(Mode.class, CONSTRUCTOR);
 
       public static final Mode UNLOCKED = type.createAndRegister("Unlocked");
 
@@ -210,17 +212,12 @@ public class BlobInfo implements Serializable {
 
     private OffsetDateTime retainUntilTime;
 
-    /**
-     * Returns the retention policy's Mode. Can be Locked or Unlocked.
-     */
+    /** Returns the retention policy's Mode. Can be Locked or Unlocked. */
     public Mode getMode() {
       return mode;
     }
 
-    /**
-     * Returns what time this object will be retained until, if the mode
-     * is Locked.
-     */
+    /** Returns what time this object will be retained until, if the mode is Locked. */
     public OffsetDateTime getRetainUntilTime() {
       return retainUntilTime;
     }
@@ -234,7 +231,8 @@ public class BlobInfo implements Serializable {
         return false;
       }
       Retention that = (Retention) o;
-      return Objects.equals(mode, that.mode) && Objects.equals(retainUntilTime, that.retainUntilTime);
+      return Objects.equals(mode, that.mode)
+          && Objects.equals(retainUntilTime, that.retainUntilTime);
     }
 
     @Override
@@ -245,15 +243,17 @@ public class BlobInfo implements Serializable {
     @Override
     public String toString() {
       return MoreObjects.toStringHelper(this)
-              .add("mode", mode)
-              .add("retainUntilTime", retainUntilTime)
-              .toString();
+          .add("mode", mode)
+          .add("retainUntilTime", retainUntilTime)
+          .toString();
     }
 
     public static Builder newBuilder() {
       return new Builder();
     }
-    private Retention(){}
+
+    private Retention() {}
+
     public Retention(Builder builder) {
       this.mode = builder.mode;
       this.retainUntilTime = builder.retainUntilTime;
@@ -264,18 +264,13 @@ public class BlobInfo implements Serializable {
       private Mode mode;
       private OffsetDateTime retainUntilTime;
 
-      /**
-       * Sets the retention policy's Mode. Can be Locked or Unlocked.
-       */
+      /** Sets the retention policy's Mode. Can be Locked or Unlocked. */
       public Builder setMode(Mode mode) {
         this.mode = mode;
         return this;
       }
 
-      /**
-       * Sets what time this object will be retained until, if the mode
-       * is Locked.
-       */
+      /** Sets what time this object will be retained until, if the mode is Locked. */
       public Builder setRetainUntilTime(OffsetDateTime retainUntilTime) {
         this.retainUntilTime = retainUntilTime;
         return this;
@@ -285,7 +280,6 @@ public class BlobInfo implements Serializable {
         return new Retention(this);
       }
     }
-
   }
 
   /** Builder for {@code BlobInfo}. */
@@ -1666,9 +1660,7 @@ public class BlobInfo implements Serializable {
     return retentionExpirationTime;
   }
 
-  /**
-   * Returns the object's Retention policy.
-   */
+  /** Returns the object's Retention policy. */
   public Retention getRetention() {
     return retention;
   }

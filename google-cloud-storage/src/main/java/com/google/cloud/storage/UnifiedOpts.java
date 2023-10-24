@@ -1639,7 +1639,8 @@ final class UnifiedOpts {
     }
   }
 
-  static final class OverrideUnlockedRetention extends RpcOptVal<Boolean> implements ObjectTargetOpt {
+  static final class OverrideUnlockedRetention extends RpcOptVal<Boolean>
+      implements ObjectTargetOpt {
 
     private static final long serialVersionUID = -7764590745622588287L;
 

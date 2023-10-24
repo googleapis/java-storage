@@ -330,11 +330,11 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
       return new BucketTargetOption(UnifiedOpts.predefinedDefaultObjectAcl(acl));
     }
 
-    /** Returns an option for enabling Object Retention on this bucket. Enabling this
-     * will create an ObjectRetention object in the created bucket (You must use
-     * this option, creating your own ObjectRetention object in the request
-     * won't work).
-     * */
+    /**
+     * Returns an option for enabling Object Retention on this bucket. Enabling this will create an
+     * ObjectRetention object in the created bucket (You must use this option, creating your own
+     * ObjectRetention object in the request won't work).
+     */
     @TransportCompatibility({Transport.HTTP})
     public static BucketTargetOption enableObjectRetention(boolean enable) {
       return new BucketTargetOption(UnifiedOpts.enableObjectRetention(enable));
@@ -1042,13 +1042,13 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     }
 
     /**
-     * Returns an option for overriding an Unlocked Retention policy. This must be set to true
-     * in order to change a policy from Unlocked to Locked, to set it to null, or to reduce
-     * its retainUntilTime attribute.
+     * Returns an option for overriding an Unlocked Retention policy. This must be set to true in
+     * order to change a policy from Unlocked to Locked, to set it to null, or to reduce its
+     * retainUntilTime attribute.
      */
     @TransportCompatibility({Transport.HTTP})
-      public static BlobTargetOption overrideUnlockedRetention(boolean overrideUnlockedRetention) {
-        return new BlobTargetOption(UnifiedOpts.overrideUnlockedRetention(overrideUnlockedRetention));
+    public static BlobTargetOption overrideUnlockedRetention(boolean overrideUnlockedRetention) {
+      return new BlobTargetOption(UnifiedOpts.overrideUnlockedRetention(overrideUnlockedRetention));
     }
 
     /**

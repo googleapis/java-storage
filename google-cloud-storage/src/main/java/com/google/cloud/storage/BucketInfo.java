@@ -439,9 +439,11 @@ public class BucketInfo implements Serializable {
       private Mode(String constant) {
         super(constant);
       }
+
       private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
 
-      private static final StringEnumType<Mode> type = new StringEnumType<>(Mode.class, CONSTRUCTOR);
+      private static final StringEnumType<Mode> type =
+          new StringEnumType<>(Mode.class, CONSTRUCTOR);
 
       public static final Mode ENABLED = type.createAndRegister("Enabled");
 
@@ -472,7 +474,7 @@ public class BucketInfo implements Serializable {
       if (this == o) {
         return true;
       }
-      if(!(o instanceof ObjectRetention)) {
+      if (!(o instanceof ObjectRetention)) {
         return false;
       }
       ObjectRetention that = (ObjectRetention) o;
@@ -486,12 +488,10 @@ public class BucketInfo implements Serializable {
 
     @Override
     public String toString() {
-      return MoreObjects.toStringHelper(this)
-              .add("mode", mode)
-              .toString();
+      return MoreObjects.toStringHelper(this).add("mode", mode).toString();
     }
 
-    private ObjectRetention(){}
+    private ObjectRetention() {}
 
     private ObjectRetention(Builder builder) {
       this.mode = builder.mode;
@@ -500,12 +500,11 @@ public class BucketInfo implements Serializable {
     public static Builder newBuilder() {
       return new Builder();
     }
+
     public static final class Builder {
       private Mode mode;
 
-      /**
-       * Sets the object retention mode. Can be Enabled or Disabled.
-       */
+      /** Sets the object retention mode. Can be Enabled or Disabled. */
       public Builder setMode(Mode mode) {
         this.mode = mode;
         return this;
@@ -2123,7 +2122,7 @@ public class BucketInfo implements Serializable {
 
     @Override
     Builder setObjectRetention(ObjectRetention objectRetention) {
-      if(!Objects.equals(this.objectRetention, objectRetention)) {
+      if (!Objects.equals(this.objectRetention, objectRetention)) {
         modifiedFields.add(BucketField.OBJECT_RETENTION);
       }
       this.objectRetention = objectRetention;

@@ -273,9 +273,9 @@ public class Bucket extends BucketInfo {
     }
 
     /**
-     * Returns an option for overriding an Unlocked Retention policy. This must be set to true
-     * in order to change a policy from Unlocked to Locked, to set it to null, or to reduce
-     * its retainUntilTime attribute.
+     * Returns an option for overriding an Unlocked Retention policy. This must be set to true in
+     * order to change a policy from Unlocked to Locked, to set it to null, or to reduce its
+     * retainUntilTime attribute.
      */
     @TransportCompatibility({Transport.HTTP})
     public static BlobTargetOption overrideUnlockedRetention(boolean overrideUnlockedRetention) {

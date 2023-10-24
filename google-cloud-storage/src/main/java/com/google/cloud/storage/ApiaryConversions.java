@@ -118,7 +118,7 @@ final class ApiaryConversions {
       Codec.of(this::autoclassEncode, this::autoclassDecode);
 
   private final Codec<ObjectRetention, Bucket.ObjectRetention> objectRetentionCodec =
-          Codec.of(this::objectRetentionEncode, this::objectRetentionDecode);
+      Codec.of(this::objectRetentionEncode, this::objectRetentionDecode);
   private final Codec<LifecycleRule, Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<LifecycleCondition, Condition> lifecycleConditionCodec =
@@ -131,7 +131,7 @@ final class ApiaryConversions {
           Codec.of(this::customerEncryptionEncode, this::customerEncryptionDecode);
 
   private final Codec<Retention, StorageObject.Retention> retentionCodec =
-          Codec.of(this::retentionEncode, this::retentionDecode);
+      Codec.of(this::retentionEncode, this::retentionDecode);
   private final Codec<BlobId, StorageObject> blobIdCodec =
       Codec.of(this::blobIdEncode, this::blobIdDecode);
   private final Codec<BlobInfo, StorageObject> blobInfoCodec =
@@ -246,7 +246,7 @@ final class ApiaryConversions {
         from.getRetentionExpirationTimeOffsetDateTime(),
         dateTimeCodec::encode,
         to::setRetentionExpirationTime);
-    if(from.getRetention() == null) {
+    if (from.getRetention() == null) {
       to.setRetention(Data.nullOf(StorageObject.Retention.class));
     } else {
       to.setRetention(this.retentionEncode(from.getRetention()));
