@@ -22,7 +22,10 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.api.client.util.Data;
+import com.google.api.core.ApiFunction;
 import com.google.api.core.BetaApi;
+import com.google.cloud.StringEnumType;
+import com.google.cloud.StringEnumValue;
 import com.google.cloud.storage.Storage.BlobField;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
@@ -104,6 +107,7 @@ public class BlobInfo implements Serializable {
   private final Boolean eventBasedHold;
   private final Boolean temporaryHold;
   private final OffsetDateTime retentionExpirationTime;
+  private final Retention retention;
   private final transient ImmutableSet<NamedField> modifiedFields;
 
   /** This class is meant for internal use only. Users are discouraged from using this class. */
@@ -166,6 +170,122 @@ public class BlobInfo implements Serializable {
       return Objects.equals(encryptionAlgorithm, that.encryptionAlgorithm)
           && Objects.equals(keySha256, that.keySha256);
     }
+  }
+
+  /**
+   * Defines a blob's Retention policy. Can only be used on objects in a retention-enabled bucket.
+   */
+  public static class Retention implements Serializable {
+
+    public static final class Mode extends StringEnumValue {
+      private static final long serialVersionUID = 1973143582659557184L;
+
+      private Mode(String constant) {
+        super(constant);
+      }
+      private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
+
+      private static final StringEnumType<Mode> type = new StringEnumType<>(Mode.class, CONSTRUCTOR);
+
+      public static final Mode UNLOCKED = type.createAndRegister("Unlocked");
+
+      public static final Mode LOCKED = type.createAndRegister("Locked");
+
+      public static Mode valueOfStrict(String constant) {
+        return type.valueOfStrict(constant);
+      }
+
+      public static Mode valueOf(String constant) {
+        return type.valueOf(constant);
+      }
+
+      public static Mode[] values() {
+        return type.values();
+      }
+    }
+
+    private static final long serialVersionUID = 5046718464542688444L;
+
+    private Mode mode;
+
+    private OffsetDateTime retainUntilTime;
+
+    /**
+     * Returns the retention policy's Mode. Can be Locked or Unlocked.
+     */
+    public Mode getMode() {
+      return mode;
+    }
+
+    /**
+     * Returns what time this object will be retained until, if the mode
+     * is Locked.
+     */
+    public OffsetDateTime getRetainUntilTime() {
+      return retainUntilTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (!(o instanceof Retention)) {
+        return false;
+      }
+      Retention that = (Retention) o;
+      return Objects.equals(mode, that.mode) && Objects.equals(retainUntilTime, that.retainUntilTime);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(mode, retainUntilTime);
+    }
+
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(this)
+              .add("mode", mode)
+              .add("retainUntilTime", retainUntilTime)
+              .toString();
+    }
+
+    public static Builder newBuilder() {
+      return new Builder();
+    }
+    private Retention(){}
+    public Retention(Builder builder) {
+      this.mode = builder.mode;
+      this.retainUntilTime = builder.retainUntilTime;
+    }
+
+    public static final class Builder {
+
+      private Mode mode;
+      private OffsetDateTime retainUntilTime;
+
+      /**
+       * Sets the retention policy's Mode. Can be Locked or Unlocked.
+       */
+      public Builder setMode(Mode mode) {
+        this.mode = mode;
+        return this;
+      }
+
+      /**
+       * Sets what time this object will be retained until, if the mode
+       * is Locked.
+       */
+      public Builder setRetainUntilTime(OffsetDateTime retainUntilTime) {
+        this.retainUntilTime = retainUntilTime;
+        return this;
+      }
+
+      public Retention build() {
+        return new Retention(this);
+      }
+    }
+
   }
 
   /** Builder for {@code BlobInfo}. */
@@ -408,6 +528,8 @@ public class BlobInfo implements Serializable {
       return setRetentionExpirationTime(millisOffsetDateTimeCodec.decode(retentionExpirationTime));
     }
 
+    public abstract Builder setRetention(Retention retention);
+
     /** Creates a {@code BlobInfo} object. */
     public abstract BlobInfo build();
 
@@ -506,6 +628,7 @@ public class BlobInfo implements Serializable {
     private Boolean eventBasedHold;
     private Boolean temporaryHold;
     private OffsetDateTime retentionExpirationTime;
+    private Retention retention;
     private final ImmutableSet.Builder<NamedField> modifiedFields = ImmutableSet.builder();
 
     BuilderImpl(BlobId blobId) {
@@ -543,6 +666,7 @@ public class BlobInfo implements Serializable {
       eventBasedHold = blobInfo.eventBasedHold;
       temporaryHold = blobInfo.temporaryHold;
       retentionExpirationTime = blobInfo.retentionExpirationTime;
+      this.retention = blobInfo.retention;
     }
 
     @Override
@@ -917,6 +1041,15 @@ public class BlobInfo implements Serializable {
     }
 
     @Override
+    public Builder setRetention(Retention retention) {
+      if (!Objects.equals(this.retention, retention)) {
+        modifiedFields.add(BlobField.RETENTION);
+      }
+      this.retention = retention;
+      return this;
+    }
+
+    @Override
     public BlobInfo build() {
       checkNotNull(blobId);
       return new BlobInfo(this);
@@ -1139,6 +1272,7 @@ public class BlobInfo implements Serializable {
     eventBasedHold = builder.eventBasedHold;
     temporaryHold = builder.temporaryHold;
     retentionExpirationTime = builder.retentionExpirationTime;
+    retention = builder.retention;
     modifiedFields = builder.modifiedFields.build();
   }
 
@@ -1532,6 +1666,13 @@ public class BlobInfo implements Serializable {
     return retentionExpirationTime;
   }
 
+  /**
+   * Returns the object's Retention policy.
+   */
+  public Retention getRetention() {
+    return retention;
+  }
+
   /** Returns a builder for the current blob. */
   public Builder toBuilder() {
     return new BuilderImpl(this);
@@ -1581,6 +1722,7 @@ public class BlobInfo implements Serializable {
         kmsKeyName,
         eventBasedHold,
         temporaryHold,
+        retention,
         retentionExpirationTime);
   }
 
@@ -1622,7 +1764,8 @@ public class BlobInfo implements Serializable {
         && Objects.equals(kmsKeyName, blobInfo.kmsKeyName)
         && Objects.equals(eventBasedHold, blobInfo.eventBasedHold)
         && Objects.equals(temporaryHold, blobInfo.temporaryHold)
-        && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime);
+        && Objects.equals(retentionExpirationTime, blobInfo.retentionExpirationTime)
+        && Objects.equals(retention, blobInfo.retention);
   }
 
   ImmutableSet<NamedField> getModifiedFields() {

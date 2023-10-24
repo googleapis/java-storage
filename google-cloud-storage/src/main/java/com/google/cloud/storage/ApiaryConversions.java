@@ -53,6 +53,7 @@ import com.google.cloud.storage.Acl.RawEntity;
 import com.google.cloud.storage.Acl.Role;
 import com.google.cloud.storage.Acl.User;
 import com.google.cloud.storage.BlobInfo.CustomerEncryption;
+import com.google.cloud.storage.BlobInfo.Retention;
 import com.google.cloud.storage.BucketInfo.Autoclass;
 import com.google.cloud.storage.BucketInfo.CustomPlacementConfig;
 import com.google.cloud.storage.BucketInfo.IamConfiguration;
@@ -63,6 +64,7 @@ import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleAction;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.LifecycleCondition;
 import com.google.cloud.storage.BucketInfo.LifecycleRule.SetStorageClassLifecycleAction;
 import com.google.cloud.storage.BucketInfo.Logging;
+import com.google.cloud.storage.BucketInfo.ObjectRetention;
 import com.google.cloud.storage.BucketInfo.PublicAccessPrevention;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.Cors.Origin;
@@ -114,6 +116,9 @@ final class ApiaryConversions {
       Codec.of(this::iamConfigEncode, this::iamConfigDecode);
   private final Codec<Autoclass, Bucket.Autoclass> autoclassCodec =
       Codec.of(this::autoclassEncode, this::autoclassDecode);
+
+  private final Codec<ObjectRetention, Bucket.ObjectRetention> objectRetentionCodec =
+          Codec.of(this::objectRetentionEncode, this::objectRetentionDecode);
   private final Codec<LifecycleRule, Rule> lifecycleRuleCodec =
       Codec.of(this::lifecycleRuleEncode, this::lifecycleRuleDecode);
   private final Codec<LifecycleCondition, Condition> lifecycleConditionCodec =
@@ -124,6 +129,9 @@ final class ApiaryConversions {
   private final Codec<CustomerEncryption, StorageObject.CustomerEncryption>
       customerEncryptionCodec =
           Codec.of(this::customerEncryptionEncode, this::customerEncryptionDecode);
+
+  private final Codec<Retention, StorageObject.Retention> retentionCodec =
+          Codec.of(this::retentionEncode, this::retentionDecode);
   private final Codec<BlobId, StorageObject> blobIdCodec =
       Codec.of(this::blobIdEncode, this::blobIdDecode);
   private final Codec<BlobInfo, StorageObject> blobInfoCodec =
@@ -238,6 +246,11 @@ final class ApiaryConversions {
         from.getRetentionExpirationTimeOffsetDateTime(),
         dateTimeCodec::encode,
         to::setRetentionExpirationTime);
+    if(from.getRetention() == null) {
+      to.setRetention(Data.nullOf(StorageObject.Retention.class));
+    } else {
+      to.setRetention(this.retentionEncode(from.getRetention()));
+    }
     to.setKmsKeyName(from.getKmsKeyName());
     to.setEventBasedHold(from.getEventBasedHold());
     to.setTemporaryHold(from.getTemporaryHold());
@@ -306,6 +319,7 @@ final class ApiaryConversions {
         from.getRetentionExpirationTime(),
         dateTimeCodec::decode,
         to::setRetentionExpirationTimeOffsetDateTime);
+    ifNonNull(from.getRetention(), this::retentionDecode, to::setRetention);
     return to.build();
   }
 
@@ -329,6 +343,20 @@ final class ApiaryConversions {
 
   private CustomerEncryption customerEncryptionDecode(StorageObject.CustomerEncryption from) {
     return new CustomerEncryption(from.getEncryptionAlgorithm(), from.getKeySha256());
+  }
+
+  private StorageObject.Retention retentionEncode(Retention from) {
+    StorageObject.Retention to = new StorageObject.Retention();
+    ifNonNull(from.getMode(), Retention.Mode::toString, to::setMode);
+    ifNonNull(from.getRetainUntilTime(), dateTimeCodec::encode, to::setRetainUntilTime);
+    return to;
+  }
+
+  private Retention retentionDecode(StorageObject.Retention from) {
+    Retention.Builder to = Retention.newBuilder();
+    ifNonNull(from.getMode(), Retention.Mode::valueOf, to::setMode);
+    ifNonNull(from.getRetainUntilTime(), dateTimeCodec::decode, to::setRetainUntilTime);
+    return to.build();
   }
 
   private Bucket bucketInfoEncode(BucketInfo from) {
@@ -400,6 +428,7 @@ final class ApiaryConversions {
         from.getCustomPlacementConfig(),
         this::customPlacementConfigEncode,
         to::setCustomPlacementConfig);
+    ifNonNull(from.getObjectRetention(), this::objectRetentionEncode, to::setObjectRetention);
     return to;
   }
 
@@ -450,7 +479,7 @@ final class ApiaryConversions {
         from.getCustomPlacementConfig(),
         this::customPlacementConfigDecode,
         to::setCustomPlacementConfig);
-
+    ifNonNull(from.getObjectRetention(), this::objectRetentionDecode, to::setObjectRetention);
     return to.build();
   }
 
@@ -491,6 +520,18 @@ final class ApiaryConversions {
     Autoclass.Builder to = Autoclass.newBuilder();
     to.setEnabled(from.getEnabled());
     ifNonNull(from.getToggleTime(), dateTimeCodec::decode, to::setToggleTime);
+    return to.build();
+  }
+
+  private Bucket.ObjectRetention objectRetentionEncode(ObjectRetention from) {
+    Bucket.ObjectRetention to = new Bucket.ObjectRetention();
+    ifNonNull(from.getMode(), ObjectRetention.Mode::toString, to::setMode);
+    return to;
+  }
+
+  private ObjectRetention objectRetentionDecode(Bucket.ObjectRetention from) {
+    ObjectRetention.Builder to = ObjectRetention.newBuilder();
+    ifNonNull(from.getMode(), ObjectRetention.Mode::valueOf, to::setMode);
     return to.build();
   }
 

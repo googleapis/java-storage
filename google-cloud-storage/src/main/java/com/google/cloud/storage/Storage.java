@@ -158,7 +158,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    AUTOCLASS("autoclass");
+    AUTOCLASS("autoclass"),
+
+    @TransportCompatibility({Transport.HTTP})
+    OBJECT_RETENTION("objectRetention");
 
     static final List<BucketField> REQUIRED_FIELDS = ImmutableList.of(NAME);
 
@@ -256,7 +259,10 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     TIME_STORAGE_CLASS_UPDATED("timeStorageClassUpdated", "update_storage_class_time"),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
-    CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption");
+    CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption"),
+
+    @TransportCompatibility({Transport.HTTP})
+    RETENTION("retention");
 
     static final List<NamedField> REQUIRED_FIELDS = ImmutableList.of(BUCKET, NAME);
 
@@ -322,6 +328,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BucketTargetOption predefinedDefaultObjectAcl(@NonNull PredefinedAcl acl) {
       return new BucketTargetOption(UnifiedOpts.predefinedDefaultObjectAcl(acl));
+    }
+
+    /** Returns an option for enabling Object Retention on this bucket. Enabling this
+     * will create an ObjectRetention object in the created bucket (You must use
+     * this option, creating your own ObjectRetention object in the request
+     * won't work).
+     * */
+    @TransportCompatibility({Transport.HTTP})
+    public static BucketTargetOption enableObjectRetention(boolean enable) {
+      return new BucketTargetOption(UnifiedOpts.enableObjectRetention(enable));
     }
 
     /**
@@ -1023,6 +1039,16 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     public static BlobTargetOption kmsKeyName(@NonNull String kmsKeyName) {
       return new BlobTargetOption(UnifiedOpts.kmsKeyName(kmsKeyName));
+    }
+
+    /**
+     * Returns an option for overriding an Unlocked Retention policy. This must be set to true
+     * in order to change a policy from Unlocked to Locked, to set it to null, or to reduce
+     * its retainUntilTime attribute.
+     */
+    @TransportCompatibility({Transport.HTTP})
+      public static BlobTargetOption overrideUnlockedRetention(boolean overrideUnlockedRetention) {
+        return new BlobTargetOption(UnifiedOpts.overrideUnlockedRetention(overrideUnlockedRetention));
     }
 
     /**

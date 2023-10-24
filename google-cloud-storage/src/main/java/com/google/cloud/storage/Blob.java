@@ -527,6 +527,12 @@ public class Blob extends BlobInfo {
     }
 
     @Override
+    public Builder setRetention(Retention retention) {
+      infoBuilder.setRetention(retention);
+      return this;
+    }
+
+    @Override
     public Blob build() {
       return new Blob(storage, infoBuilder);
     }
