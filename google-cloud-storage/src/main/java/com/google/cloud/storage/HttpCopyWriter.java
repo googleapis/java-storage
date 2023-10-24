@@ -43,7 +43,7 @@ public class HttpCopyWriter extends CopyWriter {
     while (!isDone()) {
       copyChunk();
     }
-    BlobInfo info = Conversions.apiary().blobInfo().decode(rewriteResponse.result);
+    BlobInfo info = Conversions.json().blobInfo().decode(rewriteResponse.result);
     return info.asBlob(serviceOptions.getService());
   }
 
@@ -79,14 +79,14 @@ public class HttpCopyWriter extends CopyWriter {
   public RestorableState<CopyWriter> capture() {
     return StateImpl.newBuilder(
             serviceOptions,
-            Conversions.apiary().blobId().decode(rewriteResponse.rewriteRequest.source),
+            Conversions.json().blobId().decode(rewriteResponse.rewriteRequest.source),
             rewriteResponse.rewriteRequest.sourceOptions,
             rewriteResponse.rewriteRequest.overrideInfo,
-            Conversions.apiary().blobInfo().decode(rewriteResponse.rewriteRequest.target),
+            Conversions.json().blobInfo().decode(rewriteResponse.rewriteRequest.target),
             rewriteResponse.rewriteRequest.targetOptions)
         .setResult(
             rewriteResponse.result != null
-                ? Conversions.apiary().blobInfo().decode(rewriteResponse.result)
+                ? Conversions.json().blobInfo().decode(rewriteResponse.result)
                 : null)
         .setBlobSize(getBlobSize())
         .setIsDone(isDone())
@@ -207,16 +207,16 @@ public class HttpCopyWriter extends CopyWriter {
     public CopyWriter restore() {
       RewriteRequest rewriteRequest =
           new RewriteRequest(
-              Conversions.apiary().blobId().encode(source),
+              Conversions.json().blobId().encode(source),
               sourceOptions,
               overrideInfo,
-              Conversions.apiary().blobInfo().encode(target),
+              Conversions.json().blobInfo().encode(target),
               targetOptions,
               megabytesCopiedPerChunk);
       RewriteResponse rewriteResponse =
           new RewriteResponse(
               rewriteRequest,
-              result != null ? Conversions.apiary().blobInfo().encode(result) : null,
+              result != null ? Conversions.json().blobInfo().encode(result) : null,
               blobSize,
               isDone,
               rewriteToken,

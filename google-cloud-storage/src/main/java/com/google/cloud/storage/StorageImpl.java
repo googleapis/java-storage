@@ -106,7 +106,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
   private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
-  private static final ApiaryConversions codecs = Conversions.apiary();
+  private static final JsonConversions codecs = Conversions.json();
 
   final HttpRetryAlgorithmManager retryAlgorithmManager;
   final StorageRpc storageRpc;
@@ -128,7 +128,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.create(bucketPb, optionsMap),
-        (b) -> Conversions.apiary().bucketInfo().decode(b).asBucket(this));
+        (b) -> Conversions.json().bucketInfo().decode(b).asBucket(this));
   }
 
   @Override
@@ -187,7 +187,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         firstNonNull(content, new ByteArrayInputStream(EMPTY_BYTE_ARRAY));
     // retries are not safe when the input is an InputStream, so we can't retry.
     BlobInfo info =
-        Conversions.apiary()
+        Conversions.json()
             .blobInfo()
             .decode(storageRpc.create(blobPb, inputStreamParam, optionsMap));
     return info.asBlob(this);
@@ -213,7 +213,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             storageRpc.create(
                 blobPb, new ByteArrayInputStream(content, offset, length), optionsMap),
         (x) -> {
-          BlobInfo info1 = Conversions.apiary().blobInfo().decode(x);
+          BlobInfo info1 = Conversions.json().blobInfo().decode(x);
           return info1.asBlob(this);
         });
   }
@@ -426,7 +426,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                   : Iterables.transform(
                       result.y(),
                       bucketPb ->
-                          Conversions.apiary()
+                          Conversions.json()
                               .bucketInfo()
                               .decode(bucketPb)
                               .asBucket(serviceOptions.getService()));
@@ -453,7 +453,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                   : Iterables.transform(
                       result.y(),
                       storageObject -> {
-                        BlobInfo info = Conversions.apiary().blobInfo().decode(storageObject);
+                        BlobInfo info = Conversions.json().blobInfo().decode(storageObject);
                         return info.asBlob(serviceOptions.getService());
                       });
           return new PageImpl<>(
@@ -475,7 +475,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       return run(
           algorithm,
           () -> storageRpc.patch(bucketPb, optionsMap),
-          (x) -> Conversions.apiary().bucketInfo().decode(x).asBucket(this));
+          (x) -> Conversions.json().bucketInfo().decode(x).asBucket(this));
     }
   }
 
@@ -495,7 +495,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
           algorithm,
           () -> storageRpc.patch(pb, optionsMap),
           (x) -> {
-            BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+            BlobInfo info = Conversions.json().blobInfo().decode(x);
             return info.asBlob(this);
           });
     }
@@ -560,7 +560,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         algorithm,
         () -> storageRpc.compose(sources, targetPb, targetOptions),
         (x) -> {
-          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+          BlobInfo info = Conversions.json().blobInfo().decode(x);
           return info.asBlob(this);
         });
   }
@@ -622,7 +622,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   @Override
   public StorageReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-    StorageObject storageObject = Conversions.apiary().blobId().encode(blob);
+    StorageObject storageObject = Conversions.json().blobId().encode(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     return new BlobReadChannelV2(storageObject, optionsMap, BlobReadChannelContext.from(this));
   }
@@ -1452,21 +1452,21 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.getIamPolicy(bucket, optionsMap),
-        apiPolicy -> Conversions.apiary().policyCodec().decode(apiPolicy));
+        apiPolicy -> Conversions.json().policyCodec().decode(apiPolicy));
   }
 
   @Override
   public Policy setIamPolicy(
       final String bucket, final Policy policy, BucketSourceOption... options) {
     com.google.api.services.storage.model.Policy pb =
-        Conversions.apiary().policyCodec().encode(policy);
+        Conversions.json().policyCodec().encode(policy);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     ResultRetryAlgorithm<?> algorithm =
         retryAlgorithmManager.getForBucketsSetIamPolicy(bucket, pb, optionsMap);
     return run(
         algorithm,
         () -> storageRpc.setIamPolicy(bucket, pb, optionsMap),
-        apiPolicy -> Conversions.apiary().policyCodec().decode(apiPolicy));
+        apiPolicy -> Conversions.json().policyCodec().decode(apiPolicy));
   }
 
   @Override
@@ -1500,7 +1500,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.lockRetentionPolicy(bucketPb, optionsMap),
-        (x) -> Conversions.apiary().bucketInfo().decode(x).asBucket(this));
+        (x) -> Conversions.json().bucketInfo().decode(x).asBucket(this));
   }
 
   @Override
@@ -1574,7 +1574,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         algorithm,
         () -> storageRpc.get(storedObject, optionsMap),
         (x) -> {
-          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+          BlobInfo info = Conversions.json().blobInfo().decode(x);
           return info.asBlob(this);
         });
   }
@@ -1587,6 +1587,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.get(bucketPb, optionsMap),
-        (b) -> Conversions.apiary().bucketInfo().decode(b).asBucket(this));
+        (b) -> Conversions.json().bucketInfo().decode(b).asBucket(this));
   }
 }

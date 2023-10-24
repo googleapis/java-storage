@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public final class BackwardCompatibilityUtilsTest {
   private static final Codec<DeleteRule, Rule> codec =
-      BackwardCompatibilityUtils.deleteRuleCodec.andThen(Conversions.apiary().lifecycleRule());
+      BackwardCompatibilityUtils.deleteRuleCodec.andThen(Conversions.json().lifecycleRule());
 
   @Test
   public void testDeleteRules_conversionRoundTrip_age() {

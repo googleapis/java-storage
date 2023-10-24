@@ -101,7 +101,7 @@ public class StorageBatch {
     StorageBatchResult<Boolean> result = new StorageBatchResult<>();
     RpcBatch.Callback<Void> callback = createDeleteCallback(result);
     Map<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    batch.addDelete(Conversions.apiary().blobId().encode(blob), callback, optionsMap);
+    batch.addDelete(Conversions.json().blobId().encode(blob), callback, optionsMap);
     return result;
   }
 
@@ -116,7 +116,7 @@ public class StorageBatch {
     RpcBatch.Callback<StorageObject> callback = createUpdateCallback(this.options, result);
     Map<StorageRpc.Option, ?> optionMap =
         Opts.unwrap(options).resolveFrom(blobInfo).getRpcOptions();
-    batch.addPatch(Conversions.apiary().blobInfo().encode(blobInfo), callback, optionMap);
+    batch.addPatch(Conversions.json().blobInfo().encode(blobInfo), callback, optionMap);
     return result;
   }
 
@@ -142,7 +142,7 @@ public class StorageBatch {
     StorageBatchResult<Blob> result = new StorageBatchResult<>();
     RpcBatch.Callback<StorageObject> callback = createGetCallback(this.options, result);
     Map<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    batch.addGet(Conversions.apiary().blobId().encode(blob), callback, optionsMap);
+    batch.addGet(Conversions.json().blobId().encode(blob), callback, optionsMap);
     return result;
   }
 
@@ -175,7 +175,7 @@ public class StorageBatch {
     return new RpcBatch.Callback<StorageObject>() {
       @Override
       public void onSuccess(StorageObject response) {
-        BlobInfo info = Conversions.apiary().blobInfo().decode(response);
+        BlobInfo info = Conversions.json().blobInfo().decode(response);
         result.success(response == null ? null : info.asBlob(serviceOptions.getService()));
       }
 
@@ -196,7 +196,7 @@ public class StorageBatch {
     return new RpcBatch.Callback<StorageObject>() {
       @Override
       public void onSuccess(StorageObject response) {
-        BlobInfo info = Conversions.apiary().blobInfo().decode(response);
+        BlobInfo info = Conversions.json().blobInfo().decode(response);
         result.success(response == null ? null : info.asBlob(serviceOptions.getService()));
       }
 

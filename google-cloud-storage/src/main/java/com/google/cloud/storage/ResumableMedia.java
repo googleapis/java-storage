@@ -37,7 +37,7 @@ final class ResumableMedia {
             () ->
                 storageOptions
                     .getStorageRpcV1()
-                    .open(Conversions.apiary().blobInfo().encode(blob), optionsMap),
+                    .open(Conversions.json().blobInfo().encode(blob), optionsMap),
             Function.identity());
   }
 

@@ -78,8 +78,7 @@ class BlobWriteChannel extends BaseWriteChannel<StorageOptions, BlobInfo>
     @Override
     public WriteChannel restore() {
       try {
-        StorageObject encode =
-            entity != null ? Conversions.apiary().blobInfo().encode(entity) : null;
+        StorageObject encode = entity != null ? Conversions.json().blobInfo().encode(entity) : null;
         return new BlobWriteChannelV2.BlobWriteChannelV2State(
                 (HttpStorageOptions) serviceOptions,
                 JsonResumableWrite.of(encode, ImmutableMap.of(), uploadId, position),

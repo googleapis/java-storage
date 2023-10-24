@@ -44,7 +44,7 @@ final class BlobIdPropertyTest {
   @Property
   void codecCompatibilityRoundTrip(@ForAll(supplier = ObjectRefs.class) Object p) {
     Codec<BlobId, Object> codecG = Conversions.grpc().blobId();
-    Codec<BlobId, StorageObject> codecA = Conversions.apiary().blobId();
+    Codec<BlobId, StorageObject> codecA = Conversions.json().blobId();
 
     BlobId model = codecG.decode(p);
 

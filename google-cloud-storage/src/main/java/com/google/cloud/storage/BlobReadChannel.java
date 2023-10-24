@@ -101,7 +101,7 @@ class BlobReadChannel implements ReadChannel {
 
     @Override
     public ReadChannel restore() {
-      StorageObject encode = Conversions.apiary().blobId().encode(blob);
+      StorageObject encode = Conversions.json().blobId().encode(blob);
       BlobReadChannelV2 channel =
           new BlobReadChannelV2(
               encode, requestOptions, BlobReadChannelContext.from(serviceOptions));

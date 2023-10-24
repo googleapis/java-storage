@@ -89,7 +89,7 @@ public class BucketInfo implements Serializable {
    * The getter for this property never returns null, however null awareness is critical for
    * encoding to properly determine how to process rules conversion.
    *
-   * @see ApiaryConversions#bucketInfo() encoder
+   * @see JsonConversions#bucketInfo() encoder
    */
   final List<LifecycleRule> lifecycleRules;
 
@@ -119,7 +119,7 @@ public class BucketInfo implements Serializable {
   /**
    * non-private for backward compatibility on message class. log messages are now emitted from
    *
-   * @see ApiaryConversions#lifecycleRule()
+   * @see JsonConversions#lifecycleRule()
    */
   static final Logger log = Logger.getLogger(BucketInfo.class.getName());
 

@@ -83,8 +83,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @InternalApi
-final class ApiaryConversions {
-  static final ApiaryConversions INSTANCE = new ApiaryConversions();
+final class JsonConversions {
+  static final JsonConversions INSTANCE = new JsonConversions();
   // gRPC has a Bucket.project property that apiary doesn't have yet.
   // when converting from gRPC to apiary or vice-versa we want to preserve this property. Until
   // such a time as the apiary model has a project field, we manually apply it with this name.
@@ -141,7 +141,7 @@ final class ApiaryConversions {
   private final Codec<com.google.cloud.Condition, com.google.api.services.storage.model.Expr>
       iamConditionCodec = Codec.of(this::conditionEncode, this::conditionDecode);
 
-  private ApiaryConversions() {}
+  private JsonConversions() {}
 
   Codec<Entity, String> entity() {
     return entityCodec;
@@ -433,7 +433,7 @@ final class ApiaryConversions {
         lift(Lifecycle::getRule).andThen(toListOf(lifecycleRule()::decode)),
         to::setLifecycleRules);
     ifNonNull(from.getDefaultEventBasedHold(), to::setDefaultEventBasedHold);
-    ifNonNull(from.getLabels(), ApiaryConversions::replaceDataNullValuesWithNull, to::setLabels);
+    ifNonNull(from.getLabels(), JsonConversions::replaceDataNullValuesWithNull, to::setLabels);
     ifNonNull(from.getBilling(), Billing::getRequesterPays, to::setRequesterPays);
     Encryption encryption = from.getEncryption();
     if (encryption != null
