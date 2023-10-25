@@ -428,7 +428,7 @@ public class ITBucketTest {
 
     // Create a bucket with object retention enabled
     storage.create(
-            BucketInfo.newBuilder(bucketName).build(), BucketTargetOption.enableObjectRetention(true));
+        BucketInfo.newBuilder(bucketName).build(), BucketTargetOption.enableObjectRetention(true));
 
     try {
       Bucket remoteBucket = storage.get(bucketName);
@@ -439,13 +439,13 @@ public class ITBucketTest {
 
       // Create an object with a retention policy configured
       storage.create(
-              BlobInfo.newBuilder(bucketName, "retentionObject")
-                      .setRetention(
-                              BlobInfo.Retention.newBuilder()
-                                      .setMode(BlobInfo.Retention.Mode.UNLOCKED)
-                                      .setRetainUntilTime(now.plusDays(2))
-                                      .build())
-                      .build());
+          BlobInfo.newBuilder(bucketName, "retentionObject")
+              .setRetention(
+                  BlobInfo.Retention.newBuilder()
+                      .setMode(BlobInfo.Retention.Mode.UNLOCKED)
+                      .setRetainUntilTime(now.plusDays(2))
+                      .build())
+              .build());
 
       Blob remoteBlob = storage.get(bucketName, "retentionObject");
       assertNotNull(remoteBlob.getRetention());
@@ -453,30 +453,30 @@ public class ITBucketTest {
 
       // Reduce the retainUntilTime of an object's retention policy
       remoteBlob
-              .toBuilder()
-              .setRetention(
-                      BlobInfo.Retention.newBuilder()
-                              .setMode(BlobInfo.Retention.Mode.UNLOCKED)
-                              .setRetainUntilTime(now.plusHours(1))
-                              .build())
-              .build()
-              .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+          .toBuilder()
+          .setRetention(
+              BlobInfo.Retention.newBuilder()
+                  .setMode(BlobInfo.Retention.Mode.UNLOCKED)
+                  .setRetainUntilTime(now.plusHours(1))
+                  .build())
+          .build()
+          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
 
       remoteBlob = storage.get(bucketName, "retentionObject");
       assertEquals(
-              now.plusHours(1).toInstant().truncatedTo(ChronoUnit.SECONDS),
-              remoteBlob
-                      .getRetention()
-                      .getRetainUntilTime()
-                      .toInstant()
-                      .truncatedTo(ChronoUnit.SECONDS));
+          now.plusHours(1).toInstant().truncatedTo(ChronoUnit.SECONDS),
+          remoteBlob
+              .getRetention()
+              .getRetainUntilTime()
+              .toInstant()
+              .truncatedTo(ChronoUnit.SECONDS));
 
       // Remove an unlocked retention policy
       remoteBlob
-              .toBuilder()
-              .setRetention(null)
-              .build()
-              .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
+          .toBuilder()
+          .setRetention(null)
+          .build()
+          .update(Storage.BlobTargetOption.overrideUnlockedRetention(true));
 
       remoteBlob = storage.get(bucketName, "retentionObject");
       assertNull(remoteBlob.getRetention());

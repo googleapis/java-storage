@@ -1416,7 +1416,8 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<UpdateBucketRequest.Builder> updateBucket() {
-      return CrossTransportUtils.throwHttpJsonOnly(Storage.BucketTargetOption.class, "enableObjectRetention(boolean)");
+      return CrossTransportUtils.throwHttpJsonOnly(
+          Storage.BucketTargetOption.class, "enableObjectRetention(boolean)");
     }
   }
 
@@ -1655,7 +1656,8 @@ final class UnifiedOpts {
 
     @Override
     public Mapper<UpdateObjectRequest.Builder> updateObject() {
-      return CrossTransportUtils.throwHttpJsonOnly(Storage.BlobTargetOption.class, "overrideUnlockedRetention(boolean)");
+      return CrossTransportUtils.throwHttpJsonOnly(
+          Storage.BlobTargetOption.class, "overrideUnlockedRetention(boolean)");
     }
   }
 
