@@ -265,7 +265,7 @@ public class BlobInfo implements Serializable {
       private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
 
       private static final StringEnumType<Mode> type =
-              new StringEnumType<>(Mode.class, CONSTRUCTOR);
+          new StringEnumType<>(Mode.class, CONSTRUCTOR);
 
       public static final Mode UNLOCKED = type.createAndRegister("Unlocked");
 
