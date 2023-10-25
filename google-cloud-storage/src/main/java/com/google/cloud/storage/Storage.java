@@ -159,7 +159,6 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     CUSTOM_PLACEMENT_CONFIG("customPlacementConfig", "custom_placement_config"),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     AUTOCLASS("autoclass"),
-
     @TransportCompatibility({Transport.HTTP})
     OBJECT_RETENTION("objectRetention");
 
@@ -260,7 +259,6 @@ public interface Storage extends Service<StorageOptions>, AutoCloseable {
     TIME_STORAGE_CLASS_UPDATED("timeStorageClassUpdated", "update_storage_class_time"),
     @TransportCompatibility({Transport.HTTP, Transport.GRPC})
     CUSTOMER_ENCRYPTION("customerEncryption", "customer_encryption"),
-
     @TransportCompatibility({Transport.HTTP})
     RETENTION("retention");
 

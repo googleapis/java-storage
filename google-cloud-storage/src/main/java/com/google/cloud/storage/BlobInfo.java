@@ -175,36 +175,7 @@ public class BlobInfo implements Serializable {
   /**
    * Defines a blob's Retention policy. Can only be used on objects in a retention-enabled bucket.
    */
-  public static class Retention implements Serializable {
-
-    public static final class Mode extends StringEnumValue {
-      private static final long serialVersionUID = 1973143582659557184L;
-
-      private Mode(String constant) {
-        super(constant);
-      }
-
-      private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
-
-      private static final StringEnumType<Mode> type =
-          new StringEnumType<>(Mode.class, CONSTRUCTOR);
-
-      public static final Mode UNLOCKED = type.createAndRegister("Unlocked");
-
-      public static final Mode LOCKED = type.createAndRegister("Locked");
-
-      public static Mode valueOfStrict(String constant) {
-        return type.valueOfStrict(constant);
-      }
-
-      public static Mode valueOf(String constant) {
-        return type.valueOf(constant);
-      }
-
-      public static Mode[] values() {
-        return type.values();
-      }
-    }
+  public static final class Retention implements Serializable {
 
     private static final long serialVersionUID = 5046718464542688444L;
 
@@ -252,6 +223,10 @@ public class BlobInfo implements Serializable {
       return new Builder();
     }
 
+    public Builder toBuilder() {
+      return new Builder().setMode(this.mode).setRetainUntilTime(this.retainUntilTime);
+    }
+
     private Retention() {}
 
     public Retention(Builder builder) {
@@ -260,7 +235,6 @@ public class BlobInfo implements Serializable {
     }
 
     public static final class Builder {
-
       private Mode mode;
       private OffsetDateTime retainUntilTime;
 
@@ -278,6 +252,35 @@ public class BlobInfo implements Serializable {
 
       public Retention build() {
         return new Retention(this);
+      }
+    }
+
+    public static final class Mode extends StringEnumValue {
+      private static final long serialVersionUID = 1973143582659557184L;
+
+      private Mode(String constant) {
+        super(constant);
+      }
+
+      private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
+
+      private static final StringEnumType<Mode> type =
+              new StringEnumType<>(Mode.class, CONSTRUCTOR);
+
+      public static final Mode UNLOCKED = type.createAndRegister("Unlocked");
+
+      public static final Mode LOCKED = type.createAndRegister("Locked");
+
+      public static Mode valueOfStrict(String constant) {
+        return type.valueOfStrict(constant);
+      }
+
+      public static Mode valueOf(String constant) {
+        return type.valueOf(constant);
+      }
+
+      public static Mode[] values() {
+        return type.values();
       }
     }
   }

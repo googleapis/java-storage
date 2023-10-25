@@ -486,34 +486,6 @@ public class BucketInfo implements Serializable {
   }
 
   public static final class ObjectRetention implements Serializable {
-    public static final class Mode extends StringEnumValue {
-      private static final long serialVersionUID = 1973143582659557184L;
-
-      private Mode(String constant) {
-        super(constant);
-      }
-
-      private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
-
-      private static final StringEnumType<Mode> type =
-          new StringEnumType<>(Mode.class, CONSTRUCTOR);
-
-      public static final Mode ENABLED = type.createAndRegister("Enabled");
-
-      public static final Mode DISABLED = type.createAndRegister("Disabled");
-
-      public static Mode valueOfStrict(String constant) {
-        return type.valueOfStrict(constant);
-      }
-
-      public static Mode valueOf(String constant) {
-        return type.valueOf(constant);
-      }
-
-      public static Mode[] values() {
-        return type.values();
-      }
-    }
 
     private static final long serialVersionUID = 3948199339534287669L;
     private Mode mode;
@@ -554,6 +526,10 @@ public class BucketInfo implements Serializable {
       return new Builder();
     }
 
+    public Builder toBuilder() {
+      return new Builder().setMode(this.mode);
+    }
+
     public static final class Builder {
       private Mode mode;
 
@@ -565,6 +541,35 @@ public class BucketInfo implements Serializable {
 
       public ObjectRetention build() {
         return new ObjectRetention(this);
+      }
+    }
+
+    public static final class Mode extends StringEnumValue {
+      private static final long serialVersionUID = 1973143582659557184L;
+
+      private Mode(String constant) {
+        super(constant);
+      }
+
+      private static final ApiFunction<String, Mode> CONSTRUCTOR = Mode::new;
+
+      private static final StringEnumType<Mode> type =
+              new StringEnumType<>(Mode.class, CONSTRUCTOR);
+
+      public static final Mode ENABLED = type.createAndRegister("Enabled");
+
+      public static final Mode DISABLED = type.createAndRegister("Disabled");
+
+      public static Mode valueOfStrict(String constant) {
+        return type.valueOfStrict(constant);
+      }
+
+      public static Mode valueOf(String constant) {
+        return type.valueOf(constant);
+      }
+
+      public static Mode[] values() {
+        return type.values();
       }
     }
   }

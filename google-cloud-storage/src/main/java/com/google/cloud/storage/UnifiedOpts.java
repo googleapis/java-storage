@@ -1413,6 +1413,11 @@ final class UnifiedOpts {
     private EnableObjectRetention(boolean val) {
       super(StorageRpc.Option.ENABLE_OBJECT_RETENTION, val);
     }
+
+    @Override
+    public Mapper<UpdateBucketRequest.Builder> updateBucket() {
+      return CrossTransportUtils.throwHttpJsonOnly(Storage.BucketTargetOption.class, "enableObjectRetention(boolean)");
+    }
   }
 
   static final class Prefix extends RpcOptVal<String> implements BucketListOpt, ObjectListOpt {
@@ -1646,6 +1651,11 @@ final class UnifiedOpts {
 
     private OverrideUnlockedRetention(boolean val) {
       super(StorageRpc.Option.OVERRIDE_UNLOCKED_RETENTION, val);
+    }
+
+    @Override
+    public Mapper<UpdateObjectRequest.Builder> updateObject() {
+      return CrossTransportUtils.throwHttpJsonOnly(Storage.BlobTargetOption.class, "overrideUnlockedRetention(boolean)");
     }
   }
 
