@@ -94,6 +94,9 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
       case "w1r3":
         runWorkload1();
         break;
+      case "w1r3-grpc-dp":
+        runWorkload4();
+        break;
       default:
         throw new IllegalStateException("Specify a workload to run");
     }
@@ -105,6 +108,18 @@ public final class StorageSharedBenchmarkingCli implements Runnable {
     StorageOptions retryStorageOptions =
         StorageOptions.newBuilder().setProjectId(project).setRetrySettings(retrySettings).build();
     Storage storageClient = retryStorageOptions.getService();
+    runW1R3(storageClient);
+  }
+
+  private void runWorkload4() {
+    RetrySettings retrySettings = StorageOptions.getDefaultRetrySettings().toBuilder().build();
+    StorageOptions retryStorageOptions =
+        StorageOptions.grpc().setRetrySettings(retrySettings).setAttemptDirectPath(true).build();
+    Storage storageClient = retryStorageOptions.getService();
+    runW1R3(storageClient);
+  }
+
+  private void runW1R3(Storage storageClient) {
     Path tempDir =
         tempDirLocation != null
             ? Paths.get(tempDirLocation)
