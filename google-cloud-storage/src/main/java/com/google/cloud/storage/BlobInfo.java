@@ -663,7 +663,7 @@ public class BlobInfo implements Serializable {
       eventBasedHold = blobInfo.eventBasedHold;
       temporaryHold = blobInfo.temporaryHold;
       retentionExpirationTime = blobInfo.retentionExpirationTime;
-      this.retention = blobInfo.retention;
+      retention = blobInfo.retention;
     }
 
     @Override
@@ -1039,9 +1039,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setRetention(Retention retention) {
-      if (!Objects.equals(this.retention, retention)) {
-        modifiedFields.add(BlobField.RETENTION);
-      }
+      modifiedFields.add(BlobField.RETENTION);
       this.retention = retention;
       return this;
     }
