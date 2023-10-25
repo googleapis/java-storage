@@ -135,6 +135,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -169,7 +170,12 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   private static final Opts<Fields> ALL_BLOB_FIELDS =
       Opts.from(UnifiedOpts.fields(ImmutableSet.copyOf(BlobField.values())));
   private static final Opts<Fields> ALL_BUCKET_FIELDS =
-      Opts.from(UnifiedOpts.fields(ImmutableSet.copyOf(BucketField.values())));
+      // TODO: jesse add bug here
+      Opts.from(
+          UnifiedOpts.fields(
+              Arrays.stream(BucketField.values())
+                  .filter(f -> f.equals(BucketField.OBJECT_RETENTION))
+                  .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
   final WriterFactory writerFactory;
