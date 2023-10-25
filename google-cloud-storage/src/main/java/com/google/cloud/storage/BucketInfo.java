@@ -349,11 +349,26 @@ public class BucketInfo implements Serializable {
     }
   }
 
+  /**
+   * Configuration for the Autoclass settings of a bucket.
+   *
+   * @see <a
+   *     href="https://cloud.google.com/storage/docs/autoclass">https://cloud.google.com/storage/docs/autoclass</a>
+   */
   public static final class Autoclass implements Serializable {
 
     private static final long serialVersionUID = -2378172222188072439L;
-    private Boolean enabled;
-    private OffsetDateTime toggleTime;
+    private final Boolean enabled;
+    private final OffsetDateTime toggleTime;
+    private final StorageClass terminalStorageClass;
+    private final OffsetDateTime terminalStorageClassUpdateTime;
+
+    private Autoclass(Builder builder) {
+      this.enabled = builder.enabled;
+      this.toggleTime = builder.toggleTime;
+      this.terminalStorageClass = builder.terminalStorageClass;
+      this.terminalStorageClassUpdateTime = builder.terminalStorageClassUpdateTime;
+    }
 
     public Boolean getEnabled() {
       return enabled;
@@ -361,6 +376,14 @@ public class BucketInfo implements Serializable {
 
     public OffsetDateTime getToggleTime() {
       return toggleTime;
+    }
+
+    public StorageClass getTerminalStorageClass() {
+      return terminalStorageClass;
+    }
+
+    public OffsetDateTime getTerminalStorageClassUpdateTime() {
+      return terminalStorageClassUpdateTime;
     }
 
     @Override
@@ -371,13 +394,18 @@ public class BucketInfo implements Serializable {
       if (!(o instanceof Autoclass)) {
         return false;
       }
-      Autoclass that = (Autoclass) o;
-      return Objects.equals(enabled, that.enabled) && Objects.equals(toggleTime, that.toggleTime);
+      Autoclass autoclass = (Autoclass) o;
+      return Objects.equals(enabled, autoclass.enabled)
+          && Objects.equals(toggleTime, autoclass.toggleTime)
+          && Objects.equals(terminalStorageClass, autoclass.terminalStorageClass)
+          && Objects.equals(
+              terminalStorageClassUpdateTime, autoclass.terminalStorageClassUpdateTime);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(enabled, toggleTime);
+      return Objects.hash(
+          enabled, toggleTime, terminalStorageClass, terminalStorageClassUpdateTime);
     }
 
     @Override
@@ -385,14 +413,9 @@ public class BucketInfo implements Serializable {
       return MoreObjects.toStringHelper(this)
           .add("enabled", enabled)
           .add("toggleTime", toggleTime)
+          .add("terminalStorageClass", terminalStorageClass)
+          .add("terminalStorageClassUpdateTime", terminalStorageClassUpdateTime)
           .toString();
-    }
-
-    private Autoclass() {}
-
-    private Autoclass(Builder builder) {
-      this.enabled = builder.enabled;
-      this.toggleTime = builder.toggleTime;
     }
 
     public static Builder newBuilder() {
@@ -400,12 +423,18 @@ public class BucketInfo implements Serializable {
     }
 
     public Builder toBuilder() {
-      return newBuilder().setEnabled(enabled).setToggleTime(toggleTime);
+      return newBuilder()
+          .setEnabled(enabled)
+          .setToggleTime(toggleTime)
+          .setTerminalStorageClass(terminalStorageClass)
+          .setTerminalStorageClassUpdateTime(terminalStorageClassUpdateTime);
     }
 
     public static final class Builder {
       private Boolean enabled;
       private OffsetDateTime toggleTime;
+      private StorageClass terminalStorageClass;
+      private OffsetDateTime terminalStorageClassUpdateTime;
 
       /**
        * Sets whether Autoclass is enabled for this bucket. Currently, autoclass can only be enabled
@@ -423,6 +452,30 @@ public class BucketInfo implements Serializable {
        */
       Builder setToggleTime(OffsetDateTime toggleTime) {
         this.toggleTime = toggleTime;
+        return this;
+      }
+
+      /**
+       * When set to {@link StorageClass#NEARLINE}, Autoclass restricts transitions between Standard
+       * and Nearline storage classes only.
+       *
+       * <p>When set to {@link StorageClass#ARCHIVE}, Autoclass allows transitions to Coldline and
+       * Archive as well.
+       *
+       * <p>Only valid values are {@code NEARLINE} and {@code ARCHIVE}.
+       */
+      public Builder setTerminalStorageClass(StorageClass terminalStorageClass) {
+        this.terminalStorageClass = terminalStorageClass;
+        return this;
+      }
+
+      /**
+       * The time at which Autoclass terminal storage class was last updated for this bucket.
+       *
+       * <p>This is auto populated when the feature is enabled.
+       */
+      Builder setTerminalStorageClassUpdateTime(OffsetDateTime terminalStorageClassUpdateTime) {
+        this.terminalStorageClassUpdateTime = terminalStorageClassUpdateTime;
         return this;
       }
 

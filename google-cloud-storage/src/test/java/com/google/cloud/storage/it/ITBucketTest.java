@@ -43,6 +43,7 @@ import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
+import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -60,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -480,6 +482,48 @@ public class ITBucketTest {
       assertNull(remoteBlob.getRetention());
     } finally {
       BucketCleaner.doCleanup(bucketName, storage);
+
+  public void testCreateBucketWithAutoclass_ARCHIVE() throws Exception {
+    String bucketName = generator.randomBucketName();
+    Autoclass autoclass =
+        Autoclass.newBuilder()
+            .setEnabled(true)
+            .setTerminalStorageClass(StorageClass.ARCHIVE)
+            .build();
+    BucketInfo info = BucketInfo.newBuilder(bucketName).setAutoclass(autoclass).build();
+    try (TemporaryBucket tmpb =
+        TemporaryBucket.newBuilder().setStorage(storage).setBucketInfo(info).build()) {
+      BucketInfo remoteBucket = tmpb.getBucket();
+
+      Autoclass remoteBucketAutoclass = remoteBucket.getAutoclass();
+      assertThat(remoteBucketAutoclass).isNotNull();
+      assertThat(remoteBucketAutoclass.getEnabled()).isTrue();
+      assertThat(remoteBucketAutoclass.getToggleTime()).isNotNull();
+      assertThat(remoteBucketAutoclass.getTerminalStorageClassUpdateTime()).isNotNull();
+      assertThat(remoteBucketAutoclass.getTerminalStorageClass()).isEqualTo(StorageClass.ARCHIVE);
+
+      Page<Bucket> bucketPage = storage.list(BucketListOption.prefix(bucketName));
+      ImmutableList<Bucket> buckets = ImmutableList.copyOf(bucketPage.iterateAll());
+
+      Optional<Bucket> first =
+          buckets.stream().filter(b -> bucketName.equals(b.getName())).findFirst();
+
+      assertThat(first.isPresent()).isTrue();
+      assertThat(first.get().getAutoclass().getTerminalStorageClass())
+          .isEqualTo(StorageClass.ARCHIVE);
+
+      BucketInfo disabled =
+          remoteBucket
+              .toBuilder()
+              .setAutoclass(Autoclass.newBuilder().setEnabled(false).build())
+              .build();
+      Bucket updated = storage.update(disabled, BucketTargetOption.metagenerationMatch());
+
+      Autoclass updatedAutoclass = updated.getAutoclass();
+      assertThat(updatedAutoclass.getEnabled()).isFalse();
+      assertThat(updatedAutoclass.getTerminalStorageClass()).isNull();
+
+      assertThat(updatedAutoclass).isNotEqualTo(remoteBucketAutoclass);
     }
   }
 

@@ -513,6 +513,11 @@ final class ApiaryConversions {
     Bucket.Autoclass to = new Bucket.Autoclass();
     ifNonNull(from.getEnabled(), to::setEnabled);
     ifNonNull(from.getToggleTime(), dateTimeCodec::encode, to::setToggleTime);
+    ifNonNull(from.getTerminalStorageClass(), StorageClass::toString, to::setTerminalStorageClass);
+    ifNonNull(
+        from.getTerminalStorageClassUpdateTime(),
+        dateTimeCodec::encode,
+        to::setTerminalStorageClassUpdateTime);
     return to;
   }
 
@@ -520,6 +525,11 @@ final class ApiaryConversions {
     Autoclass.Builder to = Autoclass.newBuilder();
     to.setEnabled(from.getEnabled());
     ifNonNull(from.getToggleTime(), dateTimeCodec::decode, to::setToggleTime);
+    ifNonNull(from.getTerminalStorageClass(), StorageClass::valueOf, to::setTerminalStorageClass);
+    ifNonNull(
+        from.getTerminalStorageClassUpdateTime(),
+        dateTimeCodec::decode,
+        to::setTerminalStorageClassUpdateTime);
     return to.build();
   }
 

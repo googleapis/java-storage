@@ -15,4 +15,20 @@
     <method>* writeAndClose(*)</method>
   </difference>
 
+  <!-- @BetaApi members -->
+  <difference>
+    <differenceType>7009</differenceType>
+    <className>com/google/cloud/storage/ParallelCompositeUploadBlobWriteSessionConfig$PartCleanupStrategy</className>
+    <method>boolean isDeleteAllOnError()</method>
+  </difference>
+  <difference>
+    <differenceType>7009</differenceType>
+    <className>com/google/cloud/storage/ParallelCompositeUploadBlobWriteSessionConfig$PartCleanupStrategy</className>
+    <method>boolean isDeletePartsOnSuccess()</method>
+  </difference>
+  <difference>
+    <differenceType>7009</differenceType>
+    <className>com/google/cloud/storage/ParallelCompositeUploadBlobWriteSessionConfig$PartNamingStrategy</className>
+    <method>java.lang.String fmtFields(*)</method>
+  </difference>
 </differences>

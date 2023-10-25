@@ -565,6 +565,15 @@ final class GrpcConversions {
     BucketInfo.Autoclass.Builder to = BucketInfo.Autoclass.newBuilder();
     to.setEnabled(from.getEnabled());
     ifNonNull(from.getToggleTime(), timestampCodec::decode, to::setToggleTime);
+
+    String terminalStorageClass = from.getTerminalStorageClass();
+    if (!terminalStorageClass.isEmpty()) {
+      to.setTerminalStorageClass(StorageClass.valueOf(terminalStorageClass));
+    }
+    ifNonNull(
+        from.getTerminalStorageClassUpdateTime(),
+        timestampCodec::decode,
+        to::setTerminalStorageClassUpdateTime);
     return to.build();
   }
 
@@ -572,6 +581,11 @@ final class GrpcConversions {
     Bucket.Autoclass.Builder to = Bucket.Autoclass.newBuilder();
     ifNonNull(from.getEnabled(), to::setEnabled);
     ifNonNull(from.getToggleTime(), timestampCodec::encode, to::setToggleTime);
+    ifNonNull(from.getTerminalStorageClass(), StorageClass::toString, to::setTerminalStorageClass);
+    ifNonNull(
+        from.getTerminalStorageClassUpdateTime(),
+        timestampCodec::encode,
+        to::setTerminalStorageClassUpdateTime);
     return to.build();
   }
 

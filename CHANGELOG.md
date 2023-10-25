@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.29.0](https://github.com/googleapis/java-storage/compare/v2.28.0...v2.29.0) (2023-10-23)
+
+
+### Features
+
+* Add Autoclass v2.1 support ([#2258](https://github.com/googleapis/java-storage/issues/2258)) ([a134994](https://github.com/googleapis/java-storage/commit/a13499453932189d3b4efdbb8d774e6d15a96cc1))
+
+
+### Bug Fixes
+
+* Remove PCU internals which should be hidden ([#2263](https://github.com/googleapis/java-storage/issues/2263)) ([eff00fb](https://github.com/googleapis/java-storage/commit/eff00fbb9b36f7225291cf0be0b5d7aab3ea2114))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20231012-2.0.0 ([#2257](https://github.com/googleapis/java-storage/issues/2257)) ([e75d8bf](https://github.com/googleapis/java-storage/commit/e75d8bf85db50427a4b89089cca9d88fe4d0b6d9))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.18.0 ([#2265](https://github.com/googleapis/java-storage/issues/2265)) ([40bf665](https://github.com/googleapis/java-storage/commit/40bf6654301175ee5113af9be29be2fb80224af1))
+* Update dependency net.jqwik:jqwik to v1.8.1 ([#2267](https://github.com/googleapis/java-storage/issues/2267)) ([c518c75](https://github.com/googleapis/java-storage/commit/c518c7512e71537cd9468bb0be6ceaa7515cf651))
+* Update dependency org.graalvm.buildtools:native-maven-plugin to v0.9.28 ([#2266](https://github.com/googleapis/java-storage/issues/2266)) ([b0b1b57](https://github.com/googleapis/java-storage/commit/b0b1b57162e014994b432e94a532df4f0003c628))
+
 ## [2.28.0](https://github.com/googleapis/java-storage/compare/v2.27.1...v2.28.0) (2023-10-10)
 
 
