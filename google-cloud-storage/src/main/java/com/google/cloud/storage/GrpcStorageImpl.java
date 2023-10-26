@@ -174,7 +174,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       Opts.from(
           UnifiedOpts.fields(
               Arrays.stream(BucketField.values())
-                  .filter(f -> f.equals(BucketField.OBJECT_RETENTION))
+                  .filter(f -> !f.equals(BucketField.OBJECT_RETENTION))
                   .collect(ImmutableSet.toImmutableSet())));
 
   final StorageClient storageClient;
