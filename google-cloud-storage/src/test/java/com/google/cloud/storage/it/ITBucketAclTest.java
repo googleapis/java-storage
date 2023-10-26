@@ -34,6 +34,7 @@ import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.Storage.BucketField;
 import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -127,7 +128,7 @@ public final class ITBucketAclTest {
       assertThat(actual.getEtag()).isNotEmpty();
 
       Bucket bucketUpdated =
-          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+          storage.get(bucket.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when updates happen, drop before our comparison
@@ -177,7 +178,7 @@ public final class ITBucketAclTest {
       assertThat(actual.getEtag()).isNotEmpty();
 
       Bucket bucketUpdated =
-          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+          storage.get(bucket.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when updates happen, drop before our comparison
@@ -220,7 +221,7 @@ public final class ITBucketAclTest {
       assertThat(actual.getRole()).isEqualTo(readAll.getRole());
       assertThat(actual.getEtag()).isNotEmpty();
 
-      Bucket updated = storage.get(mgen1.getName(), BucketGetOption.fields(BucketField.values()));
+      Bucket updated = storage.get(mgen1.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(updated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when updates happen, drop before our comparison
@@ -254,7 +255,7 @@ public final class ITBucketAclTest {
       assertThat(actual).isTrue();
 
       Bucket bucketUpdated =
-          storage.get(bucket.getName(), BucketGetOption.fields(BucketField.values()));
+          storage.get(bucket.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when deletes happen, drop before our comparison

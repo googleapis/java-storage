@@ -44,6 +44,7 @@ import com.google.cloud.storage.Storage.BucketGetOption;
 import com.google.cloud.storage.Storage.BucketListOption;
 import com.google.cloud.storage.Storage.BucketTargetOption;
 import com.google.cloud.storage.StorageClass;
+import com.google.cloud.storage.TestUtils;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -113,7 +114,7 @@ public class ITBucketTest {
   @Test
   public void testGetBucketAllSelectedFields() {
     Bucket remoteBucket =
-        storage.get(bucket.getName(), Storage.BucketGetOption.fields(BucketField.values()));
+        storage.get(bucket.getName(), Storage.BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     assertEquals(bucket.getName(), remoteBucket.getName());
     assertNotNull(remoteBucket.getCreateTime());
   }
