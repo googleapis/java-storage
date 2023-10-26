@@ -248,12 +248,14 @@ final class ApiaryConversions {
         to::setRetentionExpirationTime);
 
     // todo: clean this up once retention is enabled in grpc
-    // This is a workaround so that explicitly null retention objects are only included when the user
-    // set an existing policy to null, to avoid sending any retention objects to the test bench.
+    // This is a workaround so that explicitly null retention objects are only included when the
+    // user set an existing policy to null, to avoid sending any retention objects to the test
+    // bench.
     // We should clean this up once the test bench can handle the retention field.
     // See also the comment in StorageImpl.update(BlobInfo blobInfo, BlobTargetOption... options)
-    if (from.getModifiedFields().contains(Storage.BlobField.RETENTION) && from.getRetention() == null) {
-        to.setRetention(Data.nullOf(StorageObject.Retention.class));
+    if (from.getModifiedFields().contains(Storage.BlobField.RETENTION)
+        && from.getRetention() == null) {
+      to.setRetention(Data.nullOf(StorageObject.Retention.class));
     }
     ifNonNull(from.getRetention(), this::retentionEncode, to::setRetention);
     to.setKmsKeyName(from.getKmsKeyName());
