@@ -38,6 +38,7 @@ import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
+import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
@@ -92,7 +93,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
-final class StorageImpl extends BaseService<StorageOptions> implements Storage {
+final class StorageImpl extends BaseService<StorageOptions> implements Storage, StorageInternal {
 
   private static final byte[] EMPTY_BYTE_ARRAY = {};
   private static final String EMPTY_BYTE_ARRAY_MD5 = "1B2M2Y8AsgTpgAmY7PhCfg==";
@@ -115,11 +116,13 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   final HttpRetryAlgorithmManager retryAlgorithmManager;
   final StorageRpc storageRpc;
+  final WriterFactory writerFactory;
 
-  StorageImpl(HttpStorageOptions options) {
+  StorageImpl(HttpStorageOptions options, WriterFactory writerFactory) {
     super(options);
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.storageRpc = options.getStorageRpcV1();
+    this.writerFactory = writerFactory;
   }
 
   @Override
@@ -1634,5 +1637,14 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         algorithm,
         () -> storageRpc.get(bucketPb, optionsMap),
         (b) -> Conversions.json().bucketInfo().decode(b).asBucket(this));
+  }
+
+  @Override
+  public BlobWriteSession blobWriteSession(BlobInfo blobInfo, BlobWriteOption... options) {
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
+
+    WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
+        writerFactory.writeSession(this, blobInfo, opts);
+    return BlobWriteSessions.of(writableByteChannelSession);
   }
 }
