@@ -114,7 +114,10 @@ public class ITBucketTest {
   @Test
   public void testGetBucketAllSelectedFields() {
     Bucket remoteBucket =
-        storage.get(bucket.getName(), Storage.BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
+        storage.get(
+            bucket.getName(),
+            Storage.BucketGetOption.fields(
+                TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     assertEquals(bucket.getName(), remoteBucket.getName());
     assertNotNull(remoteBucket.getCreateTime());
   }

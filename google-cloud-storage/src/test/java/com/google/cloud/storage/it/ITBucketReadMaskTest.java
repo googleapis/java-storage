@@ -139,7 +139,10 @@ public final class ITBucketReadMaskTest {
           args.stream().map(Args::getField).map(Enum::name).sorted().collect(Collectors.toList());
 
       List<String> definedFields =
-          Arrays.stream(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())).map(Enum::name).sorted().collect(Collectors.toList());
+          Arrays.stream(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values()))
+              .map(Enum::name)
+              .sorted()
+              .collect(Collectors.toList());
 
       assertThat(argsDefined).containsExactlyElementsIn(definedFields);
       return args;

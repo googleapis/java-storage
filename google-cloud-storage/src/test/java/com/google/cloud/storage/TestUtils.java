@@ -310,9 +310,9 @@ public final class TestUtils {
    * supported by GRPC.
    */
   public static Storage.BucketField[] filterOutHttpOnlyBucketFields(Storage.BucketField[] fields) {
-    return  Arrays.stream(fields)
-            .filter(f -> !f.equals(Storage.BucketField.OBJECT_RETENTION))
-            .collect(ImmutableSet.toImmutableSet())
-            .toArray(new Storage.BucketField[0]);
+    return Arrays.stream(fields)
+        .filter(f -> !f.equals(Storage.BucketField.OBJECT_RETENTION))
+        .collect(ImmutableSet.toImmutableSet())
+        .toArray(new Storage.BucketField[0]);
   }
 }

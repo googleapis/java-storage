@@ -327,7 +327,9 @@ public final class ITOptionRegressionTest {
             "updated",
             "versioning",
             "website");
-    s.get(b.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
+    s.get(
+        b.getName(),
+        BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
 

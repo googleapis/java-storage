@@ -128,7 +128,10 @@ public final class ITBucketAclTest {
       assertThat(actual.getEtag()).isNotEmpty();
 
       Bucket bucketUpdated =
-          storage.get(bucket.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
+          storage.get(
+              bucket.getName(),
+              BucketGetOption.fields(
+                  TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when updates happen, drop before our comparison
@@ -178,7 +181,10 @@ public final class ITBucketAclTest {
       assertThat(actual.getEtag()).isNotEmpty();
 
       Bucket bucketUpdated =
-          storage.get(bucket.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
+          storage.get(
+              bucket.getName(),
+              BucketGetOption.fields(
+                  TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when updates happen, drop before our comparison
@@ -221,7 +227,11 @@ public final class ITBucketAclTest {
       assertThat(actual.getRole()).isEqualTo(readAll.getRole());
       assertThat(actual.getEtag()).isNotEmpty();
 
-      Bucket updated = storage.get(mgen1.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
+      Bucket updated =
+          storage.get(
+              mgen1.getName(),
+              BucketGetOption.fields(
+                  TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(updated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when updates happen, drop before our comparison
@@ -255,7 +265,10 @@ public final class ITBucketAclTest {
       assertThat(actual).isTrue();
 
       Bucket bucketUpdated =
-          storage.get(bucket.getName(), BucketGetOption.fields(TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
+          storage.get(
+              bucket.getName(),
+              BucketGetOption.fields(
+                  TestUtils.filterOutHttpOnlyBucketFields(BucketField.values())));
       assertThat(bucketUpdated.getMetageneration()).isNotEqualTo(bucket.getMetageneration());
 
       // etags change when deletes happen, drop before our comparison
