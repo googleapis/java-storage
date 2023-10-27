@@ -490,6 +490,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     // We need to make sure that the retention field is only included in the
     // request if it was modified, so that we don't send a null object in a
     // grpc or json request.
+    // todo: b/308194853
     if (blobInfo.getModifiedFields().contains(BlobField.RETENTION)) {
       builder.setRetention(blobInfo.getRetention());
     }

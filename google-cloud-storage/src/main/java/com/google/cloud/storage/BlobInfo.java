@@ -1039,6 +1039,7 @@ public class BlobInfo implements Serializable {
 
     @Override
     public Builder setRetention(Retention retention) {
+      // todo: b/308194853
       modifiedFields.add(BlobField.RETENTION);
       this.retention = retention;
       return this;

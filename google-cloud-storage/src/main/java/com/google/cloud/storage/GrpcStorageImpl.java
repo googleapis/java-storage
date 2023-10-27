@@ -170,7 +170,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   private static final Opts<Fields> ALL_BLOB_FIELDS =
       Opts.from(UnifiedOpts.fields(ImmutableSet.copyOf(BlobField.values())));
   private static final Opts<Fields> ALL_BUCKET_FIELDS =
-      // TODO: jesse add bug here
+      // todo: b/308194853
       Opts.from(
           UnifiedOpts.fields(
               Arrays.stream(BucketField.values())

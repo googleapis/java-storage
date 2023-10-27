@@ -253,6 +253,7 @@ final class ApiaryConversions {
     // bench.
     // We should clean this up once the test bench can handle the retention field.
     // See also the comment in StorageImpl.update(BlobInfo blobInfo, BlobTargetOption... options)
+    // todo: b/308194853
     if (from.getModifiedFields().contains(Storage.BlobField.RETENTION)
         && from.getRetention() == null) {
       to.setRetention(Data.nullOf(StorageObject.Retention.class));
