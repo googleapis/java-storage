@@ -31,6 +31,7 @@ import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.GrpcStorageOptions;
+import com.google.cloud.storage.HttpStorageOptions;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
@@ -73,7 +74,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
 @CrossRun(
-    transports = {Transport.GRPC},
+    transports = {Transport.HTTP, Transport.GRPC},
     backends = {Backend.PROD})
 public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
 
@@ -122,6 +123,12 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
     if (transport == Transport.GRPC) {
       storageOptions =
           ((GrpcStorageOptions) injectedStorage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(pcu)
+              .build();
+    } else if (transport == Transport.HTTP) {
+      storageOptions =
+          ((HttpStorageOptions) injectedStorage.getOptions())
               .toBuilder()
               .setBlobWriteSessionConfig(pcu)
               .build();

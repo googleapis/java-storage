@@ -1694,4 +1694,72 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     }
     return codecs.blobInfo().decode(object);
   }
+
+  @Override
+  public BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
+
+    BlobInfo.Builder builder =
+        info.toBuilder()
+            .setMd5(
+                BaseEncoding.base64().encode(Hashing.md5().hashBytes(buf.duplicate()).asBytes()))
+            .setCrc32c(
+                BaseEncoding.base64()
+                    .encode(Ints.toByteArray(Hashing.crc32c().hashBytes(buf.duplicate()).asInt())));
+    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    final StorageObject encoded = codecs.blobInfo().encode(updated);
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForObjectsCreate(encoded, optionsMap);
+    RewindableContent content = RewindableContent.of(buf);
+    return run(
+        algorithm,
+        () -> {
+          content.rewindTo(0);
+          return storageRpc.create(encoded, new RewindableContentInputStream(content), optionsMap);
+        },
+        Conversions.json().blobInfo()::decode);
+  }
+
+  /**
+   * Behavioral difference compared to {@link #delete(BlobId, BlobSourceOption...)} instead of
+   * returning false when an object does not exist, we throw an exception.
+   */
+  @Override
+  public Void internalObjectDelete(BlobId id, Opts<ObjectSourceOpt> opts) {
+    final StorageObject storageObject = codecs.blobId().encode(id);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForObjectsDelete(storageObject, optionsMap);
+    return run(
+        algorithm,
+        () -> {
+          boolean deleted = storageRpc.delete(storageObject, optionsMap);
+          // HttpStorageRpc turns a 404 into false, our code needs to know 404
+          if (!deleted) {
+            throw new StorageException(404, "NOT_FOUND", null, null);
+          }
+          return null;
+        },
+        Function.identity());
+  }
+
+  @Override
+  public BlobInfo internalObjectGet(BlobId blobId, Opts<ObjectSourceOpt> opts) {
+    StorageObject storedObject = codecs.blobId().encode(blobId);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    ResultRetryAlgorithm<?> algorithm =
+        retryAlgorithmManager.getForObjectsGet(storedObject, optionsMap);
+    return run(
+        algorithm,
+        () -> {
+          StorageObject storageObject = storageRpc.get(storedObject, optionsMap);
+          // HttpStorageRpc turns a 404 into null, our code needs to know 404
+          if (storageObject == null) {
+            throw new StorageException(404, "NOT_FOUND", null, null);
+          }
+          return storageObject;
+        },
+        codecs.blobInfo()::decode);
+  }
 }

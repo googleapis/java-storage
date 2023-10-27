@@ -118,9 +118,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Immutable
 @BetaApi
-@TransportCompatibility({Transport.GRPC})
+@TransportCompatibility({Transport.GRPC, Transport.HTTP})
 public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig
-    implements BlobWriteSessionConfig.GrpcCompatible {
+    implements BlobWriteSessionConfig.HttpCompatible, BlobWriteSessionConfig.GrpcCompatible {
 
   private static final int MAX_PARTS_PER_COMPOSE = 32;
   private final int maxPartsPerCompose;

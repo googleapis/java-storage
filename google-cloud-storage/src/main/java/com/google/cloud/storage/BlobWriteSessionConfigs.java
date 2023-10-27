@@ -142,7 +142,7 @@ import java.util.Collection;
  *       Break the stream of bytes into smaller part objects uploading each part in parallel. Then
  *       composing the parts together to make the ultimate object.
  *     </td>
- *     <td>gRPC</td>
+ *     <td>gRPC, HTTP</td>
  *     <td>
  *       <ol>
  *         <li>
@@ -342,7 +342,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
-  @TransportCompatibility({Transport.GRPC})
+  @TransportCompatibility({Transport.GRPC, Transport.HTTP})
   public static ParallelCompositeUploadBlobWriteSessionConfig parallelCompositeUpload() {
     return ParallelCompositeUploadBlobWriteSessionConfig.withDefaults();
   }

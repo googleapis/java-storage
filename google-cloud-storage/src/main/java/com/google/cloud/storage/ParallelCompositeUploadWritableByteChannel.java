@@ -431,6 +431,10 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
     PART_INDEX.appendTo(partRange, builder);
     OBJECT_OFFSET.appendTo(offset, builder);
     b.setMetadata(builder.build());
+    // the value of a kms key name will contain the exact version when read from gcs
+    // however, gcs will not accept that version resource identifier when creating a new object
+    // strip it out, so it can be included as a query string parameter instead
+    b.setKmsKeyName(null);
     b = partMetadataFieldDecorator.apply(b);
     return b.build();
   }
@@ -507,7 +511,11 @@ final class ParallelCompositeUploadWritableByteChannel implements BufferedWritab
   @VisibleForTesting
   @NonNull
   static Opts<ObjectTargetOpt> getPartOpts(Opts<ObjectTargetOpt> opts) {
-    return opts.filter(TO_EXCLUDE_FROM_PARTS).prepend(DOES_NOT_EXIST);
+    return opts.filter(TO_EXCLUDE_FROM_PARTS)
+        .prepend(DOES_NOT_EXIST)
+        // disable gzip transfer encoding for HTTP, it causes a significant bottleneck uploading
+        // the parts
+        .prepend(Opts.from(UnifiedOpts.disableGzipContent()));
   }
 
   @VisibleForTesting
