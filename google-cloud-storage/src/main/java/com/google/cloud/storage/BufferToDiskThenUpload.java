@@ -59,9 +59,9 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
  */
 @Immutable
 @BetaApi
-@TransportCompatibility({Transport.GRPC})
+@TransportCompatibility({Transport.GRPC, Transport.HTTP})
 public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
-    implements BlobWriteSessionConfig.GrpcCompatible {
+    implements BlobWriteSessionConfig.HttpCompatible, BlobWriteSessionConfig.GrpcCompatible {
   private static final long serialVersionUID = 9059242302276891867L;
 
   /**

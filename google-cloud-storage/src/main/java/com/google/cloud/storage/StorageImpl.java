@@ -91,6 +91,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class StorageImpl extends BaseService<StorageOptions> implements Storage, StorageInternal {
@@ -147,7 +148,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
             .setMd5(EMPTY_BYTE_ARRAY_MD5)
             .setCrc32c(EMPTY_BYTE_ARRAY_CRC32C)
             .build();
-    return internalCreate(updatedInfo, EMPTY_BYTE_ARRAY, 0, 0, options);
+    final Opts<ObjectTargetOpt> objectTargetOptOpts = Opts.unwrap(options).resolveFrom(updatedInfo);
+    return internalCreate(updatedInfo, EMPTY_BYTE_ARRAY, 0, 0, objectTargetOptOpts);
   }
 
   @Override
@@ -161,7 +163,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
                 BaseEncoding.base64()
                     .encode(Ints.toByteArray(Hashing.crc32c().hashBytes(content).asInt())))
             .build();
-    return internalCreate(updatedInfo, content, 0, content.length, options);
+    final Opts<ObjectTargetOpt> objectTargetOptOpts = Opts.unwrap(options).resolveFrom(updatedInfo);
+    return internalCreate(updatedInfo, content, 0, content.length, objectTargetOptOpts);
   }
 
   @Override
@@ -180,7 +183,8 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
                         Ints.toByteArray(
                             Hashing.crc32c().hashBytes(content, offset, length).asInt())))
             .build();
-    return internalCreate(updatedInfo, content, offset, length, options);
+    final Opts<ObjectTargetOpt> objectTargetOptOpts = Opts.unwrap(options).resolveFrom(updatedInfo);
+    return internalCreate(updatedInfo, content, offset, length, objectTargetOptOpts);
   }
 
   @Override
@@ -203,12 +207,11 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
 
   private Blob internalCreate(
       BlobInfo info,
-      final byte[] content,
+      final byte @NonNull [] content,
       final int offset,
       final int length,
-      BlobTargetOption... options) {
+      Opts<ObjectTargetOpt> opts) {
     Preconditions.checkNotNull(content);
-    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(info);
     final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
 
     BlobInfo updated = opts.blobInfoMapper().apply(info.toBuilder()).build();
@@ -1646,5 +1649,49 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage, 
     WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
         writerFactory.writeSession(this, blobInfo, opts);
     return BlobWriteSessions.of(writableByteChannelSession);
+  }
+
+  @Override
+  public BlobInfo internalCreateFrom(Path path, BlobInfo info, Opts<ObjectTargetOpt> opts)
+      throws IOException {
+    if (Files.isDirectory(path)) {
+      throw new StorageException(0, path + " is a directory");
+    }
+    long size = Files.size(path);
+    if (size == 0L) {
+      return internalCreate(info, EMPTY_BYTE_ARRAY, 0, 0, opts);
+    }
+    final Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
+    BlobInfo.Builder builder = info.toBuilder().setMd5(null).setCrc32c(null);
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
+    StorageObject encode = codecs.blobInfo().encode(updated);
+
+    Supplier<String> uploadIdSupplier =
+        ResumableMedia.startUploadForBlobInfo(
+            getOptions(),
+            updated,
+            optionsMap,
+            retryAlgorithmManager.getForResumableUploadSessionCreate(optionsMap));
+    JsonResumableWrite jsonResumableWrite =
+        JsonResumableWrite.of(encode, optionsMap, uploadIdSupplier.get(), 0);
+
+    JsonResumableSession session =
+        ResumableSession.json(
+            HttpClientContext.from(storageRpc),
+            getOptions().asRetryDependencies(),
+            retryAlgorithmManager.idempotent(),
+            jsonResumableWrite);
+    HttpContentRange contentRange =
+        HttpContentRange.of(ByteRangeSpec.relativeLength(0L, size), size);
+    ResumableOperationResult<StorageObject> put =
+        session.put(RewindableContent.of(path), contentRange);
+    // all exception translation is taken care of down in the JsonResumableSession
+    StorageObject object = put.getObject();
+    if (object == null) {
+      // if by some odd chance the put didn't get the StorageObject, query for it
+      ResumableOperationResult<StorageObject> query = session.query();
+      object = query.getObject();
+    }
+    return codecs.blobInfo().decode(object);
   }
 }

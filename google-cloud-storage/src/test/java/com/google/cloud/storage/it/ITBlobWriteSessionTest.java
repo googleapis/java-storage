@@ -69,12 +69,17 @@ public final class ITBlobWriteSessionTest {
   }
 
   @Test
-  @CrossRun.Exclude(transports = Transport.HTTP)
   public void bufferToTempDirThenUpload() throws Exception {
     StorageOptions options = null;
     if (transport == Transport.GRPC) {
       options =
           ((GrpcStorageOptions) storage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
+              .build();
+    } else if (transport == Transport.HTTP) {
+      options =
+          ((HttpStorageOptions) storage.getOptions())
               .toBuilder()
               .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bufferToTempDirThenUpload())
               .build();
