@@ -26,9 +26,9 @@ import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.core.SettableApiFuture;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
-import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.MetadataField.PartRange;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.annotations.VisibleForTesting;
@@ -36,7 +36,6 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -116,7 +115,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  */
 @Immutable
 @BetaApi
-public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig {
+@TransportCompatibility({Transport.GRPC})
+public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWriteSessionConfig
+    implements BlobWriteSessionConfig.GrpcCompatible {
 
   private static final int MAX_PARTS_PER_COMPOSE = 32;
   private final int maxPartsPerCompose;
@@ -669,10 +670,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
     @Override
     public WritableByteChannelSession<?, BlobInfo> writeSession(
-        StorageInternal s,
-        BlobInfo info,
-        Opts<ObjectTargetOpt> opts,
-        Decoder<WriteObjectResponse, BlobInfo> d) {
+        StorageInternal s, BlobInfo info, Opts<ObjectTargetOpt> opts) {
       return new PCUSession(s, info, opts);
     }
 

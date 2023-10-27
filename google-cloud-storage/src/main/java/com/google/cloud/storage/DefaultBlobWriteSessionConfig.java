@@ -20,12 +20,15 @@ import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
+import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.cloud.storage.BufferedWritableByteChannelSession.BufferedWritableByteChannel;
 import com.google.cloud.storage.Conversions.Decoder;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
 import java.nio.channels.WritableByteChannel;
 import java.time.Clock;
@@ -52,7 +55,9 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 @BetaApi
-public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig {
+@TransportCompatibility({Transport.GRPC})
+public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig
+    implements BlobWriteSessionConfig.GrpcCompatible {
   private static final long serialVersionUID = -6873740918589930633L;
 
   private final int chunkSize;
@@ -102,6 +107,9 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
 
   @InternalApi
   private static final class Factory implements WriterFactory {
+    private static final Decoder<WriteObjectResponse, BlobInfo>
+        WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER =
+            Conversions.grpc().blobInfo().compose(WriteObjectResponse::getResource);
 
     private final int chunkSize;
 
@@ -112,21 +120,36 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
     @InternalApi
     @Override
     public WritableByteChannelSession<?, BlobInfo> writeSession(
-        StorageInternal s,
-        BlobInfo info,
-        Opts<ObjectTargetOpt> opts,
-        Decoder<WriteObjectResponse, BlobInfo> d) {
-      // todo: invert this
-      //   make GrpcBlobWriteChannel use this factory to produce its WriteSession
+        StorageInternal s, BlobInfo info, Opts<ObjectTargetOpt> opts) {
       if (s instanceof GrpcStorageImpl) {
-        GrpcStorageImpl g = (GrpcStorageImpl) s;
-        GrpcBlobWriteChannel writer = g.internalWriter(info, opts);
-        writer.setChunkSize(chunkSize);
-        WritableByteChannelSession<BufferedWritableByteChannel, WriteObjectResponse> session =
-            writer.newLazyWriteChannel().getSession();
-        return new DecoratedWritableByteChannelSession<>(session, d);
+        return new DecoratedWritableByteChannelSession<>(
+            new LazySession<>(
+                new LazyWriteChannel<>(
+                    () -> {
+                      GrpcStorageImpl grpc = (GrpcStorageImpl) s;
+                      GrpcCallContext grpcCallContext =
+                          opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+                      WriteObjectRequest req = grpc.getWriteObjectRequest(info, opts);
+
+                      ApiFuture<ResumableWrite> startResumableWrite =
+                          grpc.startResumableWrite(grpcCallContext, req);
+                      return ResumableMedia.gapic()
+                          .write()
+                          .byteChannel(grpc.storageClient.writeObjectCallable())
+                          .setHasher(Hasher.noop())
+                          .setByteStringStrategy(ByteStringStrategy.copy())
+                          .resumable()
+                          .withRetryConfig(
+                              grpc.getOptions(), grpc.retryAlgorithmManager.idempotent())
+                          .buffered(BufferHandle.allocate(chunkSize))
+                          .setStartAsync(startResumableWrite)
+                          .build();
+                    })),
+            WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
+      } else {
+        throw new IllegalStateException(
+            "Unknown Storage implementation: " + s.getClass().getName());
       }
-      return CrossTransportUtils.throwGrpcOnly(DefaultBlobWriteSessionConfig.class, "");
     }
   }
 
@@ -160,6 +183,25 @@ public final class DefaultBlobWriteSessionConfig extends BlobWriteSessionConfig 
     public ApiFuture<BlobInfo> getResult() {
       return ApiFutures.transform(
           delegate.getResult(), decoder::decode, MoreExecutors.directExecutor());
+    }
+  }
+
+  private static final class LazySession<R>
+      implements WritableByteChannelSession<BufferedWritableByteChannel, R> {
+    private final LazyWriteChannel<R> lazy;
+
+    private LazySession(LazyWriteChannel<R> lazy) {
+      this.lazy = lazy;
+    }
+
+    @Override
+    public ApiFuture<BufferedWritableByteChannel> openAsync() {
+      return lazy.getSession().openAsync();
+    }
+
+    @Override
+    public ApiFuture<R> getResult() {
+      return lazy.getSession().getResult();
     }
   }
 }

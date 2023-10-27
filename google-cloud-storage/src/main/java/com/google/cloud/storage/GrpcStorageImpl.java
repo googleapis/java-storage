@@ -176,7 +176,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
-  private final Decoder<WriteObjectResponse, BlobInfo> writeObjectResponseBlobInfoDecoder;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
@@ -194,8 +193,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
-    this.writeObjectResponseBlobInfoDecoder =
-        codecs.blobInfo().compose(WriteObjectResponse::getResource);
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
   }
 
@@ -719,14 +716,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-    return internalWriter(blobInfo, opts);
-  }
-
-  @Override
-  public GrpcBlobWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(info, opts);
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     Hasher hasher = Hasher.noop();
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable(),
@@ -1534,7 +1526,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public BlobWriteSession blobWriteSession(BlobInfo info, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(info);
     WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
-        writerFactory.writeSession(this, info, opts, writeObjectResponseBlobInfoDecoder);
+        writerFactory.writeSession(this, info, opts);
     return BlobWriteSessions.of(writableByteChannelSession);
   }
 

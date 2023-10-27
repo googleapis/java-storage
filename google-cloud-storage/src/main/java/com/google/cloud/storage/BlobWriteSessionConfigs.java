@@ -21,6 +21,7 @@ import com.google.cloud.storage.GrpcStorageOptions.GrpcStorageDefaults;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.nio.channels.WritableByteChannel;
@@ -240,6 +241,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   public static DefaultBlobWriteSessionConfig getDefault() {
     return new DefaultBlobWriteSessionConfig(ByteSizeConstants._16MiB);
   }
@@ -255,6 +257,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   public static BlobWriteSessionConfig bufferToTempDirThenUpload() throws IOException {
     return bufferToDiskThenUpload(
         Paths.get(System.getProperty("java.io.tmpdir"), "google-cloud-storage"));
@@ -271,6 +274,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   public static BufferToDiskThenUpload bufferToDiskThenUpload(Path path) throws IOException {
     return bufferToDiskThenUpload(ImmutableList.of(path));
   }
@@ -289,6 +293,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.26.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   public static BufferToDiskThenUpload bufferToDiskThenUpload(Collection<Path> paths)
       throws IOException {
     return new BufferToDiskThenUpload(ImmutableList.copyOf(paths), false);
@@ -306,6 +311,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.27.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
+  @TransportCompatibility(Transport.GRPC)
   public static JournalingBlobWriteSessionConfig journaling(Collection<Path> paths) {
     return new JournalingBlobWriteSessionConfig(ImmutableList.copyOf(paths), false);
   }
@@ -321,6 +327,7 @@ public final class BlobWriteSessionConfigs {
    * @since 2.28.0 This new api is in preview and is subject to breaking changes.
    */
   @BetaApi
+  @TransportCompatibility({Transport.GRPC})
   public static ParallelCompositeUploadBlobWriteSessionConfig parallelCompositeUpload() {
     return ParallelCompositeUploadBlobWriteSessionConfig.withDefaults();
   }

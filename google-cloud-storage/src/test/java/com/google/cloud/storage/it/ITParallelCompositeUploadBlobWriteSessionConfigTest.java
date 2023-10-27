@@ -18,6 +18,7 @@ package com.google.cloud.storage.it;
 
 import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static org.junit.Assert.assertThrows;
 
 import com.google.api.gax.rpc.ApiExceptions;
@@ -29,6 +30,7 @@ import com.google.cloud.storage.BlobWriteSessionConfigs;
 import com.google.cloud.storage.BucketInfo;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.GrpcStorageOptions;
+import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.BufferAllocationStrategy;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.ExecutorSupplier;
 import com.google.cloud.storage.ParallelCompositeUploadBlobWriteSessionConfig.PartCleanupStrategy;
@@ -38,14 +40,14 @@ import com.google.cloud.storage.Storage.BlobSourceOption;
 import com.google.cloud.storage.Storage.BlobTargetOption;
 import com.google.cloud.storage.Storage.BlobWriteOption;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
 import com.google.cloud.storage.it.runner.annotations.BucketFixture;
 import com.google.cloud.storage.it.runner.annotations.BucketType;
+import com.google.cloud.storage.it.runner.annotations.CrossRun;
 import com.google.cloud.storage.it.runner.annotations.Inject;
-import com.google.cloud.storage.it.runner.annotations.SingleBackend;
-import com.google.cloud.storage.it.runner.annotations.StorageFixture;
 import com.google.cloud.storage.it.runner.registry.Generator;
 import com.google.cloud.storage.it.runner.registry.KmsFixture;
 import com.google.common.collect.ImmutableList;
@@ -67,7 +69,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(StorageITRunner.class)
-@SingleBackend(Backend.PROD)
+@CrossRun(
+    transports = {Transport.GRPC},
+    backends = {Backend.PROD})
 public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
 
   private static final int _1MiB = 1024 * 1024;
@@ -79,9 +83,9 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
   @BucketFixture(BucketType.REQUESTER_PAYS)
   public BucketInfo rpBucket;
 
-  @Inject
-  @StorageFixture(Transport.GRPC)
-  public Storage injectedStorage;
+  @Inject public Storage injectedStorage;
+
+  @Inject public Transport transport;
 
   @Inject public Generator generator;
   @Inject public KmsFixture kmsFixture;
@@ -99,18 +103,25 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
 
   @Before
   public void setUp() throws Exception {
-    GrpcStorageOptions storageOptions =
-        ((GrpcStorageOptions) injectedStorage.getOptions())
-            .toBuilder()
-            .setBlobWriteSessionConfig(
-                BlobWriteSessionConfigs.parallelCompositeUpload()
-                    .withExecutorSupplier(ExecutorSupplier.useExecutor(exec))
-                    // define a max part size that is fairly small to aid in test speed
-                    .withBufferAllocationStrategy(BufferAllocationStrategy.simple(_1MiB))
-                    .withPartNamingStrategy(PartNamingStrategy.prefix("prefix-a"))
-                    // let our fixtures take care of cleaning things up
-                    .withPartCleanupStrategy(PartCleanupStrategy.never()))
-            .build();
+    ParallelCompositeUploadBlobWriteSessionConfig pcu =
+        BlobWriteSessionConfigs.parallelCompositeUpload()
+            .withExecutorSupplier(ExecutorSupplier.useExecutor(exec))
+            // define a max part size that is fairly small to aid in test speed
+            .withBufferAllocationStrategy(BufferAllocationStrategy.simple(_1MiB))
+            .withPartNamingStrategy(PartNamingStrategy.prefix("prefix-a"))
+            // let our fixtures take care of cleaning things up if an upload fails
+            .withPartCleanupStrategy(PartCleanupStrategy.onlyOnSuccess());
+
+    StorageOptions storageOptions = null;
+    if (transport == Transport.GRPC) {
+      storageOptions =
+          ((GrpcStorageOptions) injectedStorage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(pcu)
+              .build();
+    }
+    assertWithMessage("unable to resolve options").that(storageOptions).isNotNull();
+    //noinspection DataFlowIssue
     storage = storageOptions.getService();
     rand = new Random();
   }
@@ -144,7 +155,6 @@ public final class ITParallelCompositeUploadBlobWriteSessionConfigTest {
       // it is okay if the exception is raised during write itself or close, if it happens during
       // close we should get an AsynchronousCloseException
     } catch (AsynchronousCloseException ace) {
-      assertThat(ace).hasCauseThat().hasMessageThat().contains("NOT_FOUND");
       assertThat(((StorageException) ace.getCause()).getCode()).isEqualTo(404);
     } catch (StorageException se) {
       assertThat(se.getCode()).isEqualTo(404);
