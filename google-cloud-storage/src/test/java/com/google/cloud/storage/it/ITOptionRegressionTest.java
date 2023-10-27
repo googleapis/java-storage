@@ -735,7 +735,8 @@ public final class ITOptionRegressionTest {
             "timeCreated",
             "timeDeleted",
             "timeStorageClassUpdated",
-            "updated");
+            "updated",
+            "retention");
     s.get(o.getBlobId(), BlobGetOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
@@ -909,7 +910,8 @@ public final class ITOptionRegressionTest {
             "items/timeCreated",
             "items/timeDeleted",
             "items/timeStorageClassUpdated",
-            "items/updated");
+            "items/updated",
+            "items/retention");
     s.list(b.getName(), BlobListOption.fields(BlobField.values()));
     requestAuditing.assertQueryParam("fields", expected, splitOnCommaToSet());
   }
