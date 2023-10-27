@@ -307,8 +307,7 @@ public final class TestUtils {
 
   /**
    * GRPC test methods will sometimes use all bucket fields, which can cause an error if any aren't
-   * supported by GRPC.
-   * todo: b/308194853
+   * supported by GRPC. todo: b/308194853
    */
   public static Storage.BucketField[] filterOutHttpOnlyBucketFields(Storage.BucketField[] fields) {
     return Arrays.stream(fields)
