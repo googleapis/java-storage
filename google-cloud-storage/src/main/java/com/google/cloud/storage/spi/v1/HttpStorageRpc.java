@@ -130,7 +130,7 @@ public class HttpStorageRpc implements StorageRpc {
         Arrays.stream(Thread.currentThread().getStackTrace())
             .anyMatch(
                 ste -> ste.getClassName().startsWith("com.google.cloud.storage.transfermanager"));
-    String tm = isTm ? "gcs-tm/tm" : null;
+    String tm = isTm ? "gccl-gcs-cmd/tm" : null;
 
     // Open Census initialization
     String applicationName = options.getApplicationName();

@@ -219,7 +219,8 @@ public final class GrpcStorageOptions extends StorageOptions
             .build();
     if (isTm) {
       internalHeaderProvider =
-          XGoogApiClientHeaderProvider.of(internalHeaderProvider, ImmutableList.of("gcs-tm/tm"));
+          XGoogApiClientHeaderProvider.of(
+              internalHeaderProvider, ImmutableList.of("gccl-gcs-cmd/tm"));
     }
 
     StorageSettings.Builder builder =
