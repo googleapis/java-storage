@@ -10,6 +10,9 @@
         "grpc": {
           "libraryClient": "StorageClient",
           "rpcs": {
+            "BidiWriteObject": {
+              "methods": ["bidiWriteObjectCallable"]
+            },
             "CancelResumableWrite": {
               "methods": ["cancelResumableWrite", "cancelResumableWrite", "cancelResumableWriteCallable"]
             },
@@ -75,6 +78,9 @@
             },
             "ReadObject": {
               "methods": ["readObjectCallable"]
+            },
+            "RestoreObject": {
+              "methods": ["restoreObject", "restoreObject", "restoreObject", "restoreObjectCallable"]
             },
             "RewriteObject": {
               "methods": ["rewriteObject", "rewriteObjectCallable"]

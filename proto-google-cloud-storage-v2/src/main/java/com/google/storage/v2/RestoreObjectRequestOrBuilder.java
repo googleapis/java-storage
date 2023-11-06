@@ -18,9 +18,9 @@
 
 package com.google.storage.v2;
 
-public interface GetObjectRequestOrBuilder
+public interface RestoreObjectRequestOrBuilder
     extends
-    // @@protoc_insertion_point(interface_extends:google.storage.v2.GetObjectRequest)
+    // @@protoc_insertion_point(interface_extends:google.storage.v2.RestoreObjectRequest)
     com.google.protobuf.MessageOrBuilder {
 
   /**
@@ -56,7 +56,7 @@ public interface GetObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the object.
+   * Required. The name of the object to restore.
    * </pre>
    *
    * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -68,7 +68,7 @@ public interface GetObjectRequestOrBuilder
    *
    *
    * <pre>
-   * Required. Name of the object.
+   * Required. The name of the object to restore.
    * </pre>
    *
    * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -81,40 +81,14 @@ public interface GetObjectRequestOrBuilder
    *
    *
    * <pre>
-   * If present, selects a specific revision of this object (as opposed to the
-   * latest version, the default).
+   * Required. The specific revision of the object to restore.
    * </pre>
    *
-   * <code>int64 generation = 3;</code>
+   * <code>int64 generation = 3 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The generation.
    */
   long getGeneration();
-
-  /**
-   *
-   *
-   * <pre>
-   * If true, return the soft-deleted version of this object.
-   * </pre>
-   *
-   * <code>optional bool soft_deleted = 11;</code>
-   *
-   * @return Whether the softDeleted field is set.
-   */
-  boolean hasSoftDeleted();
-  /**
-   *
-   *
-   * <pre>
-   * If true, return the soft-deleted version of this object.
-   * </pre>
-   *
-   * <code>optional bool soft_deleted = 11;</code>
-   *
-   * @return The softDeleted.
-   */
-  boolean getSoftDeleted();
 
   /**
    *
@@ -234,6 +208,35 @@ public interface GetObjectRequestOrBuilder
    *
    *
    * <pre>
+   * If false or unset, the bucket's default object ACL will be used.
+   * If true, copy the source object's access controls.
+   * Return an error if bucket has UBLA enabled.
+   * </pre>
+   *
+   * <code>optional bool copy_source_acl = 9;</code>
+   *
+   * @return Whether the copySourceAcl field is set.
+   */
+  boolean hasCopySourceAcl();
+  /**
+   *
+   *
+   * <pre>
+   * If false or unset, the bucket's default object ACL will be used.
+   * If true, copy the source object's access controls.
+   * Return an error if bucket has UBLA enabled.
+   * </pre>
+   *
+   * <code>optional bool copy_source_acl = 9;</code>
+   *
+   * @return The copySourceAcl.
+   */
+  boolean getCopySourceAcl();
+
+  /**
+   *
+   *
+   * <pre>
    * A set of parameters common to Storage API requests concerning an object.
    * </pre>
    *
@@ -264,48 +267,4 @@ public interface GetObjectRequestOrBuilder
    * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
    */
   com.google.storage.v2.CommonObjectRequestParamsOrBuilder getCommonObjectRequestParamsOrBuilder();
-
-  /**
-   *
-   *
-   * <pre>
-   * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
-   * </pre>
-   *
-   * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-   *
-   * @return Whether the readMask field is set.
-   */
-  boolean hasReadMask();
-  /**
-   *
-   *
-   * <pre>
-   * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
-   * </pre>
-   *
-   * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-   *
-   * @return The readMask.
-   */
-  com.google.protobuf.FieldMask getReadMask();
-  /**
-   *
-   *
-   * <pre>
-   * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
-   * </pre>
-   *
-   * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-   */
-  com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder();
 }

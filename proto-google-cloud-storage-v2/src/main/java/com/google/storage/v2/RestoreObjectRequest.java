@@ -22,22 +22,23 @@ package com.google.storage.v2;
  *
  *
  * <pre>
- * Request message for GetObject.
+ * Message for restoring an object.
+ * `bucket`, `object`, and `generation` **must** be set.
  * </pre>
  *
- * Protobuf type {@code google.storage.v2.GetObjectRequest}
+ * Protobuf type {@code google.storage.v2.RestoreObjectRequest}
  */
-public final class GetObjectRequest extends com.google.protobuf.GeneratedMessageV3
+public final class RestoreObjectRequest extends com.google.protobuf.GeneratedMessageV3
     implements
-    // @@protoc_insertion_point(message_implements:google.storage.v2.GetObjectRequest)
-    GetObjectRequestOrBuilder {
+    // @@protoc_insertion_point(message_implements:google.storage.v2.RestoreObjectRequest)
+    RestoreObjectRequestOrBuilder {
   private static final long serialVersionUID = 0L;
-  // Use GetObjectRequest.newBuilder() to construct.
-  private GetObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+  // Use RestoreObjectRequest.newBuilder() to construct.
+  private RestoreObjectRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
     super(builder);
   }
 
-  private GetObjectRequest() {
+  private RestoreObjectRequest() {
     bucket_ = "";
     object_ = "";
   }
@@ -45,22 +46,22 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
   @java.lang.Override
   @SuppressWarnings({"unused"})
   protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
-    return new GetObjectRequest();
+    return new RestoreObjectRequest();
   }
 
   public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_GetObjectRequest_descriptor;
+        .internal_static_google_storage_v2_RestoreObjectRequest_descriptor;
   }
 
   @java.lang.Override
   protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
     return com.google.storage.v2.StorageProto
-        .internal_static_google_storage_v2_GetObjectRequest_fieldAccessorTable
+        .internal_static_google_storage_v2_RestoreObjectRequest_fieldAccessorTable
         .ensureFieldAccessorsInitialized(
-            com.google.storage.v2.GetObjectRequest.class,
-            com.google.storage.v2.GetObjectRequest.Builder.class);
+            com.google.storage.v2.RestoreObjectRequest.class,
+            com.google.storage.v2.RestoreObjectRequest.Builder.class);
   }
 
   private int bitField0_;
@@ -127,7 +128,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * Required. Name of the object.
+   * Required. The name of the object to restore.
    * </pre>
    *
    * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -150,7 +151,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * Required. Name of the object.
+   * Required. The name of the object to restore.
    * </pre>
    *
    * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -176,50 +177,16 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * If present, selects a specific revision of this object (as opposed to the
-   * latest version, the default).
+   * Required. The specific revision of the object to restore.
    * </pre>
    *
-   * <code>int64 generation = 3;</code>
+   * <code>int64 generation = 3 [(.google.api.field_behavior) = REQUIRED];</code>
    *
    * @return The generation.
    */
   @java.lang.Override
   public long getGeneration() {
     return generation_;
-  }
-
-  public static final int SOFT_DELETED_FIELD_NUMBER = 11;
-  private boolean softDeleted_ = false;
-  /**
-   *
-   *
-   * <pre>
-   * If true, return the soft-deleted version of this object.
-   * </pre>
-   *
-   * <code>optional bool soft_deleted = 11;</code>
-   *
-   * @return Whether the softDeleted field is set.
-   */
-  @java.lang.Override
-  public boolean hasSoftDeleted() {
-    return ((bitField0_ & 0x00000001) != 0);
-  }
-  /**
-   *
-   *
-   * <pre>
-   * If true, return the soft-deleted version of this object.
-   * </pre>
-   *
-   * <code>optional bool soft_deleted = 11;</code>
-   *
-   * @return The softDeleted.
-   */
-  @java.lang.Override
-  public boolean getSoftDeleted() {
-    return softDeleted_;
   }
 
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 4;
@@ -239,7 +206,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfGenerationMatch() {
-    return ((bitField0_ & 0x00000002) != 0);
+    return ((bitField0_ & 0x00000001) != 0);
   }
   /**
    *
@@ -277,7 +244,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfGenerationNotMatch() {
-    return ((bitField0_ & 0x00000004) != 0);
+    return ((bitField0_ & 0x00000002) != 0);
   }
   /**
    *
@@ -314,7 +281,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfMetagenerationMatch() {
-    return ((bitField0_ & 0x00000008) != 0);
+    return ((bitField0_ & 0x00000004) != 0);
   }
   /**
    *
@@ -349,7 +316,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfMetagenerationNotMatch() {
-    return ((bitField0_ & 0x00000010) != 0);
+    return ((bitField0_ & 0x00000008) != 0);
   }
   /**
    *
@@ -366,6 +333,43 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
   @java.lang.Override
   public long getIfMetagenerationNotMatch() {
     return ifMetagenerationNotMatch_;
+  }
+
+  public static final int COPY_SOURCE_ACL_FIELD_NUMBER = 9;
+  private boolean copySourceAcl_ = false;
+  /**
+   *
+   *
+   * <pre>
+   * If false or unset, the bucket's default object ACL will be used.
+   * If true, copy the source object's access controls.
+   * Return an error if bucket has UBLA enabled.
+   * </pre>
+   *
+   * <code>optional bool copy_source_acl = 9;</code>
+   *
+   * @return Whether the copySourceAcl field is set.
+   */
+  @java.lang.Override
+  public boolean hasCopySourceAcl() {
+    return ((bitField0_ & 0x00000010) != 0);
+  }
+  /**
+   *
+   *
+   * <pre>
+   * If false or unset, the bucket's default object ACL will be used.
+   * If true, copy the source object's access controls.
+   * Return an error if bucket has UBLA enabled.
+   * </pre>
+   *
+   * <code>optional bool copy_source_acl = 9;</code>
+   *
+   * @return The copySourceAcl.
+   */
+  @java.lang.Override
+  public boolean getCopySourceAcl() {
+    return copySourceAcl_;
   }
 
   public static final int COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER = 8;
@@ -419,61 +423,6 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
         : commonObjectRequestParams_;
   }
 
-  public static final int READ_MASK_FIELD_NUMBER = 10;
-  private com.google.protobuf.FieldMask readMask_;
-  /**
-   *
-   *
-   * <pre>
-   * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
-   * </pre>
-   *
-   * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-   *
-   * @return Whether the readMask field is set.
-   */
-  @java.lang.Override
-  public boolean hasReadMask() {
-    return ((bitField0_ & 0x00000020) != 0);
-  }
-  /**
-   *
-   *
-   * <pre>
-   * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
-   * </pre>
-   *
-   * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-   *
-   * @return The readMask.
-   */
-  @java.lang.Override
-  public com.google.protobuf.FieldMask getReadMask() {
-    return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
-  }
-  /**
-   *
-   *
-   * <pre>
-   * Mask specifying which fields to read.
-   * If no mask is specified, will default to all fields except metadata.acl and
-   * metadata.owner.
-   * * may be used to mean "all fields".
-   * </pre>
-   *
-   * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-   */
-  @java.lang.Override
-  public com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder() {
-    return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
-  }
-
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -497,26 +446,23 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (generation_ != 0L) {
       output.writeInt64(3, generation_);
     }
-    if (((bitField0_ & 0x00000002) != 0)) {
+    if (((bitField0_ & 0x00000001) != 0)) {
       output.writeInt64(4, ifGenerationMatch_);
     }
-    if (((bitField0_ & 0x00000004) != 0)) {
+    if (((bitField0_ & 0x00000002) != 0)) {
       output.writeInt64(5, ifGenerationNotMatch_);
     }
-    if (((bitField0_ & 0x00000008) != 0)) {
+    if (((bitField0_ & 0x00000004) != 0)) {
       output.writeInt64(6, ifMetagenerationMatch_);
     }
-    if (((bitField0_ & 0x00000010) != 0)) {
+    if (((bitField0_ & 0x00000008) != 0)) {
       output.writeInt64(7, ifMetagenerationNotMatch_);
     }
     if (commonObjectRequestParams_ != null) {
       output.writeMessage(8, getCommonObjectRequestParams());
     }
-    if (((bitField0_ & 0x00000020) != 0)) {
-      output.writeMessage(10, getReadMask());
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      output.writeBool(11, softDeleted_);
+    if (((bitField0_ & 0x00000010) != 0)) {
+      output.writeBool(9, copySourceAcl_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -536,16 +482,16 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (generation_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, generation_);
     }
-    if (((bitField0_ & 0x00000002) != 0)) {
+    if (((bitField0_ & 0x00000001) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, ifGenerationMatch_);
     }
-    if (((bitField0_ & 0x00000004) != 0)) {
+    if (((bitField0_ & 0x00000002) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, ifGenerationNotMatch_);
     }
-    if (((bitField0_ & 0x00000008) != 0)) {
+    if (((bitField0_ & 0x00000004) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, ifMetagenerationMatch_);
     }
-    if (((bitField0_ & 0x00000010) != 0)) {
+    if (((bitField0_ & 0x00000008) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, ifMetagenerationNotMatch_);
     }
     if (commonObjectRequestParams_ != null) {
@@ -553,11 +499,8 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
           com.google.protobuf.CodedOutputStream.computeMessageSize(
               8, getCommonObjectRequestParams());
     }
-    if (((bitField0_ & 0x00000020) != 0)) {
-      size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, getReadMask());
-    }
-    if (((bitField0_ & 0x00000001) != 0)) {
-      size += com.google.protobuf.CodedOutputStream.computeBoolSize(11, softDeleted_);
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(9, copySourceAcl_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -569,18 +512,15 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof com.google.storage.v2.GetObjectRequest)) {
+    if (!(obj instanceof com.google.storage.v2.RestoreObjectRequest)) {
       return super.equals(obj);
     }
-    com.google.storage.v2.GetObjectRequest other = (com.google.storage.v2.GetObjectRequest) obj;
+    com.google.storage.v2.RestoreObjectRequest other =
+        (com.google.storage.v2.RestoreObjectRequest) obj;
 
     if (!getBucket().equals(other.getBucket())) return false;
     if (!getObject().equals(other.getObject())) return false;
     if (getGeneration() != other.getGeneration()) return false;
-    if (hasSoftDeleted() != other.hasSoftDeleted()) return false;
-    if (hasSoftDeleted()) {
-      if (getSoftDeleted() != other.getSoftDeleted()) return false;
-    }
     if (hasIfGenerationMatch() != other.hasIfGenerationMatch()) return false;
     if (hasIfGenerationMatch()) {
       if (getIfGenerationMatch() != other.getIfGenerationMatch()) return false;
@@ -597,14 +537,14 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (hasIfMetagenerationNotMatch()) {
       if (getIfMetagenerationNotMatch() != other.getIfMetagenerationNotMatch()) return false;
     }
+    if (hasCopySourceAcl() != other.hasCopySourceAcl()) return false;
+    if (hasCopySourceAcl()) {
+      if (getCopySourceAcl() != other.getCopySourceAcl()) return false;
+    }
     if (hasCommonObjectRequestParams() != other.hasCommonObjectRequestParams()) return false;
     if (hasCommonObjectRequestParams()) {
       if (!getCommonObjectRequestParams().equals(other.getCommonObjectRequestParams()))
         return false;
-    }
-    if (hasReadMask() != other.hasReadMask()) return false;
-    if (hasReadMask()) {
-      if (!getReadMask().equals(other.getReadMask())) return false;
     }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
@@ -623,10 +563,6 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     hash = (53 * hash) + getObject().hashCode();
     hash = (37 * hash) + GENERATION_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getGeneration());
-    if (hasSoftDeleted()) {
-      hash = (37 * hash) + SOFT_DELETED_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getSoftDeleted());
-    }
     if (hasIfGenerationMatch()) {
       hash = (37 * hash) + IF_GENERATION_MATCH_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfGenerationMatch());
@@ -643,84 +579,84 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       hash = (37 * hash) + IF_METAGENERATION_NOT_MATCH_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfMetagenerationNotMatch());
     }
+    if (hasCopySourceAcl()) {
+      hash = (37 * hash) + COPY_SOURCE_ACL_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getCopySourceAcl());
+    }
     if (hasCommonObjectRequestParams()) {
       hash = (37 * hash) + COMMON_OBJECT_REQUEST_PARAMS_FIELD_NUMBER;
       hash = (53 * hash) + getCommonObjectRequestParams().hashCode();
-    }
-    if (hasReadMask()) {
-      hash = (37 * hash) + READ_MASK_FIELD_NUMBER;
-      hash = (53 * hash) + getReadMask().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
     return hash;
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(java.nio.ByteBuffer data)
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(java.nio.ByteBuffer data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(
       java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(
       com.google.protobuf.ByteString data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(
       com.google.protobuf.ByteString data,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(byte[] data)
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(byte[] data)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(
       byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws com.google.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(java.io.InputStream input)
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseDelimitedFrom(java.io.InputStream input)
-      throws java.io.IOException {
+  public static com.google.storage.v2.RestoreObjectRequest parseDelimitedFrom(
+      java.io.InputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseDelimitedFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseDelimitedFrom(
       java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
         PARSER, input, extensionRegistry);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(
       com.google.protobuf.CodedInputStream input) throws java.io.IOException {
     return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
   }
 
-  public static com.google.storage.v2.GetObjectRequest parseFrom(
+  public static com.google.storage.v2.RestoreObjectRequest parseFrom(
       com.google.protobuf.CodedInputStream input,
       com.google.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -737,7 +673,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     return DEFAULT_INSTANCE.toBuilder();
   }
 
-  public static Builder newBuilder(com.google.storage.v2.GetObjectRequest prototype) {
+  public static Builder newBuilder(com.google.storage.v2.RestoreObjectRequest prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
   }
 
@@ -755,45 +691,36 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    *
    *
    * <pre>
-   * Request message for GetObject.
+   * Message for restoring an object.
+   * `bucket`, `object`, and `generation` **must** be set.
    * </pre>
    *
-   * Protobuf type {@code google.storage.v2.GetObjectRequest}
+   * Protobuf type {@code google.storage.v2.RestoreObjectRequest}
    */
   public static final class Builder extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:google.storage.v2.GetObjectRequest)
-      com.google.storage.v2.GetObjectRequestOrBuilder {
+      // @@protoc_insertion_point(builder_implements:google.storage.v2.RestoreObjectRequest)
+      com.google.storage.v2.RestoreObjectRequestOrBuilder {
     public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetObjectRequest_descriptor;
+          .internal_static_google_storage_v2_RestoreObjectRequest_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetObjectRequest_fieldAccessorTable
+          .internal_static_google_storage_v2_RestoreObjectRequest_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              com.google.storage.v2.GetObjectRequest.class,
-              com.google.storage.v2.GetObjectRequest.Builder.class);
+              com.google.storage.v2.RestoreObjectRequest.class,
+              com.google.storage.v2.RestoreObjectRequest.Builder.class);
     }
 
-    // Construct using com.google.storage.v2.GetObjectRequest.newBuilder()
-    private Builder() {
-      maybeForceBuilderInitialization();
-    }
+    // Construct using com.google.storage.v2.RestoreObjectRequest.newBuilder()
+    private Builder() {}
 
     private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-      maybeForceBuilderInitialization();
-    }
-
-    private void maybeForceBuilderInitialization() {
-      if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
-        getCommonObjectRequestParamsFieldBuilder();
-        getReadMaskFieldBuilder();
-      }
     }
 
     @java.lang.Override
@@ -803,20 +730,15 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       bucket_ = "";
       object_ = "";
       generation_ = 0L;
-      softDeleted_ = false;
       ifGenerationMatch_ = 0L;
       ifGenerationNotMatch_ = 0L;
       ifMetagenerationMatch_ = 0L;
       ifMetagenerationNotMatch_ = 0L;
+      copySourceAcl_ = false;
       commonObjectRequestParams_ = null;
       if (commonObjectRequestParamsBuilder_ != null) {
         commonObjectRequestParamsBuilder_.dispose();
         commonObjectRequestParamsBuilder_ = null;
-      }
-      readMask_ = null;
-      if (readMaskBuilder_ != null) {
-        readMaskBuilder_.dispose();
-        readMaskBuilder_ = null;
       }
       return this;
     }
@@ -824,17 +746,17 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     @java.lang.Override
     public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
       return com.google.storage.v2.StorageProto
-          .internal_static_google_storage_v2_GetObjectRequest_descriptor;
+          .internal_static_google_storage_v2_RestoreObjectRequest_descriptor;
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetObjectRequest getDefaultInstanceForType() {
-      return com.google.storage.v2.GetObjectRequest.getDefaultInstance();
+    public com.google.storage.v2.RestoreObjectRequest getDefaultInstanceForType() {
+      return com.google.storage.v2.RestoreObjectRequest.getDefaultInstance();
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetObjectRequest build() {
-      com.google.storage.v2.GetObjectRequest result = buildPartial();
+    public com.google.storage.v2.RestoreObjectRequest build() {
+      com.google.storage.v2.RestoreObjectRequest result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
@@ -842,9 +764,9 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     }
 
     @java.lang.Override
-    public com.google.storage.v2.GetObjectRequest buildPartial() {
-      com.google.storage.v2.GetObjectRequest result =
-          new com.google.storage.v2.GetObjectRequest(this);
+    public com.google.storage.v2.RestoreObjectRequest buildPartial() {
+      com.google.storage.v2.RestoreObjectRequest result =
+          new com.google.storage.v2.RestoreObjectRequest(this);
       if (bitField0_ != 0) {
         buildPartial0(result);
       }
@@ -852,7 +774,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       return result;
     }
 
-    private void buildPartial0(com.google.storage.v2.GetObjectRequest result) {
+    private void buildPartial0(com.google.storage.v2.RestoreObjectRequest result) {
       int from_bitField0_ = bitField0_;
       if (((from_bitField0_ & 0x00000001) != 0)) {
         result.bucket_ = bucket_;
@@ -865,23 +787,23 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       }
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.softDeleted_ = softDeleted_;
+        result.ifGenerationMatch_ = ifGenerationMatch_;
         to_bitField0_ |= 0x00000001;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.ifGenerationMatch_ = ifGenerationMatch_;
+        result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
         to_bitField0_ |= 0x00000002;
       }
       if (((from_bitField0_ & 0x00000020) != 0)) {
-        result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
+        result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000004;
       }
       if (((from_bitField0_ & 0x00000040) != 0)) {
-        result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
+        result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
         to_bitField0_ |= 0x00000008;
       }
       if (((from_bitField0_ & 0x00000080) != 0)) {
-        result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
+        result.copySourceAcl_ = copySourceAcl_;
         to_bitField0_ |= 0x00000010;
       }
       if (((from_bitField0_ & 0x00000100) != 0)) {
@@ -889,10 +811,6 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
             commonObjectRequestParamsBuilder_ == null
                 ? commonObjectRequestParams_
                 : commonObjectRequestParamsBuilder_.build();
-      }
-      if (((from_bitField0_ & 0x00000200) != 0)) {
-        result.readMask_ = readMaskBuilder_ == null ? readMask_ : readMaskBuilder_.build();
-        to_bitField0_ |= 0x00000020;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -932,16 +850,16 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
 
     @java.lang.Override
     public Builder mergeFrom(com.google.protobuf.Message other) {
-      if (other instanceof com.google.storage.v2.GetObjectRequest) {
-        return mergeFrom((com.google.storage.v2.GetObjectRequest) other);
+      if (other instanceof com.google.storage.v2.RestoreObjectRequest) {
+        return mergeFrom((com.google.storage.v2.RestoreObjectRequest) other);
       } else {
         super.mergeFrom(other);
         return this;
       }
     }
 
-    public Builder mergeFrom(com.google.storage.v2.GetObjectRequest other) {
-      if (other == com.google.storage.v2.GetObjectRequest.getDefaultInstance()) return this;
+    public Builder mergeFrom(com.google.storage.v2.RestoreObjectRequest other) {
+      if (other == com.google.storage.v2.RestoreObjectRequest.getDefaultInstance()) return this;
       if (!other.getBucket().isEmpty()) {
         bucket_ = other.bucket_;
         bitField0_ |= 0x00000001;
@@ -955,9 +873,6 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       if (other.getGeneration() != 0L) {
         setGeneration(other.getGeneration());
       }
-      if (other.hasSoftDeleted()) {
-        setSoftDeleted(other.getSoftDeleted());
-      }
       if (other.hasIfGenerationMatch()) {
         setIfGenerationMatch(other.getIfGenerationMatch());
       }
@@ -970,11 +885,11 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       if (other.hasIfMetagenerationNotMatch()) {
         setIfMetagenerationNotMatch(other.getIfMetagenerationNotMatch());
       }
+      if (other.hasCopySourceAcl()) {
+        setCopySourceAcl(other.getCopySourceAcl());
+      }
       if (other.hasCommonObjectRequestParams()) {
         mergeCommonObjectRequestParams(other.getCommonObjectRequestParams());
-      }
-      if (other.hasReadMask()) {
-        mergeReadMask(other.getReadMask());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -1023,25 +938,25 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
             case 32:
               {
                 ifGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000010;
+                bitField0_ |= 0x00000008;
                 break;
               } // case 32
             case 40:
               {
                 ifGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000020;
+                bitField0_ |= 0x00000010;
                 break;
               } // case 40
             case 48:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000040;
+                bitField0_ |= 0x00000020;
                 break;
               } // case 48
             case 56:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000080;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 56
             case 66:
@@ -1051,18 +966,12 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
                 bitField0_ |= 0x00000100;
                 break;
               } // case 66
-            case 82:
+            case 72:
               {
-                input.readMessage(getReadMaskFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000200;
+                copySourceAcl_ = input.readBool();
+                bitField0_ |= 0x00000080;
                 break;
-              } // case 82
-            case 88:
-              {
-                softDeleted_ = input.readBool();
-                bitField0_ |= 0x00000008;
-                break;
-              } // case 88
+              } // case 72
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -1203,7 +1112,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * Required. Name of the object.
+     * Required. The name of the object to restore.
      * </pre>
      *
      * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1225,7 +1134,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * Required. Name of the object.
+     * Required. The name of the object to restore.
      * </pre>
      *
      * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1247,7 +1156,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * Required. Name of the object.
+     * Required. The name of the object to restore.
      * </pre>
      *
      * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1268,7 +1177,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * Required. Name of the object.
+     * Required. The name of the object to restore.
      * </pre>
      *
      * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1285,7 +1194,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * Required. Name of the object.
+     * Required. The name of the object to restore.
      * </pre>
      *
      * <code>string object = 2 [(.google.api.field_behavior) = REQUIRED];</code>
@@ -1309,11 +1218,10 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * If present, selects a specific revision of this object (as opposed to the
-     * latest version, the default).
+     * Required. The specific revision of the object to restore.
      * </pre>
      *
-     * <code>int64 generation = 3;</code>
+     * <code>int64 generation = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return The generation.
      */
@@ -1325,11 +1233,10 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * If present, selects a specific revision of this object (as opposed to the
-     * latest version, the default).
+     * Required. The specific revision of the object to restore.
      * </pre>
      *
-     * <code>int64 generation = 3;</code>
+     * <code>int64 generation = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @param value The generation to set.
      * @return This builder for chaining.
@@ -1345,85 +1252,16 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      *
      *
      * <pre>
-     * If present, selects a specific revision of this object (as opposed to the
-     * latest version, the default).
+     * Required. The specific revision of the object to restore.
      * </pre>
      *
-     * <code>int64 generation = 3;</code>
+     * <code>int64 generation = 3 [(.google.api.field_behavior) = REQUIRED];</code>
      *
      * @return This builder for chaining.
      */
     public Builder clearGeneration() {
       bitField0_ = (bitField0_ & ~0x00000004);
       generation_ = 0L;
-      onChanged();
-      return this;
-    }
-
-    private boolean softDeleted_;
-    /**
-     *
-     *
-     * <pre>
-     * If true, return the soft-deleted version of this object.
-     * </pre>
-     *
-     * <code>optional bool soft_deleted = 11;</code>
-     *
-     * @return Whether the softDeleted field is set.
-     */
-    @java.lang.Override
-    public boolean hasSoftDeleted() {
-      return ((bitField0_ & 0x00000008) != 0);
-    }
-    /**
-     *
-     *
-     * <pre>
-     * If true, return the soft-deleted version of this object.
-     * </pre>
-     *
-     * <code>optional bool soft_deleted = 11;</code>
-     *
-     * @return The softDeleted.
-     */
-    @java.lang.Override
-    public boolean getSoftDeleted() {
-      return softDeleted_;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * If true, return the soft-deleted version of this object.
-     * </pre>
-     *
-     * <code>optional bool soft_deleted = 11;</code>
-     *
-     * @param value The softDeleted to set.
-     * @return This builder for chaining.
-     */
-    public Builder setSoftDeleted(boolean value) {
-
-      softDeleted_ = value;
-      bitField0_ |= 0x00000008;
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * If true, return the soft-deleted version of this object.
-     * </pre>
-     *
-     * <code>optional bool soft_deleted = 11;</code>
-     *
-     * @return This builder for chaining.
-     */
-    public Builder clearSoftDeleted() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      softDeleted_ = false;
       onChanged();
       return this;
     }
@@ -1444,7 +1282,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfGenerationMatch() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return ((bitField0_ & 0x00000008) != 0);
     }
     /**
      *
@@ -1480,7 +1318,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfGenerationMatch(long value) {
 
       ifGenerationMatch_ = value;
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000008;
       onChanged();
       return this;
     }
@@ -1498,7 +1336,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000008);
       ifGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1521,7 +1359,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfGenerationNotMatch() {
-      return ((bitField0_ & 0x00000020) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1559,7 +1397,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfGenerationNotMatch(long value) {
 
       ifGenerationNotMatch_ = value;
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1578,7 +1416,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000010);
       ifGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1599,7 +1437,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000040) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      *
@@ -1633,7 +1471,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfMetagenerationMatch(long value) {
 
       ifMetagenerationMatch_ = value;
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1650,7 +1488,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000020);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1671,7 +1509,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000080) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      *
@@ -1705,7 +1543,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfMetagenerationNotMatch(long value) {
 
       ifMetagenerationNotMatch_ = value;
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1722,8 +1560,84 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000040);
       ifMetagenerationNotMatch_ = 0L;
+      onChanged();
+      return this;
+    }
+
+    private boolean copySourceAcl_;
+    /**
+     *
+     *
+     * <pre>
+     * If false or unset, the bucket's default object ACL will be used.
+     * If true, copy the source object's access controls.
+     * Return an error if bucket has UBLA enabled.
+     * </pre>
+     *
+     * <code>optional bool copy_source_acl = 9;</code>
+     *
+     * @return Whether the copySourceAcl field is set.
+     */
+    @java.lang.Override
+    public boolean hasCopySourceAcl() {
+      return ((bitField0_ & 0x00000080) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If false or unset, the bucket's default object ACL will be used.
+     * If true, copy the source object's access controls.
+     * Return an error if bucket has UBLA enabled.
+     * </pre>
+     *
+     * <code>optional bool copy_source_acl = 9;</code>
+     *
+     * @return The copySourceAcl.
+     */
+    @java.lang.Override
+    public boolean getCopySourceAcl() {
+      return copySourceAcl_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If false or unset, the bucket's default object ACL will be used.
+     * If true, copy the source object's access controls.
+     * Return an error if bucket has UBLA enabled.
+     * </pre>
+     *
+     * <code>optional bool copy_source_acl = 9;</code>
+     *
+     * @param value The copySourceAcl to set.
+     * @return This builder for chaining.
+     */
+    public Builder setCopySourceAcl(boolean value) {
+
+      copySourceAcl_ = value;
+      bitField0_ |= 0x00000080;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If false or unset, the bucket's default object ACL will be used.
+     * If true, copy the source object's access controls.
+     * Return an error if bucket has UBLA enabled.
+     * </pre>
+     *
+     * <code>optional bool copy_source_acl = 9;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearCopySourceAcl() {
+      bitField0_ = (bitField0_ & ~0x00000080);
+      copySourceAcl_ = false;
       onChanged();
       return this;
     }
@@ -1917,212 +1831,6 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       return commonObjectRequestParamsBuilder_;
     }
 
-    private com.google.protobuf.FieldMask readMask_;
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.protobuf.FieldMask,
-            com.google.protobuf.FieldMask.Builder,
-            com.google.protobuf.FieldMaskOrBuilder>
-        readMaskBuilder_;
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     *
-     * @return Whether the readMask field is set.
-     */
-    public boolean hasReadMask() {
-      return ((bitField0_ & 0x00000200) != 0);
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     *
-     * @return The readMask.
-     */
-    public com.google.protobuf.FieldMask getReadMask() {
-      if (readMaskBuilder_ == null) {
-        return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
-      } else {
-        return readMaskBuilder_.getMessage();
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     */
-    public Builder setReadMask(com.google.protobuf.FieldMask value) {
-      if (readMaskBuilder_ == null) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        readMask_ = value;
-      } else {
-        readMaskBuilder_.setMessage(value);
-      }
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     */
-    public Builder setReadMask(com.google.protobuf.FieldMask.Builder builderForValue) {
-      if (readMaskBuilder_ == null) {
-        readMask_ = builderForValue.build();
-      } else {
-        readMaskBuilder_.setMessage(builderForValue.build());
-      }
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     */
-    public Builder mergeReadMask(com.google.protobuf.FieldMask value) {
-      if (readMaskBuilder_ == null) {
-        if (((bitField0_ & 0x00000200) != 0)
-            && readMask_ != null
-            && readMask_ != com.google.protobuf.FieldMask.getDefaultInstance()) {
-          getReadMaskBuilder().mergeFrom(value);
-        } else {
-          readMask_ = value;
-        }
-      } else {
-        readMaskBuilder_.mergeFrom(value);
-      }
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     */
-    public Builder clearReadMask() {
-      bitField0_ = (bitField0_ & ~0x00000200);
-      readMask_ = null;
-      if (readMaskBuilder_ != null) {
-        readMaskBuilder_.dispose();
-        readMaskBuilder_ = null;
-      }
-      onChanged();
-      return this;
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     */
-    public com.google.protobuf.FieldMask.Builder getReadMaskBuilder() {
-      bitField0_ |= 0x00000200;
-      onChanged();
-      return getReadMaskFieldBuilder().getBuilder();
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     */
-    public com.google.protobuf.FieldMaskOrBuilder getReadMaskOrBuilder() {
-      if (readMaskBuilder_ != null) {
-        return readMaskBuilder_.getMessageOrBuilder();
-      } else {
-        return readMask_ == null ? com.google.protobuf.FieldMask.getDefaultInstance() : readMask_;
-      }
-    }
-    /**
-     *
-     *
-     * <pre>
-     * Mask specifying which fields to read.
-     * If no mask is specified, will default to all fields except metadata.acl and
-     * metadata.owner.
-     * * may be used to mean "all fields".
-     * </pre>
-     *
-     * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
-     */
-    private com.google.protobuf.SingleFieldBuilderV3<
-            com.google.protobuf.FieldMask,
-            com.google.protobuf.FieldMask.Builder,
-            com.google.protobuf.FieldMaskOrBuilder>
-        getReadMaskFieldBuilder() {
-      if (readMaskBuilder_ == null) {
-        readMaskBuilder_ =
-            new com.google.protobuf.SingleFieldBuilderV3<
-                com.google.protobuf.FieldMask,
-                com.google.protobuf.FieldMask.Builder,
-                com.google.protobuf.FieldMaskOrBuilder>(
-                getReadMask(), getParentForChildren(), isClean());
-        readMask_ = null;
-      }
-      return readMaskBuilder_;
-    }
-
     @java.lang.Override
     public final Builder setUnknownFields(final com.google.protobuf.UnknownFieldSet unknownFields) {
       return super.setUnknownFields(unknownFields);
@@ -2134,24 +1842,24 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       return super.mergeUnknownFields(unknownFields);
     }
 
-    // @@protoc_insertion_point(builder_scope:google.storage.v2.GetObjectRequest)
+    // @@protoc_insertion_point(builder_scope:google.storage.v2.RestoreObjectRequest)
   }
 
-  // @@protoc_insertion_point(class_scope:google.storage.v2.GetObjectRequest)
-  private static final com.google.storage.v2.GetObjectRequest DEFAULT_INSTANCE;
+  // @@protoc_insertion_point(class_scope:google.storage.v2.RestoreObjectRequest)
+  private static final com.google.storage.v2.RestoreObjectRequest DEFAULT_INSTANCE;
 
   static {
-    DEFAULT_INSTANCE = new com.google.storage.v2.GetObjectRequest();
+    DEFAULT_INSTANCE = new com.google.storage.v2.RestoreObjectRequest();
   }
 
-  public static com.google.storage.v2.GetObjectRequest getDefaultInstance() {
+  public static com.google.storage.v2.RestoreObjectRequest getDefaultInstance() {
     return DEFAULT_INSTANCE;
   }
 
-  private static final com.google.protobuf.Parser<GetObjectRequest> PARSER =
-      new com.google.protobuf.AbstractParser<GetObjectRequest>() {
+  private static final com.google.protobuf.Parser<RestoreObjectRequest> PARSER =
+      new com.google.protobuf.AbstractParser<RestoreObjectRequest>() {
         @java.lang.Override
-        public GetObjectRequest parsePartialFrom(
+        public RestoreObjectRequest parsePartialFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2170,17 +1878,17 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
         }
       };
 
-  public static com.google.protobuf.Parser<GetObjectRequest> parser() {
+  public static com.google.protobuf.Parser<RestoreObjectRequest> parser() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.protobuf.Parser<GetObjectRequest> getParserForType() {
+  public com.google.protobuf.Parser<RestoreObjectRequest> getParserForType() {
     return PARSER;
   }
 
   @java.lang.Override
-  public com.google.storage.v2.GetObjectRequest getDefaultInstanceForType() {
+  public com.google.storage.v2.RestoreObjectRequest getDefaultInstanceForType() {
     return DEFAULT_INSTANCE;
   }
 }

@@ -44,4 +44,15 @@
     <method>* *RetentionPeriod*(*)</method>
   </difference>
 
+  <!-- Allow addition of new Soft Delete -->
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *SoftDeletePolicy*(*)</method>
+  </difference>
+  <difference>
+    <differenceType>7012</differenceType>
+    <className>com/google/storage/v2/*</className>
+    <method>* *SoftDeleted*(*)</method>
+  </difference>
 </differences>

@@ -22,6 +22,7 @@ import com.google.api.gax.core.BackgroundResource;
 import com.google.api.gax.paging.AbstractFixedSizeCollection;
 import com.google.api.gax.paging.AbstractPage;
 import com.google.api.gax.paging.AbstractPagedListResponse;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.PageContext;
 import com.google.api.gax.rpc.ServerStreamingCallable;
@@ -426,10 +427,10 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will be ignored. The project of
-   *     the bucket must be specified in the `bucket.project` field. This field must be in
-   *     `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or project
-   *     number. The `parent` field must be either empty or `projects/_`.
+   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -467,10 +468,10 @@ public class StorageClient implements BackgroundResource {
    *
    * @param parent Required. The project to which this bucket will belong.
    * @param bucket Properties of the new bucket being inserted. The name of the bucket is specified
-   *     in the `bucket_id` field. Populating `bucket.name` field will be ignored. The project of
-   *     the bucket must be specified in the `bucket.project` field. This field must be in
-   *     `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or project
-   *     number. The `parent` field must be either empty or `projects/_`.
+   *     in the `bucket_id` field. Populating `bucket.name` field will result in an error. The
+   *     project of the bucket must be specified in the `bucket.project` field. This field must be
+   *     in `projects/{projectIdentifier}` format, {projectIdentifier} can be the project ID or
+   *     project number. The `parent` field must be either empty or `projects/_`.
    * @param bucketId Required. The ID to use for this bucket, which will become the final component
    *     of the bucket's resource name. For example, the value `foo` might result in a bucket with
    *     the name `projects/123456/buckets/foo`.
@@ -834,8 +835,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -867,8 +868,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -897,8 +898,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -930,8 +931,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Gets the IAM policy for a specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -962,8 +963,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1000,8 +1001,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1035,8 +1036,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1069,8 +1070,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Updates an IAM policy for the specified bucket or object. The `resource` field in the request
-   * should be projects/_/buckets/&lt;bucket_name&gt; for a bucket or
-   * projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an object.
+   * should be `projects/_/buckets/{bucket}` for a bucket or
+   * `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1102,9 +1103,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1142,9 +1142,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1182,9 +1181,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -1216,9 +1214,8 @@ public class StorageClient implements BackgroundResource {
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
    * Tests a set of permissions on the given bucket or object to see which, if any, are held by the
-   * caller. The `resource` field in the request should be projects/_/buckets/&lt;bucket_name&gt;
-   * for a bucket or projects/_/buckets/&lt;bucket_name&gt;/objects/&lt;object_name&gt; for an
-   * object.
+   * caller. The `resource` field in the request should be `projects/_/buckets/{bucket}` for a
+   * bucket or `projects/_/buckets/{bucket}/objects/{object}` for an object.
    *
    * <p>Sample code:
    *
@@ -2198,6 +2195,147 @@ public class StorageClient implements BackgroundResource {
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
   /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BucketName bucket = BucketName.of("[PROJECT]", "[BUCKET]");
+   *   String object = "object-1023368385";
+   *   long generation = 305703192;
+   *   Object response = storageClient.restoreObject(bucket, object, generation);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. The name of the object to restore.
+   * @param generation Required. The specific revision of the object to restore.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object restoreObject(BucketName bucket, String object, long generation) {
+    RestoreObjectRequest request =
+        RestoreObjectRequest.newBuilder()
+            .setBucket(bucket == null ? null : bucket.toString())
+            .setObject(object)
+            .setGeneration(generation)
+            .build();
+    return restoreObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   String bucket = BucketName.of("[PROJECT]", "[BUCKET]").toString();
+   *   String object = "object-1023368385";
+   *   long generation = 305703192;
+   *   Object response = storageClient.restoreObject(bucket, object, generation);
+   * }
+   * }</pre>
+   *
+   * @param bucket Required. Name of the bucket in which the object resides.
+   * @param object Required. The name of the object to restore.
+   * @param generation Required. The specific revision of the object to restore.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object restoreObject(String bucket, String object, long generation) {
+    RestoreObjectRequest request =
+        RestoreObjectRequest.newBuilder()
+            .setBucket(bucket)
+            .setObject(object)
+            .setGeneration(generation)
+            .build();
+    return restoreObject(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   RestoreObjectRequest request =
+   *       RestoreObjectRequest.newBuilder()
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setObject("object-1023368385")
+   *           .setGeneration(305703192)
+   *           .setIfGenerationMatch(-1086241088)
+   *           .setIfGenerationNotMatch(1475720404)
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setCopySourceAcl(true)
+   *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .build();
+   *   Object response = storageClient.restoreObject(request);
+   * }
+   * }</pre>
+   *
+   * @param request The request object containing all of the parameters for the API call.
+   * @throws com.google.api.gax.rpc.ApiException if the remote call fails
+   */
+  public final Object restoreObject(RestoreObjectRequest request) {
+    return restoreObjectCallable().call(request);
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Restores a soft-deleted object.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   RestoreObjectRequest request =
+   *       RestoreObjectRequest.newBuilder()
+   *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
+   *           .setObject("object-1023368385")
+   *           .setGeneration(305703192)
+   *           .setIfGenerationMatch(-1086241088)
+   *           .setIfGenerationNotMatch(1475720404)
+   *           .setIfMetagenerationMatch(1043427781)
+   *           .setIfMetagenerationNotMatch(1025430873)
+   *           .setCopySourceAcl(true)
+   *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .build();
+   *   ApiFuture<Object> future = storageClient.restoreObjectCallable().futureCall(request);
+   *   // Do something.
+   *   Object response = future.get();
+   * }
+   * }</pre>
+   */
+  public final UnaryCallable<RestoreObjectRequest, Object> restoreObjectCallable() {
+    return stub.restoreObjectCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
    * Cancels an in-progress resumable upload.
    *
    * <p>Any attempts to write to the resumable upload after cancelling the upload will fail.
@@ -2444,6 +2582,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
+   *           .setSoftDeleted(true)
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
@@ -2480,6 +2619,7 @@ public class StorageClient implements BackgroundResource {
    *           .setBucket(BucketName.of("[PROJECT]", "[BUCKET]").toString())
    *           .setObject("object-1023368385")
    *           .setGeneration(305703192)
+   *           .setSoftDeleted(true)
    *           .setIfGenerationMatch(-1086241088)
    *           .setIfGenerationNotMatch(1475720404)
    *           .setIfMetagenerationMatch(1043427781)
@@ -2687,6 +2827,9 @@ public class StorageClient implements BackgroundResource {
    * <p>Attempting to resume an already finalized object will result in an OK status, with a
    * WriteObjectResponse containing the finalized object's metadata.
    *
+   * <p>Alternatively, the BidiWriteObject operation may be used to write an object with controls
+   * over flushing and the ability to fetch the ability to determine the current persisted size.
+   *
    * <p>Sample code:
    *
    * <pre>{@code
@@ -2729,6 +2872,55 @@ public class StorageClient implements BackgroundResource {
   public final ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse>
       writeObjectCallable() {
     return stub.writeObjectCallable();
+  }
+
+  // AUTO-GENERATED DOCUMENTATION AND METHOD.
+  /**
+   * Stores a new object and metadata.
+   *
+   * <p>This is similar to the WriteObject call with the added support for manual flushing of
+   * persisted state, and the ability to determine current persisted size without closing the
+   * stream.
+   *
+   * <p>The client may specify one or both of the `state_lookup` and `flush` fields in each
+   * BidiWriteObjectRequest. If `flush` is specified, the data written so far will be persisted to
+   * storage. If `state_lookup` is specified, the service will respond with a
+   * BidiWriteObjectResponse that contains the persisted size. If both `flush` and `state_lookup`
+   * are specified, the flush will always occur before a `state_lookup`, so that both may be set in
+   * the same request and the returned state will be the state of the object post-flush. When the
+   * stream is closed, a BidiWriteObjectResponse will always be sent to the client, regardless of
+   * the value of `state_lookup`.
+   *
+   * <p>Sample code:
+   *
+   * <pre>{@code
+   * // This snippet has been automatically generated and should be regarded as a code template only.
+   * // It will require modifications to work:
+   * // - It may require correct/in-range values for request initialization.
+   * // - It may require specifying regional endpoints when creating the service client as shown in
+   * // https://cloud.google.com/java/docs/setup#configure_endpoints_for_the_client_library
+   * try (StorageClient storageClient = StorageClient.create()) {
+   *   BidiStream<BidiWriteObjectRequest, BidiWriteObjectResponse> bidiStream =
+   *       storageClient.bidiWriteObjectCallable().call();
+   *   BidiWriteObjectRequest request =
+   *       BidiWriteObjectRequest.newBuilder()
+   *           .setWriteOffset(-1559543565)
+   *           .setObjectChecksums(ObjectChecksums.newBuilder().build())
+   *           .setStateLookup(true)
+   *           .setFlush(true)
+   *           .setFinishWrite(true)
+   *           .setCommonObjectRequestParams(CommonObjectRequestParams.newBuilder().build())
+   *           .build();
+   *   bidiStream.send(request);
+   *   for (BidiWriteObjectResponse response : bidiStream) {
+   *     // Do something when a response is received.
+   *   }
+   * }
+   * }</pre>
+   */
+  public final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectCallable() {
+    return stub.bidiWriteObjectCallable();
   }
 
   // AUTO-GENERATED DOCUMENTATION AND METHOD.
@@ -2815,6 +3007,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setSoftDeleted(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   for (Object element : storageClient.listObjects(request).iterateAll()) {
@@ -2855,6 +3048,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setSoftDeleted(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   ApiFuture<Object> future = storageClient.listObjectsPagedCallable().futureCall(request);
@@ -2895,6 +3089,7 @@ public class StorageClient implements BackgroundResource {
    *           .setReadMask(FieldMask.newBuilder().build())
    *           .setLexicographicStart("lexicographicStart-2093413008")
    *           .setLexicographicEnd("lexicographicEnd1646968169")
+   *           .setSoftDeleted(true)
    *           .setMatchGlob("matchGlob613636317")
    *           .build();
    *   while (true) {

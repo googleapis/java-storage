@@ -375,6 +375,26 @@ public class MockStorageImpl extends StorageImplBase {
   }
 
   @Override
+  public void restoreObject(RestoreObjectRequest request, StreamObserver<Object> responseObserver) {
+    java.lang.Object response = responses.poll();
+    if (response instanceof Object) {
+      requests.add(request);
+      responseObserver.onNext(((Object) response));
+      responseObserver.onCompleted();
+    } else if (response instanceof Exception) {
+      responseObserver.onError(((Exception) response));
+    } else {
+      responseObserver.onError(
+          new IllegalArgumentException(
+              String.format(
+                  "Unrecognized response type %s for method RestoreObject, expected %s or %s",
+                  response == null ? "null" : response.getClass().getName(),
+                  Object.class.getName(),
+                  Exception.class.getName())));
+    }
+  }
+
+  @Override
   public void cancelResumableWrite(
       CancelResumableWriteRequest request,
       StreamObserver<CancelResumableWriteResponse> responseObserver) {
@@ -477,6 +497,43 @@ public class MockStorageImpl extends StorageImplBase {
                           "Unrecognized response type %s for method WriteObject, expected %s or %s",
                           response == null ? "null" : response.getClass().getName(),
                           WriteObjectResponse.class.getName(),
+                          Exception.class.getName())));
+            }
+          }
+
+          @Override
+          public void onError(Throwable t) {
+            responseObserver.onError(t);
+          }
+
+          @Override
+          public void onCompleted() {
+            responseObserver.onCompleted();
+          }
+        };
+    return requestObserver;
+  }
+
+  @Override
+  public StreamObserver<BidiWriteObjectRequest> bidiWriteObject(
+      final StreamObserver<BidiWriteObjectResponse> responseObserver) {
+    StreamObserver<BidiWriteObjectRequest> requestObserver =
+        new StreamObserver<BidiWriteObjectRequest>() {
+          @Override
+          public void onNext(BidiWriteObjectRequest value) {
+            requests.add(value);
+            final java.lang.Object response = responses.remove();
+            if (response instanceof BidiWriteObjectResponse) {
+              responseObserver.onNext(((BidiWriteObjectResponse) response));
+            } else if (response instanceof Exception) {
+              responseObserver.onError(((Exception) response));
+            } else {
+              responseObserver.onError(
+                  new IllegalArgumentException(
+                      String.format(
+                          "Unrecognized response type %s for method BidiWriteObject, expected %s or %s",
+                          response == null ? "null" : response.getClass().getName(),
+                          BidiWriteObjectResponse.class.getName(),
                           Exception.class.getName())));
             }
           }
