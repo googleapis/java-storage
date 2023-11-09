@@ -35,6 +35,7 @@ import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
 import com.google.cloud.storage.it.runner.SneakyException;
 import com.google.common.base.Charsets;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
@@ -384,6 +385,7 @@ public final class TestBench implements ManagedLifecycle {
   public static final class RetryTestResource {
     public String id;
     public Boolean completed;
+    public String transport;
     public JsonObject instructions;
 
     public RetryTestResource() {}
@@ -392,7 +394,8 @@ public final class TestBench implements ManagedLifecycle {
       this.instructions = instructions;
     }
 
-    public static RetryTestResource newRetryTestResource(Method m, InstructionList l) {
+    public static RetryTestResource newRetryTestResource(
+        Method m, InstructionList l, String transport) {
       RetryTestResource resource = new RetryTestResource();
       resource.instructions = new JsonObject();
       JsonArray instructions = new JsonArray();
@@ -400,20 +403,18 @@ public final class TestBench implements ManagedLifecycle {
         instructions.add(s);
       }
       resource.instructions.add(m.getName(), instructions);
+      resource.transport = transport;
       return resource;
     }
 
     @Override
     public String toString() {
-      return "RetryTestResource{"
-          + "id='"
-          + id
-          + '\''
-          + ", completed="
-          + completed
-          + ", instructions="
-          + instructions
-          + '}';
+      return MoreObjects.toStringHelper(this)
+          .add("id", id)
+          .add("completed", completed)
+          .add("transport", transport)
+          .add("instructions", instructions)
+          .toString();
     }
   }
 

@@ -18,6 +18,7 @@ package com.google.cloud.storage.conformance.retry;
 
 import static org.junit.Assert.assertTrue;
 
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.gax.rpc.FixedHeaderProvider;
 import com.google.cloud.NoCredentials;
@@ -43,6 +44,7 @@ import org.junit.runner.Description;
  */
 final class RetryTestFixture extends TestWatcher {
   private static final Logger LOGGER = Logger.getLogger(RetryTestFixture.class.getName());
+  private static final int STATUS_CODE_NOT_IMPLEMENTED = 501;
 
   private final CleanupStrategy cleanupStrategy;
   private final TestBench testBench;
@@ -83,9 +85,18 @@ final class RetryTestFixture extends TestWatcher {
     LOGGER.fine("Setting up retry_test resource...");
     RetryTestResource retryTestResource =
         RetryTestResource.newRetryTestResource(
-            testRetryConformance.getMethod(), testRetryConformance.getInstruction());
+            testRetryConformance.getMethod(),
+            testRetryConformance.getInstruction(),
+            testRetryConformance.getTransport().name());
     try {
       retryTest = testBench.createRetryTest(retryTestResource);
+    } catch (HttpResponseException e) {
+      if (e.getStatusCode() == STATUS_CODE_NOT_IMPLEMENTED) {
+        throw new AssumptionViolatedException(
+            "Testbench not yet implemented for " + retryTestResource);
+      } else {
+        throw new RuntimeException(e);
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -95,7 +106,8 @@ final class RetryTestFixture extends TestWatcher {
   @Override
   protected void finished(Description description) {
     LOGGER.fine("Verifying end state of retry_test resource...");
-    try {
+    try (Storage ignore1 = nonTestStorage;
+        Storage ignore2 = testStorage) { // use try-with to shut down grpc resources
       try {
         if (retryTest != null) {
           RetryTestResource postTestState = testBench.getRetryTest(retryTest);
@@ -110,7 +122,7 @@ final class RetryTestFixture extends TestWatcher {
           retryTest = null;
         }
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -136,27 +148,42 @@ final class RetryTestFixture extends TestWatcher {
   }
 
   private Storage newStorage(boolean forTest) {
-    StorageOptions.Builder builder =
-        StorageOptions.http()
-            .setHost(testBench.getBaseUri())
-            .setCredentials(NoCredentials.getInstance())
-            .setProjectId(testRetryConformance.getProjectId());
     RetrySettings.Builder retrySettingsBuilder =
         StorageOptions.getDefaultRetrySettings().toBuilder();
     if (forTest) {
+      StorageOptions.Builder builder;
+      switch (testRetryConformance.getTransport()) {
+        case HTTP:
+          builder = StorageOptions.http().setHost(testBench.getBaseUri());
+          break;
+        case GRPC:
+          builder = StorageOptions.grpc().setHost(testBench.getGRPCBaseUri());
+          break;
+        default:
+          throw new IllegalStateException(
+              "Enum switch exhaustion checking would be nice. Unhandled case: "
+                  + testRetryConformance.getTransport());
+      }
       builder
+          .setCredentials(NoCredentials.getInstance())
+          .setProjectId(testRetryConformance.getProjectId())
           .setHeaderProvider(
               FixedHeaderProvider.create(
                   ImmutableMap.of(
                       "x-retry-test-id", retryTest.id, "User-Agent", fmtUserAgent("test"))))
           .setRetrySettings(retrySettingsBuilder.setMaxAttempts(3).build());
+      return builder.build().getService();
     } else {
-      builder
+      return StorageOptions.http()
+          .setHost(testBench.getBaseUri())
+          .setCredentials(NoCredentials.getInstance())
+          .setProjectId(testRetryConformance.getProjectId())
           .setHeaderProvider(
               FixedHeaderProvider.create(ImmutableMap.of("User-Agent", fmtUserAgent("non-test"))))
-          .setRetrySettings(retrySettingsBuilder.setMaxAttempts(1).build());
+          .setRetrySettings(retrySettingsBuilder.setMaxAttempts(1).build())
+          .build()
+          .getService();
     }
-    return builder.build().getService();
   }
 
   private String fmtUserAgent(String testDescriptor) {

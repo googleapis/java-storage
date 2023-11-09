@@ -200,7 +200,8 @@ public final class ITBlobWriteChannelTest {
             InstructionList.newBuilder()
                 .addInstructions(
                     String.format("return-broken-stream-final-chunk-after-%dB", cappedByteCount))
-                .build());
+                .build(),
+            Transport.HTTP.name());
     RetryTestResource retryTest = testBench.createRetryTest(retryTestResource);
 
     StorageOptions baseOptions =

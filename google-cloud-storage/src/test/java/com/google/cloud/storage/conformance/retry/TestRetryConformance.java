@@ -25,6 +25,7 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.conformance.storage.v1.InstructionList;
 import com.google.cloud.conformance.storage.v1.Method;
 import com.google.cloud.storage.DataGenerator;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.base.Joiner;
 import com.google.common.base.Suppliers;
 import com.google.common.io.ByteStreams;
@@ -66,6 +67,7 @@ final class TestRetryConformance {
   private static final int _512KiB = 512 * 1024;
   private static final int _8MiB = 8 * 1024 * 1024;
 
+  private final Transport transport;
   private final String projectId;
   private final String bucketName;
   private final String bucketName2;
@@ -87,6 +89,7 @@ final class TestRetryConformance {
   private final int mappingId;
 
   TestRetryConformance(
+      Transport transport,
       String projectId,
       String host,
       int scenarioId,
@@ -94,10 +97,20 @@ final class TestRetryConformance {
       InstructionList instruction,
       boolean preconditionsProvided,
       boolean expectSuccess) {
-    this(projectId, host, scenarioId, method, instruction, preconditionsProvided, expectSuccess, 0);
+    this(
+        transport,
+        projectId,
+        host,
+        scenarioId,
+        method,
+        instruction,
+        preconditionsProvided,
+        expectSuccess,
+        0);
   }
 
   TestRetryConformance(
+      Transport transport,
       String projectId,
       String host,
       int scenarioId,
@@ -106,6 +119,7 @@ final class TestRetryConformance {
       boolean preconditionsProvided,
       boolean expectSuccess,
       int mappingId) {
+    this.transport = transport;
     this.projectId = projectId;
     this.host = host;
     this.scenarioId = scenarioId;
@@ -118,26 +132,27 @@ final class TestRetryConformance {
         this.instruction.getInstructionsList().stream()
             .map(s -> s.replace("return-", ""))
             .collect(Collectors.joining("_"));
+    char transportTag = transport.name().toLowerCase().charAt(0);
     this.bucketName =
         String.format(
-            "%s_s%03d-%s-m%03d_bkt1",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
+            "%s_s%03d-%s-m%03d_bkt1_%s",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
     this.bucketName2 =
         String.format(
-            "%s_s%03d-%s-m%03d_bkt2",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
+            "%s_s%03d-%s-m%03d_bkt2_%s",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
     this.userProject =
         String.format(
-            "%s_s%03d-%s-m%03d_prj1",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
+            "%s_s%03d-%s-m%03d_prj1_%s",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
     this.objectName =
         String.format(
-            "%s_s%03d-%s-m%03d_obj1",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
+            "%s_s%03d-%s-m%03d_obj1_%s",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
     this.topicName =
         String.format(
-            "%s_s%03d-%s-m%03d_top1",
-            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId);
+            "%s_s%03d-%s-m%03d_top1_%s",
+            BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
     this.lazyHelloWorldUtf8Bytes =
         Suppliers.memoize(
             () -> {
@@ -211,8 +226,12 @@ final class TestRetryConformance {
   public String getTestName() {
     String instructionsDesc = Joiner.on("_").join(instruction.getInstructionsList());
     return String.format(
-        "TestRetryConformance/%d-[%s]-%s-%d",
-        scenarioId, instructionsDesc, method.getName(), mappingId);
+        "TestRetryConformance/%s-%d-[%s]-%s-%d",
+        transport.name().toLowerCase(), scenarioId, instructionsDesc, method.getName(), mappingId);
+  }
+
+  public Transport getTransport() {
+    return transport;
   }
 
   @Override
