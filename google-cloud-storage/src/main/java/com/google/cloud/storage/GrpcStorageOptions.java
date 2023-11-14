@@ -16,6 +16,7 @@
 
 package com.google.cloud.storage;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.api.core.ApiClock;
@@ -533,6 +534,9 @@ public final class GrpcStorageOptions extends StorageOptions
     public GrpcStorageOptions.Builder setBlobWriteSessionConfig(
         @NonNull BlobWriteSessionConfig blobWriteSessionConfig) {
       requireNonNull(blobWriteSessionConfig, "blobWriteSessionConfig must be non null");
+      checkArgument(
+          blobWriteSessionConfig instanceof BlobWriteSessionConfig.GrpcCompatible,
+          "The provided instance of BlobWriteSessionConfig is not compatible with gRPC transport.");
       this.blobWriteSessionConfig = blobWriteSessionConfig;
       return this;
     }

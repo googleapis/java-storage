@@ -20,10 +20,8 @@ import static com.google.cloud.storage.TestUtils.xxd;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.storage.BlobWriteSessionConfig.WriterFactory;
-import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
-import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
@@ -39,9 +37,6 @@ import org.junit.rules.TestName;
 
 public final class BufferToDiskThenUploadTest {
 
-  private static final Decoder<WriteObjectResponse, BlobInfo>
-      WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER =
-          Conversions.grpc().blobInfo().compose(WriteObjectResponse::getResource);
   @Rule public final TemporaryFolder temporaryFolder = new TemporaryFolder();
   @Rule public final TestName testName = new TestName();
 
@@ -68,8 +63,7 @@ public final class BufferToDiskThenUploadTest {
               }
             },
             blobInfo,
-            Opts.empty(),
-            WRITE_OBJECT_RESPONSE_BLOB_INFO_DECODER);
+            Opts.empty());
 
     byte[] bytes = DataGenerator.base64Characters().genBytes(128);
     try (WritableByteChannel open = writeSession.open()) {

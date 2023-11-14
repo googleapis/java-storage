@@ -68,7 +68,8 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 @Immutable
 @BetaApi
 @TransportCompatibility(Transport.GRPC)
-public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConfig {
+public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConfig
+    implements BlobWriteSessionConfig.GrpcCompatible {
   private static final long serialVersionUID = 9059242302276891867L;
 
   /**
@@ -159,10 +160,7 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
     @InternalApi
     @Override
     public WritableByteChannelSession<?, BlobInfo> writeSession(
-        StorageInternal storage,
-        BlobInfo info,
-        Opts<ObjectTargetOpt> opts,
-        Decoder<WriteObjectResponse, BlobInfo> d) {
+        StorageInternal storage, BlobInfo info, Opts<ObjectTargetOpt> opts) {
       if (storage instanceof GrpcStorageImpl) {
         GrpcStorageImpl grpcStorage = (GrpcStorageImpl) storage;
         RecoveryFile recoveryFile = recoveryFileManager.newRecoveryFile(info);
@@ -189,7 +187,7 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
                 .setStartAsync(start)
                 .build();
 
-        return new JournalingUpload<>(session, start, d);
+        return new JournalingUpload<>(session, start);
       } else {
         return CrossTransportUtils.throwHttpJsonOnly(BlobWriteSessionConfigs.class, "journaling");
       }
@@ -204,11 +202,10 @@ public final class JournalingBlobWriteSessionConfig extends BlobWriteSessionConf
 
       public JournalingUpload(
           WritableByteChannelSession<WBC, WriteObjectResponse> session,
-          ApiFuture<WriteCtx<ResumableWrite>> start,
-          Decoder<WriteObjectResponse, BlobInfo> decoder) {
+          ApiFuture<WriteCtx<ResumableWrite>> start) {
         this.session = session;
         this.start = start;
-        this.decoder = decoder;
+        this.decoder = Conversions.grpc().blobInfo().compose(WriteObjectResponse::getResource);
       }
 
       @Override
