@@ -93,7 +93,7 @@ final class BackwardCompatibilityUtils {
       BucketInfo.log.log(record);
 
       LifecycleCondition condition =
-          Conversions.apiary().lifecycleCondition().decode(rule.getCondition());
+          Conversions.json().lifecycleCondition().decode(rule.getCondition());
       return new LifecycleRule(LifecycleAction.newDeleteAction(), condition);
     }
     LifecycleCondition.Builder condition = LifecycleCondition.newBuilder();
@@ -135,7 +135,7 @@ final class BackwardCompatibilityUtils {
         return new BucketInfo.IsLiveDeleteRule(isLive);
       }
     }
-    return new RawDeleteRule(Conversions.apiary().lifecycleRule().encode(from));
+    return new RawDeleteRule(Conversions.json().lifecycleRule().encode(from));
   }
 
   @SuppressWarnings("deprecation")

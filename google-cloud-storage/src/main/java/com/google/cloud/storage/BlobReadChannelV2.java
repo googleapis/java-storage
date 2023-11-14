@@ -39,7 +39,7 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
       StorageObject storageObject,
       Map<StorageRpc.Option, ?> opts,
       BlobReadChannelContext blobReadChannelContext) {
-    super(Conversions.apiary().blobInfo());
+    super(Conversions.json().blobInfo());
     this.storageObject = storageObject;
     this.opts = opts;
     this.blobReadChannelContext = blobReadChannelContext;
