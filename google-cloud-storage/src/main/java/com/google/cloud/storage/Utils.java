@@ -24,6 +24,8 @@ import com.google.api.gax.grpc.GrpcCallContext;
 import com.google.api.gax.rpc.ApiCallContext;
 import com.google.cloud.storage.Conversions.Codec;
 import com.google.cloud.storage.UnifiedOpts.NamedField;
+import com.google.cloud.storage.UnifiedOpts.Opts;
+import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -309,5 +311,29 @@ final class Utils {
   @NonNull
   static GrpcCallContext merge(@NonNull GrpcCallContext l, @NonNull GrpcCallContext r) {
     return (GrpcCallContext) l.merge(r);
+  }
+
+  /**
+   * RETURN_RAW_INPUT_STREAM means do not add GZIPInputStream to the pipeline. Meaning, if
+   * RETURN_RAW_INPUT_STREAM is false, automatically attempt to decompress if Content-Encoding gzip.
+   */
+  static boolean isAutoGzipDecompression(Opts<?> opts, boolean defaultWhenUndefined) {
+    return isAutoGzipDecompression(opts.getRpcOptions(), defaultWhenUndefined);
+  }
+
+  /**
+   * RETURN_RAW_INPUT_STREAM means do not add GZIPInputStream to the pipeline. Meaning, if
+   * RETURN_RAW_INPUT_STREAM is false, automatically attempt to decompress if Content-Encoding gzip.
+   */
+  static boolean isAutoGzipDecompression(
+      Map<StorageRpc.Option, ?> opts, boolean defaultWhenUndefined) {
+    // Option.getBoolean is package private, and we don't want to open it.
+    // if non-null explicitly compare to a boolean value to coerce it to a boolean result
+    Object returnRawInputStream = opts.get(StorageRpc.Option.RETURN_RAW_INPUT_STREAM);
+    if (returnRawInputStream == null) {
+      return defaultWhenUndefined;
+    } else {
+      return Boolean.FALSE.equals(returnRawInputStream);
+    }
   }
 }

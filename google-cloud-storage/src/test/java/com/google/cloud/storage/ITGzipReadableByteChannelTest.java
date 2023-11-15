@@ -245,10 +245,10 @@ public class ITGzipReadableByteChannelTest {
     }
 
     @Test
-    public void storage_readAllBytes_defaultCompressed() {
+    public void storage_readAllBytes_defaultUncompressed() {
       Storage s = storageFixture.getInstance();
       byte[] actual = s.readAllBytes(BlobId.of("buck", "obj-compressed"));
-      assertThat(actual).isEqualTo(dataCompressed);
+      assertThat(actual).isEqualTo(dataUncompressed);
     }
 
     @Test
