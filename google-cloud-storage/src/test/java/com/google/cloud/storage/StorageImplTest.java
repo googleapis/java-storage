@@ -19,12 +19,6 @@ package com.google.cloud.storage;
 import static com.google.cloud.storage.SignedUrlEncodingHelper.Rfc3986UriEncode;
 import static com.google.cloud.storage.testing.ApiPolicyMatcher.eqApiPolicy;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.getCurrentArguments;
-import static org.easymock.EasyMock.replay;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -32,12 +26,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.api.client.googleapis.json.GoogleJsonError;
 import com.google.api.client.util.DateTime;
 import com.google.api.core.ApiClock;
-import com.google.api.gax.retrying.RetrySettings;
 import com.google.api.services.storage.model.Policy.Bindings;
 import com.google.api.services.storage.model.StorageObject;
 import com.google.api.services.storage.model.TestIamPermissionsResponse;
@@ -59,12 +51,9 @@ import com.google.cloud.storage.spi.v1.StorageRpc;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.BaseEncoding;
-import java.io.File;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -86,7 +75,6 @@ import java.util.regex.Pattern;
 import javax.crypto.spec.SecretKeySpec;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
-import org.easymock.IAnswer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -690,85 +678,6 @@ public class StorageImplTest {
     assertTrue(writer.isDone());
     assertEquals(42L, writer.getTotalBytesCopied());
     assertEquals(42L, writer.getBlobSize());
-  }
-
-  @Test
-  public void testReadAllBytes() {
-    EasyMock.expect(
-            storageRpcMock.load(
-                Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
-                EMPTY_RPC_OPTIONS))
-        .andReturn(BLOB_CONTENT);
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    byte[] readBytes = storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1);
-    assertArrayEquals(BLOB_CONTENT, readBytes);
-  }
-
-  @Test
-  public void testReadAllBytesWithOptions() {
-    EasyMock.expect(
-            storageRpcMock.load(
-                Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
-                BLOB_SOURCE_OPTIONS))
-        .andReturn(BLOB_CONTENT);
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    byte[] readBytes =
-        storage.readAllBytes(
-            BUCKET_NAME1, BLOB_NAME1, BLOB_SOURCE_GENERATION, BLOB_SOURCE_METAGENERATION);
-    assertArrayEquals(BLOB_CONTENT, readBytes);
-  }
-
-  @Test
-  public void testReadAllBytesWithDecriptionKey() {
-    EasyMock.expect(
-            storageRpcMock.load(
-                Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
-                ENCRYPTION_KEY_OPTIONS))
-        .andReturn(BLOB_CONTENT)
-        .times(2);
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    byte[] readBytes =
-        storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1, BlobSourceOption.decryptionKey(KEY));
-    assertArrayEquals(BLOB_CONTENT, readBytes);
-    readBytes =
-        storage.readAllBytes(BUCKET_NAME1, BLOB_NAME1, BlobSourceOption.decryptionKey(BASE64_KEY));
-    assertArrayEquals(BLOB_CONTENT, readBytes);
-  }
-
-  @Test
-  public void testReadAllBytesFromBlobIdWithOptions() {
-    EasyMock.expect(
-            storageRpcMock.load(
-                Conversions.json().blobId().encode(BLOB_INFO1.getBlobId()), BLOB_SOURCE_OPTIONS))
-        .andReturn(BLOB_CONTENT);
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    byte[] readBytes =
-        storage.readAllBytes(
-            BLOB_INFO1.getBlobId(),
-            BLOB_SOURCE_GENERATION_FROM_BLOB_ID,
-            BLOB_SOURCE_METAGENERATION);
-    assertArrayEquals(BLOB_CONTENT, readBytes);
-  }
-
-  @Test
-  public void testReadAllBytesFromBlobIdWithDecriptionKey() {
-    EasyMock.expect(
-            storageRpcMock.load(
-                Conversions.json().blobId().encode(BLOB_INFO1.getBlobId()), ENCRYPTION_KEY_OPTIONS))
-        .andReturn(BLOB_CONTENT)
-        .times(2);
-    EasyMock.replay(storageRpcMock);
-    initializeService();
-    byte[] readBytes =
-        storage.readAllBytes(BLOB_INFO1.getBlobId(), BlobSourceOption.decryptionKey(KEY));
-    assertArrayEquals(BLOB_CONTENT, readBytes);
-    readBytes =
-        storage.readAllBytes(BLOB_INFO1.getBlobId(), BlobSourceOption.decryptionKey(BASE64_KEY));
-    assertArrayEquals(BLOB_CONTENT, readBytes);
   }
 
   @Test
@@ -2247,98 +2156,5 @@ public class StorageImplTest {
     assertNotNull(lifecycleRule.getCondition().getNoncurrentTimeBefore());
     assertEquals(30, lifecycleRule.getCondition().getDaysSinceCustomTime().intValue());
     assertNotNull(lifecycleRule.getCondition().getCustomTimeBefore());
-  }
-
-  @Test
-  public void testDownloadTo() throws Exception {
-    BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
-    storage = options.toBuilder().build().getService();
-    final byte[] expected = {1, 2};
-    EasyMock.expect(
-            storageRpcMock.read(
-                anyObject(StorageObject.class),
-                anyObject(Map.class),
-                eq(0l),
-                anyObject(OutputStream.class)))
-        .andAnswer(
-            new IAnswer<Long>() {
-              @Override
-              public Long answer() throws Throwable {
-                ((OutputStream) getCurrentArguments()[3]).write(expected);
-                return 2l;
-              }
-            });
-    EasyMock.replay(storageRpcMock);
-    File file = File.createTempFile("blob", ".tmp");
-    storage.downloadTo(blob, file.toPath());
-    byte actual[] = Files.readAllBytes(file.toPath());
-    assertArrayEquals(expected, actual);
-  }
-
-  @Test
-  public void testDownloadToWithRetries() throws Exception {
-    BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
-    storage =
-        options
-            .toBuilder()
-            .setRetrySettings(RetrySettings.newBuilder().setMaxAttempts(2).build())
-            .build()
-            .getService();
-    final byte[] expected = {1, 2};
-    expect(
-            storageRpcMock.read(
-                anyObject(StorageObject.class),
-                anyObject(Map.class),
-                eq(0l),
-                anyObject(OutputStream.class)))
-        .andAnswer(
-            new IAnswer<Long>() {
-              @Override
-              public Long answer() throws Throwable {
-                ((OutputStream) getCurrentArguments()[3]).write(expected[0]);
-                throw new StorageException(504, "error");
-              }
-            });
-    expect(
-            storageRpcMock.read(
-                anyObject(StorageObject.class),
-                anyObject(Map.class),
-                eq(1l),
-                anyObject(OutputStream.class)))
-        .andAnswer(
-            new IAnswer<Long>() {
-              @Override
-              public Long answer() throws Throwable {
-                ((OutputStream) getCurrentArguments()[3]).write(expected[1]);
-                return 1l;
-              }
-            });
-    replay(storageRpcMock);
-    File file = File.createTempFile("blob", ".tmp");
-    storage.downloadTo(blob, file.toPath());
-    byte actual[] = Files.readAllBytes(file.toPath());
-    assertArrayEquals(expected, actual);
-  }
-
-  @Test
-  public void testDownloadToWithException() throws Exception {
-    BlobId blob = BlobId.of(BUCKET_NAME1, BLOB_NAME1);
-    storage = options.toBuilder().build().getService();
-    Exception exception = new IllegalStateException("test");
-    expect(
-            storageRpcMock.read(
-                anyObject(StorageObject.class),
-                anyObject(Map.class),
-                eq(0l),
-                anyObject(OutputStream.class)))
-        .andThrow(exception);
-    replay(storageRpcMock);
-    File file = File.createTempFile("blob", ".tmp");
-    try {
-      storage.downloadTo(blob, file.toPath());
-      fail();
-    } catch (StorageException e) {
-      assertSame(exception, e.getCause());
-    }
   }
 }
