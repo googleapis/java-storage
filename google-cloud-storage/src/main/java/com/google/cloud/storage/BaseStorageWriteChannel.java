@@ -30,12 +30,16 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
 
   private final Decoder<T, BlobInfo> objectDecoder;
   private final SettableApiFuture<T> result;
+  private final Lock writeLock;
 
   private long position;
   private boolean open;
@@ -58,6 +62,7 @@ abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
     this.open = true;
     this.chunkSize = _16MiB;
     this.writeCalledAtLeastOnce = false;
+    this.writeLock = new ReentrantLock();
   }
 
   @Override
@@ -89,24 +94,29 @@ abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
   }
 
   @Override
-  public final synchronized int write(ByteBuffer src) throws IOException {
-    if (!open) {
-      throw new ClosedChannelException();
-    }
-    writeCalledAtLeastOnce = true;
+  public final int write(ByteBuffer src) throws IOException {
+    writeLock.lock();
     try {
-      BufferedWritableByteChannel tmp = internalGetLazyChannel().getChannel();
-      if (!tmp.isOpen()) {
-        return 0;
+      if (!open) {
+        throw new ClosedChannelException();
       }
-      int write = tmp.write(src);
-      return write;
-    } catch (StorageException e) {
-      throw new IOException(e);
-    } catch (IOException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new IOException(StorageException.coalesce(e));
+      writeCalledAtLeastOnce = true;
+      try {
+        BufferedWritableByteChannel tmp = internalGetLazyChannel().getChannel();
+        if (!tmp.isOpen()) {
+          return 0;
+        }
+        int write = tmp.write(src);
+        return write;
+      } catch (StorageException e) {
+        throw new IOException(e);
+      } catch (IOException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new IOException(StorageException.coalesce(e));
+      }
+    } finally {
+      writeLock.unlock();
     }
   }
 

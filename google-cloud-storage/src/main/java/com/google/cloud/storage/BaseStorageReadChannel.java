@@ -29,12 +29,16 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
 
   private final Decoder<T, BlobInfo> objectDecoder;
   private final SettableApiFuture<T> result;
+  private final Lock readLock;
 
   private boolean open;
   private ByteRangeSpec byteRangeSpec;
@@ -47,6 +51,7 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
     this.result = SettableApiFuture.create();
     this.open = true;
     this.byteRangeSpec = ByteRangeSpec.nullRange();
+    this.readLock = new ReentrantLock();
   }
 
   @Override
@@ -85,42 +90,47 @@ abstract class BaseStorageReadChannel<T> implements StorageReadChannel {
   }
 
   @Override
-  public final synchronized int read(ByteBuffer dst) throws IOException {
-    // BlobReadChannel only considered itself closed if close had been called on it.
-    if (!open) {
-      throw new ClosedChannelException();
-    }
-    long diff = byteRangeSpec.length();
-    // the check on beginOffset >= 0 used to be a precondition on seek(long)
-    // move it here to preserve existing behavior while allowing new negative offsets
-    if (diff <= 0 && byteRangeSpec.beginOffset() >= 0) {
-      return -1;
-    }
+  public final int read(ByteBuffer dst) throws IOException {
+    readLock.lock();
     try {
-      // trap if the fact that tmp is already closed, and instead return -1
-      ReadableByteChannel tmp = internalGetLazyChannel().getChannel();
-      if (!tmp.isOpen()) {
+      // BlobReadChannel only considered itself closed if close had been called on it.
+      if (!open) {
+        throw new ClosedChannelException();
+      }
+      long diff = byteRangeSpec.length();
+      // the check on beginOffset >= 0 used to be a precondition on seek(long)
+      // move it here to preserve existing behavior while allowing new negative offsets
+      if (diff <= 0 && byteRangeSpec.beginOffset() >= 0) {
         return -1;
       }
-      int read = tmp.read(dst);
-      if (read != -1) {
-        byteRangeSpec = byteRangeSpec.withShiftBeginOffset(read);
+      try {
+        // trap if the fact that tmp is already closed, and instead return -1
+        ReadableByteChannel tmp = internalGetLazyChannel().getChannel();
+        if (!tmp.isOpen()) {
+          return -1;
+        }
+        int read = tmp.read(dst);
+        if (read != -1) {
+          byteRangeSpec = byteRangeSpec.withShiftBeginOffset(read);
+        }
+        return read;
+      } catch (StorageException e) {
+        if (e.getCode() == 416) {
+          // HttpStorageRpc turns 416 into a null etag with an empty byte array, leading
+          // BlobReadChannel to believe it read 0 bytes, returning -1 and leaving the channel open.
+          // Emulate that same behavior here to preserve behavior compatibility, though this should
+          // be removed in the next major version.
+          return -1;
+        } else {
+          throw new IOException(e);
+        }
+      } catch (IOException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new IOException(StorageException.coalesce(e));
       }
-      return read;
-    } catch (StorageException e) {
-      if (e.getCode() == 416) {
-        // HttpStorageRpc turns 416 into a null etag with an empty byte array, leading
-        // BlobReadChannel to believe it read 0 bytes, returning -1 and leaving the channel open.
-        // Emulate that same behavior here to preserve behavior compatibility, though this should
-        // be removed in the next major version.
-        return -1;
-      } else {
-        throw new IOException(e);
-      }
-    } catch (IOException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new IOException(StorageException.coalesce(e));
+    } finally {
+      readLock.unlock();
     }
   }
 

@@ -25,6 +25,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 final class StorageByteChannels {
 
@@ -74,14 +76,20 @@ final class StorageByteChannels {
       implements BufferedReadableByteChannel {
 
     private final BufferedReadableByteChannel delegate;
+    private final Lock readLock = new ReentrantLock();
 
     public SynchronizedBufferedReadableByteChannel(BufferedReadableByteChannel delegate) {
       this.delegate = delegate;
     }
 
     @Override
-    public synchronized int read(ByteBuffer dst) throws IOException {
-      return delegate.read(dst);
+    public int read(ByteBuffer dst) throws IOException {
+      readLock.lock();
+      try {
+        return delegate.read(dst);
+      } finally {
+        readLock.unlock();
+      }
     }
 
     @Override
@@ -99,14 +107,20 @@ final class StorageByteChannels {
       implements BufferedWritableByteChannel {
 
     private final BufferedWritableByteChannel delegate;
+    private final Lock writeLock = new ReentrantLock();
 
     public SynchronizedBufferedWritableByteChannel(BufferedWritableByteChannel delegate) {
       this.delegate = delegate;
     }
 
     @Override
-    public synchronized int write(ByteBuffer src) throws IOException {
-      return delegate.write(src);
+    public int write(ByteBuffer src) throws IOException {
+      writeLock.lock();
+      try {
+        return delegate.write(src);
+      } finally {
+        writeLock.unlock();
+      }
     }
 
     @Override
@@ -129,24 +143,40 @@ final class StorageByteChannels {
       implements UnbufferedReadableByteChannel {
 
     private final UnbufferedReadableByteChannel delegate;
+    private final Lock readLock = new ReentrantLock();
 
     private SynchronizedUnbufferedReadableByteChannel(UnbufferedReadableByteChannel delegate) {
       this.delegate = delegate;
     }
 
     @Override
-    public synchronized int read(ByteBuffer src) throws IOException {
-      return delegate.read(src);
+    public int read(ByteBuffer src) throws IOException {
+      readLock.lock();
+      try {
+        return delegate.read(src);
+      } finally {
+        readLock.unlock();
+      }
     }
 
     @Override
-    public synchronized long read(ByteBuffer[] dsts) throws IOException {
-      return delegate.read(dsts);
+    public long read(ByteBuffer[] dsts) throws IOException {
+      readLock.lock();
+      try {
+        return delegate.read(dsts);
+      } finally {
+        readLock.unlock();
+      }
     }
 
     @Override
-    public synchronized long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
-      return delegate.read(dsts, offset, length);
+    public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
+      readLock.lock();
+      try {
+        return delegate.read(dsts, offset, length);
+      } finally {
+        readLock.unlock();
+      }
     }
 
     @Override
@@ -164,40 +194,70 @@ final class StorageByteChannels {
       implements UnbufferedWritableByteChannel {
 
     private final UnbufferedWritableByteChannel delegate;
+    private final Lock writeLock = new ReentrantLock();
 
     private SynchronizedUnbufferedWritableByteChannel(UnbufferedWritableByteChannel delegate) {
       this.delegate = delegate;
     }
 
     @Override
-    public synchronized int write(ByteBuffer src) throws IOException {
-      return delegate.write(src);
+    public int write(ByteBuffer src) throws IOException {
+      writeLock.lock();
+      try {
+        return delegate.write(src);
+      } finally {
+        writeLock.unlock();
+      }
     }
 
     @Override
-    public synchronized long write(ByteBuffer[] srcs) throws IOException {
-      return delegate.write(srcs);
+    public long write(ByteBuffer[] srcs) throws IOException {
+      writeLock.lock();
+      try {
+        return delegate.write(srcs);
+      } finally {
+        writeLock.unlock();
+      }
     }
 
     @Override
-    public synchronized long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
-      return delegate.write(srcs, offset, length);
+    public long write(ByteBuffer[] srcs, int offset, int length) throws IOException {
+      writeLock.lock();
+      try {
+        return delegate.write(srcs, offset, length);
+      } finally {
+        writeLock.unlock();
+      }
     }
 
     @Override
-    public synchronized int writeAndClose(ByteBuffer src) throws IOException {
-      return delegate.writeAndClose(src);
+    public int writeAndClose(ByteBuffer src) throws IOException {
+      writeLock.lock();
+      try {
+        return delegate.writeAndClose(src);
+      } finally {
+        writeLock.unlock();
+      }
     }
 
     @Override
-    public synchronized long writeAndClose(ByteBuffer[] srcs) throws IOException {
-      return delegate.writeAndClose(srcs);
+    public long writeAndClose(ByteBuffer[] srcs) throws IOException {
+      writeLock.lock();
+      try {
+        return delegate.writeAndClose(srcs);
+      } finally {
+        writeLock.unlock();
+      }
     }
 
     @Override
-    public synchronized long writeAndClose(ByteBuffer[] srcs, int offset, int length)
-        throws IOException {
-      return delegate.writeAndClose(srcs, offset, length);
+    public long writeAndClose(ByteBuffer[] srcs, int offset, int length) throws IOException {
+      writeLock.lock();
+      try {
+        return delegate.writeAndClose(srcs, offset, length);
+      } finally {
+        writeLock.unlock();
+      }
     }
 
     @Override
