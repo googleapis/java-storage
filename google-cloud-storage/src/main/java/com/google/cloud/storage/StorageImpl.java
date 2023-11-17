@@ -21,7 +21,6 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.concurrent.Executors.callable;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.paging.Page;
@@ -37,12 +36,14 @@ import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRequest;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.PostPolicyV4.PostPolicyV4Document;
+import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
@@ -59,9 +60,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
-import com.google.common.io.CountingOutputStream;
+import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -73,6 +75,7 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -604,9 +607,25 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
     Opts<ObjectSourceOpt> resolve = unwrap.resolveFrom(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForObjectsGet(storageObject, optionsMap);
-    return run(algorithm, () -> storageRpc.load(storageObject, optionsMap), Function.identity());
+    boolean autoGzipDecompression =
+        Utils.isAutoGzipDecompression(resolve, /*defaultWhenUndefined=*/ true);
+    UnbufferedReadableByteChannelSession<StorageObject> session =
+        ResumableMedia.http()
+            .read()
+            .byteChannel(BlobReadChannelContext.from(this))
+            .setAutoGzipDecompression(autoGzipDecompression)
+            .unbuffered()
+            .setApiaryReadRequest(
+                new ApiaryReadRequest(storageObject, optionsMap, ByteRangeSpec.nullRange()))
+            .build();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    try (UnbufferedReadableByteChannel r = session.open();
+        WritableByteChannel w = Channels.newChannel(baos)) {
+      ByteStreams.copy(r, w);
+    } catch (IOException e) {
+      throw StorageException.translate(e);
+    }
+    return baos.toByteArray();
   }
 
   @Override
@@ -638,19 +657,26 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
     final StorageObject pb = codecs.blobId().encode(blob);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, optionsMap);
-    run(
-        algorithm,
-        callable(
-            () -> {
-              storageRpc.read(
-                  pb, optionsMap, countingOutputStream.getCount(), countingOutputStream);
-            }),
-        Function.identity());
+    Opts<ObjectSourceOpt> resolve = Opts.unwrap(options).resolveFrom(blob);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
+    boolean autoGzipDecompression =
+        Utils.isAutoGzipDecompression(resolve, /*defaultWhenUndefined=*/ true);
+    UnbufferedReadableByteChannelSession<StorageObject> session =
+        ResumableMedia.http()
+            .read()
+            .byteChannel(BlobReadChannelContext.from(this))
+            .setAutoGzipDecompression(autoGzipDecompression)
+            .unbuffered()
+            .setApiaryReadRequest(new ApiaryReadRequest(pb, optionsMap, ByteRangeSpec.nullRange()))
+            .build();
+    // don't close the provided stream
+    WritableByteChannel w = Channels.newChannel(outputStream);
+    try (UnbufferedReadableByteChannel r = session.open()) {
+      ByteStreams.copy(r, w);
+    } catch (IOException e) {
+      throw StorageException.translate(e);
+    }
   }
 
   @Override

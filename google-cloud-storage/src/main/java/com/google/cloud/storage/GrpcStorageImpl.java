@@ -250,11 +250,34 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
-    try {
-      return createFrom(blobInfo, content, options);
-    } catch (IOException e) {
+    requireNonNull(blobInfo, "blobInfo must be non null");
+
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+
+    UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+        ResumableMedia.gapic()
+            .write()
+            .byteChannel(
+                storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+            .setHasher(Hasher.enabled())
+            .setByteStringStrategy(ByteStringStrategy.noCopy())
+            .direct()
+            .unbuffered()
+            .setRequest(req)
+            .build();
+
+    // Specifically not in the try-with, so we don't close the provided stream
+    ReadableByteChannel src =
+        Channels.newChannel(firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES)));
+    try (UnbufferedWritableByteChannel dst = session.open()) {
+      ByteStreams.copy(src, dst);
+    } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
+    return getBlob(session.getResult());
   }
 
   @Override
@@ -309,7 +332,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       }
       return codecs.blobInfo().decode(object).asBlob(this);
     } catch (InterruptedException | ExecutionException e) {
-      throw StorageException.coalesce(e);
+      throw StorageException.coalesce(e.getCause());
     }
   }
 
@@ -359,7 +382,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
     Opts<BucketSourceOpt> unwrap = Opts.unwrap(options);
-    return internalBucketGet(bucket, unwrap);
+    try {
+      return internalBucketGet(bucket, unwrap);
+    } catch (StorageException e) {
+      if (e.getCode() == 404) {
+        return null;
+      }
+      throw e;
+    }
   }
 
   @Override

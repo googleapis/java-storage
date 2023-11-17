@@ -21,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.fail;
 
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceTeardown;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
@@ -104,8 +105,15 @@ final class RpcMethodMapping {
           if (instructions.contains("return-401") && code == 401) {
             matchExpectedCode = true;
           }
-          if (instructions.contains("return-reset-connection") && code == 0) {
-            matchExpectedCode = true;
+          if (instructions.contains("return-reset-connection")) {
+            if (c.getTransport() == Transport.HTTP && code == 0) {
+              matchExpectedCode = true;
+            }
+            // in grpc a broken connection is converted to an UNAVAILABLE
+            // our mapping from UNAVAILABLE to status code is 503
+            if (c.getTransport() == Transport.GRPC && code == 503) {
+              matchExpectedCode = true;
+            }
           }
 
           if (matchExpectedCode) {
