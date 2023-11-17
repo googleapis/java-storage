@@ -27,7 +27,6 @@ import com.google.cloud.conformance.storage.v1.Method;
 import com.google.cloud.storage.DataGenerator;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.common.base.Joiner;
-import com.google.common.base.Suppliers;
 import com.google.common.io.ByteStreams;
 import com.google.errorprone.annotations.Immutable;
 import java.io.ByteArrayInputStream;
@@ -42,6 +41,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -153,13 +153,11 @@ final class TestRetryConformance {
         String.format(
             "%s_s%03d-%s-m%03d_top1_%s",
             BASE_ID, scenarioId, instructionsString.toLowerCase(), mappingId, transportTag);
+    // define a lazy supplier for bytes.
     this.lazyHelloWorldUtf8Bytes =
-        Suppliers.memoize(
-            () -> {
-              // define a lazy supplier for bytes.
-              return genBytes(method);
-            });
-    this.helloWorldFilePath = resolvePathForResource(objectName, method);
+        () -> genBytes(this.method, this.instruction.getInstructionsList());
+    this.helloWorldFilePath =
+        resolvePathForResource(objectName, method, this.instruction.getInstructionsList());
     this.serviceAccountCredentials = resolveServiceAccountCredentials();
   }
 
@@ -239,13 +237,14 @@ final class TestRetryConformance {
     return getTestName();
   }
 
-  private static Supplier<Path> resolvePathForResource(String objectName, Method method) {
+  private static Supplier<Path> resolvePathForResource(
+      String objectName, Method method, List<String> instructionList) {
     return () -> {
       try {
         File tempFile = File.createTempFile(objectName, "");
         tempFile.deleteOnExit();
 
-        byte[] bytes = genBytes(method);
+        byte[] bytes = genBytes(method, instructionList);
         try (ByteArrayInputStream in = new ByteArrayInputStream(bytes);
             FileOutputStream out = new FileOutputStream(tempFile)) {
           long copy = ByteStreams.copy(in, out);
@@ -276,14 +275,19 @@ final class TestRetryConformance {
     return topicName;
   }
 
-  private static byte[] genBytes(Method method) {
+  private static byte[] genBytes(Method method, List<String> instructionsList) {
     // Not all tests need data for an object, though some tests - resumable upload - needs
     // more than 8MiB.
     // We want to avoid allocating 8.1MiB for each test unnecessarily, especially since we
     // instantiate all permuted test cases. ~1000 * 8.1MiB ~~ > 8GiB.
     switch (method.getName()) {
       case "storage.objects.insert":
-        return DataGenerator.base64Characters().genBytes(_8MiB * 2 + _512KiB);
+        boolean after8m = instructionsList.stream().anyMatch(s -> s.endsWith("after-8192K"));
+        if (after8m) {
+          return DataGenerator.base64Characters().genBytes(_8MiB * 2 + _512KiB);
+        } else {
+          return DataGenerator.base64Characters().genBytes(_512KiB);
+        }
       case "storage.objects.get":
         return DataGenerator.base64Characters().genBytes(_512KiB);
       default:

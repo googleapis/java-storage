@@ -86,11 +86,11 @@ final class GrpcRetryAlgorithmManager implements Serializable {
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteBucketRequest req) {
-    return retryStrategy.getNonidempotentHandler();
+    return retryStrategy.getIdempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteHmacKeyRequest req) {
-    return retryStrategy.getNonidempotentHandler();
+    return retryStrategy.getIdempotentHandler();
   }
 
   public ResultRetryAlgorithm<?> getFor(DeleteNotificationConfigRequest req) {
