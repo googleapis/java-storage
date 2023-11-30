@@ -487,7 +487,17 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo);
     Map<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     boolean unmodifiedBeforeOpts = blobInfo.getModifiedFields().isEmpty();
-    BlobInfo updated = opts.blobInfoMapper().apply(blobInfo.toBuilder()).build();
+    BlobInfo.Builder builder = blobInfo.toBuilder();
+
+    // This is a workaround until everything is in prod for both json and grpc.
+    // We need to make sure that the retention field is only included in the
+    // request if it was modified, so that we don't send a null object in a
+    // grpc or json request.
+    // todo: b/308194853
+    if (blobInfo.getModifiedFields().contains(BlobField.RETENTION)) {
+      builder.setRetention(blobInfo.getRetention());
+    }
+    BlobInfo updated = opts.blobInfoMapper().apply(builder).build();
     boolean unmodifiedAfterOpts = updated.getModifiedFields().isEmpty();
     if (unmodifiedBeforeOpts && unmodifiedAfterOpts) {
       return internalGetBlob(blobInfo.getBlobId(), optionsMap);

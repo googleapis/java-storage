@@ -364,6 +364,7 @@ public class HttpStorageRpc implements StorageRpc {
           .setPredefinedAcl(Option.PREDEFINED_ACL.getString(options))
           .setPredefinedDefaultObjectAcl(Option.PREDEFINED_DEFAULT_OBJECT_ACL.getString(options))
           .setUserProject(Option.USER_PROJECT.getString(options))
+          .setEnableObjectRetention(Option.ENABLE_OBJECT_RETENTION.getBoolean(options))
           .execute();
     } catch (IOException ex) {
       span.setStatus(Status.UNKNOWN.withDescription(ex.getMessage()));
@@ -622,6 +623,7 @@ public class HttpStorageRpc implements StorageRpc {
         .setIfMetagenerationNotMatch(Option.IF_METAGENERATION_NOT_MATCH.getLong(options))
         .setIfGenerationMatch(Option.IF_GENERATION_MATCH.getLong(options))
         .setIfGenerationNotMatch(Option.IF_GENERATION_NOT_MATCH.getLong(options))
+        .setOverrideUnlockedRetention(Option.OVERRIDE_UNLOCKED_RETENTION.getBoolean(options))
         .setUserProject(Option.USER_PROJECT.getString(options));
   }
 
