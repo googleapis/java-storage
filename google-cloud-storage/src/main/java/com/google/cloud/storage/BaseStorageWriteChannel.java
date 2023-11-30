@@ -101,12 +101,10 @@ abstract class BaseStorageWriteChannel<T> implements StorageWriteChannel {
       }
       int write = tmp.write(src);
       return write;
-    } catch (StorageException e) {
-      throw new IOException(e);
     } catch (IOException e) {
       throw e;
     } catch (Exception e) {
-      throw new IOException(StorageException.coalesce(e));
+      throw StorageException.coalesce(e);
     }
   }
 

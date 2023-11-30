@@ -264,8 +264,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Immutable. The content generation of this object. Used for object
-   * versioning. Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * versioning.
    * </pre>
    *
    * <code>int64 generation = 3 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -286,8 +285,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * Output only. The version of the metadata for this generation of this
    * object. Used for preconditions and for detecting changes in metadata. A
    * metageneration number is only meaningful in the context of a particular
-   * generation of a particular object. Attempting to set or update this field
-   * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * generation of a particular object.
    * </pre>
    *
    * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -358,8 +356,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Output only. Content-Length of the object data in bytes, matching
    * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -675,8 +671,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. If this object is noncurrent, this is the time when the object
-   * became noncurrent. Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * became noncurrent.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp delete_time = 12 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -693,8 +688,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. If this object is noncurrent, this is the time when the object
-   * became noncurrent. Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * became noncurrent.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp delete_time = 12 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -711,8 +705,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. If this object is noncurrent, this is the time when the object
-   * became noncurrent. Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * became noncurrent.
    * </pre>
    *
    * <code>.google.protobuf.Timestamp delete_time = 12 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -787,8 +780,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The creation time of the object.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 14 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -805,8 +796,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The creation time of the object.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 14 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -823,8 +812,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The creation time of the object.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 14 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -842,9 +829,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. Number of underlying components that make up this object.
-   * Components are accumulated by compose operations. Attempting to set or
-   * update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * Components are accumulated by compose operations.
    * </pre>
    *
    * <code>int32 component_count = 15 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -927,8 +912,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * such as modifying custom metadata, as well as changes made by Cloud Storage
    * on behalf of a requester, such as changing the storage class based on an
    * Object Lifecycle Configuration.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 17 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -950,8 +933,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * such as modifying custom metadata, as well as changes made by Cloud Storage
    * on behalf of a requester, such as changing the storage class based on an
    * Object Lifecycle Configuration.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 17 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -973,8 +954,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * such as modifying custom metadata, as well as changes made by Cloud Storage
    * on behalf of a requester, such as changing the storage class based on an
    * Object Lifecycle Configuration.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 17 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -1046,8 +1025,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Output only. The time at which the object's storage class was last changed.
    * When the object is initially created, it will be set to time_created.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>
@@ -1066,8 +1043,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Output only. The time at which the object's storage class was last changed.
    * When the object is initially created, it will be set to time_created.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>
@@ -1088,8 +1063,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    * <pre>
    * Output only. The time at which the object's storage class was last changed.
    * When the object is initially created, it will be set to time_created.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>
@@ -1355,8 +1328,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The owner of the object. This will always be the uploader of
-   * the object. Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * the object.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1372,8 +1344,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The owner of the object. This will always be the uploader of
-   * the object. Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * the object.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -1389,8 +1360,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The owner of the object. This will always be the uploader of
-   * the object. Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+   * the object.
    * </pre>
    *
    * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -2989,8 +2959,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The content generation of this object. Used for object
-     * versioning. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * versioning.
      * </pre>
      *
      * <code>int64 generation = 3 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -3006,8 +2975,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The content generation of this object. Used for object
-     * versioning. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * versioning.
      * </pre>
      *
      * <code>int64 generation = 3 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -3027,8 +2995,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Immutable. The content generation of this object. Used for object
-     * versioning. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * versioning.
      * </pre>
      *
      * <code>int64 generation = 3 [(.google.api.field_behavior) = IMMUTABLE];</code>
@@ -3050,8 +3017,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. The version of the metadata for this generation of this
      * object. Used for preconditions and for detecting changes in metadata. A
      * metageneration number is only meaningful in the context of a particular
-     * generation of a particular object. Attempting to set or update this field
-     * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * generation of a particular object.
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3069,8 +3035,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. The version of the metadata for this generation of this
      * object. Used for preconditions and for detecting changes in metadata. A
      * metageneration number is only meaningful in the context of a particular
-     * generation of a particular object. Attempting to set or update this field
-     * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * generation of a particular object.
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3092,8 +3057,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * Output only. The version of the metadata for this generation of this
      * object. Used for preconditions and for detecting changes in metadata. A
      * metageneration number is only meaningful in the context of a particular
-     * generation of a particular object. Attempting to set or update this field
-     * will result in a [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * generation of a particular object.
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3220,8 +3184,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Content-Length of the object data in bytes, matching
      * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3238,8 +3200,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Content-Length of the object data in bytes, matching
      * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -3260,8 +3220,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. Content-Length of the object data in bytes, matching
      * [https://tools.ietf.org/html/rfc7230#section-3.3.2][RFC 7230 §3.3.2].
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 size = 6 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -4124,8 +4082,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4142,8 +4099,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4166,8 +4122,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4192,8 +4147,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4215,8 +4169,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4244,8 +4197,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4267,8 +4219,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4285,8 +4236,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4307,8 +4257,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. If this object is noncurrent, this is the time when the object
-     * became noncurrent. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * became noncurrent.
      * </pre>
      *
      * <code>
@@ -4464,8 +4413,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4482,8 +4429,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4506,8 +4451,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4532,8 +4475,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4555,8 +4496,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4584,8 +4523,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4607,8 +4544,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4625,8 +4560,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4647,8 +4580,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the object.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4678,9 +4609,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Number of underlying components that make up this object.
-     * Components are accumulated by compose operations. Attempting to set or
-     * update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * Components are accumulated by compose operations.
      * </pre>
      *
      * <code>int32 component_count = 15 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -4696,9 +4625,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Number of underlying components that make up this object.
-     * Components are accumulated by compose operations. Attempting to set or
-     * update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * Components are accumulated by compose operations.
      * </pre>
      *
      * <code>int32 component_count = 15 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -4718,9 +4645,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. Number of underlying components that make up this object.
-     * Components are accumulated by compose operations. Attempting to set or
-     * update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * Components are accumulated by compose operations.
      * </pre>
      *
      * <code>int32 component_count = 15 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -4960,8 +4885,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -4983,8 +4906,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5012,8 +4933,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5043,8 +4962,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5071,8 +4988,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5105,8 +5020,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5133,8 +5046,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5156,8 +5067,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5183,8 +5092,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * such as modifying custom metadata, as well as changes made by Cloud Storage
      * on behalf of a requester, such as changing the storage class based on an
      * Object Lifecycle Configuration.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5331,8 +5238,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5350,8 +5255,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5375,8 +5278,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5402,8 +5303,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5427,8 +5326,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5457,8 +5354,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5481,8 +5376,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5500,8 +5393,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -5523,8 +5414,6 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      * <pre>
      * Output only. The time at which the object's storage class was last changed.
      * When the object is initially created, it will be set to time_created.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -6133,8 +6022,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6150,8 +6038,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6171,8 +6058,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6196,8 +6082,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6218,8 +6103,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6246,8 +6130,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6268,8 +6151,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6285,8 +6167,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -6304,8 +6185,7 @@ public final class Object extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The owner of the object. This will always be the uploader of
-     * the object. Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
+     * the object.
      * </pre>
      *
      * <code>.google.storage.v2.Owner owner = 24 [(.google.api.field_behavior) = OUTPUT_ONLY];

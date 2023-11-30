@@ -95,6 +95,31 @@ public interface GetObjectRequestOrBuilder
    *
    *
    * <pre>
+   * If true, return the soft-deleted version of this object.
+   * </pre>
+   *
+   * <code>optional bool soft_deleted = 11;</code>
+   *
+   * @return Whether the softDeleted field is set.
+   */
+  boolean hasSoftDeleted();
+  /**
+   *
+   *
+   * <pre>
+   * If true, return the soft-deleted version of this object.
+   * </pre>
+   *
+   * <code>optional bool soft_deleted = 11;</code>
+   *
+   * @return The softDeleted.
+   */
+  boolean getSoftDeleted();
+
+  /**
+   *
+   *
+   * <pre>
    * Makes the operation conditional on whether the object's current generation
    * matches the given value. Setting to 0 makes the operation succeed only if
    * there are no live versions of the object.

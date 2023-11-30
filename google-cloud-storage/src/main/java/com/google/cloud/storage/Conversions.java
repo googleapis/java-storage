@@ -18,23 +18,55 @@ package com.google.cloud.storage;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+/**
+ * Abstraction utilities for converting between two different types.
+ *
+ * <p>Primarily targeted at encapsulating the logic for conversion from our model classes and the
+ * respective transport specific models.
+ */
 final class Conversions {
 
   private Conversions() {}
 
-  static ApiaryConversions apiary() {
-    return ApiaryConversions.INSTANCE;
+  /** Entry point to the registry of Codecs for conversions with the JSON Api model */
+  static JsonConversions json() {
+    return JsonConversions.INSTANCE;
   }
 
+  /** Entry point to the registry of Codecs for conversions with the gRPC Api model */
   static GrpcConversions grpc() {
     return GrpcConversions.INSTANCE;
   }
 
+  /**
+   * Abstraction representing a conversion to a different model type.
+   *
+   * <p>This class is the inverse of {@link Decoder}
+   *
+   * <p>A symmetric {@link Encoder} {@link Decoder} pair can make a {@link Codec}
+   *
+   * @param <From>
+   * @param <To>
+   * @see Decoder
+   * @see Codec
+   */
   @FunctionalInterface
   interface Encoder<From, To> {
     To encode(From f);
   }
 
+  /**
+   * Abstraction representing a conversion from a different model type.
+   *
+   * <p>This class is the inverse of {@link Encoder}
+   *
+   * <p>A symmetric {@link Encoder} {@link Decoder} pair can make a {@link Codec}
+   *
+   * @param <From>
+   * @param <To>
+   * @see Encoder
+   * @see Codec
+   */
   @FunctionalInterface
   interface Decoder<From, To> {
     To decode(From f);
@@ -43,12 +75,12 @@ final class Conversions {
       return f -> d.decode(this.decode(f));
     }
 
-    static <X> Decoder<X, X> identity() {
-      return (x) -> x;
-    }
-
     default <In> Decoder<In, To> compose(Decoder<In, From> before) {
       return in -> this.decode(before.decode(in));
+    }
+
+    static <X> Decoder<X, X> identity() {
+      return (x) -> x;
     }
   }
 
@@ -94,6 +126,10 @@ final class Conversions {
     }
   }
 
+  /**
+   * Internal implementation detail, not to be opened if the containing class and interfaces are
+   * ever opened up for access.
+   */
   private static final class SimpleCodec<A, B> implements Codec<A, B> {
     private final Encoder<A, B> e;
     private final Decoder<B, A> d;

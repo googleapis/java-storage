@@ -21,7 +21,6 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.concurrent.Executors.callable;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.paging.Page;
@@ -37,12 +36,14 @@ import com.google.cloud.PageImpl.NextPageFetcher;
 import com.google.cloud.Policy;
 import com.google.cloud.WriteChannel;
 import com.google.cloud.storage.Acl.Entity;
+import com.google.cloud.storage.ApiaryUnbufferedReadableByteChannel.ApiaryReadRequest;
 import com.google.cloud.storage.BlobReadChannelV2.BlobReadChannelContext;
 import com.google.cloud.storage.HmacKey.HmacKeyMetadata;
 import com.google.cloud.storage.PostPolicyV4.ConditionV4Type;
 import com.google.cloud.storage.PostPolicyV4.PostConditionsV4;
 import com.google.cloud.storage.PostPolicyV4.PostFieldsV4;
 import com.google.cloud.storage.PostPolicyV4.PostPolicyV4Document;
+import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import com.google.cloud.storage.UnifiedOpts.ObjectSourceOpt;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
@@ -59,9 +60,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
-import com.google.common.io.CountingOutputStream;
+import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -73,6 +75,7 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -106,7 +109,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   private static final int DEFAULT_BUFFER_SIZE = 15 * 1024 * 1024;
   private static final int MIN_BUFFER_SIZE = 256 * 1024;
 
-  private static final ApiaryConversions codecs = Conversions.apiary();
+  private static final JsonConversions codecs = Conversions.json();
 
   final HttpRetryAlgorithmManager retryAlgorithmManager;
   final StorageRpc storageRpc;
@@ -128,7 +131,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.create(bucketPb, optionsMap),
-        (b) -> Conversions.apiary().bucketInfo().decode(b).asBucket(this));
+        (b) -> Conversions.json().bucketInfo().decode(b).asBucket(this));
   }
 
   @Override
@@ -187,7 +190,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         firstNonNull(content, new ByteArrayInputStream(EMPTY_BYTE_ARRAY));
     // retries are not safe when the input is an InputStream, so we can't retry.
     BlobInfo info =
-        Conversions.apiary()
+        Conversions.json()
             .blobInfo()
             .decode(storageRpc.create(blobPb, inputStreamParam, optionsMap));
     return info.asBlob(this);
@@ -213,7 +216,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
             storageRpc.create(
                 blobPb, new ByteArrayInputStream(content, offset, length), optionsMap),
         (x) -> {
-          BlobInfo info1 = Conversions.apiary().blobInfo().decode(x);
+          BlobInfo info1 = Conversions.json().blobInfo().decode(x);
           return info1.asBlob(this);
         });
   }
@@ -426,7 +429,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                   : Iterables.transform(
                       result.y(),
                       bucketPb ->
-                          Conversions.apiary()
+                          Conversions.json()
                               .bucketInfo()
                               .decode(bucketPb)
                               .asBucket(serviceOptions.getService()));
@@ -453,7 +456,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
                   : Iterables.transform(
                       result.y(),
                       storageObject -> {
-                        BlobInfo info = Conversions.apiary().blobInfo().decode(storageObject);
+                        BlobInfo info = Conversions.json().blobInfo().decode(storageObject);
                         return info.asBlob(serviceOptions.getService());
                       });
           return new PageImpl<>(
@@ -475,7 +478,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
       return run(
           algorithm,
           () -> storageRpc.patch(bucketPb, optionsMap),
-          (x) -> Conversions.apiary().bucketInfo().decode(x).asBucket(this));
+          (x) -> Conversions.json().bucketInfo().decode(x).asBucket(this));
     }
   }
 
@@ -505,7 +508,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
           algorithm,
           () -> storageRpc.patch(pb, optionsMap),
           (x) -> {
-            BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+            BlobInfo info = Conversions.json().blobInfo().decode(x);
             return info.asBlob(this);
           });
     }
@@ -570,7 +573,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         algorithm,
         () -> storageRpc.compose(sources, targetPb, targetOptions),
         (x) -> {
-          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+          BlobInfo info = Conversions.json().blobInfo().decode(x);
           return info.asBlob(this);
         });
   }
@@ -614,9 +617,25 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     Opts<ObjectSourceOpt> unwrap = Opts.unwrap(options);
     Opts<ObjectSourceOpt> resolve = unwrap.resolveFrom(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm =
-        retryAlgorithmManager.getForObjectsGet(storageObject, optionsMap);
-    return run(algorithm, () -> storageRpc.load(storageObject, optionsMap), Function.identity());
+    boolean autoGzipDecompression =
+        Utils.isAutoGzipDecompression(resolve, /*defaultWhenUndefined=*/ true);
+    UnbufferedReadableByteChannelSession<StorageObject> session =
+        ResumableMedia.http()
+            .read()
+            .byteChannel(BlobReadChannelContext.from(this))
+            .setAutoGzipDecompression(autoGzipDecompression)
+            .unbuffered()
+            .setApiaryReadRequest(
+                new ApiaryReadRequest(storageObject, optionsMap, ByteRangeSpec.nullRange()))
+            .build();
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    try (UnbufferedReadableByteChannel r = session.open();
+        WritableByteChannel w = Channels.newChannel(baos)) {
+      ByteStreams.copy(r, w);
+    } catch (IOException e) {
+      throw StorageException.translate(e);
+    }
+    return baos.toByteArray();
   }
 
   @Override
@@ -632,7 +651,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
   @Override
   public StorageReadChannel reader(BlobId blob, BlobSourceOption... options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob);
-    StorageObject storageObject = Conversions.apiary().blobId().encode(blob);
+    StorageObject storageObject = Conversions.json().blobId().encode(blob);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = opts.getRpcOptions();
     return new BlobReadChannelV2(storageObject, optionsMap, BlobReadChannelContext.from(this));
   }
@@ -648,19 +667,26 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
 
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
-    final CountingOutputStream countingOutputStream = new CountingOutputStream(outputStream);
     final StorageObject pb = codecs.blobId().encode(blob);
-    ImmutableMap<StorageRpc.Option, ?> optionsMap =
-        Opts.unwrap(options).resolveFrom(blob).getRpcOptions();
-    ResultRetryAlgorithm<?> algorithm = retryAlgorithmManager.getForObjectsGet(pb, optionsMap);
-    run(
-        algorithm,
-        callable(
-            () -> {
-              storageRpc.read(
-                  pb, optionsMap, countingOutputStream.getCount(), countingOutputStream);
-            }),
-        Function.identity());
+    Opts<ObjectSourceOpt> resolve = Opts.unwrap(options).resolveFrom(blob);
+    ImmutableMap<StorageRpc.Option, ?> optionsMap = resolve.getRpcOptions();
+    boolean autoGzipDecompression =
+        Utils.isAutoGzipDecompression(resolve, /*defaultWhenUndefined=*/ true);
+    UnbufferedReadableByteChannelSession<StorageObject> session =
+        ResumableMedia.http()
+            .read()
+            .byteChannel(BlobReadChannelContext.from(this))
+            .setAutoGzipDecompression(autoGzipDecompression)
+            .unbuffered()
+            .setApiaryReadRequest(new ApiaryReadRequest(pb, optionsMap, ByteRangeSpec.nullRange()))
+            .build();
+    // don't close the provided stream
+    WritableByteChannel w = Channels.newChannel(outputStream);
+    try (UnbufferedReadableByteChannel r = session.open()) {
+      ByteStreams.copy(r, w);
+    } catch (IOException e) {
+      throw StorageException.translate(e);
+    }
   }
 
   @Override
@@ -1462,21 +1488,21 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.getIamPolicy(bucket, optionsMap),
-        apiPolicy -> Conversions.apiary().policyCodec().decode(apiPolicy));
+        apiPolicy -> Conversions.json().policyCodec().decode(apiPolicy));
   }
 
   @Override
   public Policy setIamPolicy(
       final String bucket, final Policy policy, BucketSourceOption... options) {
     com.google.api.services.storage.model.Policy pb =
-        Conversions.apiary().policyCodec().encode(policy);
+        Conversions.json().policyCodec().encode(policy);
     ImmutableMap<StorageRpc.Option, ?> optionsMap = Opts.unwrap(options).getRpcOptions();
     ResultRetryAlgorithm<?> algorithm =
         retryAlgorithmManager.getForBucketsSetIamPolicy(bucket, pb, optionsMap);
     return run(
         algorithm,
         () -> storageRpc.setIamPolicy(bucket, pb, optionsMap),
-        apiPolicy -> Conversions.apiary().policyCodec().decode(apiPolicy));
+        apiPolicy -> Conversions.json().policyCodec().decode(apiPolicy));
   }
 
   @Override
@@ -1510,7 +1536,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.lockRetentionPolicy(bucketPb, optionsMap),
-        (x) -> Conversions.apiary().bucketInfo().decode(x).asBucket(this));
+        (x) -> Conversions.json().bucketInfo().decode(x).asBucket(this));
   }
 
   @Override
@@ -1584,7 +1610,7 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
         algorithm,
         () -> storageRpc.get(storedObject, optionsMap),
         (x) -> {
-          BlobInfo info = Conversions.apiary().blobInfo().decode(x);
+          BlobInfo info = Conversions.json().blobInfo().decode(x);
           return info.asBlob(this);
         });
   }
@@ -1597,6 +1623,6 @@ final class StorageImpl extends BaseService<StorageOptions> implements Storage {
     return run(
         algorithm,
         () -> storageRpc.get(bucketPb, optionsMap),
-        (b) -> Conversions.apiary().bucketInfo().decode(b).asBucket(this));
+        (b) -> Conversions.json().bucketInfo().decode(b).asBucket(this));
   }
 }

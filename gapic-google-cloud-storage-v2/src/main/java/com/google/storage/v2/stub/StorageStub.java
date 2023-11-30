@@ -22,6 +22,7 @@ import static com.google.storage.v2.StorageClient.ListNotificationConfigsPagedRe
 import static com.google.storage.v2.StorageClient.ListObjectsPagedResponse;
 
 import com.google.api.gax.core.BackgroundResource;
+import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
 import com.google.api.gax.rpc.ServerStreamingCallable;
 import com.google.api.gax.rpc.UnaryCallable;
@@ -31,6 +32,8 @@ import com.google.iam.v1.SetIamPolicyRequest;
 import com.google.iam.v1.TestIamPermissionsRequest;
 import com.google.iam.v1.TestIamPermissionsResponse;
 import com.google.protobuf.Empty;
+import com.google.storage.v2.BidiWriteObjectRequest;
+import com.google.storage.v2.BidiWriteObjectResponse;
 import com.google.storage.v2.Bucket;
 import com.google.storage.v2.CancelResumableWriteRequest;
 import com.google.storage.v2.CancelResumableWriteResponse;
@@ -64,6 +67,7 @@ import com.google.storage.v2.QueryWriteStatusRequest;
 import com.google.storage.v2.QueryWriteStatusResponse;
 import com.google.storage.v2.ReadObjectRequest;
 import com.google.storage.v2.ReadObjectResponse;
+import com.google.storage.v2.RestoreObjectRequest;
 import com.google.storage.v2.RewriteObjectRequest;
 import com.google.storage.v2.RewriteResponse;
 import com.google.storage.v2.ServiceAccount;
@@ -160,6 +164,10 @@ public abstract class StorageStub implements BackgroundResource {
     throw new UnsupportedOperationException("Not implemented: deleteObjectCallable()");
   }
 
+  public UnaryCallable<RestoreObjectRequest, Object> restoreObjectCallable() {
+    throw new UnsupportedOperationException("Not implemented: restoreObjectCallable()");
+  }
+
   public UnaryCallable<CancelResumableWriteRequest, CancelResumableWriteResponse>
       cancelResumableWriteCallable() {
     throw new UnsupportedOperationException("Not implemented: cancelResumableWriteCallable()");
@@ -179,6 +187,11 @@ public abstract class StorageStub implements BackgroundResource {
 
   public ClientStreamingCallable<WriteObjectRequest, WriteObjectResponse> writeObjectCallable() {
     throw new UnsupportedOperationException("Not implemented: writeObjectCallable()");
+  }
+
+  public BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse>
+      bidiWriteObjectCallable() {
+    throw new UnsupportedOperationException("Not implemented: bidiWriteObjectCallable()");
   }
 
   public UnaryCallable<ListObjectsRequest, ListObjectsPagedResponse> listObjectsPagedCallable() {

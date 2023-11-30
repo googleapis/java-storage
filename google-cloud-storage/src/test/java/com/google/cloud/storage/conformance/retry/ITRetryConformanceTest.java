@@ -21,6 +21,7 @@ import static com.google.cloud.storage.PackagePrivateMethodWorkarounds.bucketCop
 import static com.google.cloud.storage.conformance.retry.Ctx.ctx;
 import static com.google.cloud.storage.conformance.retry.State.empty;
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,6 +31,7 @@ import com.google.cloud.conformance.storage.v1.RetryTest;
 import com.google.cloud.conformance.storage.v1.RetryTests;
 import com.google.cloud.storage.CIUtils;
 import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.Functions.CtxFunction;
 import com.google.cloud.storage.conformance.retry.ITRetryConformanceTest.RetryConformanceParameterProvider;
 import com.google.cloud.storage.it.runner.StorageITRunner;
@@ -63,6 +65,7 @@ import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.After;
 import org.junit.AssumptionViolatedException;
 import org.junit.Before;
@@ -78,7 +81,6 @@ import org.junit.runner.RunWith;
  * RpcMethodMappings}.
  */
 @RunWith(StorageITRunner.class)
-// @CrossRun(transports = Transport.HTTP, backends = Backend.TEST_BENCH)
 @SingleBackend(Backend.TEST_BENCH)
 @Parameterized(RetryConformanceParameterProvider.class)
 @ParallelFriendly
@@ -93,7 +95,7 @@ public class ITRetryConformanceTest {
   private RpcMethodMapping mapping;
   private Storage nonTestStorage;
   private Storage testStorage;
-  private Ctx ctx;
+  @Nullable private Ctx ctx;
 
   @Before
   public void setUp() throws Throwable {
@@ -114,9 +116,12 @@ public class ITRetryConformanceTest {
   @After
   public void tearDown() throws Throwable {
     LOGGER.fine("Running teardown...");
-    getReplaceStorageInObjectsFromCtx()
-        .andThen(mapping.getTearDown())
-        .apply(ctx, testRetryConformance);
+    if (ctx != null) {
+      Ctx tearDownCtx = ctx.leftMap(s -> nonTestStorage);
+      getReplaceStorageInObjectsFromCtx()
+          .andThen(mapping.getTearDown())
+          .apply(tearDownCtx, testRetryConformance);
+    }
     retryTestFixture.finished(null);
     LOGGER.fine("Running teardown complete");
   }
@@ -128,6 +133,7 @@ public class ITRetryConformanceTest {
   @Test
   public void test() throws Throwable {
     LOGGER.fine("Running test...");
+    assertThat(ctx).isNotNull();
     try {
       ctx =
           getReplaceStorageInObjectsFromCtx()
@@ -161,7 +167,9 @@ public class ITRetryConformanceTest {
               .setMappings(new RpcMethodMappings())
               .setProjectId("conformance-tests")
               .setHost(testBench.getBaseUri().replaceAll("https?://", ""))
-              .setTestAllowFilter(RetryTestCaseResolver.includeAll())
+              .setTestAllowFilter(
+                  RetryTestCaseResolver.includeAll()
+                      .and(RetryTestCaseResolver.lift(trc -> trc.getTransport() == Transport.HTTP)))
               .build();
 
       List<RetryTestCase> retryTestCases;
@@ -170,7 +178,9 @@ public class ITRetryConformanceTest {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-      assertThat(retryTestCases).isNotEmpty();
+      assertWithMessage("Filter too strict. Resolved 0 retry test cases")
+          .that(retryTestCases)
+          .isNotEmpty();
       return retryTestCases.stream()
           .map(
               rtc ->
@@ -276,69 +286,76 @@ public class ITRetryConformanceTest {
         RpcMethodMappings rpcMethodMappings, List<RetryTest> retryTests) {
 
       List<RetryTestCase> testCases = new ArrayList<>();
-      for (RetryTest testCase : retryTests) {
-        for (InstructionList instructionList : testCase.getCasesList()) {
-          for (Method method : testCase.getMethodsList()) {
-            String methodName = method.getName();
-            RpcMethod key = RpcMethod.storage.lookup.get(methodName);
-            assertNotNull(
-                String.format("Unable to resolve RpcMethod for value '%s'", methodName), key);
-            // get all RpcMethodMappings which are defined for key
-            List<RpcMethodMapping> mappings =
-                rpcMethodMappings.get(key).stream()
-                    .sorted(Comparator.comparingInt(RpcMethodMapping::getMappingId))
-                    .collect(Collectors.toList());
-            // if we don't have any mappings defined for the provide key, generate a case that when
-            // run reports an ignored test. This is done for the sake of completeness and to be
-            // aware of a lack of mapping.
-            if (mappings.isEmpty() && CIUtils.verbose()) {
-              TestRetryConformance testRetryConformance =
-                  new TestRetryConformance(
-                      projectId,
-                      host,
-                      testCase.getId(),
-                      method,
-                      instructionList,
-                      testCase.getPreconditionProvided(),
-                      false);
-              if (testAllowFilter.test(key, testRetryConformance)) {
-                testCases.add(
-                    new RetryTestCase(testRetryConformance, RpcMethodMapping.notImplemented(key)));
-              }
-            } else {
-              for (RpcMethodMapping mapping : mappings) {
+      Transport[] values = Transport.values();
+      for (Transport transport : values) {
+        for (RetryTest testCase : retryTests) {
+          for (InstructionList instructionList : testCase.getCasesList()) {
+            for (Method method : testCase.getMethodsList()) {
+              String methodName = method.getName();
+              RpcMethod key = RpcMethod.storage.lookup.get(methodName);
+              assertNotNull(
+                  String.format("Unable to resolve RpcMethod for value '%s'", methodName), key);
+              // get all RpcMethodMappings which are defined for key
+              List<RpcMethodMapping> mappings =
+                  rpcMethodMappings.get(key).stream()
+                      .sorted(Comparator.comparingInt(RpcMethodMapping::getMappingId))
+                      .collect(Collectors.toList());
+              // if we don't have any mappings defined for the provide key, generate a case that
+              // when
+              // run reports an ignored test. This is done for the sake of completeness and to be
+              // aware of a lack of mapping.
+              if (mappings.isEmpty() && CIUtils.verbose()) {
                 TestRetryConformance testRetryConformance =
                     new TestRetryConformance(
+                        transport,
                         projectId,
                         host,
                         testCase.getId(),
                         method,
                         instructionList,
                         testCase.getPreconditionProvided(),
-                        testCase.getExpectSuccess(),
-                        mapping.getMappingId());
-                // check that this case is allowed based on the provided filter
+                        false);
                 if (testAllowFilter.test(key, testRetryConformance)) {
-                  // check that the defined mapping is applicable to the case we've resolved.
-                  // Many mappings are conditionally valid and depend on the defined case.
-                  if (mapping.getApplicable().test(testRetryConformance)) {
-                    testCases.add(new RetryTestCase(testRetryConformance, mapping));
-                  } else if (CIUtils.verbose()) {
-                    // when the mapping is determined to not be applicable to this case, generate
-                    // a synthetic mapping which  will report as an ignored test. This is done for
-                    // the sake of completeness.
-                    RpcMethodMapping build =
-                        mapping
-                            .toBuilder()
-                            .withSetup(CtxFunction.identity())
-                            .withTest(
-                                (s, c) -> {
-                                  throw new AssumptionViolatedException(
-                                      "applicability predicate evaluated to false");
-                                })
-                            .withTearDown(CtxFunction.identity())
-                            .build();
-                    testCases.add(new RetryTestCase(testRetryConformance, build));
+                  testCases.add(
+                      new RetryTestCase(
+                          testRetryConformance, RpcMethodMapping.notImplemented(key)));
+                }
+              } else {
+                for (RpcMethodMapping mapping : mappings) {
+                  TestRetryConformance testRetryConformance =
+                      new TestRetryConformance(
+                          transport,
+                          projectId,
+                          host,
+                          testCase.getId(),
+                          method,
+                          instructionList,
+                          testCase.getPreconditionProvided(),
+                          testCase.getExpectSuccess(),
+                          mapping.getMappingId());
+                  // check that this case is allowed based on the provided filter
+                  if (testAllowFilter.test(key, testRetryConformance)) {
+                    // check that the defined mapping is applicable to the case we've resolved.
+                    // Many mappings are conditionally valid and depend on the defined case.
+                    if (mapping.getApplicable().test(testRetryConformance)) {
+                      testCases.add(new RetryTestCase(testRetryConformance, mapping));
+                    } else if (CIUtils.verbose()) {
+                      // when the mapping is determined to not be applicable to this case, generate
+                      // a synthetic mapping which  will report as an ignored test. This is done for
+                      // the sake of completeness.
+                      RpcMethodMapping build =
+                          mapping
+                              .toBuilder()
+                              .withSetup(CtxFunction.identity())
+                              .withTest(
+                                  (s, c) -> {
+                                    throw new AssumptionViolatedException(
+                                        "applicability predicate evaluated to false");
+                                  })
+                              .withTearDown(CtxFunction.identity())
+                              .build();
+                      testCases.add(new RetryTestCase(testRetryConformance, build));
+                    }
                   }
                 }
               }

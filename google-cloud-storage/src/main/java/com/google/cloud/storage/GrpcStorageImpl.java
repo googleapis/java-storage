@@ -182,7 +182,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   final GrpcConversions codecs;
   final GrpcRetryAlgorithmManager retryAlgorithmManager;
   final SyntaxDecoders syntaxDecoders;
-  private final Decoder<WriteObjectResponse, BlobInfo> writeObjectResponseBlobInfoDecoder;
 
   // workaround for https://github.com/googleapis/java-storage/issues/1736
   private final Opts<UserProject> defaultOpts;
@@ -200,8 +199,6 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     this.codecs = Conversions.grpc();
     this.retryAlgorithmManager = options.getRetryAlgorithmManager();
     this.syntaxDecoders = new SyntaxDecoders();
-    this.writeObjectResponseBlobInfoDecoder =
-        codecs.blobInfo().compose(WriteObjectResponse::getResource);
     this.defaultProjectId = UnifiedOpts.projectId(options.getProjectId());
   }
 
@@ -259,11 +256,34 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public Blob create(BlobInfo blobInfo, InputStream content, BlobWriteOption... options) {
-    try {
-      return createFrom(blobInfo, content, options);
-    } catch (IOException e) {
+    requireNonNull(blobInfo, "blobInfo must be non null");
+
+    Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
+    GrpcCallContext grpcCallContext =
+        opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
+
+    UnbufferedWritableByteChannelSession<WriteObjectResponse> session =
+        ResumableMedia.gapic()
+            .write()
+            .byteChannel(
+                storageClient.writeObjectCallable().withDefaultCallContext(grpcCallContext))
+            .setHasher(Hasher.enabled())
+            .setByteStringStrategy(ByteStringStrategy.noCopy())
+            .direct()
+            .unbuffered()
+            .setRequest(req)
+            .build();
+
+    // Specifically not in the try-with, so we don't close the provided stream
+    ReadableByteChannel src =
+        Channels.newChannel(firstNonNull(content, new ByteArrayInputStream(ZERO_BYTES)));
+    try (UnbufferedWritableByteChannel dst = session.open()) {
+      ByteStreams.copy(src, dst);
+    } catch (Exception e) {
       throw StorageException.coalesce(e);
     }
+    return getBlob(session.getResult());
   }
 
   @Override
@@ -318,7 +338,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
       }
       return codecs.blobInfo().decode(object).asBlob(this);
     } catch (InterruptedException | ExecutionException e) {
-      throw StorageException.coalesce(e);
+      throw StorageException.coalesce(e.getCause());
     }
   }
 
@@ -368,7 +388,14 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public Bucket get(String bucket, BucketGetOption... options) {
     Opts<BucketSourceOpt> unwrap = Opts.unwrap(options);
-    return internalBucketGet(bucket, unwrap);
+    try {
+      return internalBucketGet(bucket, unwrap);
+    } catch (StorageException e) {
+      if (e.getCode() == 404) {
+        return null;
+      }
+      throw e;
+    }
   }
 
   @Override
@@ -662,7 +689,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
   @Override
   public byte[] readAllBytes(BlobId blob, BlobSourceOption... options) {
-    UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
+    UnbufferedReadableByteChannelSession<Object> session =
+        unbufferedDefaultAutoGzipDecompressingReadSession(blob, options);
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try (UnbufferedReadableByteChannel r = session.open();
@@ -690,16 +718,19 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     ReadObjectRequest request = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(request));
     GrpcCallContext grpcCallContext = Retrying.newCallContext().withRetryableCodes(codes);
+    boolean autoGzipDecompression =
+        Utils.isAutoGzipDecompression(opts, /*defaultWhenUndefined=*/ false);
     return new GrpcBlobReadChannel(
         storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext),
         request,
-        !opts.autoGzipDecompression());
+        autoGzipDecompression);
   }
 
   @Override
   public void downloadTo(BlobId blob, Path path, BlobSourceOption... options) {
 
-    UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
+    UnbufferedReadableByteChannelSession<Object> session =
+        unbufferedDefaultAutoGzipDecompressingReadSession(blob, options);
 
     try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Files.newByteChannel(path, WRITE_OPS)) {
@@ -712,7 +743,8 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public void downloadTo(BlobId blob, OutputStream outputStream, BlobSourceOption... options) {
 
-    UnbufferedReadableByteChannelSession<Object> session = unbufferedReadSession(blob, options);
+    UnbufferedReadableByteChannelSession<Object> session =
+        unbufferedDefaultAutoGzipDecompressingReadSession(blob, options);
 
     try (UnbufferedReadableByteChannel r = session.open();
         WritableByteChannel w = Channels.newChannel(outputStream)) {
@@ -725,14 +757,9 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   @Override
   public GrpcBlobWriteChannel writer(BlobInfo blobInfo, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(blobInfo).prepend(defaultOpts);
-    return internalWriter(blobInfo, opts);
-  }
-
-  @Override
-  public GrpcBlobWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(GrpcCallContext.createDefault());
-    WriteObjectRequest req = getWriteObjectRequest(info, opts);
+    WriteObjectRequest req = getWriteObjectRequest(blobInfo, opts);
     Hasher hasher = Hasher.noop();
     return new GrpcBlobWriteChannel(
         storageClient.writeObjectCallable(),
@@ -1540,7 +1567,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   public BlobWriteSession blobWriteSession(BlobInfo info, BlobWriteOption... options) {
     Opts<ObjectTargetOpt> opts = Opts.unwrap(options).resolveFrom(info);
     WritableByteChannelSession<?, BlobInfo> writableByteChannelSession =
-        writerFactory.writeSession(this, info, opts, writeObjectResponseBlobInfoDecoder);
+        writerFactory.writeSession(this, info, opts);
     return BlobWriteSessions.of(writableByteChannelSession);
   }
 
@@ -1815,18 +1842,20 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
     return opts.writeObjectRequest().apply(requestBuilder).build();
   }
 
-  private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
-      BlobId blob, BlobSourceOption[] options) {
+  private UnbufferedReadableByteChannelSession<Object>
+      unbufferedDefaultAutoGzipDecompressingReadSession(BlobId blob, BlobSourceOption[] options) {
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes =
         resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(readObjectRequest));
     GrpcCallContext grpcCallContext =
         opts.grpcMetadataMapper().apply(Retrying.newCallContext().withRetryableCodes(codes));
+    boolean autoGzipDecompression =
+        Utils.isAutoGzipDecompression(opts, /*defaultWhenUndefined=*/ true);
     return ResumableMedia.gapic()
         .read()
         .byteChannel(storageClient.readObjectCallable().withDefaultCallContext(grpcCallContext))
-        .setAutoGzipDecompression(!opts.autoGzipDecompression())
+        .setAutoGzipDecompression(autoGzipDecompression)
         .unbuffered()
         .setReadObjectRequest(readObjectRequest)
         .build();

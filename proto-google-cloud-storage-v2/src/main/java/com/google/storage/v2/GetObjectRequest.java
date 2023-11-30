@@ -189,6 +189,39 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     return generation_;
   }
 
+  public static final int SOFT_DELETED_FIELD_NUMBER = 11;
+  private boolean softDeleted_ = false;
+  /**
+   *
+   *
+   * <pre>
+   * If true, return the soft-deleted version of this object.
+   * </pre>
+   *
+   * <code>optional bool soft_deleted = 11;</code>
+   *
+   * @return Whether the softDeleted field is set.
+   */
+  @java.lang.Override
+  public boolean hasSoftDeleted() {
+    return ((bitField0_ & 0x00000001) != 0);
+  }
+  /**
+   *
+   *
+   * <pre>
+   * If true, return the soft-deleted version of this object.
+   * </pre>
+   *
+   * <code>optional bool soft_deleted = 11;</code>
+   *
+   * @return The softDeleted.
+   */
+  @java.lang.Override
+  public boolean getSoftDeleted() {
+    return softDeleted_;
+  }
+
   public static final int IF_GENERATION_MATCH_FIELD_NUMBER = 4;
   private long ifGenerationMatch_ = 0L;
   /**
@@ -206,7 +239,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfGenerationMatch() {
-    return ((bitField0_ & 0x00000001) != 0);
+    return ((bitField0_ & 0x00000002) != 0);
   }
   /**
    *
@@ -244,7 +277,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfGenerationNotMatch() {
-    return ((bitField0_ & 0x00000002) != 0);
+    return ((bitField0_ & 0x00000004) != 0);
   }
   /**
    *
@@ -281,7 +314,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfMetagenerationMatch() {
-    return ((bitField0_ & 0x00000004) != 0);
+    return ((bitField0_ & 0x00000008) != 0);
   }
   /**
    *
@@ -316,7 +349,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasIfMetagenerationNotMatch() {
-    return ((bitField0_ & 0x00000008) != 0);
+    return ((bitField0_ & 0x00000010) != 0);
   }
   /**
    *
@@ -404,7 +437,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
    */
   @java.lang.Override
   public boolean hasReadMask() {
-    return ((bitField0_ & 0x00000010) != 0);
+    return ((bitField0_ & 0x00000020) != 0);
   }
   /**
    *
@@ -464,23 +497,26 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (generation_ != 0L) {
       output.writeInt64(3, generation_);
     }
-    if (((bitField0_ & 0x00000001) != 0)) {
+    if (((bitField0_ & 0x00000002) != 0)) {
       output.writeInt64(4, ifGenerationMatch_);
     }
-    if (((bitField0_ & 0x00000002) != 0)) {
+    if (((bitField0_ & 0x00000004) != 0)) {
       output.writeInt64(5, ifGenerationNotMatch_);
     }
-    if (((bitField0_ & 0x00000004) != 0)) {
+    if (((bitField0_ & 0x00000008) != 0)) {
       output.writeInt64(6, ifMetagenerationMatch_);
     }
-    if (((bitField0_ & 0x00000008) != 0)) {
+    if (((bitField0_ & 0x00000010) != 0)) {
       output.writeInt64(7, ifMetagenerationNotMatch_);
     }
     if (commonObjectRequestParams_ != null) {
       output.writeMessage(8, getCommonObjectRequestParams());
     }
-    if (((bitField0_ & 0x00000010) != 0)) {
+    if (((bitField0_ & 0x00000020) != 0)) {
       output.writeMessage(10, getReadMask());
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      output.writeBool(11, softDeleted_);
     }
     getUnknownFields().writeTo(output);
   }
@@ -500,16 +536,16 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (generation_ != 0L) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(3, generation_);
     }
-    if (((bitField0_ & 0x00000001) != 0)) {
+    if (((bitField0_ & 0x00000002) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(4, ifGenerationMatch_);
     }
-    if (((bitField0_ & 0x00000002) != 0)) {
+    if (((bitField0_ & 0x00000004) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(5, ifGenerationNotMatch_);
     }
-    if (((bitField0_ & 0x00000004) != 0)) {
+    if (((bitField0_ & 0x00000008) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(6, ifMetagenerationMatch_);
     }
-    if (((bitField0_ & 0x00000008) != 0)) {
+    if (((bitField0_ & 0x00000010) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeInt64Size(7, ifMetagenerationNotMatch_);
     }
     if (commonObjectRequestParams_ != null) {
@@ -517,8 +553,11 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
           com.google.protobuf.CodedOutputStream.computeMessageSize(
               8, getCommonObjectRequestParams());
     }
-    if (((bitField0_ & 0x00000010) != 0)) {
+    if (((bitField0_ & 0x00000020) != 0)) {
       size += com.google.protobuf.CodedOutputStream.computeMessageSize(10, getReadMask());
+    }
+    if (((bitField0_ & 0x00000001) != 0)) {
+      size += com.google.protobuf.CodedOutputStream.computeBoolSize(11, softDeleted_);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -538,6 +577,10 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     if (!getBucket().equals(other.getBucket())) return false;
     if (!getObject().equals(other.getObject())) return false;
     if (getGeneration() != other.getGeneration()) return false;
+    if (hasSoftDeleted() != other.hasSoftDeleted()) return false;
+    if (hasSoftDeleted()) {
+      if (getSoftDeleted() != other.getSoftDeleted()) return false;
+    }
     if (hasIfGenerationMatch() != other.hasIfGenerationMatch()) return false;
     if (hasIfGenerationMatch()) {
       if (getIfGenerationMatch() != other.getIfGenerationMatch()) return false;
@@ -580,6 +623,10 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     hash = (53 * hash) + getObject().hashCode();
     hash = (37 * hash) + GENERATION_FIELD_NUMBER;
     hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getGeneration());
+    if (hasSoftDeleted()) {
+      hash = (37 * hash) + SOFT_DELETED_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(getSoftDeleted());
+    }
     if (hasIfGenerationMatch()) {
       hash = (37 * hash) + IF_GENERATION_MATCH_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(getIfGenerationMatch());
@@ -756,6 +803,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       bucket_ = "";
       object_ = "";
       generation_ = 0L;
+      softDeleted_ = false;
       ifGenerationMatch_ = 0L;
       ifGenerationNotMatch_ = 0L;
       ifMetagenerationMatch_ = 0L;
@@ -817,30 +865,34 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       }
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000008) != 0)) {
-        result.ifGenerationMatch_ = ifGenerationMatch_;
+        result.softDeleted_ = softDeleted_;
         to_bitField0_ |= 0x00000001;
       }
       if (((from_bitField0_ & 0x00000010) != 0)) {
-        result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
+        result.ifGenerationMatch_ = ifGenerationMatch_;
         to_bitField0_ |= 0x00000002;
       }
       if (((from_bitField0_ & 0x00000020) != 0)) {
-        result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
+        result.ifGenerationNotMatch_ = ifGenerationNotMatch_;
         to_bitField0_ |= 0x00000004;
       }
       if (((from_bitField0_ & 0x00000040) != 0)) {
-        result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
+        result.ifMetagenerationMatch_ = ifMetagenerationMatch_;
         to_bitField0_ |= 0x00000008;
       }
       if (((from_bitField0_ & 0x00000080) != 0)) {
+        result.ifMetagenerationNotMatch_ = ifMetagenerationNotMatch_;
+        to_bitField0_ |= 0x00000010;
+      }
+      if (((from_bitField0_ & 0x00000100) != 0)) {
         result.commonObjectRequestParams_ =
             commonObjectRequestParamsBuilder_ == null
                 ? commonObjectRequestParams_
                 : commonObjectRequestParamsBuilder_.build();
       }
-      if (((from_bitField0_ & 0x00000100) != 0)) {
+      if (((from_bitField0_ & 0x00000200) != 0)) {
         result.readMask_ = readMaskBuilder_ == null ? readMask_ : readMaskBuilder_.build();
-        to_bitField0_ |= 0x00000010;
+        to_bitField0_ |= 0x00000020;
       }
       result.bitField0_ |= to_bitField0_;
     }
@@ -902,6 +954,9 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       }
       if (other.getGeneration() != 0L) {
         setGeneration(other.getGeneration());
+      }
+      if (other.hasSoftDeleted()) {
+        setSoftDeleted(other.getSoftDeleted());
       }
       if (other.hasIfGenerationMatch()) {
         setIfGenerationMatch(other.getIfGenerationMatch());
@@ -968,40 +1023,46 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
             case 32:
               {
                 ifGenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000008;
+                bitField0_ |= 0x00000010;
                 break;
               } // case 32
             case 40:
               {
                 ifGenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000010;
+                bitField0_ |= 0x00000020;
                 break;
               } // case 40
             case 48:
               {
                 ifMetagenerationMatch_ = input.readInt64();
-                bitField0_ |= 0x00000020;
+                bitField0_ |= 0x00000040;
                 break;
               } // case 48
             case 56:
               {
                 ifMetagenerationNotMatch_ = input.readInt64();
-                bitField0_ |= 0x00000040;
+                bitField0_ |= 0x00000080;
                 break;
               } // case 56
             case 66:
               {
                 input.readMessage(
                     getCommonObjectRequestParamsFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000080;
+                bitField0_ |= 0x00000100;
                 break;
               } // case 66
             case 82:
               {
                 input.readMessage(getReadMaskFieldBuilder().getBuilder(), extensionRegistry);
-                bitField0_ |= 0x00000100;
+                bitField0_ |= 0x00000200;
                 break;
               } // case 82
+            case 88:
+              {
+                softDeleted_ = input.readBool();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 88
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -1299,6 +1360,74 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       return this;
     }
 
+    private boolean softDeleted_;
+    /**
+     *
+     *
+     * <pre>
+     * If true, return the soft-deleted version of this object.
+     * </pre>
+     *
+     * <code>optional bool soft_deleted = 11;</code>
+     *
+     * @return Whether the softDeleted field is set.
+     */
+    @java.lang.Override
+    public boolean hasSoftDeleted() {
+      return ((bitField0_ & 0x00000008) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If true, return the soft-deleted version of this object.
+     * </pre>
+     *
+     * <code>optional bool soft_deleted = 11;</code>
+     *
+     * @return The softDeleted.
+     */
+    @java.lang.Override
+    public boolean getSoftDeleted() {
+      return softDeleted_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If true, return the soft-deleted version of this object.
+     * </pre>
+     *
+     * <code>optional bool soft_deleted = 11;</code>
+     *
+     * @param value The softDeleted to set.
+     * @return This builder for chaining.
+     */
+    public Builder setSoftDeleted(boolean value) {
+
+      softDeleted_ = value;
+      bitField0_ |= 0x00000008;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * If true, return the soft-deleted version of this object.
+     * </pre>
+     *
+     * <code>optional bool soft_deleted = 11;</code>
+     *
+     * @return This builder for chaining.
+     */
+    public Builder clearSoftDeleted() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      softDeleted_ = false;
+      onChanged();
+      return this;
+    }
+
     private long ifGenerationMatch_;
     /**
      *
@@ -1315,7 +1444,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfGenerationMatch() {
-      return ((bitField0_ & 0x00000008) != 0);
+      return ((bitField0_ & 0x00000010) != 0);
     }
     /**
      *
@@ -1351,7 +1480,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfGenerationMatch(long value) {
 
       ifGenerationMatch_ = value;
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       onChanged();
       return this;
     }
@@ -1369,7 +1498,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       ifGenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1392,7 +1521,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfGenerationNotMatch() {
-      return ((bitField0_ & 0x00000010) != 0);
+      return ((bitField0_ & 0x00000020) != 0);
     }
     /**
      *
@@ -1430,7 +1559,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfGenerationNotMatch(long value) {
 
       ifGenerationNotMatch_ = value;
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       onChanged();
       return this;
     }
@@ -1449,7 +1578,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfGenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000020);
       ifGenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1470,7 +1599,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfMetagenerationMatch() {
-      return ((bitField0_ & 0x00000020) != 0);
+      return ((bitField0_ & 0x00000040) != 0);
     }
     /**
      *
@@ -1504,7 +1633,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfMetagenerationMatch(long value) {
 
       ifMetagenerationMatch_ = value;
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000040;
       onChanged();
       return this;
     }
@@ -1521,7 +1650,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationMatch() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000040);
       ifMetagenerationMatch_ = 0L;
       onChanged();
       return this;
@@ -1542,7 +1671,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     @java.lang.Override
     public boolean hasIfMetagenerationNotMatch() {
-      return ((bitField0_ & 0x00000040) != 0);
+      return ((bitField0_ & 0x00000080) != 0);
     }
     /**
      *
@@ -1576,7 +1705,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder setIfMetagenerationNotMatch(long value) {
 
       ifMetagenerationNotMatch_ = value;
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000080;
       onChanged();
       return this;
     }
@@ -1593,7 +1722,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return This builder for chaining.
      */
     public Builder clearIfMetagenerationNotMatch() {
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000080);
       ifMetagenerationNotMatch_ = 0L;
       onChanged();
       return this;
@@ -1617,7 +1746,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return Whether the commonObjectRequestParams field is set.
      */
     public boolean hasCommonObjectRequestParams() {
-      return ((bitField0_ & 0x00000080) != 0);
+      return ((bitField0_ & 0x00000100) != 0);
     }
     /**
      *
@@ -1658,7 +1787,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       } else {
         commonObjectRequestParamsBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -1678,7 +1807,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       } else {
         commonObjectRequestParamsBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -1694,7 +1823,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
     public Builder mergeCommonObjectRequestParams(
         com.google.storage.v2.CommonObjectRequestParams value) {
       if (commonObjectRequestParamsBuilder_ == null) {
-        if (((bitField0_ & 0x00000080) != 0)
+        if (((bitField0_ & 0x00000100) != 0)
             && commonObjectRequestParams_ != null
             && commonObjectRequestParams_
                 != com.google.storage.v2.CommonObjectRequestParams.getDefaultInstance()) {
@@ -1705,7 +1834,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       } else {
         commonObjectRequestParamsBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000100;
       onChanged();
       return this;
     }
@@ -1719,7 +1848,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * <code>.google.storage.v2.CommonObjectRequestParams common_object_request_params = 8;</code>
      */
     public Builder clearCommonObjectRequestParams() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000100);
       commonObjectRequestParams_ = null;
       if (commonObjectRequestParamsBuilder_ != null) {
         commonObjectRequestParamsBuilder_.dispose();
@@ -1739,7 +1868,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     public com.google.storage.v2.CommonObjectRequestParams.Builder
         getCommonObjectRequestParamsBuilder() {
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000100;
       onChanged();
       return getCommonObjectRequestParamsFieldBuilder().getBuilder();
     }
@@ -1809,7 +1938,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * @return Whether the readMask field is set.
      */
     public boolean hasReadMask() {
-      return ((bitField0_ & 0x00000100) != 0);
+      return ((bitField0_ & 0x00000200) != 0);
     }
     /**
      *
@@ -1853,7 +1982,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       } else {
         readMaskBuilder_.setMessage(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -1875,7 +2004,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       } else {
         readMaskBuilder_.setMessage(builderForValue.build());
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -1893,7 +2022,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      */
     public Builder mergeReadMask(com.google.protobuf.FieldMask value) {
       if (readMaskBuilder_ == null) {
-        if (((bitField0_ & 0x00000100) != 0)
+        if (((bitField0_ & 0x00000200) != 0)
             && readMask_ != null
             && readMask_ != com.google.protobuf.FieldMask.getDefaultInstance()) {
           getReadMaskBuilder().mergeFrom(value);
@@ -1903,7 +2032,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
       } else {
         readMaskBuilder_.mergeFrom(value);
       }
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return this;
     }
@@ -1920,7 +2049,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
      */
     public Builder clearReadMask() {
-      bitField0_ = (bitField0_ & ~0x00000100);
+      bitField0_ = (bitField0_ & ~0x00000200);
       readMask_ = null;
       if (readMaskBuilder_ != null) {
         readMaskBuilder_.dispose();
@@ -1942,7 +2071,7 @@ public final class GetObjectRequest extends com.google.protobuf.GeneratedMessage
      * <code>optional .google.protobuf.FieldMask read_mask = 10;</code>
      */
     public com.google.protobuf.FieldMask.Builder getReadMaskBuilder() {
-      bitField0_ |= 0x00000100;
+      bitField0_ |= 0x00000200;
       onChanged();
       return getReadMaskFieldBuilder().getBuilder();
     }

@@ -47,6 +47,7 @@ import java.io.StringReader;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.util.List;
@@ -68,6 +69,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
   private long position;
   private ScatteringByteChannel sbc;
   private boolean open;
+  private boolean returnEOF;
 
   // returned X-Goog-Generation header value
   private Long xGoogGeneration;
@@ -84,16 +86,30 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     this.options = options;
     this.resultRetryAlgorithm = resultRetryAlgorithm;
     this.open = true;
+    this.returnEOF = false;
     this.position = apiaryReadRequest.getByteRangeSpec().beginOffset();
   }
 
   @Override
   public long read(ByteBuffer[] dsts, int offset, int length) throws IOException {
+    if (returnEOF) {
+      close();
+      return -1;
+    } else if (!open) {
+      throw new ClosedChannelException();
+    }
+    long totalRead = 0;
     do {
       if (sbc == null) {
-        sbc = Retrying.run(options, resultRetryAlgorithm, this::open, Function.identity());
+        try {
+          sbc = Retrying.run(options, resultRetryAlgorithm, this::open, Function.identity());
+        } catch (StorageException e) {
+          result.setException(e);
+          throw e;
+        }
       }
 
+      long totalRemaining = Buffers.totalRemaining(dsts, offset, length);
       try {
         // According to the contract of Retrying#run it's possible for sbc to be null even after
         // invocation. However, the function we provide is guaranteed to return non-null or throw
@@ -101,11 +117,11 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
         //noinspection ConstantConditions
         long read = sbc.read(dsts, offset, length);
         if (read == -1) {
-          open = false;
+          returnEOF = true;
         } else {
-          position += read;
+          totalRead += read;
         }
-        return read;
+        return totalRead;
       } catch (Exception t) {
         if (resultRetryAlgorithm.shouldRetry(t, null)) {
           // if our retry algorithm COULD allow a retry, continue the loop and allow trying to
@@ -113,13 +129,24 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
           sbc = null;
         } else if (t instanceof IOException) {
           IOException ioE = (IOException) t;
-          if (resultRetryAlgorithm.shouldRetry(StorageException.translate(ioE), null)) {
+          StorageException translate = StorageException.translate(ioE);
+          if (resultRetryAlgorithm.shouldRetry(translate, null)) {
             sbc = null;
           } else {
+            result.setException(translate);
             throw ioE;
           }
         } else {
-          throw new IOException(StorageException.coalesce(t));
+          BaseServiceException coalesce = StorageException.coalesce(t);
+          result.setException(coalesce);
+          throw new IOException(coalesce);
+        }
+      } finally {
+        long totalRemainingAfter = Buffers.totalRemaining(dsts, offset, length);
+        long delta = totalRemaining - totalRemainingAfter;
+        if (delta > 0) {
+          position += delta;
+          totalRead += delta;
         }
       }
     } while (true);
@@ -189,20 +216,17 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       if (xGoogGeneration != null) {
         int statusCode = e.getStatusCode();
         if (statusCode == 404) {
-          throw new StorageException(404, "Failure while trying to resume download", e);
+          StorageException storageException =
+              new StorageException(404, "Failure while trying to resume download", e);
+          result.setException(storageException);
+          throw storageException;
         }
       }
-      StorageException translate = StorageException.translate(e);
-      result.setException(translate);
-      throw translate;
+      throw StorageException.translate(e);
     } catch (IOException e) {
-      StorageException translate = StorageException.translate(e);
-      result.setException(translate);
-      throw translate;
+      throw StorageException.translate(e);
     } catch (Throwable t) {
-      BaseServiceException coalesce = StorageException.coalesce(t);
-      result.setException(coalesce);
-      throw coalesce;
+      throw StorageException.coalesce(t);
     }
   }
 

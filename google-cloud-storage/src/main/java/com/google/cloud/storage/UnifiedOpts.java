@@ -2339,18 +2339,6 @@ final class UnifiedOpts {
       return fuseMappers(ObjectTargetOpt.class, ObjectTargetOpt::blobInfo);
     }
 
-    /**
-     * Here for compatibility. This should NOT be an "Opt" instead an attribute of the channel
-     * builder. When {@link ReturnRawInputStream} is removed, this method should be removed as well.
-     *
-     * @see
-     *     GapicDownloadSessionBuilder.ReadableByteChannelSessionBuilder#setAutoGzipDecompression(boolean)
-     */
-    @Deprecated
-    boolean autoGzipDecompression() {
-      return filterTo(ReturnRawInputStream.class).findFirst().map(r -> r.val).orElse(true);
-    }
-
     Decoder<BlobInfo, BlobInfo> clearBlobFields() {
       return filterTo(Fields.class)
           .findFirst()

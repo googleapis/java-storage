@@ -21,15 +21,14 @@ import com.google.api.core.ApiFutures;
 import com.google.api.core.BetaApi;
 import com.google.api.core.InternalApi;
 import com.google.api.core.SettableApiFuture;
-import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.RecoveryFileManager.RecoveryVolumeSinkFactory;
 import com.google.cloud.storage.Storage.BlobWriteOption;
+import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.UnifiedOpts.ObjectTargetOpt;
 import com.google.cloud.storage.UnifiedOpts.Opts;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.google.storage.v2.WriteObjectResponse;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -60,7 +59,9 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
  */
 @Immutable
 @BetaApi
-public final class BufferToDiskThenUpload extends BlobWriteSessionConfig {
+@TransportCompatibility({Transport.GRPC})
+public final class BufferToDiskThenUpload extends BlobWriteSessionConfig
+    implements BlobWriteSessionConfig.GrpcCompatible {
   private static final long serialVersionUID = 9059242302276891867L;
 
   /**
@@ -151,10 +152,7 @@ public final class BufferToDiskThenUpload extends BlobWriteSessionConfig {
     @InternalApi
     @Override
     public WritableByteChannelSession<?, BlobInfo> writeSession(
-        StorageInternal storage,
-        BlobInfo info,
-        Opts<ObjectTargetOpt> opts,
-        Decoder<WriteObjectResponse, BlobInfo> d) {
+        StorageInternal storage, BlobInfo info, Opts<ObjectTargetOpt> opts) {
       return new Factory.WriteToFileThenUpload(
           storage, info, opts, recoveryFileManager.newRecoveryFile(info));
     }

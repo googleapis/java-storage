@@ -146,8 +146,6 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Output only. The metadata generation of this bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -262,7 +260,7 @@ public interface BucketOrBuilder
    * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
    * buckets only. If rpo is not specified when the bucket is created, it
    * defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/turbo-replication.
+   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
    * <code>string rpo = 27;</code>
@@ -279,7 +277,7 @@ public interface BucketOrBuilder
    * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
    * buckets only. If rpo is not specified when the bucket is created, it
    * defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/turbo-replication.
+   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
    * <code>string rpo = 27;</code>
@@ -458,8 +456,6 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Output only. The creation time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 11 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -473,8 +469,6 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Output only. The creation time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 11 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -488,8 +482,6 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Output only. The creation time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 11 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -558,8 +550,6 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Output only. The modification time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 13 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -573,8 +563,6 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Output only. The modification time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 13 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -588,8 +576,6 @@ public interface BucketOrBuilder
    *
    * <pre>
    * Output only. The modification time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 13 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -1087,4 +1073,48 @@ public interface BucketOrBuilder
    * <code>.google.storage.v2.Bucket.Autoclass autoclass = 28;</code>
    */
   com.google.storage.v2.Bucket.AutoclassOrBuilder getAutoclassOrBuilder();
+
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's soft delete policy. The soft delete policy prevents
+   * soft-deleted objects from being permanently deleted.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the softDeletePolicy field is set.
+   */
+  boolean hasSoftDeletePolicy();
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's soft delete policy. The soft delete policy prevents
+   * soft-deleted objects from being permanently deleted.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The softDeletePolicy.
+   */
+  com.google.storage.v2.Bucket.SoftDeletePolicy getSoftDeletePolicy();
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's soft delete policy. The soft delete policy prevents
+   * soft-deleted objects from being permanently deleted.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder getSoftDeletePolicyOrBuilder();
 }

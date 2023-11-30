@@ -31,10 +31,6 @@ interface StorageInternal {
     throw new UnsupportedOperationException("not implemented");
   }
 
-  default StorageWriteChannel internalWriter(BlobInfo info, Opts<ObjectTargetOpt> opts) {
-    throw new UnsupportedOperationException("not implemented");
-  }
-
   default BlobInfo internalDirectUpload(BlobInfo info, Opts<ObjectTargetOpt> opts, ByteBuffer buf) {
     throw new UnsupportedOperationException("not implemented");
   }

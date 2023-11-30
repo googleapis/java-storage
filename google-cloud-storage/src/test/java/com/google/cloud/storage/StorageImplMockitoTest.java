@@ -369,10 +369,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testCreateBucket() {
-    doReturn(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1))
+    doReturn(Conversions.json().bucketInfo().encode(BUCKET_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .create(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1), EMPTY_RPC_OPTIONS);
+        .create(Conversions.json().bucketInfo().encode(BUCKET_INFO1), EMPTY_RPC_OPTIONS);
     initializeService();
     Bucket bucket = storage.create(BUCKET_INFO1);
     assertEquals(expectedBucket1, bucket);
@@ -380,10 +380,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testCreateBucketWithOptions() {
-    doReturn(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1))
+    doReturn(Conversions.json().bucketInfo().encode(BUCKET_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .create(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1), BUCKET_TARGET_OPTIONS);
+        .create(Conversions.json().bucketInfo().encode(BUCKET_INFO1), BUCKET_TARGET_OPTIONS);
     initializeService();
     Bucket bucket =
         storage.create(BUCKET_INFO1, BUCKET_TARGET_METAGENERATION, BUCKET_TARGET_PREDEFINED_ACL);
@@ -394,7 +394,7 @@ public class StorageImplMockitoTest {
   public void testCreateBucketFailure() {
     doThrow(STORAGE_FAILURE)
         .when(storageRpcMock)
-        .create(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1), EMPTY_RPC_OPTIONS);
+        .create(Conversions.json().bucketInfo().encode(BUCKET_INFO1), EMPTY_RPC_OPTIONS);
     initializeService();
     try {
       storage.create(BUCKET_INFO1);
@@ -406,12 +406,11 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetBucket() {
-    doReturn(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1))
+    doReturn(Conversions.json().bucketInfo().encode(BUCKET_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Conversions.apiary().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1)),
-            EMPTY_RPC_OPTIONS);
+            Conversions.json().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1)), EMPTY_RPC_OPTIONS);
     initializeService();
     Bucket bucket = storage.get(BUCKET_NAME1);
     assertEquals(expectedBucket1, bucket);
@@ -419,11 +418,11 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetBucketWithOptions() {
-    doReturn(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1))
+    doReturn(Conversions.json().bucketInfo().encode(BUCKET_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Conversions.apiary().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1)),
+            Conversions.json().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1)),
             BUCKET_GET_OPTIONS);
     initializeService();
     Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION);
@@ -434,11 +433,11 @@ public class StorageImplMockitoTest {
   public void testGetBucketWithSelectedFields() {
     ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
         ArgumentCaptor.forClass(Map.class);
-    doReturn(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1))
+    doReturn(Conversions.json().bucketInfo().encode(BUCKET_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Mockito.eq(Conversions.apiary().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1))),
+            Mockito.eq(Conversions.json().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1))),
             capturedOptions.capture());
     initializeService();
     Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION, BUCKET_GET_FIELDS);
@@ -457,11 +456,11 @@ public class StorageImplMockitoTest {
   public void testGetBucketWithEmptyFields() {
     ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
         ArgumentCaptor.forClass(Map.class);
-    doReturn(Conversions.apiary().bucketInfo().encode(BUCKET_INFO1))
+    doReturn(Conversions.json().bucketInfo().encode(BUCKET_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Mockito.eq(Conversions.apiary().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1))),
+            Mockito.eq(Conversions.json().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1))),
             capturedOptions.capture());
     initializeService();
     Bucket bucket = storage.get(BUCKET_NAME1, BUCKET_GET_METAGENERATION, BUCKET_GET_EMPTY_FIELDS);
@@ -479,8 +478,7 @@ public class StorageImplMockitoTest {
     doThrow(STORAGE_FAILURE)
         .when(storageRpcMock)
         .get(
-            Conversions.apiary().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1)),
-            EMPTY_RPC_OPTIONS);
+            Conversions.json().bucketInfo().encode(BucketInfo.of(BUCKET_NAME1)), EMPTY_RPC_OPTIONS);
     initializeService();
     try {
       storage.get(BUCKET_NAME1);
@@ -492,11 +490,11 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetBlob() {
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Conversions.apiary().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
+            Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
             EMPTY_RPC_OPTIONS);
     initializeService();
     Blob blob = storage.get(BUCKET_NAME1, BLOB_NAME1);
@@ -505,11 +503,11 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetBlobWithOptions() {
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Conversions.apiary().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
+            Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
             BLOB_GET_OPTIONS);
     initializeService();
     Blob blob = storage.get(BUCKET_NAME1, BLOB_NAME1, BLOB_GET_METAGENERATION, BLOB_GET_GENERATION);
@@ -518,10 +516,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetBlobWithOptionsFromBlobId() {
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .get(Conversions.apiary().blobId().encode(BLOB_INFO1.getBlobId()), BLOB_GET_OPTIONS);
+        .get(Conversions.json().blobId().encode(BLOB_INFO1.getBlobId()), BLOB_GET_OPTIONS);
     initializeService();
     Blob blob =
         storage.get(
@@ -533,11 +531,11 @@ public class StorageImplMockitoTest {
   public void testGetBlobWithSelectedFields() {
     ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
         ArgumentCaptor.forClass(Map.class);
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Mockito.eq(Conversions.apiary().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1))),
+            Mockito.eq(Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1))),
             capturedOptions.capture());
     initializeService();
     Blob blob =
@@ -566,11 +564,11 @@ public class StorageImplMockitoTest {
   public void testGetBlobWithEmptyFields() {
     ArgumentCaptor<Map<StorageRpc.Option, Object>> capturedOptions =
         ArgumentCaptor.forClass(Map.class);
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .get(
-            Mockito.eq(Conversions.apiary().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1))),
+            Mockito.eq(Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1))),
             capturedOptions.capture());
     initializeService();
     Blob blob =
@@ -598,7 +596,7 @@ public class StorageImplMockitoTest {
     doThrow(STORAGE_FAILURE)
         .when(storageRpcMock)
         .get(
-            Conversions.apiary().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
+            Conversions.json().blobId().encode(BlobId.of(BUCKET_NAME1, BLOB_NAME1)),
             EMPTY_RPC_OPTIONS);
     initializeService();
     try {
@@ -622,11 +620,11 @@ public class StorageImplMockitoTest {
   public void testCreateBlob() throws IOException {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Mockito.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
+            Mockito.eq(Conversions.json().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
             capturedStream.capture(),
             Mockito.eq(EMPTY_RPC_OPTIONS));
     initializeService();
@@ -641,12 +639,12 @@ public class StorageImplMockitoTest {
   public void testCreateBlobWithSubArrayFromByteArray() throws IOException {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
             Mockito.eq(
-                Conversions.apiary()
+                Conversions.json()
                     .blobInfo()
                     .encode(
                         BLOB_INFO1
@@ -673,10 +671,10 @@ public class StorageImplMockitoTest {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
 
-    StorageObject storageObject = Conversions.apiary().blobInfo().encode(BLOB_INFO_WITH_HASHES);
+    StorageObject storageObject = Conversions.json().blobInfo().encode(BLOB_INFO_WITH_HASHES);
 
     doThrow(new StorageException(500, "internalError"))
-        .doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+        .doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
@@ -709,12 +707,12 @@ public class StorageImplMockitoTest {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
 
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
             Mockito.eq(
-                Conversions.apiary()
+                Conversions.json()
                     .blobInfo()
                     .encode(
                         BLOB_INFO1
@@ -738,11 +736,11 @@ public class StorageImplMockitoTest {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
 
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Mockito.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
+            Mockito.eq(Conversions.json().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
             capturedStream.capture(),
             Mockito.eq(BLOB_TARGET_OPTIONS_CREATE));
     initializeService();
@@ -763,11 +761,11 @@ public class StorageImplMockitoTest {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
 
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Mockito.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
+            Mockito.eq(Conversions.json().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
             capturedStream.capture(),
             Mockito.eq(BLOB_TARGET_OPTIONS_CREATE_DISABLE_GZIP_CONTENT));
     initializeService();
@@ -782,12 +780,12 @@ public class StorageImplMockitoTest {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
 
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
-        .doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
+        .doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Mockito.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
+            Mockito.eq(Conversions.json().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
             capturedStream.capture(),
             Mockito.eq(ENCRYPTION_KEY_OPTIONS));
     initializeService();
@@ -808,12 +806,12 @@ public class StorageImplMockitoTest {
     ArgumentCaptor<ByteArrayInputStream> capturedStream =
         ArgumentCaptor.forClass(ByteArrayInputStream.class);
 
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
-        .doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
+        .doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Mockito.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
+            Mockito.eq(Conversions.json().blobInfo().encode(BLOB_INFO_WITH_HASHES)),
             capturedStream.capture(),
             Mockito.eq(KMS_KEY_NAME_OPTIONS));
     initializeService();
@@ -837,11 +835,11 @@ public class StorageImplMockitoTest {
     ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
 
     // verify that md5 and crc32c are cleared if present when calling create
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Mockito.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES)),
+            Mockito.eq(Conversions.json().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES)),
             capturedStream.capture(),
             Mockito.eq(EMPTY_RPC_OPTIONS));
     initializeService();
@@ -860,11 +858,11 @@ public class StorageImplMockitoTest {
 
     // verify that md5 and crc32c are cleared if present when calling create
     ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Mockito.eq(Conversions.apiary().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES)),
+            Mockito.eq(Conversions.json().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES)),
             capturedStream.capture(),
             Mockito.eq(BLOB_TARGET_OPTIONS_CREATE_DISABLE_GZIP_CONTENT));
     initializeService();
@@ -883,12 +881,12 @@ public class StorageImplMockitoTest {
     ByteArrayInputStream fileStream = new ByteArrayInputStream(BLOB_CONTENT);
 
     // verify that md5 and crc32c are cleared if present when calling create
-    doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
-        .doReturn(Conversions.apiary().blobInfo().encode(BLOB_INFO1))
+    doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
+        .doReturn(Conversions.json().blobInfo().encode(BLOB_INFO1))
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
         .create(
-            Conversions.apiary().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES),
+            Conversions.json().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES),
             fileStream,
             ENCRYPTION_KEY_OPTIONS);
     initializeService();
@@ -913,7 +911,7 @@ public class StorageImplMockitoTest {
     doThrow(internalErrorException)
         .when(storageRpcMock)
         .create(
-            Conversions.apiary().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES),
+            Conversions.json().blobInfo().encode(BLOB_INFO_WITHOUT_HASHES),
             fileStream,
             EMPTY_RPC_OPTIONS);
 
@@ -967,7 +965,7 @@ public class StorageImplMockitoTest {
     doReturn(uploadId)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
-        .open(Conversions.apiary().blobInfo().encode(blobInfo), rpcOptions);
+        .open(Conversions.json().blobInfo().encode(blobInfo), rpcOptions);
 
     doReturn(storageObject)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
@@ -975,7 +973,7 @@ public class StorageImplMockitoTest {
         .writeWithResponse(uploadId, buffer, 0, 0L, bytes.length, true);
 
     initializeService();
-    BlobInfo info = Conversions.apiary().blobInfo().decode(storageObject);
+    BlobInfo info = Conversions.json().blobInfo().decode(storageObject);
     expectedUpdated = info.asBlob(storage);
     return blobInfo;
   }
@@ -986,7 +984,7 @@ public class StorageImplMockitoTest {
     ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
         Tuple.of(
-            cursor, Iterables.transform(bucketInfoList, Conversions.apiary().bucketInfo()::encode));
+            cursor, Iterables.transform(bucketInfoList, Conversions.json().bucketInfo()::encode));
 
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
@@ -1020,7 +1018,7 @@ public class StorageImplMockitoTest {
     ImmutableList<BucketInfo> bucketInfoList = ImmutableList.of(BUCKET_INFO1, BUCKET_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.Bucket>> result =
         Tuple.of(
-            cursor, Iterables.transform(bucketInfoList, Conversions.apiary().bucketInfo()::encode));
+            cursor, Iterables.transform(bucketInfoList, Conversions.json().bucketInfo()::encode));
 
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
@@ -1051,8 +1049,7 @@ public class StorageImplMockitoTest {
     String cursor = "cursor";
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
+        Tuple.of(cursor, Iterables.transform(blobInfoList, Conversions.json().blobInfo()::encode));
 
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
@@ -1087,8 +1084,7 @@ public class StorageImplMockitoTest {
     String cursor = "cursor";
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
+        Tuple.of(cursor, Iterables.transform(blobInfoList, Conversions.json().blobInfo()::encode));
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
@@ -1107,8 +1103,7 @@ public class StorageImplMockitoTest {
     Map<StorageRpc.Option, ?> options = ImmutableMap.of(StorageRpc.Option.DELIMITER, "/");
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
+        Tuple.of(cursor, Iterables.transform(blobInfoList, Conversions.json().blobInfo()::encode));
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
@@ -1128,8 +1123,7 @@ public class StorageImplMockitoTest {
     Map<StorageRpc.Option, ?> options = ImmutableMap.of(StorageRpc.Option.DELIMITER, delimiter);
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
+        Tuple.of(cursor, Iterables.transform(blobInfoList, Conversions.json().blobInfo()::encode));
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
@@ -1152,8 +1146,7 @@ public class StorageImplMockitoTest {
             StorageRpc.Option.START_OFF_SET, startOffset, StorageRpc.Option.END_OFF_SET, endOffset);
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
+        Tuple.of(cursor, Iterables.transform(blobInfoList, Conversions.json().blobInfo()::encode));
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
@@ -1177,8 +1170,7 @@ public class StorageImplMockitoTest {
     Map<StorageRpc.Option, ?> options = ImmutableMap.of(StorageRpc.Option.MATCH_GLOB, matchGlob);
     ImmutableList<BlobInfo> blobInfoList = ImmutableList.of(BLOB_INFO1, BLOB_INFO2);
     Tuple<String, Iterable<com.google.api.services.storage.model.StorageObject>> result =
-        Tuple.of(
-            cursor, Iterables.transform(blobInfoList, Conversions.apiary().blobInfo()::encode));
+        Tuple.of(cursor, Iterables.transform(blobInfoList, Conversions.json().blobInfo()::encode));
     doReturn(result)
         .doThrow(UNEXPECTED_CALL_EXCEPTION)
         .when(storageRpcMock)
@@ -1205,10 +1197,10 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testCreateNotification() {
-    doReturn(Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01))
+    doReturn(Conversions.json().notificationInfo().encode(NOTIFICATION_INFO_01))
         .when(storageRpcMock)
         .createNotification(
-            BUCKET_NAME1, Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01));
+            BUCKET_NAME1, Conversions.json().notificationInfo().encode(NOTIFICATION_INFO_01));
     initializeService();
     Notification notification = storage.createNotification(BUCKET_NAME1, NOTIFICATION_INFO_01);
     verifyBucketNotification(notification);
@@ -1216,7 +1208,7 @@ public class StorageImplMockitoTest {
 
   @Test
   public void testGetNotification() {
-    doReturn(Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01))
+    doReturn(Conversions.json().notificationInfo().encode(NOTIFICATION_INFO_01))
         .when(storageRpcMock)
         .getNotification(BUCKET_NAME1, GENERATED_ID);
     initializeService();
@@ -1228,8 +1220,8 @@ public class StorageImplMockitoTest {
   public void testListNotification() {
     doReturn(
             Arrays.asList(
-                Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_01),
-                Conversions.apiary().notificationInfo().encode(NOTIFICATION_INFO_02)))
+                Conversions.json().notificationInfo().encode(NOTIFICATION_INFO_01),
+                Conversions.json().notificationInfo().encode(NOTIFICATION_INFO_02)))
         .when(storageRpcMock)
         .listNotifications(BUCKET_NAME1);
     initializeService();

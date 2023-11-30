@@ -86,7 +86,7 @@ public class BlobInfo implements Serializable {
    * The getter for this property never returns null, however null awareness is critical for
    * encoding
    *
-   * @see ApiaryConversions#blobInfo() encoder
+   * @see JsonConversions#blobInfo() encoder
    */
   final Map<String, String> metadata;
 

@@ -27,10 +27,10 @@ public interface ChecksummedDataOrBuilder
    *
    *
    * <pre>
-   * The data.
+   * Optional. The data.
    * </pre>
    *
-   * <code>bytes content = 1 [ctype = CORD];</code>
+   * <code>bytes content = 1 [ctype = CORD, (.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The content.
    */

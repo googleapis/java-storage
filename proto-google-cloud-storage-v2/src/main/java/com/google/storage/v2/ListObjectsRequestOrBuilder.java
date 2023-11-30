@@ -296,6 +296,20 @@ public interface ListObjectsRequestOrBuilder
    *
    *
    * <pre>
+   * Optional. If true, only list all soft-deleted versions of the object.
+   * Soft delete policy is required to set this option.
+   * </pre>
+   *
+   * <code>bool soft_deleted = 12 [(.google.api.field_behavior) = OPTIONAL];</code>
+   *
+   * @return The softDeleted.
+   */
+  boolean getSoftDeleted();
+
+  /**
+   *
+   *
+   * <pre>
    * Optional. Filter results to objects and prefixes that match this glob
    * pattern. See [List Objects Using
    * Glob](https://cloud.google.com/storage/docs/json_api/v1/objects/list#list-objects-and-prefixes-using-glob)

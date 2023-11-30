@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.29.1](https://github.com/googleapis/java-storage/compare/v2.29.0...v2.29.1) (2023-11-02)
+
+
+### Bug Fixes
+
+* Improve 503 handling for json resumable uploads ([#2289](https://github.com/googleapis/java-storage/issues/2289)) ([9b4bb82](https://github.com/googleapis/java-storage/commit/9b4bb8221294bcd94037b69281a37f33b364b174))
+
+
+### Dependencies
+
+* Update dependency com.google.apis:google-api-services-storage to v1-rev20231028-2.0.0 ([#2281](https://github.com/googleapis/java-storage/issues/2281)) ([94b8dd6](https://github.com/googleapis/java-storage/commit/94b8dd601d33c25edcff05885b0fadf0decbb86e))
+* Update dependency com.google.cloud:google-cloud-shared-dependencies to v3.19.0 ([#2288](https://github.com/googleapis/java-storage/issues/2288)) ([cc65fd0](https://github.com/googleapis/java-storage/commit/cc65fd0897a064d7efc7b50f33acecee9ffa2c4b))
+
 ## [2.29.0](https://github.com/googleapis/java-storage/compare/v2.28.0...v2.29.0) (2023-10-23)
 
 

@@ -39,11 +39,11 @@ public class AclTest {
   private static final String ETAG = "etag";
   private static final String ID = "id";
   private static final Acl ACL = Acl.newBuilder(ENTITY, ROLE).setEtag(ETAG).setId(ID).build();
-  private static final Codec<Entity, String> CODEC_ENTITY = Conversions.apiary().entity();
+  private static final Codec<Entity, String> CODEC_ENTITY = Conversions.json().entity();
   private static final Codec<Acl, ObjectAccessControl> CODEC_ACL_OBJECT =
-      Conversions.apiary().objectAcl();
+      Conversions.json().objectAcl();
   private static final Codec<Acl, BucketAccessControl> CODEC_ACL_BUCKET =
-      Conversions.apiary().bucketAcl();
+      Conversions.json().bucketAcl();
 
   static {
   }

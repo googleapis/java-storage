@@ -70,10 +70,10 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
    *
    *
    * <pre>
-   * The data.
+   * Optional. The data.
    * </pre>
    *
-   * <code>bytes content = 1 [ctype = CORD];</code>
+   * <code>bytes content = 1 [ctype = CORD, (.google.api.field_behavior) = OPTIONAL];</code>
    *
    * @return The content.
    */
@@ -488,10 +488,10 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The data.
+     * Optional. The data.
      * </pre>
      *
-     * <code>bytes content = 1 [ctype = CORD];</code>
+     * <code>bytes content = 1 [ctype = CORD, (.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return The content.
      */
@@ -503,10 +503,10 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The data.
+     * Optional. The data.
      * </pre>
      *
-     * <code>bytes content = 1 [ctype = CORD];</code>
+     * <code>bytes content = 1 [ctype = CORD, (.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @param value The content to set.
      * @return This builder for chaining.
@@ -524,10 +524,10 @@ public final class ChecksummedData extends com.google.protobuf.GeneratedMessageV
      *
      *
      * <pre>
-     * The data.
+     * Optional. The data.
      * </pre>
      *
-     * <code>bytes content = 1 [ctype = CORD];</code>
+     * <code>bytes content = 1 [ctype = CORD, (.google.api.field_behavior) = OPTIONAL];</code>
      *
      * @return This builder for chaining.
      */

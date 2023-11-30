@@ -13129,6 +13129,1087 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
   }
 
+  public interface SoftDeletePolicyOrBuilder
+      extends
+      // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.SoftDeletePolicy)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     *
+     *
+     * <pre>
+     * The period of time that soft-deleted objects in the bucket must be
+     * retained and cannot be permanently deleted. The duration must be greater
+     * than or equal to 7 days and less than 1 year.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+     *
+     * @return Whether the retentionDuration field is set.
+     */
+    boolean hasRetentionDuration();
+    /**
+     *
+     *
+     * <pre>
+     * The period of time that soft-deleted objects in the bucket must be
+     * retained and cannot be permanently deleted. The duration must be greater
+     * than or equal to 7 days and less than 1 year.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+     *
+     * @return The retentionDuration.
+     */
+    com.google.protobuf.Duration getRetentionDuration();
+    /**
+     *
+     *
+     * <pre>
+     * The period of time that soft-deleted objects in the bucket must be
+     * retained and cannot be permanently deleted. The duration must be greater
+     * than or equal to 7 days and less than 1 year.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+     */
+    com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder();
+
+    /**
+     *
+     *
+     * <pre>
+     * Time from which the policy was effective. This is service-provided.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+     *
+     * @return Whether the effectiveTime field is set.
+     */
+    boolean hasEffectiveTime();
+    /**
+     *
+     *
+     * <pre>
+     * Time from which the policy was effective. This is service-provided.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+     *
+     * @return The effectiveTime.
+     */
+    com.google.protobuf.Timestamp getEffectiveTime();
+    /**
+     *
+     *
+     * <pre>
+     * Time from which the policy was effective. This is service-provided.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+     */
+    com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder();
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Soft delete policy properties of a bucket.
+   * </pre>
+   *
+   * Protobuf type {@code google.storage.v2.Bucket.SoftDeletePolicy}
+   */
+  public static final class SoftDeletePolicy extends com.google.protobuf.GeneratedMessageV3
+      implements
+      // @@protoc_insertion_point(message_implements:google.storage.v2.Bucket.SoftDeletePolicy)
+      SoftDeletePolicyOrBuilder {
+    private static final long serialVersionUID = 0L;
+    // Use SoftDeletePolicy.newBuilder() to construct.
+    private SoftDeletePolicy(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+
+    private SoftDeletePolicy() {}
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(UnusedPrivateParameter unused) {
+      return new SoftDeletePolicy();
+    }
+
+    public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_SoftDeletePolicy_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.google.storage.v2.StorageProto
+          .internal_static_google_storage_v2_Bucket_SoftDeletePolicy_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              com.google.storage.v2.Bucket.SoftDeletePolicy.class,
+              com.google.storage.v2.Bucket.SoftDeletePolicy.Builder.class);
+    }
+
+    private int bitField0_;
+    public static final int RETENTION_DURATION_FIELD_NUMBER = 1;
+    private com.google.protobuf.Duration retentionDuration_;
+    /**
+     *
+     *
+     * <pre>
+     * The period of time that soft-deleted objects in the bucket must be
+     * retained and cannot be permanently deleted. The duration must be greater
+     * than or equal to 7 days and less than 1 year.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+     *
+     * @return Whether the retentionDuration field is set.
+     */
+    @java.lang.Override
+    public boolean hasRetentionDuration() {
+      return ((bitField0_ & 0x00000001) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The period of time that soft-deleted objects in the bucket must be
+     * retained and cannot be permanently deleted. The duration must be greater
+     * than or equal to 7 days and less than 1 year.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+     *
+     * @return The retentionDuration.
+     */
+    @java.lang.Override
+    public com.google.protobuf.Duration getRetentionDuration() {
+      return retentionDuration_ == null
+          ? com.google.protobuf.Duration.getDefaultInstance()
+          : retentionDuration_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * The period of time that soft-deleted objects in the bucket must be
+     * retained and cannot be permanently deleted. The duration must be greater
+     * than or equal to 7 days and less than 1 year.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder() {
+      return retentionDuration_ == null
+          ? com.google.protobuf.Duration.getDefaultInstance()
+          : retentionDuration_;
+    }
+
+    public static final int EFFECTIVE_TIME_FIELD_NUMBER = 2;
+    private com.google.protobuf.Timestamp effectiveTime_;
+    /**
+     *
+     *
+     * <pre>
+     * Time from which the policy was effective. This is service-provided.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+     *
+     * @return Whether the effectiveTime field is set.
+     */
+    @java.lang.Override
+    public boolean hasEffectiveTime() {
+      return ((bitField0_ & 0x00000002) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Time from which the policy was effective. This is service-provided.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+     *
+     * @return The effectiveTime.
+     */
+    @java.lang.Override
+    public com.google.protobuf.Timestamp getEffectiveTime() {
+      return effectiveTime_ == null
+          ? com.google.protobuf.Timestamp.getDefaultInstance()
+          : effectiveTime_;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Time from which the policy was effective. This is service-provided.
+     * </pre>
+     *
+     * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+     */
+    @java.lang.Override
+    public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+      return effectiveTime_ == null
+          ? com.google.protobuf.Timestamp.getDefaultInstance()
+          : effectiveTime_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output) throws java.io.IOException {
+      if (((bitField0_ & 0x00000001) != 0)) {
+        output.writeMessage(1, getRetentionDuration());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        output.writeMessage(2, getEffectiveTime());
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) != 0)) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(1, getRetentionDuration());
+      }
+      if (((bitField0_ & 0x00000002) != 0)) {
+        size += com.google.protobuf.CodedOutputStream.computeMessageSize(2, getEffectiveTime());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+        return true;
+      }
+      if (!(obj instanceof com.google.storage.v2.Bucket.SoftDeletePolicy)) {
+        return super.equals(obj);
+      }
+      com.google.storage.v2.Bucket.SoftDeletePolicy other =
+          (com.google.storage.v2.Bucket.SoftDeletePolicy) obj;
+
+      if (hasRetentionDuration() != other.hasRetentionDuration()) return false;
+      if (hasRetentionDuration()) {
+        if (!getRetentionDuration().equals(other.getRetentionDuration())) return false;
+      }
+      if (hasEffectiveTime() != other.hasEffectiveTime()) return false;
+      if (hasEffectiveTime()) {
+        if (!getEffectiveTime().equals(other.getEffectiveTime())) return false;
+      }
+      if (!getUnknownFields().equals(other.getUnknownFields())) return false;
+      return true;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      if (hasRetentionDuration()) {
+        hash = (37 * hash) + RETENTION_DURATION_FIELD_NUMBER;
+        hash = (53 * hash) + getRetentionDuration().hashCode();
+      }
+      if (hasEffectiveTime()) {
+        hash = (37 * hash) + EFFECTIVE_TIME_FIELD_NUMBER;
+        hash = (53 * hash) + getEffectiveTime().hashCode();
+      }
+      hash = (29 * hash) + getUnknownFields().hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(
+        java.nio.ByteBuffer data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(
+        byte[] data, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseDelimitedFrom(
+        java.io.InputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseDelimitedFrom(
+        java.io.InputStream input, com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseDelimitedWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(
+        com.google.protobuf.CodedInputStream input) throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(PARSER, input);
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3.parseWithIOException(
+          PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() {
+      return newBuilder();
+    }
+
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+
+    public static Builder newBuilder(com.google.storage.v2.Bucket.SoftDeletePolicy prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Soft delete policy properties of a bucket.
+     * </pre>
+     *
+     * Protobuf type {@code google.storage.v2.Bucket.SoftDeletePolicy}
+     */
+    public static final class Builder
+        extends com.google.protobuf.GeneratedMessageV3.Builder<Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:google.storage.v2.Bucket.SoftDeletePolicy)
+        com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor getDescriptor() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_SoftDeletePolicy_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_SoftDeletePolicy_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                com.google.storage.v2.Bucket.SoftDeletePolicy.class,
+                com.google.storage.v2.Bucket.SoftDeletePolicy.Builder.class);
+      }
+
+      // Construct using com.google.storage.v2.Bucket.SoftDeletePolicy.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders) {
+          getRetentionDurationFieldBuilder();
+          getEffectiveTimeFieldBuilder();
+        }
+      }
+
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        bitField0_ = 0;
+        retentionDuration_ = null;
+        if (retentionDurationBuilder_ != null) {
+          retentionDurationBuilder_.dispose();
+          retentionDurationBuilder_ = null;
+        }
+        effectiveTime_ = null;
+        if (effectiveTimeBuilder_ != null) {
+          effectiveTimeBuilder_.dispose();
+          effectiveTimeBuilder_ = null;
+        }
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor getDescriptorForType() {
+        return com.google.storage.v2.StorageProto
+            .internal_static_google_storage_v2_Bucket_SoftDeletePolicy_descriptor;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.SoftDeletePolicy getDefaultInstanceForType() {
+        return com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.SoftDeletePolicy build() {
+        com.google.storage.v2.Bucket.SoftDeletePolicy result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public com.google.storage.v2.Bucket.SoftDeletePolicy buildPartial() {
+        com.google.storage.v2.Bucket.SoftDeletePolicy result =
+            new com.google.storage.v2.Bucket.SoftDeletePolicy(this);
+        if (bitField0_ != 0) {
+          buildPartial0(result);
+        }
+        onBuilt();
+        return result;
+      }
+
+      private void buildPartial0(com.google.storage.v2.Bucket.SoftDeletePolicy result) {
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.retentionDuration_ =
+              retentionDurationBuilder_ == null
+                  ? retentionDuration_
+                  : retentionDurationBuilder_.build();
+          to_bitField0_ |= 0x00000001;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.effectiveTime_ =
+              effectiveTimeBuilder_ == null ? effectiveTime_ : effectiveTimeBuilder_.build();
+          to_bitField0_ |= 0x00000002;
+        }
+        result.bitField0_ |= to_bitField0_;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return super.clone();
+      }
+
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.setField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder clearField(com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return super.clearField(field);
+      }
+
+      @java.lang.Override
+      public Builder clearOneof(com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return super.clearOneof(oneof);
+      }
+
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index,
+          java.lang.Object value) {
+        return super.setRepeatedField(field, index, value);
+      }
+
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field, java.lang.Object value) {
+        return super.addRepeatedField(field, value);
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.google.storage.v2.Bucket.SoftDeletePolicy) {
+          return mergeFrom((com.google.storage.v2.Bucket.SoftDeletePolicy) other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(com.google.storage.v2.Bucket.SoftDeletePolicy other) {
+        if (other == com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance())
+          return this;
+        if (other.hasRetentionDuration()) {
+          mergeRetentionDuration(other.getRetentionDuration());
+        }
+        if (other.hasEffectiveTime()) {
+          mergeEffectiveTime(other.getEffectiveTime());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        if (extensionRegistry == null) {
+          throw new java.lang.NullPointerException();
+        }
+        try {
+          boolean done = false;
+          while (!done) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                done = true;
+                break;
+              case 10:
+                {
+                  input.readMessage(
+                      getRetentionDurationFieldBuilder().getBuilder(), extensionRegistry);
+                  bitField0_ |= 0x00000001;
+                  break;
+                } // case 10
+              case 18:
+                {
+                  input.readMessage(getEffectiveTimeFieldBuilder().getBuilder(), extensionRegistry);
+                  bitField0_ |= 0x00000002;
+                  break;
+                } // case 18
+              default:
+                {
+                  if (!super.parseUnknownField(input, extensionRegistry, tag)) {
+                    done = true; // was an endgroup tag
+                  }
+                  break;
+                } // default:
+            } // switch (tag)
+          } // while (!done)
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          throw e.unwrapIOException();
+        } finally {
+          onChanged();
+        } // finally
+        return this;
+      }
+
+      private int bitField0_;
+
+      private com.google.protobuf.Duration retentionDuration_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Duration,
+              com.google.protobuf.Duration.Builder,
+              com.google.protobuf.DurationOrBuilder>
+          retentionDurationBuilder_;
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       *
+       * @return Whether the retentionDuration field is set.
+       */
+      public boolean hasRetentionDuration() {
+        return ((bitField0_ & 0x00000001) != 0);
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       *
+       * @return The retentionDuration.
+       */
+      public com.google.protobuf.Duration getRetentionDuration() {
+        if (retentionDurationBuilder_ == null) {
+          return retentionDuration_ == null
+              ? com.google.protobuf.Duration.getDefaultInstance()
+              : retentionDuration_;
+        } else {
+          return retentionDurationBuilder_.getMessage();
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       */
+      public Builder setRetentionDuration(com.google.protobuf.Duration value) {
+        if (retentionDurationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          retentionDuration_ = value;
+        } else {
+          retentionDurationBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       */
+      public Builder setRetentionDuration(com.google.protobuf.Duration.Builder builderForValue) {
+        if (retentionDurationBuilder_ == null) {
+          retentionDuration_ = builderForValue.build();
+        } else {
+          retentionDurationBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       */
+      public Builder mergeRetentionDuration(com.google.protobuf.Duration value) {
+        if (retentionDurationBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) != 0)
+              && retentionDuration_ != null
+              && retentionDuration_ != com.google.protobuf.Duration.getDefaultInstance()) {
+            getRetentionDurationBuilder().mergeFrom(value);
+          } else {
+            retentionDuration_ = value;
+          }
+        } else {
+          retentionDurationBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       */
+      public Builder clearRetentionDuration() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        retentionDuration_ = null;
+        if (retentionDurationBuilder_ != null) {
+          retentionDurationBuilder_.dispose();
+          retentionDurationBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       */
+      public com.google.protobuf.Duration.Builder getRetentionDurationBuilder() {
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return getRetentionDurationFieldBuilder().getBuilder();
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       */
+      public com.google.protobuf.DurationOrBuilder getRetentionDurationOrBuilder() {
+        if (retentionDurationBuilder_ != null) {
+          return retentionDurationBuilder_.getMessageOrBuilder();
+        } else {
+          return retentionDuration_ == null
+              ? com.google.protobuf.Duration.getDefaultInstance()
+              : retentionDuration_;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * The period of time that soft-deleted objects in the bucket must be
+       * retained and cannot be permanently deleted. The duration must be greater
+       * than or equal to 7 days and less than 1 year.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Duration retention_duration = 1;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Duration,
+              com.google.protobuf.Duration.Builder,
+              com.google.protobuf.DurationOrBuilder>
+          getRetentionDurationFieldBuilder() {
+        if (retentionDurationBuilder_ == null) {
+          retentionDurationBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.protobuf.Duration,
+                  com.google.protobuf.Duration.Builder,
+                  com.google.protobuf.DurationOrBuilder>(
+                  getRetentionDuration(), getParentForChildren(), isClean());
+          retentionDuration_ = null;
+        }
+        return retentionDurationBuilder_;
+      }
+
+      private com.google.protobuf.Timestamp effectiveTime_;
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          effectiveTimeBuilder_;
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return Whether the effectiveTime field is set.
+       */
+      public boolean hasEffectiveTime() {
+        return ((bitField0_ & 0x00000002) != 0);
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       *
+       * @return The effectiveTime.
+       */
+      public com.google.protobuf.Timestamp getEffectiveTime() {
+        if (effectiveTimeBuilder_ == null) {
+          return effectiveTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : effectiveTime_;
+        } else {
+          return effectiveTimeBuilder_.getMessage();
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      public Builder setEffectiveTime(com.google.protobuf.Timestamp value) {
+        if (effectiveTimeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          effectiveTime_ = value;
+        } else {
+          effectiveTimeBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      public Builder setEffectiveTime(com.google.protobuf.Timestamp.Builder builderForValue) {
+        if (effectiveTimeBuilder_ == null) {
+          effectiveTime_ = builderForValue.build();
+        } else {
+          effectiveTimeBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      public Builder mergeEffectiveTime(com.google.protobuf.Timestamp value) {
+        if (effectiveTimeBuilder_ == null) {
+          if (((bitField0_ & 0x00000002) != 0)
+              && effectiveTime_ != null
+              && effectiveTime_ != com.google.protobuf.Timestamp.getDefaultInstance()) {
+            getEffectiveTimeBuilder().mergeFrom(value);
+          } else {
+            effectiveTime_ = value;
+          }
+        } else {
+          effectiveTimeBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      public Builder clearEffectiveTime() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        effectiveTime_ = null;
+        if (effectiveTimeBuilder_ != null) {
+          effectiveTimeBuilder_.dispose();
+          effectiveTimeBuilder_ = null;
+        }
+        onChanged();
+        return this;
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      public com.google.protobuf.Timestamp.Builder getEffectiveTimeBuilder() {
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return getEffectiveTimeFieldBuilder().getBuilder();
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      public com.google.protobuf.TimestampOrBuilder getEffectiveTimeOrBuilder() {
+        if (effectiveTimeBuilder_ != null) {
+          return effectiveTimeBuilder_.getMessageOrBuilder();
+        } else {
+          return effectiveTime_ == null
+              ? com.google.protobuf.Timestamp.getDefaultInstance()
+              : effectiveTime_;
+        }
+      }
+      /**
+       *
+       *
+       * <pre>
+       * Time from which the policy was effective. This is service-provided.
+       * </pre>
+       *
+       * <code>optional .google.protobuf.Timestamp effective_time = 2;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+              com.google.protobuf.Timestamp,
+              com.google.protobuf.Timestamp.Builder,
+              com.google.protobuf.TimestampOrBuilder>
+          getEffectiveTimeFieldBuilder() {
+        if (effectiveTimeBuilder_ == null) {
+          effectiveTimeBuilder_ =
+              new com.google.protobuf.SingleFieldBuilderV3<
+                  com.google.protobuf.Timestamp,
+                  com.google.protobuf.Timestamp.Builder,
+                  com.google.protobuf.TimestampOrBuilder>(
+                  getEffectiveTime(), getParentForChildren(), isClean());
+          effectiveTime_ = null;
+        }
+        return effectiveTimeBuilder_;
+      }
+
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFields(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+      // @@protoc_insertion_point(builder_scope:google.storage.v2.Bucket.SoftDeletePolicy)
+    }
+
+    // @@protoc_insertion_point(class_scope:google.storage.v2.Bucket.SoftDeletePolicy)
+    private static final com.google.storage.v2.Bucket.SoftDeletePolicy DEFAULT_INSTANCE;
+
+    static {
+      DEFAULT_INSTANCE = new com.google.storage.v2.Bucket.SoftDeletePolicy();
+    }
+
+    public static com.google.storage.v2.Bucket.SoftDeletePolicy getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<SoftDeletePolicy> PARSER =
+        new com.google.protobuf.AbstractParser<SoftDeletePolicy>() {
+          @java.lang.Override
+          public SoftDeletePolicy parsePartialFrom(
+              com.google.protobuf.CodedInputStream input,
+              com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+              throws com.google.protobuf.InvalidProtocolBufferException {
+            Builder builder = newBuilder();
+            try {
+              builder.mergeFrom(input, extensionRegistry);
+            } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+              throw e.setUnfinishedMessage(builder.buildPartial());
+            } catch (com.google.protobuf.UninitializedMessageException e) {
+              throw e.asInvalidProtocolBufferException()
+                  .setUnfinishedMessage(builder.buildPartial());
+            } catch (java.io.IOException e) {
+              throw new com.google.protobuf.InvalidProtocolBufferException(e)
+                  .setUnfinishedMessage(builder.buildPartial());
+            }
+            return builder.buildPartial();
+          }
+        };
+
+    public static com.google.protobuf.Parser<SoftDeletePolicy> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<SoftDeletePolicy> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.storage.v2.Bucket.SoftDeletePolicy getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+  }
+
   public interface VersioningOrBuilder
       extends
       // @@protoc_insertion_point(interface_extends:google.storage.v2.Bucket.Versioning)
@@ -15464,7 +16545,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Latest instant at which the autoclass terminal storage class was updated.
+     * Output only. Latest instant at which the autoclass terminal storage class
+     * was updated.
      * </pre>
      *
      * <code>
@@ -15478,7 +16560,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Latest instant at which the autoclass terminal storage class was updated.
+     * Output only. Latest instant at which the autoclass terminal storage class
+     * was updated.
      * </pre>
      *
      * <code>
@@ -15492,7 +16575,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Latest instant at which the autoclass terminal storage class was updated.
+     * Output only. Latest instant at which the autoclass terminal storage class
+     * was updated.
      * </pre>
      *
      * <code>
@@ -15703,7 +16787,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Latest instant at which the autoclass terminal storage class was updated.
+     * Output only. Latest instant at which the autoclass terminal storage class
+     * was updated.
      * </pre>
      *
      * <code>
@@ -15720,7 +16805,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Latest instant at which the autoclass terminal storage class was updated.
+     * Output only. Latest instant at which the autoclass terminal storage class
+     * was updated.
      * </pre>
      *
      * <code>
@@ -15739,7 +16825,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      *
      * <pre>
-     * Latest instant at which the autoclass terminal storage class was updated.
+     * Output only. Latest instant at which the autoclass terminal storage class
+     * was updated.
      * </pre>
      *
      * <code>
@@ -16633,7 +17720,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16649,7 +17737,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16671,7 +17760,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16695,7 +17785,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16717,7 +17808,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16745,7 +17837,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16766,7 +17859,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16782,7 +17876,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -16802,7 +17897,8 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
        *
        *
        * <pre>
-       * Latest instant at which the autoclass terminal storage class was updated.
+       * Output only. Latest instant at which the autoclass terminal storage class
+       * was updated.
        * </pre>
        *
        * <code>
@@ -17119,8 +18215,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The metadata generation of this bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -17320,7 +18414,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
    * buckets only. If rpo is not specified when the bucket is created, it
    * defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/turbo-replication.
+   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
    * <code>string rpo = 27;</code>
@@ -17348,7 +18442,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
    * buckets only. If rpo is not specified when the bucket is created, it
    * defaults to "DEFAULT". For more information, see
-   * https://cloud.google.com/storage/docs/turbo-replication.
+   * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
    * </pre>
    *
    * <code>string rpo = 27;</code>
@@ -17594,8 +18688,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The creation time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 11 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -17612,8 +18704,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The creation time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 11 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -17630,8 +18720,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The creation time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp create_time = 11 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -17725,8 +18813,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The modification time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 13 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -17743,8 +18829,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The modification time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 13 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -17761,8 +18845,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
    *
    * <pre>
    * Output only. The modification time of the bucket.
-   * Attempting to set or update this field will result in a
-   * [FieldViolation][google.rpc.BadRequest.FieldViolation].
    * </pre>
    *
    * <code>.google.protobuf.Timestamp update_time = 13 [(.google.api.field_behavior) = OUTPUT_ONLY];
@@ -18453,6 +19535,65 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         : autoclass_;
   }
 
+  public static final int SOFT_DELETE_POLICY_FIELD_NUMBER = 31;
+  private com.google.storage.v2.Bucket.SoftDeletePolicy softDeletePolicy_;
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's soft delete policy. The soft delete policy prevents
+   * soft-deleted objects from being permanently deleted.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return Whether the softDeletePolicy field is set.
+   */
+  @java.lang.Override
+  public boolean hasSoftDeletePolicy() {
+    return softDeletePolicy_ != null;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's soft delete policy. The soft delete policy prevents
+   * soft-deleted objects from being permanently deleted.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   *
+   * @return The softDeletePolicy.
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.SoftDeletePolicy getSoftDeletePolicy() {
+    return softDeletePolicy_ == null
+        ? com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance()
+        : softDeletePolicy_;
+  }
+  /**
+   *
+   *
+   * <pre>
+   * Optional. The bucket's soft delete policy. The soft delete policy prevents
+   * soft-deleted objects from being permanently deleted.
+   * </pre>
+   *
+   * <code>
+   * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+   * </code>
+   */
+  @java.lang.Override
+  public com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder getSoftDeletePolicyOrBuilder() {
+    return softDeletePolicy_ == null
+        ? com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance()
+        : softDeletePolicy_;
+  }
+
   private byte memoizedIsInitialized = -1;
 
   @java.lang.Override
@@ -18549,6 +19690,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     }
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 29, etag_);
+    }
+    if (softDeletePolicy_ != null) {
+      output.writeMessage(31, getSoftDeletePolicy());
     }
     getUnknownFields().writeTo(output);
   }
@@ -18651,6 +19795,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(etag_)) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(29, etag_);
     }
+    if (softDeletePolicy_ != null) {
+      size += com.google.protobuf.CodedOutputStream.computeMessageSize(31, getSoftDeletePolicy());
+    }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
     return size;
@@ -18732,6 +19879,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (hasAutoclass() != other.hasAutoclass()) return false;
     if (hasAutoclass()) {
       if (!getAutoclass().equals(other.getAutoclass())) return false;
+    }
+    if (hasSoftDeletePolicy() != other.hasSoftDeletePolicy()) return false;
+    if (hasSoftDeletePolicy()) {
+      if (!getSoftDeletePolicy().equals(other.getSoftDeletePolicy())) return false;
     }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
@@ -18833,6 +19984,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
     if (hasAutoclass()) {
       hash = (37 * hash) + AUTOCLASS_FIELD_NUMBER;
       hash = (53 * hash) + getAutoclass().hashCode();
+    }
+    if (hasSoftDeletePolicy()) {
+      hash = (37 * hash) + SOFT_DELETE_POLICY_FIELD_NUMBER;
+      hash = (53 * hash) + getSoftDeletePolicy().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -19088,6 +20243,11 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         autoclassBuilder_.dispose();
         autoclassBuilder_ = null;
       }
+      softDeletePolicy_ = null;
+      if (softDeletePolicyBuilder_ != null) {
+        softDeletePolicyBuilder_.dispose();
+        softDeletePolicyBuilder_ = null;
+      }
       return this;
     }
 
@@ -19232,6 +20392,10 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (((from_bitField0_ & 0x08000000) != 0)) {
         result.autoclass_ = autoclassBuilder_ == null ? autoclass_ : autoclassBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x10000000) != 0)) {
+        result.softDeletePolicy_ =
+            softDeletePolicyBuilder_ == null ? softDeletePolicy_ : softDeletePolicyBuilder_.build();
       }
     }
 
@@ -19450,6 +20614,9 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
       }
       if (other.hasAutoclass()) {
         mergeAutoclass(other.getAutoclass());
+      }
+      if (other.hasSoftDeletePolicy()) {
+        mergeSoftDeletePolicy(other.getSoftDeletePolicy());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
@@ -19673,6 +20840,13 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
                 bitField0_ |= 0x00000004;
                 break;
               } // case 234
+            case 250:
+              {
+                input.readMessage(
+                    getSoftDeletePolicyFieldBuilder().getBuilder(), extensionRegistry);
+                bitField0_ |= 0x10000000;
+                break;
+              } // case 250
             default:
               {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
@@ -20167,8 +21341,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The metadata generation of this bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -20184,8 +21356,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The metadata generation of this bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -20205,8 +21375,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The metadata generation of this bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>int64 metageneration = 4 [(.google.api.field_behavior) = OUTPUT_ONLY];</code>
@@ -20603,7 +21771,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
      * buckets only. If rpo is not specified when the bucket is created, it
      * defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/turbo-replication.
+     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
      * <code>string rpo = 27;</code>
@@ -20630,7 +21798,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
      * buckets only. If rpo is not specified when the bucket is created, it
      * defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/turbo-replication.
+     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
      * <code>string rpo = 27;</code>
@@ -20657,7 +21825,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
      * buckets only. If rpo is not specified when the bucket is created, it
      * defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/turbo-replication.
+     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
      * <code>string rpo = 27;</code>
@@ -20683,7 +21851,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
      * buckets only. If rpo is not specified when the bucket is created, it
      * defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/turbo-replication.
+     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
      * <code>string rpo = 27;</code>
@@ -20705,7 +21873,7 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      * replication. "ASYNC_TURBO" enables turbo replication, valid for dual-region
      * buckets only. If rpo is not specified when the bucket is created, it
      * defaults to "DEFAULT". For more information, see
-     * https://cloud.google.com/storage/docs/turbo-replication.
+     * https://cloud.google.com/storage/docs/availability-durability#turbo-replication.
      * </pre>
      *
      * <code>string rpo = 27;</code>
@@ -21711,8 +22879,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21729,8 +22895,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21753,8 +22917,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21779,8 +22941,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21802,8 +22962,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21831,8 +22989,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21854,8 +23010,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21872,8 +23026,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -21894,8 +23046,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The creation time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22294,8 +23444,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22312,8 +23460,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22336,8 +23482,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22362,8 +23506,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22385,8 +23527,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22414,8 +23554,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22437,8 +23575,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22455,8 +23591,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -22477,8 +23611,6 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
      *
      * <pre>
      * Output only. The modification time of the bucket.
-     * Attempting to set or update this field will result in a
-     * [FieldViolation][google.rpc.BadRequest.FieldViolation].
      * </pre>
      *
      * <code>
@@ -24783,6 +25915,218 @@ public final class Bucket extends com.google.protobuf.GeneratedMessageV3
         autoclass_ = null;
       }
       return autoclassBuilder_;
+    }
+
+    private com.google.storage.v2.Bucket.SoftDeletePolicy softDeletePolicy_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.SoftDeletePolicy,
+            com.google.storage.v2.Bucket.SoftDeletePolicy.Builder,
+            com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder>
+        softDeletePolicyBuilder_;
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return Whether the softDeletePolicy field is set.
+     */
+    public boolean hasSoftDeletePolicy() {
+      return ((bitField0_ & 0x10000000) != 0);
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     *
+     * @return The softDeletePolicy.
+     */
+    public com.google.storage.v2.Bucket.SoftDeletePolicy getSoftDeletePolicy() {
+      if (softDeletePolicyBuilder_ == null) {
+        return softDeletePolicy_ == null
+            ? com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance()
+            : softDeletePolicy_;
+      } else {
+        return softDeletePolicyBuilder_.getMessage();
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setSoftDeletePolicy(com.google.storage.v2.Bucket.SoftDeletePolicy value) {
+      if (softDeletePolicyBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        softDeletePolicy_ = value;
+      } else {
+        softDeletePolicyBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x10000000;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder setSoftDeletePolicy(
+        com.google.storage.v2.Bucket.SoftDeletePolicy.Builder builderForValue) {
+      if (softDeletePolicyBuilder_ == null) {
+        softDeletePolicy_ = builderForValue.build();
+      } else {
+        softDeletePolicyBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x10000000;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder mergeSoftDeletePolicy(com.google.storage.v2.Bucket.SoftDeletePolicy value) {
+      if (softDeletePolicyBuilder_ == null) {
+        if (((bitField0_ & 0x10000000) != 0)
+            && softDeletePolicy_ != null
+            && softDeletePolicy_
+                != com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance()) {
+          getSoftDeletePolicyBuilder().mergeFrom(value);
+        } else {
+          softDeletePolicy_ = value;
+        }
+      } else {
+        softDeletePolicyBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x10000000;
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public Builder clearSoftDeletePolicy() {
+      bitField0_ = (bitField0_ & ~0x10000000);
+      softDeletePolicy_ = null;
+      if (softDeletePolicyBuilder_ != null) {
+        softDeletePolicyBuilder_.dispose();
+        softDeletePolicyBuilder_ = null;
+      }
+      onChanged();
+      return this;
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Bucket.SoftDeletePolicy.Builder getSoftDeletePolicyBuilder() {
+      bitField0_ |= 0x10000000;
+      onChanged();
+      return getSoftDeletePolicyFieldBuilder().getBuilder();
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    public com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder getSoftDeletePolicyOrBuilder() {
+      if (softDeletePolicyBuilder_ != null) {
+        return softDeletePolicyBuilder_.getMessageOrBuilder();
+      } else {
+        return softDeletePolicy_ == null
+            ? com.google.storage.v2.Bucket.SoftDeletePolicy.getDefaultInstance()
+            : softDeletePolicy_;
+      }
+    }
+    /**
+     *
+     *
+     * <pre>
+     * Optional. The bucket's soft delete policy. The soft delete policy prevents
+     * soft-deleted objects from being permanently deleted.
+     * </pre>
+     *
+     * <code>
+     * .google.storage.v2.Bucket.SoftDeletePolicy soft_delete_policy = 31 [(.google.api.field_behavior) = OPTIONAL];
+     * </code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+            com.google.storage.v2.Bucket.SoftDeletePolicy,
+            com.google.storage.v2.Bucket.SoftDeletePolicy.Builder,
+            com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder>
+        getSoftDeletePolicyFieldBuilder() {
+      if (softDeletePolicyBuilder_ == null) {
+        softDeletePolicyBuilder_ =
+            new com.google.protobuf.SingleFieldBuilderV3<
+                com.google.storage.v2.Bucket.SoftDeletePolicy,
+                com.google.storage.v2.Bucket.SoftDeletePolicy.Builder,
+                com.google.storage.v2.Bucket.SoftDeletePolicyOrBuilder>(
+                getSoftDeletePolicy(), getParentForChildren(), isClean());
+        softDeletePolicy_ = null;
+      }
+      return softDeletePolicyBuilder_;
     }
 
     @java.lang.Override
