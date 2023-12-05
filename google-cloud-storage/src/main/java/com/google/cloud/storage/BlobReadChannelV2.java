@@ -44,7 +44,10 @@ final class BlobReadChannelV2 extends BaseStorageReadChannel<StorageObject> {
     this.opts = opts;
     this.blobReadChannelContext = blobReadChannelContext;
     this.autoGzipDecompression =
-        Utils.isAutoGzipDecompression(opts, /*defaultWhenUndefined=*/ false);
+        // RETURN_RAW_INPUT_STREAM means do not add GZIPInputStream to the pipeline. Meaning, if
+        // RETURN_RAW_INPUT_STREAM is false, automatically attempt to decompress if Content-Encoding
+        // gzip.
+        Boolean.FALSE.equals(opts.get(StorageRpc.Option.RETURN_RAW_INPUT_STREAM));
   }
 
   @Override
