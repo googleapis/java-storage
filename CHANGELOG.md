@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.30.1](https://github.com/googleapis/java-storage/compare/v2.30.0...v2.30.1) (2023-12-06)
+
+
+### Bug Fixes
+
+* Revert ReadAllBytes fix ([#2331](https://github.com/googleapis/java-storage/issues/2331)) ([4b8458f](https://github.com/googleapis/java-storage/commit/4b8458f01f4375b18f1c447761e8419d43d0cbc9))
+
 ## [2.30.0](https://github.com/googleapis/java-storage/compare/v2.29.1...v2.30.0) (2023-12-01)
 
 
