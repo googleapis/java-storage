@@ -17,7 +17,6 @@
 package com.google.cloud.storage;
 
 import com.google.api.core.ApiFuture;
-import com.google.api.gax.rpc.ApiExceptions;
 import com.google.cloud.storage.UnbufferedReadableByteChannelSession.UnbufferedReadableByteChannel;
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
@@ -28,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.ScatteringByteChannel;
+import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPInputStream;
 
 final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
@@ -60,7 +60,7 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
       source.read(wrap);
       try {
         // Step 2: wait for the object metadata, this is populated in the first message from GCS
-        String contentEncoding = ApiExceptions.callAndTranslateApiException(this.contentEncoding);
+        String contentEncoding = this.contentEncoding.get();
         // if the Content-Encoding is gzip, Step 3: wire gzip decompression into the byte path
         //   this will have a copy impact as we are no longer controlling all the buffers
         if ("gzip".equals(contentEncoding) || "x-gzip".equals(contentEncoding)) {
@@ -86,9 +86,7 @@ final class GzipReadableByteChannel implements UnbufferedReadableByteChannel {
           bytesRead += Buffers.copy(wrap, dsts, offset, length);
           delegate = source;
         }
-      } catch (StorageException se) {
-        throw se;
-      } catch (Exception e) {
+      } catch (InterruptedException | ExecutionException e) {
         throw new IOException(e);
       }
     }
