@@ -53,7 +53,6 @@ import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.SignUrlOption;
 import com.google.cloud.storage.Storage.UriScheme;
 import com.google.cloud.storage.StorageRoles;
-import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Local;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.ResourceSetup;
 import com.google.cloud.storage.conformance.retry.CtxFunctions.Rpc;
@@ -1608,9 +1607,7 @@ final class RpcMethodMappings {
                 .build());
         a.add(
             RpcMethodMapping.newBuilder(54, objects.insert)
-                .withApplicable(
-                    not(TestRetryConformance::isPreconditionsProvided)
-                        .and(TestRetryConformance.transportIs(Transport.HTTP)))
+                .withApplicable(not(TestRetryConformance::isPreconditionsProvided))
                 .withSetup(defaultSetup.andThen(Local.blobInfoWithoutGeneration))
                 .withTest(
                     (ctx, c) ->
