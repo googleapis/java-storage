@@ -101,12 +101,7 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
     long totalRead = 0;
     do {
       if (sbc == null) {
-        try {
-          sbc = Retrying.run(options, resultRetryAlgorithm, this::open, Function.identity());
-        } catch (StorageException e) {
-          result.setException(e);
-          throw e;
-        }
+        sbc = Retrying.run(options, resultRetryAlgorithm, this::open, Function.identity());
       }
 
       long totalRemaining = Buffers.totalRemaining(dsts, offset, length);
@@ -129,17 +124,13 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
           sbc = null;
         } else if (t instanceof IOException) {
           IOException ioE = (IOException) t;
-          StorageException translate = StorageException.translate(ioE);
-          if (resultRetryAlgorithm.shouldRetry(translate, null)) {
+          if (resultRetryAlgorithm.shouldRetry(StorageException.translate(ioE), null)) {
             sbc = null;
           } else {
-            result.setException(translate);
             throw ioE;
           }
         } else {
-          BaseServiceException coalesce = StorageException.coalesce(t);
-          result.setException(coalesce);
-          throw new IOException(coalesce);
+          throw new IOException(StorageException.coalesce(t));
         }
       } finally {
         long totalRemainingAfter = Buffers.totalRemaining(dsts, offset, length);
@@ -216,17 +207,20 @@ class ApiaryUnbufferedReadableByteChannel implements UnbufferedReadableByteChann
       if (xGoogGeneration != null) {
         int statusCode = e.getStatusCode();
         if (statusCode == 404) {
-          StorageException storageException =
-              new StorageException(404, "Failure while trying to resume download", e);
-          result.setException(storageException);
-          throw storageException;
+          throw new StorageException(404, "Failure while trying to resume download", e);
         }
       }
-      throw StorageException.translate(e);
+      StorageException translate = StorageException.translate(e);
+      result.setException(translate);
+      throw translate;
     } catch (IOException e) {
-      throw StorageException.translate(e);
+      StorageException translate = StorageException.translate(e);
+      result.setException(translate);
+      throw translate;
     } catch (Throwable t) {
-      throw StorageException.coalesce(t);
+      BaseServiceException coalesce = StorageException.coalesce(t);
+      result.setException(coalesce);
+      throw coalesce;
     }
   }
 
