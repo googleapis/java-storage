@@ -18,7 +18,6 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.ByteSizeConstants._2MiB;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertThrows;
 
 import com.google.api.core.ApiFuture;
 import com.google.api.gax.grpc.GrpcCallContext;
@@ -82,19 +81,16 @@ public final class ITGrpcStorageImplUploadRetryTest {
 
   @Test
   public void create_inputStream() throws Exception {
-    Direct.FakeService service = Direct.FakeService.create();
+    Resumable.FakeService service = Resumable.FakeService.create();
     try (TmpFile tmpFile = DataGenerator.base64Characters().tempFile(baseDir, objectContentSize);
         FakeServer server = FakeServer.of(service);
         Storage s = server.getGrpcStorageOptions().getService();
         InputStream in = Channels.newInputStream(tmpFile.reader())) {
       BlobInfo info = BlobInfo.newBuilder("buck", "obj").build();
-      // create uses a direct upload, once the stream is consumed there is no means for us to retry
-      // if an error happens it should be surfaced
-      StorageException se =
-          assertThrows(
-              StorageException.class, () -> s.create(info, in, BlobWriteOption.doesNotExist()));
-      assertThat(se.getCode()).isEqualTo(500);
+      s.create(info, in, BlobWriteOption.doesNotExist());
     }
+
+    assertThat(service.returnError.get()).isFalse();
   }
 
   @Test
