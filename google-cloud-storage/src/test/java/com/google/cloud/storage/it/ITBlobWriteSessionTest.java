@@ -103,6 +103,24 @@ public final class ITBlobWriteSessionTest {
   }
 
   @Test
+  public void bidiTest() throws Exception {
+    StorageOptions options = null;
+    if (transport == Transport.GRPC) {
+      options =
+              ((GrpcStorageOptions) storage.getOptions())
+                      .toBuilder()
+                      .setBlobWriteSessionConfig(
+                              BlobWriteSessionConfigs.bidiWrite())
+                      .build();
+    }
+    assertWithMessage("unable to resolve options").that(options).isNotNull();
+
+    try (Storage s = options.getService()) {
+      doTest(s);
+    }
+  }
+
+  @Test
   public void closingAnOpenedSessionWithoutCallingWriteShouldMakeAnEmptyObject()
       throws IOException, ExecutionException, InterruptedException, TimeoutException {
     BlobInfo info = BlobInfo.newBuilder(bucket, generator.randomObjectName()).build();

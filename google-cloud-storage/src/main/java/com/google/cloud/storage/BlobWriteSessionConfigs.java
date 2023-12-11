@@ -247,6 +247,21 @@ public final class BlobWriteSessionConfigs {
   }
 
   /**
+   * Factory to produce a resumable upload using a bi-directional stream. This should provide
+   * a small performance increase compared to a regular resumable upload.
+   *
+   * <p>Configuration of the buffer size can be performed via {@link
+   * BidiBlobWriteSessionConfig#withBufferSize(int)}.
+   *
+   * @since 2.30.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  @TransportCompatibility({Transport.GRPC})
+  public static BidiBlobWriteSessionConfig bidiWrite() {
+    return new BidiBlobWriteSessionConfig(ByteSizeConstants._16MiB);
+  }
+
+  /**
    * Create a new {@link BlobWriteSessionConfig} which will first buffer the content of the object
    * to a temporary file under {@code java.io.tmpdir}.
    *
