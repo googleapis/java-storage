@@ -54,6 +54,7 @@ import com.google.cloud.storage.Storage.CopyRequest;
 import com.google.cloud.storage.Storage.PredefinedAcl;
 import com.google.cloud.storage.StorageClass;
 import com.google.cloud.storage.StorageException;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.storage.TransportCompatibility.Transport;
 import com.google.cloud.storage.it.runner.StorageITRunner;
 import com.google.cloud.storage.it.runner.annotations.Backend;
@@ -74,10 +75,12 @@ import com.google.common.io.ByteStreams;
 import com.google.common.primitives.Ints;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
+import java.nio.file.Paths;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -193,6 +196,21 @@ public class ITObjectTest {
     assertNotNull(remoteBlob);
     assertEquals(blob.getBucket(), remoteBlob.getBucket());
     assertEquals(blob.getName(), remoteBlob.getName());
+    byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
+    assertArrayEquals(new byte[0], readBytes);
+  }
+
+  @Test
+  public void testZeroByteFileUpload() throws Exception {
+    String blobName = generator.randomObjectName();
+    BlobId blobId = BlobId.of(bucket.getName(), blobName);
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+
+    File zeroByteFile = File.createTempFile("zerobyte", null);
+    zeroByteFile.deleteOnExit();
+
+    storage.createFrom(blobInfo, Paths.get(zeroByteFile.getAbsolutePath()));
+
     byte[] readBytes = storage.readAllBytes(bucket.getName(), blobName);
     assertArrayEquals(new byte[0], readBytes);
   }
