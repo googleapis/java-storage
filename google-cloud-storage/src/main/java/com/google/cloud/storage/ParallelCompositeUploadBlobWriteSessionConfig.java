@@ -126,6 +126,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
   private final PartNamingStrategy partNamingStrategy;
   private final PartCleanupStrategy partCleanupStrategy;
 
+
   private ParallelCompositeUploadBlobWriteSessionConfig(
       int maxPartsPerCompose,
       ExecutorSupplier executorSupplier,
@@ -462,10 +463,7 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
       // encode it to base 64, yielding 22 characters
       String randomKey = B64.encodeToString(bytes);
-      HashCode hashCode =
-          OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
-      String nameDigest = B64.encodeToString(hashCode.asBytes());
-      return fmtFields(randomKey, nameDigest, partRange.encode());
+      return fmtFields(randomKey, ultimateObjectName, partRange.encode());
     }
 
     abstract String fmtFields(String randomKey, String nameDigest, String partRange);
@@ -523,6 +521,36 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       return new WithPrefix(rand, prefixPattern);
     }
 
+    /**
+     * Strategy in which an explicit stable prefix with object name included is present on each part
+     * and intermediary compose object.
+     *
+     * <p>General format is
+     *
+     * <pre><code>
+     *   {prefixPattern}/{objectName}/{randomKeyDigest};{objectInfoDigest};{partIndex}.part
+     * </code></pre>
+     *
+     * <p>{@code {objectInfoDigest}} will be fixed for an individual {@link BlobWriteSession}.
+     *
+     * <p><b><i>NOTE:</i></b>The way in which both {@code randomKeyDigest} and {@code
+     * objectInfoDigest} are generated is undefined and subject to change at any time.
+     *
+     * <p>Care must be taken when choosing to specify a stable prefix as this can create hotspots in
+     * the keyspace for object names. See <a
+     * href="https://cloud.google.com/storage/docs/request-rate#naming-convention">Object Naming
+     * Convention Guidelines</a> for more details.
+     *
+     * @see #withPartNamingStrategy(PartNamingStrategy)
+     * @since 2.30.2 This new api is in preview and is subject to breaking changes.
+     */
+    @BetaApi
+    public static PartNamingStrategy objectLevelPrefix(String prefixPattern) {
+      checkNotNull(prefixPattern, "prefixPattern must be non null");
+      SecureRandom rand = new SecureRandom();
+      return new WithObjectLevelPrefix(rand, prefixPattern);
+    }
+
     static final class WithPrefix extends PartNamingStrategy {
       private static final long serialVersionUID = 5709330763161570411L;
 
@@ -534,8 +562,38 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       }
 
       @Override
-      protected String fmtFields(String randomKey, String nameDigest, String partRange) {
+      protected String fmtFields(String randomKey, String ultimateObjectName, String partRange) {
+        HashCode hashCode =
+            OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
+        String nameDigest = B64.encodeToString(hashCode.asBytes());
         return prefix
+            + "/"
+            + randomKey
+            + FIELD_SEPARATOR
+            + nameDigest
+            + FIELD_SEPARATOR
+            + partRange
+            + ".part";
+      }
+    }
+     static final class WithObjectLevelPrefix extends PartNamingStrategy {
+
+       private static final long serialVersionUID = 5157942020618764450L;
+      private final String prefix;
+
+      private WithObjectLevelPrefix(SecureRandom rand, String prefix) {
+        super(rand);
+        this.prefix = prefix;
+      }
+
+      @Override
+      protected String fmtFields(String randomKey, String ultimateObjectName, String partRange) {
+        HashCode hashCode =
+            OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
+        String nameDigest = B64.encodeToString(hashCode.asBytes());
+        return prefix
+            + "/"
+            + ultimateObjectName
             + "/"
             + randomKey
             + FIELD_SEPARATOR
