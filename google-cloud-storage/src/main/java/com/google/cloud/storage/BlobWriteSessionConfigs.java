@@ -247,8 +247,8 @@ public final class BlobWriteSessionConfigs {
   }
 
   /**
-   * Factory to produce a resumable upload using a bi-directional stream. This should provide
-   * a small performance increase compared to a regular resumable upload.
+   * Factory to produce a resumable upload using a bi-directional stream. This should provide a
+   * small performance increase compared to a regular resumable upload.
    *
    * <p>Configuration of the buffer size can be performed via {@link
    * BidiBlobWriteSessionConfig#withBufferSize(int)}.

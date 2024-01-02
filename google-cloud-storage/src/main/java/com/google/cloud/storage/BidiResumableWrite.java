@@ -28,68 +28,69 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class BidiResumableWrite implements BidiWriteObjectRequestBuilderFactory {
 
-    private final StartResumableWriteRequest req;
-    private final StartResumableWriteResponse res;
+  private final StartResumableWriteRequest req;
+  private final StartResumableWriteResponse res;
 
-    private final BidiWriteObjectRequest writeRequest;
+  private final BidiWriteObjectRequest writeRequest;
 
-    public BidiResumableWrite(
-            StartResumableWriteRequest req,
-            StartResumableWriteResponse res,
-            Function<String, BidiWriteObjectRequest> f) {
-        this.req = req;
-        this.res = res;
-        this.writeRequest = f.apply(res.getUploadId());
+  public BidiResumableWrite(
+      StartResumableWriteRequest req,
+      StartResumableWriteResponse res,
+      Function<String, BidiWriteObjectRequest> f) {
+    this.req = req;
+    this.res = res;
+    this.writeRequest = f.apply(res.getUploadId());
+  }
+
+  public StartResumableWriteRequest getReq() {
+    return req;
+  }
+
+  public StartResumableWriteResponse getRes() {
+    return res;
+  }
+
+  @Override
+  public BidiWriteObjectRequest.Builder newBuilder() {
+    return writeRequest.toBuilder();
+  }
+
+  @Override
+  public @Nullable String bucketName() {
+    if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
+      return req.getWriteObjectSpec().getResource().getBucket();
     }
+    return null;
+  }
 
-    public StartResumableWriteRequest getReq() {
-        return req;
-    }
+  @Override
+  public String toString() {
+    return "BidiResumableWrite{" + "req=" + fmtProto(req) + ", res=" + fmtProto(res) + '}';
+  }
 
-    public StartResumableWriteResponse getRes() {
-        return res;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
+    if (!(o instanceof ResumableWrite)) {
+      return false;
+    }
+    ResumableWrite resumableWrite = (ResumableWrite) o;
+    return Objects.equals(req, resumableWrite.getReq())
+        && Objects.equals(res, resumableWrite.getRes());
+  }
 
-    @Override
-    public BidiWriteObjectRequest.Builder newBuilder() {
-        return writeRequest.toBuilder();
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(req, res);
+  }
 
-    @Override
-    public @Nullable String bucketName() {
-        if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
-            return req.getWriteObjectSpec().getResource().getBucket();
-        }
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return "BidiResumableWrite{" + "req=" + fmtProto(req) + ", res=" + fmtProto(res) + '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof ResumableWrite)) {
-            return false;
-        }
-        ResumableWrite resumableWrite = (ResumableWrite) o;
-        return Objects.equals(req, resumableWrite.getReq()) && Objects.equals(res, resumableWrite.getRes());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(req, res);
-    }
-
-    /**
-     * Helper function which is more specific than {@link Function#identity()}. Constraining the input
-     * and output to be exactly {@link BidiResumableWrite}.
-     */
-    static BidiResumableWrite identity(BidiResumableWrite w) {
-        return w;
-    }
+  /**
+   * Helper function which is more specific than {@link Function#identity()}. Constraining the input
+   * and output to be exactly {@link BidiResumableWrite}.
+   */
+  static BidiResumableWrite identity(BidiResumableWrite w) {
+    return w;
+  }
 }

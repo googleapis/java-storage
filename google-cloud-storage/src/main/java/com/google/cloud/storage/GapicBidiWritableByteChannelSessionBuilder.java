@@ -34,145 +34,145 @@ import java.util.function.Function;
 
 final class GapicBidiWritableByteChannelSessionBuilder {
 
-    private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write;
-    private Hasher hasher;
-    private ByteStringStrategy byteStringStrategy;
+  private final BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write;
+  private Hasher hasher;
+  private ByteStringStrategy byteStringStrategy;
 
-    GapicBidiWritableByteChannelSessionBuilder(
-            BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write) {
-        this.write = write;
-        this.hasher = Hasher.noop();
-        this.byteStringStrategy = ByteStringStrategy.copy();
+  GapicBidiWritableByteChannelSessionBuilder(
+      BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write) {
+    this.write = write;
+    this.hasher = Hasher.noop();
+    this.byteStringStrategy = ByteStringStrategy.copy();
+  }
+
+  /**
+   * Set the {@link Hasher} to apply to the bytes passing through the built session's channel.
+   *
+   * <p>Default: {@link Hasher#noop()}
+   *
+   * @see Hasher#enabled()
+   * @see Hasher#noop()
+   */
+  GapicBidiWritableByteChannelSessionBuilder setHasher(Hasher hasher) {
+    this.hasher = requireNonNull(hasher, "hasher must be non null");
+    return this;
+  }
+
+  /**
+   * Set the {@link ByteStringStrategy} to be used when constructing {@link
+   * com.google.protobuf.ByteString ByteString}s from {@link ByteBuffer}s.
+   *
+   * <p>Default: {@link ByteStringStrategy#copy()}
+   *
+   * <p>Note: usage of {@link ByteStringStrategy#noCopy()} requires that any {@link ByteBuffer}
+   * passed to the session's channel not be modified while {@link
+   * java.nio.channels.WritableByteChannel#write(ByteBuffer)} is processing.
+   *
+   * @see ByteStringStrategy#copy()
+   * @see ByteStringStrategy#noCopy()
+   */
+  GapicBidiWritableByteChannelSessionBuilder setByteStringStrategy(
+      ByteStringStrategy byteStringStrategy) {
+    this.byteStringStrategy =
+        requireNonNull(byteStringStrategy, "byteStringStrategy must be non null");
+    return this;
+  }
+
+  /**
+   * When constructing a bidi channel session, there is always a {@link
+   * GapicBidiUnbufferedWritableByteChannel} at the bottom of it. This method creates a BiFunction
+   * which will instantiate the {@link GapicBidiUnbufferedWritableByteChannel} when provided with a
+   * {@code StartT} value and a {@code SettableApiFuture<BidiWriteObjectResponse>}.
+   *
+   * <p>As part of providing the function, the provided parameters {@code BidiFlusherFactory} and
+   * {@code f} are "bound" into the returned function. In conjunction with the configured fields of
+   * this class a new instance of {@link GapicBidiUnbufferedWritableByteChannel} can be constructed.
+   */
+  private <StartT, RequestFactoryT extends BidiWriteCtx.BidiWriteObjectRequestBuilderFactory>
+      BiFunction<StartT, SettableApiFuture<BidiWriteObjectResponse>, UnbufferedWritableByteChannel>
+          bindFunction(
+              WriteFlushStrategy.BidiFlusherFactory flusherFactory,
+              Function<StartT, RequestFactoryT> f) {
+    // it is theoretically possible that the setter methods for the following variables could
+    // be called again between when this method is invoked and the resulting function is invoked.
+    // To ensure we are using the specified values at the point in time they are bound to the
+    // function read them into local variables which will be closed over rather than the class
+    // fields.
+    ByteStringStrategy boundStrategy = byteStringStrategy;
+    Hasher boundHasher = hasher;
+    return (start, resultFuture) ->
+        new GapicBidiUnbufferedWritableByteChannel<>(
+            resultFuture,
+            new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
+            f.apply(start),
+            flusherFactory);
+  }
+
+  GapicBidiWritableByteChannelSessionBuilder.ResumableUploadBuilder resumable() {
+    return new GapicBidiWritableByteChannelSessionBuilder.ResumableUploadBuilder();
+  }
+
+  final class ResumableUploadBuilder {
+
+    private RetryingDependencies deps;
+    private ResultRetryAlgorithm<?> alg;
+
+    ResumableUploadBuilder() {
+      this.deps = RetryingDependencies.attemptOnce();
+      this.alg = Retrying.neverRetry();
+    }
+
+    ResumableUploadBuilder withRetryConfig(RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
+      this.deps = requireNonNull(deps, "deps must be non null");
+      this.alg = requireNonNull(alg, "alg must be non null");
+      return this;
     }
 
     /**
-     * Set the {@link Hasher} to apply to the bytes passing through the built session's channel.
+     * Buffer using {@code byteBuffer} worth of space before attempting to flush.
      *
-     * <p>Default: {@link Hasher#noop()}
-     *
-     * @see Hasher#enabled()
-     * @see Hasher#noop()
+     * <p>The provided {@link ByteBuffer} <i>should</i> be aligned with GCSs block size of <a
+     * target="_blank"
+     * href="https://cloud.google.com/storage/docs/performing-resumable-uploads#chunked-upload">256
+     * KiB</a>.
      */
-    GapicBidiWritableByteChannelSessionBuilder setHasher(Hasher hasher) {
-        this.hasher = requireNonNull(hasher, "hasher must be non null");
+    BufferedResumableUploadBuilder buffered(ByteBuffer byteBuffer) {
+      return buffered(BufferHandle.handleOf(byteBuffer));
+    }
+
+    BufferedResumableUploadBuilder buffered(BufferHandle bufferHandle) {
+      return new BufferedResumableUploadBuilder(bufferHandle);
+    }
+
+    final class BufferedResumableUploadBuilder {
+
+      private final BufferHandle bufferHandle;
+
+      private ApiFuture<BidiResumableWrite> start;
+
+      BufferedResumableUploadBuilder(BufferHandle bufferHandle) {
+        this.bufferHandle = bufferHandle;
+      }
+
+      /**
+       * Set the Future which will contain the ResumableWrite information necessary to open the
+       * Write stream.
+       */
+      BufferedResumableUploadBuilder setStartAsync(ApiFuture<BidiResumableWrite> start) {
+        this.start = requireNonNull(start, "start must be non null");
         return this;
+      }
+
+      BufferedWritableByteChannelSession<BidiWriteObjectResponse> build() {
+        return new BufferedWriteSession<>(
+            requireNonNull(start, "start must be non null"),
+            bindFunction(
+                    WriteFlushStrategy.defaultBidiFlusher(
+                        write, deps, alg, Retrying::newCallContext),
+                    BidiResumableWrite::identity)
+                .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
+                .andThen(StorageByteChannels.writable()::createSynchronized));
+      }
     }
-
-    /**
-     * Set the {@link ByteStringStrategy} to be used when constructing {@link
-     * com.google.protobuf.ByteString ByteString}s from {@link ByteBuffer}s.
-     *
-     * <p>Default: {@link ByteStringStrategy#copy()}
-     *
-     * <p>Note: usage of {@link ByteStringStrategy#noCopy()} requires that any {@link ByteBuffer}
-     * passed to the session's channel not be modified while {@link
-     * java.nio.channels.WritableByteChannel#write(ByteBuffer)} is processing.
-     *
-     * @see ByteStringStrategy#copy()
-     * @see ByteStringStrategy#noCopy()
-     */
-    GapicBidiWritableByteChannelSessionBuilder setByteStringStrategy(
-            ByteStringStrategy byteStringStrategy) {
-        this.byteStringStrategy =
-                requireNonNull(byteStringStrategy, "byteStringStrategy must be non null");
-        return this;
-    }
-
-
-    /**
-     * When constructing a bidi channel session, there is always a {@link
-     * GapicBidiUnbufferedWritableByteChannel} at the bottom of it. This method creates a BiFunction which
-     * will instantiate the {@link GapicBidiUnbufferedWritableByteChannel} when provided with a {@code
-     * StartT} value and a {@code SettableApiFuture<BidiWriteObjectResponse>}.
-     *
-     * <p>As part of providing the function, the provided parameters {@code BidiFlusherFactory} and {@code
-     * f} are "bound" into the returned function. In conjunction with the configured fields of this
-     * class a new instance of {@link GapicBidiUnbufferedWritableByteChannel} can be constructed.
-     */
-    private <StartT, RequestFactoryT extends BidiWriteCtx.BidiWriteObjectRequestBuilderFactory>
-    BiFunction<StartT, SettableApiFuture<BidiWriteObjectResponse>, UnbufferedWritableByteChannel>
-    bindFunction(WriteFlushStrategy.BidiFlusherFactory flusherFactory, Function<StartT, RequestFactoryT> f) {
-        // it is theoretically possible that the setter methods for the following variables could
-        // be called again between when this method is invoked and the resulting function is invoked.
-        // To ensure we are using the specified values at the point in time they are bound to the
-        // function read them into local variables which will be closed over rather than the class
-        // fields.
-        ByteStringStrategy boundStrategy = byteStringStrategy;
-        Hasher boundHasher = hasher;
-        return (start, resultFuture) ->
-                new GapicBidiUnbufferedWritableByteChannel<>(
-                        resultFuture,
-                        new ChunkSegmenter(boundHasher, boundStrategy, Values.MAX_WRITE_CHUNK_BYTES_VALUE),
-                        f.apply(start),
-                        flusherFactory);
-    }
-
-    GapicBidiWritableByteChannelSessionBuilder.ResumableUploadBuilder resumable() {
-        return new GapicBidiWritableByteChannelSessionBuilder.ResumableUploadBuilder();
-    }
-
-
-    final class ResumableUploadBuilder {
-
-        private RetryingDependencies deps;
-        private ResultRetryAlgorithm<?> alg;
-
-        ResumableUploadBuilder() {
-            this.deps = RetryingDependencies.attemptOnce();
-            this.alg = Retrying.neverRetry();
-        }
-
-        ResumableUploadBuilder withRetryConfig(RetryingDependencies deps, ResultRetryAlgorithm<?> alg) {
-            this.deps = requireNonNull(deps, "deps must be non null");
-            this.alg = requireNonNull(alg, "alg must be non null");
-            return this;
-        }
-
-        /**
-         * Buffer using {@code byteBuffer} worth of space before attempting to flush.
-         *
-         * <p>The provided {@link ByteBuffer} <i>should</i> be aligned with GCSs block size of <a
-         * target="_blank"
-         * href="https://cloud.google.com/storage/docs/performing-resumable-uploads#chunked-upload">256
-         * KiB</a>.
-         */
-        BufferedResumableUploadBuilder buffered(ByteBuffer byteBuffer) {
-            return buffered(BufferHandle.handleOf(byteBuffer));
-        }
-
-        BufferedResumableUploadBuilder buffered(BufferHandle bufferHandle) {
-            return new BufferedResumableUploadBuilder(bufferHandle);
-        }
-
-
-        final class BufferedResumableUploadBuilder {
-
-            private final BufferHandle bufferHandle;
-
-            private ApiFuture<BidiResumableWrite> start;
-
-            BufferedResumableUploadBuilder(BufferHandle bufferHandle) {
-                this.bufferHandle = bufferHandle;
-            }
-
-            /**
-             * Set the Future which will contain the ResumableWrite information necessary to open the
-             * Write stream.
-             */
-            BufferedResumableUploadBuilder setStartAsync(ApiFuture<BidiResumableWrite> start) {
-                this.start = requireNonNull(start, "start must be non null");
-                return this;
-            }
-
-            BufferedWritableByteChannelSession<BidiWriteObjectResponse> build() {
-                return new BufferedWriteSession<>(
-                        requireNonNull(start, "start must be non null"),
-                        bindFunction(WriteFlushStrategy.defaultBidiFlusher(
-                                        write, deps, alg, Retrying::newCallContext),
-                                BidiResumableWrite::identity)
-                                .andThen(c -> new DefaultBufferedWritableByteChannel(bufferHandle, c))
-                                .andThen(StorageByteChannels.writable()::createSynchronized));
-            }
-        }
-    }
+  }
 }
