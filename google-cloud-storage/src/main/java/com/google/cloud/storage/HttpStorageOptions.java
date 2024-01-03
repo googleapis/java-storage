@@ -346,7 +346,7 @@ public class HttpStorageOptions extends StorageOptions {
    * we do need use it in a couple places, for those we create this adapter.
    */
   private final class RetryDependenciesAdapter implements RetryingDependencies, Serializable {
-
+    private static long serialVersionUID = -7446566394108158974L;
     private RetryDependenciesAdapter() {}
 
     @Override
