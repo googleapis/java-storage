@@ -521,6 +521,11 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
       return new WithPrefix(rand, prefixPattern);
     }
 
+    @BetaApi
+    public static PartNamingStrategy objectLevelPrefix() {
+      return objectLevelPrefix("");
+    }
+
     /**
      * Strategy in which an explicit stable prefix with object name included is present on each part
      * and intermediary compose object.
@@ -583,7 +588,9 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
 
       private WithObjectLevelPrefix(SecureRandom rand, String prefix) {
         super(rand);
-        this.prefix = prefix;
+        // If no prefix is specified we will create the part files under the same directory as the
+        // ultimate object.
+        this.prefix = prefix.isEmpty() ? prefix :  prefix + "/";
       }
 
       @Override
@@ -592,7 +599,6 @@ public final class ParallelCompositeUploadBlobWriteSessionConfig extends BlobWri
             OBJECT_NAME_HASH_FUNCTION.hashString(ultimateObjectName, StandardCharsets.UTF_8);
         String nameDigest = B64.encodeToString(hashCode.asBytes());
         return prefix
-            + "/"
             + ultimateObjectName
             + "/"
             + randomKey
