@@ -70,6 +70,38 @@ public final class ParallelCompositeUploadBlobWriteSessionConfigTest {
         () -> assertThat(fmt).startsWith("[%s]/"));
   }
 
+  @Test
+  public void partNameStrategy_prefixObjectLevel() throws Exception {
+    PartNamingStrategy strategy = PartNamingStrategy.objectLevelPrefix("asdf");
+
+    String fmt = strategy.fmtName("a/b/obj", PartRange.of(1, 96));
+    assertAll(
+        // random digest with prefix to spread over keyspace
+        // digest is 22, prefix is 4, slash is 1 , objectName is 7, additional slash is 1
+        () -> assertField(fmt, 0).hasLength(22 + 5 + 8),
+        // name digest
+        () -> assertField(fmt, 1).hasLength(22),
+        () -> assertField(fmt, 2).isEqualTo("0001-0096.part"),
+        () -> assertThat(fmt).startsWith("asdf/a/b/obj/"));
+  }
+
+  @Test
+  public void partNameStrategy_noPrefixObjectLevel() throws Exception {
+    // Creating an object level prefix without specifying an additional prefix will append the
+    // object name to the beginning of the part name.
+    PartNamingStrategy strategy = PartNamingStrategy.objectLevelPrefix();
+
+    String fmt = strategy.fmtName("a/b/obj", PartRange.of(1, 96));
+    assertAll(
+        // random digest with prefix to spread over keyspace
+        // digest is 22, objectName is 7, slash is 1
+        () -> assertField(fmt, 0).hasLength(22 + 8),
+        // name digest
+        () -> assertField(fmt, 1).hasLength(22),
+        () -> assertField(fmt, 2).isEqualTo("0001-0096.part"),
+        () -> assertThat(fmt).startsWith("a/b/obj/"));
+  }
+
   private static StringSubject assertField(String fmt, int idx) {
     String[] split = fmt.split(";");
     String s = split[idx];
