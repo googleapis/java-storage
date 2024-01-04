@@ -107,11 +107,10 @@ public final class ITBlobWriteSessionTest {
     StorageOptions options = null;
     if (transport == Transport.GRPC) {
       options =
-              ((GrpcStorageOptions) storage.getOptions())
-                      .toBuilder()
-                      .setBlobWriteSessionConfig(
-                              BlobWriteSessionConfigs.bidiWrite())
-                      .build();
+          ((GrpcStorageOptions) storage.getOptions())
+              .toBuilder()
+              .setBlobWriteSessionConfig(BlobWriteSessionConfigs.bidiWrite())
+              .build();
     }
     assertWithMessage("unable to resolve options").that(options).isNotNull();
 

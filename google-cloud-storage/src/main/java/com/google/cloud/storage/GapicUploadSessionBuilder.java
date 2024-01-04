@@ -28,8 +28,6 @@ import com.google.storage.v2.StartResumableWriteRequest;
 import com.google.storage.v2.StartResumableWriteResponse;
 import com.google.storage.v2.WriteObjectRequest;
 import com.google.storage.v2.WriteObjectResponse;
-
-import java.text.Bidi;
 import java.util.function.Function;
 
 final class GapicUploadSessionBuilder {
@@ -46,7 +44,7 @@ final class GapicUploadSessionBuilder {
   }
 
   GapicBidiWritableByteChannelSessionBuilder bidiByteChannel(
-          BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write) {
+      BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write) {
     return new GapicBidiWritableByteChannelSessionBuilder(write);
   }
 
@@ -74,8 +72,8 @@ final class GapicUploadSessionBuilder {
   }
 
   ApiFuture<BidiResumableWrite> bidiResumableWrite(
-          UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
-          BidiWriteObjectRequest writeObjectRequest) {
+      UnaryCallable<StartResumableWriteRequest, StartResumableWriteResponse> x,
+      BidiWriteObjectRequest writeObjectRequest) {
     StartResumableWriteRequest.Builder b = StartResumableWriteRequest.newBuilder();
     if (writeObjectRequest.hasWriteObjectSpec()) {
       b.setWriteObjectSpec(writeObjectRequest.getWriteObjectSpec());
@@ -88,11 +86,11 @@ final class GapicUploadSessionBuilder {
     }
     StartResumableWriteRequest req = b.build();
     Function<String, BidiWriteObjectRequest> f =
-            uploadId ->
-                    writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();
+        uploadId ->
+            writeObjectRequest.toBuilder().clearWriteObjectSpec().setUploadId(uploadId).build();
     return ApiFutures.transform(
-            x.futureCall(req),
-            (resp) -> new BidiResumableWrite(req, resp, f),
-            MoreExecutors.directExecutor());
+        x.futureCall(req),
+        (resp) -> new BidiResumableWrite(req, resp, f),
+        MoreExecutors.directExecutor());
   }
 }

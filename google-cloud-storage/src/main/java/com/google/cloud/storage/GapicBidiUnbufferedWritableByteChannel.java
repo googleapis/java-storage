@@ -35,131 +35,131 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 final class GapicBidiUnbufferedWritableByteChannel<
         RequestFactoryT extends BidiWriteCtx.BidiWriteObjectRequestBuilderFactory>
-        implements UnbufferedWritableByteChannel {
+    implements UnbufferedWritableByteChannel {
 
-    private final SettableApiFuture<BidiWriteObjectResponse> resultFuture;
-    private final ChunkSegmenter chunkSegmenter;
+  private final SettableApiFuture<BidiWriteObjectResponse> resultFuture;
+  private final ChunkSegmenter chunkSegmenter;
 
-    private final BidiWriteCtx<RequestFactoryT> writeCtx;
-    private final WriteFlushStrategy.BidiFlusher flusher;
+  private final BidiWriteCtx<RequestFactoryT> writeCtx;
+  private final WriteFlushStrategy.BidiFlusher flusher;
 
-    private boolean open = true;
-    private boolean finished = false;
+  private boolean open = true;
+  private boolean finished = false;
 
-    GapicBidiUnbufferedWritableByteChannel(
-            SettableApiFuture<BidiWriteObjectResponse> resultFuture,
-            ChunkSegmenter chunkSegmenter,
-            RequestFactoryT requestFactory,
-            WriteFlushStrategy.BidiFlusherFactory flusherFactory) {
-        this.resultFuture = resultFuture;
-        this.chunkSegmenter = chunkSegmenter;
+  GapicBidiUnbufferedWritableByteChannel(
+      SettableApiFuture<BidiWriteObjectResponse> resultFuture,
+      ChunkSegmenter chunkSegmenter,
+      RequestFactoryT requestFactory,
+      WriteFlushStrategy.BidiFlusherFactory flusherFactory) {
+    this.resultFuture = resultFuture;
+    this.chunkSegmenter = chunkSegmenter;
 
-        this.writeCtx = new BidiWriteCtx<>(requestFactory);
-        this.flusher =
-                flusherFactory.newFlusher(
-                        requestFactory.bucketName(), writeCtx.getConfirmedBytes()::set, resultFuture::set);
+    this.writeCtx = new BidiWriteCtx<>(requestFactory);
+    this.flusher =
+        flusherFactory.newFlusher(
+            requestFactory.bucketName(), writeCtx.getConfirmedBytes()::set, resultFuture::set);
+  }
+
+  @Override
+  public long write(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
+    return internalWrite(srcs, srcsOffset, srcsLength, false);
+  }
+
+  @Override
+  public boolean isOpen() {
+    return open;
+  }
+
+  @Override
+  public void close() throws IOException {
+    if (!finished) {
+      BidiWriteObjectRequest message = finishMessage();
+      try {
+        flusher.close(message);
+        finished = true;
+      } catch (RuntimeException e) {
+        resultFuture.setException(e);
+        throw e;
+      }
+    } else {
+      flusher.close(null);
+    }
+    open = false;
+  }
+
+  @VisibleForTesting
+  BidiWriteCtx<RequestFactoryT> getWriteCtx() {
+    return writeCtx;
+  }
+
+  private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength, boolean finalize)
+      throws ClosedChannelException {
+    if (!open) {
+      throw new ClosedChannelException();
     }
 
-    @Override
-    public long write(ByteBuffer[] srcs, int srcsOffset, int srcsLength) throws IOException {
-        return internalWrite(srcs, srcsOffset, srcsLength, false);
-    }
+    ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
 
-    @Override
-    public boolean isOpen() {
-        return open;
-    }
+    List<BidiWriteObjectRequest> messages = new ArrayList<>();
 
-    @Override
-    public void close() throws IOException {
-        if (!finished) {
-            BidiWriteObjectRequest message = finishMessage();
-            try {
-                flusher.close(message);
-                finished = true;
-            } catch (RuntimeException e) {
-                resultFuture.setException(e);
-                throw e;
-            }
-        } else {
-            flusher.close(null);
+    int bytesConsumed = 0;
+    for (ChunkSegment datum : data) {
+      Crc32cLengthKnown crc32c = datum.getCrc32c();
+      ByteString b = datum.getB();
+      int contentSize = b.size();
+      long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
+      Crc32cLengthKnown cumulative =
+          writeCtx
+              .getCumulativeCrc32c()
+              .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
+      ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
+      if (crc32c != null) {
+        checksummedData.setCrc32C(crc32c.getValue());
+      }
+      BidiWriteObjectRequest.Builder builder =
+          writeCtx
+              .newRequestBuilder()
+              .setWriteOffset(offset)
+              .setChecksummedData(checksummedData.build());
+      if (!datum.isOnlyFullBlocks()) {
+        builder.setFinishWrite(true);
+        if (cumulative != null) {
+          builder.setObjectChecksums(
+              ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
         }
-        open = false;
+        finished = true;
+      }
+
+      BidiWriteObjectRequest build = builder.build();
+      messages.add(build);
+      bytesConsumed += contentSize;
+    }
+    if (finalize && !finished) {
+      messages.add(finishMessage());
+      finished = true;
     }
 
-    @VisibleForTesting
-    BidiWriteCtx<RequestFactoryT> getWriteCtx() {
-        return writeCtx;
+    try {
+      flusher.flush(messages);
+    } catch (RuntimeException e) {
+      resultFuture.setException(e);
+      throw e;
     }
 
-    private long internalWrite(ByteBuffer[] srcs, int srcsOffset, int srcsLength, boolean finalize)
-            throws ClosedChannelException {
-        if (!open) {
-            throw new ClosedChannelException();
-        }
+    return bytesConsumed;
+  }
 
-        ChunkSegment[] data = chunkSegmenter.segmentBuffers(srcs, srcsOffset, srcsLength);
+  @NonNull
+  private BidiWriteObjectRequest finishMessage() {
+    long offset = writeCtx.getTotalSentBytes().get();
+    Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
 
-        List<BidiWriteObjectRequest> messages = new ArrayList<>();
-
-        int bytesConsumed = 0;
-        for (ChunkSegment datum : data) {
-            Crc32cLengthKnown crc32c = datum.getCrc32c();
-            ByteString b = datum.getB();
-            int contentSize = b.size();
-            long offset = writeCtx.getTotalSentBytes().getAndAdd(contentSize);
-            Crc32cLengthKnown cumulative =
-                    writeCtx
-                            .getCumulativeCrc32c()
-                            .accumulateAndGet(crc32c, chunkSegmenter.getHasher()::nullSafeConcat);
-            ChecksummedData.Builder checksummedData = ChecksummedData.newBuilder().setContent(b);
-            if (crc32c != null) {
-                checksummedData.setCrc32C(crc32c.getValue());
-            }
-            BidiWriteObjectRequest.Builder builder =
-                    writeCtx
-                            .newRequestBuilder()
-                            .setWriteOffset(offset)
-                            .setChecksummedData(checksummedData.build());
-            if (!datum.isOnlyFullBlocks()) {
-                builder.setFinishWrite(true);
-                if (cumulative != null) {
-                    builder.setObjectChecksums(
-                            ObjectChecksums.newBuilder().setCrc32C(cumulative.getValue()).build());
-                }
-                finished = true;
-            }
-
-            BidiWriteObjectRequest build = builder.build();
-            messages.add(build);
-            bytesConsumed += contentSize;
-        }
-        if (finalize && !finished) {
-            messages.add(finishMessage());
-            finished = true;
-        }
-
-        try {
-            flusher.flush(messages);
-        } catch (RuntimeException e) {
-            resultFuture.setException(e);
-            throw e;
-        }
-
-        return bytesConsumed;
+    BidiWriteObjectRequest.Builder b =
+        writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
+    if (crc32cValue != null) {
+      b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
     }
-
-    @NonNull
-    private BidiWriteObjectRequest finishMessage() {
-        long offset = writeCtx.getTotalSentBytes().get();
-        Crc32cLengthKnown crc32cValue = writeCtx.getCumulativeCrc32c().get();
-
-        BidiWriteObjectRequest.Builder b =
-                writeCtx.newRequestBuilder().setFinishWrite(true).setWriteOffset(offset);
-        if (crc32cValue != null) {
-            b.setObjectChecksums(ObjectChecksums.newBuilder().setCrc32C(crc32cValue.getValue()).build());
-        }
-        BidiWriteObjectRequest message = b.build();
-        return message;
-    }
+    BidiWriteObjectRequest message = b.build();
+    return message;
+  }
 }

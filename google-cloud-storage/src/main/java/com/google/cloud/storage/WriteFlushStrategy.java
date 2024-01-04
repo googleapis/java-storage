@@ -22,8 +22,6 @@ import com.google.api.gax.retrying.ResultRetryAlgorithm;
 import com.google.api.gax.rpc.ApiStreamObserver;
 import com.google.api.gax.rpc.BidiStreamingCallable;
 import com.google.api.gax.rpc.ClientStreamingCallable;
-import com.google.api.gax.rpc.ResponseObserver;
-import com.google.api.gax.rpc.StreamController;
 import com.google.cloud.storage.Conversions.Decoder;
 import com.google.cloud.storage.Retrying.RetryingDependencies;
 import com.google.common.collect.ImmutableList;
@@ -78,24 +76,25 @@ final class WriteFlushStrategy {
   }
 
   /**
-   * Create a {@link BidiFlusher} which will keep a bidirectional stream open, flushing and
-   * sending the appropriate signals to GCS when the buffer is full.
+   * Create a {@link BidiFlusher} which will keep a bidirectional stream open, flushing and sending
+   * the appropriate signals to GCS when the buffer is full.
    */
-  static BidiFlusherFactory defaultBidiFlusher(BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
-                                               RetryingDependencies deps,
-                                               ResultRetryAlgorithm<?> alg,
-                                               Supplier<GrpcCallContext> baseContextSupplier) {
+  static BidiFlusherFactory defaultBidiFlusher(
+      BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
+      RetryingDependencies deps,
+      ResultRetryAlgorithm<?> alg,
+      Supplier<GrpcCallContext> baseContextSupplier) {
     return (String bucketName,
-            LongConsumer committedTotalBytesCallback,
-            Consumer<BidiWriteObjectResponse> onSuccessCallback) ->
-            new DefaultBidiFlusher(
-                    write,
-                    deps,
-                    alg,
-                    bucketName,
-                    committedTotalBytesCallback,
-                    onSuccessCallback,
-                    baseContextSupplier);
+        LongConsumer committedTotalBytesCallback,
+        Consumer<BidiWriteObjectResponse> onSuccessCallback) ->
+        new DefaultBidiFlusher(
+            write,
+            deps,
+            alg,
+            bucketName,
+            committedTotalBytesCallback,
+            onSuccessCallback,
+            baseContextSupplier);
   }
 
   /**
@@ -148,7 +147,7 @@ final class WriteFlushStrategy {
   }
 
   private static BidiWriteObjectRequest possiblyPairDownBidiRequest(
-          BidiWriteObjectRequest message, boolean firstMessageOfStream) {
+      BidiWriteObjectRequest message, boolean firstMessageOfStream) {
     if (firstMessageOfStream && message.getWriteOffset() == 0) {
       return message;
     }
@@ -195,9 +194,9 @@ final class WriteFlushStrategy {
      * @param onSuccessCallback Callback to signal success, and provide the final response.
      */
     BidiFlusher newFlusher(
-            String bucketName,
-            LongConsumer committedTotalBytesCallback,
-            Consumer<BidiWriteObjectResponse> onSuccessCallback);
+        String bucketName,
+        LongConsumer committedTotalBytesCallback,
+        Consumer<BidiWriteObjectResponse> onSuccessCallback);
   }
 
   interface BidiFlusher {
@@ -279,13 +278,13 @@ final class WriteFlushStrategy {
     private final BidiObserver responseObserver;
 
     private DefaultBidiFlusher(
-            BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
-            RetryingDependencies deps,
-            ResultRetryAlgorithm<?> alg,
-            String bucketName,
-            LongConsumer sizeCallback,
-            Consumer<BidiWriteObjectResponse> completeCallback,
-            Supplier<GrpcCallContext> baseContextSupplier) {
+        BidiStreamingCallable<BidiWriteObjectRequest, BidiWriteObjectResponse> write,
+        RetryingDependencies deps,
+        ResultRetryAlgorithm<?> alg,
+        String bucketName,
+        LongConsumer sizeCallback,
+        Consumer<BidiWriteObjectResponse> completeCallback,
+        Supplier<GrpcCallContext> baseContextSupplier) {
       this.write = write;
       this.deps = deps;
       this.alg = alg;
@@ -299,22 +298,23 @@ final class WriteFlushStrategy {
     public void flush(@NonNull List<BidiWriteObjectRequest> segments) {
       ensureOpen();
       Retrying.run(
-              deps,
-              alg,
-              () -> {
-                boolean first = true;
-                for (BidiWriteObjectRequest message : segments) {
-                  message = possiblyPairDownBidiRequest(message, first);
+          deps,
+          alg,
+          () -> {
+            boolean first = true;
+            for (BidiWriteObjectRequest message : segments) {
+              message = possiblyPairDownBidiRequest(message, first);
 
-                  stream.onNext(message);
-                  first = false;
-                }
-                BidiWriteObjectRequest message = BidiWriteObjectRequest.newBuilder().setFlush(true).setStateLookup(true).build();
-                stream.onNext(message);
-                responseObserver.await();
-                return null;
-              },
-              Decoder.identity());
+              stream.onNext(message);
+              first = false;
+            }
+            BidiWriteObjectRequest message =
+                BidiWriteObjectRequest.newBuilder().setFlush(true).setStateLookup(true).build();
+            stream.onNext(message);
+            responseObserver.await();
+            return null;
+          },
+          Decoder.identity());
     }
 
     public void close(@Nullable BidiWriteObjectRequest req) {
@@ -329,8 +329,11 @@ final class WriteFlushStrategy {
         synchronized (this) {
           if (stream == null) {
             GrpcCallContext internalContext =
-                    contextWithBucketName(bucketName, baseContextSupplier.get());
-            stream = this.write.withDefaultCallContext(internalContext).bidiStreamingCall(responseObserver);
+                contextWithBucketName(bucketName, baseContextSupplier.get());
+            stream =
+                this.write
+                    .withDefaultCallContext(internalContext)
+                    .bidiStreamingCall(responseObserver);
           }
         }
       }
@@ -453,6 +456,7 @@ final class WriteFlushStrategy {
       }
     }
   }
+
   static class BidiObserver implements ApiStreamObserver<BidiWriteObjectResponse> {
 
     private final LongConsumer sizeCallback;

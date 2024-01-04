@@ -18,8 +18,8 @@ package com.google.cloud.storage;
 
 import static com.google.cloud.storage.StorageV2ProtoUtils.fmtProto;
 
-import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.cloud.storage.BidiWriteCtx.BidiWriteObjectRequestBuilderFactory;
+import com.google.cloud.storage.Crc32cValue.Crc32cLengthKnown;
 import com.google.storage.v2.BidiWriteObjectRequest;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,93 +27,93 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 final class BidiWriteCtx<RequestFactoryT extends BidiWriteObjectRequestBuilderFactory> {
 
-    private final RequestFactoryT requestFactory;
+  private final RequestFactoryT requestFactory;
 
-    private final AtomicLong totalSentBytes;
-    private final AtomicLong confirmedBytes;
-    private final AtomicReference<Crc32cLengthKnown> cumulativeCrc32c;
+  private final AtomicLong totalSentBytes;
+  private final AtomicLong confirmedBytes;
+  private final AtomicReference<Crc32cLengthKnown> cumulativeCrc32c;
 
-    BidiWriteCtx(RequestFactoryT requestFactory) {
-        this.requestFactory = requestFactory;
-        this.totalSentBytes = new AtomicLong(0);
-        this.confirmedBytes = new AtomicLong(0);
-        this.cumulativeCrc32c = new AtomicReference<>();
+  BidiWriteCtx(RequestFactoryT requestFactory) {
+    this.requestFactory = requestFactory;
+    this.totalSentBytes = new AtomicLong(0);
+    this.confirmedBytes = new AtomicLong(0);
+    this.cumulativeCrc32c = new AtomicReference<>();
+  }
+
+  public RequestFactoryT getRequestFactory() {
+    return requestFactory;
+  }
+
+  public BidiWriteObjectRequest.Builder newRequestBuilder() {
+    return requestFactory.newBuilder();
+  }
+
+  public AtomicLong getTotalSentBytes() {
+    return totalSentBytes;
+  }
+
+  public AtomicLong getConfirmedBytes() {
+    return confirmedBytes;
+  }
+
+  public AtomicReference<Crc32cLengthKnown> getCumulativeCrc32c() {
+    return cumulativeCrc32c;
+  }
+
+  // TODO: flush this out more
+  boolean isDirty() {
+    return confirmedBytes.get() == totalSentBytes.get();
+  }
+
+  @Override
+  public String toString() {
+    return "ServerState{"
+        + "requestFactory="
+        + requestFactory
+        + ", totalSentBytes="
+        + totalSentBytes
+        + ", confirmedBytes="
+        + confirmedBytes
+        + ", totalSentCrc32c="
+        + cumulativeCrc32c
+        + '}';
+  }
+
+  interface BidiWriteObjectRequestBuilderFactory {
+    BidiWriteObjectRequest.Builder newBuilder();
+
+    @Nullable
+    String bucketName();
+
+    static BidiSimpleWriteObjectRequestBuilderFactory simple(BidiWriteObjectRequest req) {
+      return new BidiSimpleWriteObjectRequestBuilderFactory(req);
+    }
+  }
+
+  static final class BidiSimpleWriteObjectRequestBuilderFactory
+      implements BidiWriteObjectRequestBuilderFactory {
+    private final BidiWriteObjectRequest req;
+
+    private BidiSimpleWriteObjectRequestBuilderFactory(BidiWriteObjectRequest req) {
+      this.req = req;
     }
 
-    public RequestFactoryT getRequestFactory() {
-        return requestFactory;
+    @Override
+    public BidiWriteObjectRequest.Builder newBuilder() {
+      return req.toBuilder();
     }
 
-    public BidiWriteObjectRequest.Builder newRequestBuilder() {
-        return requestFactory.newBuilder();
-    }
-
-    public AtomicLong getTotalSentBytes() {
-        return totalSentBytes;
-    }
-
-    public AtomicLong getConfirmedBytes() {
-        return confirmedBytes;
-    }
-
-    public AtomicReference<Crc32cLengthKnown> getCumulativeCrc32c() {
-        return cumulativeCrc32c;
-    }
-
-    // TODO: flush this out more
-    boolean isDirty() {
-        return confirmedBytes.get() == totalSentBytes.get();
+    @Override
+    public @Nullable String bucketName() {
+      if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
+        return req.getWriteObjectSpec().getResource().getBucket();
+      }
+      return null;
     }
 
     @Override
     public String toString() {
-        return "ServerState{"
-                + "requestFactory="
-                + requestFactory
-                + ", totalSentBytes="
-                + totalSentBytes
-                + ", confirmedBytes="
-                + confirmedBytes
-                + ", totalSentCrc32c="
-                + cumulativeCrc32c
-                + '}';
+      return "SimpleBidiWriteObjectRequestBuilderFactory{" + "req=" + fmtProto(req) + '}';
     }
-
-    interface BidiWriteObjectRequestBuilderFactory {
-        BidiWriteObjectRequest.Builder newBuilder();
-
-        @Nullable
-        String bucketName();
-
-        static BidiSimpleWriteObjectRequestBuilderFactory simple(BidiWriteObjectRequest req) {
-            return new BidiSimpleWriteObjectRequestBuilderFactory(req);
-        }
-    }
-
-    static final class BidiSimpleWriteObjectRequestBuilderFactory
-            implements BidiWriteObjectRequestBuilderFactory {
-        private final BidiWriteObjectRequest req;
-
-        private BidiSimpleWriteObjectRequestBuilderFactory(BidiWriteObjectRequest req) {
-            this.req = req;
-        }
-
-        @Override
-        public BidiWriteObjectRequest.Builder newBuilder() {
-            return req.toBuilder();
-        }
-
-        @Override
-        public @Nullable String bucketName() {
-            if (req.hasWriteObjectSpec() && req.getWriteObjectSpec().hasResource()) {
-                return req.getWriteObjectSpec().getResource().getBucket();
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return "SimpleBidiWriteObjectRequestBuilderFactory{" + "req=" + fmtProto(req) + '}';
-        }
-    }
+  }
 }

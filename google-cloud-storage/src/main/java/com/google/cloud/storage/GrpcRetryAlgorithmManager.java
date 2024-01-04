@@ -205,7 +205,7 @@ final class GrpcRetryAlgorithmManager implements Serializable {
 
   public ResultRetryAlgorithm<?> getFor(BidiWriteObjectRequest req) {
     return req.getWriteObjectSpec().hasIfGenerationMatch()
-            ? retryStrategy.getIdempotentHandler()
-            : retryStrategy.getNonidempotentHandler();
+        ? retryStrategy.getIdempotentHandler()
+        : retryStrategy.getNonidempotentHandler();
   }
 }

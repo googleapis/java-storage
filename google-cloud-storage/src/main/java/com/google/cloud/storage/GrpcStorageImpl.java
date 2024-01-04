@@ -1811,25 +1811,26 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   BidiWriteObjectRequest getBidiWriteObjectRequest(BlobInfo info, Opts<ObjectTargetOpt> opts) {
     Object object = codecs.blobInfo().encode(info);
     Object.Builder objectBuilder =
-            object
-                    .toBuilder()
-                    // required if the data is changing
-                    .clearChecksums()
-                    // trimmed to shave payload size
-                    .clearGeneration()
-                    .clearMetageneration()
-                    .clearSize()
-                    .clearCreateTime()
-                    .clearUpdateTime();
+        object
+            .toBuilder()
+            // required if the data is changing
+            .clearChecksums()
+            // trimmed to shave payload size
+            .clearGeneration()
+            .clearMetageneration()
+            .clearSize()
+            .clearCreateTime()
+            .clearUpdateTime();
     WriteObjectSpec.Builder specBuilder = WriteObjectSpec.newBuilder().setResource(objectBuilder);
 
     BidiWriteObjectRequest.Builder requestBuilder =
-            BidiWriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
+        BidiWriteObjectRequest.newBuilder().setWriteObjectSpec(specBuilder);
 
     return opts.bidiWriteObjectRequest().apply(requestBuilder).build();
   }
   private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
       BlobId blob, BlobSourceOption[] options) {
+
     Opts<ObjectSourceOpt> opts = Opts.unwrap(options).resolveFrom(blob).prepend(defaultOpts);
     ReadObjectRequest readObjectRequest = getReadObjectRequest(blob, opts);
     Set<StatusCode.Code> codes =
@@ -1860,16 +1861,16 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
   }
 
   ApiFuture<BidiResumableWrite> startResumableWrite(
-          GrpcCallContext grpcCallContext, BidiWriteObjectRequest req) {
+      GrpcCallContext grpcCallContext, BidiWriteObjectRequest req) {
     Set<StatusCode.Code> codes = resultRetryAlgorithmToCodes(retryAlgorithmManager.getFor(req));
     GrpcCallContext merge = Utils.merge(grpcCallContext, Retrying.newCallContext());
     return ResumableMedia.gapic()
-            .write()
-            .bidiResumableWrite(
-                    storageClient
-                            .startResumableWriteCallable()
-                            .withDefaultCallContext(merge.withRetryableCodes(codes)),
-                    req);
+        .write()
+        .bidiResumableWrite(
+            storageClient
+                .startResumableWriteCallable()
+                .withDefaultCallContext(merge.withRetryableCodes(codes)),
+            req);
   }
 
   private SourceObject sourceObjectEncode(SourceBlob from) {
