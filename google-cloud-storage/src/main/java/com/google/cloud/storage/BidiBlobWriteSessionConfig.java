@@ -105,25 +105,26 @@ public class BidiBlobWriteSessionConfig extends BlobWriteSessionConfig
     }
   }
 
-    /**
-     * Create a new instance with the {@code bufferSize} set to the specified value.
-     *
-     * <p><i>Default:</i> {@code 16777216 (16 MiB)}
-     *
-     * @param bufferSize The number of bytes to hold in the buffer before each flush. Must be &gt;= {@code 262144 (256
-     *     KiB)}
-     * @return The new instance
-     * @see #getBufferSize()
-     * @since 2.26.0 This new api is in preview and is subject to breaking changes.
-     */
-    @BetaApi
-    public BidiBlobWriteSessionConfig withBufferSize(int bufferSize) {
-        Preconditions.checkArgument(
-                bufferSize >= ByteSizeConstants._256KiB,
-                "bufferSize must be >= %d",
-                ByteSizeConstants._256KiB);
-        return new BidiBlobWriteSessionConfig(bufferSize);
-    }
+  /**
+   * Create a new instance with the {@code bufferSize} set to the specified value.
+   *
+   * <p><i>Default:</i> {@code 16777216 (16 MiB)}
+   *
+   * @param bufferSize The number of bytes to hold in the buffer before each flush. Must be &gt;=
+   *     {@code 262144 (256 KiB)}
+   * @return The new instance
+   * @see #getBufferSize()
+   * @since 2.26.0 This new api is in preview and is subject to breaking changes.
+   */
+  @BetaApi
+  public BidiBlobWriteSessionConfig withBufferSize(int bufferSize) {
+    Preconditions.checkArgument(
+        bufferSize >= ByteSizeConstants._256KiB,
+        "bufferSize must be >= %d",
+        ByteSizeConstants._256KiB);
+    return new BidiBlobWriteSessionConfig(bufferSize);
+  }
+
   private static final class DecoratedWritableByteChannelSession<WBC extends WritableByteChannel, T>
       implements WritableByteChannelSession<WBC, BlobInfo> {
 

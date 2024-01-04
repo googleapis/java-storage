@@ -1828,6 +1828,7 @@ final class GrpcStorageImpl extends BaseService<StorageOptions>
 
     return opts.bidiWriteObjectRequest().apply(requestBuilder).build();
   }
+
   private UnbufferedReadableByteChannelSession<Object> unbufferedReadSession(
       BlobId blob, BlobSourceOption[] options) {
 
